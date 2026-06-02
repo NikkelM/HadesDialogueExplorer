@@ -325,7 +325,7 @@ function renderInfo(name) {
     const tl = textlines[name];
     const container = document.getElementById('info-content');
     if (!tl) {
-        container.innerHTML = `<div class="textline-info"><h3>${name}</h3><div class="meta"><span>⚠ External/unresolved reference - not defined in HadesNPCData.lua</span></div><div class="meta"><span>This line is referenced as a requirement by other dialogues but comes from a different data file or is unavailable in this mod.</span></div></div>`;
+        container.innerHTML = `<div class="textline-info"><h3>${name}</h3><div class="meta"><span>⚠ External/unresolved reference - not found in any parsed data file</span></div><div class="meta"><span>This line is referenced as a requirement by other dialogues but is defined in a data file that hasn't been parsed yet.</span></div></div>`;
         return;
     }
     let html = `<div class="textline-info">
