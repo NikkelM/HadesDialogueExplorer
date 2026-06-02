@@ -1,0 +1,216 @@
+"""Tests for the NPCData extractor."""
+
+import pytest
+
+from src.lua_parser import LuaParser
+from src.extractors.npc_data import extract_npc_data
+
+
+def extract(lua_text, source="Test"):
+    """Helper: parse Lua text and extract NPC data."""
+    parsed = LuaParser(lua_text).parse_file()
+    return extract_npc_data(parsed, source_label=source)
+
+
+class TestBasicExtraction:
+    def test_empty_input_returns_empty(self):
+        assert extract("") == {}
+
+    def test_input_without_npcs_returns_empty(self):
+        assert extract('X = { something = "else" }') == {}
+
+    def test_single_npc_under_unitsetdata(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Test_01 = {
+                InteractTextLineSets = {
+                    TestLine01 = { { Text = "Hi" } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        assert "NPC_Test_01" in result
+        assert result["NPC_Test_01"]["source"] == "Test"
+
+    def test_source_label_propagated(self):
+        lua = 'UnitSetData.NPCs = { NPC_X_01 = { InteractTextLineSets = {} } }'
+        result = extract(lua, source="Hades 1")
+        assert result["NPC_X_01"]["source"] == "Hades 1"
+
+
+class TestSpeakerAttribution:
+    """Regression tests for the speaker-attribution bug (issue #13)."""
+
+    def test_dialogue_speaker_defaults_to_npc(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Orpheus_01 = {
+                InteractTextLineSets = {
+                    OrpheusLine01 = {
+                        { Text = "Greetings, my lord." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        line = result["NPC_Orpheus_01"]["InteractTextLineSets"]["OrpheusLine01"]
+        assert line["dialogueLines"] == [
+            {"speaker": "NPC_Orpheus_01", "text": "Greetings, my lord."}
+        ]
+
+    def test_explicit_speaker_honored(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Orpheus_01 = {
+                InteractTextLineSets = {
+                    OrpheusLine01 = {
+                        { Speaker = "CharProtag", Text = "Hey Orpheus." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        line = result["NPC_Orpheus_01"]["InteractTextLineSets"]["OrpheusLine01"]
+        assert line["dialogueLines"] == [
+            {"speaker": "CharProtag", "text": "Hey Orpheus."}
+        ]
+
+    def test_mixed_speakers_in_sequence(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Orpheus_01 = {
+                InteractTextLineSets = {
+                    OrpheusLine01 = {
+                        { Speaker = "CharProtag", Text = "Hi." },
+                        { Text = "Hello to you too." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        lines = result["NPC_Orpheus_01"]["InteractTextLineSets"]["OrpheusLine01"]["dialogueLines"]
+        assert lines == [
+            {"speaker": "CharProtag", "text": "Hi."},
+            {"speaker": "NPC_Orpheus_01", "text": "Hello to you too."},
+        ]
+
+
+class TestRequirementClassification:
+    """Regression tests for the RequiredTextLines-as-dialogue bug."""
+
+    def test_required_textlines_classified_as_requirement(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    Line01 = {
+                        RequiredTextLines = { "PrereqA", "PrereqB" },
+                        { Text = "Hi." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        line = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]
+        assert line["requirements"]["RequiredTextLines"] == ["PrereqA", "PrereqB"]
+        assert len(line["dialogueLines"]) == 1
+        assert line["dialogueLines"][0]["text"] == "Hi."
+
+    def test_all_textline_req_fields_recognized(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    Line01 = {
+                        RequiredTextLines = { "A" },
+                        RequiredAnyTextLines = { "B" },
+                        RequiredFalseTextLines = { "C" },
+                        RequiredTextLinesLastRun = { "D" },
+                        RequiredFalseTextLinesThisRun = { "E" },
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        reqs = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]["requirements"]
+        assert reqs["RequiredTextLines"] == ["A"]
+        assert reqs["RequiredAnyTextLines"] == ["B"]
+        assert reqs["RequiredFalseTextLines"] == ["C"]
+        assert reqs["RequiredTextLinesLastRun"] == ["D"]
+        assert reqs["RequiredFalseTextLinesThisRun"] == ["E"]
+
+    def test_other_requirements_captured(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    Line01 = {
+                        RequiredMinCompletedRuns = 3,
+                        RequiredCue = "SomeCue",
+                        { Text = "Hi." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        other = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]["otherRequirements"]
+        assert other["RequiredMinCompletedRuns"] == 3
+        assert other["RequiredCue"] == "SomeCue"
+
+
+class TestSectionDiscovery:
+    """All *TextLineSets sections should be discovered dynamically."""
+
+    def test_gift_textline_sets_discovered(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Orpheus_01 = {
+                GiftTextLineSets = {
+                    OrpheusGift01 = { { Text = "Thanks!" } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        npc = result["NPC_Orpheus_01"]
+        assert "GiftTextLineSets" in npc
+        assert "OrpheusGift01" in npc["GiftTextLineSets"]
+
+    def test_multiple_section_types_in_one_npc(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = { A = { { Text = "a" } } },
+                RepeatableTextLineSets = { B = { { Text = "b" } } },
+                GiftTextLineSets = { C = { { Text = "c" } } },
+                BossPresentationTextLineSets = { D = { { Text = "d" } } },
+            }
+        }'''
+        result = extract(lua)
+        npc = result["NPC_X_01"]
+        assert "InteractTextLineSets" in npc
+        assert "RepeatableTextLineSets" in npc
+        assert "GiftTextLineSets" in npc
+        assert "BossPresentationTextLineSets" in npc
+
+
+class TestTextProcessing:
+    def test_formatting_tags_stripped(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    Line01 = {
+                        { Text = "{#DialogueItalicFormat}A whispered note." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        text = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]["dialogueLines"][0]["text"]
+        assert text == "A whispered note."
+
+    def test_entry_without_text_ignored(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    Line01 = {
+                        { Cue = "/SFX/Whatever" },
+                        { Text = "Hi." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        lines = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]["dialogueLines"]
+        assert len(lines) == 1
+        assert lines[0]["text"] == "Hi."

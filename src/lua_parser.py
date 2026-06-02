@@ -575,27 +575,49 @@ class LuaParser:
         return result
 
     def _skip_statement(self):
-        """Skip tokens until we reach a likely statement boundary."""
-        # Simple heuristic: skip until we find a top-level assignment pattern
-        # or end of nested blocks
-        depth = 0
+        """Skip tokens until we reach a likely top-level assignment.
+
+        Used to recover past constructs we don't care about (function
+        definitions, control flow, standalone calls, etc.). A "boundary" is a
+        non-keyword identifier followed by ``=`` or ``.`` at depth 0.
+        """
+        brace_depth = 0
+        paren_depth = 0
+        bracket_depth = 0
+        # Lua statement/control keywords that should never be treated as the
+        # start of a new top-level assignment.
+        keywords = {
+            'local', 'function', 'return', 'if', 'for', 'while', 'do', 'end',
+            'then', 'else', 'elseif', 'repeat', 'until', 'in', 'not', 'and', 'or',
+        }
         while self.current.type != T_EOF:
-            if self.current.type == T_LBRACE:
-                depth += 1
-            elif self.current.type == T_RBRACE:
-                if depth > 0:
-                    depth -= 1
+            t = self.current.type
+            if t == T_LBRACE:
+                brace_depth += 1
+            elif t == T_RBRACE:
+                if brace_depth > 0:
+                    brace_depth -= 1
                 else:
-                    break
-            elif self.current.type == T_IDENT and depth == 0:
-                # Check if this looks like a new top-level assignment
-                if self.peek().type == T_EQUALS or self.peek().type == T_DOT:
+                    # Unbalanced closing brace: stop and let caller handle it.
                     return
-                # Check for keywords that start new statements
-                if self.current.value in ('local', 'function', 'if', 'for', 'while', 'return', 'end'):
+            elif t == T_LPAREN:
+                paren_depth += 1
+            elif t == T_RPAREN:
+                if paren_depth > 0:
+                    paren_depth -= 1
+            elif t == T_LBRACKET:
+                bracket_depth += 1
+            elif t == T_RBRACKET:
+                if bracket_depth > 0:
+                    bracket_depth -= 1
+            elif (t == T_IDENT
+                  and brace_depth == 0
+                  and paren_depth == 0
+                  and bracket_depth == 0
+                  and self.current.value not in keywords):
+                peek_tok = self.peek()
+                if peek_tok.type == T_EQUALS or peek_tok.type == T_DOT:
                     return
-            self.advance()
-        if self.current.type == T_RBRACE:
             self.advance()
 
 

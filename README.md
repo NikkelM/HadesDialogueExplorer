@@ -28,6 +28,16 @@ By default, outputs `dialogue_explorer.html` in the project root.
 - Python 3.8+
 - Hades 1 installed at the default Steam path
 
+### Running tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
+The test suite covers the tokenizer, parser, semantic extractor, graph builder,
+and an end-to-end integration test using a synthetic fixture.
+
 ### Interacting with the viewer
 
 - **Search**: Type a textline name in the search bar
