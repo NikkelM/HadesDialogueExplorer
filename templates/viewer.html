@@ -40,17 +40,34 @@ function loadData() {
     return {
         textlines: DATA.textlines,
         dependents: DATA.dependents,
+        speakerNames: DATA.speakerNames || {},
         stats: DATA.stats,
         allNames: Object.keys(DATA.textlines).sort(),
     };
 }
 
-const { textlines, dependents, stats, allNames } = loadData();
+const { textlines, dependents, speakerNames, stats, allNames } = loadData();
 
 // --- Utilities ---
 
 function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Look up the friendly display name for a speaker/NPC ID, falling back to
+// the internal ID when no mapping exists.
+function displayName(id) {
+    return speakerNames[id] || id;
+}
+
+// Render a speaker/NPC name as HTML: friendly label with the internal ID
+// available as a `title` tooltip when a mapping exists.
+function renderSpeakerHtml(id) {
+    const friendly = speakerNames[id];
+    if (friendly && friendly !== id) {
+        return `<span class="speaker-name" title="${escapeHtml(id)}">${escapeHtml(friendly)}</span>`;
+    }
+    return `<span class="speaker-name">${escapeHtml(id)}</span>`;
 }
 
 function getEdgeClass(type) {
@@ -103,11 +120,21 @@ function initSearch() {
     searchInput.addEventListener('input', () => {
         const q = searchInput.value.toLowerCase().trim();
         if (!q) { searchResults.classList.remove('visible'); return; }
-        const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 30);
+        // Match against textline name, NPC internal id, and NPC display name
+        const matches = allNames.filter(n => {
+            if (n.toLowerCase().includes(q)) return true;
+            const tl = textlines[n];
+            if (!tl) return false;
+            if (tl.npc.toLowerCase().includes(q)) return true;
+            const friendly = speakerNames[tl.npc];
+            if (friendly && friendly.toLowerCase().includes(q)) return true;
+            return false;
+        }).slice(0, 30);
         if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
         searchResults.innerHTML = matches.map(n => {
             const tl = textlines[n];
-            return `<div class="search-item" data-name="${n}">${n}<span class="npc">${tl.npc} \u00B7 ${tl.section.replace('TextLineSets', '')}</span></div>`;
+            const npcLabel = displayName(tl.npc);
+            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(npcLabel)} \u00B7 ${escapeHtml(tl.section.replace('TextLineSets', ''))}</span></div>`;
         }).join('');
         searchResults.classList.add('visible');
     });
@@ -148,12 +175,11 @@ function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3>${name}</h3>
+        <h3>${escapeHtml(name)}</h3>
         <div class="meta">
-            <span>NPC: ${tl.npc}</span>
-            <span>Section: ${tl.section.replace('TextLineSets', '')}</span>
-            <span>Source: ${tl.source || 'Unknown'}</span>
-            <span>Line: ${tl.line}</span>
+            <span>NPC: ${renderSpeakerHtml(tl.npc)}</span>
+            <span>Section: ${escapeHtml(tl.section.replace('TextLineSets', ''))}</span>
+            <span>Source: ${escapeHtml(tl.source || 'Unknown')}</span>
         </div>`;
 
     // Dialogue text with speaker names
@@ -161,7 +187,7 @@ function renderInfo(name) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
         for (const line of tl.dialogueLines) {
             if (typeof line === 'object' && line.speaker) {
-                html += `<div class="dialogue-line"><span class="speaker">${escapeHtml(line.speaker)}:</span> ${escapeHtml(line.text)}</div>`;
+                html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
             } else if (typeof line === 'object') {
                 html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;
             } else {
@@ -226,7 +252,12 @@ function hasChildren(name, direction) {
 
 function createNodeEl(name, edgeType, direction, ancestorPath) {
     const tl = textlines[name];
-    const npcTag = tl ? tl.npc.replace('NPC_', '').replace('_01', '') : '?';
+    // Use the friendly display name for the NPC tag when available, otherwise
+    // fall back to a stripped-down version of the internal ID.
+    let npcTag = '?';
+    if (tl) {
+        npcTag = speakerNames[tl.npc] || tl.npc.replace('NPC_', '').replace('_01', '');
+    }
     const isCycle = ancestorPath.has(name);
     const expandable = !isCycle && hasChildren(name, direction);
 
@@ -273,6 +304,9 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
     const npcSpan = document.createElement('span');
     npcSpan.className = 'npc-tag';
     npcSpan.textContent = npcTag;
+    if (tl) {
+        npcSpan.title = tl.npc;
+    }
     label.appendChild(npcSpan);
 
     // Focus button (for non-root nodes)

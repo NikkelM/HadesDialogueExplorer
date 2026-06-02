@@ -1,13 +1,20 @@
 """Build dependency graph data from parsed NPC dialogue data."""
 
 
-def build_graph_data(npcs: dict) -> dict:
+def build_graph_data(npcs: dict, speaker_names: dict = None) -> dict:
     """
     Build the final data structure for the viewer from parsed NPC data.
+
+    Args:
+        npcs: Dict of npc_name -> {section: {textline: data}} from extract_npc_data.
+        speaker_names: Optional dict of internal_id -> display_name for NPCs
+            and other speaker IDs. Used by the viewer to show friendly names
+            while keeping internal IDs canonical in the data.
 
     Returns a dict with:
       - textlines: flat dict of textline name -> metadata
       - dependents: reverse lookup of what depends on each textline
+      - speakerNames: optional id -> display-name map
       - stats: summary statistics
     """
     textlines = {}
@@ -59,5 +66,6 @@ def build_graph_data(npcs: dict) -> dict:
     return {
         "textlines": textlines,
         "dependents": dependents,
+        "speakerNames": speaker_names or {},
         "stats": stats,
     }

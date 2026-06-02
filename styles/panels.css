@@ -91,9 +91,21 @@
     line-height: 1.5;
     font-style: italic;
 }
-.dialogue-line .speaker {
+.dialogue-line .speaker-name {
     font-style: normal;
     font-weight: 600;
     color: #e94560;
+}
+.dialogue-line .speaker-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted #e9456066;
+}
+.dialogue-line .speaker-sep {
+    font-style: normal;
+    color: #e94560;
     margin-right: 4px;
+}
+.meta .speaker-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
 }

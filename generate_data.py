@@ -14,11 +14,13 @@ from pathlib import Path
 from src.lua_parser import parse_lua_file
 from src.extractors.npc_data import extract_npc_data
 from src.graph import build_graph_data
+from src.speaker_names import HADES1_SPEAKER_NAMES
 
 # Game data source paths
 SOURCES = {
     "Hades 1": {
         "npc_data": Path(r"C:\Program Files (x86)\Steam\steamapps\common\Hades\Content\Scripts\NPCData.lua"),
+        "speaker_names": HADES1_SPEAKER_NAMES,
     },
 }
 
@@ -36,11 +38,11 @@ def generate_hades1():
 
     print(f"Parsing Hades 1: {npc_path}")
     parsed = parse_lua_file(str(npc_path))
-    npcs = extract_npc_data(parsed, source_label="Hades 1")
-
+    npcs = extract_npc_data(parsed, source_label="Hades 1", source_file=npc_path.name)
     print(f"  Found {len(npcs)} NPCs")
 
-    graph_data = build_graph_data(npcs)
+    speaker_names = source["speaker_names"]
+    graph_data = build_graph_data(npcs, speaker_names=speaker_names)
 
     print(f"  Textlines: {graph_data['stats']['totalTextlines']}")
     print(f"  Dependency edges: {graph_data['stats']['totalEdges']}")
