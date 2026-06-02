@@ -142,9 +142,8 @@ function initSearch() {
     searchResults.addEventListener('click', (e) => {
         const item = e.target.closest('.search-item');
         if (item) {
-            selectTextline(item.dataset.name);
+            navigateTo(item.dataset.name);
             searchResults.classList.remove('visible');
-            searchInput.value = item.dataset.name;
         }
     });
 
@@ -152,9 +151,8 @@ function initSearch() {
         if (e.key === 'Enter') {
             const first = searchResults.querySelector('.search-item');
             if (first) {
-                selectTextline(first.dataset.name);
+                navigateTo(first.dataset.name);
                 searchResults.classList.remove('visible');
-                searchInput.value = first.dataset.name;
             }
         }
         if (e.key === 'Escape') searchResults.classList.remove('visible');
