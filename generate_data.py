@@ -59,7 +59,8 @@ def main():
     if hades1_data:
         output_path = OUTPUT_DIR / "hades1.json"
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(hades1_data, f, separators=(",", ":"))
+            json.dump(hades1_data, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
         print(f"  Written to: {output_path}")
 
     print("\nDone!")
