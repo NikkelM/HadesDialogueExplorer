@@ -47,4 +47,42 @@ HADES1_SPEAKER_NAMES = {
     "NPC_Skelly_01": "Skelly",
     "NPC_Thanatos_01": "Thanatos",
     "NPC_Thanatos_Field_01": "Thanatos",
+
+    # God-boon owners from LootData.lua. The friendly display name is just
+    # the god's name; dialogue lines themselves still resolve to the
+    # canonical NPC_* speaker id via LOOT_DEFAULT_SPEAKERS.
+    "AphroditeUpgrade": "Aphrodite",
+    "AresUpgrade": "Ares",
+    "ArtemisUpgrade": "Artemis",
+    "AthenaUpgrade": "Athena",
+    "DemeterUpgrade": "Demeter",
+    "DionysusUpgrade": "Dionysus",
+    "HermesUpgrade": "Hermes",
+    "HermesUpgradeRare": "Hermes",
+    "PoseidonUpgrade": "Poseidon",
+    "ZeusUpgrade": "Zeus",
+    "ChaosUpgrade": "Chaos",
+    "TrialUpgrade": "Chaos",
+    "NPC_Aphrodite_01": "Aphrodite",
+    "NPC_Ares_01": "Ares",
+    "NPC_Artemis_01": "Artemis",
+    "NPC_Athena_01": "Athena",
+    "NPC_Demeter_01": "Demeter",
+    "NPC_Dionysus_01": "Dionysus",
+    "NPC_Hermes_01": "Hermes",
+    "NPC_Poseidon_01": "Poseidon",
+    "NPC_Zeus_01": "Zeus",
+
+    # Enemy/boss owners from EnemyData.lua.
+    "Charon": "Charon",
+    "Hades": "Hades",
+    "Harpy": "Megaera",
+    "Harpy2": "Alecto",
+    "Harpy3": "Tisiphone",
+    "Minotaur": "Asterius",
+    "Theseus": "Theseus",
+    "TrainingMelee": "Skelly",
+
+    # DeathLoopData ambient narration.
+    "Storyteller": "Narrator",
 }

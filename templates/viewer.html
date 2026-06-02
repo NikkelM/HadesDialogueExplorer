@@ -108,7 +108,7 @@ function formatReqType(type) {
 
 function initStats() {
     document.getElementById('stats').textContent =
-        `${stats.totalNPCs} NPCs \u00B7 ${stats.totalTextlines} textlines \u00B7 ${stats.totalEdges} edges \u00B7 ${stats.unresolvedRefs.length} external refs`;
+        `${stats.totalOwners} owners \u00B7 ${stats.totalTextlines} textlines \u00B7 ${stats.totalEdges} edges \u00B7 ${stats.unresolvedRefs.length} external refs`;
 }
 
 // --- Search Component ---
@@ -125,16 +125,16 @@ function initSearch() {
             if (n.toLowerCase().includes(q)) return true;
             const tl = textlines[n];
             if (!tl) return false;
-            if (tl.npc.toLowerCase().includes(q)) return true;
-            const friendly = speakerNames[tl.npc];
+            if (tl.owner.toLowerCase().includes(q)) return true;
+            const friendly = speakerNames[tl.owner];
             if (friendly && friendly.toLowerCase().includes(q)) return true;
             return false;
         }).slice(0, 30);
         if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
         searchResults.innerHTML = matches.map(n => {
             const tl = textlines[n];
-            const npcLabel = displayName(tl.npc);
-            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(npcLabel)} \u00B7 ${escapeHtml(tl.section.replace('TextLineSets', ''))}</span></div>`;
+            const ownerLabel = displayName(tl.owner);
+            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${escapeHtml(tl.section.replace('TextLineSets', ''))}</span></div>`;
         }).join('');
         searchResults.classList.add('visible');
     });
@@ -177,10 +177,35 @@ function renderInfo(name) {
     let html = `<div class="textline-info">
         <h3>${escapeHtml(name)}</h3>
         <div class="meta">
-            <span>NPC: ${renderSpeakerHtml(tl.npc)}</span>
+            <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             <span>Section: ${escapeHtml(tl.section)}</span>
             <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
+
+    // Choice-variant banner: this textline is a synthetic child of a
+    // dialogue choice picked by the player at runtime.
+    if (tl.isSynthetic && tl.parentTextline && tl.choiceText) {
+        html += `<div class="meta synthetic-banner">`
+              + `<span>\u21B3 Choice variant of `
+              + `<a class="choice-link" onclick="navigateTo('${tl.parentTextline}')">${escapeHtml(tl.parentTextline)}</a>`
+              + ` \u00B7 ChoiceText: <code>${escapeHtml(tl.choiceText)}</code>`
+              + `</span></div>`;
+    }
+
+    // Forward links to any choice variants of this parent textline.
+    const childChoices = [];
+    for (const [n, t] of Object.entries(textlines)) {
+        if (t.isSynthetic && t.parentTextline === name) {
+            childChoices.push({ name: n, choice: t.choiceText });
+        }
+    }
+    if (childChoices.length > 0) {
+        html += `<div class="meta synthetic-banner"><span>Choices: `
+              + childChoices.map(c =>
+                    `<a class="choice-link" onclick="navigateTo('${c.name}')">${escapeHtml(c.choice)}</a>`
+                ).join(' \u00B7 ')
+              + `</span></div>`;
+    }
 
     // Dialogue text with speaker names
     if (tl.dialogueLines && tl.dialogueLines.length > 0) {
@@ -200,9 +225,31 @@ function renderInfo(name) {
     // Textline requirements
     for (const [type, refs] of Object.entries(tl.requirements)) {
         html += `<div class="req-section req-type-${type}"><h4>${formatReqType(type)}</h4>`;
-        for (const ref of refs) {
-            const resolved = ref in textlines;
-            html += `<div class="req-item ${resolved ? 'resolved' : 'unresolved'}" data-name="${ref}" onclick="navigateTo('${ref}')">${ref}</div>`;
+        const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
+        let i = 0;
+        while (i < refs.length) {
+            const src = sources[i] || null;
+            if (src) {
+                let j = i;
+                while (j < refs.length && (sources[j] || null) === src) j++;
+                html += `<div class="gamedata-group-inline">`
+                      + `<div class="gamedata-group-header-inline">`
+                      + `<span class="gamedata-group-label">${escapeHtml(src)}</span>`
+                      + `<span class="gamedata-group-count">${j - i} textline${j - i === 1 ? '' : 's'}</span>`
+                      + `</div>`;
+                for (let k = i; k < j; k++) {
+                    const ref = refs[k];
+                    const resolved = ref in textlines;
+                    html += `<div class="req-item ${resolved ? 'resolved' : 'unresolved'}" data-name="${ref}" onclick="navigateTo('${ref}')">${ref}</div>`;
+                }
+                html += `</div>`;
+                i = j;
+            } else {
+                const ref = refs[i];
+                const resolved = ref in textlines;
+                html += `<div class="req-item ${resolved ? 'resolved' : 'unresolved'}" data-name="${ref}" onclick="navigateTo('${ref}')">${ref}</div>`;
+                i++;
+            }
         }
         html += `</div>`;
     }
@@ -229,14 +276,19 @@ function getChildren(name, direction) {
         const tl = textlines[name];
         if (tl) {
             for (const [type, refs] of Object.entries(tl.requirements)) {
-                for (const ref of refs) {
-                    children.push({ name: ref, edgeType: type });
+                const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
+                for (let i = 0; i < refs.length; i++) {
+                    children.push({
+                        name: refs[i],
+                        edgeType: type,
+                        group: sources[i] || null,
+                    });
                 }
             }
         }
     } else {
         for (const dep of (dependents[name] || [])) {
-            children.push({ name: dep.name, edgeType: dep.type });
+            children.push({ name: dep.name, edgeType: dep.type, group: null });
         }
     }
     return children;
@@ -252,11 +304,11 @@ function hasChildren(name, direction) {
 
 function createNodeEl(name, edgeType, direction, ancestorPath) {
     const tl = textlines[name];
-    // Use the friendly display name for the NPC tag when available, otherwise
-    // fall back to a stripped-down version of the internal ID.
-    let npcTag = '?';
+    // Use the friendly display name for the owner tag when available,
+    // otherwise fall back to a stripped-down version of the internal ID.
+    let ownerTag = '?';
     if (tl) {
-        npcTag = speakerNames[tl.npc] || tl.npc.replace('NPC_', '').replace('_01', '');
+        ownerTag = speakerNames[tl.owner] || tl.owner.replace('NPC_', '').replace('_01', '');
     }
     const isCycle = ancestorPath.has(name);
     const expandable = !isCycle && hasChildren(name, direction);
@@ -303,9 +355,9 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
 
     const npcSpan = document.createElement('span');
     npcSpan.className = 'npc-tag';
-    npcSpan.textContent = npcTag;
+    npcSpan.textContent = ownerTag;
     if (tl) {
-        npcSpan.title = tl.npc;
+        npcSpan.title = tl.owner;
     }
     label.appendChild(npcSpan);
 
@@ -343,9 +395,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
             const newPath = new Set(ancestorPath);
             newPath.add(name);
             const kids = getChildren(name, direction);
-            for (const child of kids) {
-                childContainer.appendChild(createNodeEl(child.name, child.edgeType, direction, newPath));
-            }
+            appendGroupedChildren(childContainer, kids, direction, newPath);
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
         }
@@ -372,9 +422,7 @@ function renderUpstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        for (const child of kids) {
-            childContainer.appendChild(createNodeEl(child.name, child.edgeType, 'upstream', newPath));
-        }
+        appendGroupedChildren(childContainer, kids, 'upstream', newPath);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
@@ -394,13 +442,88 @@ function renderDownstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        for (const child of kids) {
-            childContainer.appendChild(createNodeEl(child.name, child.edgeType, 'downstream', newPath));
-        }
+        appendGroupedChildren(childContainer, kids, 'downstream', newPath);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
     container.appendChild(rootNode);
+}
+
+// Walks the children list and chunks contiguous runs that share the same
+// non-null GameData group + edge type into a single collapsible
+// `.gamedata-group` box. Ungrouped children are appended as-is. Used by
+// both the root auto-expand path and the lazy-expand path so behaviour is
+// consistent at every depth.
+function appendGroupedChildren(container, kids, direction, ancestorPath) {
+    let i = 0;
+    while (i < kids.length) {
+        const child = kids[i];
+        if (child.group) {
+            let j = i;
+            while (
+                j < kids.length
+                && kids[j].group === child.group
+                && kids[j].edgeType === child.edgeType
+            ) {
+                j++;
+            }
+            const box = createGameDataGroup(child.group, child.edgeType, j - i);
+            const groupChildren = box.querySelector('.gamedata-group-children');
+            for (let k = i; k < j; k++) {
+                groupChildren.appendChild(
+                    createNodeEl(kids[k].name, kids[k].edgeType, direction, ancestorPath)
+                );
+            }
+            container.appendChild(box);
+            i = j;
+        } else {
+            container.appendChild(
+                createNodeEl(child.name, child.edgeType, direction, ancestorPath)
+            );
+            i++;
+        }
+    }
+}
+
+function createGameDataGroup(groupName, edgeType, count) {
+    const box = document.createElement('div');
+    box.className = 'gamedata-group';
+
+    const header = document.createElement('div');
+    header.className = 'gamedata-group-header';
+
+    const toggle = document.createElement('span');
+    toggle.className = 'toggle';
+    toggle.textContent = '\u25BC';
+    header.appendChild(toggle);
+
+    const edgeChip = document.createElement('span');
+    edgeChip.className = `edge-type ${getEdgeClass(edgeType)}`;
+    edgeChip.textContent = getEdgeLabel(edgeType);
+    header.appendChild(edgeChip);
+
+    const label = document.createElement('span');
+    label.className = 'gamedata-group-label';
+    label.textContent = groupName;
+    header.appendChild(label);
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'gamedata-group-count';
+    countSpan.textContent = `${count} textline${count === 1 ? '' : 's'}`;
+    header.appendChild(countSpan);
+
+    const childrenBox = document.createElement('div');
+    childrenBox.className = 'gamedata-group-children expanded';
+
+    header.addEventListener('click', () => {
+        const isExpanded = childrenBox.classList.contains('expanded');
+        childrenBox.classList.toggle('expanded');
+        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+    });
+
+    box.appendChild(header);
+    box.appendChild(childrenBox);
+    return box;
 }
 
 // --- Navigation ---

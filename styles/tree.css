@@ -47,3 +47,50 @@
     transition: opacity 0.15s;
 }
 .tree-label:hover .focus-btn { opacity: 1; }
+
+/* GameData group boxes wrap contiguous tree children that all came from
+   the same `GameData.X` list expansion. Collapsible via header click. */
+.gamedata-group {
+    margin: 4px 0 4px 16px;
+    border: 1px dashed #4a3a6b;
+    border-radius: 4px;
+    background: rgba(108, 91, 123, 0.08);
+    padding: 2px 4px 4px 4px;
+}
+.gamedata-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    color: #c8b6ff;
+    border-radius: 3px;
+}
+.gamedata-group-header:hover { background: rgba(108, 91, 123, 0.18); }
+.gamedata-group-header .toggle {
+    width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.gamedata-group-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #b8a5ff;
+}
+.gamedata-group-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
+}
+.gamedata-group-children { display: none; }
+.gamedata-group-children.expanded { display: block; }
+/* Children inside a group lose their own left border + indent so the
+   group box itself frames them visually. */
+.gamedata-group-children .tree-node {
+    margin-left: 8px;
+    border-left: 1px dotted #4a3a6b;
+    padding-left: 8px;
+}

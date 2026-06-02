@@ -3,7 +3,7 @@
 import pytest
 
 from src.lua_parser import LuaParser
-from src.extractors.npc_data import extract_npc_data
+from src.extractors.hades1.npc_data import extract_npc_data
 
 
 def extract(lua_text, source="Test", source_file=""):

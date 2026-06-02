@@ -23,7 +23,7 @@ class TestBasicGraph:
         result = build_graph_data({})
         assert result["textlines"] == {}
         assert result["dependents"] == {}
-        assert result["stats"]["totalNPCs"] == 0
+        assert result["stats"]["totalOwners"] == 0
         assert result["stats"]["totalTextlines"] == 0
         assert result["stats"]["totalEdges"] == 0
 
@@ -34,7 +34,7 @@ class TestBasicGraph:
         result = build_graph_data(npcs)
         assert "Line01" in result["textlines"]
         tl = result["textlines"]["Line01"]
-        assert tl["npc"] == "NPC_X_01"
+        assert tl["owner"] == "NPC_X_01"
         assert tl["section"] == "InteractTextLineSets"
         assert tl["source"] == "Test"
         assert result["dependents"] == {}
@@ -105,13 +105,13 @@ class TestUnresolvedReferences:
 
 
 class TestStats:
-    def test_npc_count(self):
+    def test_owner_count(self):
         npcs = {
             "NPC_A_01": {"source": "T", "InteractTextLineSets": {}},
             "NPC_B_01": {"source": "T", "InteractTextLineSets": {}},
         }
         result = build_graph_data(npcs)
-        assert result["stats"]["totalNPCs"] == 2
+        assert result["stats"]["totalOwners"] == 2
 
     def test_textline_and_edge_counts(self):
         npcs = make_npc("NPC_X_01", "InteractTextLineSets", {

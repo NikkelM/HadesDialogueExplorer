@@ -37,6 +37,27 @@
     margin-bottom: 8px;
 }
 .textline-info .meta span { margin-right: 12px; }
+.synthetic-banner {
+    background: #1b1b2e;
+    border-left: 3px solid #6c5b7b;
+    padding: 6px 10px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    color: #c8b6ff !important;
+    font-size: 12px;
+}
+.synthetic-banner .choice-link {
+    color: #b8a5ff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.synthetic-banner .choice-link:hover { color: #fff; }
+.synthetic-banner code {
+    background: #2a2a3e;
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: #e7d3a1;
+}
 .req-section {
     margin-top: 10px;
 }
@@ -77,6 +98,33 @@
     font-size: 12px;
     color: #8d99ae;
     font-family: 'Consolas', monospace;
+}
+
+/* GameData group framing inside the details panel: same visual language
+   as the tree-view group box, scaled for the denser req-item list. */
+.gamedata-group-inline {
+    border: 1px dashed #4a3a6b;
+    border-radius: 4px;
+    background: rgba(108, 91, 123, 0.08);
+    padding: 4px 6px;
+    margin: 4px 0;
+}
+.gamedata-group-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+.gamedata-group-header-inline .gamedata-group-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #b8a5ff;
+}
+.gamedata-group-header-inline .gamedata-group-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
 }
 .dialogue-section { margin-top: 10px; }
 .dialogue-section h4 { font-size: 12px; color: #888; margin-bottom: 6px; }

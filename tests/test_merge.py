@@ -1,0 +1,138 @@
+"""Tests for build_viewer.merge_graph_data and graph._resolve_duplicate.
+
+The merge combines per-source JSON datasets into one viewer dataset,
+detecting duplicate textline names, rebuilding the dependents index, and
+flagging conflicting speakerNames mappings.
+"""
+
+from build_viewer import merge_graph_data
+from src.graph import _resolve_duplicate, _richness
+
+
+def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
+                   source_file="X.lua", source_line=None, other_reqs=None):
+    return {
+        "name": name,
+        "owner": owner,
+        "section": "InteractTextLineSets",
+        "source": "Test",
+        "sourceFile": source_file,
+        "sourceLine": source_line,
+        "requirements": requirements or {},
+        "otherRequirements": other_reqs or {},
+        "dialogueLines": dialogue_lines or [],
+    }
+
+
+def _make_dataset(*textlines, owners_count=1, speaker_names=None):
+    tl_map = {tl["name"]: tl for tl in textlines}
+    return {
+        "textlines": tl_map,
+        "dependents": {},
+        "speakerNames": speaker_names or {},
+        "stats": {
+            "totalOwners": owners_count,
+            "totalTextlines": len(tl_map),
+            "totalEdges": 0,
+            "unresolvedRefs": [],
+            "duplicates": [],
+        },
+    }
+
+
+class TestRichnessResolution:
+    """When two definitions of the same textline collide, the entry with
+    more dialogue lines / requirements wins."""
+
+    def test_richer_entry_wins_regardless_of_order(self):
+        stub = _make_textline("Shared", "NPC_A")
+        full = _make_textline(
+            "Shared", "NPC_B",
+            dialogue_lines=[{"speaker": "NPC_B", "text": "Hi"}],
+            requirements={"RequiredTextLines": ["X", "Y"]},
+        )
+        # Stub first, full second.
+        kept, dropped = _resolve_duplicate(stub, full)
+        assert kept["owner"] == "NPC_B"
+        assert dropped["owner"] == "NPC_A"
+        # And the other way round.
+        kept, dropped = _resolve_duplicate(full, stub)
+        assert kept["owner"] == "NPC_B"
+        assert dropped["owner"] == "NPC_A"
+
+    def test_ties_go_to_existing_entry(self):
+        a = _make_textline("X", "A")
+        b = _make_textline("X", "B")
+        assert _richness(a) == _richness(b)
+        kept, dropped = _resolve_duplicate(a, b)
+        assert kept["owner"] == "A"
+
+
+class TestMergeDatasets:
+    def test_merge_unions_textlines_from_multiple_sources(self):
+        ds1 = _make_dataset(_make_textline("Alpha", "OwnerA"))
+        ds2 = _make_dataset(_make_textline("Beta", "OwnerB"))
+        merged = merge_graph_data([ds1, ds2])
+        assert set(merged["textlines"].keys()) == {"Alpha", "Beta"}
+
+    def test_merge_picks_richer_entry_on_duplicate(self):
+        stub = _make_textline("Shared", "OwnerStub")
+        full = _make_textline(
+            "Shared", "OwnerFull",
+            dialogue_lines=[{"speaker": "OwnerFull", "text": "Real line."}],
+        )
+        ds1 = _make_dataset(stub)
+        ds2 = _make_dataset(full)
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["textlines"]["Shared"]["owner"] == "OwnerFull"
+
+    def test_merge_rebuilds_dependents_from_merged_textlines(self):
+        """The dependents index must come from the merged textline set, not
+        from any per-source pre-computation - else stale edges referencing
+        overwritten textlines could leak in."""
+        ds1 = _make_dataset(
+            _make_textline("Alpha", "A",
+                           requirements={"RequiredTextLines": ["Target"]}),
+        )
+        ds2 = _make_dataset(
+            _make_textline("Target", "B"),
+            _make_textline("Beta", "B",
+                           requirements={"RequiredAnyTextLines": ["Target"]}),
+        )
+        merged = merge_graph_data([ds1, ds2])
+        deps = merged["dependents"]["Target"]
+        names = sorted(d["name"] for d in deps)
+        assert names == ["Alpha", "Beta"]
+
+    def test_merge_totals_owners_across_sources(self):
+        ds1 = _make_dataset(_make_textline("A", "X"), owners_count=3)
+        ds2 = _make_dataset(_make_textline("B", "Y"), owners_count=5)
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["stats"]["totalOwners"] == 8
+
+    def test_merge_unions_speaker_names_without_conflict(self):
+        ds1 = _make_dataset(_make_textline("A", "X"),
+                            speaker_names={"NPC_A": "Aria"})
+        ds2 = _make_dataset(_make_textline("B", "Y"),
+                            speaker_names={"NPC_B": "Beck"})
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["speakerNames"] == {"NPC_A": "Aria", "NPC_B": "Beck"}
+
+    def test_merge_keeps_first_speaker_name_on_conflict(self):
+        ds1 = _make_dataset(_make_textline("A", "X"),
+                            speaker_names={"NPC_A": "Aria"})
+        ds2 = _make_dataset(_make_textline("B", "Y"),
+                            speaker_names={"NPC_A": "Different Name"})
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["speakerNames"]["NPC_A"] == "Aria"
+
+    def test_unresolved_refs_computed_against_merged_textline_set(self):
+        """A textline referenced in one source but DEFINED in another should
+        not appear in unresolvedRefs after merge."""
+        ds1 = _make_dataset(
+            _make_textline("Alpha", "A",
+                           requirements={"RequiredTextLines": ["Beta"]}),
+        )
+        ds2 = _make_dataset(_make_textline("Beta", "B"))
+        merged = merge_graph_data([ds1, ds2])
+        assert "Beta" not in merged["stats"]["unresolvedRefs"]

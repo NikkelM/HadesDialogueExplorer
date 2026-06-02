@@ -1,21 +1,16 @@
 """
-Build the final HTML viewer by combining JSON data with the HTML template.
+Build the final HTML viewer by combining all JSON datasets in ``outputs/``
+with the HTML template.
 
 Usage:
     python build_viewer.py [output_path]
-
-Reads from:
-    outputs/*.json      - Generated data files
-    styles/*.css        - CSS stylesheets (inlined into output)
-    templates/viewer.html - HTML template
-
-Outputs:
-    dialogue_explorer.html (or specified path)
 """
 
 import json
 import sys
 from pathlib import Path
+
+from src.graph import _resolve_duplicate, _dup_summary
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATE_PATH = PROJECT_DIR / "templates" / "viewer.html"
@@ -25,40 +20,96 @@ DEFAULT_OUTPUT = PROJECT_DIR / "dialogue_explorer.html"
 
 
 def merge_graph_data(datasets: list[dict]) -> dict:
-    """Merge multiple graph datasets into one combined dataset."""
+    """Merge multiple per-source graph datasets into one combined dataset.
+
+    - Detects duplicate textline names across files (these can cause silent
+      dependency mis-resolution and so are surfaced for the developer to
+      fix at the source).
+    - Recomputes `dependents` from the merged textline set rather than
+      unioning per-source maps (which could include stale edges from
+      overwritten textlines).
+    - Unions `speakerNames`; conflicting mappings (same id -> different
+      display name) are surfaced as a warning.
+    """
     merged_textlines = {}
-    merged_dependents = {}
-    total_npcs = 0
+    merged_speaker_names = {}
+    total_owners = 0
+    duplicates = []
+    speaker_name_conflicts = []
 
     for data in datasets:
-        # Merge textlines (later datasets override on name collision)
-        merged_textlines.update(data["textlines"])
-        total_npcs += data["stats"]["totalNPCs"]
+        for tl_name, tl_data in data.get("textlines", {}).items():
+            if tl_name in merged_textlines:
+                chosen, dropped = _resolve_duplicate(merged_textlines[tl_name], tl_data)
+                duplicates.append({
+                    "name": tl_name,
+                    "kept": _dup_summary(chosen),
+                    "dropped": _dup_summary(dropped),
+                })
+                merged_textlines[tl_name] = chosen
+            else:
+                merged_textlines[tl_name] = tl_data
 
-        # Merge dependents
-        for dep_name, dep_list in data["dependents"].items():
-            if dep_name not in merged_dependents:
-                merged_dependents[dep_name] = []
-            merged_dependents[dep_name].extend(dep_list)
+        total_owners += data.get("stats", {}).get("totalOwners", 0)
 
-    # Recalculate stats
+        for sid, name in data.get("speakerNames", {}).items():
+            if sid in merged_speaker_names and merged_speaker_names[sid] != name:
+                speaker_name_conflicts.append({
+                    "id": sid,
+                    "existing": merged_speaker_names[sid],
+                    "new": name,
+                })
+            else:
+                merged_speaker_names[sid] = name
+
+    merged_dependents = {}
+    for tl_name, tl_data in merged_textlines.items():
+        for req_type, req_list in tl_data.get("requirements", {}).items():
+            for dep in req_list:
+                merged_dependents.setdefault(dep, []).append({
+                    "name": tl_name,
+                    "type": req_type,
+                })
+
     all_referenced = set()
     for tl_data in merged_textlines.values():
-        for req_list in tl_data["requirements"].values():
+        for req_list in tl_data.get("requirements", {}).values():
             all_referenced.update(req_list)
 
+    if duplicates:
+        print(f"INFO: {len(duplicates)} textline name(s) defined in multiple sources (richer entry kept):")
+        for d in duplicates[:5]:
+            k, dr = d["kept"], d["dropped"]
+            print(f"  {d['name']}: kept {k['owner']}@{k['sourceFile']}:{k['sourceLine']} ({k['dialogueLines']}L/{k['requirementCount']}R), dropped {dr['owner']}@{dr['sourceFile']}:{dr['sourceLine']} ({dr['dialogueLines']}L/{dr['requirementCount']}R)")
+        if len(duplicates) > 5:
+            print(f"  ... and {len(duplicates) - 5} more")
+    if speaker_name_conflicts:
+        print(f"WARNING: {len(speaker_name_conflicts)} speakerNames conflict(s):")
+        for c in speaker_name_conflicts[:5]:
+            print(f"  {c['id']}: {c['existing']!r} vs {c['new']!r}")
+
     stats = {
-        "totalNPCs": total_npcs,
+        "totalOwners": total_owners,
         "totalTextlines": len(merged_textlines),
         "totalEdges": sum(len(v) for v in merged_dependents.values()),
         "unresolvedRefs": sorted(all_referenced - set(merged_textlines.keys())),
+        "duplicates": duplicates,
     }
 
     return {
         "textlines": merged_textlines,
         "dependents": merged_dependents,
+        "speakerNames": merged_speaker_names,
         "stats": stats,
     }
+
+
+def _short_loc(tl_data: dict) -> str:
+    """Compact owner/source/line string for diagnostics."""
+    owner = tl_data.get("owner", "?")
+    sf = tl_data.get("sourceFile", "?")
+    sl = tl_data.get("sourceLine")
+    return f"{owner} @ {sf}:{sl}" if sl is not None else f"{owner} @ {sf}"
 
 
 def build_css() -> str:
@@ -91,7 +142,6 @@ def build_html(graph_data: dict, output_path: Path):
 def main():
     output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUTPUT
 
-    # Load all JSON datasets from outputs/
     datasets = []
     json_files = sorted(OUTPUT_DIR.glob("*.json"))
 
@@ -104,7 +154,6 @@ def main():
         with open(json_file, "r", encoding="utf-8") as f:
             datasets.append(json.load(f))
 
-    # Merge datasets
     if len(datasets) == 1:
         graph_data = datasets[0]
     else:

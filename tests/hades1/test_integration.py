@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from src.lua_parser import parse_lua_file
-from src.extractors.npc_data import extract_npc_data
+from src.extractors.hades1.npc_data import extract_npc_data
 from src.graph import build_graph_data
 
 
@@ -22,9 +22,9 @@ def graph_data():
 
 
 def test_npc_discovered(graph_data):
-    # The NPC should appear in textlines (via its textline entries)
-    npcs = {tl["npc"] for tl in graph_data["textlines"].values()}
-    assert "NPC_Orpheus_01" in npcs
+    # The owner of every textline should appear in the merged dataset.
+    owners = {tl["owner"] for tl in graph_data["textlines"].values()}
+    assert "NPC_Orpheus_01" in owners
 
 
 def test_all_textlines_present(graph_data):
@@ -100,7 +100,7 @@ def test_required_textlines_not_misclassified(graph_data):
 def test_stats_match_fixture(graph_data):
     stats = graph_data["stats"]
     assert stats["totalTextlines"] == 5
-    assert stats["totalNPCs"] == 1
+    assert stats["totalOwners"] == 1
     # Edges: Intro<-Followup, Followup<-Secret, Forbidden<-Secret, External<-Repeat
     assert stats["totalEdges"] == 4
 
