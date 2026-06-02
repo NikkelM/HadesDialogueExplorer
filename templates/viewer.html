@@ -195,155 +195,178 @@ function renderInfo(name) {
     container.innerHTML = html;
 }
 
-// --- Tree Component ---
+// --- Tree Component (lazy expansion) ---
 
-function buildTree(name, direction, visited, depth, maxDepth) {
-    if (depth > maxDepth) return `<div class="tree-node"><span class="cycle-marker">... max depth reached</span></div>`;
-    if (visited.has(name)) return `<div class="tree-node"><span class="cycle-marker">\u21A9 ${name} (cycle)</span></div>`;
-
-    visited = new Set(visited);
-    visited.add(name);
-
-    const tl = textlines[name];
-    const isRoot = depth === 0;
-    let children = [];
-
-    if (direction === 'upstream' && tl) {
-        for (const [type, refs] of Object.entries(tl.requirements)) {
-            for (const ref of refs) {
-                children.push({ name: ref, edgeType: type });
+function getChildren(name, direction) {
+    const children = [];
+    if (direction === 'upstream') {
+        const tl = textlines[name];
+        if (tl) {
+            for (const [type, refs] of Object.entries(tl.requirements)) {
+                for (const ref of refs) {
+                    children.push({ name: ref, edgeType: type });
+                }
             }
         }
-    } else if (direction === 'downstream') {
-        const deps = dependents[name] || [];
-        for (const dep of deps) {
+    } else {
+        for (const dep of (dependents[name] || [])) {
             children.push({ name: dep.name, edgeType: dep.type });
         }
     }
+    return children;
+}
 
-    const hasChildren = children.length > 0;
+function hasChildren(name, direction) {
+    if (direction === 'upstream') {
+        const tl = textlines[name];
+        return tl && Object.values(tl.requirements).some(r => r.length > 0);
+    }
+    return (dependents[name] || []).length > 0;
+}
+
+function createNodeEl(name, edgeType, direction, ancestorPath) {
+    const tl = textlines[name];
     const npcTag = tl ? tl.npc.replace('NPC_', '').replace('_01', '') : '?';
-    const toggle = hasChildren ? '\u25B6' : '\u00B7';
-    const expanded = isRoot ? 'expanded' : '';
+    const isCycle = ancestorPath.has(name);
+    const expandable = !isCycle && hasChildren(name, direction);
 
-    let html = `<div class="tree-node ${isRoot ? 'root' : ''}">`;
-    html += `<div class="tree-label ${isRoot ? 'active' : ''}" data-name="${name}">`;
-    html += `<span class="toggle">${toggle}</span>`;
-    html += `<span class="name">${name}</span>`;
-    if (!tl) html += `<span style="color:#666;font-size:10px;margin-left:4px">\u26A0</span>`;
-    html += `<span class="npc-tag">${npcTag}</span>`;
-    html += `</div>`;
+    const node = document.createElement('div');
+    node.className = 'tree-node';
 
-    if (hasChildren) {
-        html += `<div class="tree-children ${expanded}">`;
-        for (const child of children) {
-            html += buildTreeChild(child, direction, visited, depth, maxDepth);
-        }
-        html += `</div>`;
-    }
-    html += `</div>`;
-    return html;
-}
+    const label = document.createElement('div');
+    label.className = 'tree-label';
+    label.dataset.name = name;
+    label.dataset.direction = direction;
+    label.dataset.ancestors = JSON.stringify([...ancestorPath]);
 
-function buildTreeChild(child, direction, visited, depth, maxDepth) {
-    const edgeClass = getEdgeClass(child.edgeType);
-    const edgeLabel = getEdgeLabel(child.edgeType);
-    const childTl = textlines[child.name];
-    const childHasChildren = direction === 'upstream'
-        ? (childTl && Object.values(childTl.requirements).some(r => r.length > 0))
-        : ((dependents[child.name] || []).length > 0);
-    const childToggle = childHasChildren && !visited.has(child.name) ? '\u25B6' : '\u00B7';
-    const childNpc = childTl ? childTl.npc.replace('NPC_', '').replace('_01', '') : '?';
+    const toggle = document.createElement('span');
+    toggle.className = 'toggle';
+    toggle.textContent = expandable ? '\u25B6' : '\u00B7';
+    label.appendChild(toggle);
 
-    let html = `<div class="tree-node">`;
-    html += `<div class="tree-label" data-name="${child.name}">`;
-    html += `<span class="toggle">${childToggle}</span>`;
-    html += `<span class="edge-type ${edgeClass}">${edgeLabel}</span>`;
-    html += `<span class="name">${child.name}</span>`;
-    if (!childTl) html += `<span style="color:#666;font-size:10px;margin-left:4px">\u26A0</span>`;
-    html += `<span class="npc-tag">${childNpc}</span>`;
-    html += `</div>`;
-    if (childHasChildren && !visited.has(child.name)) {
-        html += `<div class="tree-children">${buildTreeChildren(child.name, direction, visited, depth + 1, maxDepth)}</div>`;
-    } else if (visited.has(child.name)) {
-        html += `<span class="cycle-marker" style="margin-left:28px">\u21A9 cycle</span>`;
-    }
-    html += `</div>`;
-    return html;
-}
-
-function buildTreeChildren(name, direction, visited, depth, maxDepth) {
-    if (depth > maxDepth) return `<span class="cycle-marker">... max depth</span>`;
-    if (visited.has(name)) return `<span class="cycle-marker">\u21A9 cycle</span>`;
-
-    visited = new Set(visited);
-    visited.add(name);
-
-    const tl = textlines[name];
-    let children = [];
-
-    if (direction === 'upstream' && tl) {
-        for (const [type, refs] of Object.entries(tl.requirements)) {
-            for (const ref of refs) {
-                children.push({ name: ref, edgeType: type });
-            }
-        }
-    } else if (direction === 'downstream') {
-        const deps = dependents[name] || [];
-        for (const dep of deps) {
-            children.push({ name: dep.name, edgeType: dep.type });
-        }
+    if (edgeType) {
+        const edge = document.createElement('span');
+        edge.className = `edge-type ${getEdgeClass(edgeType)}`;
+        edge.textContent = getEdgeLabel(edgeType);
+        label.appendChild(edge);
     }
 
-    let html = '';
-    for (const child of children) {
-        html += buildTreeChild(child, direction, visited, depth, maxDepth);
-    }
-    return html;
-}
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    nameSpan.textContent = name;
+    label.appendChild(nameSpan);
 
-function attachTreeListeners(container) {
-    container.querySelectorAll('.tree-label').forEach(label => {
-        if (!label.closest('.tree-node.root') || label.closest('.tree-node.root') !== label.parentElement) {
-            const btn = document.createElement('span');
-            btn.className = 'focus-btn';
-            btn.title = 'Focus on this dialogue';
-            btn.textContent = '\u2934';
-            label.appendChild(btn);
+    if (!tl) {
+        const warn = document.createElement('span');
+        warn.style.cssText = 'color:#666;font-size:10px;margin-left:4px';
+        warn.textContent = '\u26A0';
+        label.appendChild(warn);
+    }
+
+    if (isCycle) {
+        const cycleSpan = document.createElement('span');
+        cycleSpan.className = 'cycle-marker';
+        cycleSpan.textContent = ' \u21A9 cycle';
+        label.appendChild(cycleSpan);
+    }
+
+    const npcSpan = document.createElement('span');
+    npcSpan.className = 'npc-tag';
+    npcSpan.textContent = npcTag;
+    label.appendChild(npcSpan);
+
+    // Focus button (for non-root nodes)
+    if (edgeType) {
+        const btn = document.createElement('span');
+        btn.className = 'focus-btn';
+        btn.title = 'Focus on this dialogue';
+        btn.textContent = '\u2934';
+        label.appendChild(btn);
+    }
+
+    node.appendChild(label);
+
+    // Click handler
+    label.addEventListener('click', (e) => {
+        if (e.target.classList.contains('focus-btn')) {
+            navigateTo(name);
+            return;
         }
-        label.addEventListener('click', (e) => {
-            const name = label.dataset.name;
-            if (e.target.classList.contains('focus-btn')) {
-                navigateTo(name);
-                return;
-            }
-            const children = label.nextElementSibling;
-            if (children && children.classList.contains('tree-children')) {
-                const isExpanded = children.classList.contains('expanded');
-                children.classList.toggle('expanded');
-                const toggle = label.querySelector('.toggle');
-                if (toggle) toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-            }
+        if (!expandable) {
             renderInfo(name);
-        });
-        label.addEventListener('dblclick', () => {
-            navigateTo(label.dataset.name);
-        });
+            return;
+        }
+        let childContainer = label.nextElementSibling;
+        if (childContainer && childContainer.classList.contains('tree-children')) {
+            // Toggle existing children
+            const isExpanded = childContainer.classList.contains('expanded');
+            childContainer.classList.toggle('expanded');
+            toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+        } else {
+            // Lazily create children
+            childContainer = document.createElement('div');
+            childContainer.className = 'tree-children expanded';
+            const newPath = new Set(ancestorPath);
+            newPath.add(name);
+            const kids = getChildren(name, direction);
+            for (const child of kids) {
+                childContainer.appendChild(createNodeEl(child.name, child.edgeType, direction, newPath));
+            }
+            node.appendChild(childContainer);
+            toggle.textContent = '\u25BC';
+        }
+        renderInfo(name);
     });
+
+    label.addEventListener('dblclick', () => navigateTo(name));
+
+    return node;
 }
 
 // --- Tree Panel Renderers ---
 
-function renderUpstream(name, maxDepth = 10) {
+function renderUpstream(name) {
     const container = document.getElementById('upstream-content');
-    container.innerHTML = buildTree(name, 'upstream', new Set(), 0, maxDepth);
-    attachTreeListeners(container);
+    container.innerHTML = '';
+    const rootPath = new Set();
+    const rootNode = createNodeEl(name, null, 'upstream', rootPath);
+    rootNode.classList.add('root');
+    rootNode.querySelector('.tree-label').classList.add('active');
+    // Auto-expand root's children
+    const kids = getChildren(name, 'upstream');
+    if (kids.length > 0) {
+        const childContainer = document.createElement('div');
+        childContainer.className = 'tree-children expanded';
+        const newPath = new Set([name]);
+        for (const child of kids) {
+            childContainer.appendChild(createNodeEl(child.name, child.edgeType, 'upstream', newPath));
+        }
+        rootNode.appendChild(childContainer);
+        rootNode.querySelector('.toggle').textContent = '\u25BC';
+    }
+    container.appendChild(rootNode);
 }
 
-function renderDownstream(name, maxDepth = 10) {
+function renderDownstream(name) {
     const container = document.getElementById('downstream-content');
-    container.innerHTML = buildTree(name, 'downstream', new Set(), 0, maxDepth);
-    attachTreeListeners(container);
+    container.innerHTML = '';
+    const rootPath = new Set();
+    const rootNode = createNodeEl(name, null, 'downstream', rootPath);
+    rootNode.classList.add('root');
+    rootNode.querySelector('.tree-label').classList.add('active');
+    // Auto-expand root's children
+    const kids = getChildren(name, 'downstream');
+    if (kids.length > 0) {
+        const childContainer = document.createElement('div');
+        childContainer.className = 'tree-children expanded';
+        const newPath = new Set([name]);
+        for (const child of kids) {
+            childContainer.appendChild(createNodeEl(child.name, child.edgeType, 'downstream', newPath));
+        }
+        rootNode.appendChild(childContainer);
+        rootNode.querySelector('.toggle').textContent = '\u25BC';
+    }
+    container.appendChild(rootNode);
 }
 
 // --- Navigation ---
