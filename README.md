@@ -11,6 +11,14 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 - Highlights external/unresolved references
 - Single self-contained HTML output - no server needed
 
+## Setup
+
+1. Copy `config.example.toml` to `config.toml` in the repo root.
+2. Edit `config.toml` to point `paths.hades1_scripts` at your local Hades
+   install's `Scripts` directory (typical Steam path is shown in the
+   example). `config.toml` is git-ignored so your local paths stay out
+   of version control.
+
 ## Usage
 
 ```bash
@@ -25,8 +33,10 @@ By default, outputs `dialogue_explorer.html` in the project root.
 
 ### Requirements
 
-- Python 3.8+
-- Hades 1 installed at the default Steam path
+- Python 3.9+
+- Hades 1 installed locally (any path - configure it in `config.toml`)
+- On Python < 3.11, `pip install -r requirements.txt` to get the TOML
+  parser (`tomli`). On 3.11+ this is a no-op since `tomllib` is stdlib.
 
 ### Running tests
 

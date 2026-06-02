@@ -2,6 +2,9 @@
 dialogue_explorer.html
 outputs/*.json
 
+# Local user config (paths to game installs). config.example.toml is checked in.
+config.toml
+
 # Python
 __pycache__/
 *.pyc

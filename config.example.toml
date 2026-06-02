@@ -1,0 +1,14 @@
+# HadesDialogueExplorer local configuration.
+#
+# Copy this file to ``config.toml`` (in the repo root) and edit the paths
+# below to point at your local game installation. ``config.toml`` is
+# git-ignored so your local paths are never committed.
+
+[paths]
+# Required: directory containing the Hades 1 Lua scripts.
+# Typical Steam install on Windows:
+hades1_scripts = "C:/Program Files (x86)/Steam/steamapps/common/Hades/Content/Scripts"
+
+# Optional: directory containing the Hades II Lua scripts. Leave commented
+# out until the Hades II extractors are wired up (see issue #9).
+# hades2_scripts = "C:/Program Files (x86)/Steam/steamapps/common/Hades II/Content/Scripts"
