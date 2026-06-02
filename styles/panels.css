@@ -1,0 +1,99 @@
+/* Panel layout, textline info, requirements, dialogue */
+.panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    border-right: 1px solid #0f3460;
+}
+.panel:last-child { border-right: none; }
+.panel h2 {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 0;
+    background: #1a1a2e;
+    padding: 4px 0;
+    z-index: 10;
+}
+.textline-info {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.textline-info h3 {
+    color: #e94560;
+    font-size: 15px;
+    margin-bottom: 6px;
+    word-break: break-all;
+}
+.textline-info .meta {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+}
+.textline-info .meta span { margin-right: 12px; }
+.req-section {
+    margin-top: 10px;
+}
+.req-section h4 {
+    font-size: 12px;
+    margin-bottom: 4px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: inline-block;
+}
+.req-type-RequiredTextLines h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredAnyTextLines h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredAnyOtherTextLines h4 { background: #3d2b1f; color: #e9c46a; }
+.req-type-RequiredFalseTextLines h4 { background: #4a1520; color: #f07167; }
+.req-type-RequiredFalseQueuedTextLines h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredFalseTextLinesThisRun h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredFalseTextLinesLastRun h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredTextLinesThisRun h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredTextLinesLastRun h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredAnyTextLinesThisRun h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredAnyTextLinesLastRun h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-other h4 { background: #2b2d42; color: #8d99ae; }
+.req-item {
+    padding: 3px 8px;
+    margin: 2px 0;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.15s;
+}
+.req-item:hover { background: #0f3460; }
+.req-item.resolved { color: #a8dadc; }
+.req-item.unresolved { color: #888; font-style: italic; }
+.req-item.unresolved::after { content: " \26A0  external"; font-size: 10px; color: #666; }
+.other-req-item {
+    padding: 3px 8px;
+    margin: 2px 0;
+    font-size: 12px;
+    color: #8d99ae;
+    font-family: 'Consolas', monospace;
+}
+.dialogue-section { margin-top: 10px; }
+.dialogue-section h4 { font-size: 12px; color: #888; margin-bottom: 6px; }
+.dialogue-line {
+    padding: 6px 10px;
+    margin: 4px 0;
+    font-size: 12px;
+    color: #ccd6e0;
+    background: #1a1a2e;
+    border-left: 3px solid #0f3460;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+    font-style: italic;
+}
+.dialogue-line .speaker {
+    font-style: normal;
+    font-weight: 600;
+    color: #e94560;
+    margin-right: 4px;
+}

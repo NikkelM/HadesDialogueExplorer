@@ -6,6 +6,7 @@ Usage:
 
 Reads from:
     outputs/*.json      - Generated data files
+    styles/*.css        - CSS stylesheets (inlined into output)
     templates/viewer.html - HTML template
 
 Outputs:
@@ -18,6 +19,7 @@ from pathlib import Path
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATE_PATH = PROJECT_DIR / "templates" / "viewer.html"
+STYLES_DIR = PROJECT_DIR / "styles"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
 DEFAULT_OUTPUT = PROJECT_DIR / "dialogue_explorer.html"
 
@@ -59,12 +61,27 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     }
 
 
+def build_css() -> str:
+    """Read and concatenate all CSS files in order."""
+    css_files = sorted(STYLES_DIR.glob("*.css"))
+    if not css_files:
+        print("WARNING: No CSS files found in styles/")
+        return ""
+    parts = []
+    for css_file in css_files:
+        parts.append(f"/* --- {css_file.name} --- */")
+        parts.append(css_file.read_text(encoding="utf-8").strip())
+    return "\n\n".join(parts)
+
+
 def build_html(graph_data: dict, output_path: Path):
     """Generate the self-contained HTML viewer."""
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
     json_data = json.dumps(graph_data, separators=(",", ":"))
+    css_data = build_css()
 
-    html = template.replace("/* __DATA_PLACEHOLDER__ */", f"const DATA = {json_data};")
+    html = template.replace("/* __CSS_PLACEHOLDER__ */", css_data)
+    html = html.replace("/* __DATA_PLACEHOLDER__ */", f"const DATA = {json_data};")
 
     output_path.write_text(html, encoding="utf-8")
     size_kb = output_path.stat().st_size / 1024

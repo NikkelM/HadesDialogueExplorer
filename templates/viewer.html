@@ -5,237 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hades Dialogue Dependency Explorer</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #1a1a2e;
-    color: #e0e0e0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-header {
-    background: #16213e;
-    padding: 12px 20px;
-    border-bottom: 1px solid #0f3460;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-}
-header h1 {
-    font-size: 16px;
-    color: #e94560;
-    white-space: nowrap;
-}
-.search-container {
-    flex: 1;
-    position: relative;
-    max-width: 500px;
-}
-#search {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #0f3460;
-    border-radius: 4px;
-    background: #1a1a2e;
-    color: #e0e0e0;
-    font-size: 14px;
-    outline: none;
-}
-#search:focus { border-color: #e94560; }
-#search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #16213e;
-    border: 1px solid #0f3460;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 100;
-    display: none;
-}
-#search-results.visible { display: block; }
-.search-item {
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    border-bottom: 1px solid #0f346040;
-}
-.search-item:hover { background: #0f3460; }
-.search-item .npc { color: #888; font-size: 11px; margin-left: 8px; }
-.stats {
-    font-size: 11px;
-    color: #888;
-    white-space: nowrap;
-}
-main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-}
-.panel {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    border-right: 1px solid #0f3460;
-}
-.panel:last-child { border-right: none; }
-.panel h2 {
-    font-size: 13px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-    position: sticky;
-    top: 0;
-    background: #1a1a2e;
-    padding: 4px 0;
-    z-index: 10;
-}
-.textline-info {
-    background: #16213e;
-    border: 1px solid #0f3460;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 12px;
-}
-.textline-info h3 {
-    color: #e94560;
-    font-size: 15px;
-    margin-bottom: 6px;
-    word-break: break-all;
-}
-.textline-info .meta {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 8px;
-}
-.textline-info .meta span { margin-right: 12px; }
-.req-section {
-    margin-top: 10px;
-}
-.req-section h4 {
-    font-size: 12px;
-    margin-bottom: 4px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    display: inline-block;
-}
-.req-type-RequiredTextLines h4 { background: #1b4332; color: #95d5b2; }
-.req-type-RequiredAnyTextLines h4 { background: #3d2b1f; color: #f4a261; }
-.req-type-RequiredAnyOtherTextLines h4 { background: #3d2b1f; color: #e9c46a; }
-.req-type-RequiredFalseTextLines h4 { background: #4a1520; color: #f07167; }
-.req-type-RequiredFalseQueuedTextLines h4 { background: #4a1520; color: #f4845f; }
-.req-type-RequiredFalseTextLinesThisRun h4 { background: #4a1520; color: #f4845f; }
-.req-type-RequiredFalseTextLinesLastRun h4 { background: #4a1520; color: #f4845f; }
-.req-type-RequiredTextLinesThisRun h4 { background: #1b4332; color: #95d5b2; }
-.req-type-RequiredTextLinesLastRun h4 { background: #1b4332; color: #95d5b2; }
-.req-type-RequiredAnyTextLinesThisRun h4 { background: #3d2b1f; color: #f4a261; }
-.req-type-RequiredAnyTextLinesLastRun h4 { background: #3d2b1f; color: #f4a261; }
-.req-type-other h4 { background: #2b2d42; color: #8d99ae; }
-.req-item {
-    padding: 3px 8px;
-    margin: 2px 0;
-    font-size: 13px;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: background 0.15s;
-}
-.req-item:hover { background: #0f3460; }
-.req-item.resolved { color: #a8dadc; }
-.req-item.unresolved { color: #888; font-style: italic; }
-.req-item.unresolved::after { content: " ⚠ external"; font-size: 10px; color: #666; }
-.other-req-item {
-    padding: 3px 8px;
-    margin: 2px 0;
-    font-size: 12px;
-    color: #8d99ae;
-    font-family: 'Consolas', monospace;
-}
-.dialogue-section { margin-top: 10px; }
-.dialogue-section h4 { font-size: 12px; color: #888; margin-bottom: 6px; }
-.dialogue-line {
-    padding: 6px 10px;
-    margin: 4px 0;
-    font-size: 12px;
-    color: #ccd6e0;
-    background: #1a1a2e;
-    border-left: 3px solid #0f3460;
-    border-radius: 0 4px 4px 0;
-    line-height: 1.5;
-    font-style: italic;
-}
-.dialogue-line .speaker {
-    font-style: normal;
-    font-weight: 600;
-    color: #e94560;
-    margin-right: 4px;
-}
-.focus-btn {
-    font-size: 12px;
-    color: #e94560;
-    cursor: pointer;
-    padding: 0 4px;
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-.tree-label:hover .focus-btn { opacity: 1; }
-/* Tree view */
-.tree-node {
-    margin-left: 16px;
-    border-left: 1px solid #0f3460;
-    padding-left: 12px;
-}
-.tree-node.root { margin-left: 0; border-left: none; padding-left: 0; }
-.tree-label {
-    padding: 4px 8px;
-    margin: 2px 0;
-    font-size: 13px;
-    cursor: pointer;
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.tree-label:hover { background: #0f3460; }
-.tree-label.active { background: #0f3460; color: #e94560; }
-.tree-label .toggle {
-    width: 16px;
-    text-align: center;
-    color: #888;
-    font-size: 11px;
-    flex-shrink: 0;
-}
-.tree-label .edge-type {
-    font-size: 10px;
-    padding: 1px 4px;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-.edge-all { background: #1b4332; color: #95d5b2; }
-.edge-any { background: #3d2b1f; color: #f4a261; }
-.edge-false { background: #4a1520; color: #f07167; }
-.tree-label .name { word-break: break-all; }
-.tree-label .npc-tag { font-size: 10px; color: #666; margin-left: auto; flex-shrink: 0; }
-.tree-children { display: none; }
-.tree-children.expanded { display: block; }
-.cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }
-.empty-state {
-    color: #555;
-    font-style: italic;
-    text-align: center;
-    padding: 40px;
-}
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #1a1a2e; }
-::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #e94560; }
+/* __CSS_PLACEHOLDER__ */
 </style>
 </head>
 <body>
@@ -264,263 +34,23 @@ main {
 <script>
 /* __DATA_PLACEHOLDER__ */
 
-const textlines = DATA.textlines;
-const dependents = DATA.dependents;
-const stats = DATA.stats;
-const allNames = Object.keys(textlines).sort();
+// --- Data Layer ---
 
-// Stats display
-document.getElementById('stats').textContent = 
-    `${stats.totalNPCs} NPCs · ${stats.totalTextlines} textlines · ${stats.totalEdges} edges · ${stats.unresolvedRefs.length} external refs`;
-
-// Search
-const searchInput = document.getElementById('search');
-const searchResults = document.getElementById('search-results');
-
-searchInput.addEventListener('input', () => {
-    const q = searchInput.value.toLowerCase().trim();
-    if (!q) { searchResults.classList.remove('visible'); return; }
-    const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 30);
-    if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
-    searchResults.innerHTML = matches.map(n => {
-        const tl = textlines[n];
-        return `<div class="search-item" data-name="${n}">${n}<span class="npc">${tl.npc} · ${tl.section.replace('TextLineSets','')}</span></div>`;
-    }).join('');
-    searchResults.classList.add('visible');
-});
-
-searchResults.addEventListener('click', (e) => {
-    const item = e.target.closest('.search-item');
-    if (item) {
-        selectTextline(item.dataset.name);
-        searchResults.classList.remove('visible');
-        searchInput.value = item.dataset.name;
-    }
-});
-
-searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        const first = searchResults.querySelector('.search-item');
-        if (first) {
-            selectTextline(first.dataset.name);
-            searchResults.classList.remove('visible');
-            searchInput.value = first.dataset.name;
-        }
-    }
-    if (e.key === 'Escape') searchResults.classList.remove('visible');
-});
-
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-container')) searchResults.classList.remove('visible');
-});
-
-// Selection
-function selectTextline(name) {
-    renderInfo(name);
-    renderUpstream(name);
-    renderDownstream(name);
+function loadData() {
+    return {
+        textlines: DATA.textlines,
+        dependents: DATA.dependents,
+        stats: DATA.stats,
+        allNames: Object.keys(DATA.textlines).sort(),
+    };
 }
 
-function renderInfo(name) {
-    const tl = textlines[name];
-    const container = document.getElementById('info-content');
-    if (!tl) {
-        container.innerHTML = `<div class="textline-info"><h3>${name}</h3><div class="meta"><span>⚠ External/unresolved reference - not found in any parsed data file</span></div><div class="meta"><span>This line is referenced as a requirement by other dialogues but is defined in a data file that hasn't been parsed yet.</span></div></div>`;
-        return;
-    }
-    let html = `<div class="textline-info">
-        <h3>${name}</h3>
-        <div class="meta">
-            <span>NPC: ${tl.npc}</span>
-            <span>Section: ${tl.section.replace('TextLineSets','')}</span>
-            <span>Source: ${tl.source || 'Unknown'}</span>
-            <span>Line: ${tl.line}</span>
-        </div>`;
-    
-    // Dialogue text with speaker names
-    if (tl.dialogueLines && tl.dialogueLines.length > 0) {
-        html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
-        for (const line of tl.dialogueLines) {
-            if (typeof line === 'object' && line.speaker) {
-                html += `<div class="dialogue-line"><span class="speaker">${escapeHtml(line.speaker)}:</span> ${escapeHtml(line.text)}</div>`;
-            } else if (typeof line === 'object') {
-                html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;
-            } else {
-                html += `<div class="dialogue-line">${escapeHtml(line)}</div>`;
-            }
-        }
-        html += `</div>`;
-    }
-    
-    // Textline requirements
-    for (const [type, refs] of Object.entries(tl.requirements)) {
-        html += `<div class="req-section req-type-${type}"><h4>${formatReqType(type)}</h4>`;
-        for (const ref of refs) {
-            const resolved = ref in textlines;
-            html += `<div class="req-item ${resolved ? 'resolved' : 'unresolved'}" data-name="${ref}" onclick="navigateTo('${ref}')">${ref}</div>`;
-        }
-        html += `</div>`;
-    }
-    
-    // Other requirements
-    if (Object.keys(tl.otherRequirements).length > 0) {
-        html += `<div class="req-section req-type-other"><h4>Other Requirements</h4>`;
-        for (const [key, val] of Object.entries(tl.otherRequirements)) {
-            const display = typeof val === 'object' ? JSON.stringify(val) : String(val);
-            html += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
-        }
-        html += `</div>`;
-    }
-    
-    html += `</div>`;
-    container.innerHTML = html;
-}
+const { textlines, dependents, stats, allNames } = loadData();
+
+// --- Utilities ---
 
 function escapeHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function navigateTo(name) {
-    selectTextline(name);
-    searchInput.value = name;
-    window.location.hash = name;
-}
-
-function renderUpstream(name, maxDepth = 10) {
-    const container = document.getElementById('upstream-content');
-    container.innerHTML = buildTree(name, 'upstream', new Set(), 0, maxDepth);
-    attachTreeListeners(container);
-}
-
-function renderDownstream(name, maxDepth = 10) {
-    const container = document.getElementById('downstream-content');
-    container.innerHTML = buildTree(name, 'downstream', new Set(), 0, maxDepth);
-    attachTreeListeners(container);
-}
-
-function buildTree(name, direction, visited, depth, maxDepth) {
-    if (depth > maxDepth) return `<div class="tree-node"><span class="cycle-marker">... max depth reached</span></div>`;
-    if (visited.has(name)) return `<div class="tree-node"><span class="cycle-marker">↩ ${name} (cycle)</span></div>`;
-    
-    visited = new Set(visited);
-    visited.add(name);
-    
-    const tl = textlines[name];
-    const isRoot = depth === 0;
-    let children = [];
-    
-    if (direction === 'upstream' && tl) {
-        for (const [type, refs] of Object.entries(tl.requirements)) {
-            for (const ref of refs) {
-                children.push({ name: ref, edgeType: type });
-            }
-        }
-    } else if (direction === 'downstream') {
-        const deps = dependents[name] || [];
-        for (const dep of deps) {
-            children.push({ name: dep.name, edgeType: dep.type });
-        }
-    }
-    
-    const hasChildren = children.length > 0;
-    const npcTag = tl ? tl.npc.replace('NPC_','').replace('_01','') : '?';
-    const toggle = hasChildren ? '▶' : '·';
-    const expanded = isRoot ? 'expanded' : '';
-    
-    let html = `<div class="tree-node ${isRoot ? 'root' : ''}">`;
-    html += `<div class="tree-label ${isRoot ? 'active' : ''}" data-name="${name}">`;
-    html += `<span class="toggle">${toggle}</span>`;
-    if (!isRoot) {
-        // No edge type on root
-    }
-    html += `<span class="name">${name}</span>`;
-    if (!tl) html += `<span style="color:#666;font-size:10px;margin-left:4px">⚠</span>`;
-    html += `<span class="npc-tag">${npcTag}</span>`;
-    html += `</div>`;
-    
-    if (hasChildren) {
-        html += `<div class="tree-children ${expanded}">`;
-        for (const child of children) {
-            const edgeClass = getEdgeClass(child.edgeType);
-            const edgeLabel = getEdgeLabel(child.edgeType);
-            // Wrap child in container with edge label
-            html += `<div class="tree-node">`;
-            html += `<div class="tree-label" data-name="${child.name}">`;
-            const childTl = textlines[child.name];
-            const childHasChildren = direction === 'upstream' 
-                ? (childTl && Object.values(childTl.requirements).some(r => r.length > 0))
-                : ((dependents[child.name] || []).length > 0);
-            const childToggle = childHasChildren && !visited.has(child.name) ? '▶' : '·';
-            html += `<span class="toggle">${childToggle}</span>`;
-            html += `<span class="edge-type ${edgeClass}">${edgeLabel}</span>`;
-            html += `<span class="name">${child.name}</span>`;
-            if (!childTl) html += `<span style="color:#666;font-size:10px;margin-left:4px">⚠</span>`;
-            const childNpc = childTl ? childTl.npc.replace('NPC_','').replace('_01','') : '?';
-            html += `<span class="npc-tag">${childNpc}</span>`;
-            html += `</div>`;
-            if (childHasChildren && !visited.has(child.name)) {
-                html += `<div class="tree-children">${buildTreeChildren(child.name, direction, visited, depth + 1, maxDepth)}</div>`;
-            } else if (visited.has(child.name)) {
-                html += `<span class="cycle-marker" style="margin-left:28px">↩ cycle</span>`;
-            }
-            html += `</div>`;
-        }
-        html += `</div>`;
-    }
-    html += `</div>`;
-    return html;
-}
-
-function buildTreeChildren(name, direction, visited, depth, maxDepth) {
-    if (depth > maxDepth) return `<span class="cycle-marker">... max depth</span>`;
-    if (visited.has(name)) return `<span class="cycle-marker">↩ cycle</span>`;
-    
-    visited = new Set(visited);
-    visited.add(name);
-    
-    const tl = textlines[name];
-    let children = [];
-    
-    if (direction === 'upstream' && tl) {
-        for (const [type, refs] of Object.entries(tl.requirements)) {
-            for (const ref of refs) {
-                children.push({ name: ref, edgeType: type });
-            }
-        }
-    } else if (direction === 'downstream') {
-        const deps = dependents[name] || [];
-        for (const dep of deps) {
-            children.push({ name: dep.name, edgeType: dep.type });
-        }
-    }
-    
-    let html = '';
-    for (const child of children) {
-        const edgeClass = getEdgeClass(child.edgeType);
-        const edgeLabel = getEdgeLabel(child.edgeType);
-        const childTl = textlines[child.name];
-        const childHasChildren = direction === 'upstream'
-            ? (childTl && Object.values(childTl.requirements).some(r => r.length > 0))
-            : ((dependents[child.name] || []).length > 0);
-        const childToggle = childHasChildren && !visited.has(child.name) ? '▶' : '·';
-        
-        html += `<div class="tree-node">`;
-        html += `<div class="tree-label" data-name="${child.name}">`;
-        html += `<span class="toggle">${childToggle}</span>`;
-        html += `<span class="edge-type ${edgeClass}">${edgeLabel}</span>`;
-        html += `<span class="name">${child.name}</span>`;
-        if (!childTl) html += `<span style="color:#666;font-size:10px;margin-left:4px">⚠</span>`;
-        const childNpc = childTl ? childTl.npc.replace('NPC_','').replace('_01','') : '?';
-        html += `<span class="npc-tag">${childNpc}</span>`;
-        html += `</div>`;
-        if (childHasChildren && !visited.has(child.name)) {
-            html += `<div class="tree-children">${buildTreeChildren(child.name, direction, visited, depth + 1, maxDepth)}</div>`;
-        } else if (visited.has(child.name)) {
-            html += `<span class="cycle-marker" style="margin-left:28px">↩ cycle</span>`;
-        }
-        html += `</div>`;
-    }
-    return html;
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function getEdgeClass(type) {
@@ -533,9 +63,9 @@ function getEdgeLabel(type) {
     if (type === 'RequiredTextLines') return 'ALL';
     if (type === 'RequiredAnyTextLines') return 'ANY';
     if (type === 'RequiredAnyOtherTextLines') return 'ANY';
-    if (type === 'RequiredFalseTextLines') return '¬';
-    if (type === 'RequiredFalseQueuedTextLines') return '¬Q';
-    if (type.includes('False')) return '¬';
+    if (type === 'RequiredFalseTextLines') return '\u00AC';
+    if (type === 'RequiredFalseQueuedTextLines') return '\u00ACQ';
+    if (type.includes('False')) return '\u00AC';
     if (type.includes('Any')) return 'ANY';
     return 'ALL';
 }
@@ -557,49 +87,296 @@ function formatReqType(type) {
     return map[type] || type;
 }
 
+// --- Stats Component ---
+
+function initStats() {
+    document.getElementById('stats').textContent =
+        `${stats.totalNPCs} NPCs \u00B7 ${stats.totalTextlines} textlines \u00B7 ${stats.totalEdges} edges \u00B7 ${stats.unresolvedRefs.length} external refs`;
+}
+
+// --- Search Component ---
+
+function initSearch() {
+    const searchInput = document.getElementById('search');
+    const searchResults = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        if (!q) { searchResults.classList.remove('visible'); return; }
+        const matches = allNames.filter(n => n.toLowerCase().includes(q)).slice(0, 30);
+        if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
+        searchResults.innerHTML = matches.map(n => {
+            const tl = textlines[n];
+            return `<div class="search-item" data-name="${n}">${n}<span class="npc">${tl.npc} \u00B7 ${tl.section.replace('TextLineSets', '')}</span></div>`;
+        }).join('');
+        searchResults.classList.add('visible');
+    });
+
+    searchResults.addEventListener('click', (e) => {
+        const item = e.target.closest('.search-item');
+        if (item) {
+            selectTextline(item.dataset.name);
+            searchResults.classList.remove('visible');
+            searchInput.value = item.dataset.name;
+        }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const first = searchResults.querySelector('.search-item');
+            if (first) {
+                selectTextline(first.dataset.name);
+                searchResults.classList.remove('visible');
+                searchInput.value = first.dataset.name;
+            }
+        }
+        if (e.key === 'Escape') searchResults.classList.remove('visible');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) searchResults.classList.remove('visible');
+    });
+}
+
+// --- Info Panel Component ---
+
+function renderInfo(name) {
+    const tl = textlines[name];
+    const container = document.getElementById('info-content');
+    if (!tl) {
+        container.innerHTML = `<div class="textline-info"><h3>${name}</h3><div class="meta"><span>\u26A0 External/unresolved reference - not found in any parsed data file</span></div><div class="meta"><span>This line is referenced as a requirement by other dialogues but is defined in a data file that hasn't been parsed yet.</span></div></div>`;
+        return;
+    }
+    let html = `<div class="textline-info">
+        <h3>${name}</h3>
+        <div class="meta">
+            <span>NPC: ${tl.npc}</span>
+            <span>Section: ${tl.section.replace('TextLineSets', '')}</span>
+            <span>Source: ${tl.source || 'Unknown'}</span>
+            <span>Line: ${tl.line}</span>
+        </div>`;
+
+    // Dialogue text with speaker names
+    if (tl.dialogueLines && tl.dialogueLines.length > 0) {
+        html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
+        for (const line of tl.dialogueLines) {
+            if (typeof line === 'object' && line.speaker) {
+                html += `<div class="dialogue-line"><span class="speaker">${escapeHtml(line.speaker)}:</span> ${escapeHtml(line.text)}</div>`;
+            } else if (typeof line === 'object') {
+                html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;
+            } else {
+                html += `<div class="dialogue-line">${escapeHtml(line)}</div>`;
+            }
+        }
+        html += `</div>`;
+    }
+
+    // Textline requirements
+    for (const [type, refs] of Object.entries(tl.requirements)) {
+        html += `<div class="req-section req-type-${type}"><h4>${formatReqType(type)}</h4>`;
+        for (const ref of refs) {
+            const resolved = ref in textlines;
+            html += `<div class="req-item ${resolved ? 'resolved' : 'unresolved'}" data-name="${ref}" onclick="navigateTo('${ref}')">${ref}</div>`;
+        }
+        html += `</div>`;
+    }
+
+    // Other requirements
+    if (Object.keys(tl.otherRequirements).length > 0) {
+        html += `<div class="req-section req-type-other"><h4>Other Requirements</h4>`;
+        for (const [key, val] of Object.entries(tl.otherRequirements)) {
+            const display = typeof val === 'object' ? JSON.stringify(val) : String(val);
+            html += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
+        }
+        html += `</div>`;
+    }
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+// --- Tree Component ---
+
+function buildTree(name, direction, visited, depth, maxDepth) {
+    if (depth > maxDepth) return `<div class="tree-node"><span class="cycle-marker">... max depth reached</span></div>`;
+    if (visited.has(name)) return `<div class="tree-node"><span class="cycle-marker">\u21A9 ${name} (cycle)</span></div>`;
+
+    visited = new Set(visited);
+    visited.add(name);
+
+    const tl = textlines[name];
+    const isRoot = depth === 0;
+    let children = [];
+
+    if (direction === 'upstream' && tl) {
+        for (const [type, refs] of Object.entries(tl.requirements)) {
+            for (const ref of refs) {
+                children.push({ name: ref, edgeType: type });
+            }
+        }
+    } else if (direction === 'downstream') {
+        const deps = dependents[name] || [];
+        for (const dep of deps) {
+            children.push({ name: dep.name, edgeType: dep.type });
+        }
+    }
+
+    const hasChildren = children.length > 0;
+    const npcTag = tl ? tl.npc.replace('NPC_', '').replace('_01', '') : '?';
+    const toggle = hasChildren ? '\u25B6' : '\u00B7';
+    const expanded = isRoot ? 'expanded' : '';
+
+    let html = `<div class="tree-node ${isRoot ? 'root' : ''}">`;
+    html += `<div class="tree-label ${isRoot ? 'active' : ''}" data-name="${name}">`;
+    html += `<span class="toggle">${toggle}</span>`;
+    html += `<span class="name">${name}</span>`;
+    if (!tl) html += `<span style="color:#666;font-size:10px;margin-left:4px">\u26A0</span>`;
+    html += `<span class="npc-tag">${npcTag}</span>`;
+    html += `</div>`;
+
+    if (hasChildren) {
+        html += `<div class="tree-children ${expanded}">`;
+        for (const child of children) {
+            html += buildTreeChild(child, direction, visited, depth, maxDepth);
+        }
+        html += `</div>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+function buildTreeChild(child, direction, visited, depth, maxDepth) {
+    const edgeClass = getEdgeClass(child.edgeType);
+    const edgeLabel = getEdgeLabel(child.edgeType);
+    const childTl = textlines[child.name];
+    const childHasChildren = direction === 'upstream'
+        ? (childTl && Object.values(childTl.requirements).some(r => r.length > 0))
+        : ((dependents[child.name] || []).length > 0);
+    const childToggle = childHasChildren && !visited.has(child.name) ? '\u25B6' : '\u00B7';
+    const childNpc = childTl ? childTl.npc.replace('NPC_', '').replace('_01', '') : '?';
+
+    let html = `<div class="tree-node">`;
+    html += `<div class="tree-label" data-name="${child.name}">`;
+    html += `<span class="toggle">${childToggle}</span>`;
+    html += `<span class="edge-type ${edgeClass}">${edgeLabel}</span>`;
+    html += `<span class="name">${child.name}</span>`;
+    if (!childTl) html += `<span style="color:#666;font-size:10px;margin-left:4px">\u26A0</span>`;
+    html += `<span class="npc-tag">${childNpc}</span>`;
+    html += `</div>`;
+    if (childHasChildren && !visited.has(child.name)) {
+        html += `<div class="tree-children">${buildTreeChildren(child.name, direction, visited, depth + 1, maxDepth)}</div>`;
+    } else if (visited.has(child.name)) {
+        html += `<span class="cycle-marker" style="margin-left:28px">\u21A9 cycle</span>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+function buildTreeChildren(name, direction, visited, depth, maxDepth) {
+    if (depth > maxDepth) return `<span class="cycle-marker">... max depth</span>`;
+    if (visited.has(name)) return `<span class="cycle-marker">\u21A9 cycle</span>`;
+
+    visited = new Set(visited);
+    visited.add(name);
+
+    const tl = textlines[name];
+    let children = [];
+
+    if (direction === 'upstream' && tl) {
+        for (const [type, refs] of Object.entries(tl.requirements)) {
+            for (const ref of refs) {
+                children.push({ name: ref, edgeType: type });
+            }
+        }
+    } else if (direction === 'downstream') {
+        const deps = dependents[name] || [];
+        for (const dep of deps) {
+            children.push({ name: dep.name, edgeType: dep.type });
+        }
+    }
+
+    let html = '';
+    for (const child of children) {
+        html += buildTreeChild(child, direction, visited, depth, maxDepth);
+    }
+    return html;
+}
+
 function attachTreeListeners(container) {
     container.querySelectorAll('.tree-label').forEach(label => {
-        // Add focus button if not root
         if (!label.closest('.tree-node.root') || label.closest('.tree-node.root') !== label.parentElement) {
             const btn = document.createElement('span');
             btn.className = 'focus-btn';
             btn.title = 'Focus on this dialogue';
-            btn.textContent = '⤴';
+            btn.textContent = '\u2934';
             label.appendChild(btn);
         }
         label.addEventListener('click', (e) => {
             const name = label.dataset.name;
-            // If clicking the focus button, navigate
             if (e.target.classList.contains('focus-btn')) {
                 navigateTo(name);
                 return;
             }
-            // Toggle children
             const children = label.nextElementSibling;
             if (children && children.classList.contains('tree-children')) {
                 const isExpanded = children.classList.contains('expanded');
                 children.classList.toggle('expanded');
                 const toggle = label.querySelector('.toggle');
-                if (toggle) toggle.textContent = isExpanded ? '▶' : '▼';
+                if (toggle) toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
             }
-            // Show detail in info panel
             renderInfo(name);
         });
-        label.addEventListener('dblclick', (e) => {
+        label.addEventListener('dblclick', () => {
             navigateTo(label.dataset.name);
         });
     });
 }
 
-// Handle URL hash for deep linking
-if (window.location.hash) {
-    const name = decodeURIComponent(window.location.hash.slice(1));
-    if (name in textlines) {
-        selectTextline(name);
-        searchInput.value = name;
+// --- Tree Panel Renderers ---
+
+function renderUpstream(name, maxDepth = 10) {
+    const container = document.getElementById('upstream-content');
+    container.innerHTML = buildTree(name, 'upstream', new Set(), 0, maxDepth);
+    attachTreeListeners(container);
+}
+
+function renderDownstream(name, maxDepth = 10) {
+    const container = document.getElementById('downstream-content');
+    container.innerHTML = buildTree(name, 'downstream', new Set(), 0, maxDepth);
+    attachTreeListeners(container);
+}
+
+// --- Navigation ---
+
+function selectTextline(name) {
+    renderInfo(name);
+    renderUpstream(name);
+    renderDownstream(name);
+}
+
+function navigateTo(name) {
+    selectTextline(name);
+    document.getElementById('search').value = name;
+    window.location.hash = name;
+}
+
+// --- Init ---
+
+function init() {
+    initStats();
+    initSearch();
+
+    // Handle URL hash for deep linking
+    if (window.location.hash) {
+        const name = decodeURIComponent(window.location.hash.slice(1));
+        if (name in textlines) {
+            selectTextline(name);
+            document.getElementById('search').value = name;
+        }
     }
 }
+
+init();
 </script>
 </body>
 </html>
-
