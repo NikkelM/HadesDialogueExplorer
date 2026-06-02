@@ -1,0 +1,7 @@
+# Generated output
+dialogue_explorer.html
+outputs/*.json
+
+# Python
+__pycache__/
+*.pyc
