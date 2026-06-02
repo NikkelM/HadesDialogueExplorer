@@ -11,7 +11,8 @@ Outputs:
 import json
 from pathlib import Path
 
-from src.parser import parse_lua_file
+from src.lua_parser import parse_lua_file
+from src.extractors.npc_data import extract_npc_data
 from src.graph import build_graph_data
 
 # Game data source paths
@@ -34,11 +35,8 @@ def generate_hades1():
         return None
 
     print(f"Parsing Hades 1: {npc_path}")
-    npcs = parse_lua_file(str(npc_path))
-
-    # Tag all NPCs with source
-    for npc_data in npcs.values():
-        npc_data["source"] = "Hades 1"
+    parsed = parse_lua_file(str(npc_path))
+    npcs = extract_npc_data(parsed, source_label="Hades 1")
 
     print(f"  Found {len(npcs)} NPCs")
 

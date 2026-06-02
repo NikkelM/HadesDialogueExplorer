@@ -14,14 +14,19 @@ def build_graph_data(npcs: dict) -> dict:
 
     for npc_name, npc_data in npcs.items():
         source = npc_data.get("source", "Unknown")
-        for section in ("InteractTextLineSets", "RepeatableTextLineSets"):
-            for tl_name, tl_data in npc_data.get(section, {}).items():
+        for section_key, section_data in npc_data.items():
+            if not section_key.endswith("TextLineSets"):
+                continue
+            if not isinstance(section_data, dict):
+                continue
+            for tl_name, tl_data in section_data.items():
+                if not isinstance(tl_data, dict):
+                    continue
                 textlines[tl_name] = {
                     "name": tl_name,
                     "npc": npc_name,
-                    "section": section,
+                    "section": section_key,
                     "source": source,
-                    "line": tl_data.get("line"),
                     "requirements": tl_data.get("requirements", {}),
                     "otherRequirements": tl_data.get("otherRequirements", {}),
                     "dialogueLines": tl_data.get("dialogueLines", []),
