@@ -6,10 +6,10 @@ from src.lua_parser import LuaParser
 from src.extractors.npc_data import extract_npc_data
 
 
-def extract(lua_text, source="Test"):
+def extract(lua_text, source="Test", source_file=""):
     """Helper: parse Lua text and extract NPC data."""
     parsed = LuaParser(lua_text).parse_file()
-    return extract_npc_data(parsed, source_label=source)
+    return extract_npc_data(parsed, source_label=source, source_file=source_file)
 
 
 class TestBasicExtraction:
@@ -35,6 +35,50 @@ class TestBasicExtraction:
         lua = 'UnitSetData.NPCs = { NPC_X_01 = { InteractTextLineSets = {} } }'
         result = extract(lua, source="Hades 1")
         assert result["NPC_X_01"]["source"] == "Hades 1"
+
+
+class TestSourceLocation:
+    """Each textline should record the file and line where it is defined."""
+
+    def test_source_file_propagated_to_textline(self):
+        lua = (
+            "UnitSetData.NPCs = {\n"
+            "    NPC_Test_01 = {\n"
+            "        InteractTextLineSets = {\n"
+            "            Line01 = { { Text = \"Hi\" } }\n"
+            "        }\n"
+            "    }\n"
+            "}\n"
+        )
+        result = extract(lua, source_file="NPCData.lua")
+        tl = result["NPC_Test_01"]["InteractTextLineSets"]["Line01"]
+        assert tl["sourceFile"] == "NPCData.lua"
+
+    def test_source_line_matches_opening_brace(self):
+        lua = (
+            "UnitSetData.NPCs = {\n"          # line 1
+            "    NPC_Test_01 = {\n"           # line 2
+            "        InteractTextLineSets = {\n"   # line 3
+            "            LineA = {\n"          # line 4 - opening brace of textline
+            "                { Text = \"a\" },\n"
+            "            },\n"
+            "            LineB = {\n"          # line 7
+            "                { Text = \"b\" },\n"
+            "            },\n"
+            "        }\n"
+            "    }\n"
+            "}\n"
+        )
+        result = extract(lua, source_file="NPCData.lua")
+        section = result["NPC_Test_01"]["InteractTextLineSets"]
+        assert section["LineA"]["sourceLine"] == 4
+        assert section["LineB"]["sourceLine"] == 7
+
+    def test_source_file_defaults_to_empty(self):
+        lua = 'UnitSetData.NPCs = { NPC_X_01 = { InteractTextLineSets = { L = { { Text = "x" } } } } }'
+        result = extract(lua)
+        tl = result["NPC_X_01"]["InteractTextLineSets"]["L"]
+        assert tl["sourceFile"] == ""
 
 
 class TestSpeakerAttribution:

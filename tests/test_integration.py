@@ -17,7 +17,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "mini_npc_data.lua"
 def graph_data():
     """Run the full pipeline once and reuse the result across tests."""
     parsed = parse_lua_file(str(FIXTURE))
-    npcs = extract_npc_data(parsed, source_label="Test Fixture")
+    npcs = extract_npc_data(parsed, source_label="Test Fixture", source_file="mini_npc_data.lua")
     return build_graph_data(npcs)
 
 
@@ -103,3 +103,16 @@ def test_stats_match_fixture(graph_data):
     assert stats["totalNPCs"] == 1
     # Edges: Intro<-Followup, Followup<-Secret, Forbidden<-Secret, External<-Repeat
     assert stats["totalEdges"] == 4
+
+
+def test_source_location_in_graph_output(graph_data):
+    # Every textline should be tagged with the source file name passed in.
+    for tl in graph_data["textlines"].values():
+        assert tl["sourceFile"] == "mini_npc_data.lua"
+        assert isinstance(tl["sourceLine"], int)
+        assert tl["sourceLine"] > 0
+    # Spot-check exact line numbers from the fixture.
+    # OrpheusIntro01 opens on line 7 of mini_npc_data.lua
+    assert graph_data["textlines"]["OrpheusIntro01"]["sourceLine"] == 7
+    # OrpheusGift01 opens on line 26
+    assert graph_data["textlines"]["OrpheusGift01"]["sourceLine"] == 26

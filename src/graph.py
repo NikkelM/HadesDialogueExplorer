@@ -34,6 +34,8 @@ def build_graph_data(npcs: dict, speaker_names: dict = None) -> dict:
                     "npc": npc_name,
                     "section": section_key,
                     "source": source,
+                    "sourceFile": tl_data.get("sourceFile", ""),
+                    "sourceLine": tl_data.get("sourceLine"),
                     "requirements": tl_data.get("requirements", {}),
                     "otherRequirements": tl_data.get("otherRequirements", {}),
                     "dialogueLines": tl_data.get("dialogueLines", []),

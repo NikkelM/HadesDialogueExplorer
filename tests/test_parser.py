@@ -188,3 +188,45 @@ class TestRobustness:
             b = 2,
         }''')
         assert t.named == {"a": 1, "b": 2}
+
+
+class TestLineTracking:
+    """Each parsed LuaTable should record the line of its opening '{'."""
+
+    def test_top_level_table_line_is_recorded(self):
+        # Two assignments; the second table opens on line 3.
+        text = "A = 1\nB = {\n    x = 2,\n}"
+        result = parse_file(text)
+        assert isinstance(result["B"], LuaTable)
+        assert result["B"].line == 2
+
+    def test_nested_table_line_is_recorded(self):
+        # Nested table opens on its own line.
+        text = (
+            "Root = {\n"
+            "    First = { a = 1 },\n"
+            "    Second = {\n"
+            "        b = 2,\n"
+            "    },\n"
+            "}\n"
+        )
+        result = parse_file(text)
+        root = result["Root"]
+        assert root.line == 1
+        assert root.named["First"].line == 2
+        assert root.named["Second"].line == 3
+
+    def test_anonymous_array_entry_table_has_line(self):
+        # Tables that appear as anonymous array entries (e.g. dialogue lines)
+        # should also carry their opening-brace line.
+        text = (
+            "X = {\n"
+            "    { Speaker = \"A\", Text = \"hi\" },\n"
+            "    { Speaker = \"B\", Text = \"bye\" },\n"
+            "}\n"
+        )
+        result = parse_file(text)
+        x = result["X"]
+        assert x.line == 1
+        assert x.array[0].line == 2
+        assert x.array[1].line == 3

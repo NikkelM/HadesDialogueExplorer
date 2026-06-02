@@ -14,6 +14,7 @@ class LuaTable:
     """Represents a Lua table with both named fields and anonymous array entries."""
     named: dict = field(default_factory=dict)
     array: list = field(default_factory=list)
+    line: int = None  # Source line of the opening '{', when known
 
     def get(self, key, default=None):
         return self.named.get(key, default)
@@ -486,8 +487,8 @@ class LuaParser:
 
     def parse_table(self) -> LuaTable:
         """Parse a Lua table literal { ... }."""
-        self.expect(T_LBRACE)
-        table = LuaTable()
+        open_brace = self.expect(T_LBRACE)
+        table = LuaTable(line=open_brace.line)
 
         while self.current.type != T_RBRACE and self.current.type != T_EOF:
             # Try to detect: key = value

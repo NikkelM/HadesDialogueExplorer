@@ -178,8 +178,8 @@ function renderInfo(name) {
         <h3>${escapeHtml(name)}</h3>
         <div class="meta">
             <span>NPC: ${renderSpeakerHtml(tl.npc)}</span>
-            <span>Section: ${escapeHtml(tl.section.replace('TextLineSets', ''))}</span>
-            <span>Source: ${escapeHtml(tl.source || 'Unknown')}</span>
+            <span>Section: ${escapeHtml(tl.section)}</span>
+            <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
 
     // Dialogue text with speaker names

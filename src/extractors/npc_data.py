@@ -27,13 +27,15 @@ TEXTLINE_REQ_FIELDS = {
 NON_DIALOGUE_REQ_PREFIX = "Require"
 
 
-def extract_npc_data(parsed: dict, source_label: str = "") -> dict:
+def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "") -> dict:
     """
     Extract NPC dialogue data from a parsed Lua file.
 
     Args:
         parsed: Dict from lua_parser.parse_file() - top-level assignments
         source_label: Label for this data source (e.g. "Hades 1")
+        source_file: Filename of the source (e.g. "NPCData.lua"), recorded on
+            each textline so the viewer can show where it is defined.
 
     Returns:
         Dict of NPC name -> {section_name: {textline_name: textline_data}}
@@ -61,17 +63,17 @@ def extract_npc_data(parsed: dict, source_label: str = "") -> dict:
     if npcs_table:
         for npc_name, npc_data in npcs_table.items():
             if isinstance(npc_data, LuaTable) and ('NPC_' in npc_name):
-                result[npc_name] = _extract_npc(npc_name, npc_data, source_label)
+                result[npc_name] = _extract_npc(npc_name, npc_data, source_label, source_file)
 
     # Process individual top-level NPCs
     for npc_name, npc_data in individual_npcs.items():
         if npc_name not in result:
-            result[npc_name] = _extract_npc(npc_name, npc_data, source_label)
+            result[npc_name] = _extract_npc(npc_name, npc_data, source_label, source_file)
 
     return result
 
 
-def _extract_npc(npc_name: str, npc_table: LuaTable, source_label: str) -> dict:
+def _extract_npc(npc_name: str, npc_table: LuaTable, source_label: str, source_file: str) -> dict:
     """Extract all textline sets from a single NPC's data."""
     npc_result = {"source": source_label}
 
@@ -80,18 +82,20 @@ def _extract_npc(npc_name: str, npc_table: LuaTable, source_label: str) -> dict:
             section_data = {}
             for tl_name, tl_table in value.items():
                 if isinstance(tl_table, LuaTable):
-                    section_data[tl_name] = _extract_textline(tl_name, tl_table, npc_name)
+                    section_data[tl_name] = _extract_textline(tl_name, tl_table, npc_name, source_file)
             npc_result[key] = section_data
 
     return npc_result
 
 
-def _extract_textline(tl_name: str, tl_table: LuaTable, npc_name: str) -> dict:
+def _extract_textline(tl_name: str, tl_table: LuaTable, npc_name: str, source_file: str) -> dict:
     """Extract requirements and dialogue from a single textline set."""
     data = {
         "requirements": {},
         "otherRequirements": {},
         "dialogueLines": [],
+        "sourceFile": source_file,
+        "sourceLine": tl_table.line,
     }
 
     # Extract requirements and other fields from named entries
