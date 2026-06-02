@@ -35,8 +35,3 @@ By default, outputs `dialogue_explorer.html` in the project root.
 - **Double-click** a tree node: navigates to it (refocuses the tree)
 - **⤴ button**: appears on hover, navigates to that dialogue
 - **Details panel**: shows dialogue text, requirements, and metadata
-
-## Data Sources
-
-- **Hades 1**: `C:\Program Files (x86)\Steam\steamapps\common\Hades\Content\Scripts\NPCData.lua`
-- **Hades II** (planned): `C:\Program Files (x86)\Steam\steamapps\common\Hades II\Content\Scripts\NPCData.lua`
