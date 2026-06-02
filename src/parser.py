@@ -201,27 +201,32 @@ def parse_lua_file(filepath: str) -> dict:
                 continue
 
             # Track dialogue entry braces for speaker attribution
+            # Dialogue entries are anonymous { ... } blocks (not key = { ... } assignments)
             if not in_dialogue_entry and opens > 0 and (textline_depth - net) == 1:
-                in_dialogue_entry = True
-                dialogue_entry_depth = 1
-                current_speaker = None
-                speaker_match = re.search(r'Speaker\s*=\s*"([^"]*)"', stripped)
-                if speaker_match:
-                    current_speaker = speaker_match.group(1)
+                # Only treat as dialogue entry if this isn't a named field assignment
+                is_field_assignment = bool(re.match(r'\s*\w+\s*=\s*\{', stripped))
+                if not is_field_assignment:
+                    in_dialogue_entry = True
+                    dialogue_entry_depth = opens - closes  # account for same-line closes
+                    current_speaker = None
+                    speaker_match = re.search(r'Speaker\s*=\s*"([^"]*)"', stripped)
+                    if speaker_match:
+                        current_speaker = speaker_match.group(1)
+                    if dialogue_entry_depth <= 0:
+                        # Single-line entry like { Cue = "...", Text = "..." },
+                        in_dialogue_entry = False
             elif in_dialogue_entry:
+                # Check for Speaker before potentially closing
+                if current_speaker is None:
+                    speaker_match = re.search(r'Speaker\s*=\s*"([^"]*)"', stripped)
+                    if speaker_match:
+                        current_speaker = speaker_match.group(1)
                 dialogue_entry_depth += net
                 if dialogue_entry_depth <= 0:
                     in_dialogue_entry = False
-                    current_speaker = None
 
             # Extract requirements
             extract_requirements_from_line(stripped, current_textline_data)
-
-            # Extract Speaker field
-            if in_dialogue_entry and current_speaker is None:
-                speaker_match = re.search(r'Speaker\s*=\s*"([^"]*)"', stripped)
-                if speaker_match:
-                    current_speaker = speaker_match.group(1)
 
             # Extract dialogue text with speaker
             text_match = re.search(r'Text\s*=\s*"((?:[^"\\]|\\.)*)"', stripped)
@@ -230,5 +235,9 @@ def parse_lua_file(filepath: str) -> dict:
                 text = re.sub(r'\{#\w+\}', '', text)
                 speaker = current_speaker if current_speaker else current_npc
                 current_textline_data["dialogueLines"].append({"speaker": speaker, "text": text})
+
+            # Reset speaker after processing the line that closes an entry
+            if not in_dialogue_entry and dialogue_entry_depth <= 0:
+                current_speaker = None
 
     return npcs
