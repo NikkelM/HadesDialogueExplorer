@@ -1,7 +1,7 @@
 """Build dependency graph data from parsed NPC dialogue data."""
 
 
-def build_graph_data(npcs: dict, speaker_names: dict = None) -> dict:
+def build_graph_data(npcs: dict, speaker_names: dict = {}) -> dict:
     """
     Build the final data structure for the viewer from parsed NPC data.
 
@@ -68,6 +68,6 @@ def build_graph_data(npcs: dict, speaker_names: dict = None) -> dict:
     return {
         "textlines": textlines,
         "dependents": dependents,
-        "speakerNames": speaker_names or {},
+        "speakerNames": speaker_names,
         "stats": stats,
     }

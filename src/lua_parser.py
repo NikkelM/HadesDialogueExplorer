@@ -14,7 +14,7 @@ class LuaTable:
     """Represents a Lua table with both named fields and anonymous array entries."""
     named: dict = field(default_factory=dict)
     array: list = field(default_factory=list)
-    line: int = None  # Source line of the opening '{', when known
+    line: int = -1  # Source line of the opening '{', when known
 
     def get(self, key, default=None):
         return self.named.get(key, default)
