@@ -664,6 +664,11 @@ function createGameDataGroup(groupName, edgeType, count) {
 
 // --- Navigation ---
 
+// Tracks the name currently reflected in window.location.hash so the
+// hashchange listener can skip the redundant re-render that fires when
+// navigateTo itself sets the hash.
+let urlSelection = null;
+
 function selectTextline(name) {
     renderInfo(name);
     renderUpstream(name);
@@ -671,9 +676,23 @@ function selectTextline(name) {
 }
 
 function navigateTo(name) {
+    urlSelection = name;
     selectTextline(name);
     document.getElementById('search').value = name;
     window.location.hash = name;
+}
+
+// Read window.location.hash and sync the viewer to whatever name it
+// points to. Used on initial load and on every browser back/forward.
+function applyHashFromUrl() {
+    const hash = window.location.hash;
+    const name = hash ? decodeURIComponent(hash.slice(1)) : '';
+    if (name === urlSelection) return;
+    urlSelection = name;
+    if (name) {
+        selectTextline(name);
+        document.getElementById('search').value = name;
+    }
 }
 
 // --- Init ---
@@ -681,15 +700,8 @@ function navigateTo(name) {
 function init() {
     initStats();
     initSearch();
-
-    // Handle URL hash for deep linking
-    if (window.location.hash) {
-        const name = decodeURIComponent(window.location.hash.slice(1));
-        if (name in textlines) {
-            selectTextline(name);
-            document.getElementById('search').value = name;
-        }
-    }
+    applyHashFromUrl();
+    window.addEventListener('hashchange', applyHashFromUrl);
 }
 
 init();
