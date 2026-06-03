@@ -53,6 +53,7 @@ TEXTLINE_REQ_FIELDS_COUNT = {
     "RequiredMinAnyTextLines",
     "RequiredMaxAnyTextLines",
     "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
 }
 
 # Field names that look like textline requirements but are not. These are
@@ -64,9 +65,63 @@ REQ_TEXTLINE_FIELD_IGNORES = {
 
 NON_DIALOGUE_REQ_PREFIX = "Require"
 
+# Per requirement-field semantics for the "is this textline blocked by
+# unresolved refs?" analysis. Values:
+#   "all"        every entry must have played -> any unresolved entry
+#                blocks the referencing textline outright.
+#   "any"        at least one entry must have played -> blocks only when
+#                ALL entries are unresolved.
+#   "none"       the entry must NOT have played -> unresolved is trivially
+#                satisfied (never-defined lines can never play), so never
+#                blocking.
+#   "count-min"  field shape ``{ TextLines = {...}, Count = N }``: blocks
+#                when ``N > number-of-resolved-entries``.
+#   "count-permissive"
+#                count-based field whose semantics treat "never played"
+#                as satisfying the requirement (e.g. MinRunsSinceAnyTextLines:
+#                if none of the listed lines ever played, "runs since" is
+#                effectively infinite, so the >=N condition is met). Never
+#                blocking from unresolved entries alone.
+REQUIREMENT_BLOCKING_SEMANTICS = {
+    # ALL-required forms
+    "RequiredTextLines":                 "all",
+    "RequiredTextLinesThisRun":          "all",
+    "RequiredTextLinesLastRun":          "all",
+    "RequiredTextLinesThisRoom":         "all",
+    "RequiredQueuedTextLines":           "all",
+
+    # ANY-required forms
+    "RequiredAnyTextLines":              "any",
+    "RequiredAnyOtherTextLines":         "any",
+    "RequiredAnyTextLinesThisRun":       "any",
+    "RequiredAnyTextLinesLastRun":       "any",
+    "RequiredAnyQueuedTextLines":        "any",
+
+    # Must-not-have-played forms (always non-blocking for unresolved refs)
+    "RequiredFalseTextLines":            "none",
+    "RequiredFalseQueuedTextLines":      "none",
+    "RequiredFalseTextLinesThisRun":     "none",
+    "RequiredFalseTextLinesLastRun":     "none",
+    "RequiredFalseTextLinesThisRoom":    "none",
+
+    # Count-based forms (otherRequirements carries the Count param)
+    "RequiredMinAnyTextLines":           "count-min",
+    "RequiredMaxAnyTextLines":           "count-permissive",
+    "MinRunsSinceAnyTextLines":          "count-permissive",
+    "MaxRunsSinceAnyTextLines":          "count-permissive",
+}
+
 # Regex used by the audit to catch any field that *looks* like a textline
 # requirement but isn't in TEXTLINE_REQ_FIELDS.
 _REQ_TEXTLINE_PATTERN = re.compile(r"^Required.*TextLine.*$")
+
+# Regex used by ``audit_textline_section_keys`` to catch any field that
+# *looks* like a textline-set container - covers all observed shapes
+# (``*TextLineSets`` plural-with-Sets, singular ``TextLineSet``, and
+# ``*TextLines`` plural-without-Sets like LootData's ``BoughtTextLines``).
+# Requirement-field names also match this pattern; the audit excludes them
+# explicitly via ``TEXTLINE_REQ_FIELDS`` / ``TEXTLINE_REQ_FIELDS_COUNT``.
+_SECTION_KEY_PATTERN = re.compile(r"^[A-Za-z]\w*TextLines?(?:Sets?)?$")
 
 # Pre-compiled tag stripper for dialogue text.
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
@@ -76,10 +131,12 @@ def extract_textline_sections(
     owner_name: str,
     owner_table: LuaTable,
     source_file: str,
+    *,
+    section_keys,
     default_speaker: str = None,
     game_data_lists: dict = None,
 ) -> dict:
-    """Extract every `*TextLineSets` section from a single owner table.
+    """Extract every textline-set section from a single owner table.
 
     Returns a dict shaped like::
 
@@ -91,6 +148,13 @@ def extract_textline_sections(
             "GiftTextLineSets": {...},
             ...
         }
+
+    ``section_keys`` is the per-game allowlist of owner-level section names
+    (e.g. ``HADES1_TEXTLINE_SECTION_KEYS``). Hardcoding the allowed keys
+    per game - rather than matching by suffix - ensures we never silently
+    pick up an unexpected field or silently miss a renamed/new container.
+    Use ``audit_textline_section_keys`` to surface unrecognized
+    section-shaped keys in newly-added source files.
 
     `default_speaker` overrides the per-line fallback (which is otherwise the
     owner name). Sources where the owner key is not itself a meaningful
@@ -104,13 +168,7 @@ def extract_textline_sections(
     sections = {}
     fallback_speaker = default_speaker or owner_name
     for key, value in owner_table.items():
-        if not isinstance(key, str):
-            continue
-        # `*TextLineSets` (plural) is the common form (a map of named
-        # textlines). DeathLoopData also uses bare `TextLineSet` (singular)
-        # inside distance/proximity triggers; the inner shape is identical
-        # so we treat it as another section type.
-        if not (key.endswith("TextLineSets") or key == "TextLineSet"):
+        if key not in section_keys:
             continue
         if not isinstance(value, LuaTable):
             continue
@@ -281,6 +339,44 @@ def audit_requirement_fields(parsed_root) -> set:
                 if isinstance(k, str) and _REQ_TEXTLINE_PATTERN.match(k):
                     if k not in known:
                         unknown.add(k)
+                visit(v)
+            for v in node.array:
+                visit(v)
+
+    if isinstance(parsed_root, dict):
+        for v in parsed_root.values():
+            visit(v)
+    else:
+        visit(parsed_root)
+    return unknown
+
+
+def audit_textline_section_keys(parsed_root, section_keys) -> set:
+    """Walk a parsed Lua tree and return any owner-level keys that *look*
+    like textline-set containers (match ``*TextLineSets`` / ``TextLineSet`` /
+    ``*TextLines``) but aren't in the per-game ``section_keys`` allowlist
+    and aren't already known requirement-field names.
+
+    Used by the pipeline to catch newly-added or renamed container keys in
+    a future game update before the parser silently drops them. Mirrors
+    ``audit_requirement_fields`` but for the section side of the schema.
+    """
+    unknown = set()
+    req_known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT | REQ_TEXTLINE_FIELD_IGNORES
+    section_known = set(section_keys)
+
+    def visit(node):
+        if isinstance(node, LuaTable):
+            for k, v in node.items():
+                if (
+                    isinstance(k, str)
+                    and _SECTION_KEY_PATTERN.match(k)
+                    and isinstance(v, LuaTable)
+                    and any(isinstance(nv, LuaTable) for nv in v.named.values())
+                    and k not in section_known
+                    and k not in req_known
+                ):
+                    unknown.add(k)
                 visit(v)
             for v in node.array:
                 visit(v)

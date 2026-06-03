@@ -60,15 +60,15 @@ class TestSectionDiscovery:
         lua = '''UnitSetData.Enemies = {
             Hades = {
                 BossPresentationTextLineSets = { A = { { Text = "a" } } },
-                BossPresentationDefeatTextLineSets = { B = { { Text = "b" } } },
-                BossPresentationFightTextLineSets = { C = { { Text = "c" } } },
+                BossPresentationIntroTextLineSets = { B = { { Text = "b" } } },
+                BossPresentationRepeatableTextLineSets = { C = { { Text = "c" } } },
             }
         }'''
         result = extract(lua)
         hades = result["Hades"]
         assert "BossPresentationTextLineSets" in hades
-        assert "BossPresentationDefeatTextLineSets" in hades
-        assert "BossPresentationFightTextLineSets" in hades
+        assert "BossPresentationIntroTextLineSets" in hades
+        assert "BossPresentationRepeatableTextLineSets" in hades
 
     def test_enemy_without_textline_sections_dropped(self):
         lua = '''UnitSetData.Enemies = {

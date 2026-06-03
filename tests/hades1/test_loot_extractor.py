@@ -96,3 +96,47 @@ class TestNonUpgradeKeysIgnored:
         result = extract(lua)
         assert "ZeusUpgrade" in result
         assert "SomeMetadataKey" not in result
+
+
+class TestPluralWithoutSetsContainers:
+    """Demeter and Hermes use the plural-without-Sets container shape
+    (``BoughtTextLines``, ``MakeUpTextLines``, ``RejectionTextLines``)
+    instead of the more common ``*TextLineSets`` form. These were silently
+    missed before the hardcoded allowlist (see issue #7-followup)."""
+
+    def test_bought_text_lines_extracted(self):
+        lua = '''LootData = {
+            HermesUpgrade = {
+                BoughtTextLines = {
+                    HermesLootBought01 = { { Text = "Boon bought!" } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        section = result["HermesUpgrade"]["BoughtTextLines"]
+        assert "HermesLootBought01" in section
+        assert section["HermesLootBought01"]["dialogueLines"][0]["speaker"] == "NPC_Hermes_01"
+
+    def test_make_up_text_lines_extracted(self):
+        lua = '''LootData = {
+            DemeterUpgrade = {
+                MakeUpTextLines = {
+                    DemeterMakeUp07 = { { Text = "Mended fences." } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        section = result["DemeterUpgrade"]["MakeUpTextLines"]
+        assert "DemeterMakeUp07" in section
+
+    def test_rejection_text_lines_extracted(self):
+        lua = '''LootData = {
+            DemeterUpgrade = {
+                RejectionTextLines = {
+                    DemeterRejection09 = { { Text = "Not interested." } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        section = result["DemeterUpgrade"]["RejectionTextLines"]
+        assert "DemeterRejection09" in section

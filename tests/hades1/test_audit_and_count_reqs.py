@@ -138,3 +138,81 @@ class TestRequirementAudit:
         REQ_TEXTLINE_FIELD_IGNORES so the audit must not flag it."""
         lua = '''X = { Y = { RequiredTextLinesThis = { "z" } } }'''
         assert "RequiredTextLinesThis" not in audit_requirement_fields(parse(lua))
+
+
+class TestSectionKeyAudit:
+    """audit_textline_section_keys surfaces owner-level keys that look like
+    textline-set containers but aren't in the per-game allowlist - so
+    silently-dropped textlines can't slip past us when a new game update
+    renames or adds a container."""
+
+    def test_audit_empty_when_all_keys_in_allowlist(self):
+        from src.extractors.textline_set import audit_textline_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = { L = { { Text = "x" } } },
+                GiftTextLineSets = { G = { { Text = "y" } } }
+            }
+        }'''
+        result = audit_textline_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert result == set()
+
+    def test_audit_flags_new_section_shaped_key(self):
+        from src.extractors.textline_set import audit_textline_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                BrandNewBossBanterTextLineSets = { L = { { Text = "x" } } }
+            }
+        }'''
+        result = audit_textline_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "BrandNewBossBanterTextLineSets" in result
+
+    def test_audit_does_not_flag_known_requirement_fields(self):
+        from src.extractors.textline_set import audit_textline_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        # RequiredMinAnyTextLines matches the section-key regex but is a
+        # requirement field - must be excluded from the section audit.
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    L = {
+                        RequiredMinAnyTextLines = {
+                            TextLines = { "A" },
+                            Count = 1
+                        }
+                    }
+                }
+            }
+        }'''
+        result = audit_textline_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "RequiredMinAnyTextLines" not in result
+
+    def test_audit_skips_keys_without_named_table_values(self):
+        """A `TextLines` key whose value is a flat list of strings (i.e. the
+        inner field of a count-based requirement) must not be flagged as a
+        container."""
+        from src.extractors.textline_set import audit_textline_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''X = { Y = { TextLines = { "A", "B" } } }'''
+        result = audit_textline_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "TextLines" not in result
+
+
+class TestSectionKeysRequired:
+    """extract_textline_sections requires the per-game ``section_keys``
+    allowlist - calling it without one is a programming error and must
+    fail loudly rather than silently extract nothing."""
+
+    def test_extract_textline_sections_requires_section_keys_kwarg(self):
+        import pytest
+        from src.extractors.textline_set import extract_textline_sections
+        from src.lua_parser import LuaTable
+
+        with pytest.raises(TypeError):
+            extract_textline_sections("Owner", LuaTable(), "Source.lua")

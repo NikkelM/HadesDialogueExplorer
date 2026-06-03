@@ -17,6 +17,7 @@ The owner of each section is derived from the path:
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
 
 # Special-case prefixes for known parent maps. Anything else just uses the
 # parent name verbatim (e.g. ``ObstacleData_310036``).
@@ -32,6 +33,7 @@ GENERIC_PATH_NAMES = {
     "TextLineSet",
     "TextLineSets",
     "InteractTextLineSets",
+    "TextLines",
 }
 
 
@@ -50,6 +52,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
     for owner_name, owner_table, owner_default_speaker in _walk_owners(root):
         sections = extract_textline_sections(
             owner_name, owner_table, source_file,
+            section_keys=HADES1_TEXTLINE_SECTION_KEYS,
             default_speaker=owner_default_speaker,
             game_data_lists=game_data_lists,
         )
@@ -93,9 +96,7 @@ def _walk_owners(node, path=()):
 
 def _has_textline_section(table: LuaTable) -> bool:
     return any(
-        isinstance(k, str)
-        and (k.endswith("TextLineSets") or k == "TextLineSet")
-        and isinstance(v, LuaTable)
+        k in HADES1_TEXTLINE_SECTION_KEYS and isinstance(v, LuaTable)
         for k, v in table.items()
     )
 

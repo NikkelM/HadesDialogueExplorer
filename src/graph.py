@@ -25,8 +25,9 @@ def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
     for owner_name, owner_data in owners.items():
         source = owner_data.get("source", "Unknown")
         for section_key, section_data in owner_data.items():
-            if not (section_key.endswith("TextLineSets") or section_key == "TextLineSet"):
-                continue
+            # The extractor already filtered to known textline-set sections
+            # for this game; the only non-section key at owner level is
+            # ``source`` (a string), filtered out by the isinstance check.
             if not isinstance(section_data, dict):
                 continue
             for tl_name, tl_data in section_data.items():

@@ -24,8 +24,12 @@ from src.extractors.hades1 import (
     extract_enemy_data,
     extract_game_data_lists,
     HADES1_SPEAKER_NAMES,
+    HADES1_TEXTLINE_SECTION_KEYS,
 )
-from src.extractors.textline_set import audit_requirement_fields
+from src.extractors.textline_set import (
+    audit_requirement_fields,
+    audit_textline_section_keys,
+)
 from src.graph import build_graph_data
 
 # Each entry: (output filename, source label, lua filename, extractor function)
@@ -84,6 +88,13 @@ def generate_source(
     unknown = audit_requirement_fields(parsed)
     if unknown:
         print(f"  WARNING: unknown Required*TextLine* fields: {sorted(unknown)}")
+
+    unknown_sections = audit_textline_section_keys(parsed, HADES1_TEXTLINE_SECTION_KEYS)
+    if unknown_sections:
+        print(
+            f"  WARNING: section-shaped keys with named-table values not in the "
+            f"H1 allowlist (HADES1_TEXTLINE_SECTION_KEYS): {sorted(unknown_sections)}"
+        )
 
     owners = extractor(
         parsed,

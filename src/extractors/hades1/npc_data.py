@@ -9,6 +9,7 @@ import re
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
 
 
 def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
@@ -61,6 +62,7 @@ def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_
     entry = {"source": source_label}
     entry.update(extract_textline_sections(
         owner_name, owner_table, source_file,
+        section_keys=HADES1_TEXTLINE_SECTION_KEYS,
         game_data_lists=game_data_lists,
     ))
     return entry

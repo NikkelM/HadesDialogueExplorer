@@ -92,6 +92,175 @@
 .req-item.resolved { color: #a8dadc; }
 .req-item.unresolved { color: #888; font-style: italic; }
 .req-item.unresolved::after { content: " \26A0  external"; font-size: 10px; color: #666; }
+
+/* Category-specific colors for unresolved refs - overrides the generic
+   .unresolved color so the user can visually distinguish intentional
+   (back-compat), buggy (typo-or-bug), missing (cut-content), and
+   not-yet-triaged (uncategorized) references at a glance. */
+.req-item.unresolved.unresolved-cat-back-compatibility {
+    color: #c9a96e;
+}
+.req-item.unresolved.unresolved-cat-back-compatibility::after {
+    content: " \1F501  back-compat";
+    color: #c9a96e;
+}
+.req-item.unresolved.unresolved-cat-typo-or-bug {
+    color: #e07b7b;
+}
+.req-item.unresolved.unresolved-cat-typo-or-bug::after {
+    content: " \26A0  typo/bug";
+    color: #e07b7b;
+}
+.req-item.unresolved.unresolved-cat-cut-content {
+    color: #888;
+}
+.req-item.unresolved.unresolved-cat-cut-content::after {
+    content: " \2702  cut";
+    color: #888;
+}
+.req-item.unresolved.unresolved-cat-uncategorized {
+    color: #d97a7a;
+}
+.req-item.unresolved.unresolved-cat-uncategorized::after {
+    content: " \26A0  uncategorized";
+    color: #d97a7a;
+}
+
+/* Tree-node badge for unresolved children - small inline pill that
+   inherits the same color language as the req-item categories. */
+.tree-unresolved-badge {
+    font-size: 10px;
+    margin-left: 6px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #888;
+    font-style: italic;
+}
+.tree-unresolved-badge.unresolved-cat-back-compatibility {
+    color: #c9a96e;
+    background: rgba(201, 169, 110, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-typo-or-bug {
+    color: #e07b7b;
+    background: rgba(224, 123, 123, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-cut-content {
+    color: #888;
+    background: rgba(136, 136, 136, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-uncategorized {
+    color: #d97a7a;
+    background: rgba(217, 122, 122, 0.12);
+}
+
+/* Info-panel banner shown when the user navigates to an unresolved ref. */
+.unresolved-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #888;
+    background: rgba(255, 255, 255, 0.04);
+    margin-top: 8px;
+}
+.unresolved-banner.unresolved-cat-back-compatibility {
+    border-left-color: #c9a96e;
+    background: rgba(201, 169, 110, 0.08);
+}
+.unresolved-banner.unresolved-cat-typo-or-bug {
+    border-left-color: #e07b7b;
+    background: rgba(224, 123, 123, 0.08);
+}
+.unresolved-banner.unresolved-cat-cut-content {
+    border-left-color: #888;
+    background: rgba(136, 136, 136, 0.08);
+}
+.unresolved-banner.unresolved-cat-uncategorized {
+    border-left-color: #d97a7a;
+    background: rgba(217, 122, 122, 0.10);
+}
+.unresolved-cat-badge {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #e0e0e0;
+}
+.unresolved-cat-reason {
+    font-size: 12px;
+    color: #cfcfcf;
+}
+.unresolved-cat-desc {
+    font-size: 11px;
+    color: #9aa0a6;
+    font-style: italic;
+    padding: 0 4px;
+}
+
+/* Banner shown in the info panel for a dialogue that can never play
+   because at least one hard requirement field references undefined
+   textlines. Also reused inside the unresolved-ref panel to list which
+   dialogues that unresolved ref blocks. */
+.blocked-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #e74c3c;
+    background: rgba(231, 76, 60, 0.12);
+    margin-top: 8px;
+}
+.blocked-banner-header {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #ffb3a8;
+}
+.blocked-banner-list {
+    font-size: 12px;
+    color: #e8d2cf;
+    line-height: 1.6;
+}
+.blocked-reason {
+    font-size: 12px;
+    color: #e8d2cf;
+    line-height: 1.5;
+}
+.blocked-reason strong {
+    color: #fff;
+    font-family: 'Consolas', monospace;
+    font-weight: normal;
+}
+.blocked-ref {
+    color: #ffb3a8;
+    cursor: pointer;
+    text-decoration: underline dotted;
+}
+.blocked-ref:hover {
+    color: #fff;
+}
+
+/* Tree-node badge: marks a dialogue that can never play (either because
+   it is itself blocked, or because it is an unresolved ref that blocks
+   other dialogues). */
+.tree-blocked-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    background: rgba(231, 76, 60, 0.20);
+    color: #ffb3a8;
+    border: 1px solid rgba(231, 76, 60, 0.45);
+}
+
 .other-req-item {
     padding: 3px 8px;
     margin: 2px 0;
