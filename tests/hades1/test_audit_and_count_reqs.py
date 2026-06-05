@@ -204,6 +204,82 @@ class TestSectionKeyAudit:
         assert "TextLines" not in result
 
 
+class TestObservedSectionKeys:
+    """``observed_section_keys`` is the per-source observation helper
+    that feeds the cross-source ``audit_section_keys_stale`` check
+    (allowlist entries that never appear in any parsed source)."""
+
+    def test_returns_allowlisted_keys_present_in_source(self):
+        from src.extractors.textline_set import observed_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = { L = { { Text = "x" } } },
+                GiftTextLineSets = { G = { { Text = "y" } } }
+            }
+        }'''
+        result = observed_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "InteractTextLineSets" in result
+        assert "GiftTextLineSets" in result
+
+    def test_does_not_return_unknown_keys(self):
+        """Keys not in the allowlist must never appear in the observed
+        set - that's the territory of ``audit_textline_section_keys``."""
+        from src.extractors.textline_set import observed_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                BrandNewTextLineSets = { L = { { Text = "x" } } }
+            }
+        }'''
+        result = observed_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "BrandNewTextLineSets" not in result
+
+    def test_skips_keys_without_named_table_values(self):
+        """Same structural filter as ``audit_textline_section_keys``: a
+        flat-list ``TextLines`` (the inner field of a count-based
+        requirement) is not a container observation."""
+        from src.extractors.textline_set import observed_section_keys
+        from src.extractors.hades1 import HADES1_TEXTLINE_SECTION_KEYS
+
+        lua = '''X = { Y = { TextLines = { "A", "B" } } }'''
+        result = observed_section_keys(parse(lua), HADES1_TEXTLINE_SECTION_KEYS)
+        assert "TextLines" not in result
+
+
+class TestAuditSectionKeysStale:
+    """``audit_section_keys_stale`` is the reverse of
+    ``audit_textline_section_keys``: allowlist entries that were never
+    observed in any source (typically left behind by a rename or a
+    removed extractor target)."""
+
+    def test_returns_allowlist_entries_not_observed(self):
+        from src.extractors.textline_set import audit_section_keys_stale
+
+        section_keys = {"A", "B", "C"}
+        observed = {"A", "B"}
+        assert audit_section_keys_stale(observed, section_keys) == {"C"}
+
+    def test_empty_when_all_observed(self):
+        from src.extractors.textline_set import audit_section_keys_stale
+
+        section_keys = {"A", "B"}
+        observed = {"A", "B"}
+        assert audit_section_keys_stale(observed, section_keys) == set()
+
+    def test_ignores_extra_observed_keys(self):
+        """Anything in ``observed`` that isn't in the allowlist is not
+        the responsibility of this helper - that case is the
+        ``audit_textline_section_keys`` (forward) territory."""
+        from src.extractors.textline_set import audit_section_keys_stale
+
+        section_keys = {"A", "B"}
+        observed = {"A", "B", "OutOfBand"}
+        assert audit_section_keys_stale(observed, section_keys) == set()
+
+
 class TestSectionKeysRequired:
     """extract_textline_sections requires the per-game ``section_keys``
     allowlist - calling it without one is a programming error and must

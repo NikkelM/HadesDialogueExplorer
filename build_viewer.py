@@ -42,6 +42,10 @@ from src.extractors.textline_set import (
     audit_section_key_labels_stale,
     audit_req_type_labels,
     audit_req_type_labels_stale,
+    audit_req_type_edge_labels,
+    audit_req_type_edge_labels_stale,
+    audit_req_type_display_order,
+    audit_req_type_display_order_stale,
 )
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
@@ -413,9 +417,12 @@ def annotate_label_maps(graph_data: dict) -> None:
       - labels defined for keys no longer in the allowlist (stale);
       - requirement fields allowlisted in any game's req-fields
         allowlist but missing from the corresponding
-        ``*_REQ_TYPE_LABELS`` map (would silently fall back to the raw
-        camelCase field name);
-      - req-type labels defined for fields no longer in the allowlist;
+        ``*_REQ_TYPE_LABELS`` / ``*_REQ_TYPE_EDGE_LABELS`` /
+        ``*_REQ_TYPE_DISPLAY_ORDER`` map (would silently fall back to
+        the raw camelCase field name, the literal 'ALL' edge chip, and
+        the end-of-list sort sentinel respectively);
+      - entries in any of the three req-type maps that reference fields
+        no longer in the per-game allowlist (stale);
       - duplicate field names across two games' req-type maps (the
         merged map would silently last-wins and mask a real conflict
         between disjoint per-game vocabularies).
@@ -465,6 +472,47 @@ def annotate_label_maps(graph_data: dict) -> None:
                 f"{game_label}_REQ_TYPE_LABELS reference fields that "
                 f"are not in the {game_label} req-fields allowlist - "
                 f"remove them: {stale_labels}"
+            )
+
+        # Mirror the labels-map drift checks for the edge-chip and
+        # display-order maps so the same per-game seam catches all
+        # three sides of the requirement-field vocabulary. Without
+        # these, a missing edge entry silently falls back to the
+        # literal ``'ALL'`` chip in the viewer (mislabelling any
+        # non-``all``-semantics field) and a missing display-order
+        # entry sorts to the end via the index fallback (breaking the
+        # curated hard-vs-permissive grouping).
+        missing_edge = sorted(audit_req_type_edge_labels(allowed_fields, edge_labels))
+        if missing_edge:
+            print(
+                f"WARNING: {len(missing_edge)} {game_label} req-type "
+                f"field(s) have no entry in {game_label}_REQ_TYPE_EDGE_LABELS - "
+                f"viewer will fall back to the literal 'ALL' chip: "
+                f"{missing_edge}"
+            )
+        stale_edge = sorted(audit_req_type_edge_labels_stale(allowed_fields, edge_labels))
+        if stale_edge:
+            print(
+                f"WARNING: {len(stale_edge)} entry(ies) in "
+                f"{game_label}_REQ_TYPE_EDGE_LABELS reference fields that "
+                f"are not in the {game_label} req-fields allowlist - "
+                f"remove them: {stale_edge}"
+            )
+        missing_order = sorted(audit_req_type_display_order(allowed_fields, display_order))
+        if missing_order:
+            print(
+                f"WARNING: {len(missing_order)} {game_label} req-type "
+                f"field(s) missing from {game_label}_REQ_TYPE_DISPLAY_ORDER - "
+                f"viewer will sort them to the end via the index fallback: "
+                f"{missing_order}"
+            )
+        stale_order = sorted(audit_req_type_display_order_stale(allowed_fields, display_order))
+        if stale_order:
+            print(
+                f"WARNING: {len(stale_order)} entry(ies) in "
+                f"{game_label}_REQ_TYPE_DISPLAY_ORDER reference fields that "
+                f"are not in the {game_label} req-fields allowlist - "
+                f"remove them: {stale_order}"
             )
 
         # Per-game vocabularies are expected to be disjoint (H1 and H2

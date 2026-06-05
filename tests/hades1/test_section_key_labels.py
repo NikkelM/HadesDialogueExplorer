@@ -19,6 +19,10 @@ from src.extractors.textline_set import (
     audit_section_key_labels_stale,
     audit_req_type_labels,
     audit_req_type_labels_stale,
+    audit_req_type_edge_labels,
+    audit_req_type_edge_labels_stale,
+    audit_req_type_display_order,
+    audit_req_type_display_order_stale,
 )
 from build_viewer import annotate_label_maps
 
@@ -96,6 +100,33 @@ class TestReqTypeLabelMaps:
         assert stale == set(), (
             f"HADES1_REQ_TYPE_LABELS entries with no matching allowlist "
             f"field: {sorted(stale)}"
+        )
+
+    def test_no_stale_req_type_edge_labels(self):
+        """Edge-label entries for fields no longer in the allowlist
+        would produce phantom chip mappings in the merged
+        ``reqTypeEdgeLabels`` map. Reverse direction of
+        :func:`audit_req_type_edge_labels` - the forward case is
+        covered by ``test_req_type_edge_labels_covers_all_known_fields``
+        above."""
+        known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
+        stale = audit_req_type_edge_labels_stale(known, HADES1_REQ_TYPE_EDGE_LABELS)
+        assert stale == set(), (
+            f"HADES1_REQ_TYPE_EDGE_LABELS entries with no matching "
+            f"allowlist field: {sorted(stale)}"
+        )
+
+    def test_no_stale_req_type_display_order(self):
+        """Display-order entries for fields no longer in the allowlist
+        would produce a phantom sort bucket. Reverse direction of
+        :func:`audit_req_type_display_order` - the forward case is
+        covered by ``test_req_type_order_covers_all_known_fields``
+        above."""
+        known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
+        stale = audit_req_type_display_order_stale(known, HADES1_REQ_TYPE_DISPLAY_ORDER)
+        assert stale == set(), (
+            f"HADES1_REQ_TYPE_DISPLAY_ORDER entries with no matching "
+            f"allowlist field: {sorted(stale)}"
         )
 
 
@@ -282,4 +313,106 @@ class TestReqTypeLabelSourcesPerGameSeam:
 
         out = capsys.readouterr().out
         assert "RemovedFromAllowlist" in out
+        assert "are not in the HADES1 req-fields allowlist" in out
+
+    def test_missing_req_type_edge_label_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """A req-field allowlisted without an entry in the edge-label
+        map would silently fall back to the literal 'ALL' chip in the
+        viewer, which is a misnomer for any non-all-semantics field."""
+        import build_viewer
+
+        fake_allowed = {"H1Field", "NewlyAddedField"}
+        fake_labels = {"H1Field": "H1 friendly", "NewlyAddedField": "New"}
+        fake_edge = {"H1Field": "ALL"}
+        fake_order = ["H1Field", "NewlyAddedField"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "NewlyAddedField" in out
+        assert "no entry in HADES1_REQ_TYPE_EDGE_LABELS" in out
+
+    def test_stale_req_type_edge_label_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """Edge-label entries referencing fields no longer in the
+        allowlist would render phantom chip mappings in the merged
+        ``reqTypeEdgeLabels`` map; surface as a warning so the dead
+        entry can be cleaned up."""
+        import build_viewer
+
+        fake_allowed = {"H1Field"}
+        fake_labels = {"H1Field": "H1 friendly"}
+        fake_edge = {
+            "H1Field": "ALL",
+            "RemovedFromAllowlist": "STALE",
+        }
+        fake_order = ["H1Field"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "RemovedFromAllowlist" in out
+        assert "HADES1_REQ_TYPE_EDGE_LABELS" in out
+        assert "are not in the HADES1 req-fields allowlist" in out
+
+    def test_missing_req_type_display_order_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """A req-field allowlisted but missing from the display-order
+        list would sort to the end via the viewer's index fallback,
+        breaking the curated hard-vs-permissive grouping."""
+        import build_viewer
+
+        fake_allowed = {"H1Field", "NewlyAddedField"}
+        fake_labels = {"H1Field": "H1 friendly", "NewlyAddedField": "New"}
+        fake_edge = {"H1Field": "ALL", "NewlyAddedField": "ALL"}
+        fake_order = ["H1Field"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "NewlyAddedField" in out
+        assert "HADES1_REQ_TYPE_DISPLAY_ORDER" in out
+
+    def test_stale_req_type_display_order_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """Display-order entries referencing fields no longer in the
+        allowlist would produce a phantom sort bucket. Surface as a
+        warning so the dead entry can be cleaned up."""
+        import build_viewer
+
+        fake_allowed = {"H1Field"}
+        fake_labels = {"H1Field": "H1 friendly"}
+        fake_edge = {"H1Field": "ALL"}
+        fake_order = ["H1Field", "RemovedFromAllowlist"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "RemovedFromAllowlist" in out
+        assert "HADES1_REQ_TYPE_DISPLAY_ORDER" in out
         assert "are not in the HADES1 req-fields allowlist" in out

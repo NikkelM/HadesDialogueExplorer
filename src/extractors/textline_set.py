@@ -166,6 +166,48 @@ def audit_req_type_labels_stale(req_fields, labels) -> set:
     """
     return set(labels) - set(req_fields)
 
+
+def audit_req_type_edge_labels(req_fields, edge_labels) -> set:
+    """Return the subset of ``req_fields`` that have no entry in
+    ``edge_labels``.
+
+    Mirrors :func:`audit_req_type_labels` for the tree edge chip
+    vocabulary. Missing entries fall back to the literal ``'ALL'``
+    chip in the viewer (``reqTypeEdgeLabels[type] || 'ALL'`` in
+    ``viewer.js``) which is a silent mislabel for any
+    non-``all``-semantics field.
+    """
+    return set(req_fields) - set(edge_labels)
+
+
+def audit_req_type_edge_labels_stale(req_fields, edge_labels) -> set:
+    """Return the subset of ``edge_labels`` keys that are not in
+    ``req_fields``. Reverse direction of
+    :func:`audit_req_type_edge_labels`.
+    """
+    return set(edge_labels) - set(req_fields)
+
+
+def audit_req_type_display_order(req_fields, display_order) -> set:
+    """Return the subset of ``req_fields`` that does not appear in
+    ``display_order``.
+
+    Fields missing from the order list sort to the end via the viewer's
+    ``reqTypeOrderIndex`` fallback sentinel, breaking the curated
+    grouping that puts hard requirements above permissive ones.
+    """
+    return set(req_fields) - set(display_order)
+
+
+def audit_req_type_display_order_stale(req_fields, display_order) -> set:
+    """Return the subset of ``display_order`` entries that are not in
+    ``req_fields``. Reverse direction of
+    :func:`audit_req_type_display_order` - a leftover entry from a
+    renamed/removed field produces a phantom slot in the merged
+    ``reqTypeOrder``.
+    """
+    return set(display_order) - set(req_fields)
+
 # Regex used by the audit to catch any field that *looks* like a textline
 # requirement but isn't in TEXTLINE_REQ_FIELDS.
 _REQ_TEXTLINE_PATTERN = re.compile(r"^Required.*TextLine.*$")
@@ -447,6 +489,46 @@ def audit_textline_section_keys(parsed_root, section_keys) -> set:
         and k not in section_known
         and k not in req_known
     }
+
+
+def observed_section_keys(parsed_root, section_keys) -> set:
+    """Return the subset of ``section_keys`` (allowlist) that actually
+    appears as an owner-level section-shaped key in ``parsed_root``.
+
+    Per-source observation: most allowlist entries appear in only one
+    or two source files, so individual-file results are noisy. Callers
+    union this across all parsed sources and pass the result to
+    :func:`audit_section_keys_stale` to identify allowlist entries that
+    were never observed in any source (typically left behind by a
+    field rename or a renamed extractor target).
+
+    The structural shape filter (named-table value of section-shaped
+    key) mirrors :func:`audit_textline_section_keys` so the two
+    helpers report consistent observations - any key one finds the
+    other can be reasoned about against.
+    """
+    section_known = set(section_keys)
+    return {
+        k for k, v in _walk_lua_tree(parsed_root)
+        if isinstance(k, str)
+        and k in section_known
+        and isinstance(v, LuaTable)
+        and any(isinstance(nv, LuaTable) for nv in v.named.values())
+    }
+
+
+def audit_section_keys_stale(observed, section_keys) -> set:
+    """Return the subset of ``section_keys`` not present in
+    ``observed`` (the union of :func:`observed_section_keys` across
+    every parsed source).
+
+    Reverse direction of :func:`audit_textline_section_keys`: that
+    catches unknown keys appearing in sources; this catches allowlisted
+    keys that never appear in any source (typically the leftover of a
+    rename or a removed extractor target). Surfacing both directions
+    keeps the per-game allowlist tight as the game data evolves.
+    """
+    return set(section_keys) - set(observed)
 
 
 def _to_string_list(value, game_data_lists: dict = None, sources_out: list = None) -> list:
