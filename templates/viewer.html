@@ -85,6 +85,35 @@ function getEdgeClass(type) {
     return 'edge-all';
 }
 
+// Display order for requirement-type groupings in the dependency tree.
+// Groups are sorted by this index so the same colour bands appear in a
+// consistent semantic order: hard requirements first, then optional, then
+// counts, then exclusions, then cooldowns.
+const REQ_TYPE_ORDER = [
+    'RequiredTextLines',
+    'RequiredTextLinesThisRun',
+    'RequiredTextLinesLastRun',
+    'RequiredTextLinesThisRoom',
+    'RequiredQueuedTextLines',
+    'RequiredAnyTextLines',
+    'RequiredAnyOtherTextLines',
+    'RequiredAnyTextLinesThisRun',
+    'RequiredAnyTextLinesLastRun',
+    'RequiredAnyQueuedTextLines',
+    'RequiredMinAnyTextLines',
+    'RequiredMaxAnyTextLines',
+    'RequiredFalseTextLines',
+    'RequiredFalseQueuedTextLines',
+    'RequiredFalseTextLinesThisRun',
+    'RequiredFalseTextLinesLastRun',
+    'MinRunsSinceAnyTextLines',
+    'MaxRunsSinceAnyTextLines',
+];
+function reqTypeOrder(type) {
+    const i = REQ_TYPE_ORDER.indexOf(type);
+    return i === -1 ? 999 : i;
+}
+
 function getEdgeLabel(type) {
     if (type === 'RequiredTextLines') return 'ALL';
     if (type === 'RequiredAnyTextLines') return 'ANY';
@@ -558,7 +587,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
             const newPath = new Set(ancestorPath);
             newPath.add(name);
             const kids = getChildren(name, direction);
-            appendGroupedChildren(childContainer, kids, direction, newPath);
+            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath);
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
         }
@@ -585,7 +614,7 @@ function renderUpstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        appendGroupedChildren(childContainer, kids, 'upstream', newPath);
+        appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
@@ -605,18 +634,92 @@ function renderDownstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        appendGroupedChildren(childContainer, kids, 'downstream', newPath);
+        appendChildrenWithTypeGrouping(childContainer, kids, 'downstream', newPath);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
     container.appendChild(rootNode);
 }
 
+// Outer grouping: sorts kids by requirement-type order, then wraps each
+// contiguous same-type run in a colour-coded `.req-type-group` box that
+// mirrors the per-type styling in the info panel. Inside each box the
+// existing GameData grouping (`appendGroupedChildren`) still runs, so the
+// nesting is:
+//   .req-type-group  (per requirement type, e.g. ALL / ANY / NOT / ...)
+//     └─ .gamedata-group  (per GameData.X source list, optional)
+//          └─ .tree-node
+// Used by both the root auto-expand path and the lazy-expand path so the
+// grouping is consistent at every depth.
+function appendChildrenWithTypeGrouping(container, kids, direction, ancestorPath) {
+    if (kids.length === 0) return;
+    // Stable sort by requirement-type order. JS Array.prototype.sort is
+    // stable in all evergreen browsers, so kids within the same type keep
+    // their natural insertion order — which is what the inner GameData
+    // chunking relies on to detect contiguous same-group runs.
+    const sorted = kids.slice().sort(
+        (a, b) => reqTypeOrder(a.edgeType) - reqTypeOrder(b.edgeType)
+    );
+    let i = 0;
+    while (i < sorted.length) {
+        const edgeType = sorted[i].edgeType;
+        let j = i;
+        while (j < sorted.length && sorted[j].edgeType === edgeType) j++;
+        const chunk = sorted.slice(i, j);
+        const box = createReqTypeGroup(edgeType, chunk.length);
+        const groupChildren = box.querySelector('.req-type-group-children');
+        appendGroupedChildren(groupChildren, chunk, direction, ancestorPath);
+        container.appendChild(box);
+        i = j;
+    }
+}
+
+function createReqTypeGroup(edgeType, count) {
+    const box = document.createElement('div');
+    box.className = `req-type-group req-type-${edgeType}`;
+
+    const header = document.createElement('div');
+    header.className = 'req-type-group-header';
+
+    const toggle = document.createElement('span');
+    toggle.className = 'toggle';
+    toggle.textContent = '\u25BC';
+    header.appendChild(toggle);
+
+    const edgeChip = document.createElement('span');
+    edgeChip.className = `edge-type ${getEdgeClass(edgeType)}`;
+    edgeChip.textContent = getEdgeLabel(edgeType);
+    header.appendChild(edgeChip);
+
+    const label = document.createElement('span');
+    label.className = 'req-type-group-label';
+    label.textContent = formatReqType(edgeType);
+    header.appendChild(label);
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'req-type-group-count';
+    countSpan.textContent = `${count} textline${count === 1 ? '' : 's'}`;
+    header.appendChild(countSpan);
+
+    const childrenBox = document.createElement('div');
+    childrenBox.className = 'req-type-group-children expanded';
+
+    header.addEventListener('click', () => {
+        const isExpanded = childrenBox.classList.contains('expanded');
+        childrenBox.classList.toggle('expanded');
+        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+    });
+
+    box.appendChild(header);
+    box.appendChild(childrenBox);
+    return box;
+}
+
 // Walks the children list and chunks contiguous runs that share the same
 // non-null GameData group + edge type into a single collapsible
-// `.gamedata-group` box. Ungrouped children are appended as-is. Used by
-// both the root auto-expand path and the lazy-expand path so behaviour is
-// consistent at every depth.
+// `.gamedata-group` box. Ungrouped children are appended as-is. Called
+// from `appendChildrenWithTypeGrouping` after kids have already been
+// chunked by requirement type.
 function appendGroupedChildren(container, kids, direction, ancestorPath) {
     let i = 0;
     while (i < kids.length) {

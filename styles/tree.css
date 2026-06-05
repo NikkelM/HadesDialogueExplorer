@@ -94,3 +94,67 @@
     border-left: 1px dotted #4a3a6b;
     padding-left: 8px;
 }
+
+/* Requirement-type group boxes wrap contiguous tree children that all
+   share the same requirement type (RequiredTextLines, RequiredAnyTextLines,
+   etc.). Mirrors the per-type coloured boxes in the info panel — the
+   actual border-left colour and tinted background come from the global
+   `.req-type-*` classes defined in panels.css, so both views stay in
+   sync. Collapsible via header click. */
+.req-type-group {
+    margin: 4px 0 4px 16px;
+    border-left: 3px solid #555;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.025);
+    padding: 2px 4px 4px 4px;
+}
+.req-type-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
+.req-type-group-header .toggle {
+    width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.req-type-group-header .edge-type {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.req-type-group-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #c0c0c0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+}
+.req-type-group-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
+}
+.req-type-group-children { display: none; padding-top: 2px; }
+.req-type-group-children.expanded { display: block; }
+/* Direct child tree-nodes inside a req-type-group lose their own left
+   border + indent so the box itself frames them visually. */
+.req-type-group-children > .tree-node {
+    margin-left: 8px;
+    border-left: 1px dotted rgba(255, 255, 255, 0.08);
+    padding-left: 8px;
+}
+/* Nested gamedata-group boxes already have their own margin; reduce it
+   so they don't sit awkwardly far right inside the req-type box. */
+.req-type-group-children > .gamedata-group {
+    margin-left: 8px;
+}
