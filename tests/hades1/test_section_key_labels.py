@@ -5,11 +5,6 @@ data and surfaces drift warnings.
 Issue #56: render section keys as human-readable names in the viewer.
 """
 
-import io
-import sys
-
-import pytest
-
 from src.extractors.hades1 import (
     HADES1_TEXTLINE_SECTION_KEYS,
     HADES1_SECTION_KEY_LABELS,
@@ -93,22 +88,8 @@ class TestAnnotateLabelMaps:
     """``annotate_label_maps`` must attach all four label/order lookups
     to the merged graph data so the viewer can do pure lookups."""
 
-    def _base(self):
-        return {
-            "textlines": {},
-            "dependents": {},
-            "speakerNames": {},
-            "stats": {
-                "totalOwners": 0,
-                "totalTextlines": 0,
-                "totalEdges": 0,
-                "unresolvedRefs": [],
-                "duplicates": [],
-            },
-        }
-
-    def test_all_label_maps_attached(self):
-        gd = self._base()
+    def test_all_label_maps_attached(self, make_graph_data):
+        gd = make_graph_data()
         annotate_label_maps(gd)
         # Merged across all games; today H1 is the only contributor so
         # the merged maps equal the H1 maps verbatim.
@@ -117,7 +98,7 @@ class TestAnnotateLabelMaps:
         assert gd["reqTypeOrder"] == list(HADES1_REQ_TYPE_DISPLAY_ORDER)
         assert gd["sectionKeyLabels"] == dict(HADES1_SECTION_KEY_LABELS)
 
-    def test_section_key_label_drift_prints_warning(self, monkeypatch):
+    def test_section_key_label_drift_prints_warning(self, capsys, monkeypatch, make_graph_data):
         """Stub the H1 source list so the audit sees a missing label
         and verify the build pipeline prints a warning rather than
         silently emitting a viewer with raw camelCase keys."""
@@ -130,17 +111,15 @@ class TestAnnotateLabelMaps:
             "_SECTION_KEY_LABEL_SOURCES",
             [("HADES1", fake_keys, fake_labels)],
         )
-        buf = io.StringIO()
-        monkeypatch.setattr(sys, "stdout", buf)
 
-        gd = self._base()
+        gd = make_graph_data()
         build_viewer.annotate_label_maps(gd)
 
-        out = buf.getvalue()
+        out = capsys.readouterr().out
         assert "BrandNewSectionKey" in out
         assert "no entry in HADES1_SECTION_KEY_LABELS" in out
 
-    def test_stale_label_prints_warning(self, monkeypatch):
+    def test_stale_label_prints_warning(self, capsys, monkeypatch, make_graph_data):
         import build_viewer
 
         fake_keys = frozenset({"InteractTextLineSets"})
@@ -153,13 +132,11 @@ class TestAnnotateLabelMaps:
             "_SECTION_KEY_LABEL_SOURCES",
             [("HADES1", fake_keys, fake_labels)],
         )
-        buf = io.StringIO()
-        monkeypatch.setattr(sys, "stdout", buf)
 
-        gd = self._base()
+        gd = make_graph_data()
         build_viewer.annotate_label_maps(gd)
 
-        out = buf.getvalue()
+        out = capsys.readouterr().out
         assert "RemovedFromAllowlist" in out
         assert "are not in HADES1_TEXTLINE_SECTION_KEYS" in out
 
@@ -171,21 +148,7 @@ class TestReqTypeLabelSourcesPerGameSeam:
     per-game maps additively, drop duplicates from the display order,
     and warn loudly if two games' maps collide on a field name."""
 
-    def _base(self):
-        return {
-            "textlines": {},
-            "dependents": {},
-            "speakerNames": {},
-            "stats": {
-                "totalOwners": 0,
-                "totalTextlines": 0,
-                "totalEdges": 0,
-                "unresolvedRefs": [],
-                "duplicates": [],
-            },
-        }
-
-    def test_two_games_with_disjoint_vocab_merge_additively(self, monkeypatch):
+    def test_two_games_with_disjoint_vocab_merge_additively(self, capsys, monkeypatch, make_graph_data):
         import build_viewer
 
         h1_labels = {"H1Field": "H1 friendly"}
@@ -205,10 +168,8 @@ class TestReqTypeLabelSourcesPerGameSeam:
         # Stub the section-key seam to a no-op so this test only
         # exercises the req-type merge path.
         monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
-        buf = io.StringIO()
-        monkeypatch.setattr(sys, "stdout", buf)
 
-        gd = self._base()
+        gd = make_graph_data()
         build_viewer.annotate_label_maps(gd)
 
         assert gd["reqTypeLabels"] == {"H1Field": "H1 friendly", "H2Field": "H2 friendly"}
@@ -216,9 +177,9 @@ class TestReqTypeLabelSourcesPerGameSeam:
         # Order: H1 first (declared first), then H2 appended.
         assert gd["reqTypeOrder"] == ["H1Field", "H2Field"]
         # No conflict warnings when vocabularies are disjoint.
-        assert "conflict" not in buf.getvalue()
+        assert "conflict" not in capsys.readouterr().out
 
-    def test_conflicting_req_type_field_emits_warning(self, monkeypatch):
+    def test_conflicting_req_type_field_emits_warning(self, capsys, monkeypatch, make_graph_data):
         """If H2 ever ships a field name H1 also uses, the silent
         last-wins behaviour of dict.update would mask a real
         per-game-vocabulary conflict. The audit must surface it."""
@@ -240,13 +201,11 @@ class TestReqTypeLabelSourcesPerGameSeam:
             ],
         )
         monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
-        buf = io.StringIO()
-        monkeypatch.setattr(sys, "stdout", buf)
 
-        gd = self._base()
+        gd = make_graph_data()
         build_viewer.annotate_label_maps(gd)
 
-        out = buf.getvalue()
+        out = capsys.readouterr().out
         assert "HADES2_REQ_TYPE_LABELS" in out
         assert "HADES2_REQ_TYPE_EDGE_LABELS" in out
         assert "HADES2_REQ_TYPE_DISPLAY_ORDER" in out

@@ -102,6 +102,10 @@ function displayName(id) {
 
 // Render a speaker/NPC name as HTML: friendly label with the internal ID
 // available as a `title` tooltip when a mapping exists.
+//
+// Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
+// call site - both the friendly label and the internal-ID tooltip are
+// already routed through escapeHtml below.
 function renderSpeakerHtml(id) {
     const friendly = speakerNames[id];
     if (friendly && friendly !== id) {
@@ -136,6 +140,10 @@ function formatReqType(type) {
 // exists. Mirrors ``renderSpeakerHtml`` / ``renderSectionHtml`` so the
 // hover-to-reveal-internal-name affordance is consistent across the
 // three label families.
+//
+// Returns pre-escaped HTML. Do NOT pass through escapeHtml again at
+// the call site - both the friendly label and the internal-key tooltip
+// are already routed through escapeHtml below.
 function renderReqTypeHtml(type, extraClass) {
     const friendly = reqTypeLabels[type];
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
@@ -159,6 +167,10 @@ function formatSectionKey(key) {
 // ``renderSpeakerHtml`` so both UI surfaces (search dropdown + details
 // view) get the same hover-to-reveal-internal-name behaviour, including
 // the dotted-underline affordance via the ``[title]`` attribute selector.
+//
+// Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
+// call site - both the friendly label and the internal-key tooltip are
+// already routed through escapeHtml below.
 function renderSectionHtml(key) {
     const friendly = sectionKeyLabels[key];
     if (friendly && friendly !== key) {

@@ -36,6 +36,13 @@ GENERIC_PATH_NAMES = {
     "TextLines",
 }
 
+# Defensive depth cap on ``_walk_owners``. Hades data is finite and
+# well-shaped (max real-world depth is well under 20), so any walk that
+# exceeds this bound indicates either a cycle introduced by a future
+# parser change or a malformed Lua input. Matches the project-wide
+# "fail loud" idiom rather than risking a silent ``RecursionError``.
+_WALK_OWNERS_MAX_DEPTH = 64
+
 
 def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
     """
@@ -74,6 +81,15 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
 def _walk_owners(node, path=()):
     """Yield (owner_name, owner_table, default_speaker) for every table
     that contains a textline-set section."""
+    if len(path) > _WALK_OWNERS_MAX_DEPTH:
+        tail = " -> ".join(repr(seg) for seg in path[-8:])
+        raise ValueError(
+            f"DeathLoopData walker exceeded max depth "
+            f"{_WALK_OWNERS_MAX_DEPTH} (path tail: ... -> {tail}). "
+            f"This likely indicates a cycle introduced by a parser change "
+            f"or malformed Lua input."
+        )
+
     if not isinstance(node, LuaTable):
         return
 
