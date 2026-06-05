@@ -136,10 +136,13 @@ def _short_loc(tl_data: dict) -> str:
 
 
 # Hardcoded per-game known-unresolved maps in priority order. Each entry is
-# ``(label, mapping)`` so the audit can identify which game's list is drifting.
-# Future H2 support adds its own entry here.
+# ``(game_label, mapping)`` so the audit can identify which game's list is
+# drifting; the warning string interpolates the variable-name suffix from
+# the game prefix (e.g. ``HADES1`` -> ``HADES1_KNOWN_UNRESOLVED_REFS``).
+# Mirrors the ``_SECTION_KEY_LABEL_SOURCES`` convention below so adding H2
+# is a one-line change in both lists.
 _KNOWN_UNRESOLVED_SOURCES = [
-    ("HADES1_KNOWN_UNRESOLVED_REFS", HADES1_KNOWN_UNRESOLVED_REFS),
+    ("HADES1", HADES1_KNOWN_UNRESOLVED_REFS),
 ]
 
 
@@ -162,12 +165,13 @@ def annotate_known_unresolved(graph_data: dict) -> None:
     """
     unresolved_set = set(graph_data["stats"]["unresolvedRefs"])
     union_known = {}
-    for label, mapping in _KNOWN_UNRESOLVED_SOURCES:
+    for game_label, mapping in _KNOWN_UNRESOLVED_SOURCES:
         stale = sorted(set(mapping) - unresolved_set)
         if stale:
             print(
-                f"WARNING: {len(stale)} entry(ies) in {label} are now "
-                f"resolved by the parser - remove them: {stale}"
+                f"WARNING: {len(stale)} entry(ies) in "
+                f"{game_label}_KNOWN_UNRESOLVED_REFS are now resolved by "
+                f"the parser - remove them: {stale}"
             )
         for name, info in mapping.items():
             if name in unresolved_set:
