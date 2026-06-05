@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hades Dialogue Dependency Explorer</title>
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+<header>
+    <h1>Hades Dialogue Dependency Explorer</h1>
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search textlines... (e.g. OrpheusSingsAgain02)" autocomplete="off">
+        <div id="search-results"></div>
+    </div>
+    <div class="stats" id="stats"></div>
+</header>
+<!-- Stable mount for viewer.js to render a load error into without
+     clobbering the page chrome. Initially hidden; showLoadError()
+     reveals it on fetch/JSON.parse failure. -->
+<div id="app-error" class="app-error" hidden></div>
+<main>
+    <div class="panel" id="panel-info">
+        <h2>Textline Details</h2>
+        <div id="info-content"><div class="empty-state">Search for a textline to see its details</div></div>
+    </div>
+    <div class="panel" id="panel-upstream">
+        <h2>↑ Prerequisites (what it requires)</h2>
+        <div id="upstream-content"><div class="empty-state">Select a textline to see its prerequisites</div></div>
+    </div>
+    <div class="panel" id="panel-downstream">
+        <h2>↓ Dependents (what requires it)</h2>
+        <div id="downstream-content"><div class="empty-state">Select a textline to see what depends on it</div></div>
+    </div>
+</main>
+<!-- Script kept at end of body so the DOM is fully parsed before
+     ``boot()`` runs. The bundler inserts a sibling
+     ``<script type="application/json" id="viewer-data">`` immediately
+     before this tag for the offline single-file build. -->
+<script src="viewer.js"></script>
+</body>
+</html>

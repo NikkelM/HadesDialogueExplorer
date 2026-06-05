@@ -1,42 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hades Dialogue Dependency Explorer</title>
-<style>
-/* __CSS_PLACEHOLDER__ */
-</style>
-</head>
-<body>
-<header>
-    <h1>🎵 Dialogue Dependency Explorer</h1>
-    <div class="search-container">
-        <input type="text" id="search" placeholder="Search textlines... (e.g. OrpheusSingsAgain02)" autocomplete="off">
-        <div id="search-results"></div>
-    </div>
-    <div class="stats" id="stats"></div>
-</header>
-<main>
-    <div class="panel" id="panel-info">
-        <h2>Textline Details</h2>
-        <div id="info-content"><div class="empty-state">Search for a textline to see its details</div></div>
-    </div>
-    <div class="panel" id="panel-upstream">
-        <h2>↑ Prerequisites (what it requires)</h2>
-        <div id="upstream-content"><div class="empty-state">Select a textline to see its prerequisites</div></div>
-    </div>
-    <div class="panel" id="panel-downstream">
-        <h2>↓ Dependents (what requires it)</h2>
-        <div id="downstream-content"><div class="empty-state">Select a textline to see what depends on it</div></div>
-    </div>
-</main>
-<script>
-/* __DATA_PLACEHOLDER__ */
-
 // --- Data Layer ---
+//
+// All DATA-dependent module state is declared with ``let`` so it can be
+// assigned inside ``init(data)`` once the dataset is loaded. Two boot
+// modes are supported by the same script (see the bottom of this file):
+//
+//   - Split build (GH Pages / local HTTP): ``fetch('data.json')``.
+//   - Bundled single-file (release artifact, ``file://``): JSON is
+//     inlined inside a ``<script type="application/json"
+//     id="viewer-data">`` element and read via ``textContent``.
 
-function loadData() {
+let textlines, dependents, speakerNames, stats;
+let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions;
+let unresolvedRefBlocks;
+let reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder;
+let sectionKeyLabels;
+let allNames;
+
+// Pre-built index for O(1) lookups when sorting tree children into
+// per-type groups; falls back to a sentinel so unknown types sort last
+// and keep a stable order amongst themselves. Initialised in
+// ``init(data)`` once ``reqTypeOrder`` is populated.
+let _reqTypeOrderIndex;
+
+function loadData(DATA) {
     return {
         textlines: DATA.textlines,
         dependents: DATA.dependents,
@@ -53,24 +39,6 @@ function loadData() {
         allNames: Object.keys(DATA.textlines).sort(),
     };
 }
-
-const {
-    textlines, dependents, speakerNames, stats,
-    knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions,
-    unresolvedRefBlocks,
-    reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder,
-    sectionKeyLabels,
-    allNames,
-} = loadData();
-
-// Pre-built index for O(1) lookups when sorting tree children into
-// per-type groups; falls back to a sentinel so unknown types sort last
-// and keep a stable order amongst themselves.
-const _reqTypeOrderIndex = (() => {
-    const m = {};
-    reqTypeOrder.forEach((t, i) => { m[t] = i; });
-    return m;
-})();
 
 // --- Utilities ---
 
@@ -871,14 +839,73 @@ function applyHashFromUrl() {
 
 // --- Init ---
 
-function init() {
+function init(data) {
+    ({
+        textlines, dependents, speakerNames, stats,
+        knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions,
+        unresolvedRefBlocks,
+        reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder,
+        sectionKeyLabels,
+        allNames,
+    } = loadData(data));
+
+    _reqTypeOrderIndex = (() => {
+        const m = {};
+        reqTypeOrder.forEach((t, i) => { m[t] = i; });
+        return m;
+    })();
+
     initStats();
     initSearch();
     applyHashFromUrl();
     window.addEventListener('hashchange', applyHashFromUrl);
 }
 
-init();
-</script>
-</body>
-</html>
+// Render a load error into the stable #app-error mount instead of
+// blowing away the page chrome, so the search bar and panel headers
+// remain visible while the user reads the message.
+function showLoadError(err) {
+    const mount = document.getElementById('app-error');
+    const msg = (err && err.message) ? err.message : String(err);
+    if (mount) {
+        mount.hidden = false;
+        mount.textContent = 'Failed to load dialogue data: ' + msg;
+    } else {
+        // Fallback: prepend to body if the mount is missing (e.g.
+        // someone customised the shell and removed the placeholder).
+        const fallback = document.createElement('div');
+        fallback.style.cssText = 'padding:1em;margin:1em;background:#3a1414;color:#f8b;border:1px solid #a44;border-radius:6px';
+        fallback.textContent = 'Failed to load dialogue data: ' + msg;
+        document.body.insertBefore(fallback, document.body.firstChild);
+    }
+}
+
+// Dual-mode boot:
+//   1. Bundled single-file: data is inlined as
+//      ``<script type="application/json" id="viewer-data">``; we read
+//      its textContent and JSON.parse it. Works from ``file://``.
+//   2. Split build: no inline element, so fetch ``data.json``. Requires
+//      an HTTP server (local dev or GH Pages).
+// Wrapped in an async function so a synchronous JSON.parse throw is
+// caught by the same try/catch as a network failure.
+async function boot() {
+    try {
+        const inline = document.getElementById('viewer-data');
+        let data;
+        if (inline) {
+            data = JSON.parse(inline.textContent);
+        } else {
+            const r = await fetch('data.json');
+            if (!r.ok) {
+                throw new Error('HTTP ' + r.status + ' fetching data.json');
+            }
+            data = await r.json();
+        }
+        init(data);
+    } catch (err) {
+        console.error('Viewer boot failed:', err);
+        showLoadError(err);
+    }
+}
+
+boot();

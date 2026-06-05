@@ -9,7 +9,9 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 - Shows upstream prerequisites and downstream dependents
 - Displays dialogue text with speaker attribution
 - Highlights external/unresolved references
-- Single self-contained HTML output - no server needed
+- Ships in two flavours: a split build for HTTP / GitHub Pages hosting
+  (small cacheable files) and a single-file bundle for offline `file://`
+  use
 
 ## Setup
 
@@ -26,10 +28,34 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 python generate_data.py
 
 # Step 2: Build the HTML viewer from generated data
-python build_viewer.py [output_path]
+python build_viewer.py            # writes both split + bundle outputs (default)
+python build_viewer.py --split    # split only (for GH Pages / local HTTP dev)
+python build_viewer.py --bundle   # single-file only (for release artifacts)
 ```
 
-By default, outputs `dialogue_explorer.html` in the project root.
+All outputs land in `dist/`:
+
+| File | Mode | Purpose |
+| --- | --- | --- |
+| `dist/index.html`            | split  | HTML shell |
+| `dist/viewer.js`             | split  | Viewer code (loads `data.json` via fetch) |
+| `dist/viewer.css`            | split  | Concatenated styles |
+| `dist/data.json`             | split  | Merged graph data |
+| `dist/dialogue_explorer.html` | bundle | Single self-contained file |
+
+### Viewing the split build locally
+
+Browsers block `fetch()` from `file://`, so the split build needs an
+HTTP server. The bundled file does not. Any static server works; the
+simplest:
+
+```bash
+python -m http.server 8000 --directory dist
+# then open http://localhost:8000/
+```
+
+The bundled `dist/dialogue_explorer.html` can be opened by
+double-clicking it (or via `file://`) - no server required.
 
 ### Requirements
 

@@ -2,10 +2,33 @@
 Build the final HTML viewer by combining all JSON datasets in ``outputs/``
 with the HTML template.
 
+Two output flavours are supported:
+
+  - ``--split`` (default): writes ``dist/index.html`` + ``dist/viewer.js``
+    + ``dist/viewer.css`` + ``dist/data.json``. This is the canonical
+    artifact - it's what gets deployed to GitHub Pages and is the only
+    shape that benefits from HTTP caching (each file is cached and
+    invalidated independently). Requires an HTTP server to view locally
+    because browsers block ``fetch()`` from ``file://``.
+
+  - ``--bundle``: stitches the split outputs into a single
+    ``dist/dialogue_explorer.html`` for offline ``file://`` use. CSS and
+    JS are inlined; data is embedded as a ``<script
+    type="application/json">`` block read via ``textContent``. Suitable
+    as a GitHub Releases attachment.
+
+  - ``--all``: runs both, in that order. This is the default when no flag
+    is passed because the bundler is fast and most release flows want
+    both artifacts.
+
 Usage:
-    python build_viewer.py [output_path]
+    python build_viewer.py            # equivalent to --all
+    python build_viewer.py --split
+    python build_viewer.py --bundle
+    python build_viewer.py --all
 """
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -28,10 +51,18 @@ from src.extractors.hades1 import (
 )
 
 PROJECT_DIR = Path(__file__).parent
-TEMPLATE_PATH = PROJECT_DIR / "templates" / "viewer.html"
+TEMPLATES_DIR = PROJECT_DIR / "templates"
+INDEX_TEMPLATE = TEMPLATES_DIR / "index.html"
+VIEWER_JS_TEMPLATE = TEMPLATES_DIR / "viewer.js"
 STYLES_DIR = PROJECT_DIR / "styles"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
-DEFAULT_OUTPUT = PROJECT_DIR / "dialogue_explorer.html"
+DIST_DIR = PROJECT_DIR / "dist"
+
+# Files written by the split build. Tracked explicitly so the cleaner
+# only removes managed artifacts, not anything else the user may have
+# dropped in ``dist/`` (e.g. screenshots, release notes).
+_SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
+_BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
 
 
 def merge_graph_data(datasets: list[dict]) -> dict:
@@ -417,22 +448,128 @@ def build_css() -> str:
     return "\n\n".join(parts)
 
 
-def build_html(graph_data: dict, output_path: Path):
-    """Generate the self-contained HTML viewer."""
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
-    json_data = json.dumps(graph_data, separators=(",", ":"))
+def _ensure_clean_dist() -> None:
+    """Remove just the managed split/bundle outputs from ``dist/`` so a
+    rebuild can't leave a stale ``data.json`` next to a fresh
+    ``index.html``. Unrelated files (e.g. user-dropped screenshots,
+    release notes) are preserved."""
+    DIST_DIR.mkdir(parents=True, exist_ok=True)
+    for name in (*_SPLIT_OUTPUT_NAMES, _BUNDLE_OUTPUT_NAME):
+        target = DIST_DIR / name
+        if target.exists():
+            target.unlink()
+
+
+def build_split(graph_data: dict) -> dict:
+    """Write the canonical split-build outputs into ``dist/``.
+
+    Returns a dict mapping output name -> file size in bytes, used by
+    the caller for reporting and by ``build_bundle`` to inline the same
+    artifacts without re-reading the source templates.
+    """
+    _ensure_clean_dist()
+
     css_data = build_css()
+    js_data = VIEWER_JS_TEMPLATE.read_text(encoding="utf-8")
+    index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
+    json_data = json.dumps(graph_data, separators=(",", ":"))
 
-    html = template.replace("/* __CSS_PLACEHOLDER__ */", css_data)
-    html = html.replace("/* __DATA_PLACEHOLDER__ */", f"const DATA = {json_data};")
+    (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
+    (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
+    (DIST_DIR / "viewer.css").write_text(css_data, encoding="utf-8")
+    (DIST_DIR / "data.json").write_text(json_data, encoding="utf-8")
 
-    output_path.write_text(html, encoding="utf-8")
-    size_kb = output_path.stat().st_size / 1024
-    print(f"Generated: {output_path} ({size_kb:.0f} KB)")
+    sizes = {name: (DIST_DIR / name).stat().st_size for name in _SPLIT_OUTPUT_NAMES}
+    print(
+        f"Split build -> dist/: "
+        f"index.html {sizes['index.html']/1024:.1f} KB, "
+        f"viewer.js {sizes['viewer.js']/1024:.1f} KB, "
+        f"viewer.css {sizes['viewer.css']/1024:.1f} KB, "
+        f"data.json {sizes['data.json']/1024:.0f} KB"
+    )
+    return sizes
 
 
-def main():
-    output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUTPUT
+def _inline_data_for_bundle(json_text: str) -> str:
+    """Escape a JSON document so it can safely be embedded inside a
+    ``<script type="application/json">`` element.
+
+    The HTML tokenizer scans script contents for ``</script>`` (case
+    insensitive, partial-match-friendly) to find the end tag and also
+    has historical edge cases around ``<!--``, ``<script``, etc.
+    Replacing every ``<`` with its ``\\u003C`` JSON escape sidesteps the
+    entire family - the JSON parser decodes ``\\u003C`` back to ``<``
+    transparently and the HTML tokenizer never sees a literal ``<`` in
+    the embedded text.
+    """
+    return json_text.replace("<", "\\u003C")
+
+
+def build_bundle(sizes: dict) -> None:
+    """Stitch the split outputs into a single ``dialogue_explorer.html``.
+
+    Reads the four ``dist/`` artifacts produced by :func:`build_split`
+    and inlines them so the result opens directly from ``file://``.
+    ``sizes`` is taken as input rather than re-computed so the report
+    line agrees with the split build's own report.
+    """
+    index_html = (DIST_DIR / "index.html").read_text(encoding="utf-8")
+    viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
+    viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
+    json_text = (DIST_DIR / "data.json").read_text(encoding="utf-8")
+
+    css_link = '<link rel="stylesheet" href="viewer.css">'
+    if css_link not in index_html:
+        raise RuntimeError(
+            f"Bundler expected to find {css_link!r} in index.html but did not. "
+            f"templates/index.html may have drifted from the bundler's expectations."
+        )
+    script_tag = '<script src="viewer.js"></script>'
+    if script_tag not in index_html:
+        raise RuntimeError(
+            f"Bundler expected to find {script_tag!r} in index.html but did not. "
+            f"templates/index.html may have drifted from the bundler's expectations."
+        )
+
+    inline_css = f"<style>\n{viewer_css}\n</style>"
+    inline_data = (
+        f'<script type="application/json" id="viewer-data">'
+        f'{_inline_data_for_bundle(json_text)}'
+        f'</script>'
+    )
+    inline_js = f"<script>\n{viewer_js}\n</script>"
+
+    bundled = index_html.replace(css_link, inline_css)
+    bundled = bundled.replace(script_tag, inline_data + "\n" + inline_js)
+
+    out = DIST_DIR / _BUNDLE_OUTPUT_NAME
+    out.write_text(bundled, encoding="utf-8")
+    print(f"Bundle build -> {out} ({out.stat().st_size/1024:.0f} KB)")
+
+
+def _parse_args(argv):
+    parser = argparse.ArgumentParser(
+        description="Build the HTML viewer in split, bundled, or both forms."
+    )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--split", dest="mode", action="store_const", const="split",
+        help="Write dist/index.html + viewer.js + viewer.css + data.json (for GH Pages / local HTTP).",
+    )
+    mode.add_argument(
+        "--bundle", dest="mode", action="store_const", const="bundle",
+        help="Write dist/dialogue_explorer.html as a single offline-friendly file.",
+    )
+    mode.add_argument(
+        "--all", dest="mode", action="store_const", const="all",
+        help="Run --split then --bundle (default).",
+    )
+    parser.set_defaults(mode="all")
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = _parse_args(argv if argv is not None else sys.argv[1:])
 
     datasets = []
     json_files = sorted(OUTPUT_DIR.glob("*.json"))
@@ -460,7 +597,17 @@ def main():
           f"{graph_data['stats']['totalEdges']} edges, "
           f"{len(graph_data['stats']['unresolvedRefs'])} external refs")
 
-    build_html(graph_data, output_path)
+    if args.mode in ("split", "all"):
+        sizes = build_split(graph_data)
+    else:
+        sizes = {}
+
+    if args.mode in ("bundle", "all"):
+        if args.mode == "bundle":
+            # Bundle-only run still needs the split outputs to stitch
+            # from; refresh them so we don't bundle stale content.
+            sizes = build_split(graph_data)
+        build_bundle(sizes)
 
 
 if __name__ == "__main__":

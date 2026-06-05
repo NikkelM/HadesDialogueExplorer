@@ -79,6 +79,20 @@ main {
     padding: 40px;
 }
 
+/* Failure banner rendered by viewer.js when data load (fetch or
+   JSON.parse) fails. Hidden until populated; styled to be unmissable
+   without clobbering the page chrome (search bar, panel headers). */
+.app-error {
+    background: #3a1414;
+    color: #f8b3b3;
+    border: 1px solid #a44;
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 20px;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #1a1a2e; }
