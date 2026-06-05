@@ -355,6 +355,38 @@ def _merge_synthetic(section: dict, name: str, data: dict) -> None:
     return
 
 
+def _walk_lua_tree(root):
+    """Yield every ``(key, value)`` pair from every ``LuaTable`` nested
+    under ``root``.
+
+    Accepts either a parsed-file ``dict`` (mapping top-level Lua names
+    to values) or a raw ``LuaTable``; the former is transparently
+    unwrapped so audits can take the parser output directly. Recursion
+    descends through both named entries and the array part so any
+    ``LuaTable`` reachable from the root has its keys surfaced
+    regardless of position.
+
+    Iteration order is DFS but unordered between siblings (a stack-based
+    walker, so iteration order is reverse of declaration order). Audits
+    collect into a ``set`` so ordering does not matter; if a future
+    caller needs deterministic order it should sort the result.
+    """
+    stack: list = []
+    if isinstance(root, dict):
+        stack.extend(root.values())
+    else:
+        stack.append(root)
+    while stack:
+        node = stack.pop()
+        if not isinstance(node, LuaTable):
+            continue
+        for k, v in node.items():
+            yield k, v
+            stack.append(v)
+        for v in node.array:
+            stack.append(v)
+
+
 def audit_requirement_fields(parsed_root) -> set:
     """Walk a parsed Lua tree and return any field names matching
     Required.*TextLine.* that are NOT in our known TEXTLINE_REQ_FIELDS sets.
@@ -363,25 +395,13 @@ def audit_requirement_fields(parsed_root) -> set:
     source files are added. Fields in REQ_TEXTLINE_FIELD_IGNORES are skipped
     (they look like requirements but aren't - typically game-data typos).
     """
-    unknown = set()
     known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT | REQ_TEXTLINE_FIELD_IGNORES
-
-    def visit(node):
-        if isinstance(node, LuaTable):
-            for k, v in node.items():
-                if isinstance(k, str) and _REQ_TEXTLINE_PATTERN.match(k):
-                    if k not in known:
-                        unknown.add(k)
-                visit(v)
-            for v in node.array:
-                visit(v)
-
-    if isinstance(parsed_root, dict):
-        for v in parsed_root.values():
-            visit(v)
-    else:
-        visit(parsed_root)
-    return unknown
+    return {
+        k for k, _ in _walk_lua_tree(parsed_root)
+        if isinstance(k, str)
+        and _REQ_TEXTLINE_PATTERN.match(k)
+        and k not in known
+    }
 
 
 def audit_textline_section_keys(parsed_root, section_keys) -> set:
@@ -394,32 +414,17 @@ def audit_textline_section_keys(parsed_root, section_keys) -> set:
     a future game update before the parser silently drops them. Mirrors
     ``audit_requirement_fields`` but for the section side of the schema.
     """
-    unknown = set()
     req_known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT | REQ_TEXTLINE_FIELD_IGNORES
     section_known = set(section_keys)
-
-    def visit(node):
-        if isinstance(node, LuaTable):
-            for k, v in node.items():
-                if (
-                    isinstance(k, str)
-                    and _SECTION_KEY_PATTERN.match(k)
-                    and isinstance(v, LuaTable)
-                    and any(isinstance(nv, LuaTable) for nv in v.named.values())
-                    and k not in section_known
-                    and k not in req_known
-                ):
-                    unknown.add(k)
-                visit(v)
-            for v in node.array:
-                visit(v)
-
-    if isinstance(parsed_root, dict):
-        for v in parsed_root.values():
-            visit(v)
-    else:
-        visit(parsed_root)
-    return unknown
+    return {
+        k for k, v in _walk_lua_tree(parsed_root)
+        if isinstance(k, str)
+        and _SECTION_KEY_PATTERN.match(k)
+        and isinstance(v, LuaTable)
+        and any(isinstance(nv, LuaTable) for nv in v.named.values())
+        and k not in section_known
+        and k not in req_known
+    }
 
 
 def _to_string_list(value, game_data_lists: dict = None, sources_out: list = None) -> list:
