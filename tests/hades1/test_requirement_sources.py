@@ -3,7 +3,7 @@
 When `RequiredTextLines = { "A", GameData.X, "B" }` is extracted, the
 flat `requirements["RequiredTextLines"]` list is `["A", x1, x2, x3, "B"]`
 and the parallel `requirementSources["RequiredTextLines"]` list is
-`[None, "GameData.X", "GameData.X", "GameData.X", None]` — aligned 1:1
+`[None, "GameData.X", "GameData.X", "GameData.X", None]` - aligned 1:1
 so the viewer can chunk adjacent same-group entries into a labeled box.
 """
 
@@ -90,7 +90,7 @@ class TestInArrayMixedSources:
 
     def test_same_group_referenced_twice_emits_duplicates(self):
         tl = extract_one('RequiredAnyTextLines = { GameData.X, GameData.X },')
-        # Both expansions appear (semantically OK — would be a no-op
+        # Both expansions appear (semantically OK - would be a no-op
         # dedupe in-game, but we represent the source faithfully).
         assert tl["requirements"]["RequiredAnyTextLines"] == [
             "X1", "X2", "X3", "X1", "X2", "X3"

@@ -315,7 +315,7 @@ def _merge_synthetic(section: dict, name: str, data: dict) -> None:
         section[name] = data
         return
     if not existing.get("isSynthetic"):
-        # Real textline already present — keep it, drop the synthetic.
+        # Real textline already present - keep it, drop the synthetic.
         return
     # Both synthetic: first-wins. (Same parent/choice in the same section
     # would be a source-data quirk; we don't expect it in practice.)
@@ -395,7 +395,7 @@ def _to_string_list(value, game_data_lists: dict = None, sources_out: list = Non
     Expands ``LuaIdentifier`` references that name a known GameData list
     (e.g. ``GameData.AphroditeBasicPickUpTextLines``) into the underlying
     textline names. Unknown identifiers are kept as their bare ``.name``
-    so the unresolved-ref audit still surfaces them (cleanly — not as a
+    so the unresolved-ref audit still surfaces them (cleanly - not as a
     ``LuaIdentifier(name='...')`` repr).
 
     If ``sources_out`` is provided (a list), it is populated 1:1 with the

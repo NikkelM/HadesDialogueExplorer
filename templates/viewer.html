@@ -125,7 +125,11 @@ function unresolvedCategoryFor(name) {
 // Render a single requirement <div>, applying the resolved/unresolved
 // class plus (when unresolved) the category class so the viewer can
 // color-code back-compat vs typo-or-bug vs cut-content vs uncategorized.
-function renderReqItem(ref) {
+// When the ref equals ``selfName`` (the textline whose requirements
+// list we're rendering), mark it as a self-reference so the user can
+// see that the game data is faithful while understanding it's a known
+// cooldown / PlayOnce idiom rather than a contradiction.
+function renderReqItem(ref, selfName) {
     const cat = unresolvedCategoryFor(ref);
     const classes = ['req-item'];
     let tip = '';
@@ -140,7 +144,15 @@ function renderReqItem(ref) {
             tip = ` title="${escapeHtml(label)}: ${escapeHtml(known.reason)}"`;
         }
     }
-    return `<div class="${classes.join(' ')}" data-name="${ref}"${tip} onclick="navigateTo('${ref}')">${escapeHtml(ref)}</div>`;
+    const isSelf = selfName && ref === selfName;
+    if (isSelf) {
+        classes.push('self-ref');
+        if (!tip) {
+            tip = ` title="Self-reference: this textline appears in its own requirement list. Common with cooldown (MinRunsSinceAnyTextLines) and PlayOnce (RequiredFalse*) fields; excluded from the dependency graph."`;
+        }
+    }
+    const selfBadge = isSelf ? `<span class="self-ref-badge">self</span>` : '';
+    return `<div class="${classes.join(' ')}" data-name="${ref}"${tip} onclick="navigateTo('${ref}')">${escapeHtml(ref)}${selfBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.
@@ -350,12 +362,12 @@ function renderInfo(name) {
                       + `<span class="gamedata-group-count">${j - i} textline${j - i === 1 ? '' : 's'}</span>`
                       + `</div>`;
                 for (let k = i; k < j; k++) {
-                    html += renderReqItem(refs[k]);
+                    html += renderReqItem(refs[k], name);
                 }
                 html += `</div>`;
                 i = j;
             } else {
-                html += renderReqItem(refs[i]);
+                html += renderReqItem(refs[i], name);
                 i++;
             }
         }
@@ -386,6 +398,12 @@ function getChildren(name, direction) {
             for (const [type, refs] of Object.entries(tl.requirements)) {
                 const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
                 for (let i = 0; i < refs.length; i++) {
+                    // Skip self-references: they always come from cooldown
+                    // / PlayOnce fields (MinRunsSinceAnyTextLines,
+                    // RequiredFalseTextLines*) and would render as a
+                    // misleading recursive edge. Still shown in the
+                    // requirements list in renderInfo with a "self" badge.
+                    if (refs[i] === name) continue;
                     children.push({
                         name: refs[i],
                         edgeType: type,
@@ -396,6 +414,10 @@ function getChildren(name, direction) {
         }
     } else {
         for (const dep of (dependents[name] || [])) {
+            // Self-edges are already filtered out of the dependents
+            // index by graph.py, but guard defensively in case the
+            // upstream data ever changes.
+            if (dep.name === name) continue;
             children.push({ name: dep.name, edgeType: dep.type, group: null });
         }
     }
@@ -405,9 +427,14 @@ function getChildren(name, direction) {
 function hasChildren(name, direction) {
     if (direction === 'upstream') {
         const tl = textlines[name];
-        return tl && Object.values(tl.requirements).some(r => r.length > 0);
+        if (!tl) return false;
+        // Mirror getChildren's self-filter so a textline whose only
+        // requirement is a self-reference renders as a leaf.
+        return Object.values(tl.requirements).some(
+            r => r.some(ref => ref !== name)
+        );
     }
-    return (dependents[name] || []).length > 0;
+    return (dependents[name] || []).some(d => d.name !== name);
 }
 
 function createNodeEl(name, edgeType, direction, ancestorPath) {

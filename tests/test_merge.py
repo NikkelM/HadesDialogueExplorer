@@ -136,3 +136,30 @@ class TestMergeDatasets:
         ds2 = _make_dataset(_make_textline("Beta", "B"))
         merged = merge_graph_data([ds1, ds2])
         assert "Beta" not in merged["stats"]["unresolvedRefs"]
+
+    def test_merge_filters_self_references_from_dependents(self):
+        """Self-references (textline lists itself in own requirements)
+        are kept in the textline's requirements map but filtered from
+        the merged dependents reverse-index and from totalEdges. This
+        mirrors src/graph.py:_build_dependents."""
+        ds = _make_dataset(
+            _make_textline(
+                "Solo", "X",
+                requirements={
+                    "MinRunsSinceAnyTextLines": ["Solo", "Peer"],
+                    "RequiredFalseTextLinesThisRun": ["Solo"],
+                },
+            ),
+            _make_textline("Peer", "X"),
+        )
+        merged = merge_graph_data([ds])
+        # Self-ref preserved in requirements for the info panel.
+        assert "Solo" in merged["textlines"]["Solo"]["requirements"]["MinRunsSinceAnyTextLines"]
+        # But removed from the dependents reverse-index.
+        assert "Solo" not in merged["dependents"]
+        # Peer edge IS kept.
+        assert merged["dependents"]["Peer"] == [
+            {"name": "Solo", "type": "MinRunsSinceAnyTextLines"}
+        ]
+        # Edge count excludes the two self-edges.
+        assert merged["stats"]["totalEdges"] == 1

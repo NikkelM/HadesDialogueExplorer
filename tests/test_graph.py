@@ -136,3 +136,77 @@ class TestMultipleSections:
         result = build_graph_data(npcs)
         assert result["textlines"]["A"]["section"] == "InteractTextLineSets"
         assert result["textlines"]["B"]["section"] == "GiftTextLineSets"
+
+
+class TestSelfReferenceFiltering:
+    """Self-references are kept in each textline's ``requirements`` map
+    (so the info panel can show them) but excluded from the
+    ``dependents`` reverse-index and from ``stats.totalEdges``."""
+
+    def test_self_ref_kept_in_requirements(self):
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Line01": make_textline(
+                requirements={"MinRunsSinceAnyTextLines": ["Line01", "Line02"]}
+            ),
+            "Line02": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        # Faithful to source: self-ref still listed in requirements.
+        assert result["textlines"]["Line01"]["requirements"] == {
+            "MinRunsSinceAnyTextLines": ["Line01", "Line02"]
+        }
+
+    def test_self_ref_excluded_from_dependents(self):
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Line01": make_textline(
+                requirements={"MinRunsSinceAnyTextLines": ["Line01", "Line02"]}
+            ),
+            "Line02": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        # Line01 must not appear as its own dependent.
+        assert "Line01" not in result["dependents"]
+        # The non-self peer-edge IS recorded.
+        assert result["dependents"]["Line02"] == [
+            {"name": "Line01", "type": "MinRunsSinceAnyTextLines"}
+        ]
+
+    def test_self_ref_excluded_from_edge_count(self):
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Line01": make_textline(
+                requirements={"MinRunsSinceAnyTextLines": ["Line01", "Line02"]}
+            ),
+            "Line02": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        # Only the Line01 -> Line02 edge counts; the self-edge does not.
+        assert result["stats"]["totalEdges"] == 1
+
+    def test_self_ref_across_multiple_fields(self):
+        """A textline can self-reference in several fields (e.g.
+        MinRunsSinceAnyTextLines AND RequiredFalseTextLinesThisRun);
+        none of them should land in dependents."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Line01": make_textline(requirements={
+                "MinRunsSinceAnyTextLines": ["Line01"],
+                "RequiredFalseTextLinesThisRun": ["Line01"],
+                "RequiredFalseTextLinesLastRun": ["Line01"],
+            }),
+        })
+        result = build_graph_data(npcs)
+        assert result["dependents"] == {}
+        assert result["stats"]["totalEdges"] == 0
+
+    def test_only_self_ref_makes_isolated_textline(self):
+        """A textline whose only requirements are self-references is
+        effectively isolated from a graph perspective."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Line01": make_textline(
+                requirements={"RequiredFalseTextLines": ["Line01"]}
+            ),
+        })
+        result = build_graph_data(npcs)
+        assert result["dependents"] == {}
+        assert result["stats"]["totalEdges"] == 0
+        # Self-ref is still NOT treated as an unresolved external ref.
+        assert result["stats"]["unresolvedRefs"] == []

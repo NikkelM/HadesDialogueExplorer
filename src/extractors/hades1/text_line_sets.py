@@ -27,7 +27,7 @@ expanded into concrete textline names in the requirements lists.
 
 The file also defines a handful of shared *requirement* objects (e.g.
 ``GameData.PartnerConversationRequirements``). Those are not textline
-lists and are deliberately skipped — only entries whose value is a pure
+lists and are deliberately skipped - only entries whose value is a pure
 array of strings are returned.
 """
 

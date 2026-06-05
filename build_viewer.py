@@ -72,6 +72,14 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     for tl_name, tl_data in merged_textlines.items():
         for req_type, req_list in tl_data.get("requirements", {}).items():
             for dep in req_list:
+                # Self-references (textline lists itself in its own
+                # requirements) always come from cooldown / PlayOnce
+                # fields and are never real graph edges; excluded here
+                # so they don't inflate totalEdges or render as
+                # misleading self-loops in the viewer tree. Mirrors the
+                # filter in src/graph.py:_build_dependents.
+                if dep == tl_name:
+                    continue
                 merged_dependents.setdefault(dep, []).append({
                     "name": tl_name,
                     "type": req_type,

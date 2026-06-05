@@ -126,6 +126,27 @@
     color: #d97a7a;
 }
 
+/* Self-reference marker: a textline that lists itself in one of its
+   own requirement fields. Always a benign cooldown/PlayOnce idiom,
+   never a hard prereq; filtered out of the dependency tree but kept
+   visible here so the user sees the game data faithfully. */
+.req-item.self-ref {
+    opacity: 0.75;
+}
+.self-ref-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 5px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    background: rgba(141, 153, 174, 0.20);
+    color: #b8c2d4;
+    border: 1px solid rgba(141, 153, 174, 0.40);
+}
+
 /* Tree-node badge for unresolved children - small inline pill that
    inherits the same color language as the req-item categories. */
 .tree-unresolved-badge {

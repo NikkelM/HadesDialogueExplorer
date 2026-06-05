@@ -131,10 +131,20 @@ def _dup_summary(entry: dict) -> dict:
 
 
 def _build_dependents(textlines: dict) -> dict:
-    """Reverse-index requirements: dep_name -> [{name, type}, ...]."""
+    """Reverse-index requirements: dep_name -> [{name, type}, ...].
+
+    Self-references are intentionally excluded. They always come from
+    cooldown / PlayOnce-style fields (``MinRunsSinceAnyTextLines``,
+    ``RequiredFalseTextLines*``) and never from hard-prereq fields, so
+    they are idiomatic game-data patterns rather than real graph edges.
+    Including them would inflate ``stats.totalEdges`` and produce
+    misleading "cycle" markers in the viewer's tree.
+    """
     dependents = {}
     for tl_name, tl_data in textlines.items():
         for req_type, req_list in tl_data["requirements"].items():
             for dep in req_list:
+                if dep == tl_name:
+                    continue
                 dependents.setdefault(dep, []).append({"name": tl_name, "type": req_type})
     return dependents
