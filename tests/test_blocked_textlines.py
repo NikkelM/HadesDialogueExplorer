@@ -3,6 +3,8 @@ as permanently unable to play because their hard requirements reference
 undefined textlines, and the reverse-lookup used by the viewer to show
 which dialogues a given unresolved ref blocks."""
 
+import pytest
+
 from build_viewer import annotate_blocked_textlines
 
 
@@ -256,3 +258,26 @@ class TestStats:
         annotate_blocked_textlines(gd)
         assert gd["stats"]["blockedTextlines"] == 0
         assert gd["unresolvedRefBlocks"] == {}
+
+
+class TestSemanticsValidator:
+    """``_assert_viewer_knows_semantics`` is the bundler-drift guard that
+    fails the build if ``annotate_blocked_textlines`` ever emits a
+    ``blockingReasons[*].semantics`` value the viewer can't render.
+    Belt-and-braces against the H1 ``ReferenceError`` regression where
+    a typo'd fallback branch silently produced an invalid explanation."""
+
+    def test_raises_on_unknown_semantics(self):
+        from build_viewer import _assert_viewer_knows_semantics
+        with pytest.raises(ValueError, match="unknown semantics"):
+            _assert_viewer_knows_semantics(
+                [{"semantics": "future-thing"}], "TestTextline"
+            )
+
+    def test_passes_on_known_semantics(self):
+        from build_viewer import (
+            _assert_viewer_knows_semantics,
+            _VIEWER_KNOWN_SEMANTICS,
+        )
+        for sem in _VIEWER_KNOWN_SEMANTICS:
+            _assert_viewer_knows_semantics([{"semantics": sem}], "x")

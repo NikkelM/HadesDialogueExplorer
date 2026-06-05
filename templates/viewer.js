@@ -209,7 +209,7 @@ function renderBlockingReason(reason) {
     } else if (reason.semantics === 'count-min') {
         explain = `${fieldHtml} requires at least ${reason.requiredCount} of the listed textlines to have played, but only ${reason.resolvedCount} are defined (${reason.missingRefs.length} missing: ${missing}).`;
     } else {
-        explain = `<strong>${escapeHtml(fieldName)}</strong>: ${missing}.`;
+        explain = `${fieldHtml}: ${missing}.`;
     }
     return `<div class="blocked-reason">${explain}</div>`;
 }

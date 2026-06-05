@@ -230,6 +230,39 @@ def annotate_known_unresolved(graph_data: dict) -> None:
     graph_data["stats"]["unresolvedByCategory"] = by_category
 
 
+# Semantics tags ``annotate_blocked_textlines`` is allowed to emit on
+# ``blockingReasons[*]["semantics"]``. ``viewer.js::renderBlockingReason``
+# has a finite branch ladder matching these exact strings; any new value
+# emitted here without a corresponding viewer-side branch would render
+# as a generic fallback line and (historically) hit a
+# ``ReferenceError`` on a typo. Kept as a separate constant from
+# ``textline_set.REQUIREMENT_BLOCKING_SEMANTICS`` because that map also
+# contains ``"none"`` / ``"count-permissive"`` values that are filtered
+# out before reaching ``blockingReasons``.
+_VIEWER_KNOWN_SEMANTICS = frozenset({"all", "any", "count-min"})
+
+
+def _assert_viewer_knows_semantics(reasons: list, textline_name: str) -> None:
+    """Fail loud if ``reasons`` contains any semantics value the viewer
+    doesn't know how to render.
+
+    Called once per textline that gains a ``blockingReasons`` list, so
+    that adding a new semantics branch to ``annotate_blocked_textlines``
+    forces the contributor to either add the matching viewer-side
+    branch or update ``_VIEWER_KNOWN_SEMANTICS`` (which surfaces the
+    drift in code review).
+    """
+    unknown = {r["semantics"] for r in reasons} - _VIEWER_KNOWN_SEMANTICS
+    if unknown:
+        raise ValueError(
+            f"annotate_blocked_textlines emitted unknown semantics "
+            f"{sorted(unknown)} for textline {textline_name!r}. "
+            f"viewer.js::renderBlockingReason only handles "
+            f"{sorted(_VIEWER_KNOWN_SEMANTICS)}; add the new branch(es) "
+            f"there before extending the emit set."
+        )
+
+
 def annotate_blocked_textlines(graph_data: dict) -> None:
     """Walk every defined textline and flag those whose requirements can
     never be satisfied because of unresolved references.
@@ -307,6 +340,7 @@ def annotate_blocked_textlines(graph_data: dict) -> None:
                     })
 
         if reasons:
+            _assert_viewer_knows_semantics(reasons, name)
             tl["blocked"] = True
             tl["blockingReasons"] = reasons
             blocked_count += 1
