@@ -1,7 +1,7 @@
 """Build dependency graph data from parsed source data."""
 
 
-def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
+def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
     """
     Build the final data structure for the viewer from per-source extractor
     output.
@@ -11,7 +11,12 @@ def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
             may be an NPC, an enemy, a god boon, an inspect point, etc.
         speaker_names: Optional dict of internal_id -> display_name for owners
             and other speaker IDs. The viewer uses this to render friendly
-            names while keeping internal IDs canonical in the data.
+            names while keeping internal IDs canonical in the data. ``None``
+            (the default) is treated as an empty mapping; pass an explicit
+            dict to populate ``speakerNames`` in the result. ``None`` is the
+            default rather than ``{}`` to avoid the
+            mutable-default-argument footgun if a future maintainer adds
+            in-place mutation here.
 
     Returns a dict with:
       - textlines: flat dict of textline name -> metadata (incl. `owner`)
