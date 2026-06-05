@@ -78,12 +78,15 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     - Recomputes `dependents` from the merged textline set rather than
       unioning per-source maps (which could include stale edges from
       overwritten textlines).
+    - Recomputes `stats.totalOwners` from the distinct owners in the merged
+      textline set rather than summing per-file counts: summing would
+      double-count any owner name appearing in multiple sources and include
+      skeleton owners that contributed no textlines (closes issue #36).
     - Unions `speakerNames`; conflicting mappings (same id -> different
       display name) are surfaced as a warning.
     """
     merged_textlines = {}
     merged_speaker_names = {}
-    total_owners = 0
     duplicates = []
     speaker_name_conflicts = []
 
@@ -99,8 +102,6 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                 merged_textlines[tl_name] = chosen
             else:
                 merged_textlines[tl_name] = tl_data
-
-        total_owners += data.get("stats", {}).get("totalOwners", 0)
 
         for sid, name in data.get("speakerNames", {}).items():
             if sid in merged_speaker_names and merged_speaker_names[sid] != name:
@@ -147,7 +148,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
             print(f"  {c['id']}: {c['existing']!r} vs {c['new']!r}")
 
     stats = {
-        "totalOwners": total_owners,
+        "totalOwners": len({tl["owner"] for tl in merged_textlines.values()}),
         "totalTextlines": len(merged_textlines),
         "totalEdges": sum(len(v) for v in merged_dependents.values()),
         "unresolvedRefs": sorted(all_referenced - set(merged_textlines.keys())),

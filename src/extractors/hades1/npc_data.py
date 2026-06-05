@@ -63,20 +63,38 @@ def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = ""
     if npcs_table:
         for npc_name, npc_data in npcs_table.items():
             if isinstance(npc_data, LuaTable) and "NPC_" in npc_name:
-                result[npc_name] = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists)
+                entry = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists)
+                if entry is not None:
+                    result[npc_name] = entry
 
     for npc_name, npc_data in individual_npcs.items():
         if npc_name not in result:
-            result[npc_name] = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists)
+            entry = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists)
+            if entry is not None:
+                result[npc_name] = entry
 
     return result
 
 
 def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_data_lists=None):
-    entry = {"source": source_label}
-    entry.update(extract_textline_sections(
+    """Return an owner entry for the NPC, or ``None`` if it contributed
+    no textline sections.
+
+    Returning ``None`` lets the calling loops skip skeleton NPCs that
+    are pure shared-component templates (``NPC_Giftable``,
+    ``NPC_Neutral``) or empty ``{}`` stubs that inherit from a parent
+    NPC. Mirrors the ``if any(sections.values()):`` filter in
+    ``enemy_data`` / ``loot_data`` / ``deathloop_data`` so per-file
+    ``stats.totalOwners`` reflects owners that actually contribute
+    dialogue (closes issue #36).
+    """
+    sections = extract_textline_sections(
         owner_name, owner_table, source_file,
         section_keys=HADES1_TEXTLINE_SECTION_KEYS,
         game_data_lists=game_data_lists,
-    ))
+    )
+    if not any(sections.values()):
+        return None
+    entry = {"source": source_label}
+    entry.update(sections)
     return entry

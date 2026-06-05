@@ -75,7 +75,7 @@ def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
             all_referenced.update(req_list)
 
     stats = {
-        "totalOwners": len(owners),
+        "totalOwners": len({tl["owner"] for tl in textlines.values()}),
         "totalTextlines": len(textlines),
         "totalEdges": sum(len(v) for v in dependents.values()),
         "unresolvedRefs": sorted(all_referenced - set(textlines.keys())),

@@ -107,11 +107,30 @@ class TestUnresolvedReferences:
 class TestStats:
     def test_owner_count(self):
         npcs = {
-            "NPC_A_01": {"source": "T", "InteractTextLineSets": {}},
-            "NPC_B_01": {"source": "T", "InteractTextLineSets": {}},
+            "NPC_A_01": {"source": "T", "InteractTextLineSets": {
+                "A_Line": make_textline(),
+            }},
+            "NPC_B_01": {"source": "T", "InteractTextLineSets": {
+                "B_Line": make_textline(),
+            }},
         }
         result = build_graph_data(npcs)
         assert result["stats"]["totalOwners"] == 2
+
+    def test_owners_with_no_textlines_not_counted(self):
+        """Owners that contributed no textlines (e.g. NPC entries that are
+        pure shared-component templates, or empty {} stubs that inherit
+        from a parent) must not inflate ``totalOwners``. The viewer's
+        owner count reflects distinct dialogue contributors only.
+        Regression guard for issue #36."""
+        npcs = {
+            "NPC_Skeleton": {"source": "T", "InteractTextLineSets": {}},
+            "NPC_Real": {"source": "T", "InteractTextLineSets": {
+                "Line01": make_textline(),
+            }},
+        }
+        result = build_graph_data(npcs)
+        assert result["stats"]["totalOwners"] == 1
 
     def test_textline_and_edge_counts(self):
         npcs = make_npc("NPC_X_01", "InteractTextLineSets", {

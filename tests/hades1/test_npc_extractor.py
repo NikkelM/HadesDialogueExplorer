@@ -32,9 +32,29 @@ class TestBasicExtraction:
         assert result["NPC_Test_01"]["source"] == "Test"
 
     def test_source_label_propagated(self):
-        lua = 'UnitSetData.NPCs = { NPC_X_01 = { InteractTextLineSets = {} } }'
+        lua = (
+            'UnitSetData.NPCs = { NPC_X_01 = { '
+            'InteractTextLineSets = { L = { { Text = "Hi" } } } } }'
+        )
         result = extract(lua, source="Hades 1")
         assert result["NPC_X_01"]["source"] == "Hades 1"
+
+    def test_skeleton_npc_with_no_textlines_skipped(self):
+        """Skeleton NPC entries (pure shared-component templates or
+        empty ``{}`` stubs that inherit from a parent) contribute zero
+        textlines and must not appear in the extractor output. Mirrors
+        the ``if any(sections.values()):`` filter in ``enemy_data`` /
+        ``loot_data`` / ``deathloop_data``. Regression guard for the
+        ``stats.totalOwners`` overcount in issue #36."""
+        lua = (
+            'UnitSetData.NPCs = { '
+            'NPC_Skeleton = { InteractTextLineSets = {} }, '
+            'NPC_Real = { InteractTextLineSets = { L = { { Text = "Hi" } } } }'
+            ' }'
+        )
+        result = extract(lua)
+        assert "NPC_Skeleton" not in result
+        assert "NPC_Real" in result
 
 
 class TestContainerDiscovery:

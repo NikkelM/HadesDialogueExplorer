@@ -24,14 +24,15 @@ def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
     }
 
 
-def _make_dataset(*textlines, owners_count=1, speaker_names=None):
+def _make_dataset(*textlines, speaker_names=None):
     tl_map = {tl["name"]: tl for tl in textlines}
+    owners = {tl["owner"] for tl in textlines}
     return {
         "textlines": tl_map,
         "dependents": {},
         "speakerNames": speaker_names or {},
         "stats": {
-            "totalOwners": owners_count,
+            "totalOwners": len(owners),
             "totalTextlines": len(tl_map),
             "totalEdges": 0,
             "unresolvedRefs": [],
@@ -106,11 +107,26 @@ class TestMergeDatasets:
         names = sorted(d["name"] for d in deps)
         assert names == ["Alpha", "Beta"]
 
-    def test_merge_totals_owners_across_sources(self):
-        ds1 = _make_dataset(_make_textline("A", "X"), owners_count=3)
-        ds2 = _make_dataset(_make_textline("B", "Y"), owners_count=5)
+    def test_merge_counts_distinct_owners_across_sources(self):
+        """Merged ``totalOwners`` is the count of distinct owners surviving
+        into the merged textline set, NOT the sum of per-file owner counts.
+
+        Summing per-file counts (the old behaviour) would double-count
+        any owner appearing in multiple source files and would also
+        include skeleton owners that contributed no textlines, producing
+        the inflated header number reported in issue #36.
+        """
+        ds1 = _make_dataset(
+            _make_textline("A", "OwnerX"),
+            _make_textline("B", "OwnerY"),
+        )
+        ds2 = _make_dataset(
+            _make_textline("C", "OwnerZ"),
+            # OwnerX also appears in ds2 - must not be double-counted.
+            _make_textline("D", "OwnerX"),
+        )
         merged = merge_graph_data([ds1, ds2])
-        assert merged["stats"]["totalOwners"] == 8
+        assert merged["stats"]["totalOwners"] == 3  # OwnerX, OwnerY, OwnerZ
 
     def test_merge_unions_speaker_names_without_conflict(self):
         ds1 = _make_dataset(_make_textline("A", "X"),
