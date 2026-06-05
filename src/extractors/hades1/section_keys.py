@@ -48,3 +48,40 @@ HADES1_TEXTLINE_SECTION_KEYS = frozenset({
     "OnTrophyUnlockedTextLineSets",
     "TextLineSet",            # singular form, used inside distance triggers
 })
+
+# Human-readable labels for each owner-level section key. The viewer shows
+# these in the search dropdown and the details view (with the internal key
+# available as a tooltip). The build pipeline audits this map against
+# ``HADES1_TEXTLINE_SECTION_KEYS`` so any newly-allowlisted key without a
+# friendly name surfaces as a warning rather than silently rendering as
+# the raw camelCase key.
+#
+# Note: many keys share the same display label by design - e.g. all the
+# boss-intro variants collapse to "Boss introduction" because the
+# user-facing distinction (super-priority, etc.) is an internal sorting
+# concern, not something the player would categorise differently.
+HADES1_SECTION_KEY_LABELS = {
+    "InteractTextLineSets":                          "NPC interaction",
+    "GiftTextLineSets":                              "NPC gifting",
+    "RepeatableTextLineSets":                        "NPC interaction (repeatable)",
+    "BossPresentationTextLineSets":                  "Boss introduction",
+    "BossPresentationIntroTextLineSets":             "Boss introduction",
+    "BossPresentationPriorityIntroTextLineSets":     "Boss introduction",
+    "BossPresentationSuperPriorityIntroTextLineSets": "Boss introduction",
+    "BossPresentationRepeatableTextLineSets":        "Boss introduction (repeatable)",
+    "BossPresentationNextStageTextLineSets":         "Boss phase transition",
+    "BossPresentationOutroTextLineSets":             "Boss outro",
+    "BossPresentationOutroRepeatableTextLineSets":   "Boss outro (repeatable)",
+    "OnDeathTextLineSets":                           "NPC interaction",
+    "PickupTextLineSets":                            "God boon pickup",
+    "PriorityPickupTextLineSets":                    "God boon pickup",
+    "SuperPriorityPickupTextLineSets":               "God boon pickup",
+    "DuoPickupTextLineSets":                         "Duo boon pickup",
+    "BoughtTextLines":                               "God boon shop purchase",
+    "MakeUpTextLines":                               "\"Trial of the Gods\" - Completion",
+    "RejectionTextLines":                            "\"Trial of the Gods\" - Displeased",
+    "OnUsedTextLineSets":                            "Misc. interaction",
+    "OnTrophyRevealedTextLineSets":                  "NPC interaction",
+    "OnTrophyUnlockedTextLineSets":                  "NPC interaction",
+    "TextLineSet":                                   "Misc. interaction",
+}

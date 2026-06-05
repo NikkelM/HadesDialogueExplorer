@@ -11,11 +11,20 @@ import sys
 from pathlib import Path
 
 from src.graph import _resolve_duplicate, _dup_summary
-from src.extractors.textline_set import REQUIREMENT_BLOCKING_SEMANTICS
+from src.extractors.textline_set import (
+    REQUIREMENT_BLOCKING_SEMANTICS,
+    REQ_TYPE_LABELS,
+    REQ_TYPE_EDGE_LABELS,
+    REQ_TYPE_DISPLAY_ORDER,
+    audit_section_key_labels,
+    audit_section_key_labels_stale,
+)
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
     UNRESOLVED_CATEGORY_LABELS,
     UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    HADES1_TEXTLINE_SECTION_KEYS,
+    HADES1_SECTION_KEY_LABELS,
 )
 
 PROJECT_DIR = Path(__file__).parent
@@ -280,6 +289,60 @@ def annotate_blocked_textlines(graph_data: dict) -> None:
         )
 
 
+# Per-game section-key allowlists and their friendly-name maps. Future
+# Hades II support adds its own tuple here so the audit runs against
+# each game's data independently.
+_SECTION_KEY_LABEL_SOURCES = [
+    ("HADES1", HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS),
+]
+
+
+def annotate_label_maps(graph_data: dict) -> None:
+    """Attach the viewer's friendly-name lookups to the merged graph data
+    and audit them against the Python-side allowlists.
+
+    Adds to ``graph_data``:
+      - ``reqTypeLabels``: ``{field: human-label}`` for the requirement
+        groups shown in the details panel.
+      - ``reqTypeEdgeLabels``: ``{field: short-chip-label}`` for the tree
+        view edge badges.
+      - ``reqTypeOrder``: ordered list of fields used to sort tree
+        children into per-type groups.
+      - ``sectionKeyLabels``: ``{key: human-label}`` for the per-game
+        union of section-key labels (merged across all games so the
+        viewer can do a single lookup regardless of source).
+
+    Audits and prints warnings for:
+      - section keys allowlisted in any game's ``*_TEXTLINE_SECTION_KEYS``
+        but missing from the corresponding ``*_SECTION_KEY_LABELS`` map
+        (would silently fall back to the raw camelCase key);
+      - labels defined for keys no longer in the allowlist (stale).
+    """
+    merged_section_labels: dict[str, str] = {}
+    for game_label, section_keys, labels in _SECTION_KEY_LABEL_SOURCES:
+        missing = sorted(audit_section_key_labels(section_keys, labels))
+        if missing:
+            print(
+                f"WARNING: {len(missing)} {game_label} section key(s) "
+                f"have no entry in {game_label}_SECTION_KEY_LABELS - "
+                f"viewer will fall back to the raw key: {missing}"
+            )
+        stale = sorted(audit_section_key_labels_stale(section_keys, labels))
+        if stale:
+            print(
+                f"WARNING: {len(stale)} entry(ies) in "
+                f"{game_label}_SECTION_KEY_LABELS reference keys that "
+                f"are not in {game_label}_TEXTLINE_SECTION_KEYS - "
+                f"remove them: {stale}"
+            )
+        merged_section_labels.update(labels)
+
+    graph_data["reqTypeLabels"] = dict(REQ_TYPE_LABELS)
+    graph_data["reqTypeEdgeLabels"] = dict(REQ_TYPE_EDGE_LABELS)
+    graph_data["reqTypeOrder"] = list(REQ_TYPE_DISPLAY_ORDER)
+    graph_data["sectionKeyLabels"] = merged_section_labels
+
+
 def build_css() -> str:
     """Read and concatenate all CSS files in order."""
     css_files = sorted(STYLES_DIR.glob("*.css"))
@@ -330,6 +393,7 @@ def main():
 
     annotate_known_unresolved(graph_data)
     annotate_blocked_textlines(graph_data)
+    annotate_label_maps(graph_data)
 
     print(f"Total: {graph_data['stats']['totalTextlines']} textlines, "
           f"{graph_data['stats']['totalEdges']} edges, "

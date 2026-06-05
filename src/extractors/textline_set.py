@@ -111,6 +111,111 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
     "MaxRunsSinceAnyTextLines":          "count-permissive",
 }
 
+# --- Viewer label data ----------------------------------------------------
+# Single source of truth for the human-readable labels and ordering used in
+# the viewer. The build pipeline (``build_viewer.py``) injects these into
+# the rendered JSON so the JS layer never contains static label data of
+# its own. Keep additions here in sync with ``TEXTLINE_REQ_FIELDS`` /
+# ``TEXTLINE_REQ_FIELDS_COUNT``; missing entries fall back to the raw
+# field name in the viewer, and the dedicated audit (see ``audit_*``
+# helpers used in build_viewer) will surface any gaps once #44 is closed.
+
+# Friendly headers shown above each requirement group in the details panel
+# (also used in unresolved-ref reason text). Mapping is intentionally
+# partial today - see issue #44 for the missing entries.
+REQ_TYPE_LABELS = {
+    "RequiredTextLines":              "Required (ALL)",
+    "RequiredAnyTextLines":           "Required (ANY)",
+    "RequiredAnyOtherTextLines":      "Required (ANY other)",
+    "RequiredFalseTextLines":         "Must NOT have played",
+    "RequiredFalseQueuedTextLines":   "Must NOT be queued",
+    "RequiredFalseTextLinesThisRun":  "Must NOT have played (this run)",
+    "RequiredFalseTextLinesLastRun": "Must NOT have played (last run)",
+    "RequiredTextLinesThisRun":       "Required (this run)",
+    "RequiredTextLinesLastRun":       "Required (last run)",
+    "RequiredAnyTextLinesThisRun":    "Required ANY (this run)",
+    "RequiredAnyTextLinesLastRun":    "Required ANY (last run)",
+}
+
+# Short chips rendered next to each child in the dependency tree. Full
+# enumeration: every entry in ``TEXTLINE_REQ_FIELDS`` and
+# ``TEXTLINE_REQ_FIELDS_COUNT`` gets an explicit label so the viewer can
+# do a pure lookup with no JS heuristics. Symbols: ``\u00AC`` is the
+# logical NOT sign, used as a compact "must not" badge.
+REQ_TYPE_EDGE_LABELS = {
+    "RequiredTextLines":              "ALL",
+    "RequiredTextLinesThisRun":       "ALL",
+    "RequiredTextLinesLastRun":       "ALL",
+    "RequiredTextLinesThisRoom":      "ALL",
+    "RequiredQueuedTextLines":        "ALL",
+
+    "RequiredAnyTextLines":           "ANY",
+    "RequiredAnyOtherTextLines":      "ANY",
+    "RequiredAnyTextLinesThisRun":    "ANY",
+    "RequiredAnyTextLinesLastRun":    "ANY",
+    "RequiredAnyQueuedTextLines":     "ANY",
+
+    "RequiredFalseTextLines":         "\u00AC",
+    "RequiredFalseTextLinesThisRun":  "\u00AC",
+    "RequiredFalseTextLinesLastRun":  "\u00AC",
+    "RequiredFalseTextLinesThisRoom": "\u00AC",
+    "RequiredFalseQueuedTextLines":   "\u00ACQ",
+
+    "RequiredMinAnyTextLines":        "ANY",
+    "RequiredMaxAnyTextLines":        "ANY",
+    "MinRunsSinceAnyTextLines":       "ANY",
+    "MaxRunsSinceAnyTextLines":       "ANY",
+}
+
+# Display order for requirement-type groupings in the dependency tree.
+# The viewer sorts each level's children by this index so the same colour
+# bands appear in a consistent semantic order: hard requirements first,
+# then optional, then counts, then exclusions, then cooldowns. Anything
+# not listed sorts to the end.
+REQ_TYPE_DISPLAY_ORDER = [
+    "RequiredTextLines",
+    "RequiredTextLinesThisRun",
+    "RequiredTextLinesLastRun",
+    "RequiredTextLinesThisRoom",
+    "RequiredQueuedTextLines",
+    "RequiredAnyTextLines",
+    "RequiredAnyOtherTextLines",
+    "RequiredAnyTextLinesThisRun",
+    "RequiredAnyTextLinesLastRun",
+    "RequiredAnyQueuedTextLines",
+    "RequiredMinAnyTextLines",
+    "RequiredMaxAnyTextLines",
+    "RequiredFalseTextLines",
+    "RequiredFalseQueuedTextLines",
+    "RequiredFalseTextLinesThisRun",
+    "RequiredFalseTextLinesLastRun",
+    "RequiredFalseTextLinesThisRoom",
+    "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
+]
+
+
+def audit_section_key_labels(section_keys, labels) -> set:
+    """Return the subset of ``section_keys`` that have no entry in
+    ``labels``.
+
+    Used by ``build_viewer.py`` so a newly-allowlisted key without a
+    friendly-name mapping is surfaced as a build-time warning rather
+    than silently falling back to the raw camelCase key in the viewer.
+    Stale entries (label keys not in ``section_keys``) are also worth
+    surfacing - the helper ``audit_section_key_labels_stale`` covers
+    that direction.
+    """
+    return set(section_keys) - set(labels)
+
+
+def audit_section_key_labels_stale(section_keys, labels) -> set:
+    """Return the subset of ``labels`` keys that are not in
+    ``section_keys`` (i.e. friendly names defined for keys the
+    allowlist no longer contains).
+    """
+    return set(labels) - set(section_keys)
+
 # Regex used by the audit to catch any field that *looks* like a textline
 # requirement but isn't in TEXTLINE_REQ_FIELDS.
 _REQ_TEXTLINE_PATTERN = re.compile(r"^Required.*TextLine.*$")

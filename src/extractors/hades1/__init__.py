@@ -16,7 +16,7 @@ from .loot_data import extract_loot_data, LOOT_DEFAULT_SPEAKERS
 from .enemy_data import extract_enemy_data
 from .text_line_sets import extract_game_data_lists
 from .speaker_names import HADES1_SPEAKER_NAMES
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS
 from .unresolved_refs import (
     HADES1_KNOWN_UNRESOLVED_REFS,
     UNRESOLVED_CATEGORY_LABELS,
@@ -32,6 +32,7 @@ __all__ = [
     "extract_game_data_lists",
     "HADES1_SPEAKER_NAMES",
     "HADES1_TEXTLINE_SECTION_KEYS",
+    "HADES1_SECTION_KEY_LABELS",
     "HADES1_KNOWN_UNRESOLVED_REFS",
     "UNRESOLVED_CATEGORY_LABELS",
     "UNRESOLVED_CATEGORY_DESCRIPTIONS",

@@ -46,6 +46,10 @@ function loadData() {
         unresolvedCategoryLabels: DATA.unresolvedCategoryLabels || {},
         unresolvedCategoryDescriptions: DATA.unresolvedCategoryDescriptions || {},
         unresolvedRefBlocks: DATA.unresolvedRefBlocks || {},
+        reqTypeLabels: DATA.reqTypeLabels || {},
+        reqTypeEdgeLabels: DATA.reqTypeEdgeLabels || {},
+        reqTypeOrder: DATA.reqTypeOrder || [],
+        sectionKeyLabels: DATA.sectionKeyLabels || {},
         allNames: Object.keys(DATA.textlines).sort(),
     };
 }
@@ -54,8 +58,19 @@ const {
     textlines, dependents, speakerNames, stats,
     knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions,
     unresolvedRefBlocks,
+    reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder,
+    sectionKeyLabels,
     allNames,
 } = loadData();
+
+// Pre-built index for O(1) lookups when sorting tree children into
+// per-type groups; falls back to a sentinel so unknown types sort last
+// and keep a stable order amongst themselves.
+const _reqTypeOrderIndex = (() => {
+    const m = {};
+    reqTypeOrder.forEach((t, i) => { m[t] = i; });
+    return m;
+})();
 
 // --- Utilities ---
 
@@ -85,61 +100,55 @@ function getEdgeClass(type) {
     return 'edge-all';
 }
 
-// Display order for requirement-type groupings in the dependency tree.
-// Groups are sorted by this index so the same colour bands appear in a
-// consistent semantic order: hard requirements first, then optional, then
-// counts, then exclusions, then cooldowns.
-const REQ_TYPE_ORDER = [
-    'RequiredTextLines',
-    'RequiredTextLinesThisRun',
-    'RequiredTextLinesLastRun',
-    'RequiredTextLinesThisRoom',
-    'RequiredQueuedTextLines',
-    'RequiredAnyTextLines',
-    'RequiredAnyOtherTextLines',
-    'RequiredAnyTextLinesThisRun',
-    'RequiredAnyTextLinesLastRun',
-    'RequiredAnyQueuedTextLines',
-    'RequiredMinAnyTextLines',
-    'RequiredMaxAnyTextLines',
-    'RequiredFalseTextLines',
-    'RequiredFalseQueuedTextLines',
-    'RequiredFalseTextLinesThisRun',
-    'RequiredFalseTextLinesLastRun',
-    'MinRunsSinceAnyTextLines',
-    'MaxRunsSinceAnyTextLines',
-];
-function reqTypeOrder(type) {
-    const i = REQ_TYPE_ORDER.indexOf(type);
-    return i === -1 ? 999 : i;
+// All label/order data lives in Python (see textline_set.py); these
+// helpers are pure lookups against the maps injected via DATA.
+function reqTypeOrderIndex(type) {
+    const i = _reqTypeOrderIndex[type];
+    return i === undefined ? 999 : i;
 }
 
 function getEdgeLabel(type) {
-    if (type === 'RequiredTextLines') return 'ALL';
-    if (type === 'RequiredAnyTextLines') return 'ANY';
-    if (type === 'RequiredAnyOtherTextLines') return 'ANY';
-    if (type === 'RequiredFalseTextLines') return '\u00AC';
-    if (type === 'RequiredFalseQueuedTextLines') return '\u00ACQ';
-    if (type.includes('False')) return '\u00AC';
-    if (type.includes('Any')) return 'ANY';
-    return 'ALL';
+    return reqTypeEdgeLabels[type] || 'ALL';
 }
 
 function formatReqType(type) {
-    const map = {
-        'RequiredTextLines': 'Required (ALL)',
-        'RequiredAnyTextLines': 'Required (ANY)',
-        'RequiredAnyOtherTextLines': 'Required (ANY other)',
-        'RequiredFalseTextLines': 'Must NOT have played',
-        'RequiredFalseQueuedTextLines': 'Must NOT be queued',
-        'RequiredFalseTextLinesThisRun': 'Must NOT have played (this run)',
-        'RequiredFalseTextLinesLastRun': 'Must NOT have played (last run)',
-        'RequiredTextLinesThisRun': 'Required (this run)',
-        'RequiredTextLinesLastRun': 'Required (last run)',
-        'RequiredAnyTextLinesThisRun': 'Required ANY (this run)',
-        'RequiredAnyTextLinesLastRun': 'Required ANY (last run)',
-    };
-    return map[type] || type;
+    return reqTypeLabels[type] || type;
+}
+
+// Render a requirement-type label as HTML: friendly name with the
+// internal field key available as a `title` tooltip when a mapping
+// exists. Mirrors ``renderSpeakerHtml`` / ``renderSectionHtml`` so the
+// hover-to-reveal-internal-name affordance is consistent across the
+// three label families.
+function renderReqTypeHtml(type, extraClass) {
+    const friendly = reqTypeLabels[type];
+    const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
+    if (friendly && friendly !== type) {
+        return `<span class="${cls}" title="${escapeHtml(type)}">${escapeHtml(friendly)}</span>`;
+    }
+    return `<span class="${cls}">${escapeHtml(type)}</span>`;
+}
+
+// Friendly label for an owner-level section key (e.g.
+// `InteractTextLineSets` -> `NPC interaction`). Falls back to the raw
+// key when no mapping exists; the build pipeline audits the labels map
+// against the section-key allowlist so missing entries become a
+// build-time warning rather than silently rendering the raw key.
+function formatSectionKey(key) {
+    return sectionKeyLabels[key] || key;
+}
+
+// Render a section key as HTML: friendly label with the internal key
+// available as a `title` tooltip when a mapping exists. Mirrors
+// ``renderSpeakerHtml`` so both UI surfaces (search dropdown + details
+// view) get the same hover-to-reveal-internal-name behaviour, including
+// the dotted-underline affordance via the ``[title]`` attribute selector.
+function renderSectionHtml(key) {
+    const friendly = sectionKeyLabels[key];
+    if (friendly && friendly !== key) {
+        return `<span class="section-name" title="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
+    }
+    return `<span class="section-name">${escapeHtml(key)}</span>`;
 }
 
 // Returns the category id ('back-compatibility', 'typo-or-bug', 'cut-content')
@@ -188,21 +197,21 @@ function renderReqItem(ref, selfName) {
 // Each entry describes a single requirement field whose semantics can
 // never be satisfied because of unresolved refs.
 function renderBlockingReason(reason) {
-    const fieldName = formatReqType(reason.field);
+    const fieldHtml = renderReqTypeHtml(reason.field, 'blocking-field');
     const missing = (reason.missingRefs || [])
         .map(r => `<a class="blocked-ref" onclick="navigateTo('${r}')">${escapeHtml(r)}</a>`)
         .join(', ');
     let explain;
     if (reason.semantics === 'all') {
-        explain = `<strong>${escapeHtml(fieldName)}</strong> requires every listed textline to have played, but `
+        explain = `${fieldHtml} requires every listed textline to have played, but `
                 + (reason.missingRefs.length === reason.totalRefs
                     ? `none of the ${reason.totalRefs} entries are defined`
                     : `${reason.missingRefs.length} of ${reason.totalRefs} entries are undefined`)
                 + `: ${missing}.`;
     } else if (reason.semantics === 'any') {
-        explain = `<strong>${escapeHtml(fieldName)}</strong> requires at least one of the listed textlines to have played, but all ${reason.totalRefs} are undefined: ${missing}.`;
+        explain = `${fieldHtml} requires at least one of the listed textlines to have played, but all ${reason.totalRefs} are undefined: ${missing}.`;
     } else if (reason.semantics === 'count-min') {
-        explain = `<strong>${escapeHtml(fieldName)}</strong> requires at least ${reason.requiredCount} of the listed textlines to have played, but only ${reason.resolvedCount} are defined (${reason.missingRefs.length} missing: ${missing}).`;
+        explain = `${fieldHtml} requires at least ${reason.requiredCount} of the listed textlines to have played, but only ${reason.resolvedCount} are defined (${reason.missingRefs.length} missing: ${missing}).`;
     } else {
         explain = `<strong>${escapeHtml(fieldName)}</strong>: ${missing}.`;
     }
@@ -248,7 +257,7 @@ function initSearch() {
         searchResults.innerHTML = matches.map(n => {
             const tl = textlines[n];
             const ownerLabel = displayName(tl.owner);
-            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${escapeHtml(tl.section.replace(/TextLines?(?:Set)?s?$/, ''))}</span></div>`;
+            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`;
         }).join('');
         searchResults.classList.add('visible');
     });
@@ -320,7 +329,7 @@ function renderInfo(name) {
         <h3>${escapeHtml(name)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
-            <span>Section: ${escapeHtml(tl.section)}</span>
+            <span>Section: ${renderSectionHtml(tl.section)}</span>
             <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
 
@@ -377,7 +386,7 @@ function renderInfo(name) {
 
     // Textline requirements
     for (const [type, refs] of Object.entries(tl.requirements)) {
-        html += `<div class="req-section req-type-${type}"><h4>${formatReqType(type)}</h4>`;
+        html += `<div class="req-section req-type-${type}"><h4>${renderReqTypeHtml(type)}</h4>`;
         const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
         let i = 0;
         while (i < refs.length) {
@@ -658,7 +667,7 @@ function appendChildrenWithTypeGrouping(container, kids, direction, ancestorPath
     // their natural insertion order — which is what the inner GameData
     // chunking relies on to detect contiguous same-group runs.
     const sorted = kids.slice().sort(
-        (a, b) => reqTypeOrder(a.edgeType) - reqTypeOrder(b.edgeType)
+        (a, b) => reqTypeOrderIndex(a.edgeType) - reqTypeOrderIndex(b.edgeType)
     );
     let i = 0;
     while (i < sorted.length) {
@@ -694,6 +703,13 @@ function createReqTypeGroup(edgeType, count) {
     const label = document.createElement('span');
     label.className = 'req-type-group-label';
     label.textContent = formatReqType(edgeType);
+    // Mirror the other render*Html helpers: only attach the tooltip
+    // when a friendly mapping exists, so unmapped types stay plain.
+    const friendlyEdge = reqTypeLabels[edgeType];
+    if (friendlyEdge && friendlyEdge !== edgeType) {
+        label.title = edgeType;
+        label.classList.add('has-tooltip');
+    }
     header.appendChild(label);
 
     const countSpan = document.createElement('span');
