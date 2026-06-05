@@ -78,6 +78,22 @@ function escapeHtml(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Render a string value safe for embedding inside a quoted HTML
+// attribute that is also a JavaScript string literal (e.g.
+// ``onclick="navigateTo(${jsAttr(ref)})"``). ``JSON.stringify``
+// produces a properly-escaped JS string literal (handles backslashes,
+// quotes, control chars, unicode) including its own outer quotes, and
+// the subsequent HTML-escape (including ``"``) keeps the embedded
+// quotes from terminating the surrounding attribute. Call sites must
+// NOT add their own quotes around the placeholder.
+function jsAttr(s) {
+    return JSON.stringify(String(s))
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 // Look up the friendly display name for a speaker/NPC ID, falling back to
 // the internal ID when no mapping exists.
 function displayName(id) {
@@ -190,7 +206,7 @@ function renderReqItem(ref, selfName) {
         }
     }
     const selfBadge = isSelf ? `<span class="self-ref-badge">self</span>` : '';
-    return `<div class="${classes.join(' ')}" data-name="${ref}"${tip} onclick="navigateTo('${ref}')">${escapeHtml(ref)}${selfBadge}</div>`;
+    return `<div class="${classes.join(' ')}" data-name="${ref}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.
@@ -199,7 +215,7 @@ function renderReqItem(ref, selfName) {
 function renderBlockingReason(reason) {
     const fieldHtml = renderReqTypeHtml(reason.field, 'blocking-field');
     const missing = (reason.missingRefs || [])
-        .map(r => `<a class="blocked-ref" onclick="navigateTo('${r}')">${escapeHtml(r)}</a>`)
+        .map(r => `<a class="blocked-ref" onclick="navigateTo(${jsAttr(r)})">${escapeHtml(r)}</a>`)
         .join(', ');
     let explain;
     if (reason.semantics === 'all') {
@@ -297,7 +313,7 @@ function renderInfo(name) {
             ? `<div class="meta blocked-banner">`
             + `<div class="blocked-banner-header">\u26D4 Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing</div>`
             + `<div class="blocked-banner-list">`
-            + blocks.map(b => `<a class="blocked-ref" onclick="navigateTo('${b}')">${escapeHtml(b)}</a>`).join(', ')
+            + blocks.map(b => `<a class="blocked-ref" onclick="navigateTo(${jsAttr(b)})">${escapeHtml(b)}</a>`).join(', ')
             + `</div></div>`
             : '';
         const cat = knownUnresolved[name];
@@ -349,7 +365,7 @@ function renderInfo(name) {
     if (tl.isSynthetic && tl.parentTextline && tl.choiceText) {
         html += `<div class="meta synthetic-banner">`
               + `<span>\u21B3 Choice variant of `
-              + `<a class="choice-link" onclick="navigateTo('${tl.parentTextline}')">${escapeHtml(tl.parentTextline)}</a>`
+              + `<a class="choice-link" onclick="navigateTo(${jsAttr(tl.parentTextline)})">${escapeHtml(tl.parentTextline)}</a>`
               + ` \u00B7 ChoiceText: <code>${escapeHtml(tl.choiceText)}</code>`
               + `</span></div>`;
     }
@@ -364,7 +380,7 @@ function renderInfo(name) {
     if (childChoices.length > 0) {
         html += `<div class="meta synthetic-banner"><span>Choices: `
               + childChoices.map(c =>
-                    `<a class="choice-link" onclick="navigateTo('${c.name}')">${escapeHtml(c.choice)}</a>`
+                    `<a class="choice-link" onclick="navigateTo(${jsAttr(c.name)})">${escapeHtml(c.choice)}</a>`
                 ).join(' \u00B7 ')
               + `</span></div>`;
     }
