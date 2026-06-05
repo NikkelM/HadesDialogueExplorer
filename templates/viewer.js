@@ -42,8 +42,21 @@ function loadData(DATA) {
 
 // --- Utilities ---
 
+// Escape a string for safe embedding into HTML, covering both text
+// content and double-quoted attribute values (the only attribute-quote
+// style used in the templates here). Escaping ``"`` in addition to
+// the three text-content metacharacters is a free hardening: it has
+// no effect inside element text, and it prevents an attribute value
+// from breaking out of its surrounding ``"..."`` if a future game
+// adds quotes to an identifier. Use :func:`jsAttr` instead when the
+// value also needs to be a JavaScript string literal (e.g. inline
+// ``onclick``).
 function escapeHtml(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 // Render a string value safe for embedding inside a quoted HTML
@@ -51,15 +64,12 @@ function escapeHtml(str) {
 // ``onclick="navigateTo(${jsAttr(ref)})"``). ``JSON.stringify``
 // produces a properly-escaped JS string literal (handles backslashes,
 // quotes, control chars, unicode) including its own outer quotes, and
-// the subsequent HTML-escape (including ``"``) keeps the embedded
-// quotes from terminating the surrounding attribute. Call sites must
-// NOT add their own quotes around the placeholder.
+// the subsequent :func:`escapeHtml` pass (which also escapes ``"``)
+// keeps the embedded quotes from terminating the surrounding
+// attribute. Call sites must NOT add their own quotes around the
+// placeholder.
 function jsAttr(s) {
-    return JSON.stringify(String(s))
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+    return escapeHtml(JSON.stringify(String(s)));
 }
 
 // Look up the friendly display name for a speaker/NPC ID, falling back to
@@ -186,7 +196,7 @@ function renderReqItem(ref, selfName) {
         }
     }
     const selfBadge = isSelf ? `<span class="self-ref-badge">self</span>` : '';
-    return `<div class="${classes.join(' ')}" data-name="${ref}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}</div>`;
+    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.
@@ -253,7 +263,7 @@ function initSearch() {
         searchResults.innerHTML = matches.map(n => {
             const tl = textlines[n];
             const ownerLabel = displayName(tl.owner);
-            return `<div class="search-item" data-name="${n}">${escapeHtml(n)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`;
+            return `<div class="search-item" data-name="${escapeHtml(n)}">${escapeHtml(n)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`;
         }).join('');
         searchResults.classList.add('visible');
     });

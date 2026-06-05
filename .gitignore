@@ -10,3 +10,6 @@ config.toml
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# node
+node_modules/
