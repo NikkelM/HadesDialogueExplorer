@@ -570,16 +570,36 @@ def _normalize_value(value, game_data_lists: dict = None):
     GameData identifiers known to resolve to textline lists are expanded
     here too, so e.g. a non-textline-typed otherRequirement that happens
     to reference one shows the contents instead of the bare name.
+
+    Mixed-shape tables (Lua tables populating BOTH the array part and the
+    named part) are intentionally rejected with a hard error. No
+    requirement field across the four H1 sources currently uses this
+    idiom, and silently flattening to just the named half - which is
+    what an earlier version did - would drop array entries without any
+    warning. If/when an H2 (or future H1) field needs this shape, choose
+    a JSON-friendly representation here explicitly rather than letting
+    data vanish through the pipeline.
     """
     if isinstance(value, (str, int, float, bool)):
         return value
     if value is None:
         return None
     if isinstance(value, LuaTable):
-        if value.array and not value.named:
+        if value.array and value.named:
+            raise ValueError(
+                "_normalize_value: encountered a mixed-shape LuaTable with "
+                f"both array ({len(value.array)} entries) and named "
+                f"({len(value.named)} entries) parts populated. This shape "
+                "is not currently handled by the pipeline because no "
+                "requirement field exercises it; add an explicit "
+                "representation here if a new game/field needs it. "
+                f"Named keys: {sorted(value.named.keys())}; "
+                f"table source line: {value.line}."
+            )
+        if value.array:
             return [_normalize_value(v, game_data_lists) for v in value.array]
-        if value.named and not value.array:
-            return {k: _normalize_value(v, game_data_lists) for k, v in value.items()}
+        # Pure-named (or both empty -> {}). Iterating .items() on an
+        # empty LuaTable yields nothing, matching the previous behaviour.
         return {k: _normalize_value(v, game_data_lists) for k, v in value.items()}
     if isinstance(value, LuaIdentifier):
         if game_data_lists and value.name in game_data_lists:
