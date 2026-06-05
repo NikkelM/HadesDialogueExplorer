@@ -37,6 +37,39 @@ class TestBasicExtraction:
         assert result["NPC_X_01"]["source"] == "Hades 1"
 
 
+class TestContainerDiscovery:
+    """The NPCs container is normally pinned to the exact key
+    ``UnitSetData.NPCs`` (matching the explicit-allowlist style used by
+    the Enemy/Loot/DeathLoop extractors). A loose substring scan stays
+    in place as a fallback for files using a non-standard container
+    name, but the pinned key must always win when both are present so
+    an unrelated table with ``NPC`` in its key cannot hijack
+    discovery."""
+
+    def test_pinned_key_wins_over_decoy_with_npc_substring(self):
+        # Decoy declared first (so a first-match loose scan would pick
+        # it up). The pinned key must still win.
+        lua = '''SomeNPCAddon = {
+            NPC_Decoy_01 = { InteractTextLineSets = { D = { { Text = "decoy" } } } }
+        }
+        UnitSetData.NPCs = {
+            NPC_Real_01 = { InteractTextLineSets = { R = { { Text = "real" } } } }
+        }'''
+        result = extract(lua)
+        assert "NPC_Real_01" in result
+        assert "NPC_Decoy_01" not in result
+
+    def test_fallback_scan_still_finds_npcs_under_nonstandard_key(self):
+        """If a future file uses a different container name, the loose
+        scan should still discover it - guards against the pin being
+        too strict."""
+        lua = '''SomeOtherNPCContainer = {
+            NPC_Fallback_01 = { InteractTextLineSets = { L = { { Text = "fb" } } } }
+        }'''
+        result = extract(lua)
+        assert "NPC_Fallback_01" in result
+
+
 class TestSourceLocation:
     """Each textline should record the file and line where it is defined."""
 

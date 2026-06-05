@@ -27,14 +27,28 @@ def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = ""
             ...
         }
     """
-    # NPC data is normally found under "UnitSetData.NPCs". Some files instead
-    # define individual top-level NPC_* assignments.
+    # NPC data is normally found under "UnitSetData.NPCs" (matches the
+    # `enemy_data` / `loot_data` / `deathloop_data` pinning style and the
+    # project-wide "explicit allowlist over heuristics" philosophy).
+    # Some files instead define individual top-level NPC_* assignments
+    # alongside or instead of the container, so both code paths still
+    # run below.
     npcs_table = None
-    for key, value in parsed.items():
-        if "NPC" in key and isinstance(value, LuaTable):
-            if any(k.startswith("NPC_") or "NPC_" in k for k in value.keys()):
-                npcs_table = value
-                break
+    candidate = parsed.get("UnitSetData.NPCs")
+    if isinstance(candidate, LuaTable):
+        npcs_table = candidate
+    else:
+        # Fallback: loose scan for files using a non-standard container
+        # name. No known H1 file currently triggers this path; retained
+        # as a safety net for future game data that wraps the same
+        # `NPC_*` children under a different parent key. First match
+        # wins, so the pin above must always be tried first to avoid
+        # an earlier same-substring key hijacking discovery.
+        for key, value in parsed.items():
+            if "NPC" in key and isinstance(value, LuaTable):
+                if any("NPC_" in k for k in value.keys()):
+                    npcs_table = value
+                    break
 
     individual_npcs = {}
     for key, value in parsed.items():
