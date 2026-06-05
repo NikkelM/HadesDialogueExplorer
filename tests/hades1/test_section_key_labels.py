@@ -13,11 +13,11 @@ import pytest
 from src.extractors.hades1 import (
     HADES1_TEXTLINE_SECTION_KEYS,
     HADES1_SECTION_KEY_LABELS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_DISPLAY_ORDER,
 )
 from src.extractors.textline_set import (
-    REQ_TYPE_LABELS,
-    REQ_TYPE_EDGE_LABELS,
-    REQ_TYPE_DISPLAY_ORDER,
     TEXTLINE_REQ_FIELDS,
     TEXTLINE_REQ_FIELDS_COUNT,
     audit_section_key_labels,
@@ -65,9 +65,9 @@ class TestReqTypeLabelMaps:
         in the display-order list - otherwise it sorts to the end with
         a fallback sentinel and renders out-of-band."""
         known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
-        missing = known - set(REQ_TYPE_DISPLAY_ORDER)
+        missing = known - set(HADES1_REQ_TYPE_DISPLAY_ORDER)
         assert missing == set(), (
-            f"Fields missing from REQ_TYPE_DISPLAY_ORDER: {sorted(missing)}"
+            f"Fields missing from HADES1_REQ_TYPE_DISPLAY_ORDER: {sorted(missing)}"
         )
 
     def test_req_type_edge_labels_covers_all_known_fields(self):
@@ -75,17 +75,17 @@ class TestReqTypeLabelMaps:
         requirement field so the JS layer never needs heuristic
         fallbacks for label data."""
         known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
-        missing = known - set(REQ_TYPE_EDGE_LABELS)
+        missing = known - set(HADES1_REQ_TYPE_EDGE_LABELS)
         assert missing == set(), (
-            f"Fields missing from REQ_TYPE_EDGE_LABELS: {sorted(missing)}"
+            f"Fields missing from HADES1_REQ_TYPE_EDGE_LABELS: {sorted(missing)}"
         )
 
     def test_req_type_labels_are_subset_of_known_fields(self):
         """Friendly headers must not reference unknown fields."""
         known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
-        unknown = set(REQ_TYPE_LABELS) - known
+        unknown = set(HADES1_REQ_TYPE_LABELS) - known
         assert unknown == set(), (
-            f"REQ_TYPE_LABELS references unknown fields: {sorted(unknown)}"
+            f"HADES1_REQ_TYPE_LABELS references unknown fields: {sorted(unknown)}"
         )
 
 
@@ -110,10 +110,11 @@ class TestAnnotateLabelMaps:
     def test_all_label_maps_attached(self):
         gd = self._base()
         annotate_label_maps(gd)
-        assert gd["reqTypeLabels"] == REQ_TYPE_LABELS
-        assert gd["reqTypeEdgeLabels"] == REQ_TYPE_EDGE_LABELS
-        assert gd["reqTypeOrder"] == list(REQ_TYPE_DISPLAY_ORDER)
-        # Merged across all games; today H1 is the only contributor.
+        # Merged across all games; today H1 is the only contributor so
+        # the merged maps equal the H1 maps verbatim.
+        assert gd["reqTypeLabels"] == dict(HADES1_REQ_TYPE_LABELS)
+        assert gd["reqTypeEdgeLabels"] == dict(HADES1_REQ_TYPE_EDGE_LABELS)
+        assert gd["reqTypeOrder"] == list(HADES1_REQ_TYPE_DISPLAY_ORDER)
         assert gd["sectionKeyLabels"] == dict(HADES1_SECTION_KEY_LABELS)
 
     def test_section_key_label_drift_prints_warning(self, monkeypatch):
@@ -161,3 +162,94 @@ class TestAnnotateLabelMaps:
         out = buf.getvalue()
         assert "RemovedFromAllowlist" in out
         assert "are not in HADES1_TEXTLINE_SECTION_KEYS" in out
+
+
+class TestReqTypeLabelSourcesPerGameSeam:
+    """``_REQ_TYPE_LABEL_SOURCES`` is the per-game seam that lets H2
+    contribute its own (disjoint) requirement-field vocabulary
+    alongside H1 without overwriting it. The merge must concatenate
+    per-game maps additively, drop duplicates from the display order,
+    and warn loudly if two games' maps collide on a field name."""
+
+    def _base(self):
+        return {
+            "textlines": {},
+            "dependents": {},
+            "speakerNames": {},
+            "stats": {
+                "totalOwners": 0,
+                "totalTextlines": 0,
+                "totalEdges": 0,
+                "unresolvedRefs": [],
+                "duplicates": [],
+            },
+        }
+
+    def test_two_games_with_disjoint_vocab_merge_additively(self, monkeypatch):
+        import build_viewer
+
+        h1_labels = {"H1Field": "H1 friendly"}
+        h1_edge = {"H1Field": "ALL"}
+        h1_order = ["H1Field"]
+        h2_labels = {"H2Field": "H2 friendly"}
+        h2_edge = {"H2Field": "HAS-ANY"}
+        h2_order = ["H2Field"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [
+                ("HADES1", h1_labels, h1_edge, h1_order),
+                ("HADES2", h2_labels, h2_edge, h2_order),
+            ],
+        )
+        # Stub the section-key seam to a no-op so this test only
+        # exercises the req-type merge path.
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+        buf = io.StringIO()
+        monkeypatch.setattr(sys, "stdout", buf)
+
+        gd = self._base()
+        build_viewer.annotate_label_maps(gd)
+
+        assert gd["reqTypeLabels"] == {"H1Field": "H1 friendly", "H2Field": "H2 friendly"}
+        assert gd["reqTypeEdgeLabels"] == {"H1Field": "ALL", "H2Field": "HAS-ANY"}
+        # Order: H1 first (declared first), then H2 appended.
+        assert gd["reqTypeOrder"] == ["H1Field", "H2Field"]
+        # No conflict warnings when vocabularies are disjoint.
+        assert "conflict" not in buf.getvalue()
+
+    def test_conflicting_req_type_field_emits_warning(self, monkeypatch):
+        """If H2 ever ships a field name H1 also uses, the silent
+        last-wins behaviour of dict.update would mask a real
+        per-game-vocabulary conflict. The audit must surface it."""
+        import build_viewer
+
+        shared = "SharedFieldName"
+        h1_labels = {shared: "H1 says"}
+        h1_edge = {shared: "ALL"}
+        h1_order = [shared]
+        h2_labels = {shared: "H2 says"}
+        h2_edge = {shared: "HAS-ANY"}
+        h2_order = [shared]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [
+                ("HADES1", h1_labels, h1_edge, h1_order),
+                ("HADES2", h2_labels, h2_edge, h2_order),
+            ],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+        buf = io.StringIO()
+        monkeypatch.setattr(sys, "stdout", buf)
+
+        gd = self._base()
+        build_viewer.annotate_label_maps(gd)
+
+        out = buf.getvalue()
+        assert "HADES2_REQ_TYPE_LABELS" in out
+        assert "HADES2_REQ_TYPE_EDGE_LABELS" in out
+        assert "HADES2_REQ_TYPE_DISPLAY_ORDER" in out
+        assert shared in out
+        # Display-order dedupes - shared appears exactly once.
+        assert gd["reqTypeOrder"] == [shared]

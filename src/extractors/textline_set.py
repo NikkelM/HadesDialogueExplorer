@@ -111,88 +111,16 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
     "MaxRunsSinceAnyTextLines":          "count-permissive",
 }
 
-# --- Viewer label data ----------------------------------------------------
-# Single source of truth for the human-readable labels and ordering used in
-# the viewer. The build pipeline (``build_viewer.py``) injects these into
-# the rendered JSON so the JS layer never contains static label data of
-# its own. Keep additions here in sync with ``TEXTLINE_REQ_FIELDS`` /
-# ``TEXTLINE_REQ_FIELDS_COUNT``; missing entries fall back to the raw
-# field name in the viewer, and the dedicated audit (see ``audit_*``
-# helpers used in build_viewer) will surface any gaps once #44 is closed.
-
-# Friendly headers shown above each requirement group in the details panel
-# (also used in unresolved-ref reason text). Mapping is intentionally
-# partial today - see issue #44 for the missing entries.
-REQ_TYPE_LABELS = {
-    "RequiredTextLines":              "Required (ALL)",
-    "RequiredAnyTextLines":           "Required (ANY)",
-    "RequiredAnyOtherTextLines":      "Required (ANY other)",
-    "RequiredFalseTextLines":         "Must NOT have played",
-    "RequiredFalseQueuedTextLines":   "Must NOT be queued",
-    "RequiredFalseTextLinesThisRun":  "Must NOT have played (this run)",
-    "RequiredFalseTextLinesLastRun": "Must NOT have played (last run)",
-    "RequiredTextLinesThisRun":       "Required (this run)",
-    "RequiredTextLinesLastRun":       "Required (last run)",
-    "RequiredAnyTextLinesThisRun":    "Required ANY (this run)",
-    "RequiredAnyTextLinesLastRun":    "Required ANY (last run)",
-}
-
-# Short chips rendered next to each child in the dependency tree. Full
-# enumeration: every entry in ``TEXTLINE_REQ_FIELDS`` and
-# ``TEXTLINE_REQ_FIELDS_COUNT`` gets an explicit label so the viewer can
-# do a pure lookup with no JS heuristics. Symbols: ``\u00AC`` is the
-# logical NOT sign, used as a compact "must not" badge.
-REQ_TYPE_EDGE_LABELS = {
-    "RequiredTextLines":              "ALL",
-    "RequiredTextLinesThisRun":       "ALL",
-    "RequiredTextLinesLastRun":       "ALL",
-    "RequiredTextLinesThisRoom":      "ALL",
-    "RequiredQueuedTextLines":        "ALL",
-
-    "RequiredAnyTextLines":           "ANY",
-    "RequiredAnyOtherTextLines":      "ANY",
-    "RequiredAnyTextLinesThisRun":    "ANY",
-    "RequiredAnyTextLinesLastRun":    "ANY",
-    "RequiredAnyQueuedTextLines":     "ANY",
-
-    "RequiredFalseTextLines":         "\u00AC",
-    "RequiredFalseTextLinesThisRun":  "\u00AC",
-    "RequiredFalseTextLinesLastRun":  "\u00AC",
-    "RequiredFalseTextLinesThisRoom": "\u00AC",
-    "RequiredFalseQueuedTextLines":   "\u00ACQ",
-
-    "RequiredMinAnyTextLines":        "ANY",
-    "RequiredMaxAnyTextLines":        "ANY",
-    "MinRunsSinceAnyTextLines":       "ANY",
-    "MaxRunsSinceAnyTextLines":       "ANY",
-}
-
-# Display order for requirement-type groupings in the dependency tree.
-# The viewer sorts each level's children by this index so the same colour
-# bands appear in a consistent semantic order: hard requirements first,
-# then optional, then counts, then exclusions, then cooldowns. Anything
-# not listed sorts to the end.
-REQ_TYPE_DISPLAY_ORDER = [
-    "RequiredTextLines",
-    "RequiredTextLinesThisRun",
-    "RequiredTextLinesLastRun",
-    "RequiredTextLinesThisRoom",
-    "RequiredQueuedTextLines",
-    "RequiredAnyTextLines",
-    "RequiredAnyOtherTextLines",
-    "RequiredAnyTextLinesThisRun",
-    "RequiredAnyTextLinesLastRun",
-    "RequiredAnyQueuedTextLines",
-    "RequiredMinAnyTextLines",
-    "RequiredMaxAnyTextLines",
-    "RequiredFalseTextLines",
-    "RequiredFalseQueuedTextLines",
-    "RequiredFalseTextLinesThisRun",
-    "RequiredFalseTextLinesLastRun",
-    "RequiredFalseTextLinesThisRoom",
-    "MinRunsSinceAnyTextLines",
-    "MaxRunsSinceAnyTextLines",
-]
+# --- Section-key audit helpers --------------------------------------------
+# The viewer-label data itself (req-type labels, edge labels, display
+# order) is per-game and lives next to each game's section-key allowlist
+# (e.g. ``hades1/req_types.py``). H2's requirement vocabulary is
+# disjoint from H1's, so a per-game seam in ``build_viewer.annotate_label_maps``
+# merges them rather than shipping a single global map from this module.
+#
+# The audit helpers below remain here because they are game-agnostic -
+# they just compare an allowlist set against a labels mapping and
+# surface either direction of drift.
 
 
 def audit_section_key_labels(section_keys, labels) -> set:
