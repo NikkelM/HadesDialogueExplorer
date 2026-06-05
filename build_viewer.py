@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from src.graph import _resolve_duplicate, _dup_summary
+from src.graph import resolve_duplicate, dup_summary
 from src.extractors.textline_set import (
     REQUIREMENT_BLOCKING_SEMANTICS,
     audit_section_key_labels,
@@ -55,11 +55,11 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     for data in datasets:
         for tl_name, tl_data in data.get("textlines", {}).items():
             if tl_name in merged_textlines:
-                chosen, dropped = _resolve_duplicate(merged_textlines[tl_name], tl_data)
+                chosen, dropped = resolve_duplicate(merged_textlines[tl_name], tl_data)
                 duplicates.append({
                     "name": tl_name,
-                    "kept": _dup_summary(chosen),
-                    "dropped": _dup_summary(dropped),
+                    "kept": dup_summary(chosen),
+                    "dropped": dup_summary(dropped),
                 })
                 merged_textlines[tl_name] = chosen
             else:

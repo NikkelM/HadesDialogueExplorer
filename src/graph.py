@@ -57,11 +57,11 @@ def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
                         new_entry[opt_key] = tl_data[opt_key]
                 existing = textlines.get(tl_name)
                 if existing is not None:
-                    chosen, dropped = _resolve_duplicate(existing, new_entry)
+                    chosen, dropped = resolve_duplicate(existing, new_entry)
                     duplicates.append({
                         "name": tl_name,
-                        "kept": _dup_summary(chosen),
-                        "dropped": _dup_summary(dropped),
+                        "kept": dup_summary(chosen),
+                        "dropped": dup_summary(dropped),
                     })
                     textlines[tl_name] = chosen
                 else:
@@ -90,7 +90,7 @@ def build_graph_data(owners: dict, speaker_names: dict = {}) -> dict:
     }
 
 
-def _resolve_duplicate(existing: dict, new: dict) -> tuple:
+def resolve_duplicate(existing: dict, new: dict) -> tuple:
     """When the same textline name appears under two owners, pick the one
     with more content (more dialogue lines + more requirements). This matches
     the game's pattern where shared dialogues have one "stub" entry (queue
@@ -100,6 +100,10 @@ def _resolve_duplicate(existing: dict, new: dict) -> tuple:
     textline in another source file always wins) regardless of richness.
 
     Returns (kept, dropped). Ties go to the existing entry (first-wins).
+
+    Public alongside :func:`dup_summary` because the merge pipeline in
+    ``build_viewer.merge_graph_data`` reuses these helpers across module
+    boundaries when stitching per-source datasets together.
     """
     existing_synth = bool(existing.get("isSynthetic"))
     new_synth = bool(new.get("isSynthetic"))
@@ -119,7 +123,12 @@ def _richness(entry: dict) -> int:
     return lines * 100 + reqs * 10 + other
 
 
-def _dup_summary(entry: dict) -> dict:
+def dup_summary(entry: dict) -> dict:
+    """Compact descriptor for one half of a duplicate pair, written into
+    ``stats.duplicates`` so the viewer can surface which definition won
+    and which lost when the same textline name appeared twice across
+    parsed source files. Public counterpart to :func:`resolve_duplicate`.
+    """
     return {
         "owner": entry["owner"],
         "section": entry["section"],

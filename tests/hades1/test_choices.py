@@ -9,7 +9,7 @@ textline so the dependency graph resolves cleanly.
 
 from src.lua_parser import LuaParser
 from src.extractors.hades1.npc_data import extract_npc_data
-from src.graph import build_graph_data, _resolve_duplicate
+from src.graph import build_graph_data, resolve_duplicate
 
 
 def parse(lua_text):
@@ -157,7 +157,7 @@ class TestSyntheticVsRealCollision:
             "dialogueLines": [{"speaker": "Z", "text": "a"}, {"speaker": "Z", "text": "b"}],
             "isSynthetic": True,
         }
-        kept, dropped = _resolve_duplicate(real, synthetic)
+        kept, dropped = resolve_duplicate(real, synthetic)
         assert kept is real and dropped is synthetic
 
     def test_real_beats_synthetic_when_synthetic_first(self):
@@ -170,7 +170,7 @@ class TestSyntheticVsRealCollision:
             "name": "X", "owner": "R", "section": "InteractTextLineSets", "source": "Hades 1",
             "requirements": {}, "otherRequirements": {}, "dialogueLines": [],
         }
-        kept, dropped = _resolve_duplicate(synthetic, real)
+        kept, dropped = resolve_duplicate(synthetic, real)
         assert kept is real and dropped is synthetic
 
     def test_two_synthetics_use_first_wins(self):
@@ -190,7 +190,7 @@ class TestSyntheticVsRealCollision:
             "isSynthetic": True,
         }
         # Richness still applies between two synthetics; second is richer.
-        kept, _ = _resolve_duplicate(first, second)
+        kept, _ = resolve_duplicate(first, second)
         assert kept is second
 
     def test_two_reals_use_richness(self):
@@ -203,7 +203,7 @@ class TestSyntheticVsRealCollision:
             "requirements": {"RequiredTextLines": ["Y"]}, "otherRequirements": {},
             "dialogueLines": [{"speaker": "Z", "text": "a"}],
         }
-        kept, _ = _resolve_duplicate(a, b)
+        kept, _ = resolve_duplicate(a, b)
         assert kept is b
 
 

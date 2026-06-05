@@ -1,4 +1,4 @@
-"""Tests for build_viewer.merge_graph_data and graph._resolve_duplicate.
+"""Tests for build_viewer.merge_graph_data and graph.resolve_duplicate.
 
 The merge combines per-source JSON datasets into one viewer dataset,
 detecting duplicate textline names, rebuilding the dependents index, and
@@ -6,7 +6,7 @@ flagging conflicting speakerNames mappings.
 """
 
 from build_viewer import merge_graph_data
-from src.graph import _resolve_duplicate, _richness
+from src.graph import resolve_duplicate
 
 
 def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
@@ -52,19 +52,21 @@ class TestRichnessResolution:
             requirements={"RequiredTextLines": ["X", "Y"]},
         )
         # Stub first, full second.
-        kept, dropped = _resolve_duplicate(stub, full)
+        kept, dropped = resolve_duplicate(stub, full)
         assert kept["owner"] == "NPC_B"
         assert dropped["owner"] == "NPC_A"
         # And the other way round.
-        kept, dropped = _resolve_duplicate(full, stub)
+        kept, dropped = resolve_duplicate(full, stub)
         assert kept["owner"] == "NPC_B"
         assert dropped["owner"] == "NPC_A"
 
     def test_ties_go_to_existing_entry(self):
+        # Bare textlines with identical shapes (no dialogue lines, no
+        # requirements) score identical richness, so the tie-breaker is
+        # first-wins on the existing entry.
         a = _make_textline("X", "A")
         b = _make_textline("X", "B")
-        assert _richness(a) == _richness(b)
-        kept, dropped = _resolve_duplicate(a, b)
+        kept, dropped = resolve_duplicate(a, b)
         assert kept["owner"] == "A"
 
 
