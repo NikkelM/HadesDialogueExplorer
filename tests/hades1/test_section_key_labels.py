@@ -17,6 +17,8 @@ from src.extractors.textline_set import (
     TEXTLINE_REQ_FIELDS_COUNT,
     audit_section_key_labels,
     audit_section_key_labels_stale,
+    audit_req_type_labels,
+    audit_req_type_labels_stale,
 )
 from build_viewer import annotate_label_maps
 
@@ -75,12 +77,25 @@ class TestReqTypeLabelMaps:
             f"Fields missing from HADES1_REQ_TYPE_EDGE_LABELS: {sorted(missing)}"
         )
 
-    def test_req_type_labels_are_subset_of_known_fields(self):
-        """Friendly headers must not reference unknown fields."""
+    def test_every_req_type_field_has_label(self):
+        """Equality direction (issue #44): every field that can appear
+        as a requirement group must have a friendly header so the
+        viewer never falls back to the raw camelCase field name."""
         known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
-        unknown = set(HADES1_REQ_TYPE_LABELS) - known
-        assert unknown == set(), (
-            f"HADES1_REQ_TYPE_LABELS references unknown fields: {sorted(unknown)}"
+        missing = audit_req_type_labels(known, HADES1_REQ_TYPE_LABELS)
+        assert missing == set(), (
+            f"H1 req-type fields without a friendly label: {sorted(missing)}"
+        )
+
+    def test_no_stale_req_type_labels(self):
+        """Labels referencing fields no longer in
+        ``TEXTLINE_REQ_FIELDS{,_COUNT}`` would render unreachable
+        entries in any UI that iterates the label map."""
+        known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
+        stale = audit_req_type_labels_stale(known, HADES1_REQ_TYPE_LABELS)
+        assert stale == set(), (
+            f"HADES1_REQ_TYPE_LABELS entries with no matching allowlist "
+            f"field: {sorted(stale)}"
         )
 
 
@@ -151,9 +166,11 @@ class TestReqTypeLabelSourcesPerGameSeam:
     def test_two_games_with_disjoint_vocab_merge_additively(self, capsys, monkeypatch, make_graph_data):
         import build_viewer
 
+        h1_allowed = {"H1Field"}
         h1_labels = {"H1Field": "H1 friendly"}
         h1_edge = {"H1Field": "ALL"}
         h1_order = ["H1Field"]
+        h2_allowed = {"H2Field"}
         h2_labels = {"H2Field": "H2 friendly"}
         h2_edge = {"H2Field": "HAS-ANY"}
         h2_order = ["H2Field"]
@@ -161,8 +178,8 @@ class TestReqTypeLabelSourcesPerGameSeam:
             build_viewer,
             "_REQ_TYPE_LABEL_SOURCES",
             [
-                ("HADES1", h1_labels, h1_edge, h1_order),
-                ("HADES2", h2_labels, h2_edge, h2_order),
+                ("HADES1", h1_allowed, h1_labels, h1_edge, h1_order),
+                ("HADES2", h2_allowed, h2_labels, h2_edge, h2_order),
             ],
         )
         # Stub the section-key seam to a no-op so this test only
@@ -186,9 +203,11 @@ class TestReqTypeLabelSourcesPerGameSeam:
         import build_viewer
 
         shared = "SharedFieldName"
+        h1_allowed = {shared}
         h1_labels = {shared: "H1 says"}
         h1_edge = {shared: "ALL"}
         h1_order = [shared]
+        h2_allowed = {shared}
         h2_labels = {shared: "H2 says"}
         h2_edge = {shared: "HAS-ANY"}
         h2_order = [shared]
@@ -196,8 +215,8 @@ class TestReqTypeLabelSourcesPerGameSeam:
             build_viewer,
             "_REQ_TYPE_LABEL_SOURCES",
             [
-                ("HADES1", h1_labels, h1_edge, h1_order),
-                ("HADES2", h2_labels, h2_edge, h2_order),
+                ("HADES1", h1_allowed, h1_labels, h1_edge, h1_order),
+                ("HADES2", h2_allowed, h2_labels, h2_edge, h2_order),
             ],
         )
         monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
@@ -212,3 +231,55 @@ class TestReqTypeLabelSourcesPerGameSeam:
         assert shared in out
         # Display-order dedupes - shared appears exactly once.
         assert gd["reqTypeOrder"] == [shared]
+
+    def test_missing_req_type_label_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """Issue #44: stub the H1 allowlist with a field that has no
+        friendly label and verify the build pipeline prints a warning
+        rather than silently emitting a viewer with the raw camelCase
+        field name."""
+        import build_viewer
+
+        fake_allowed = {"H1Field", "NewlyAddedField"}
+        fake_labels = {"H1Field": "H1 friendly"}
+        fake_edge = {"H1Field": "ALL", "NewlyAddedField": "ALL"}
+        fake_order = ["H1Field", "NewlyAddedField"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "NewlyAddedField" in out
+        assert "no entry in HADES1_REQ_TYPE_LABELS" in out
+
+    def test_stale_req_type_label_prints_warning(self, capsys, monkeypatch, make_graph_data):
+        """Issue #44: labels referencing fields no longer in the
+        allowlist would render unreachable entries; surface as a
+        warning at build time so the dead label can be cleaned up."""
+        import build_viewer
+
+        fake_allowed = {"H1Field"}
+        fake_labels = {
+            "H1Field": "H1 friendly",
+            "RemovedFromAllowlist": "Should not exist",
+        }
+        fake_edge = {"H1Field": "ALL"}
+        fake_order = ["H1Field"]
+        monkeypatch.setattr(
+            build_viewer,
+            "_REQ_TYPE_LABEL_SOURCES",
+            [("HADES1", fake_allowed, fake_labels, fake_edge, fake_order)],
+        )
+        monkeypatch.setattr(build_viewer, "_SECTION_KEY_LABEL_SOURCES", [])
+
+        gd = make_graph_data()
+        build_viewer.annotate_label_maps(gd)
+
+        out = capsys.readouterr().out
+        assert "RemovedFromAllowlist" in out
+        assert "are not in the HADES1 req-fields allowlist" in out

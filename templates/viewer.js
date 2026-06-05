@@ -382,7 +382,17 @@ function renderInfo(name) {
 
     // Textline requirements
     for (const [type, refs] of Object.entries(tl.requirements)) {
-        html += `<div class="req-section req-type-${type}"><h4>${renderReqTypeHtml(type)}</h4>`;
+        // Count-based requirement fields stash ``{Count: N}`` in
+        // ``otherRequirements`` under the same key as the requirement.
+        // Surface the count inline with the header (issue #43) so the
+        // user sees ``Required min (any) (3)`` instead of finding the
+        // Count duplicated in the Other Requirements section below.
+        const meta = tl.otherRequirements[type];
+        let countSuffix = '';
+        if (meta && typeof meta === 'object' && 'Count' in meta) {
+            countSuffix = `: ${escapeHtml(String(meta.Count))}`;
+        }
+        html += `<div class="req-section req-type-${type}"><h4>${renderReqTypeHtml(type)}${countSuffix}</h4>`;
         const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
         let i = 0;
         while (i < refs.length) {
@@ -410,12 +420,31 @@ function renderInfo(name) {
 
     // Other requirements
     if (Object.keys(tl.otherRequirements).length > 0) {
-        html += `<div class="req-section req-type-other"><h4>Other Requirements</h4>`;
+        let otherHtml = '';
         for (const [key, val] of Object.entries(tl.otherRequirements)) {
+            if (key in tl.requirements) {
+                // Already surfaced inline with the requirement-section
+                // header above. Defensively render any non-Count meta
+                // keys to guard against silent data loss if the game
+                // data ever ships additional metadata fields beyond
+                // ``Count`` (none today across all 4 H1 sources).
+                if (val && typeof val === 'object' && !Array.isArray(val)) {
+                    const extras = {};
+                    for (const [k, v] of Object.entries(val)) {
+                        if (k !== 'Count') extras[k] = v;
+                    }
+                    if (Object.keys(extras).length > 0) {
+                        otherHtml += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(JSON.stringify(extras))}</div>`;
+                    }
+                }
+                continue;
+            }
             const display = typeof val === 'object' ? JSON.stringify(val) : String(val);
-            html += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
+            otherHtml += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
         }
-        html += `</div>`;
+        if (otherHtml) {
+            html += `<div class="req-section req-type-other"><h4>Other Requirements</h4>${otherHtml}</div>`;
+        }
     }
 
     html += `</div>`;
@@ -592,7 +621,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
             const newPath = new Set(ancestorPath);
             newPath.add(name);
             const kids = getChildren(name, direction);
-            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath);
+            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
         }
@@ -619,7 +648,7 @@ function renderUpstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath);
+        appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
@@ -639,7 +668,7 @@ function renderDownstream(name) {
         const childContainer = document.createElement('div');
         childContainer.className = 'tree-children expanded';
         const newPath = new Set([name]);
-        appendChildrenWithTypeGrouping(childContainer, kids, 'downstream', newPath);
+        appendChildrenWithTypeGrouping(childContainer, kids, 'downstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
     }
@@ -654,24 +683,49 @@ function renderDownstream(name) {
 //   .req-type-group  (per requirement type, e.g. ALL / ANY / NOT / ...)
 //     └─ .gamedata-group  (per GameData.X source list, optional)
 //          └─ .tree-node
-// Used by both the root auto-expand path and the lazy-expand path so the
-// grouping is consistent at every depth.
-function appendChildrenWithTypeGrouping(container, kids, direction, ancestorPath) {
+//
+// Count-based requirement types (Min/MaxRunsSinceAny, RequiredMin/MaxAny)
+// stash their threshold in ``otherRequirements[edgeType].Count`` on the
+// textline that OWNS the requirement: for upstream the parent (one count
+// for the whole group); for downstream each child individually (counts
+// can vary per dependent). Grouping by ``(edgeType, count)`` means each
+// group header carries a single, unambiguous count to display alongside
+// the friendly label - upstream collapses to one group as before;
+// downstream splits into per-count subgroups when threshold values
+// differ across dependents. Used by both the root auto-expand path and
+// the lazy-expand path so the grouping is consistent at every depth.
+function appendChildrenWithTypeGrouping(container, kids, direction, ancestorPath, parentName) {
     if (kids.length === 0) return;
-    // Stable sort by requirement-type order. JS Array.prototype.sort is
-    // stable in all evergreen browsers, so kids within the same type keep
-    // their natural insertion order — which is what the inner GameData
+    // Annotate each kid with the Count threshold for its
+    // requirement-relationship to ``parentName``. For upstream the
+    // requirement (and thus the count) lives on the parent; for
+    // downstream it lives on the child itself.
+    const annotated = kids.map(k => {
+        const ownerName = direction === 'upstream' ? parentName : k.name;
+        const owner = textlines[ownerName];
+        const meta = owner && owner.otherRequirements && owner.otherRequirements[k.edgeType];
+        const count = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : null;
+        return { name: k.name, edgeType: k.edgeType, group: k.group, _count: count };
+    });
+    // Stable sort by (req-type order, count). JS Array.prototype.sort is
+    // stable in all evergreen browsers, so kids within the same key keep
+    // their natural insertion order - which is what the inner GameData
     // chunking relies on to detect contiguous same-group runs.
-    const sorted = kids.slice().sort(
-        (a, b) => reqTypeOrderIndex(a.edgeType) - reqTypeOrderIndex(b.edgeType)
-    );
+    const sorted = annotated.slice().sort((a, b) => {
+        const d = reqTypeOrderIndex(a.edgeType) - reqTypeOrderIndex(b.edgeType);
+        if (d !== 0) return d;
+        const ac = a._count == null ? -Infinity : a._count;
+        const bc = b._count == null ? -Infinity : b._count;
+        return ac - bc;
+    });
     let i = 0;
     while (i < sorted.length) {
         const edgeType = sorted[i].edgeType;
+        const groupCount = sorted[i]._count;
         let j = i;
-        while (j < sorted.length && sorted[j].edgeType === edgeType) j++;
+        while (j < sorted.length && sorted[j].edgeType === edgeType && sorted[j]._count === groupCount) j++;
         const chunk = sorted.slice(i, j);
-        const box = createReqTypeGroup(edgeType, chunk.length);
+        const box = createReqTypeGroup(edgeType, chunk.length, groupCount);
         const groupChildren = box.querySelector('.req-type-group-children');
         appendGroupedChildren(groupChildren, chunk, direction, ancestorPath);
         container.appendChild(box);
@@ -679,7 +733,7 @@ function appendChildrenWithTypeGrouping(container, kids, direction, ancestorPath
     }
 }
 
-function createReqTypeGroup(edgeType, count) {
+function createReqTypeGroup(edgeType, count, requirementCount) {
     const box = document.createElement('div');
     box.className = `req-type-group req-type-${edgeType}`;
 
@@ -698,7 +752,13 @@ function createReqTypeGroup(edgeType, count) {
 
     const label = document.createElement('span');
     label.className = 'req-type-group-label';
-    label.textContent = formatReqType(edgeType);
+    // Append the count threshold for count-based requirement fields
+    // so the tree-view header matches the detail-view format
+    // ``Must have played at least (ANY): 3``.
+    const friendlyLabel = formatReqType(edgeType);
+    label.textContent = requirementCount != null
+        ? `${friendlyLabel}: ${requirementCount}`
+        : friendlyLabel;
     // Mirror the other render*Html helpers: only attach the tooltip
     // when a friendly mapping exists, so unmapped types stay plain.
     const friendlyEdge = reqTypeLabels[edgeType];

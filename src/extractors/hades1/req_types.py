@@ -29,20 +29,41 @@ reach the viewer).
 """
 
 # Friendly headers shown above each requirement group in the details
-# panel (also used in unresolved-ref reason text). Mapping is
-# intentionally partial today - see issue #44 for the missing entries.
+# panel (also used in unresolved-ref reason text). Every entry in
+# ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT`` is covered;
+# the build-time ``audit_req_type_labels`` audit (wired into
+# ``build_viewer.annotate_label_maps``) flags any drift between the
+# allowlist and this map.
+#
+# Naming scheme: positives use ``Must have played`` / ``Must be queued``;
+# negatives use ``Must NOT have played`` / ``Must NOT be queued``.
+# Quantifier (``ALL`` / ``ANY``) and scope (``this run`` / ``last run``
+# / ``this room``) are in parens; every label carries an explicit
+# quantifier marker so the headers are self-describing. Count-based
+# fields use ``at least`` / ``at most`` / ``Min/Max runs since played``
+# forms - the ``Count`` parameter is appended by the viewer as a
+# trailing ``: N`` (see #43), so e.g. ``Must have played at least (ANY)``
+# renders as ``Must have played at least (ANY): 3``.
 HADES1_REQ_TYPE_LABELS = {
-    "RequiredTextLines":              "Required (ALL)",
-    "RequiredAnyTextLines":           "Required (ANY)",
-    "RequiredAnyOtherTextLines":      "Required (ANY other)",
+    "RequiredTextLines":              "Must have played (ALL)",
+    "RequiredAnyTextLines":           "Must have played (ANY)",
+    "RequiredAnyOtherTextLines":      "Must have played (ANY other)",
+    "RequiredTextLinesThisRun":       "Must have played (ALL, this run)",
+    "RequiredTextLinesLastRun":       "Must have played (ALL, last run)",
+    "RequiredTextLinesThisRoom":      "Must have played (ALL, this room)",
+    "RequiredAnyTextLinesThisRun":    "Must have played (ANY, this run)",
+    "RequiredAnyTextLinesLastRun":    "Must have played (ANY, last run)",
+    "RequiredQueuedTextLines":        "Must be queued (ALL)",
+    "RequiredAnyQueuedTextLines":     "Must be queued (ANY)",
     "RequiredFalseTextLines":         "Must NOT have played",
     "RequiredFalseQueuedTextLines":   "Must NOT be queued",
     "RequiredFalseTextLinesThisRun":  "Must NOT have played (this run)",
-    "RequiredFalseTextLinesLastRun":  "Must NOT have played (last run)",
-    "RequiredTextLinesThisRun":       "Required (this run)",
-    "RequiredTextLinesLastRun":       "Required (last run)",
-    "RequiredAnyTextLinesThisRun":    "Required ANY (this run)",
-    "RequiredAnyTextLinesLastRun":    "Required ANY (last run)",
+    "RequiredFalseTextLinesLastRun": "Must NOT have played (last run)",
+    "RequiredFalseTextLinesThisRoom": "Must NOT have played (this room)",
+    "RequiredMinAnyTextLines":        "Must have played at least (ANY)",
+    "RequiredMaxAnyTextLines":        "Must have played at most (ANY)",
+    "MinRunsSinceAnyTextLines":       "Min runs since played (ANY)",
+    "MaxRunsSinceAnyTextLines":       "Max runs since played (ANY)",
 }
 
 # Short chips rendered next to each child in the dependency tree. Full

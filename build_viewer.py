@@ -36,8 +36,12 @@ from pathlib import Path
 from src.graph import resolve_duplicate, dup_summary
 from src.extractors.textline_set import (
     REQUIREMENT_BLOCKING_SEMANTICS,
+    TEXTLINE_REQ_FIELDS,
+    TEXTLINE_REQ_FIELDS_COUNT,
     audit_section_key_labels,
     audit_section_key_labels_stale,
+    audit_req_type_labels,
+    audit_req_type_labels_stale,
 )
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
@@ -331,16 +335,19 @@ _SECTION_KEY_LABEL_SOURCES = [
     ("HADES1", HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS),
 ]
 
-# Per-game requirement-type label data (friendly headers, short tree
-# chips, tree display order). H1 and H2 use disjoint requirement-field
-# vocabularies (H1: flat ``Required.*TextLine.*`` fields; H2: nested
-# ``GameStateRequirements`` with ``HasAny``/``HasAll``/``Path`` records),
-# so each game contributes its own maps and the build merges them into
-# a single viewer-side lookup. Mirrors ``_SECTION_KEY_LABEL_SOURCES``.
-# Adding H2 is a one-line append once ``hades2/req_types.py`` exists.
+# Per-game requirement-type label data. Tuple shape:
+#   (game_label, allowed_fields, labels, edge_labels, display_order)
+# H1 and H2 use disjoint requirement-field vocabularies (H1: flat
+# ``Required.*TextLine.*`` fields; H2: nested ``GameStateRequirements``
+# with ``HasAny``/``HasAll``/``Path`` records), so each game contributes
+# its own allowlist + maps and the build merges them into a single
+# viewer-side lookup. Mirrors ``_SECTION_KEY_LABEL_SOURCES``. Adding H2
+# is a one-line append once ``hades2/req_types.py`` and the H2-side
+# req-fields allowlist exist.
 _REQ_TYPE_LABEL_SOURCES = [
     (
         "HADES1",
+        TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT,
         HADES1_REQ_TYPE_LABELS,
         HADES1_REQ_TYPE_EDGE_LABELS,
         HADES1_REQ_TYPE_DISPLAY_ORDER,
@@ -369,6 +376,11 @@ def annotate_label_maps(graph_data: dict) -> None:
         but missing from the corresponding ``*_SECTION_KEY_LABELS`` map
         (would silently fall back to the raw camelCase key);
       - labels defined for keys no longer in the allowlist (stale);
+      - requirement fields allowlisted in any game's req-fields
+        allowlist but missing from the corresponding
+        ``*_REQ_TYPE_LABELS`` map (would silently fall back to the raw
+        camelCase field name);
+      - req-type labels defined for fields no longer in the allowlist;
       - duplicate field names across two games' req-type maps (the
         merged map would silently last-wins and mask a real conflict
         between disjoint per-game vocabularies).
@@ -396,7 +408,30 @@ def annotate_label_maps(graph_data: dict) -> None:
     merged_req_edge_labels: dict[str, str] = {}
     merged_req_order: list[str] = []
     merged_req_order_seen: set[str] = set()
-    for game_label, labels, edge_labels, display_order in _REQ_TYPE_LABEL_SOURCES:
+    for game_label, allowed_fields, labels, edge_labels, display_order in _REQ_TYPE_LABEL_SOURCES:
+        # Per-game allowlist vs labels: any allowed field without a
+        # friendly header would render as the raw camelCase key in the
+        # viewer. The matching equality test in
+        # ``tests/hades1/test_section_key_labels.py`` catches this at
+        # CI time; this runtime warning is the safety net for any
+        # future game whose label map drifts post-merge.
+        missing_labels = sorted(audit_req_type_labels(allowed_fields, labels))
+        if missing_labels:
+            print(
+                f"WARNING: {len(missing_labels)} {game_label} req-type "
+                f"field(s) have no entry in {game_label}_REQ_TYPE_LABELS - "
+                f"viewer will fall back to the raw field name: "
+                f"{missing_labels}"
+            )
+        stale_labels = sorted(audit_req_type_labels_stale(allowed_fields, labels))
+        if stale_labels:
+            print(
+                f"WARNING: {len(stale_labels)} entry(ies) in "
+                f"{game_label}_REQ_TYPE_LABELS reference fields that "
+                f"are not in the {game_label} req-fields allowlist - "
+                f"remove them: {stale_labels}"
+            )
+
         # Per-game vocabularies are expected to be disjoint (H1 and H2
         # use different field names entirely). Warn loudly if any name
         # collides so the silent last-wins merge below doesn't mask a

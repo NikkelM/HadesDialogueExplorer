@@ -144,6 +144,28 @@ def audit_section_key_labels_stale(section_keys, labels) -> set:
     """
     return set(labels) - set(section_keys)
 
+
+def audit_req_type_labels(req_fields, labels) -> set:
+    """Return the subset of ``req_fields`` that have no entry in
+    ``labels``.
+
+    Mirrors ``audit_section_key_labels`` but for the requirement-field
+    vocabulary: each entry in a game's req-fields allowlist
+    (``TEXTLINE_REQ_FIELDS`` | ``TEXTLINE_REQ_FIELDS_COUNT`` for H1)
+    must have a friendly header in the per-game labels map, or the
+    viewer falls back to the raw camelCase field name.
+    """
+    return set(req_fields) - set(labels)
+
+
+def audit_req_type_labels_stale(req_fields, labels) -> set:
+    """Return the subset of ``labels`` keys that are not in
+    ``req_fields`` (i.e. friendly names defined for fields the
+    allowlist no longer contains - typically left behind by a typo
+    fix or a field rename).
+    """
+    return set(labels) - set(req_fields)
+
 # Regex used by the audit to catch any field that *looks* like a textline
 # requirement but isn't in TEXTLINE_REQ_FIELDS.
 _REQ_TEXTLINE_PATTERN = re.compile(r"^Required.*TextLine.*$")
