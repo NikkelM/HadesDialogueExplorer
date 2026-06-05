@@ -510,6 +510,38 @@ function hasChildren(name, direction) {
     return (dependents[name] || []).some(d => d.name !== name);
 }
 
+// Bring newly-expanded content into the visible scroll viewport. After
+// a DOM mutation reveals new tree rows (e.g. clicking a `.tree-label`
+// toggle, expanding a `.req-type-group` / `.gamedata-group` header),
+// horizontally scroll the enclosing `.panel-body` to the rightmost
+// position so the full extent of the section is on-screen. CSS handles
+// the actual layout / right-edge alignment (see `styles/tree.css`):
+// each container uses default block layout so its right edge equals
+// its parent's right edge, and the root `.tree-node.root` sizes to
+// `max-content` so the panel-body scrollWidth equals the widest
+// descendant's natural content width. We only need to nudge the
+// scroll position here.
+//
+// We always scroll to `panelBody.scrollWidth` (auto-clamped to the
+// max scrollable position) rather than measuring whether the new
+// container fits in the current viewport. Measuring `container.right`
+// is unreliable because: the newly-revealed branch can contain deeper
+// labels that grew the panel's intrinsic width via `max-content`
+// propagation; each level of `.req-type-group` / `.gamedata-group`
+// adds `padding-right` framing so the container's right edge sits
+// inside the panel's rightmost content; and a previous expand may
+// have already scrolled the container into view, leaving the
+// section's full extent still off-screen. Unconditional max-scroll
+// matches the user's mental model: "expand to see the whole section".
+function ensureExpandedContentVisible(container) {
+    if (!container) return;
+    const panelBody = container.closest('.panel-body');
+    if (!panelBody) return;
+    requestAnimationFrame(() => {
+        panelBody.scrollTo({ left: panelBody.scrollWidth, behavior: 'smooth' });
+    });
+}
+
 function createNodeEl(name, edgeType, direction, ancestorPath) {
     const tl = textlines[name];
     // Use the friendly display name for the owner tag when available,
@@ -624,6 +656,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
             const isExpanded = childContainer.classList.contains('expanded');
             childContainer.classList.toggle('expanded');
             toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+            if (!isExpanded) ensureExpandedContentVisible(childContainer);
         } else {
             // Lazily create children
             childContainer = document.createElement('div');
@@ -634,6 +667,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
             appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
+            ensureExpandedContentVisible(childContainer);
         }
         renderInfo(name);
     });
@@ -790,6 +824,7 @@ function createReqTypeGroup(edgeType, count, requirementCount) {
         const isExpanded = childrenBox.classList.contains('expanded');
         childrenBox.classList.toggle('expanded');
         toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
     });
 
     box.appendChild(header);
@@ -867,6 +902,7 @@ function createGameDataGroup(groupName, edgeType, count) {
         const isExpanded = childrenBox.classList.contains('expanded');
         childrenBox.classList.toggle('expanded');
         toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
     });
 
     box.appendChild(header);

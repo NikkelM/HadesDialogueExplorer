@@ -1,22 +1,39 @@
 /* Panel layout, textline info, requirements, dialogue */
 .panel {
     flex: 1;
-    overflow-y: auto;
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
     border-right: 1px solid #0f3460;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
 }
 .panel:last-child { border-right: none; }
+/* The header is rendered OUTSIDE the scroll container (#31) so scrolled
+   content can't slide under it - no `position: sticky` needed - and it
+   stays visible regardless of how far the body has been scrolled in
+   either axis. */
 .panel h2 {
     font-size: 13px;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 12px;
-    position: sticky;
-    top: 0;
     background: #1a1a2e;
-    padding: 4px 0;
+    padding: 16px 16px 12px;
+    flex-shrink: 0;
     z-index: 10;
+}
+/* Scroll container for panel content. Scrolls on BOTH axes so:
+   - tree rows that extend horizontally past the panel width don't wrap
+     mid-word; the user scrolls right to follow deep chains (#60).
+   - long single-line content in any panel is reachable.
+   Prose content (dialogue lines, requirement boxes) wraps normally
+   because it has no `white-space: nowrap` rule. */
+.panel-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 0 16px 16px;
 }
 .textline-info {
     background: #16213e;

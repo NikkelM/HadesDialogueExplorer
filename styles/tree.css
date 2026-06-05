@@ -5,6 +5,35 @@
     padding-left: 12px;
 }
 .tree-node.root { margin-left: 0; border-left: none; padding-left: 0; }
+
+/* Right-edge alignment strategy (issue #60).
+   The visible panel-body has `overflow: auto`; we want a horizontal
+   scrollbar to appear when deep nesting or long textline names push
+   content past the panel's visible width, AND every box at every depth
+   to share the same right edge so framing stays visually consistent
+   regardless of which branch is expanded.
+
+   Default block layout already gives us right-edge alignment for free:
+   a `width: auto` block element fills its parent's content box minus
+   its own margins, so `child.right === parent.right` recursively. We
+   just need ONE element to drive the intrinsic width:
+
+     - `.tree-node.root` is sized to `max-content` so the entire tree
+       grows as wide as the widest descendant's natural content.
+     - `min-width: 100%` keeps it at least as wide as the panel-body
+       so narrow trees don't render with empty space on the right.
+
+   Inner containers (`.tree-node`, `.tree-children`, `.req-type-group`,
+   `.gamedata-group`, ...) intentionally have no explicit width: their
+   default `width: auto` makes them fill their parent's content box,
+   which means every box's right edge matches the root's right edge.
+   `.tree-label` itself is `width: max-content; min-width: 100%;` so
+   its natural text width propagates up to the root's max-content
+   computation while it still stretches to fill its container row. */
+.tree-node.root {
+    width: max-content;
+    min-width: 100%;
+}
 .tree-label {
     padding: 4px 8px;
     margin: 2px 0;
@@ -14,6 +43,16 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    /* Keep each row on a single line; the panel-body scrolls horizontally
+       so long names extend right rather than wrapping mid-word (#60).
+       `white-space` is inheritable so descendants (`.name`, `.edge-type`,
+       `.npc-tag`, ...) all stay single-line too without per-element rules.
+       `width: max-content` makes the flex item as wide as its content so
+       the parent `.tree-node` / `.panel-body` see the overflow and
+       horizontal scroll kicks in. */
+    white-space: nowrap;
+    width: max-content;
+    min-width: 100%;
 }
 .tree-label:hover { background: #0f3460; }
 .tree-label.active { background: #0f3460; color: #e94560; }
@@ -33,7 +72,10 @@
 .edge-all { background: #1b4332; color: #95d5b2; }
 .edge-any { background: #3d2b1f; color: #f4a261; }
 .edge-false { background: #4a1520; color: #f07167; }
-.tree-label .name { word-break: break-all; }
+/* `.tree-label .name` previously had `word-break: break-all` to force
+   long textline names to wrap mid-word. Dropped in #60: rows stay on a
+   single line (`.tree-label` is `white-space: nowrap`) and the
+   `.panel-body` scrolls horizontally so deep chains push content right. */
 .tree-label .npc-tag { font-size: 10px; color: #666; margin-left: auto; flex-shrink: 0; }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
