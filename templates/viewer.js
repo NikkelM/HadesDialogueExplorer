@@ -222,6 +222,18 @@ function renderSetLevelBadgeHtml(tl) {
     return `<span class="set-priority-badge ${cls}" title="${escapeHtml(tip)}">${text}</span>`;
 }
 
+// PlayOnce / Repeatable indicator (issue #25). Always renders one of
+// the two so the repeatability state is explicit rather than implied
+// by the absence of a badge - a non-PlayOnce dialogue is still
+// eligible to play after it's been heard (subject to other gates),
+// which is easy to miss if the only visual signal is the lock.
+function renderPlayOnceBadgeHtml(tl) {
+    if (tl && tl.playOnce) {
+        return `<span class="play-once-badge play-once-locked" title="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>`;
+    }
+    return `<span class="play-once-badge play-once-repeatable" title="This dialogue can play repeatedly as long as its requirements are met.">\u{1F501} Repeatable</span>`;
+}
+
 // Render a single requirement <div>, applying the resolved/unresolved
 // class plus (when unresolved) the category class so the viewer can
 // color-code back-compat vs typo-or-bug vs cut-content vs uncategorized.
@@ -394,7 +406,7 @@ function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3><span class="name">${escapeHtml(name)}</span>${renderPriorityBadgeHtml(tl)}${tl.playOnce ? `<span class="play-once-badge" title="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>` : ''}</h3>
+        <h3><span class="name">${escapeHtml(name)}</span>${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             <span>Section: ${renderSectionHtml(tl.section)}</span>
