@@ -6,10 +6,9 @@ the parser should extract.
 
 The allowlist is hardcoded (rather than pattern-matched by suffix) because:
   - the games are complete, so the set is finite and stable;
-  - pattern matching would silently accept new key names introduced by a
-    future update OR silently miss any container that doesn't follow the
-    pattern - both are worse than a hardcoded list that surfaces gaps
-    explicitly via ``audit_textline_section_keys``.
+  - pattern matching would silently accept new key names that don't fit
+    the dialogue-set shape OR silently miss any container that doesn't
+    follow the pattern - both are worse than an explicit list.
 
 When adding a Hades II equivalent, define ``HADES2_TEXTLINE_SECTION_KEYS``
 in the corresponding ``hades2/section_keys.py`` module and thread it through

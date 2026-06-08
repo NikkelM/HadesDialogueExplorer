@@ -24,13 +24,6 @@ from src.extractors.hades1 import (
     extract_enemy_data,
     extract_game_data_lists,
     HADES1_SPEAKER_NAMES,
-    HADES1_TEXTLINE_SECTION_KEYS,
-)
-from src.extractors.textline_set import (
-    audit_requirement_fields,
-    audit_textline_section_keys,
-    audit_section_keys_stale,
-    observed_section_keys,
 )
 from src.graph import build_graph_data
 
@@ -77,17 +70,8 @@ def generate_source(
     extractor,
     game_data_lists: dict,
     hades1_scripts: Path,
-    observed_keys_out: set = None,
 ) -> dict:
-    """Parse one Lua source file and return its graph dataset (or None).
-
-    ``observed_keys_out`` (optional) is updated in-place with every
-    allowlisted section key that appeared in this source. The caller
-    aggregates the result across sources to drive the cross-source
-    ``audit_section_keys_stale`` warning (an allowlist entry that was
-    never observed in any source typically indicates a rename or
-    removed extractor target).
-    """
+    """Parse one Lua source file and return its graph dataset (or None)."""
     lua_path = hades1_scripts / lua_name
     if not lua_path.exists():
         print(f"  SKIP {lua_name}: file not found at {lua_path}")
@@ -95,20 +79,6 @@ def generate_source(
 
     print(f"Parsing {source_label}: {lua_path}")
     parsed = parse_lua_file(str(lua_path))
-
-    unknown = audit_requirement_fields(parsed)
-    if unknown:
-        print(f"  WARNING: unknown Required*TextLine* fields: {sorted(unknown)}")
-
-    unknown_sections = audit_textline_section_keys(parsed, HADES1_TEXTLINE_SECTION_KEYS)
-    if unknown_sections:
-        print(
-            f"  WARNING: section-shaped keys with named-table values not in the "
-            f"H1 allowlist (HADES1_TEXTLINE_SECTION_KEYS): {sorted(unknown_sections)}"
-        )
-
-    if observed_keys_out is not None:
-        observed_keys_out.update(observed_section_keys(parsed, HADES1_TEXTLINE_SECTION_KEYS))
 
     owners = extractor(
         parsed,
@@ -146,17 +116,10 @@ def main():
 
     game_data_lists = load_game_data_lists(hades1_scripts)
 
-    # Accumulated across sources so the cross-source
-    # ``audit_section_keys_stale`` below can catch allowlist entries
-    # that never appeared anywhere - the reverse direction of the
-    # per-source ``audit_textline_section_keys`` check above.
-    observed_keys: set = set()
-
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
             game_data_lists, hades1_scripts,
-            observed_keys_out=observed_keys,
         )
         if data is None:
             continue
@@ -165,18 +128,6 @@ def main():
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {out_path}")
-
-    stale_section_keys = sorted(
-        audit_section_keys_stale(observed_keys, HADES1_TEXTLINE_SECTION_KEYS)
-    )
-    if stale_section_keys:
-        print(
-            f"\nWARNING: {len(stale_section_keys)} entry(ies) in "
-            f"HADES1_TEXTLINE_SECTION_KEYS never appeared in any "
-            f"parsed source - typically left behind by a rename or "
-            f"a removed extractor target. Remove them: "
-            f"{stale_section_keys}"
-        )
 
     print("\nDone!")
 

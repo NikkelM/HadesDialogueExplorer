@@ -30,10 +30,8 @@ reach the viewer).
 
 # Friendly headers shown above each requirement group in the details
 # panel (also used in unresolved-ref reason text). Every entry in
-# ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT`` is covered;
-# the build-time ``audit_req_type_labels`` audit (wired into
-# ``build_viewer.annotate_label_maps``) flags any drift between the
-# allowlist and this map.
+# ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT`` must be
+# covered.
 #
 # Naming scheme: positives use ``Must have played`` / ``Must be queued``;
 # negatives use ``Must NOT have played`` / ``Must NOT be queued``.

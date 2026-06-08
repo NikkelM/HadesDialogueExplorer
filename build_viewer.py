@@ -38,14 +38,6 @@ from src.extractors.textline_set import (
     REQUIREMENT_BLOCKING_SEMANTICS,
     TEXTLINE_REQ_FIELDS,
     TEXTLINE_REQ_FIELDS_COUNT,
-    audit_section_key_labels,
-    audit_section_key_labels_stale,
-    audit_req_type_labels,
-    audit_req_type_labels_stale,
-    audit_req_type_edge_labels,
-    audit_req_type_edge_labels_stale,
-    audit_req_type_display_order,
-    audit_req_type_display_order_stale,
 )
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
@@ -395,8 +387,7 @@ _REQ_TYPE_LABEL_SOURCES = [
 
 
 def annotate_label_maps(graph_data: dict) -> None:
-    """Attach the viewer's friendly-name lookups to the merged graph data
-    and audit them against the Python-side allowlists.
+    """Attach the viewer's friendly-name lookups to the merged graph data.
 
     Adds to ``graph_data``:
       - ``reqTypeLabels``: ``{field: human-label}`` for the requirement
@@ -409,137 +400,16 @@ def annotate_label_maps(graph_data: dict) -> None:
       - ``sectionKeyLabels``: ``{key: human-label}`` for the per-game
         union of section-key labels (merged across all games so the
         viewer can do a single lookup regardless of source).
-
-    Audits and prints warnings for:
-      - section keys allowlisted in any game's ``*_TEXTLINE_SECTION_KEYS``
-        but missing from the corresponding ``*_SECTION_KEY_LABELS`` map
-        (would silently fall back to the raw camelCase key);
-      - labels defined for keys no longer in the allowlist (stale);
-      - requirement fields allowlisted in any game's req-fields
-        allowlist but missing from the corresponding
-        ``*_REQ_TYPE_LABELS`` / ``*_REQ_TYPE_EDGE_LABELS`` /
-        ``*_REQ_TYPE_DISPLAY_ORDER`` map (would silently fall back to
-        the raw camelCase field name, the literal 'ALL' edge chip, and
-        the end-of-list sort sentinel respectively);
-      - entries in any of the three req-type maps that reference fields
-        no longer in the per-game allowlist (stale);
-      - duplicate field names across two games' req-type maps (the
-        merged map would silently last-wins and mask a real conflict
-        between disjoint per-game vocabularies).
     """
     merged_section_labels: dict[str, str] = {}
-    for game_label, section_keys, labels in _SECTION_KEY_LABEL_SOURCES:
-        missing = sorted(audit_section_key_labels(section_keys, labels))
-        if missing:
-            print(
-                f"WARNING: {len(missing)} {game_label} section key(s) "
-                f"have no entry in {game_label}_SECTION_KEY_LABELS - "
-                f"viewer will fall back to the raw key: {missing}"
-            )
-        stale = sorted(audit_section_key_labels_stale(section_keys, labels))
-        if stale:
-            print(
-                f"WARNING: {len(stale)} entry(ies) in "
-                f"{game_label}_SECTION_KEY_LABELS reference keys that "
-                f"are not in {game_label}_TEXTLINE_SECTION_KEYS - "
-                f"remove them: {stale}"
-            )
+    for _game_label, _section_keys, labels in _SECTION_KEY_LABEL_SOURCES:
         merged_section_labels.update(labels)
 
     merged_req_labels: dict[str, str] = {}
     merged_req_edge_labels: dict[str, str] = {}
     merged_req_order: list[str] = []
     merged_req_order_seen: set[str] = set()
-    for game_label, allowed_fields, labels, edge_labels, display_order in _REQ_TYPE_LABEL_SOURCES:
-        # Per-game allowlist vs labels: any allowed field without a
-        # friendly header would render as the raw camelCase key in the
-        # viewer. The matching equality test in
-        # ``tests/hades1/test_section_key_labels.py`` catches this at
-        # CI time; this runtime warning is the safety net for any
-        # future game whose label map drifts post-merge.
-        missing_labels = sorted(audit_req_type_labels(allowed_fields, labels))
-        if missing_labels:
-            print(
-                f"WARNING: {len(missing_labels)} {game_label} req-type "
-                f"field(s) have no entry in {game_label}_REQ_TYPE_LABELS - "
-                f"viewer will fall back to the raw field name: "
-                f"{missing_labels}"
-            )
-        stale_labels = sorted(audit_req_type_labels_stale(allowed_fields, labels))
-        if stale_labels:
-            print(
-                f"WARNING: {len(stale_labels)} entry(ies) in "
-                f"{game_label}_REQ_TYPE_LABELS reference fields that "
-                f"are not in the {game_label} req-fields allowlist - "
-                f"remove them: {stale_labels}"
-            )
-
-        # Mirror the labels-map drift checks for the edge-chip and
-        # display-order maps so the same per-game seam catches all
-        # three sides of the requirement-field vocabulary. Without
-        # these, a missing edge entry silently falls back to the
-        # literal ``'ALL'`` chip in the viewer (mislabelling any
-        # non-``all``-semantics field) and a missing display-order
-        # entry sorts to the end via the index fallback (breaking the
-        # curated hard-vs-permissive grouping).
-        missing_edge = sorted(audit_req_type_edge_labels(allowed_fields, edge_labels))
-        if missing_edge:
-            print(
-                f"WARNING: {len(missing_edge)} {game_label} req-type "
-                f"field(s) have no entry in {game_label}_REQ_TYPE_EDGE_LABELS - "
-                f"viewer will fall back to the literal 'ALL' chip: "
-                f"{missing_edge}"
-            )
-        stale_edge = sorted(audit_req_type_edge_labels_stale(allowed_fields, edge_labels))
-        if stale_edge:
-            print(
-                f"WARNING: {len(stale_edge)} entry(ies) in "
-                f"{game_label}_REQ_TYPE_EDGE_LABELS reference fields that "
-                f"are not in the {game_label} req-fields allowlist - "
-                f"remove them: {stale_edge}"
-            )
-        missing_order = sorted(audit_req_type_display_order(allowed_fields, display_order))
-        if missing_order:
-            print(
-                f"WARNING: {len(missing_order)} {game_label} req-type "
-                f"field(s) missing from {game_label}_REQ_TYPE_DISPLAY_ORDER - "
-                f"viewer will sort them to the end via the index fallback: "
-                f"{missing_order}"
-            )
-        stale_order = sorted(audit_req_type_display_order_stale(allowed_fields, display_order))
-        if stale_order:
-            print(
-                f"WARNING: {len(stale_order)} entry(ies) in "
-                f"{game_label}_REQ_TYPE_DISPLAY_ORDER reference fields that "
-                f"are not in the {game_label} req-fields allowlist - "
-                f"remove them: {stale_order}"
-            )
-
-        # Per-game vocabularies are expected to be disjoint (H1 and H2
-        # use different field names entirely). Warn loudly if any name
-        # collides so the silent last-wins merge below doesn't mask a
-        # real conflict.
-        label_conflicts = sorted(set(labels) & set(merged_req_labels))
-        if label_conflicts:
-            print(
-                f"WARNING: {len(label_conflicts)} {game_label}_REQ_TYPE_LABELS "
-                f"entry(ies) conflict with another game's map and will "
-                f"be silently overwritten: {label_conflicts}"
-            )
-        edge_conflicts = sorted(set(edge_labels) & set(merged_req_edge_labels))
-        if edge_conflicts:
-            print(
-                f"WARNING: {len(edge_conflicts)} {game_label}_REQ_TYPE_EDGE_LABELS "
-                f"entry(ies) conflict with another game's map and will "
-                f"be silently overwritten: {edge_conflicts}"
-            )
-        order_conflicts = sorted(set(display_order) & merged_req_order_seen)
-        if order_conflicts:
-            print(
-                f"WARNING: {len(order_conflicts)} {game_label}_REQ_TYPE_DISPLAY_ORDER "
-                f"entry(ies) already appear in an earlier game's order "
-                f"and will be skipped: {order_conflicts}"
-            )
+    for _game_label, _allowed_fields, labels, edge_labels, display_order in _REQ_TYPE_LABEL_SOURCES:
         merged_req_labels.update(labels)
         merged_req_edge_labels.update(edge_labels)
         for field in display_order:

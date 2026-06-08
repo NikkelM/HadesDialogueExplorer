@@ -26,8 +26,6 @@ import re
 from ..lua_parser import LuaTable, LuaIdentifier, LuaExpression
 
 # Requirement fields that reference other textlines (dialogue dependencies).
-# Whenever we add a new source we run an audit (see `audit_requirement_fields`)
-# to catch fields matching `Required.*TextLine.*` that are not listed here.
 TEXTLINE_REQ_FIELDS = {
     "RequiredTextLines",
     "RequiredAnyTextLines",
@@ -54,13 +52,6 @@ TEXTLINE_REQ_FIELDS_COUNT = {
     "RequiredMaxAnyTextLines",
     "MinRunsSinceAnyTextLines",
     "MaxRunsSinceAnyTextLines",
-}
-
-# Field names that look like textline requirements but are not. These are
-# either typos in the game data (e.g. truncated keys) or unrelated fields
-# whose name happens to match the audit pattern.
-REQ_TEXTLINE_FIELD_IGNORES = {
-    "RequiredTextLinesThis",  # game-data typo, seen once in NPCData.lua
 }
 
 NON_DIALOGUE_REQ_PREFIX = "Require"
@@ -111,114 +102,12 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
     "MaxRunsSinceAnyTextLines":          "count-permissive",
 }
 
-# --- Section-key audit helpers --------------------------------------------
-# The viewer-label data itself (req-type labels, edge labels, display
-# order) is per-game and lives next to each game's section-key allowlist
-# (e.g. ``hades1/req_types.py``). H2's requirement vocabulary is
-# disjoint from H1's, so a per-game seam in ``build_viewer.annotate_label_maps``
-# merges them rather than shipping a single global map from this module.
-#
-# The audit helpers below remain here because they are game-agnostic -
-# they just compare an allowlist set against a labels mapping and
-# surface either direction of drift.
+# Per-game label maps (req-type labels, edge labels, display order)
+# live next to each game's section-key allowlist (e.g.
+# ``hades1/req_types.py``). H2's requirement vocabulary is disjoint from
+# H1's, so a per-game seam in ``build_viewer.annotate_label_maps`` merges
+# them rather than shipping a single global map from this module.
 
-
-def audit_section_key_labels(section_keys, labels) -> set:
-    """Return the subset of ``section_keys`` that have no entry in
-    ``labels``.
-
-    Used by ``build_viewer.py`` so a newly-allowlisted key without a
-    friendly-name mapping is surfaced as a build-time warning rather
-    than silently falling back to the raw camelCase key in the viewer.
-    Stale entries (label keys not in ``section_keys``) are also worth
-    surfacing - the helper ``audit_section_key_labels_stale`` covers
-    that direction.
-    """
-    return set(section_keys) - set(labels)
-
-
-def audit_section_key_labels_stale(section_keys, labels) -> set:
-    """Return the subset of ``labels`` keys that are not in
-    ``section_keys`` (i.e. friendly names defined for keys the
-    allowlist no longer contains).
-    """
-    return set(labels) - set(section_keys)
-
-
-def audit_req_type_labels(req_fields, labels) -> set:
-    """Return the subset of ``req_fields`` that have no entry in
-    ``labels``.
-
-    Mirrors ``audit_section_key_labels`` but for the requirement-field
-    vocabulary: each entry in a game's req-fields allowlist
-    (``TEXTLINE_REQ_FIELDS`` | ``TEXTLINE_REQ_FIELDS_COUNT`` for H1)
-    must have a friendly header in the per-game labels map, or the
-    viewer falls back to the raw camelCase field name.
-    """
-    return set(req_fields) - set(labels)
-
-
-def audit_req_type_labels_stale(req_fields, labels) -> set:
-    """Return the subset of ``labels`` keys that are not in
-    ``req_fields`` (i.e. friendly names defined for fields the
-    allowlist no longer contains - typically left behind by a typo
-    fix or a field rename).
-    """
-    return set(labels) - set(req_fields)
-
-
-def audit_req_type_edge_labels(req_fields, edge_labels) -> set:
-    """Return the subset of ``req_fields`` that have no entry in
-    ``edge_labels``.
-
-    Mirrors :func:`audit_req_type_labels` for the tree edge chip
-    vocabulary. Missing entries fall back to the literal ``'ALL'``
-    chip in the viewer (``reqTypeEdgeLabels[type] || 'ALL'`` in
-    ``viewer.js``) which is a silent mislabel for any
-    non-``all``-semantics field.
-    """
-    return set(req_fields) - set(edge_labels)
-
-
-def audit_req_type_edge_labels_stale(req_fields, edge_labels) -> set:
-    """Return the subset of ``edge_labels`` keys that are not in
-    ``req_fields``. Reverse direction of
-    :func:`audit_req_type_edge_labels`.
-    """
-    return set(edge_labels) - set(req_fields)
-
-
-def audit_req_type_display_order(req_fields, display_order) -> set:
-    """Return the subset of ``req_fields`` that does not appear in
-    ``display_order``.
-
-    Fields missing from the order list sort to the end via the viewer's
-    ``reqTypeOrderIndex`` fallback sentinel, breaking the curated
-    grouping that puts hard requirements above permissive ones.
-    """
-    return set(req_fields) - set(display_order)
-
-
-def audit_req_type_display_order_stale(req_fields, display_order) -> set:
-    """Return the subset of ``display_order`` entries that are not in
-    ``req_fields``. Reverse direction of
-    :func:`audit_req_type_display_order` - a leftover entry from a
-    renamed/removed field produces a phantom slot in the merged
-    ``reqTypeOrder``.
-    """
-    return set(display_order) - set(req_fields)
-
-# Regex used by the audit to catch any field that *looks* like a textline
-# requirement but isn't in TEXTLINE_REQ_FIELDS.
-_REQ_TEXTLINE_PATTERN = re.compile(r"^Required.*TextLine.*$")
-
-# Regex used by ``audit_textline_section_keys`` to catch any field that
-# *looks* like a textline-set container - covers all observed shapes
-# (``*TextLineSets`` plural-with-Sets, singular ``TextLineSet``, and
-# ``*TextLines`` plural-without-Sets like LootData's ``BoughtTextLines``).
-# Requirement-field names also match this pattern; the audit excludes them
-# explicitly via ``TEXTLINE_REQ_FIELDS`` / ``TEXTLINE_REQ_FIELDS_COUNT``.
-_SECTION_KEY_PATTERN = re.compile(r"^[A-Za-z]\w*TextLines?(?:Sets?)?$")
 
 # Pre-compiled tag stripper for dialogue text.
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
@@ -251,8 +140,6 @@ def extract_textline_sections(
     (e.g. ``HADES1_TEXTLINE_SECTION_KEYS``). Hardcoding the allowed keys
     per game - rather than matching by suffix - ensures we never silently
     pick up an unexpected field or silently miss a renamed/new container.
-    Use ``audit_textline_section_keys`` to surface unrecognized
-    section-shaped keys in newly-added source files.
 
     `default_speaker` overrides the per-line fallback (which is otherwise the
     owner name). Sources where the owner key is not itself a meaningful
@@ -450,118 +337,6 @@ def _merge_synthetic(section: dict, name: str, data: dict) -> None:
     # Both synthetic: first-wins. (Same parent/choice in the same section
     # would be a source-data quirk; we don't expect it in practice.)
     return
-
-
-def _walk_lua_tree(root):
-    """Yield every ``(key, value)`` pair from every ``LuaTable`` nested
-    under ``root``.
-
-    Accepts either a parsed-file ``dict`` (mapping top-level Lua names
-    to values) or a raw ``LuaTable``; the former is transparently
-    unwrapped so audits can take the parser output directly. Recursion
-    descends through both named entries and the array part so any
-    ``LuaTable`` reachable from the root has its keys surfaced
-    regardless of position.
-
-    Iteration order is DFS but unordered between siblings (a stack-based
-    walker, so iteration order is reverse of declaration order). Audits
-    collect into a ``set`` so ordering does not matter; if a future
-    caller needs deterministic order it should sort the result.
-    """
-    stack: list = []
-    if isinstance(root, dict):
-        stack.extend(root.values())
-    else:
-        stack.append(root)
-    while stack:
-        node = stack.pop()
-        if not isinstance(node, LuaTable):
-            continue
-        for k, v in node.items():
-            yield k, v
-            stack.append(v)
-        for v in node.array:
-            stack.append(v)
-
-
-def audit_requirement_fields(parsed_root) -> set:
-    """Walk a parsed Lua tree and return any field names matching
-    Required.*TextLine.* that are NOT in our known TEXTLINE_REQ_FIELDS sets.
-
-    Used by the pipeline to surface silently-dropped dependency edges as new
-    source files are added. Fields in REQ_TEXTLINE_FIELD_IGNORES are skipped
-    (they look like requirements but aren't - typically game-data typos).
-    """
-    known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT | REQ_TEXTLINE_FIELD_IGNORES
-    return {
-        k for k, _ in _walk_lua_tree(parsed_root)
-        if isinstance(k, str)
-        and _REQ_TEXTLINE_PATTERN.match(k)
-        and k not in known
-    }
-
-
-def audit_textline_section_keys(parsed_root, section_keys) -> set:
-    """Walk a parsed Lua tree and return any owner-level keys that *look*
-    like textline-set containers (match ``*TextLineSets`` / ``TextLineSet`` /
-    ``*TextLines``) but aren't in the per-game ``section_keys`` allowlist
-    and aren't already known requirement-field names.
-
-    Used by the pipeline to catch newly-added or renamed container keys in
-    a future game update before the parser silently drops them. Mirrors
-    ``audit_requirement_fields`` but for the section side of the schema.
-    """
-    req_known = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT | REQ_TEXTLINE_FIELD_IGNORES
-    section_known = set(section_keys)
-    return {
-        k for k, v in _walk_lua_tree(parsed_root)
-        if isinstance(k, str)
-        and _SECTION_KEY_PATTERN.match(k)
-        and isinstance(v, LuaTable)
-        and any(isinstance(nv, LuaTable) for nv in v.named.values())
-        and k not in section_known
-        and k not in req_known
-    }
-
-
-def observed_section_keys(parsed_root, section_keys) -> set:
-    """Return the subset of ``section_keys`` (allowlist) that actually
-    appears as an owner-level section-shaped key in ``parsed_root``.
-
-    Per-source observation: most allowlist entries appear in only one
-    or two source files, so individual-file results are noisy. Callers
-    union this across all parsed sources and pass the result to
-    :func:`audit_section_keys_stale` to identify allowlist entries that
-    were never observed in any source (typically left behind by a
-    field rename or a renamed extractor target).
-
-    The structural shape filter (named-table value of section-shaped
-    key) mirrors :func:`audit_textline_section_keys` so the two
-    helpers report consistent observations - any key one finds the
-    other can be reasoned about against.
-    """
-    section_known = set(section_keys)
-    return {
-        k for k, v in _walk_lua_tree(parsed_root)
-        if isinstance(k, str)
-        and k in section_known
-        and isinstance(v, LuaTable)
-        and any(isinstance(nv, LuaTable) for nv in v.named.values())
-    }
-
-
-def audit_section_keys_stale(observed, section_keys) -> set:
-    """Return the subset of ``section_keys`` not present in
-    ``observed`` (the union of :func:`observed_section_keys` across
-    every parsed source).
-
-    Reverse direction of :func:`audit_textline_section_keys`: that
-    catches unknown keys appearing in sources; this catches allowlisted
-    keys that never appear in any source (typically the leftover of a
-    rename or a removed extractor target). Surfacing both directions
-    keeps the per-game allowlist tight as the game data evolves.
-    """
-    return set(section_keys) - set(observed)
 
 
 def _to_string_list(value, game_data_lists: dict = None, sources_out: list = None) -> list:
