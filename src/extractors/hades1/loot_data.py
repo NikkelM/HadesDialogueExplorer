@@ -10,7 +10,7 @@ one speaker per god, not one per boon table).
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 # Maps `LootData.<key>` -> canonical speaker id for that boon. Lines without
 # an explicit `Speaker` default to this id rather than the owner key.
@@ -43,6 +43,7 @@ def extract_loot_data(parsed: dict, source_label: str = "", source_file: str = "
             section_keys=HADES1_TEXTLINE_SECTION_KEYS,
             default_speaker=LOOT_DEFAULT_SPEAKERS.get(owner_name),
             game_data_lists=game_data_lists,
+            section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
         )
         if any(sections.values()):
             entry = {"source": source_label}

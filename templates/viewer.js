@@ -161,6 +161,67 @@ function unresolvedCategoryFor(name) {
     return known ? known.category : 'uncategorized';
 }
 
+// Render narrative-priority badges as HTML for either the tree or the
+// details panel (see issue #8). Two independent signals are surfaced
+// side-by-side:
+//
+//   1. Tier badge - derived purely from the parent section the textline
+//      lives in. The engine cascades through priority-tagged sibling
+//      containers at the call site (super -> priority -> normal -> low),
+//      so this is the dominant scheduling axis.
+//
+//   2. Set-level badge (optional) - the per-textline-set `Priority` /
+//      `SuperPriority` boolean. This only biases random selection
+//      *within* a section, never across sections, so it gets its own
+//      small "SP" / "P" pill rather than collapsing into the tier badge.
+//
+// Always returns at least one badge (the tier badge) so every row in
+// the tree has a priority tag for visual alignment.
+function renderPriorityBadgeHtml(tl) {
+    return renderTierBadgeHtml(tl) + renderSetLevelBadgeHtml(tl);
+}
+
+function renderTierBadgeHtml(tl) {
+    const sec = tl && tl.narrativePrioritySectionTier;
+    let strongest;
+    let label;
+    let icon;
+    let tip;
+    if (sec === 'super') {
+        strongest = 'super';
+        label = 'super-priority';
+        icon = '\u2605\u2605';
+        tip = 'Super-priority dialogues are played before all other dialogues from the same context. Within a set, a random dialogue from all eligible dialogues is picked.';
+    } else if (sec === 'priority') {
+        strongest = 'priority';
+        label = 'priority';
+        icon = '\u2605';
+        tip = 'Priority dialogues are played before normal and low-priority dialogues from the same context, but after super-priority dialogues. Within a set, a random dialogue from all eligible dialogues is picked.';
+    } else if (sec === 'low') {
+        strongest = 'low';
+        label = 'low-priority';
+        icon = '\u2B07';
+        tip = 'Low-priority dialogues are the final fallback - played only when no super-priority, priority, or normal dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
+    } else {
+        strongest = 'normal';
+        label = 'normal';
+        icon = '\u25CF';
+        tip = 'Normal dialogues are played only when no super-priority or priority dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
+    }
+    return `<span class="priority-badge priority-${strongest}" title="${escapeHtml(tip)}">${icon} ${escapeHtml(label)}</span>`;
+}
+
+function renderSetLevelBadgeHtml(tl) {
+    const set = tl && tl.narrativePrioritySetLevel;
+    if (set !== 'super' && set !== 'priority') return '';
+    const isSuper = set === 'super';
+    const cls = isSuper ? 'set-priority-super' : 'set-priority-priority';
+    const text = isSuper ? 'SP' : 'P';
+    const word = isSuper ? 'super-priority' : 'priority';
+    const tip = `Within its own set, this dialogue will be played with ${word} before other eligible dialogues from the same set.`;
+    return `<span class="set-priority-badge ${cls}" title="${escapeHtml(tip)}">${text}</span>`;
+}
+
 // Render a single requirement <div>, applying the resolved/unresolved
 // class plus (when unresolved) the category class so the viewer can
 // color-code back-compat vs typo-or-bug vs cut-content vs uncategorized.
@@ -327,7 +388,7 @@ function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3>${escapeHtml(name)}</h3>
+        <h3>${escapeHtml(name)}${renderPriorityBadgeHtml(tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             <span>Section: ${renderSectionHtml(tl.section)}</span>
@@ -614,6 +675,26 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
         cycleSpan.className = 'cycle-marker';
         cycleSpan.textContent = ' \u21A9 cycle';
         label.appendChild(cycleSpan);
+    }
+
+    // Narrative-priority badge (see issue #8). Surfaces both the
+    // section-tier and set-level priority on the textline; the badge
+    // collapses to the strongest of the two with the breakdown in the
+    // tooltip. Placed immediately before `.npc-tag` so it sits inside
+    // the right-aligned cluster of the row; CSS pushes the badge to
+    // the right via `margin-left: auto` so badges line up across rows
+    // regardless of textline-name length. Only relevant for resolved
+    // textlines (`tl != null`); unresolved-ref nodes never have
+    // priority metadata.
+    if (tl) {
+        const priorityHtml = renderPriorityBadgeHtml(tl);
+        if (priorityHtml) {
+            const wrapper = document.createElement('span');
+            wrapper.innerHTML = priorityHtml;
+            while (wrapper.firstChild) {
+                label.appendChild(wrapper.firstChild);
+            }
+        }
     }
 
     const npcSpan = document.createElement('span');

@@ -85,3 +85,19 @@ HADES1_SECTION_KEY_LABELS = {
     "OnTrophyUnlockedTextLineSets":                  "NPC interaction",
     "TextLineSet":                                   "Misc. interaction",
 }
+
+# Section-tier narrative priority. Section names ending in
+# `SuperPriorityXxxTextLineSets` map to `"super"`; `PriorityXxxTextLineSets`
+# map to `"priority"`. The boss-intro cascade also has a strictly-lower
+# fallback (`BossPresentationTextLineSets`, no "Intro" qualifier) which
+# the engine consults only after the entire intro chain is exhausted -
+# captured here as `"low"`. Engine call sites cascade super -> priority
+# -> plain-intro -> low. See e.g. `RoomEvents.lua:1794-1802` and
+# `Interactables.lua:785-789` in Hades 1.
+HADES1_SECTION_KEY_PRIORITY_TIER = {
+    "SuperPriorityPickupTextLineSets":                "super",
+    "BossPresentationSuperPriorityIntroTextLineSets": "super",
+    "PriorityPickupTextLineSets":                     "priority",
+    "BossPresentationPriorityIntroTextLineSets":      "priority",
+    "BossPresentationTextLineSets":                   "low",
+}

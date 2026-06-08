@@ -8,7 +8,7 @@ various `BossPresentation*TextLineSets` variants for boss encounter banter.
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 
 def extract_enemy_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
@@ -25,6 +25,7 @@ def extract_enemy_data(parsed: dict, source_label: str = "", source_file: str = 
             owner_name, owner_table, source_file,
             section_keys=HADES1_TEXTLINE_SECTION_KEYS,
             game_data_lists=game_data_lists,
+            section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
         )
         if any(sections.values()):
             entry = {"source": source_label}

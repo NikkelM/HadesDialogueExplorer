@@ -232,6 +232,7 @@ def extract_textline_sections(
     section_keys,
     default_speaker: str = None,
     game_data_lists: dict = None,
+    section_priority_tiers: dict = None,
 ) -> dict:
     """Extract every textline-set section from a single owner table.
 
@@ -261,15 +262,23 @@ def extract_textline_sections(
     `game_data_lists`, when provided, is a ``{"GameData.X": [textline names]}``
     map used to expand bare-identifier references in requirement fields (see
     ``src/extractors/text_line_sets.py``).
+
+    `section_priority_tiers`, when provided, is a per-game map of
+    ``section_key -> "super" | "priority"`` (e.g.
+    ``HADES1_SECTION_KEY_PRIORITY_TIER``). Each extracted textline inside
+    a tiered section gets ``narrativePrioritySectionTier`` set, capturing
+    the engine's "consult super-tier first" cascade at the call site.
     """
     sections = {}
     fallback_speaker = default_speaker or owner_name
+    priority_tiers = section_priority_tiers or {}
     for key, value in owner_table.items():
         if key not in section_keys:
             continue
         if not isinstance(value, LuaTable):
             continue
         section = {}
+        section_tier = priority_tiers.get(key)
         for tl_name, tl_table in value.items():
             if not isinstance(tl_table, LuaTable):
                 continue
@@ -277,6 +286,8 @@ def extract_textline_sections(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
             )
+            if section_tier is not None:
+                section[tl_name]["narrativePrioritySectionTier"] = section_tier
             # In-game, picking a dialogue choice records a flag named
             # `<ParentTextline><ChoiceText>`. Those names are then referenced
             # by other textlines' requirements. We surface each choice as a
@@ -285,6 +296,8 @@ def extract_textline_sections(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
             ).items():
+                if section_tier is not None:
+                    syn_data["narrativePrioritySectionTier"] = section_tier
                 _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
     return sections
@@ -329,6 +342,16 @@ def extract_textline(
                     data["otherRequirements"][key] = meta
         elif key.startswith(NON_DIALOGUE_REQ_PREFIX):
             data["otherRequirements"][key] = _normalize_value(value, game_data_lists)
+
+    # Set-level narrative priority. SuperPriority wins if both are set
+    # (matches engine ordering in `PlayRandomRemainingTextLines`).
+    set_level_priority = None
+    if tl_table.get("SuperPriority") is True:
+        set_level_priority = "super"
+    elif tl_table.get("Priority") is True:
+        set_level_priority = "priority"
+    if set_level_priority is not None:
+        data["narrativePrioritySetLevel"] = set_level_priority
 
     for entry in tl_table.array:
         if not isinstance(entry, LuaTable):

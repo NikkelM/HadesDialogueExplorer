@@ -17,7 +17,7 @@ The owner of each section is derived from the path:
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS
+from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 # Special-case prefixes for known parent maps. Anything else just uses the
 # parent name verbatim (e.g. ``ObstacleData_310036``).
@@ -62,6 +62,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
             section_keys=HADES1_TEXTLINE_SECTION_KEYS,
             default_speaker=owner_default_speaker,
             game_data_lists=game_data_lists,
+            section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
         )
         if not any(sections.values()):
             continue

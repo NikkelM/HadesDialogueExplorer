@@ -77,6 +77,50 @@
    single line (`.tree-label` is `white-space: nowrap`) and the
    `.panel-body` scrolls horizontally so deep chains push content right. */
 .tree-label .npc-tag { font-size: 10px; color: #666; margin-left: auto; flex-shrink: 0; }
+
+/* Narrative-priority badge (issue #8). Same compact pill style as the
+   other inline tree badges (`.edge-type`, `.tree-blocked-badge`); three
+   tone variants for super- / plain-priority / low-priority so each
+   cascade tier reads at a glance.
+   Tree placement: positioned in the right-aligned cluster just before
+   `.npc-tag`. `margin-left: auto` on the badge consumes the free space
+   so badges line up at the right edge across rows; the sibling rule
+   below then zeros out the npc-tag's own auto margin (which only kicks
+   in when no badge is present). */
+.priority-badge {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    font-weight: 500;
+}
+.tree-label .priority-badge { margin-left: auto; }
+.tree-label .priority-badge ~ .npc-tag { margin-left: 8px; }
+.priority-super { background: #3b2a0a; color: #ffd166; border: 1px solid #6b4e1f; }
+.priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
+.priority-normal { background: #1c2530; color: #8fb3d1; border: 1px solid #2c4258; }
+.priority-low { background: #20242a; color: #8a98a8; border: 1px solid #3a4350; }
+
+/* Set-level priority badge (SP / P). Surfaces the per-textline-set
+   `Priority` / `SuperPriority` boolean as a small standalone pill to
+   the right of the tier badge; the two signals are independent (the
+   set-level boolean only biases random selection within a section)
+   so they get their own marker rather than collapsing together. */
+.set-priority-badge {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.tree-label .set-priority-badge { margin-left: 4px; }
+.set-priority-super { background: #3b2a0a; color: #ffd166; border: 1px solid #6b4e1f; }
+.set-priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
+.textline-info h3 .set-priority-badge { margin-left: 4px; vertical-align: middle; }
+
+/* In the details panel header the badge floats next to the textline name. */
+.textline-info h3 .priority-badge { margin-left: 8px; vertical-align: middle; }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
 .cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }

@@ -74,6 +74,17 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
                 for opt_key in ("parentTextline", "choiceText", "isSynthetic"):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
+                # Narrative-priority fields, when present. Two distinct
+                # sources, both meaningful (see issue #8):
+                #   - section-tier: which container the textline lives in
+                #     (the engine cascades super-tier sections before
+                #     priority-tier sections before plain).
+                #   - set-level: `Priority`/`SuperPriority` boolean on the
+                #     textline-set table itself (biases random selection
+                #     within whichever section is being consulted).
+                for opt_key in ("narrativePrioritySectionTier", "narrativePrioritySetLevel"):
+                    if opt_key in tl_data:
+                        new_entry[opt_key] = tl_data[opt_key]
                 existing = textlines.get(tl_name)
                 if existing is not None:
                     chosen, dropped = resolve_duplicate(existing, new_entry)
