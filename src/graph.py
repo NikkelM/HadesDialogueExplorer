@@ -85,6 +85,10 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
                 for opt_key in ("narrativePrioritySectionTier", "narrativePrioritySetLevel"):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
+                # PlayOnce flag (once per save). Surfaced in the details
+                # panel only - see #8.
+                if tl_data.get("playOnce"):
+                    new_entry["playOnce"] = True
                 existing = textlines.get(tl_name)
                 if existing is not None:
                     chosen, dropped = resolve_duplicate(existing, new_entry)

@@ -252,7 +252,13 @@ function renderReqItem(ref, selfName) {
         }
     }
     const selfBadge = isSelf ? `<span class="self-ref-badge">self</span>` : '';
-    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}</div>`;
+    // Tier badge for resolved refs - mirrors the tree view so the user
+    // can see each requirement's narrative-priority tier at a glance.
+    // Skipped for unresolved/self refs since the former has no textline
+    // data and the latter is a known cooldown/PlayOnce idiom.
+    const refTl = (cat === null && !isSelf) ? textlines[ref] : null;
+    const tierBadge = refTl ? renderTierBadgeHtml(refTl) : '';
+    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}${tierBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.
@@ -388,7 +394,7 @@ function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3>${escapeHtml(name)}${renderPriorityBadgeHtml(tl)}</h3>
+        <h3><span class="name">${escapeHtml(name)}</span>${renderPriorityBadgeHtml(tl)}${tl.playOnce ? `<span class="play-once-badge" title="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>` : ''}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             <span>Section: ${renderSectionHtml(tl.section)}</span>
@@ -677,20 +683,17 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
         label.appendChild(cycleSpan);
     }
 
-    // Narrative-priority badge (see issue #8). Surfaces both the
-    // section-tier and set-level priority on the textline; the badge
-    // collapses to the strongest of the two with the breakdown in the
-    // tooltip. Placed immediately before `.npc-tag` so it sits inside
-    // the right-aligned cluster of the row; CSS pushes the badge to
-    // the right via `margin-left: auto` so badges line up across rows
-    // regardless of textline-name length. Only relevant for resolved
-    // textlines (`tl != null`); unresolved-ref nodes never have
-    // priority metadata.
+    // Narrative-priority tier badge (see issue #8). Tree view shows
+    // only the section-tier badge to keep rows uncluttered; the
+    // set-level (SP/P) and PlayOnce indicators are reserved for the
+    // details panel. Placed inside the right-aligned cluster of the
+    // row so badges line up across rows regardless of name length.
+    // Only relevant for resolved textlines (`tl != null`).
     if (tl) {
-        const priorityHtml = renderPriorityBadgeHtml(tl);
-        if (priorityHtml) {
+        const tierHtml = renderTierBadgeHtml(tl);
+        if (tierHtml) {
             const wrapper = document.createElement('span');
-            wrapper.innerHTML = priorityHtml;
+            wrapper.innerHTML = tierHtml;
             while (wrapper.firstChild) {
                 label.appendChild(wrapper.firstChild);
             }

@@ -46,7 +46,14 @@
     color: #e94560;
     font-size: 15px;
     margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.textline-info h3 .name {
     word-break: break-all;
+    min-width: 0;
+    flex-shrink: 1;
 }
 .textline-info .meta {
     font-size: 12px;
@@ -54,6 +61,23 @@
     margin-bottom: 8px;
 }
 .textline-info .meta span { margin-right: 12px; }
+/* PlayOnce indicator (see #8). Surfaces the textline-set-level
+   `PlayOnce = true` flag - a hard cap that the dialogue can only ever
+   play once per save, which affects whether it is still "available"
+   for the player. Lives in the details-panel header to the right of
+   the priority badges. */
+.textline-info h3 .play-once-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #2e2018;
+    color: #f5b78c;
+    border: 1px solid #5a3a2a;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
 .synthetic-banner {
     background: #1b1b2e;
     border-left: 3px solid #6c5b7b;
@@ -132,7 +156,13 @@
     cursor: pointer;
     border-radius: 3px;
     transition: background 0.15s;
+    display: flex;
+    align-items: center;
 }
+/* Tier badge inside a requirement row - sits to the right so badges
+   line up vertically down the requirements list, mirroring the tree
+   view layout. */
+.req-item .priority-badge { margin-left: auto; }
 .req-item:hover { background: #0f3460; }
 .req-item.resolved { color: #a8dadc; }
 .req-item.unresolved { color: #888; font-style: italic; }

@@ -114,13 +114,13 @@
     font-weight: 600;
     letter-spacing: 0.5px;
 }
-.tree-label .set-priority-badge { margin-left: 4px; }
 .set-priority-super { background: #3b2a0a; color: #ffd166; border: 1px solid #6b4e1f; }
 .set-priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
-.textline-info h3 .set-priority-badge { margin-left: 4px; vertical-align: middle; }
-
-/* In the details panel header the badge floats next to the textline name. */
-.textline-info h3 .priority-badge { margin-left: 8px; vertical-align: middle; }
+/* Details-panel header badges. The tier badge consumes the free space
+   with `margin-left: auto`, pushing itself and any sibling badges
+   (set-level + PlayOnce) to the right edge of the header row. */
+.textline-info h3 .priority-badge { margin-left: auto; flex-shrink: 0; }
+.textline-info h3 .set-priority-badge { margin-left: 4px; flex-shrink: 0; }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
 .cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }

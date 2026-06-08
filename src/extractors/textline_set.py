@@ -353,6 +353,16 @@ def extract_textline(
     if set_level_priority is not None:
         data["narrativePrioritySetLevel"] = set_level_priority
 
+    # Play-once flag at the textline-set level. `PlayOnce = true` means
+    # the dialogue can only ever play a single time per save - a hard
+    # cap that's important to surface because it affects whether a
+    # textline is still "available" for the player.
+    # (The variants `PlayOnceThisRun` / `PlayOnceFromTableThisRun` only
+    # appear on individual voice quips inside the cue array, not on the
+    # textline-set table, so they're not surfaced here.)
+    if tl_table.get("PlayOnce") is True:
+        data["playOnce"] = True
+
     for entry in tl_table.array:
         if not isinstance(entry, LuaTable):
             continue
