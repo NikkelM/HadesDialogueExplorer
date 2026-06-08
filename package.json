@@ -1,0 +1,13 @@
+{
+  "name": "hades-dialogue-explorer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dev-tooling manifest for the JavaScript viewer assets. The viewer itself is a static template processed by `build_viewer.py` (Python); npm is used only for the JS linter so unintroduced identifiers and unused names get caught the same way pyflakes catches their Python equivalents.",
+  "scripts": {
+    "lint": "eslint templates/"
+  },
+  "devDependencies": {
+    "eslint": "^9.16.0",
+    "globals": "^15.14.0"
+  }
+}

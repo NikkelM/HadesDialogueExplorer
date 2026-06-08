@@ -74,6 +74,18 @@ python -m pytest
 The test suite covers the tokenizer, parser, semantic extractor, graph builder,
 and an end-to-end integration test using a synthetic fixture.
 
+### Linting the viewer JavaScript
+
+`templates/viewer.js` is checked with ESLint (`no-undef` + `no-unused-vars`)
+to catch the same class of typos and dead names that `pyflakes` catches on
+the Python side. Node.js + npm are only needed for this linter; the viewer
+itself ships as plain JavaScript with no build step beyond `build_viewer.py`.
+
+```bash
+npm install        # one-time, installs eslint into node_modules/ (git-ignored)
+npm run lint
+```
+
 ### Interacting with the viewer
 
 - **Search**: Type a textline name in the search bar

@@ -131,20 +131,15 @@ function renderReqTypeHtml(type, extraClass) {
     return `<span class="${cls}">${escapeHtml(type)}</span>`;
 }
 
-// Friendly label for an owner-level section key (e.g.
-// `InteractTextLineSets` -> `NPC interaction`). Falls back to the raw
-// key when no mapping exists; the build pipeline audits the labels map
-// against the section-key allowlist so missing entries become a
-// build-time warning rather than silently rendering the raw key.
-function formatSectionKey(key) {
-    return sectionKeyLabels[key] || key;
-}
-
 // Render a section key as HTML: friendly label with the internal key
-// available as a `title` tooltip when a mapping exists. Mirrors
-// ``renderSpeakerHtml`` so both UI surfaces (search dropdown + details
-// view) get the same hover-to-reveal-internal-name behaviour, including
-// the dotted-underline affordance via the ``[title]`` attribute selector.
+// available as a `title` tooltip when a mapping exists, falling back
+// to the raw key when no mapping is registered. The build pipeline
+// audits the labels map against the section-key allowlist so any
+// missing entry becomes a build-time warning rather than silently
+// rendering the raw key here. Mirrors ``renderSpeakerHtml`` so both
+// UI surfaces (search dropdown + details view) get the same
+// hover-to-reveal-internal-name behaviour, including the dotted-
+// underline affordance via the ``[title]`` attribute selector.
 //
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
 // call site - both the friendly label and the internal-key tooltip are
