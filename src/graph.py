@@ -1,4 +1,18 @@
-"""Build dependency graph data from parsed source data."""
+"""Build the per-source dependency-graph data structure consumed by the
+viewer.
+
+Public API:
+
+- :func:`build_graph_data` -- assemble the textlines / dependents /
+  speakerNames / stats payload from one extractor's owner -> sections
+  output. The single entry point used by :mod:`generate_data`.
+- :func:`resolve_duplicate` and :func:`dup_summary` -- helpers for the
+  same-textline-name collision case. Re-exported across module
+  boundaries because the cross-source merge in
+  ``build_viewer.merge_graph_data`` reuses them when stitching
+  per-source datasets together; keep them stable as part of the
+  contract.
+"""
 
 
 def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
