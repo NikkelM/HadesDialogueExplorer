@@ -48,12 +48,25 @@ header h1 {
     border: 1px solid #0f3460;
     border-top: none;
     border-radius: 0 0 4px 4px;
-    max-height: 300px;
+    max-height: 450px;
     overflow-y: auto;
     z-index: 100;
     display: none;
 }
 #search-results.visible { display: block; }
+.search-section-header {
+    padding: 4px 12px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #0f3460;
+    border-bottom: 1px solid #0a2647;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 .search-item {
     padding: 6px 12px;
     cursor: pointer;
@@ -62,6 +75,26 @@ header h1 {
 }
 .search-item:hover { background: #0f3460; }
 .search-item .npc { color: #888; font-size: 11px; margin-left: 8px; }
+.search-item-text .search-item-head { font-size: 13px; }
+.search-item-text .search-snippet {
+    font-size: 11px;
+    color: #b8b8b8;
+    margin-top: 2px;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+}
+.search-item-text .snippet-speaker {
+    color: #888;
+    font-weight: bold;
+    margin-right: 2px;
+}
+.search-item mark {
+    background: #e94560;
+    color: #fff;
+    padding: 0 2px;
+    border-radius: 2px;
+}
 .stats {
     font-size: 11px;
     color: #888;
