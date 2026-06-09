@@ -442,8 +442,9 @@
 
 /* Requirement-type label affordance: dotted underline + help cursor when
    a friendly mapping exists (i.e. the tooltip will reveal the internal
-   field name). Mirrors the speaker-name and section-name patterns. The
-   `.blocking-field` variant is bold to keep the visual weight the
+   field name plus a plain-English blurb of what the check gates on -
+   see issue #26). Mirrors the speaker-name and section-name patterns.
+   The `.blocking-field` variant is bold to keep the visual weight the
    previous `<strong>` wrapper provided in the blocked-banner copy. */
 .req-section h4 .req-type-name[title] {
     cursor: help;

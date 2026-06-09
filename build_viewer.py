@@ -47,6 +47,7 @@ from src.extractors.hades1 import (
     HADES1_SECTION_KEY_LABELS,
     HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_DISPLAY_ORDER,
 )
 
@@ -367,7 +368,7 @@ _SECTION_KEY_LABEL_SOURCES = [
 ]
 
 # Per-game requirement-type label data. Tuple shape:
-#   (game_label, allowed_fields, labels, edge_labels, display_order)
+#   (game_label, allowed_fields, labels, edge_labels, tooltips, display_order)
 # H1 and H2 use disjoint requirement-field vocabularies (H1: flat
 # ``Required.*TextLine.*`` fields; H2: nested ``GameStateRequirements``
 # with ``HasAny``/``HasAll``/``Path`` records), so each game contributes
@@ -381,6 +382,7 @@ _REQ_TYPE_LABEL_SOURCES = [
         TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT,
         HADES1_REQ_TYPE_LABELS,
         HADES1_REQ_TYPE_EDGE_LABELS,
+        HADES1_REQ_TYPE_TOOLTIPS,
         HADES1_REQ_TYPE_DISPLAY_ORDER,
     ),
 ]
@@ -394,6 +396,10 @@ def annotate_label_maps(graph_data: dict) -> None:
         groups shown in the details panel - merged across all games.
       - ``reqTypeEdgeLabels``: ``{field: short-chip-label}`` for the tree
         view edge badges - merged across all games.
+      - ``reqTypeTooltips``: ``{field: plain-english-blurb}`` shown as
+        the second line of the hover tooltip on requirement labels
+        (the viewer prepends the internal field name as the first line);
+        merged across all games.
       - ``reqTypeOrder``: ordered list of fields used to sort tree
         children into per-type groups - concatenation in game order
         (later games append after earlier ones; duplicates dropped).
@@ -407,11 +413,13 @@ def annotate_label_maps(graph_data: dict) -> None:
 
     merged_req_labels: dict[str, str] = {}
     merged_req_edge_labels: dict[str, str] = {}
+    merged_req_tooltips: dict[str, str] = {}
     merged_req_order: list[str] = []
     merged_req_order_seen: set[str] = set()
-    for _game_label, _allowed_fields, labels, edge_labels, display_order in _REQ_TYPE_LABEL_SOURCES:
+    for _game_label, _allowed_fields, labels, edge_labels, tooltips, display_order in _REQ_TYPE_LABEL_SOURCES:
         merged_req_labels.update(labels)
         merged_req_edge_labels.update(edge_labels)
+        merged_req_tooltips.update(tooltips)
         for field in display_order:
             if field not in merged_req_order_seen:
                 merged_req_order.append(field)
@@ -419,6 +427,7 @@ def annotate_label_maps(graph_data: dict) -> None:
 
     graph_data["reqTypeLabels"] = merged_req_labels
     graph_data["reqTypeEdgeLabels"] = merged_req_edge_labels
+    graph_data["reqTypeTooltips"] = merged_req_tooltips
     graph_data["reqTypeOrder"] = merged_req_order
     graph_data["sectionKeyLabels"] = merged_section_labels
 

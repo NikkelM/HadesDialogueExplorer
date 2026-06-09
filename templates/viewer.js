@@ -12,7 +12,7 @@
 let textlines, dependents, speakerNames, stats;
 let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions;
 let unresolvedRefBlocks;
-let reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder;
+let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
 let sectionKeyLabels;
 let allNames;
 
@@ -34,6 +34,7 @@ function loadData(DATA) {
         unresolvedRefBlocks: DATA.unresolvedRefBlocks || {},
         reqTypeLabels: DATA.reqTypeLabels || {},
         reqTypeEdgeLabels: DATA.reqTypeEdgeLabels || {},
+        reqTypeTooltips: DATA.reqTypeTooltips || {},
         reqTypeOrder: DATA.reqTypeOrder || [],
         sectionKeyLabels: DATA.sectionKeyLabels || {},
         allNames: Object.keys(DATA.textlines).sort(),
@@ -113,20 +114,38 @@ function formatReqType(type) {
     return reqTypeLabels[type] || type;
 }
 
+// Build the title-attribute string for a requirement-type label. When a
+// plain-English blurb is known for the field, the tooltip is rendered as
+// the internal field name on the first line, a blank line, and the
+// blurb beneath. Otherwise we fall back to the internal-name-only
+// tooltip used pre-issue-#26 so unmapped types still get the
+// hover-to-reveal-internal-name affordance.
+//
+// Returns ``null`` when no friendly label exists either: in that case
+// the rendered span already shows the internal name as its text, so an
+// echoing tooltip would be redundant.
+function reqTypeTitleText(type) {
+    const friendly = reqTypeLabels[type];
+    if (!friendly || friendly === type) return null;
+    const blurb = reqTypeTooltips[type];
+    return blurb ? `${type}\n\n${blurb}` : type;
+}
+
 // Render a requirement-type label as HTML: friendly name with the
-// internal field key available as a `title` tooltip when a mapping
-// exists. Mirrors ``renderSpeakerHtml`` / ``renderSectionHtml`` so the
-// hover-to-reveal-internal-name affordance is consistent across the
-// three label families.
+// internal field key (and a plain-English explanation when known)
+// available as a `title` tooltip. Mirrors ``renderSpeakerHtml`` /
+// ``renderSectionHtml`` so the hover-to-reveal-internal-name affordance
+// is consistent across the three label families.
 //
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at
-// the call site - both the friendly label and the internal-key tooltip
-// are already routed through escapeHtml below.
+// the call site - both the friendly label and the tooltip text are
+// already routed through escapeHtml below.
 function renderReqTypeHtml(type, extraClass) {
     const friendly = reqTypeLabels[type];
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
-    if (friendly && friendly !== type) {
-        return `<span class="${cls}" title="${escapeHtml(type)}">${escapeHtml(friendly)}</span>`;
+    const titleText = reqTypeTitleText(type);
+    if (titleText !== null) {
+        return `<span class="${cls}" title="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="${cls}">${escapeHtml(type)}</span>`;
 }
@@ -894,12 +913,16 @@ function createReqTypeGroup(edgeType, count, requirementCount) {
     label.textContent = requirementCount != null
         ? `${friendlyLabel}: ${requirementCount}`
         : friendlyLabel;
-    // Mirror the other render*Html helpers: only attach the tooltip
-    // when a friendly mapping exists, so unmapped types stay plain.
-    const friendlyEdge = reqTypeLabels[edgeType];
-    if (friendlyEdge && friendlyEdge !== edgeType) {
-        label.title = edgeType;
+    // Mirror the other render*Html helpers: attach the tooltip on both
+    // the edge-chip and the label so hovering over either part of the
+    // header surfaces the internal field name + plain-English blurb
+    // (issue #26). Skipped for unmapped types so they stay plain.
+    const titleText = reqTypeTitleText(edgeType);
+    if (titleText !== null) {
+        label.title = titleText;
         label.classList.add('has-tooltip');
+        edgeChip.title = titleText;
+        edgeChip.classList.add('has-tooltip');
     }
     header.appendChild(label);
 
@@ -1066,7 +1089,7 @@ function init(data) {
         textlines, dependents, speakerNames, stats,
         knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions,
         unresolvedRefBlocks,
-        reqTypeLabels, reqTypeEdgeLabels, reqTypeOrder,
+        reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder,
         sectionKeyLabels,
         allNames,
     } = loadData(data));

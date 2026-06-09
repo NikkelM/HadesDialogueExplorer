@@ -94,6 +94,65 @@ HADES1_REQ_TYPE_EDGE_LABELS = {
     "MaxRunsSinceAnyTextLines":       "ANY",
 }
 
+# Plain-English explanations shown as the second line of the hover
+# tooltip on every requirement-type label (details-panel headers,
+# tree-view group headers, blocked-banner blocking-field chips). The
+# viewer prepends the internal field name as the first line so the
+# tooltip carries both the canonical engine name and a short blurb of
+# what the check actually gates on. Every entry in
+# ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT`` should be
+# covered; unmapped types fall back to the internal-name-only tooltip
+# the viewer used pre-issue-#26.
+#
+# Wording conventions mirror ``HADES1_REQ_TYPE_LABELS``: positives use
+# "has been played" / "is queued", negatives use "has not been played"
+# / "is not queued"; ALL/ANY quantifiers are spelled out; scope words
+# match the labels ("this run" / "last run" / "this room"). Count-based
+# entries reference the ``Count`` parameter explicitly so the user
+# can connect the threshold shown next to the header (e.g. ``: 3``)
+# with the field's meaning.
+HADES1_REQ_TYPE_TOOLTIPS = {
+    "RequiredTextLines":
+        "This dialogue is only eligible if EVERY listed textline has been played at some point in this save.",
+    "RequiredAnyTextLines":
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in this save.",
+    "RequiredAnyOtherTextLines":
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in this save. Used as a second disjunctive group alongside RequiredAnyTextLines when two independent 'any' checks are needed on the same dialogue.",
+    "RequiredTextLinesThisRun":
+        "This dialogue is only eligible if EVERY listed textline has been played within the current run.",
+    "RequiredTextLinesLastRun":
+        "This dialogue is only eligible if EVERY listed textline was played during the previous run.",
+    "RequiredTextLinesThisRoom":
+        "This dialogue is only eligible if EVERY listed textline has been played within the current room.",
+    "RequiredAnyTextLinesThisRun":
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played within the current run.",
+    "RequiredAnyTextLinesLastRun":
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines was played during the previous run.",
+    "RequiredQueuedTextLines":
+        "This dialogue is only eligible if EVERY listed textline is currently queued to play (assigned and waiting) but has not yet played.",
+    "RequiredAnyQueuedTextLines":
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines is currently queued to play (assigned and waiting) but has not yet played.",
+    "RequiredFalseTextLines":
+        "This dialogue is only eligible if NONE of the listed textlines have been played at any point in this save.",
+    "RequiredFalseQueuedTextLines":
+        "This dialogue is only eligible if NONE of the listed textlines are currently queued to play.",
+    "RequiredFalseTextLinesThisRun":
+        "This dialogue is only eligible if NONE of the listed textlines have been played within the current run.",
+    "RequiredFalseTextLinesLastRun":
+        "This dialogue is only eligible if NONE of the listed textlines were played during the previous run.",
+    "RequiredFalseTextLinesThisRoom":
+        "This dialogue is only eligible if NONE of the listed textlines have been played within the current room.",
+    "RequiredMinAnyTextLines":
+        "This dialogue is only eligible if AT LEAST X of the listed textlines have been played at some point in this save.",
+    "RequiredMaxAnyTextLines":
+        "This dialogue is only eligible if AT MOST X of the listed textlines have been played at some point in this save.",
+    "MinRunsSinceAnyTextLines":
+        "This dialogue is only eligible if AT LEAST X runs have passed since any of the listed textlines was last played.",
+    "MaxRunsSinceAnyTextLines":
+        "This dialogue is only eligible if AT MOST X runs have passed since any of the listed textlines was last played.",
+}
+
+
 # Display order for requirement-type groupings in the dependency tree.
 # The viewer sorts each level's children by this index so the same colour
 # bands appear in a consistent semantic order: hard requirements first,

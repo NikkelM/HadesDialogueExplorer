@@ -217,6 +217,12 @@
     border-radius: 2px;
     flex-shrink: 0;
 }
+/* Help-cursor affordance when the edge-chip carries a tooltip (issue
+   #26). No underline on chips - the chip background already frames the
+   text - so a cursor change is the only hover hint needed. */
+.req-type-group-header .edge-type.has-tooltip {
+    cursor: help;
+}
 .req-type-group-label {
     font-family: 'Consolas', monospace;
     font-weight: 600;
