@@ -335,6 +335,44 @@ function initStats() {
 
 // --- Search Component ---
 
+// Rank a single search token against one candidate textline. Lower is
+// better; -1 means no match. Tiers:
+//
+//   0 = token at start of textline name
+//   1 = token at start of owner display name or internal id
+//       (broad sweep of "all dialogue from <NPC>")
+//   2 = token at a PascalCase word boundary in the textline name
+//       (e.g. ``Eurydice`` inside ``OrpheusWithEurydice01``)
+//   3 = token anywhere else in the textline name (mid-segment)
+//   4 = token anywhere in the owner display name or internal id
+//
+// Aggregate ranking compares the per-token tiers lexicographically so
+// earlier query tokens dominate later ones. For ``Zeus with aphrodite``
+// this means ``ZeusWithAphrodite01`` (tiers 0,2,2) outranks
+// ``AphroditeWithZeus01`` (tiers 2,2,0) - the token the user typed first
+// is treated as the most important one to satisfy strongly.
+function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower) {
+    if (nameLower.startsWith(token)) return 0;
+    if (ownerIdLower.startsWith(token)) return 1;
+    if (ownerDisplayLower && ownerDisplayLower.startsWith(token)) return 1;
+    // PascalCase boundary: scan for any match position where the
+    // original-case character is uppercase. Position 0 is also a
+    // boundary but is already covered by the `startsWith` check above.
+    let i = 0;
+    while ((i = nameLower.indexOf(token, i)) !== -1) {
+        if (i > 0) {
+            const c = nameOriginal.charCodeAt(i);
+            if (c >= 65 && c <= 90) return 2;
+        }
+        i++;
+    }
+    if (nameLower.includes(token)) return 3;
+    if (ownerIdLower.includes(token)) return 4;
+    if (ownerDisplayLower && ownerDisplayLower.includes(token)) return 4;
+    return -1;
+}
+
+
 function initSearch() {
     const searchInput = document.getElementById('search');
     const searchResults = document.getElementById('search-results');
@@ -342,17 +380,14 @@ function initSearch() {
     searchInput.addEventListener('input', () => {
         const q = searchInput.value.toLowerCase().trim();
         if (!q) { searchResults.classList.remove('visible'); return; }
-        // Rank matches before the 30-result cap so prefix hits never get
-        // displaced by alphabetically-earlier substring hits.
-        // Ranking tiers (lower = better):
-        //   0 = textline name starts with the query
-        //   1 = owner display name or internal id starts with the query
-        //       (broad sweep of "all dialogue from <NPC>")
-        //   2 = textline name contains the query somewhere
-        //   3 = owner display name or internal id contains the query
-        // Within a tier the input ordering is preserved (allNames is
-        // alphabetical and Array.prototype.sort is stable as of ES2019)
-        // so same-rank results still appear in alphabetical order.
+        // Split on whitespace into AND-joined tokens. Empty tokens
+        // (from repeated spaces or trailing whitespace) are dropped so
+        // typing ``orpheus  eurydice`` or ``orpheus eurydice `` still
+        // works. A single-token query collapses to the same ranking
+        // behaviour as the original single-substring path.
+        const tokens = q.split(/\s+/).filter(t => t.length > 0);
+        if (tokens.length === 0) { searchResults.classList.remove('visible'); return; }
+
         const ranked = [];
         for (const n of allNames) {
             const tl = textlines[n];
@@ -362,15 +397,29 @@ function initSearch() {
             const ownerDisplay = speakerNames[tl.owner];
             const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
 
-            let rank = -1;
-            if (nameLower.startsWith(q)) rank = 0;
-            else if (ownerIdLower.startsWith(q) || (ownerDisplayLower && ownerDisplayLower.startsWith(q))) rank = 1;
-            else if (nameLower.includes(q)) rank = 2;
-            else if (ownerIdLower.includes(q) || (ownerDisplayLower && ownerDisplayLower.includes(q))) rank = 3;
-
-            if (rank >= 0) ranked.push({ name: n, rank });
+            // Every token must match somewhere (AND). Per-token tiers
+            // are collected into a tuple compared lexicographically at
+            // sort time, so earlier query tokens carry more weight than
+            // later ones.
+            const tierTuple = [];
+            let allMatched = true;
+            for (const token of tokens) {
+                const r = rankSearchToken(token, n, nameLower, ownerIdLower, ownerDisplayLower);
+                if (r < 0) { allMatched = false; break; }
+                tierTuple.push(r);
+            }
+            if (allMatched) ranked.push({ name: n, tiers: tierTuple });
         }
-        ranked.sort((a, b) => a.rank - b.rank);
+        // Stable sort (ES2019) preserves allNames' alphabetical order
+        // within identical tuples.
+        ranked.sort((a, b) => {
+            const len = a.tiers.length;
+            for (let i = 0; i < len; i++) {
+                const diff = a.tiers[i] - b.tiers[i];
+                if (diff !== 0) return diff;
+            }
+            return 0;
+        });
         const matches = ranked.slice(0, 30).map(m => m.name);
         if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
         searchResults.innerHTML = matches.map(n => {
