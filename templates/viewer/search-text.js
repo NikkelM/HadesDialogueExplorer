@@ -7,7 +7,7 @@
 // every dialogue line.
 
 import { textlines, allNames } from './data.js';
-import { displayName, renderSectionHtml, escapeHtml } from './utilities.js';
+import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 
 // Flattened index of every dialogue line for fast text-content search.
 // Each entry: ``{name, lineIdx, speaker, textOriginal, textLower}``.
@@ -179,15 +179,13 @@ export function searchTextLines(tokens, excludeNames, limit) {
 export function renderTextMatchHtml(match, tokens) {
     const entry = match.entry;
     const tl = textlines[entry.name];
-    const ownerLabel = displayName(tl.owner);
-    const speakerLabel = displayName(entry.speaker);
     const snippetHtml = buildSnippetHtml(
         entry.textOriginal,
         tokens,
         match.positionsByToken,
         match.runAnchor,
     );
-    return `<div class="search-item search-item-text" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet"><span class="snippet-speaker">${escapeHtml(speakerLabel)}:</span> ${snippetHtml}</div></div>`;
+    return `<div class="search-item search-item-text" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet"><span class="snippet-speaker">${renderSpeakerHtml(entry.speaker)}:</span> ${snippetHtml}</div></div>`;
 }
 
 // Build the highlighted-snippet HTML for a single matched dialogue

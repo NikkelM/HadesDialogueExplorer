@@ -2,7 +2,7 @@
 
 The merge combines per-source JSON datasets into one viewer dataset,
 detecting duplicate textline names, rebuilding the dependents index, and
-flagging conflicting speakerNames mappings.
+flagging conflicting speakers mappings.
 """
 
 from src.graph_merge import merge_graph_data
@@ -28,13 +28,13 @@ def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
     return tl
 
 
-def _make_dataset(*textlines, speaker_names=None, duplicates=None):
+def _make_dataset(*textlines, speakers=None, duplicates=None):
     tl_map = {tl["name"]: tl for tl in textlines}
     owners = {tl["owner"] for tl in textlines}
     return {
         "textlines": tl_map,
         "dependents": {},
-        "speakerNames": speaker_names or {},
+        "speakers": speakers or {},
         "stats": {
             "totalOwners": len(owners),
             "totalTextlines": len(tl_map),
@@ -182,21 +182,34 @@ class TestMergeDatasets:
         merged = merge_graph_data([ds1, ds2])
         assert merged["stats"]["totalOwners"] == 3  # OwnerX, OwnerY, OwnerZ
 
-    def test_merge_unions_speaker_names_without_conflict(self):
+    def test_merge_unions_speakers_without_conflict(self):
         ds1 = _make_dataset(_make_textline("A", "X"),
-                            speaker_names={"NPC_A": "Aria"})
+                            speakers={"NPC_A": {"name": "Aria", "description": "First"}})
         ds2 = _make_dataset(_make_textline("B", "Y"),
-                            speaker_names={"NPC_B": "Beck"})
+                            speakers={"NPC_B": {"name": "Beck", "description": "Second"}})
         merged = merge_graph_data([ds1, ds2])
-        assert merged["speakerNames"] == {"NPC_A": "Aria", "NPC_B": "Beck"}
+        assert merged["speakers"] == {
+            "NPC_A": {"name": "Aria", "description": "First"},
+            "NPC_B": {"name": "Beck", "description": "Second"},
+        }
 
-    def test_merge_keeps_first_speaker_name_on_conflict(self):
+    def test_merge_keeps_first_speaker_subfield_on_conflict(self):
         ds1 = _make_dataset(_make_textline("A", "X"),
-                            speaker_names={"NPC_A": "Aria"})
+                            speakers={"NPC_A": {"name": "Aria"}})
         ds2 = _make_dataset(_make_textline("B", "Y"),
-                            speaker_names={"NPC_A": "Different Name"})
+                            speakers={"NPC_A": {"name": "Different Name"}})
         merged = merge_graph_data([ds1, ds2])
-        assert merged["speakerNames"]["NPC_A"] == "Aria"
+        assert merged["speakers"]["NPC_A"]["name"] == "Aria"
+
+    def test_merge_combines_complementary_speaker_subfields(self):
+        """One dataset supplies only ``name``, another only ``description``
+        for the same id - the merge unions them into a complete entry."""
+        ds1 = _make_dataset(_make_textline("A", "X"),
+                            speakers={"NPC_A": {"name": "Aria"}})
+        ds2 = _make_dataset(_make_textline("B", "Y"),
+                            speakers={"NPC_A": {"description": "Wise One"}})
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["speakers"]["NPC_A"] == {"name": "Aria", "description": "Wise One"}
 
     def test_unresolved_refs_computed_against_merged_textline_set(self):
         """A textline referenced in one source but DEFINED in another should

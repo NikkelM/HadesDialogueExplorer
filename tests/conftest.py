@@ -27,12 +27,12 @@ def make_graph_data():
     Returned as a fresh dict on each call, so tests can mutate the
     result in place without leaking between cases.
     """
-    def _factory(textlines=None, unresolved=None, speaker_names=None, total_owners=0):
+    def _factory(textlines=None, unresolved=None, speakers=None, total_owners=0):
         tl = textlines or {}
         return {
             "textlines": tl,
             "dependents": {},
-            "speakerNames": speaker_names or {},
+            "speakers": speakers or {},
             "stats": {
                 "totalOwners": total_owners,
                 "totalTextlines": len(tl),

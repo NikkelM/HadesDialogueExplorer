@@ -11,7 +11,7 @@
 import {
     textlines,
     dependents,
-    speakerNames,
+    speakers,
     knownUnresolved,
     unresolvedCategoryLabels,
     unresolvedRefBlocks,
@@ -111,7 +111,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
     // otherwise fall back to a stripped-down version of the internal ID.
     let ownerTag = '?';
     if (tl) {
-        ownerTag = speakerNames[tl.owner] || tl.owner.replace('NPC_', '').replace('_01', '');
+        ownerTag = speakers[tl.owner]?.name || tl.owner.replace('NPC_', '').replace('_01', '');
     }
     const isCycle = ancestorPath.has(name);
     const expandable = !isCycle && hasChildren(name, direction);
@@ -205,7 +205,21 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
     npcSpan.className = 'npc-tag';
     npcSpan.textContent = ownerTag;
     if (tl) {
-        npcSpan.title = tl.owner;
+        // Mirror the tooltip format used by renderSpeakerHtml:
+        //   friendly + description:    "Friendly (internal id)\nDescription"
+        //   friendly without quip:     "Friendly (internal id)"
+        //   no friendly + description: "Description"   (id visible already)
+        //   nothing known:             no tooltip
+        const entry = speakers[tl.owner] || {};
+        const friendly = entry.name;
+        const description = entry.description;
+        if (friendly && friendly !== tl.owner) {
+            const titleParts = [`${friendly} (${tl.owner})`];
+            if (description) titleParts.push(description);
+            npcSpan.title = titleParts.join('\n');
+        } else if (description) {
+            npcSpan.title = description;
+        }
     }
     label.appendChild(npcSpan);
 

@@ -230,37 +230,57 @@ class TestSelfReferenceFiltering:
         assert result["stats"]["unresolvedRefs"] == []
 
 
-class TestSpeakerNamesDefault:
-    """Regression coverage for the ``speaker_names`` parameter default.
+class TestSpeakersDefault:
+    """Regression coverage for the ``speakers`` parameter default.
 
     The parameter used to default to ``{}`` (a mutable literal), which is a
     Python footgun: the default object is shared across every no-arg call,
     so any in-place mutation persists between invocations. The function
     happens to never mutate the parameter today and the result-assembly site
-    short-circuits via ``speaker_names or {}``, but the latent risk was
-    real - a future maintainer adding ``speaker_names.setdefault(...)``
+    short-circuits via ``speakers or {}``, but the latent risk was
+    real - a future maintainer adding ``speakers.setdefault(...)``
     inside the function would silently leak state across calls. The default
     is now ``None``; these tests pin both the public contract (``None`` ==
-    "no speaker names") and the no-shared-state guarantee.
+    "no speakers") and the no-shared-state guarantee.
     """
 
-    def test_default_returns_empty_speaker_names(self):
+    def test_default_returns_empty_speakers(self):
         result = build_graph_data({})
-        assert result["speakerNames"] == {}
+        assert result["speakers"] == {}
 
     def test_explicit_none_is_equivalent_to_default(self):
-        result = build_graph_data({}, speaker_names=None)
-        assert result["speakerNames"] == {}
+        result = build_graph_data({}, speakers=None)
+        assert result["speakers"] == {}
 
     def test_explicit_mapping_is_passed_through(self):
-        result = build_graph_data({}, speaker_names={"NPC_X_01": "Mr X"})
-        assert result["speakerNames"] == {"NPC_X_01": "Mr X"}
+        result = build_graph_data({}, speakers={
+            "NPC_X_01": {"name": "Mr X", "description": "Mysterious"},
+        })
+        assert result["speakers"] == {
+            "NPC_X_01": {"name": "Mr X", "description": "Mysterious"},
+        }
+
+    def test_none_subfields_are_dropped(self):
+        """``description = None`` (and any other empty subfield) is
+        omitted from the serialized result so consumers can use a
+        truthy check against ``speakers[id]?.description`` instead of
+        comparing to ``None``."""
+        result = build_graph_data({}, speakers={
+            "NPC_X_01": {"name": "Mr X", "description": None},
+        })
+        assert result["speakers"] == {"NPC_X_01": {"name": "Mr X"}}
+
+    def test_entries_with_all_subfields_empty_are_dropped(self):
+        result = build_graph_data({}, speakers={
+            "NPC_X_01": {"name": "", "description": None},
+        })
+        assert result["speakers"] == {}
 
     def test_no_shared_state_across_default_calls(self):
         """If two default-arg calls accidentally shared a backing dict,
-        mutating one result's ``speakerNames`` would leak into the next
+        mutating one result's ``speakers`` would leak into the next
         call's result. Guard against that regression."""
         first = build_graph_data({})
-        first["speakerNames"]["bogus"] = "leak"
+        first["speakers"]["bogus"] = {"name": "leak"}
         second = build_graph_data({})
-        assert second["speakerNames"] == {}
+        assert second["speakers"] == {}

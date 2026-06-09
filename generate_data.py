@@ -23,7 +23,7 @@ from src.extractors.hades1 import (
     extract_loot_data,
     extract_enemy_data,
     extract_game_data_lists,
-    HADES1_SPEAKER_NAMES,
+    HADES1_SPEAKERS,
 )
 from src.graph import build_graph_data
 
@@ -88,7 +88,7 @@ def generate_source(
     )
     print(f"  Owners: {len(owners)}")
 
-    graph_data = build_graph_data(owners, speaker_names=HADES1_SPEAKER_NAMES)
+    graph_data = build_graph_data(owners, speakers=HADES1_SPEAKERS)
 
     stats = graph_data["stats"]
     print(f"  Textlines: {stats['totalTextlines']}")

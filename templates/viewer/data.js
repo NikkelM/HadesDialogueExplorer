@@ -12,7 +12,7 @@
 //     inlined inside a ``<script type="application/json"
 //     id="viewer-data">`` element and read via ``textContent``.
 
-export let textlines, dependents, speakerNames, stats;
+export let textlines, dependents, speakers, stats;
 export let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions;
 export let unresolvedRefBlocks;
 export let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
@@ -28,7 +28,7 @@ export let _reqTypeOrderIndex;
 export function loadData(DATA) {
     textlines = DATA.textlines;
     dependents = DATA.dependents;
-    speakerNames = DATA.speakerNames || {};
+    speakers = DATA.speakers || {};
     stats = DATA.stats;
     knownUnresolved = DATA.knownUnresolvedRefs || {};
     unresolvedCategoryLabels = DATA.unresolvedCategoryLabels || {};

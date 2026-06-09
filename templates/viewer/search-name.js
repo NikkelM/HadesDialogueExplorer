@@ -5,7 +5,7 @@
 // ``search-ui.js`` for the synchronous-on-every-keystroke top
 // section of the dropdown.
 
-import { textlines, allNames, speakerNames } from './data.js';
+import { textlines, allNames, speakers } from './data.js';
 
 // Rank a single search token against one candidate textline. Lower is
 // better; -1 means no match. Tiers:
@@ -54,7 +54,7 @@ export function searchNameMatches(tokens, limit) {
         if (!tl) continue;
         const nameLower = n.toLowerCase();
         const ownerIdLower = tl.owner.toLowerCase();
-        const ownerDisplay = speakerNames[tl.owner];
+        const ownerDisplay = speakers[tl.owner]?.name;
         const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
 
         const tierTuple = [];

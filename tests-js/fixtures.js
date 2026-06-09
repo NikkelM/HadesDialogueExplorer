@@ -86,11 +86,14 @@ export function buildFixtureData() {
         },
         dependents: {},
         stats: { totalTextlines: 5, totalEdges: 0, unresolvedRefs: [] },
-        speakerNames: {
-            NPC_Zeus_01: 'Zeus',
-            NPC_Aphrodite_01: 'Aphrodite',
-            NPC_Orpheus_01: 'Orpheus',
-            NPC_Achilles_01: 'Achilles',
+        speakers: {
+            NPC_Zeus_01:      { name: 'Zeus',      description: 'King of the Olympians' },
+            NPC_Aphrodite_01: { name: 'Aphrodite', description: 'Goddess of Love' },
+            NPC_Orpheus_01:   { name: 'Orpheus',   description: 'Court Musician' },
+            // NPC_Achilles_01 intentionally has only a name (no
+            // description) so tests can exercise the "friendly name
+            // only, no description" branch.
+            NPC_Achilles_01:  { name: 'Achilles' },
         },
         knownUnresolvedRefs: {},
         unresolvedCategoryLabels: {},

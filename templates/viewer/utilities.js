@@ -7,7 +7,7 @@
 
 import {
     textlines,
-    speakerNames,
+    speakers,
     sectionKeyLabels,
     reqTypeLabels,
     reqTypeEdgeLabels,
@@ -50,19 +50,33 @@ export function jsAttr(s) {
 // Look up the friendly display name for a speaker/NPC ID, falling back to
 // the internal ID when no mapping exists.
 export function displayName(id) {
-    return speakerNames[id] || id;
+    return speakers[id]?.name || id;
 }
 
 // Render a speaker/NPC name as HTML: friendly label with the internal ID
-// available as a `title` tooltip when a mapping exists.
+// and (when available) a one-line character description quip available
+// via a multi-line ``title`` tooltip.
+//
+// Tooltip format (issue #68):
+//   friendly + description:    "Friendly (internal id)\nDescription"
+//   friendly without quip:     "Friendly (internal id)"
+//   no friendly + description: "Description"          (id already visible)
+//   no friendly, no quip:      <no tooltip>           (id already visible)
 //
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
-// call site - both the friendly label and the internal-ID tooltip are
-// already routed through escapeHtml below.
+// call site - the friendly label, internal-ID tooltip, and description
+// quip are all routed through escapeHtml below.
 export function renderSpeakerHtml(id) {
-    const friendly = speakerNames[id];
+    const entry = speakers[id] || {};
+    const friendly = entry.name;
+    const description = entry.description;
     if (friendly && friendly !== id) {
-        return `<span class="speaker-name" title="${escapeHtml(id)}">${escapeHtml(friendly)}</span>`;
+        const titleParts = [`${friendly} (${id})`];
+        if (description) titleParts.push(description);
+        return `<span class="speaker-name" title="${escapeHtml(titleParts.join('\n'))}">${escapeHtml(friendly)}</span>`;
+    }
+    if (description) {
+        return `<span class="speaker-name" title="${escapeHtml(description)}">${escapeHtml(id)}</span>`;
     }
     return `<span class="speaker-name">${escapeHtml(id)}</span>`;
 }

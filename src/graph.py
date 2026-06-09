@@ -4,7 +4,7 @@ viewer.
 Public API:
 
 - :func:`build_graph_data` -- assemble the textlines / dependents /
-  speakerNames / stats payload from one extractor's owner -> sections
+  speakers / stats payload from one extractor's owner -> sections
   output. The single entry point used by :mod:`generate_data`.
 - :func:`resolve_duplicate` and :func:`dup_summary` -- helpers for the
   same-textline-name collision case. Re-exported across module
@@ -15,7 +15,7 @@ Public API:
 """
 
 
-def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
+def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
     """
     Build the final data structure for the viewer from per-source extractor
     output.
@@ -23,19 +23,24 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
     Args:
         owners: Dict of owner_name -> {section: {textline: data}}. The owner
             may be an NPC, an enemy, a god boon, an inspect point, etc.
-        speaker_names: Optional dict of internal_id -> display_name for owners
-            and other speaker IDs. The viewer uses this to render friendly
-            names while keeping internal IDs canonical in the data. ``None``
-            (the default) is treated as an empty mapping; pass an explicit
-            dict to populate ``speakerNames`` in the result. ``None`` is the
-            default rather than ``{}`` to avoid the
-            mutable-default-argument footgun if a future maintainer adds
-            in-place mutation here.
+        speakers: Optional dict of ``internal_id -> {"name": str,
+            "description": str | None}``. The viewer uses this to
+            render friendly names and the hover-tooltip character quip
+            while keeping internal IDs canonical in the data. ``None``
+            (the default) is treated as an empty mapping; pass an
+            explicit dict to populate ``speakers`` in the result. The
+            two fields are intentionally kept together because the set
+            is strictly 1:1 with the internal id - splitting into
+            parallel maps invites silent drift. Entries with
+            ``description = None`` are emitted with the description
+            field omitted so consumers can use a truthy check; entries
+            without a name fall through the same way.
 
     Returns a dict with:
       - textlines: flat dict of textline name -> metadata (incl. `owner`)
       - dependents: reverse lookup of what depends on each textline
-      - speakerNames: optional id -> display-name map
+      - speakers: optional ``id -> {name?, description?}`` map (each
+        sub-field is omitted when the source had ``None``)
       - stats: summary statistics (incl. `totalOwners`)
     """
     textlines = {}
@@ -133,9 +138,23 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
     return {
         "textlines": textlines,
         "dependents": dependents,
-        "speakerNames": speaker_names or {},
+        "speakers": _filter_speakers(speakers),
         "stats": stats,
     }
+
+
+def _filter_speakers(speakers: dict | None) -> dict:
+    """Strip empty/None subfields from a speakers map so consumers can
+    use a truthy check against ``speakers[id]?.name`` /
+    ``speakers[id]?.description`` instead of comparing to ``None``."""
+    out = {}
+    for sid, entry in (speakers or {}).items():
+        if not isinstance(entry, dict):
+            continue
+        slim = {k: v for k, v in entry.items() if v}
+        if slim:
+            out[sid] = slim
+    return out
 
 
 def resolve_duplicate(existing: dict, new: dict) -> tuple:

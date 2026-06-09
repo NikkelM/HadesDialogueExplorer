@@ -16,8 +16,11 @@ def merge_graph_data(datasets: list[dict]) -> dict:
       textline set rather than summing per-file counts: summing would
       double-count any owner name appearing in multiple sources and include
       skeleton owners that contributed no textlines.
-    - Unions `speakerNames`; conflicting mappings (same id -> different
-      display name) are surfaced as a warning.
+    - Unions `speakers`; conflicting per-id fields (same id ->
+      different ``name`` or ``description``) are surfaced as a
+      warning. Each subfield is compared independently so a dataset
+      that supplies only ``name`` and another that supplies only
+      ``description`` for the same id will merge cleanly.
     - Propagates each input dataset's ``stats.duplicates`` (the
       intra-file partner-stub pattern detected by ``build_graph_data``)
       into the merged ``stats.duplicates`` alongside any new cross-file
@@ -25,9 +28,9 @@ def merge_graph_data(datasets: list[dict]) -> dict:
       silently disappear from the viewer dataset.
     """
     merged_textlines = {}
-    merged_speaker_names = {}
+    merged_speakers = {}
     duplicates = []
-    speaker_name_conflicts = []
+    speaker_conflicts = []
 
     for data in datasets:
         # Carry over intra-file duplicates the per-source ``build_graph_data``
@@ -46,15 +49,22 @@ def merge_graph_data(datasets: list[dict]) -> dict:
             else:
                 merged_textlines[tl_name] = tl_data
 
-        for sid, name in data.get("speakerNames", {}).items():
-            if sid in merged_speaker_names and merged_speaker_names[sid] != name:
-                speaker_name_conflicts.append({
-                    "id": sid,
-                    "existing": merged_speaker_names[sid],
-                    "new": name,
-                })
-            else:
-                merged_speaker_names[sid] = name
+        for sid, entry in data.get("speakers", {}).items():
+            if not isinstance(entry, dict):
+                continue
+            existing = merged_speakers.setdefault(sid, {})
+            for field, value in entry.items():
+                if not value:
+                    continue
+                if field in existing and existing[field] != value:
+                    speaker_conflicts.append({
+                        "id": sid,
+                        "field": field,
+                        "existing": existing[field],
+                        "new": value,
+                    })
+                else:
+                    existing[field] = value
 
     merged_dependents = {}
     for tl_name, tl_data in merged_textlines.items():
@@ -91,10 +101,14 @@ def merge_graph_data(datasets: list[dict]) -> dict:
             print(f"  cross-file {d['name']}: kept {k['owner']}@{k['sourceFile']}:{k['sourceLine']} ({k['dialogueLines']}L/{k['requirementCount']}R), dropped {dr['owner']}@{dr['sourceFile']}:{dr['sourceLine']} ({dr['dialogueLines']}L/{dr['requirementCount']}R)")
         if len(cross_file) > 5:
             print(f"  ... and {len(cross_file) - 5} more cross-file duplicates")
-    if speaker_name_conflicts:
-        print(f"WARNING: {len(speaker_name_conflicts)} speakerNames conflict(s):")
-        for c in speaker_name_conflicts[:5]:
-            print(f"  {c['id']}: {c['existing']!r} vs {c['new']!r}")
+    if speaker_conflicts:
+        print(f"WARNING: {len(speaker_conflicts)} speakers conflict(s):")
+        for c in speaker_conflicts[:5]:
+            print(f"  {c['id']}.{c['field']}: {c['existing']!r} vs {c['new']!r}")
+
+    # Drop ids that ended up with no populated subfields (e.g. a
+    # dataset shipped ``{name: '', description: None}``).
+    merged_speakers = {sid: entry for sid, entry in merged_speakers.items() if entry}
 
     stats = {
         "totalOwners": len({tl["owner"] for tl in merged_textlines.values()}),
@@ -107,6 +121,6 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     return {
         "textlines": merged_textlines,
         "dependents": merged_dependents,
-        "speakerNames": merged_speaker_names,
+        "speakers": merged_speakers,
         "stats": stats,
     }

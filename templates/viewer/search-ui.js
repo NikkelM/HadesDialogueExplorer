@@ -4,7 +4,7 @@
 // fast typing doesn't trigger N redundant scans.
 
 import { textlines } from './data.js';
-import { displayName, renderSectionHtml, escapeHtml } from './utilities.js';
+import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
 import { navigateTo } from './navigation.js';
@@ -32,8 +32,7 @@ export function initSearch() {
         }
         for (const m of nameMatches) {
             const tl = textlines[m.name];
-            const ownerLabel = displayName(tl.owner);
-            parts.push(`<div class="search-item" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)}<span class="npc">${escapeHtml(ownerLabel)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`);
+            parts.push(`<div class="search-item" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`);
         }
         if (textMatches.length > 0) {
             if (showHeaders) {

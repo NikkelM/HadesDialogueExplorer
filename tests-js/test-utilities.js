@@ -59,15 +59,55 @@ test('displayName uses the friendly speaker label, falling back to the id', () =
     assert.equal(displayName('NPC_Unknown_01'), 'NPC_Unknown_01');
 });
 
-test('renderSpeakerHtml emits a title tooltip only when a friendly label exists', () => {
+test('renderSpeakerHtml: friendly + description -> "Friendly (id)\\nDescription" tooltip', () => {
+    // Zeus has both a friendly label and a description quip in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Zeus_01'),
-        '<span class="speaker-name" title="NPC_Zeus_01">Zeus</span>',
+        '<span class="speaker-name" title="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
     );
+});
+
+test('renderSpeakerHtml: friendly without description -> "Friendly (id)" tooltip', () => {
+    // Achilles has a friendly label but no description in the fixture.
+    assert.equal(
+        renderSpeakerHtml('NPC_Achilles_01'),
+        '<span class="speaker-name" title="Achilles (NPC_Achilles_01)">Achilles</span>',
+    );
+});
+
+test('renderSpeakerHtml: no friendly, no description -> bare span (no tooltip)', () => {
     assert.equal(
         renderSpeakerHtml('NPC_Unknown_01'),
         '<span class="speaker-name">NPC_Unknown_01</span>',
     );
+});
+
+test('renderSpeakerHtml: description without friendly label -> description-only tooltip (id already visible)', () => {
+    // Synthetic scenario: an id known to the speaker map but only by
+    // its description. Reload the data layer with a minimal override
+    // so the rest of the suite keeps the shared fixture state.
+    loadData({
+        ...buildFixtureData(),
+        speakers: { Zagreus: { description: 'Prince of the Underworld' } },
+    });
+    assert.equal(
+        renderSpeakerHtml('Zagreus'),
+        '<span class="speaker-name" title="Prince of the Underworld">Zagreus</span>',
+    );
+    // Restore the shared fixture so subsequent tests aren't affected.
+    loadFixtureData();
+});
+
+test('renderSpeakerHtml: tooltip parts are HTML-escaped', () => {
+    loadData({
+        ...buildFixtureData(),
+        speakers: { 'NPC_<X>_01': { name: 'X&Y', description: 'God of "Quotes"' } },
+    });
+    assert.equal(
+        renderSpeakerHtml('NPC_<X>_01'),
+        '<span class="speaker-name" title="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;">X&amp;Y</span>',
+    );
+    loadFixtureData();
 });
 
 test('getEdgeClass routes False > Any > default to the right CSS class', () => {
