@@ -86,7 +86,7 @@ def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_
     NPC. Mirrors the ``if any(sections.values()):`` filter in
     ``enemy_data`` / ``loot_data`` / ``deathloop_data`` so per-file
     ``stats.totalOwners`` reflects owners that actually contribute
-    dialogue (closes issue #36).
+    dialogue.
     """
     sections = extract_textline_sections(
         owner_name, owner_table, source_file,

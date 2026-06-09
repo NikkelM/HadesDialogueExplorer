@@ -1,4 +1,4 @@
-"""Regression tests for HADES1_SPEAKER_NAMES (issue #30).
+"""Regression tests for HADES1_SPEAKER_NAMES.
 
 The viewer surfaces character names in the search dropdown, info panel
 header, dialogue line attributions, and tree node labels. We want
@@ -82,8 +82,8 @@ class TestCollisionsMatchAllowlist:
 
 
 class TestKnownVariantPairsAreDistinct:
-    """Spot-check the variant pairs that were explicitly called out in
-    issue #30 as needing disambiguation. Pairs whose collision is now
+    """Spot-check the variant pairs that were explicitly called out as
+    needing disambiguation. Pairs whose collision is now
     *intentional* (lesser Furies, boon owners, training dummy) live in
     ALLOWED_COLLISIONS and are not asserted here."""
 

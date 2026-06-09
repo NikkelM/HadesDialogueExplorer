@@ -118,7 +118,7 @@ function formatReqType(type) {
 // plain-English blurb is known for the field, the tooltip is rendered as
 // the internal field name on the first line, a blank line, and the
 // blurb beneath. Otherwise we fall back to the internal-name-only
-// tooltip used pre-issue-#26 so unmapped types still get the
+// tooltip so unmapped types still get the
 // hover-to-reveal-internal-name affordance.
 //
 // Returns ``null`` when no friendly label exists either: in that case
@@ -181,7 +181,7 @@ function unresolvedCategoryFor(name) {
 }
 
 // Render narrative-priority badges as HTML for either the tree or the
-// details panel (see issue #8). Two independent signals are surfaced
+// details panel. Two independent signals are surfaced
 // side-by-side:
 //
 //   1. Tier badge - derived purely from the parent section the textline
@@ -241,7 +241,7 @@ function renderSetLevelBadgeHtml(tl) {
     return `<span class="set-priority-badge ${cls}" title="${escapeHtml(tip)}">${text}</span>`;
 }
 
-// PlayOnce / Repeatable indicator (issue #25). Always renders one of
+// PlayOnce / Repeatable indicator. Always renders one of
 // the two so the repeatability state is explicit rather than implied
 // by the absence of a badge - a non-PlayOnce dialogue is still
 // eligible to play after it's been heard (subject to other gates),
@@ -342,16 +342,36 @@ function initSearch() {
     searchInput.addEventListener('input', () => {
         const q = searchInput.value.toLowerCase().trim();
         if (!q) { searchResults.classList.remove('visible'); return; }
-        // Match against textline name, NPC internal id, and NPC display name
-        const matches = allNames.filter(n => {
-            if (n.toLowerCase().includes(q)) return true;
+        // Rank matches before the 30-result cap so prefix hits never get
+        // displaced by alphabetically-earlier substring hits.
+        // Ranking tiers (lower = better):
+        //   0 = textline name starts with the query
+        //   1 = owner display name or internal id starts with the query
+        //       (broad sweep of "all dialogue from <NPC>")
+        //   2 = textline name contains the query somewhere
+        //   3 = owner display name or internal id contains the query
+        // Within a tier the input ordering is preserved (allNames is
+        // alphabetical and Array.prototype.sort is stable as of ES2019)
+        // so same-rank results still appear in alphabetical order.
+        const ranked = [];
+        for (const n of allNames) {
             const tl = textlines[n];
-            if (!tl) return false;
-            if (tl.owner.toLowerCase().includes(q)) return true;
-            const friendly = speakerNames[tl.owner];
-            if (friendly && friendly.toLowerCase().includes(q)) return true;
-            return false;
-        }).slice(0, 30);
+            if (!tl) continue;
+            const nameLower = n.toLowerCase();
+            const ownerIdLower = tl.owner.toLowerCase();
+            const ownerDisplay = speakerNames[tl.owner];
+            const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
+
+            let rank = -1;
+            if (nameLower.startsWith(q)) rank = 0;
+            else if (ownerIdLower.startsWith(q) || (ownerDisplayLower && ownerDisplayLower.startsWith(q))) rank = 1;
+            else if (nameLower.includes(q)) rank = 2;
+            else if (ownerIdLower.includes(q) || (ownerDisplayLower && ownerDisplayLower.includes(q))) rank = 3;
+
+            if (rank >= 0) ranked.push({ name: n, rank });
+        }
+        ranked.sort((a, b) => a.rank - b.rank);
+        const matches = ranked.slice(0, 30).map(m => m.name);
         if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
         searchResults.innerHTML = matches.map(n => {
             const tl = textlines[n];
@@ -487,7 +507,7 @@ function renderInfo(name) {
     for (const [type, refs] of Object.entries(tl.requirements)) {
         // Count-based requirement fields stash ``{Count: N}`` in
         // ``otherRequirements`` under the same key as the requirement.
-        // Surface the count inline with the header (issue #43) so the
+        // Surface the count inline with the header so the
         // user sees ``Required min (any) (3)`` instead of finding the
         // Count duplicated in the Other Requirements section below.
         const meta = tl.otherRequirements[type];
@@ -714,7 +734,7 @@ function createNodeEl(name, edgeType, direction, ancestorPath) {
         label.appendChild(cycleSpan);
     }
 
-    // Narrative-priority tier badge (see issue #8). Tree view shows
+    // Narrative-priority tier badge. Tree view shows
     // only the section-tier badge to keep rows uncluttered; the
     // set-level (SP/P) and PlayOnce indicators are reserved for the
     // details panel. Placed inside the right-aligned cluster of the
@@ -915,8 +935,8 @@ function createReqTypeGroup(edgeType, count, requirementCount) {
         : friendlyLabel;
     // Mirror the other render*Html helpers: attach the tooltip on both
     // the edge-chip and the label so hovering over either part of the
-    // header surfaces the internal field name + plain-English blurb
-    // (issue #26). Skipped for unmapped types so they stay plain.
+    // header surfaces the internal field name + plain-English blurb.
+    // Skipped for unmapped types so they stay plain.
     const titleText = reqTypeTitleText(edgeType);
     if (titleText !== null) {
         label.title = titleText;

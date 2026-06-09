@@ -45,7 +45,7 @@ class TestBasicExtraction:
         textlines and must not appear in the extractor output. Mirrors
         the ``if any(sections.values()):`` filter in ``enemy_data`` /
         ``loot_data`` / ``deathloop_data``. Regression guard for the
-        ``stats.totalOwners`` overcount in issue #36."""
+        ``stats.totalOwners`` overcount that the filter prevents."""
         lua = (
             'UnitSetData.NPCs = { '
             'NPC_Skeleton = { InteractTextLineSets = {} }, '
@@ -135,7 +135,7 @@ class TestSourceLocation:
 
 
 class TestSpeakerAttribution:
-    """Regression tests for the speaker-attribution bug (issue #13)."""
+    """Regression tests for the speaker-attribution bug."""
 
     def test_dialogue_speaker_defaults_to_npc(self):
         lua = '''UnitSetData.NPCs = {

@@ -78,7 +78,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     - Recomputes `stats.totalOwners` from the distinct owners in the merged
       textline set rather than summing per-file counts: summing would
       double-count any owner name appearing in multiple sources and include
-      skeleton owners that contributed no textlines (closes issue #36).
+      skeleton owners that contributed no textlines.
     - Unions `speakerNames`; conflicting mappings (same id -> different
       display name) are surfaced as a warning.
     """

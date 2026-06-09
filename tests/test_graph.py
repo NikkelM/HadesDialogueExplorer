@@ -121,8 +121,7 @@ class TestStats:
         """Owners that contributed no textlines (e.g. NPC entries that are
         pure shared-component templates, or empty {} stubs that inherit
         from a parent) must not inflate ``totalOwners``. The viewer's
-        owner count reflects distinct dialogue contributors only.
-        Regression guard for issue #36."""
+        owner count reflects distinct dialogue contributors only."""
         npcs = {
             "NPC_Skeleton": {"source": "T", "InteractTextLineSets": {}},
             "NPC_Real": {"source": "T", "InteractTextLineSets": {

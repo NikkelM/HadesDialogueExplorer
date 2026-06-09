@@ -75,7 +75,7 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
                 # Narrative-priority fields, when present. Two distinct
-                # sources, both meaningful (see issue #8):
+                # sources, both meaningful:
                 #   - section-tier: which container the textline lives in
                 #     (the engine cascades super-tier sections before
                 #     priority-tier sections before plain).
@@ -86,7 +86,7 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
                 # PlayOnce flag (once per save). Surfaced in the details
-                # panel only - see #8.
+                # panel only.
                 if tl_data.get("playOnce"):
                     new_entry["playOnce"] = True
                 existing = textlines.get(tl_name)

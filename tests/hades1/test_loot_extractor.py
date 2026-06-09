@@ -102,7 +102,7 @@ class TestPluralWithoutSetsContainers:
     """Demeter and Hermes use the plural-without-Sets container shape
     (``BoughtTextLines``, ``MakeUpTextLines``, ``RejectionTextLines``)
     instead of the more common ``*TextLineSets`` form. These were silently
-    missed before the hardcoded allowlist (see issue #7-followup)."""
+    missed before the hardcoded allowlist was added."""
 
     def test_bought_text_lines_extracted(self):
         lua = '''LootData = {

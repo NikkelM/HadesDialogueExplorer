@@ -6,7 +6,7 @@
 }
 .tree-node.root { margin-left: 0; border-left: none; padding-left: 0; }
 
-/* Right-edge alignment strategy (issue #60).
+/* Right-edge alignment strategy.
    The visible panel-body has `overflow: auto`; we want a horizontal
    scrollbar to appear when deep nesting or long textline names push
    content past the panel's visible width, AND every box at every depth
@@ -44,7 +44,7 @@
     align-items: center;
     gap: 6px;
     /* Keep each row on a single line; the panel-body scrolls horizontally
-       so long names extend right rather than wrapping mid-word (#60).
+       so long names extend right rather than wrapping mid-word.
        `white-space` is inheritable so descendants (`.name`, `.edge-type`,
        `.npc-tag`, ...) all stay single-line too without per-element rules.
        `width: max-content` makes the flex item as wide as its content so
@@ -73,12 +73,12 @@
 .edge-any { background: #3d2b1f; color: #f4a261; }
 .edge-false { background: #4a1520; color: #f07167; }
 /* `.tree-label .name` previously had `word-break: break-all` to force
-   long textline names to wrap mid-word. Dropped in #60: rows stay on a
+   long textline names to wrap mid-word. That was dropped: rows stay on a
    single line (`.tree-label` is `white-space: nowrap`) and the
    `.panel-body` scrolls horizontally so deep chains push content right. */
 .tree-label .npc-tag { font-size: 10px; color: #666; margin-left: auto; flex-shrink: 0; }
 
-/* Narrative-priority badge (issue #8). Same compact pill style as the
+/* Narrative-priority badge. Same compact pill style as the
    other inline tree badges (`.edge-type`, `.tree-blocked-badge`); three
    tone variants for super- / plain-priority / low-priority so each
    cascade tier reads at a glance.
@@ -217,8 +217,8 @@
     border-radius: 2px;
     flex-shrink: 0;
 }
-/* Help-cursor affordance when the edge-chip carries a tooltip (issue
-   #26). No underline on chips - the chip background already frames the
+/* Help-cursor affordance when the edge-chip carries a tooltip. No
+   underline on chips - the chip background already frames the
    text - so a cursor change is the only hover hint needed. */
 .req-type-group-header .edge-type.has-tooltip {
     cursor: help;

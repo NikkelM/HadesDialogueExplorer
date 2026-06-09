@@ -114,7 +114,7 @@ class TestMergeDatasets:
         Summing per-file counts (the old behaviour) would double-count
         any owner appearing in multiple source files and would also
         include skeleton owners that contributed no textlines, producing
-        the inflated header number reported in issue #36.
+        the inflated header number that the new merge logic prevents.
         """
         ds1 = _make_dataset(
             _make_textline("A", "OwnerX"),

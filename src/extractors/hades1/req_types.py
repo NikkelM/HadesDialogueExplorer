@@ -40,7 +40,7 @@ reach the viewer).
 # quantifier marker so the headers are self-describing. Count-based
 # fields use ``at least`` / ``at most`` / ``Min/Max runs since played``
 # forms - the ``Count`` parameter is appended by the viewer as a
-# trailing ``: N`` (see #43), so e.g. ``Must have played at least (ANY)``
+# trailing ``: N``, so e.g. ``Must have played at least (ANY)``
 # renders as ``Must have played at least (ANY): 3``.
 HADES1_REQ_TYPE_LABELS = {
     "RequiredTextLines":              "Must have played (ALL)",
@@ -102,7 +102,7 @@ HADES1_REQ_TYPE_EDGE_LABELS = {
 # what the check actually gates on. Every entry in
 # ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT`` should be
 # covered; unmapped types fall back to the internal-name-only tooltip
-# the viewer used pre-issue-#26.
+# the viewer otherwise uses.
 #
 # Wording conventions mirror ``HADES1_REQ_TYPE_LABELS``: positives use
 # "has been played" / "is queued", negatives use "has not been played"

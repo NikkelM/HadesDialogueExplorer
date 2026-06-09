@@ -10,7 +10,7 @@ than parsing the game's HelpText.en.sjson localization file. Sources include
 the player character (which has no HelpText entry), regular NPCs, and
 encounter/boss/boon variants that reuse the same underlying character.
 
-Display-name convention (see issue #30):
+Display-name convention:
   * Base form (``NPC_X_01``) keeps the bare character name.
   * Variants that represent a distinct narrative context get a
     parenthesized qualifier so they can be told apart in the search
@@ -38,7 +38,7 @@ Display-name convention (see issue #30):
         (only Megaera has a substantial House/Boss split)
       - training dummy ``TrainingMelee`` shares with ``NPC_Skelly_01``
   * Hover tooltip / canonical id remains available via the viewer's
-    ``renderSpeakerHtml`` (issue #5), so collisions are disambiguated on
+    ``renderSpeakerHtml``, so collisions are disambiguated on
     hover via the underlying internal ID.
 """
 

@@ -9,7 +9,7 @@
     overflow: hidden;
 }
 .panel:last-child { border-right: none; }
-/* The header is rendered OUTSIDE the scroll container (#31) so scrolled
+/* The header is rendered OUTSIDE the scroll container so scrolled
    content can't slide under it - no `position: sticky` needed - and it
    stays visible regardless of how far the body has been scrolled in
    either axis. */
@@ -25,7 +25,7 @@
 }
 /* Scroll container for panel content. Scrolls on BOTH axes so:
    - tree rows that extend horizontally past the panel width don't wrap
-     mid-word; the user scrolls right to follow deep chains (#60).
+     mid-word; the user scrolls right to follow deep chains.
    - long single-line content in any panel is reachable.
    Prose content (dialogue lines, requirement boxes) wraps normally
    because it has no `white-space: nowrap` rule. */
@@ -61,7 +61,7 @@
     margin-bottom: 8px;
 }
 .textline-info .meta span { margin-right: 12px; }
-/* PlayOnce / Repeatable indicator (see #25). Always renders one of
+/* PlayOnce / Repeatable indicator. Always renders one of
    the two badges in the details-panel header to the right of the
    priority badges, so the repeatability state is explicit. Warm tone
    for the hard cap, cool tone for the default repeatable state. */
@@ -442,8 +442,8 @@
 
 /* Requirement-type label affordance: dotted underline + help cursor when
    a friendly mapping exists (i.e. the tooltip will reveal the internal
-   field name plus a plain-English blurb of what the check gates on -
-   see issue #26). Mirrors the speaker-name and section-name patterns.
+   field name plus a plain-English blurb of what the check gates on).
+   Mirrors the speaker-name and section-name patterns.
    The `.blocking-field` variant is bold to keep the visual weight the
    previous `<strong>` wrapper provided in the blocked-banner copy. */
 .req-section h4 .req-type-name[title] {
