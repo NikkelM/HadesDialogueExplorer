@@ -281,6 +281,63 @@ class TestSectionDiscovery:
         assert "BossPresentationTextLineSets" in npc
 
 
+class TestPartnerField:
+    """``Partner = "NPC_..."`` on the full entry of an xWithY partner
+    dialogue names the second NPC. The stub entry under that partner
+    NPC's set never declares ``Partner``. Capturing this lets the
+    viewer surface the dialogue under both NPCs and lets
+    ``resolve_duplicate`` prefer the cue-bearing side explicitly."""
+
+    def test_partner_string_captured(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_Nyx_01 = {
+                InteractTextLineSets = {
+                    NyxWithHades03 = {
+                        Partner = "NPC_Hades_01",
+                        RequiredTextLines = { "Prereq01" },
+                        { Text = "..." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["NPC_Nyx_01"]["InteractTextLineSets"]["NyxWithHades03"]
+        assert tl["partner"] == "NPC_Hades_01"
+
+    def test_missing_partner_field_not_present(self):
+        lua = '''UnitSetData.NPCs = {
+            NPC_X_01 = {
+                InteractTextLineSets = {
+                    PlainLine01 = { { Text = "Hi" } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["NPC_X_01"]["InteractTextLineSets"]["PlainLine01"]
+        assert "partner" not in tl
+
+    def test_partner_stub_does_not_get_partner_field(self):
+        """The partner-side stub never declares Partner in the source
+        Lua. Verify the extractor returns no ``partner`` key for a stub
+        even when it carries other engine flags. Regression guard against
+        a future change that might silently fall back to inferring
+        Partner from owner context."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_01 = {
+                InteractTextLineSets = {
+                    NyxWithHades03 = {
+                        PlayOnce = true,
+                        UseableOffSource = true,
+                        Skip = true,
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["NPC_Hades_01"]["InteractTextLineSets"]["NyxWithHades03"]
+        assert "partner" not in tl
+
+
 class TestTextProcessing:
     def test_formatting_tags_stripped(self):
         lua = '''UnitSetData.NPCs = {

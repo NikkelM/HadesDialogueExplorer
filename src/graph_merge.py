@@ -18,6 +18,11 @@ def merge_graph_data(datasets: list[dict]) -> dict:
       skeleton owners that contributed no textlines.
     - Unions `speakerNames`; conflicting mappings (same id -> different
       display name) are surfaced as a warning.
+    - Propagates each input dataset's ``stats.duplicates`` (the
+      intra-file partner-stub pattern detected by ``build_graph_data``)
+      into the merged ``stats.duplicates`` alongside any new cross-file
+      collisions detected here. Without this, intra-file duplicates would
+      silently disappear from the viewer dataset.
     """
     merged_textlines = {}
     merged_speaker_names = {}
@@ -25,11 +30,15 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     speaker_name_conflicts = []
 
     for data in datasets:
+        # Carry over intra-file duplicates the per-source ``build_graph_data``
+        # already detected. Each one is already tagged ``scope: "intra-file"``.
+        duplicates.extend(data.get("stats", {}).get("duplicates", []))
         for tl_name, tl_data in data.get("textlines", {}).items():
             if tl_name in merged_textlines:
                 chosen, dropped = resolve_duplicate(merged_textlines[tl_name], tl_data)
                 duplicates.append({
                     "name": tl_name,
+                    "scope": "cross-file",
                     "kept": dup_summary(chosen),
                     "dropped": dup_summary(dropped),
                 })
@@ -69,13 +78,19 @@ def merge_graph_data(datasets: list[dict]) -> dict:
         for req_list in tl_data.get("requirements", {}).values():
             all_referenced.update(req_list)
 
+    cross_file = [d for d in duplicates if d.get("scope") == "cross-file"]
+    intra_file = [d for d in duplicates if d.get("scope") == "intra-file"]
     if duplicates:
-        print(f"INFO: {len(duplicates)} textline name(s) defined in multiple sources (richer entry kept):")
-        for d in duplicates[:5]:
+        print(
+            f"INFO: {len(duplicates)} duplicate textline definition(s) "
+            f"({len(intra_file)} intra-file, "
+            f"{len(cross_file)} cross-file). Richer/canonical entry kept."
+        )
+        for d in cross_file[:5]:
             k, dr = d["kept"], d["dropped"]
-            print(f"  {d['name']}: kept {k['owner']}@{k['sourceFile']}:{k['sourceLine']} ({k['dialogueLines']}L/{k['requirementCount']}R), dropped {dr['owner']}@{dr['sourceFile']}:{dr['sourceLine']} ({dr['dialogueLines']}L/{dr['requirementCount']}R)")
-        if len(duplicates) > 5:
-            print(f"  ... and {len(duplicates) - 5} more")
+            print(f"  cross-file {d['name']}: kept {k['owner']}@{k['sourceFile']}:{k['sourceLine']} ({k['dialogueLines']}L/{k['requirementCount']}R), dropped {dr['owner']}@{dr['sourceFile']}:{dr['sourceLine']} ({dr['dialogueLines']}L/{dr['requirementCount']}R)")
+        if len(cross_file) > 5:
+            print(f"  ... and {len(cross_file) - 5} more cross-file duplicates")
     if speaker_name_conflicts:
         print(f"WARNING: {len(speaker_name_conflicts)} speakerNames conflict(s):")
         for c in speaker_name_conflicts[:5]:

@@ -250,6 +250,17 @@ def extract_textline(
     if tl_table.get("PlayOnce") is True:
         data["playOnce"] = True
 
+    # `Partner = "NPC_<other>_01"` on the full entry of an `xWithY`
+    # partner dialogue names the second NPC involved. The same dialogue
+    # is also queued under that partner NPC's textline-set as an empty
+    # `Skip = true` stub; the partner-side stub does not declare
+    # `Partner` itself. Capturing this lets the viewer surface the
+    # dialogue under both NPCs even though the canonical owner remains
+    # the side that holds the cues.
+    partner_value = tl_table.get("Partner")
+    if isinstance(partner_value, str) and partner_value:
+        data["partner"] = partner_value
+
     for entry in tl_table.array:
         if not isinstance(entry, LuaTable):
             continue

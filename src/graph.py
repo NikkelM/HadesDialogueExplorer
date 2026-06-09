@@ -89,11 +89,25 @@ def build_graph_data(owners: dict, speaker_names: dict | None = None) -> dict:
                 # panel only.
                 if tl_data.get("playOnce"):
                     new_entry["playOnce"] = True
+                # `Partner = "NPC_..."` on xWithY partner dialogues. Names
+                # the second NPC; the same textline name also exists as
+                # an empty `Skip = true` stub under that partner NPC.
+                # `resolve_duplicate` uses the presence of `partner` to
+                # pick the canonical (cue-bearing) side over the stub.
+                if tl_data.get("partner"):
+                    new_entry["partner"] = tl_data["partner"]
                 existing = textlines.get(tl_name)
                 if existing is not None:
                     chosen, dropped = resolve_duplicate(existing, new_entry)
                     duplicates.append({
                         "name": tl_name,
+                        # `intra-file` = same source file. Within a single
+                        # source (e.g. NPCData.lua) the only known cause is
+                        # the xWithY partner-stub pattern. `cross-file` is
+                        # emitted by ``graph_merge.merge_graph_data`` for
+                        # collisions detected when stitching different
+                        # per-source datasets together.
+                        "scope": "intra-file",
                         "kept": dup_summary(chosen),
                         "dropped": dup_summary(dropped),
                     })
@@ -130,8 +144,20 @@ def resolve_duplicate(existing: dict, new: dict) -> tuple:
     the game's pattern where shared dialogues have one "stub" entry (queue
     trigger only) and one "full" entry with the actual content / dependencies.
 
-    Synthetic choice-variant entries always lose to a real definition (a real
-    textline in another source file always wins) regardless of richness.
+    Two explicit signals override the richness heuristic so the rule is
+    documented and robust against future game-data changes:
+
+    - Synthetic choice-variant entries always lose to a real definition
+      (the engine only ever fires the real cue-bearing textline; the
+      synthetic exists purely to model the choice flag's name in the
+      dependency graph).
+    - The xWithY partner pattern: the side declaring ``Partner = "..."``
+      is by definition the cue-bearing canonical entry; the partner-NPC
+      side is a queue-only stub that never declares ``Partner``. Prefer
+      the side with ``partner`` set whenever exactly one side has it.
+      This handles the (hypothetical but possible) case where future
+      game data ships stubs with enough placeholder metadata to outscore
+      the canonical side under the plain richness comparison.
 
     Returns (kept, dropped). Ties go to the existing entry (first-wins).
 
@@ -145,6 +171,12 @@ def resolve_duplicate(existing: dict, new: dict) -> tuple:
         return new, existing
     if new_synth and not existing_synth:
         return existing, new
+    existing_partner = bool(existing.get("partner"))
+    new_partner = bool(new.get("partner"))
+    if existing_partner and not new_partner:
+        return existing, new
+    if new_partner and not existing_partner:
+        return new, existing
     if _richness(new) > _richness(existing):
         return new, existing
     return existing, new
@@ -162,8 +194,13 @@ def dup_summary(entry: dict) -> dict:
     ``stats.duplicates`` so the viewer can surface which definition won
     and which lost when the same textline name appeared twice across
     parsed source files. Public counterpart to :func:`resolve_duplicate`.
+
+    The ``partner`` field is preserved when present so consumers can
+    distinguish the well-known xWithY partner-stub pattern (kept side
+    declares ``Partner``) from accidental cross-file collisions
+    (neither side declares ``Partner``).
     """
-    return {
+    summary = {
         "owner": entry["owner"],
         "section": entry["section"],
         "sourceFile": entry.get("sourceFile", ""),
@@ -171,6 +208,9 @@ def dup_summary(entry: dict) -> dict:
         "dialogueLines": len(entry.get("dialogueLines") or []),
         "requirementCount": sum(len(v) for v in (entry.get("requirements") or {}).values()),
     }
+    if entry.get("partner"):
+        summary["partner"] = entry["partner"]
+    return summary
 
 
 def _build_dependents(textlines: dict) -> dict:

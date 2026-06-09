@@ -10,8 +10,9 @@ from src.graph import resolve_duplicate
 
 
 def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
-                   source_file="X.lua", source_line=None, other_reqs=None):
-    return {
+                   source_file="X.lua", source_line=None, other_reqs=None,
+                   partner=None):
+    tl = {
         "name": name,
         "owner": owner,
         "section": "InteractTextLineSets",
@@ -22,9 +23,12 @@ def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
         "otherRequirements": other_reqs or {},
         "dialogueLines": dialogue_lines or [],
     }
+    if partner is not None:
+        tl["partner"] = partner
+    return tl
 
 
-def _make_dataset(*textlines, speaker_names=None):
+def _make_dataset(*textlines, speaker_names=None, duplicates=None):
     tl_map = {tl["name"]: tl for tl in textlines}
     owners = {tl["owner"] for tl in textlines}
     return {
@@ -36,7 +40,7 @@ def _make_dataset(*textlines, speaker_names=None):
             "totalTextlines": len(tl_map),
             "totalEdges": 0,
             "unresolvedRefs": [],
-            "duplicates": [],
+            "duplicates": list(duplicates or []),
         },
     }
 
@@ -68,6 +72,56 @@ class TestRichnessResolution:
         a = _make_textline("X", "A")
         b = _make_textline("X", "B")
         kept, dropped = resolve_duplicate(a, b)
+        assert kept["owner"] == "A"
+
+
+class TestPartnerPreferredOverStub:
+    """``Partner = "..."`` on the full xWithY entry is an explicit signal
+    that the other side is the queue-only stub. ``resolve_duplicate``
+    must always pick the partner-marked entry regardless of richness so
+    a future stub that happens to ship extra placeholder metadata can
+    never accidentally outscore the cue-bearing canonical side."""
+
+    def test_partner_marked_entry_wins_against_richer_stub(self):
+        # Pathological case: stub has more `otherRequirements` than the
+        # partner-marked entry. Richness alone would pick the stub; the
+        # explicit Partner check must override.
+        stub = _make_textline(
+            "Shared", "NPC_Hades_01",
+            other_reqs={"RequiredFalseFlags": {"A": True},
+                        "RequiredMinCompletedRuns": 1},
+        )
+        full = _make_textline(
+            "Shared", "NPC_Nyx_01",
+            partner="NPC_Hades_01",
+        )
+        kept, dropped = resolve_duplicate(stub, full)
+        assert kept["owner"] == "NPC_Nyx_01"
+        assert kept.get("partner") == "NPC_Hades_01"
+        # And the other call order.
+        kept, dropped = resolve_duplicate(full, stub)
+        assert kept["owner"] == "NPC_Nyx_01"
+
+    def test_falls_back_to_richness_when_neither_declares_partner(self):
+        a = _make_textline(
+            "Shared", "A",
+            dialogue_lines=[{"speaker": "A", "text": "Hi"}],
+        )
+        b = _make_textline("Shared", "B")
+        kept, _ = resolve_duplicate(a, b)
+        assert kept["owner"] == "A"
+
+    def test_falls_back_to_richness_when_both_declare_partner(self):
+        # Hypothetical: both sides declare Partner (would imply a true
+        # data conflict). Resolution must still be deterministic - the
+        # richness comparison takes over.
+        a = _make_textline(
+            "Shared", "A",
+            partner="B",
+            dialogue_lines=[{"speaker": "A", "text": "..."}],
+        )
+        b = _make_textline("Shared", "B", partner="A")
+        kept, _ = resolve_duplicate(a, b)
         assert kept["owner"] == "A"
 
 
@@ -181,3 +235,92 @@ class TestMergeDatasets:
         ]
         # Edge count excludes the two self-edges.
         assert merged["stats"]["totalEdges"] == 1
+
+
+class TestDuplicateStatsPropagation:
+    """``stats.duplicates`` from each input dataset (intra-file partner-stub
+    pattern) must be carried into the merged dataset alongside any new
+    cross-file collisions detected at merge time. Both kinds get a
+    ``scope`` tag (``intra-file`` / ``cross-file``) so the viewer can
+    distinguish them."""
+
+    def test_intra_file_duplicates_propagated_from_input_stats(self):
+        intra = {
+            "name": "NyxWithHades03",
+            "scope": "intra-file",
+            "kept": {"owner": "NPC_Nyx_01", "section": "InteractTextLineSets",
+                     "sourceFile": "NPCData.lua", "sourceLine": 13251,
+                     "dialogueLines": 5, "requirementCount": 4,
+                     "partner": "NPC_Hades_01"},
+            "dropped": {"owner": "NPC_Hades_01", "section": "InteractTextLineSets",
+                        "sourceFile": "NPCData.lua", "sourceLine": 3750,
+                        "dialogueLines": 0, "requirementCount": 0},
+        }
+        ds1 = _make_dataset(
+            _make_textline("NyxWithHades03", "NPC_Nyx_01",
+                           partner="NPC_Hades_01"),
+            duplicates=[intra],
+        )
+        ds2 = _make_dataset(_make_textline("Other", "OwnerZ"))
+        merged = merge_graph_data([ds1, ds2])
+        dups = merged["stats"]["duplicates"]
+        names = [d["name"] for d in dups]
+        assert "NyxWithHades03" in names
+        rec = next(d for d in dups if d["name"] == "NyxWithHades03")
+        assert rec["scope"] == "intra-file"
+        assert rec["kept"].get("partner") == "NPC_Hades_01"
+
+    def test_cross_file_collisions_tagged_cross_file(self):
+        ds1 = _make_dataset(
+            _make_textline("Shared", "OwnerA", source_file="A.lua",
+                           dialogue_lines=[{"speaker": "OwnerA", "text": "a"}]),
+        )
+        ds2 = _make_dataset(
+            _make_textline("Shared", "OwnerB", source_file="B.lua"),
+        )
+        merged = merge_graph_data([ds1, ds2])
+        dups = merged["stats"]["duplicates"]
+        assert len(dups) == 1
+        assert dups[0]["name"] == "Shared"
+        assert dups[0]["scope"] == "cross-file"
+
+    def test_intra_and_cross_file_duplicates_coexist(self):
+        intra = {
+            "name": "PartnerLine",
+            "scope": "intra-file",
+            "kept": {"owner": "NPC_A", "section": "InteractTextLineSets",
+                     "sourceFile": "NPCData.lua", "sourceLine": 100,
+                     "dialogueLines": 1, "requirementCount": 0,
+                     "partner": "NPC_B"},
+            "dropped": {"owner": "NPC_B", "section": "InteractTextLineSets",
+                        "sourceFile": "NPCData.lua", "sourceLine": 200,
+                        "dialogueLines": 0, "requirementCount": 0},
+        }
+        ds1 = _make_dataset(
+            _make_textline("PartnerLine", "NPC_A", partner="NPC_B"),
+            _make_textline("CrossLine", "OwnerC", source_file="NPCData.lua",
+                           dialogue_lines=[{"speaker": "OwnerC", "text": "..."}]),
+            duplicates=[intra],
+        )
+        ds2 = _make_dataset(
+            _make_textline("CrossLine", "OwnerD", source_file="LootData.lua"),
+        )
+        merged = merge_graph_data([ds1, ds2])
+        dups = merged["stats"]["duplicates"]
+        by_name = {d["name"]: d for d in dups}
+        assert by_name["PartnerLine"]["scope"] == "intra-file"
+        assert by_name["CrossLine"]["scope"] == "cross-file"
+
+
+class TestDupSummaryIncludesPartner:
+    def test_partner_preserved_in_summary(self):
+        from src.graph import dup_summary
+        entry = _make_textline("X", "NPC_Nyx_01", partner="NPC_Hades_01")
+        summary = dup_summary(entry)
+        assert summary["partner"] == "NPC_Hades_01"
+
+    def test_no_partner_key_when_absent(self):
+        from src.graph import dup_summary
+        entry = _make_textline("X", "NPC_Nyx_01")
+        summary = dup_summary(entry)
+        assert "partner" not in summary

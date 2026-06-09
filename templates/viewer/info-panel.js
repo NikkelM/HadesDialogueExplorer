@@ -61,6 +61,7 @@ export function renderInfo(name) {
         <h3><span class="name">${escapeHtml(name)}</span>${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
+            ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}
             <span>Section: ${renderSectionHtml(tl.section)}</span>
             <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
