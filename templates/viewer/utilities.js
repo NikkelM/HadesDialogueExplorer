@@ -101,8 +101,9 @@ export function formatReqType(type) {
 export function reqTypeTitleText(type) {
     const friendly = reqTypeLabels[type];
     if (!friendly || friendly === type) return null;
+    const header = `Internal name: ${type}`;
     const blurb = reqTypeTooltips[type];
-    return blurb ? `${type}\n\n${blurb}` : type;
+    return blurb ? `${header}\n\n${blurb}` : header;
 }
 
 // Render a requirement-type label as HTML: friendly name with the

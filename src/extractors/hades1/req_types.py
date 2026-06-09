@@ -113,11 +113,11 @@ HADES1_REQ_TYPE_EDGE_LABELS = {
 # with the field's meaning.
 HADES1_REQ_TYPE_TOOLTIPS = {
     "RequiredTextLines":
-        "This dialogue is only eligible if EVERY listed textline has been played at some point in this save.",
+        "This dialogue is only eligible if EVERY listed textline has been played at some point in a save.",
     "RequiredAnyTextLines":
-        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in this save.",
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in a save.",
     "RequiredAnyOtherTextLines":
-        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in this save. Used as a second disjunctive group alongside RequiredAnyTextLines when two independent 'any' checks are needed on the same dialogue.",
+        "This dialogue is eligible if AT LEAST ONE of the listed textlines has been played at some point in a save. Used as a second disjunctive group alongside RequiredAnyTextLines when two independent 'any' checks are needed on the same dialogue.",
     "RequiredTextLinesThisRun":
         "This dialogue is only eligible if EVERY listed textline has been played within the current run.",
     "RequiredTextLinesLastRun":
@@ -133,7 +133,7 @@ HADES1_REQ_TYPE_TOOLTIPS = {
     "RequiredAnyQueuedTextLines":
         "This dialogue is eligible if AT LEAST ONE of the listed textlines is currently queued to play (assigned and waiting) but has not yet played.",
     "RequiredFalseTextLines":
-        "This dialogue is only eligible if NONE of the listed textlines have been played at any point in this save.",
+        "This dialogue is only eligible if NONE of the listed textlines have been played at any point in a save.",
     "RequiredFalseQueuedTextLines":
         "This dialogue is only eligible if NONE of the listed textlines are currently queued to play.",
     "RequiredFalseTextLinesThisRun":
@@ -143,9 +143,9 @@ HADES1_REQ_TYPE_TOOLTIPS = {
     "RequiredFalseTextLinesThisRoom":
         "This dialogue is only eligible if NONE of the listed textlines have been played within the current room.",
     "RequiredMinAnyTextLines":
-        "This dialogue is only eligible if AT LEAST X of the listed textlines have been played at some point in this save.",
+        "This dialogue is only eligible if AT LEAST X of the listed textlines have been played at some point in a save.",
     "RequiredMaxAnyTextLines":
-        "This dialogue is only eligible if AT MOST X of the listed textlines have been played at some point in this save.",
+        "This dialogue is only eligible if AT MOST X of the listed textlines have been played at some point in a save.",
     "MinRunsSinceAnyTextLines":
         "This dialogue is only eligible if AT LEAST X runs have passed since any of the listed textlines was last played.",
     "MaxRunsSinceAnyTextLines":
