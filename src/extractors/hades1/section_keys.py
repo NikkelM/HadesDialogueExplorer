@@ -46,6 +46,10 @@ HADES1_TEXTLINE_SECTION_KEYS = frozenset({
     "OnTrophyRevealedTextLineSets",
     "OnTrophyUnlockedTextLineSets",
     "TextLineSet",            # singular form, used inside distance triggers
+                              # and inside EncounterData encounter events
+
+    # RoomData* - boon-tied forced dialogue on specific rooms (Hades 1).
+    "ForcedTextLines",
 })
 
 # Human-readable labels for each owner-level section key. The viewer shows
@@ -83,6 +87,7 @@ HADES1_SECTION_KEY_LABELS = {
     "OnTrophyRevealedTextLineSets":                  "NPC interaction",
     "OnTrophyUnlockedTextLineSets":                  "NPC interaction",
     "TextLineSet":                                   "Misc. interaction",
+    "ForcedTextLines":                               "Forced room dialogue",
 }
 
 # Section-tier narrative priority. Section names ending in

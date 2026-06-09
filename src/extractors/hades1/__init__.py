@@ -14,6 +14,7 @@ from .npc_data import extract_npc_data
 from .deathloop_data import extract_deathloop_data
 from .loot_data import extract_loot_data, LOOT_DEFAULT_SPEAKERS
 from .enemy_data import extract_enemy_data
+from .encounter_room_data import extract_encounter_room_data
 from .text_line_sets import extract_game_data_lists
 from .speakers import HADES1_SPEAKERS
 from .section_keys import (
@@ -39,6 +40,7 @@ __all__ = [
     "extract_loot_data",
     "LOOT_DEFAULT_SPEAKERS",
     "extract_enemy_data",
+    "extract_encounter_room_data",
     "extract_game_data_lists",
     "HADES1_SPEAKERS",
     "HADES1_TEXTLINE_SECTION_KEYS",

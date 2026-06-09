@@ -22,6 +22,7 @@ from src.extractors.hades1 import (
     extract_deathloop_data,
     extract_loot_data,
     extract_enemy_data,
+    extract_encounter_room_data,
     extract_game_data_lists,
     HADES1_SPEAKERS,
 )
@@ -29,10 +30,18 @@ from src.graph import build_graph_data
 
 # Each entry: (output filename, source label, lua filename, extractor function)
 HADES1_SOURCES = [
-    ("hades1_npc.json",       "Hades 1", "NPCData.lua",        extract_npc_data),
-    ("hades1_deathloop.json", "Hades 1", "DeathLoopData.lua",  extract_deathloop_data),
-    ("hades1_loot.json",      "Hades 1", "LootData.lua",       extract_loot_data),
-    ("hades1_enemy.json",     "Hades 1", "EnemyData.lua",      extract_enemy_data),
+    ("hades1_npc.json",          "Hades 1", "NPCData.lua",          extract_npc_data),
+    ("hades1_deathloop.json",    "Hades 1", "DeathLoopData.lua",    extract_deathloop_data),
+    ("hades1_loot.json",         "Hades 1", "LootData.lua",         extract_loot_data),
+    ("hades1_enemy.json",        "Hades 1", "EnemyData.lua",        extract_enemy_data),
+    ("hades1_encounter.json",    "Hades 1", "EncounterData.lua",    extract_encounter_room_data),
+    ("hades1_room_base.json",    "Hades 1", "RoomData.lua",         extract_encounter_room_data),
+    ("hades1_room_tartarus.json","Hades 1", "RoomDataTartarus.lua", extract_encounter_room_data),
+    ("hades1_room_asphodel.json","Hades 1", "RoomDataAsphodel.lua", extract_encounter_room_data),
+    ("hades1_room_elysium.json", "Hades 1", "RoomDataElysium.lua",  extract_encounter_room_data),
+    ("hades1_room_styx.json",    "Hades 1", "RoomDataStyx.lua",     extract_encounter_room_data),
+    ("hades1_room_surface.json", "Hades 1", "RoomDataSurface.lua",  extract_encounter_room_data),
+    ("hades1_room_secrets.json", "Hades 1", "RoomDataSecrets.lua",  extract_encounter_room_data),
 ]
 
 # TextLineSets.lua defines named string-arrays referenced by the per-source

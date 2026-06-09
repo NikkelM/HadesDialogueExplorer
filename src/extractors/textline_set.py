@@ -122,6 +122,7 @@ def extract_textline_sections(
     default_speaker: str = None,
     game_data_lists: dict = None,
     section_priority_tiers: dict = None,
+    cue_speaker_resolver=None,
 ) -> dict:
     """Extract every textline-set section from a single owner table.
 
@@ -155,6 +156,14 @@ def extract_textline_sections(
     ``HADES1_SECTION_KEY_PRIORITY_TIER``). Each extracted textline inside
     a tiered section gets ``narrativePrioritySectionTier`` set, capturing
     the engine's "consult super-tier first" cascade at the call site.
+
+    `cue_speaker_resolver`, when provided, is a callable taking a single
+    cue ``LuaTable`` and returning a speaker id (or ``None``). It is
+    consulted per-cue when the cue lacks an explicit ``Speaker = ...``
+    field; sources where lines from multiple speakers share a single
+    textline-set without per-line speakers (e.g. EncounterData / RoomData
+    where the speaker has to be derived from the cue path) can use this
+    to recover the speaker before the owner-name fallback kicks in.
     """
     sections = {}
     fallback_speaker = default_speaker or owner_name
@@ -172,6 +181,7 @@ def extract_textline_sections(
             section[tl_name] = extract_textline(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
+                cue_speaker_resolver=cue_speaker_resolver,
             )
             if section_tier is not None:
                 section[tl_name]["narrativePrioritySectionTier"] = section_tier
@@ -182,6 +192,7 @@ def extract_textline_sections(
             for syn_name, syn_data in _extract_choice_variants(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
+                cue_speaker_resolver=cue_speaker_resolver,
             ).items():
                 if section_tier is not None:
                     syn_data["narrativePrioritySectionTier"] = section_tier
@@ -196,6 +207,7 @@ def extract_textline(
     fallback_speaker: str,
     source_file: str,
     game_data_lists: dict = None,
+    cue_speaker_resolver=None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single textline table."""
     data = {
@@ -272,7 +284,8 @@ def extract_textline(
         if isinstance(speaker, str):
             data["dialogueLines"].append({"speaker": speaker, "text": text})
         else:
-            data["dialogueLines"].append({"speaker": fallback_speaker, "text": text})
+            derived = cue_speaker_resolver(entry) if cue_speaker_resolver is not None else None
+            data["dialogueLines"].append({"speaker": derived or fallback_speaker, "text": text})
 
     return data
 
@@ -283,6 +296,7 @@ def _extract_choice_variants(
     fallback_speaker: str,
     source_file: str,
     game_data_lists: dict = None,
+    cue_speaker_resolver=None,
 ) -> dict:
     """Find every ``Choices = {...}`` array nested in the parent's cues and
     materialise each choice as a synthetic child textline.
@@ -316,6 +330,7 @@ def _extract_choice_variants(
             child = extract_textline(
                 synthetic_name, choice_item, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
+                cue_speaker_resolver=cue_speaker_resolver,
             )
             # Implicit parent dependency so the choice variant is reachable
             # in the graph only via the parent textline.

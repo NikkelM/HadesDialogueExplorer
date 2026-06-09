@@ -140,13 +140,6 @@ HADES1_KNOWN_UNRESOLVED_REFS = {
         "reason": "Used in ZeusAboutLuciferAspect01's RequiredFalseTextLines; "
                   "cut, requirement trivially satisfied.",
     },
-    "PoseidonFishQuest01": {
-        "category": "cut-content",
-        "reason": "Required by PoseidonFishQuestComplete's RequiredTextLines "
-                  "(so PoseidonFishQuestComplete can never play). Also "
-                  "referenced in the same textline's "
-                  "RequiredFalseTextLinesLastRun (harmless).",
-    },
     "DusaMiscMeeting01": {
         "category": "cut-content",
         "reason": "Used in DusaChat26's RequiredFalseTextLines; cut, "
