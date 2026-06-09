@@ -237,7 +237,7 @@ function collisionTooltipText(tl) {
 function renderCollisionBadgeHtml(tl) {
     if (!tl.collisionOriginalName) return '';
     const tip = collisionTooltipText(tl);
-    return ` <span class="collision-badge" title="${escapeHtml(tip)}">\u26A0 Renamed</span>`;
+    return ` <span class="collision-badge" data-tooltip="${escapeHtml(tip)}">\u26A0 Renamed</span>`;
 }
 
 // Banner shown below the meta line when the textline was renamed by
@@ -262,7 +262,7 @@ function renderCollisionBannerHtml(tl) {
     }).join(' \u00B7 ');
     return `<div class="collision-banner">`
          + `<div class="collision-banner-header">`
-         + `<span class="collision-banner-label" title="${escapeHtml(tip)}">`
+         + `<span class="collision-banner-label" data-tooltip="${escapeHtml(tip)}">`
          + `\u26A0 Renamed for Dialogue Explorer`
          + `</span>`
          + ` \u00B7 Original name: <code>${escapeHtml(original)}</code> `

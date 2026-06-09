@@ -63,7 +63,7 @@ test('renderSpeakerHtml: friendly + description -> "Friendly (id)\\nDescription"
     // Zeus has both a friendly label and a description quip in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Zeus_01'),
-        '<span class="speaker-name" title="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
+        '<span class="speaker-name" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
     );
 });
 
@@ -71,7 +71,7 @@ test('renderSpeakerHtml: friendly without description -> "Friendly (id)" tooltip
     // Achilles has a friendly label but no description in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Achilles_01'),
-        '<span class="speaker-name" title="Achilles (NPC_Achilles_01)">Achilles</span>',
+        '<span class="speaker-name" data-tooltip="Achilles (NPC_Achilles_01)">Achilles</span>',
     );
 });
 
@@ -92,7 +92,7 @@ test('renderSpeakerHtml: description without friendly label -> description-only 
     });
     assert.equal(
         renderSpeakerHtml('Zagreus'),
-        '<span class="speaker-name" title="Prince of the Underworld">Zagreus</span>',
+        '<span class="speaker-name" data-tooltip="Prince of the Underworld">Zagreus</span>',
     );
     // Restore the shared fixture so subsequent tests aren't affected.
     loadFixtureData();
@@ -105,7 +105,7 @@ test('renderSpeakerHtml: tooltip parts are HTML-escaped', () => {
     });
     assert.equal(
         renderSpeakerHtml('NPC_<X>_01'),
-        '<span class="speaker-name" title="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;">X&amp;Y</span>',
+        '<span class="speaker-name" data-tooltip="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;">X&amp;Y</span>',
     );
     loadFixtureData();
 });
@@ -154,7 +154,7 @@ test('reqTypeTitleText returns null when no friendly label exists (rendered span
 test('renderReqTypeHtml wraps the friendly label and embeds the prefixed tooltip', () => {
     const html = renderReqTypeHtml('RequiredTextLines');
     assert.ok(html.startsWith('<span class="req-type-name"'));
-    assert.ok(html.includes('title="Internal name: RequiredTextLines'));
+    assert.ok(html.includes('data-tooltip="Internal name: RequiredTextLines'));
     assert.ok(html.includes('>Required (ALL)<'));
 });
 

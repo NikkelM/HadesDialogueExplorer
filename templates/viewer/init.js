@@ -9,6 +9,7 @@ import { buildLinesIndex } from './search-text.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { applyHashFromUrl } from './navigation.js';
+import { initTooltip } from './tooltip.js';
 
 function init(data) {
     loadData(data);
@@ -16,6 +17,7 @@ function init(data) {
     initStats();
     initSearch();
     initInfoPanel();
+    initTooltip();
     applyHashFromUrl();
     window.addEventListener('hashchange', applyHashFromUrl);
 }

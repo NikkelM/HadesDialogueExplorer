@@ -139,13 +139,14 @@ export function createReqTypeGroup(edgeType, count, requirementCount) {
     // Mirror the other render*Html helpers: attach the tooltip on both
     // the edge-chip and the label so hovering over either part of the
     // header surfaces the internal field name + plain-English blurb.
-    // Skipped for unmapped types so they stay plain.
+    // Skipped for unmapped types so they stay plain. The
+    // ``[data-tooltip]`` attribute is the single source for both the
+    // floating-popup payload (``tooltip.js``) and the dotted-underline
+    // / help-cursor affordance (``panels-tooltips.css``).
     const titleText = reqTypeTitleText(edgeType);
     if (titleText !== null) {
-        label.title = titleText;
-        label.classList.add('has-tooltip');
-        edgeChip.title = titleText;
-        edgeChip.classList.add('has-tooltip');
+        label.dataset.tooltip = titleText;
+        edgeChip.dataset.tooltip = titleText;
     }
     header.appendChild(label);
 

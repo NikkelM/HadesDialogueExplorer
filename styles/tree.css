@@ -218,7 +218,7 @@
 /* Help-cursor affordance when the edge-chip carries a tooltip. No
    underline on chips - the chip background already frames the
    text - so a cursor change is the only hover hint needed. */
-.req-type-group-header .edge-type.has-tooltip {
+.req-type-group-header .edge-type[data-tooltip] {
     cursor: help;
 }
 .req-type-group-label {

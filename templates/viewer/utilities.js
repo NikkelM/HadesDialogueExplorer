@@ -55,7 +55,8 @@ export function displayName(id) {
 
 // Render a speaker/NPC name as HTML: friendly label with the internal ID
 // and (when available) a one-line character description quip available
-// via a multi-line ``title`` tooltip.
+// via a multi-line ``data-tooltip`` popup (rendered by the floating
+// tooltip layer in ``tooltip.js``).
 //
 // Tooltip format (issue #68):
 //   friendly + description:    "Friendly (internal id)\nDescription"
@@ -73,10 +74,10 @@ export function renderSpeakerHtml(id) {
     if (friendly && friendly !== id) {
         const titleParts = [`${friendly} (${id})`];
         if (description) titleParts.push(description);
-        return `<span class="speaker-name" title="${escapeHtml(titleParts.join('\n'))}">${escapeHtml(friendly)}</span>`;
+        return `<span class="speaker-name" data-tooltip="${escapeHtml(titleParts.join('\n'))}">${escapeHtml(friendly)}</span>`;
     }
     if (description) {
-        return `<span class="speaker-name" title="${escapeHtml(description)}">${escapeHtml(id)}</span>`;
+        return `<span class="speaker-name" data-tooltip="${escapeHtml(description)}">${escapeHtml(id)}</span>`;
     }
     return `<span class="speaker-name">${escapeHtml(id)}</span>`;
 }
@@ -102,9 +103,9 @@ export function formatReqType(type) {
     return reqTypeLabels[type] || type;
 }
 
-// Build the title-attribute string for a requirement-type label. When a
-// plain-English blurb is known for the field, the tooltip is rendered as
-// the internal field name on the first line, a blank line, and the
+// Build the tooltip-attribute string for a requirement-type label. When
+// a plain-English blurb is known for the field, the tooltip is rendered
+// as the internal field name on the first line, a blank line, and the
 // blurb beneath. Otherwise we fall back to the internal-name-only
 // tooltip so unmapped types still get the
 // hover-to-reveal-internal-name affordance.
@@ -122,7 +123,7 @@ export function reqTypeTitleText(type) {
 
 // Render a requirement-type label as HTML: friendly name with the
 // internal field key (and a plain-English explanation when known)
-// available as a `title` tooltip. Mirrors ``renderSpeakerHtml`` /
+// available as a custom tooltip popup. Mirrors ``renderSpeakerHtml`` /
 // ``renderSectionHtml`` so the hover-to-reveal-internal-name affordance
 // is consistent across the three label families.
 //
@@ -134,20 +135,20 @@ export function renderReqTypeHtml(type, extraClass) {
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
     const titleText = reqTypeTitleText(type);
     if (titleText !== null) {
-        return `<span class="${cls}" title="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
+        return `<span class="${cls}" data-tooltip="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="${cls}">${escapeHtml(type)}</span>`;
 }
 
 // Render a section key as HTML: friendly label with the internal key
-// available as a `title` tooltip when a mapping exists, falling back
-// to the raw key when no mapping is registered. The build pipeline
-// audits the labels map against the section-key allowlist so any
-// missing entry becomes a build-time warning rather than silently
+// available as a custom tooltip popup when a mapping exists, falling
+// back to the raw key when no mapping is registered. The build
+// pipeline audits the labels map against the section-key allowlist so
+// any missing entry becomes a build-time warning rather than silently
 // rendering the raw key here. Mirrors ``renderSpeakerHtml`` so both
 // UI surfaces (search dropdown + details view) get the same
 // hover-to-reveal-internal-name behaviour, including the dotted-
-// underline affordance via the ``[title]`` attribute selector.
+// underline affordance via the ``[data-tooltip]`` attribute selector.
 //
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
 // call site - both the friendly label and the internal-key tooltip are
@@ -155,7 +156,7 @@ export function renderReqTypeHtml(type, extraClass) {
 export function renderSectionHtml(key) {
     const friendly = sectionKeyLabels[key];
     if (friendly && friendly !== key) {
-        return `<span class="section-name" title="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
+        return `<span class="section-name" data-tooltip="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="section-name">${escapeHtml(key)}</span>`;
 }
@@ -216,7 +217,7 @@ export function renderTierBadgeHtml(tl) {
         icon = '\u25CF';
         tip = 'Normal dialogues are played only when no super-priority or priority dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
     }
-    return `<span class="priority-badge priority-${strongest}" title="${escapeHtml(tip)}">${icon} ${escapeHtml(label)}</span>`;
+    return `<span class="priority-badge priority-${strongest}" data-tooltip="${escapeHtml(tip)}">${icon} ${escapeHtml(label)}</span>`;
 }
 
 export function renderSetLevelBadgeHtml(tl) {
@@ -227,7 +228,7 @@ export function renderSetLevelBadgeHtml(tl) {
     const text = isSuper ? 'SP' : 'P';
     const word = isSuper ? 'super-priority' : 'priority';
     const tip = `Within its own set, this dialogue will be played with ${word} before other eligible dialogues from the same set.`;
-    return `<span class="set-priority-badge ${cls}" title="${escapeHtml(tip)}">${text}</span>`;
+    return `<span class="set-priority-badge ${cls}" data-tooltip="${escapeHtml(tip)}">${text}</span>`;
 }
 
 // PlayOnce / Repeatable indicator. Always renders one of
@@ -237,9 +238,9 @@ export function renderSetLevelBadgeHtml(tl) {
 // which is easy to miss if the only visual signal is the lock.
 export function renderPlayOnceBadgeHtml(tl) {
     if (tl && tl.playOnce) {
-        return `<span class="play-once-badge play-once-locked" title="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>`;
+        return `<span class="play-once-badge play-once-locked" data-tooltip="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>`;
     }
-    return `<span class="play-once-badge play-once-repeatable" title="This dialogue can play repeatedly as long as its requirements are met.">\u{1F501} Repeatable</span>`;
+    return `<span class="play-once-badge play-once-repeatable" data-tooltip="This dialogue can play repeatedly as long as its requirements are met.">\u{1F501} Repeatable</span>`;
 }
 
 // Render a single requirement <div>, applying the resolved/unresolved
@@ -261,14 +262,14 @@ export function renderReqItem(ref, selfName) {
         const known = knownUnresolved[ref];
         if (known) {
             const label = unresolvedCategoryLabels[cat] || cat;
-            tip = ` title="${escapeHtml(label)}: ${escapeHtml(known.reason)}"`;
+            tip = ` data-tooltip="${escapeHtml(label)}: ${escapeHtml(known.reason)}"`;
         }
     }
     const isSelf = selfName && ref === selfName;
     if (isSelf) {
         classes.push('self-ref');
         if (!tip) {
-            tip = ` title="Self-reference: this textline appears in its own requirement list. Common with cooldown (MinRunsSinceAnyTextLines) and PlayOnce (RequiredFalse*) fields; excluded from the dependency graph."`;
+            tip = ` data-tooltip="Self-reference: this textline appears in its own requirement list. Common with cooldown (MinRunsSinceAnyTextLines) and PlayOnce (RequiredFalse*) fields; excluded from the dependency graph."`;
         }
     }
     const selfBadge = isSelf ? `<span class="self-ref-badge">self</span>` : '';

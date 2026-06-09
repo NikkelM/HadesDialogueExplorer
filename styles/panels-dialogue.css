@@ -19,7 +19,7 @@
     font-weight: 600;
     color: #e94560;
 }
-.dialogue-line .speaker-name[title] {
+.dialogue-line .speaker-name[data-tooltip] {
     cursor: help;
     border-bottom: 1px dotted #e9456066;
 }

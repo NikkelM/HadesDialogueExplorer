@@ -150,10 +150,10 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         if (known) {
             const lbl = unresolvedCategoryLabels[cat] || cat;
             warn.textContent = lbl;
-            warn.title = known.reason;
+            warn.dataset.tooltip = known.reason;
         } else {
             warn.textContent = '\u26A0 not in game';
-            warn.title = 'Not found in the parsed game data.';
+            warn.dataset.tooltip = 'Not found in the parsed game data.';
         }
         label.appendChild(warn);
         const blocks = unresolvedRefBlocks[name] || [];
@@ -161,7 +161,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
             const blockedBadge = document.createElement('span');
             blockedBadge.className = 'tree-blocked-badge';
             blockedBadge.textContent = `\u26D4 blocks ${blocks.length}`;
-            blockedBadge.title = `Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing: ${blocks.join(', ')}`;
+            blockedBadge.dataset.tooltip = `Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing: ${blocks.join(', ')}`;
             label.appendChild(blockedBadge);
         }
     } else if (tl.blocked) {
@@ -171,7 +171,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         const reasonText = (tl.blockingReasons || [])
             .map(r => `${r.field}: missing ${r.missingRefs.join(', ')}`)
             .join(' \u00B7 ');
-        blockedBadge.title = reasonText
+        blockedBadge.dataset.tooltip = reasonText
             ? `This dialogue can never play. ${reasonText}`
             : 'This dialogue can never play.';
         label.appendChild(blockedBadge);
@@ -216,9 +216,9 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         if (friendly && friendly !== tl.owner) {
             const titleParts = [`${friendly} (${tl.owner})`];
             if (description) titleParts.push(description);
-            npcSpan.title = titleParts.join('\n');
+            npcSpan.dataset.tooltip = titleParts.join('\n');
         } else if (description) {
-            npcSpan.title = description;
+            npcSpan.dataset.tooltip = description;
         }
     }
     label.appendChild(npcSpan);

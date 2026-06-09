@@ -88,11 +88,11 @@ test('renamed collision sibling renders the warning badge with a tooltip', () =>
     loadData(fixtureWithCollisionPair());
     renderInfo('Shared_1');
     // Compact badge in the header carries the rename signal with
-    // the full engine-bug explanation tucked into the title.
+    // the full engine-bug explanation tucked into the tooltip.
     assert.match(lastHtml, /collision-badge/);
     assert.match(lastHtml, /Renamed/);
-    const badgeMatch = lastHtml.match(/<span class="collision-badge"[^>]*title="([^"]*)"/);
-    assert.ok(badgeMatch, 'expected a collision-badge with a title tooltip');
+    const badgeMatch = lastHtml.match(/<span class="collision-badge"[^>]*data-tooltip="([^"]*)"/);
+    assert.ok(badgeMatch, 'expected a collision-badge with a data-tooltip popup');
     assert.match(badgeMatch[1], /TextLinesRecord/);
     assert.match(badgeMatch[1], /Shared/);
 });
@@ -123,8 +123,12 @@ test('renamed collision sibling renders a banner with original name and all sibl
     // sibling links does not pop an obscuring tooltip. The full
     // engine-bug explanation is attached only to the inner
     // "Renamed for Dialogue Explorer" label (asserted below).
+    // The custom-tooltip layer uses ``data-tooltip``; the legacy
+    // ``title`` attribute must also be absent so no native browser
+    // popup ever fires.
     const bannerMatch = lastHtml.match(/<div class="collision-banner"[^>]*>/);
     assert.ok(bannerMatch, 'expected a collision-banner div');
+    assert.doesNotMatch(bannerMatch[0], /\bdata-tooltip=/);
     assert.doesNotMatch(bannerMatch[0], /\btitle=/);
     // Banner must NOT carry the generic ``meta`` class - that class
     // injects ``margin-right: 12px`` on every inner span via
@@ -134,13 +138,13 @@ test('renamed collision sibling renders a banner with original name and all sibl
     // The "Renamed for Dialogue Explorer" label inside the banner
     // header carries the same tooltip as the header badge so the
     // explanation is reachable from both surfaces.
-    const labelMatch = lastHtml.match(/<span class="collision-banner-label"[^>]*title="([^"]*)"[^>]*>/);
-    assert.ok(labelMatch, 'expected a collision-banner-label span with a title tooltip');
+    const labelMatch = lastHtml.match(/<span class="collision-banner-label"[^>]*data-tooltip="([^"]*)"[^>]*>/);
+    assert.ok(labelMatch, 'expected a collision-banner-label span with a data-tooltip popup');
     assert.match(labelMatch[1], /TextLinesRecord/);
     assert.match(labelMatch[1], /Shared/);
     // Badge tooltip and banner-label tooltip must match exactly so they
     // can't drift out of sync if the wording is updated later.
-    const badgeMatch2 = lastHtml.match(/<span class="collision-badge"[^>]*title="([^"]*)"/);
+    const badgeMatch2 = lastHtml.match(/<span class="collision-badge"[^>]*data-tooltip="([^"]*)"/);
     assert.equal(labelMatch[1], badgeMatch2[1]);
 });
 

@@ -4,7 +4,7 @@
    - panels-dialogue.css       dialogue line list
    - panels-gamedata.css       GameData group framing
    - panels-requirements.css   req-section / req-item / categories
-   - panels-tooltips.css       [title] affordances (dotted underlines)
+   - panels-tooltips.css       [data-tooltip] affordances (dotted underlines)
 */
 
 .panel {

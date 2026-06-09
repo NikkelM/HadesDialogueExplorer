@@ -1,0 +1,42 @@
+/* Custom mouse-following tooltip element.
+   Hosts the floating popup rendered by the JS layer in
+   ``templates/viewer/tooltip.js`` for any element carrying a
+   ``data-tooltip`` attribute (issue #45). One element appended to
+   ``<body>`` at boot, repositioned via inline ``style.left``/``top``
+   to follow the cursor, toggled via the ``.visible`` class.
+
+   Colour palette intentionally echoes the dark info-panel cards
+   (``#16213e`` background + ``#0f3460`` border) so it reads as part
+   of the viewer, while the slightly darker background, drop shadow,
+   and small offset keep it distinguishable from the underlying
+   surface. */
+#custom-tooltip {
+    position: fixed;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    max-width: 420px;
+    padding: 6px 10px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    background: #0e1530;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+    /* ``pre-line`` preserves explicit ``\n`` from the source string
+       and otherwise wraps long single lines at the max-width. */
+    white-space: pre-line;
+    /* Visible-by-default state is suppressed via ``visibility`` so
+       the element keeps a measurable bounding box for the JS layer
+       to read ``offsetWidth``/``offsetHeight`` against. */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.08s linear;
+}
+#custom-tooltip.visible {
+    visibility: visible;
+    opacity: 1;
+}
