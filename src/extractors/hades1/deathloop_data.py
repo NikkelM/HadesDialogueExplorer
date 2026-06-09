@@ -7,12 +7,30 @@ sometimes under ``ObstacleData`` or other named maps). Singular
 ``TextLineSet`` sections also appear nested inside distance-trigger event
 configurations.
 
-The owner of each section is derived from the path:
-  - InspectPoints[<id>]    -> ``InspectPoint_<id>`` (singularized)
-  - <NamedMap>[<id>]       -> ``<NamedMap>_<id>`` for any other numeric child
-  - everything else        -> the closest meaningful named ancestor,
-                              disambiguated by array index if needed
-                              (e.g. ``StartUnthreadedEvents_4``)
+Owner attribution model (issue #71):
+
+  1. **Parametric collapse**: any path containing an idmap segment whose
+     parent map is in :data:`IDMAP_PARENT_OWNER_OVERRIDES` collapses to a
+     single shared owner. Currently this is ``InspectPoints -> Storyteller``:
+     all inspect-point entries are ambient narration spoken by the
+     Narrator, and the synthetic ``InspectPoint_<id>`` owner surfaced
+     nothing useful in the viewer. The per-textline
+     ``sourceFile:sourceLine`` pointer (preserved by
+     :func:`extract_textline`) is the traceback mechanism back to the
+     original container.
+
+  2. **Manual per-id attribution**: every other synthetic owner is
+     produced verbatim (``ObstacleData_<id>``,
+     ``DeathArea_StartUnthreadedEvents_<n>``, etc.) and then looked up
+     in :data:`SYNTHETIC_OWNER_OVERRIDES`. When matched, the entry is
+     re-keyed under the real owner (Skelly, Persephone, etc.) and the
+     real owner is also used as the default speaker for any line in
+     that block without an explicit ``Speaker = ...``. Unmapped
+     synthetic owners keep their raw synthetic name (we'd rather expose
+     a clearly-synthetic name than misattribute it).
+
+  3. Otherwise: the closest meaningful named ancestor, disambiguated by
+     array index if needed (e.g. ``StartUnthreadedEvents_4``).
 """
 
 from ...lua_parser import LuaTable
@@ -23,10 +41,67 @@ from ..textline_set import (
 )
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
-# Special-case prefixes for known parent maps. Anything else just uses the
-# parent name verbatim (e.g. ``ObstacleData_310036``).
-PARENT_NAME_PREFIX_OVERRIDES = {
-    "InspectPoints": "InspectPoint",
+# Parametric idmap collapse. Any path passing through an idmap segment
+# whose parent map name is a key here resolves to the mapped owner.
+# ``InspectPoints -> Storyteller`` covers all ~370 inspect-point entries
+# (audited to be uniformly Narrator-spoken ambient lines), avoiding a
+# 370-entry override map for what is structurally a single rule. Other
+# idmap parents (e.g. ``ObstacleData``) are NOT parametric because the
+# real owners vary per-id - they go through :data:`SYNTHETIC_OWNER_OVERRIDES`.
+IDMAP_PARENT_OWNER_OVERRIDES = {
+    "InspectPoints": "Storyteller",
+}
+
+# Per-synthetic-id manual attribution map, keyed by the raw synthetic
+# owner name the walker produces (e.g. ``ObstacleData_487120``,
+# ``DeathAreaBedroom_StartUnthreadedEvents_1``). Source of truth: the
+# per-id attribution table in issue #71's comment. Each value:
+#
+#   ``owner``    -> real speaker id (must exist in HADES1_SPEAKERS).
+#                   Used both as the owner key in the result dict AND as
+#                   the per-line default speaker fallback for lines in
+#                   that block without an explicit ``Speaker = ...``
+#                   (e.g. Skelly's TrophyQuest_* lines).
+#   ``partner``  -> optional second speaker for mixed-speaker scenes,
+#                   injected as the ``partner`` field on each contained
+#                   textline (rendered as "Partner: <name>" in the
+#                   viewer's info panel). Only used for
+#                   ``DeathAreaBedroom_StartUnthreadedEvents_9``
+#                   (MegaeraWithThanatosBedroom01) where the
+#                   textline-name primary (Megaera) is the owner and
+#                   the other speaker (Thanatos) is the partner.
+#
+# Notes:
+#   - ``NPC_FurySister_01`` is the canonical id for the "house Megaera"
+#     speaker in this codebase (the boss form is ``Harpy``).
+#   - ``CharProtag`` is the canonical id for Zagreus; the issue comment
+#     wrote ``Zagreus`` as the display name but the speaker id is
+#     ``CharProtag`` (renders as "Zagreus" via HADES1_SPEAKERS).
+#   - Unmapped synthetic owners (e.g. a future ``ObstacleData_<newid>``)
+#     keep their raw name rather than silently defaulting to Storyteller;
+#     missing attributions surface visibly in the viewer rather than
+#     hiding behind a wrong owner.
+SYNTHETIC_OWNER_OVERRIDES = {
+    # ObstacleData_<id>: trophy plinths + flashback obstacle + badge seller.
+    "ObstacleData_310036": {"owner": "Storyteller"},
+    "ObstacleData_487120": {"owner": "NPC_Skelly_01"},
+    "ObstacleData_487421": {"owner": "NPC_Skelly_01"},
+    "ObstacleData_487422": {"owner": "NPC_Skelly_01"},
+    "ObstacleData_555853": {"owner": "CharProtag"},
+    # DeathAreaBedroom_StartUnthreadedEvents_<n>: bedroom-scene triggers.
+    "DeathAreaBedroom_StartUnthreadedEvents_1": {"owner": "NPC_FurySister_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_2": {"owner": "NPC_FurySister_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_3": {"owner": "NPC_FurySister_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_4": {"owner": "NPC_FurySister_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_5": {"owner": "NPC_FurySister_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_6": {"owner": "NPC_Thanatos_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_7": {"owner": "NPC_Thanatos_01"},
+    "DeathAreaBedroom_StartUnthreadedEvents_9": {
+        "owner": "NPC_FurySister_01",
+        "partner": "NPC_Thanatos_01",
+    },
+    # DeathArea_StartUnthreadedEvents_<n>: ending trigger in the main area.
+    "DeathArea_StartUnthreadedEvents_4": {"owner": "NPC_Persephone_01"},
 }
 
 # Path segment names that are too generic to be a useful owner label.
@@ -60,7 +135,23 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
     if not isinstance(root, LuaTable):
         return result
 
-    for owner_name, owner_table, owner_default_speaker, ancestor_reqs in _walk_owners(root):
+    for synthetic_owner, owner_table, path_default_speaker, ancestor_reqs in _walk_owners(root):
+        # Per-id manual attribution (issue #71). When the walker yields a
+        # synthetic owner that the override map recognises, re-key the
+        # entry under the real owner AND use the real owner as the
+        # default speaker for any line that doesn't declare its own
+        # ``Speaker = ...`` (e.g. Skelly's TrophyQuest_* lines on the
+        # ObstacleData plinths).
+        override = SYNTHETIC_OWNER_OVERRIDES.get(synthetic_owner)
+        if override is not None:
+            owner_name = override["owner"]
+            owner_default_speaker = override["owner"]
+            partner = override.get("partner")
+        else:
+            owner_name = synthetic_owner
+            owner_default_speaker = path_default_speaker
+            partner = None
+
         sections = extract_textline_sections(
             owner_name, owner_table, source_file,
             section_keys=HADES1_TEXTLINE_SECTION_KEYS,
@@ -82,9 +173,20 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
                 for tl in tl_map.values():
                     merge_ancestor_requirements(tl, ancestor_reqs, game_data_lists)
 
-        # Defensively merge instead of overwriting: if path-derived owner
-        # naming ever produces a collision again, we want the textlines to
-        # accumulate rather than silently disappear.
+        # Mixed-speaker scene support: inject ``partner`` on every
+        # textline in this block when the override declares one.
+        # Mirrors the ``Partner = "..."`` Lua field that
+        # :func:`extract_textline` captures natively for xWithY pairs
+        # (see ``textline_set.py``); the viewer renders it identically.
+        if partner is not None:
+            for tl_map in sections.values():
+                for tl in tl_map.values():
+                    tl.setdefault("partner", partner)
+
+        # Defensively merge instead of overwriting: multiple synthetic
+        # owners can collapse to the same real owner (e.g. four
+        # Skelly trophy plinths under ``NPC_Skelly_01``), so accumulate
+        # textlines per-section rather than overwriting the entry.
         entry = result.setdefault(owner_name, {"source": source_label})
         for section_key, tl_map in sections.items():
             existing = entry.setdefault(section_key, {})
@@ -129,8 +231,12 @@ def _walk_owners(node, path=(), ancestor_reqs=None):
     parent_name = path[-1][1] if (path and path[-1][0] == "named") else None
 
     for k, v in node.items():
-        # Numeric ids under a named map get tagged so they can become
-        # "<ParentName>_<id>" owners (e.g. "InspectPoint_370001").
+        # Numeric ids under a named map are tagged ``idmap`` so the
+        # owner resolver can either (a) parametrically collapse them via
+        # :data:`IDMAP_PARENT_OWNER_OVERRIDES` (e.g. InspectPoints), or
+        # (b) emit a raw synthetic ``<parent_name>_<id>`` name that
+        # :data:`SYNTHETIC_OWNER_OVERRIDES` can then re-map to a real
+        # owner. See issue #71 for the two-tier attribution model.
         if k.isdigit() and parent_name is not None:
             yield from _walk_owners(v, path + (("idmap", k, parent_name),), ancestor_reqs)
         else:
@@ -148,22 +254,32 @@ def _has_textline_section(table: LuaTable) -> bool:
 
 
 def _owner_name_for(path) -> str:
-    """Derive an owner name from the walker path.
+    """Derive a (raw, pre-override) owner name from the walker path.
 
     Priority:
-      1. Closest idmap segment -> ``<Prefix>_<id>`` (e.g. ``InspectPoint_370001``,
-         ``ObstacleData_310036``).
-      2. Otherwise: walk the full path, joining every non-generic named
-         segment with underscores, and appending the innermost array index
-         for disambiguation when one was crossed. This produces unique
-         readable names like ``DeathArea_StartUnthreadedEvents_4`` for
-         singular ``TextLineSet`` sections embedded in distance triggers.
+      1. Innermost idmap segment whose parent map is in
+         :data:`IDMAP_PARENT_OWNER_OVERRIDES` -> the parametric
+         collapse target (e.g. ``InspectPoints[<id>]`` -> ``Storyteller``).
+         This is the single rule that handles ~370 inspect points
+         without enumerating each id.
+      2. Otherwise innermost idmap segment -> ``<parent_name>_<id>``
+         (e.g. ``ObstacleData_310036``). This raw synthetic name is
+         then looked up in :data:`SYNTHETIC_OWNER_OVERRIDES` by
+         :func:`extract_deathloop_data` for per-id real-owner attribution.
+      3. Otherwise: walk the full path, joining every non-generic named
+         segment with underscores, and appending the innermost array
+         index for disambiguation when one was crossed. This produces
+         unique readable names like ``DeathArea_StartUnthreadedEvents_4``
+         for singular ``TextLineSet`` sections embedded in distance
+         triggers, which the override map can also re-map per-id.
     """
     for segment in reversed(path):
         if segment[0] == "idmap":
             _, key, parent_name = segment
-            prefix = PARENT_NAME_PREFIX_OVERRIDES.get(parent_name, parent_name)
-            return f"{prefix}_{key}"
+            collapsed = IDMAP_PARENT_OWNER_OVERRIDES.get(parent_name)
+            if collapsed is not None:
+                return collapsed
+            return f"{parent_name}_{key}"
 
     parts = []
     innermost_array = None
@@ -181,11 +297,19 @@ def _owner_name_for(path) -> str:
 
 
 def _default_speaker_for(path) -> str:
-    # Inspect-point and other ambient-narration lines default to Storyteller
-    # when no explicit Speaker is set on the dialogue entry. Lines inside a
-    # numeric-id map (idmap segment) are always ambient/world-object lines
-    # so the same default applies.
-    for segment in path:
+    """Per-line default speaker fallback for lines without explicit
+    ``Speaker = ...``.
+
+    Only applies to the parametric idmap collapse: when an idmap path
+    resolves to a fixed owner via :data:`IDMAP_PARENT_OWNER_OVERRIDES`,
+    we also use that owner as the default speaker (e.g. all inspect
+    points default to Storyteller). For everything else - including
+    other idmap parents like ``ObstacleData`` - we return ``None`` so
+    :func:`extract_deathloop_data` either uses the per-id override's
+    real owner or falls back to the synthetic owner name.
+    """
+    for segment in reversed(path):
         if segment[0] == "idmap":
-            return "Storyteller"
+            _, _, parent_name = segment
+            return IDMAP_PARENT_OWNER_OVERRIDES.get(parent_name)
     return None
