@@ -81,10 +81,11 @@ To add a new Lua source:
 - Python: small modules with module docstrings explaining intent and any non-obvious invariants.
   Public functions get docstrings; private helpers get comments where the why isn't obvious from the code.
 - JavaScript: same docstring discipline.
-  `templates/viewer.js` is checked by ESLint (`no-undef` + `no-unused-vars`) - run `npm run lint` before pushing viewer changes.
+  The viewer source lives as ES modules under `templates/viewer/*.js`; `build_viewer.py` strips imports/exports and concatenates them into a single classic `dist/viewer.js`.
+  ESLint (`no-undef` + `no-unused-vars`) checks both the viewer modules and the JS tests - run `npm run lint` before pushing viewer changes.
 - Audits over silent skips: extractors / loaders should warn loudly when the game data shape diverges from the allowlists rather than dropping data on the floor.
-- Tests: run `python -m pytest` before pushing.
-  New extractors need at least one fixture-driven test.
+- Tests: run `python -m pytest` (Python: extractors, parser, graph) and `npm test` (JS: viewer helpers, search ranking, render utilities) before pushing.
+  New extractors need at least one fixture-driven Python test; new viewer helpers with non-trivial logic should get a JS test under `tests-js/`.
 
 ### Running tests
 
@@ -93,7 +94,14 @@ pip install -r requirements-dev.txt
 python -m pytest
 ```
 
-The suite covers the tokenizer, parser, semantic extractors, graph builder, merge, audits, and an end-to-end integration test against a synthetic fixture.
+The Python suite covers the tokenizer, parser, semantic extractors, graph builder, merge, audits, and an end-to-end integration test against a synthetic fixture.
+
+```bash
+npm install        # one-time, installs ESLint into node_modules/ (git-ignored)
+npm test
+```
+
+The JavaScript suite runs under `node --test` (built into Node 18+, no extra dependencies) and covers the pure helpers in `templates/viewer/`: HTML render utilities, label formatters, name-based search ranking (per-token tiers + query-order-dominant sort), and text-content search (word-boundary matching, contiguous-phrase boost, partial-match fallback). Fixtures live in `tests-js/fixtures.js`.
 
 ### Linting the viewer JavaScript
 
@@ -102,4 +110,4 @@ npm install        # one-time, installs ESLint into node_modules/ (git-ignored)
 npm run lint
 ```
 
-Node.js + npm are only needed for this linter; the viewer itself ships as plain JavaScript with no build step beyond `build_viewer.py`.
+Node.js + npm are needed for the linter and the JS test runner; the viewer itself ships as plain JavaScript (concatenated by `build_viewer.py`) with no separate JS build step.
