@@ -223,23 +223,10 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
     }
     label.appendChild(npcSpan);
 
-    // Focus button (for non-root nodes)
-    if (edgeType) {
-        const btn = document.createElement('span');
-        btn.className = 'focus-btn';
-        btn.title = 'Focus on this dialogue';
-        btn.textContent = '\u2934';
-        label.appendChild(btn);
-    }
-
     node.appendChild(label);
 
     // Click handler
-    label.addEventListener('click', (e) => {
-        if (e.target.classList.contains('focus-btn')) {
-            navigateTo(name);
-            return;
-        }
+    label.addEventListener('click', () => {
         if (!expandable) {
             renderInfo(name);
             return;

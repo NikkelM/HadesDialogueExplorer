@@ -124,15 +124,6 @@
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
 .cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }
-.focus-btn {
-    font-size: 12px;
-    color: #e94560;
-    cursor: pointer;
-    padding: 0 4px;
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-.tree-label:hover .focus-btn { opacity: 1; }
 
 /* GameData group boxes wrap contiguous tree children that all came from
    the same `GameData.X` list expansion. Collapsible via header click. */
