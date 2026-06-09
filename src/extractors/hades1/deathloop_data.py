@@ -16,7 +16,11 @@ The owner of each section is derived from the path:
 """
 
 from ...lua_parser import LuaTable
-from ..textline_set import extract_textline_sections
+from ..textline_set import (
+    extract_textline_sections,
+    collect_local_requirements,
+    merge_ancestor_requirements,
+)
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 # Special-case prefixes for known parent maps. Anything else just uses the
@@ -56,7 +60,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
     if not isinstance(root, LuaTable):
         return result
 
-    for owner_name, owner_table, owner_default_speaker in _walk_owners(root):
+    for owner_name, owner_table, owner_default_speaker, ancestor_reqs in _walk_owners(root):
         sections = extract_textline_sections(
             owner_name, owner_table, source_file,
             section_keys=HADES1_TEXTLINE_SECTION_KEYS,
@@ -66,6 +70,18 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
         )
         if not any(sections.values()):
             continue
+
+        # Lift container-level requirements (sibling-level ``Required*``
+        # fields and/or a ``GameStateRequirements`` sub-table) onto each
+        # extracted textline. Inspect points in DeathLoopData.lua almost
+        # always use the sibling-level form (e.g. ``[370001] = { ...
+        # RequiredMinCompletedRuns = 4, RequiredTextLines = { ... },
+        # InteractTextLineSets = { ... } }``) with no GSR wrapper.
+        if ancestor_reqs is not None:
+            for tl_map in sections.values():
+                for tl in tl_map.values():
+                    merge_ancestor_requirements(tl, ancestor_reqs, game_data_lists)
+
         # Defensively merge instead of overwriting: if path-derived owner
         # naming ever produces a collision again, we want the textlines to
         # accumulate rather than silently disappear.
@@ -79,9 +95,18 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
     return result
 
 
-def _walk_owners(node, path=()):
-    """Yield (owner_name, owner_table, default_speaker) for every table
-    that contains a textline-set section."""
+def _walk_owners(node, path=(), ancestor_reqs=None):
+    """Yield ``(owner_name, owner_table, default_speaker, ancestor_reqs)``
+    for every table that contains a textline-set section.
+
+    ``ancestor_reqs`` is the closest enclosing block's combined
+    requirement set (sibling-level ``Required*`` fields unioned with any
+    explicit ``GameStateRequirements`` sub-table - see
+    ``collect_local_requirements``). Replace-on-encounter: each level's
+    reqs gate only its own subtree, so a closer block fully overrides an
+    outer one once it declares its own. Returns ``None`` when no
+    enclosing block has declared any requirement fields.
+    """
     if len(path) > _WALK_OWNERS_MAX_DEPTH:
         tail = " -> ".join(repr(seg) for seg in path[-8:])
         raise ValueError(
@@ -94,8 +119,12 @@ def _walk_owners(node, path=()):
     if not isinstance(node, LuaTable):
         return
 
+    own_reqs = collect_local_requirements(node)
+    if own_reqs is not None:
+        ancestor_reqs = own_reqs
+
     if _has_textline_section(node):
-        yield _owner_name_for(path), node, _default_speaker_for(path)
+        yield _owner_name_for(path), node, _default_speaker_for(path), ancestor_reqs
 
     parent_name = path[-1][1] if (path and path[-1][0] == "named") else None
 
@@ -103,12 +132,12 @@ def _walk_owners(node, path=()):
         # Numeric ids under a named map get tagged so they can become
         # "<ParentName>_<id>" owners (e.g. "InspectPoint_370001").
         if k.isdigit() and parent_name is not None:
-            yield from _walk_owners(v, path + (("idmap", k, parent_name),))
+            yield from _walk_owners(v, path + (("idmap", k, parent_name),), ancestor_reqs)
         else:
-            yield from _walk_owners(v, path + (("named", k),))
+            yield from _walk_owners(v, path + (("named", k),), ancestor_reqs)
 
     for i, v in enumerate(node.array):
-        yield from _walk_owners(v, path + (("array", i),))
+        yield from _walk_owners(v, path + (("array", i),), ancestor_reqs)
 
 
 def _has_textline_section(table: LuaTable) -> bool:

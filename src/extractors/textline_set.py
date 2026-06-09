@@ -479,3 +479,104 @@ def _normalize_value(value, game_data_lists: dict = None):
     if isinstance(value, LuaExpression):
         return value.raw
     return str(value)
+
+
+def _is_requirement_field(key) -> bool:
+    """True if ``key`` names a requirement field on a textline / ancestor
+    block (textline-typed, count-based, or any other ``Require*`` field).
+
+    ``GameStateRequirements`` is intentionally excluded - it's the wrapper
+    sub-table that owns these fields, not a requirement itself.
+    """
+    if not isinstance(key, str):
+        return False
+    if key == "GameStateRequirements":
+        return False
+    if key in TEXTLINE_REQ_FIELDS or key in TEXTLINE_REQ_FIELDS_COUNT:
+        return True
+    return key.startswith(NON_DIALOGUE_REQ_PREFIX)
+
+
+def collect_local_requirements(node: LuaTable) -> LuaTable | None:
+    """Return a synthesised ``LuaTable`` of every requirement field gating
+    textline-sets defined directly on ``node``.
+
+    Two source-data patterns are unified here:
+
+    * Wrapped form (``EncounterData`` / ``RoomData`` family): all gating
+      fields live under an explicit ``GameStateRequirements = { ... }``
+      sub-table on the container.
+    * Sibling form (most ``DeathLoopData`` inspect points): the same
+      ``Required*`` / count-based / ``Require*`` fields are direct siblings
+      of the textline-set container (``InteractTextLineSets``, etc.) on
+      the inspect-point table itself, with no wrapper sub-table.
+
+    Returns the union (sibling-level wins on key collision, since those
+    are more directly attached to the textline-set container). Returns
+    ``None`` if neither pattern produced any requirements - the walker
+    can then keep its inherited ancestor unchanged.
+    """
+    if not isinstance(node, LuaTable):
+        return None
+
+    combined: dict = {}
+
+    gsr = node.get("GameStateRequirements")
+    if isinstance(gsr, LuaTable):
+        combined.update(gsr.named)
+
+    for key, value in node.items():
+        if _is_requirement_field(key):
+            combined[key] = value
+
+    if not combined:
+        return None
+
+    return LuaTable(named=combined)
+
+
+def merge_ancestor_requirements(tl: dict, gsr: LuaTable, game_data_lists: dict | None) -> None:
+    """Lift fields from an enclosing block's combined requirements onto a
+    single extracted textline.
+
+    ``gsr`` is the ``LuaTable`` returned by ``collect_local_requirements``
+    on the nearest enclosing block that declared any requirements
+    (typically the inspect-point / encounter / room container).
+
+    Textline-typed fields (``TEXTLINE_REQ_FIELDS`` /
+    ``TEXTLINE_REQ_FIELDS_COUNT``) land in ``tl["requirements"]`` and feed
+    the dependency graph. Other ``Require*`` fields land in
+    ``tl["otherRequirements"]`` as informational metadata.
+
+    Per-textline declarations win on key collision: this function only
+    fills in keys the textline hasn't set itself.
+    """
+    for key, value in gsr.items():
+        if key in TEXTLINE_REQ_FIELDS:
+            if key in tl["requirements"]:
+                continue
+            sources: list = []
+            tl["requirements"][key] = _to_string_list(value, game_data_lists, sources_out=sources)
+            if any(s is not None for s in sources):
+                tl.setdefault("requirementSources", {})[key] = sources
+        elif key in TEXTLINE_REQ_FIELDS_COUNT:
+            if key in tl["requirements"]:
+                continue
+            inner = value.get("TextLines") if isinstance(value, LuaTable) else None
+            if inner is not None:
+                sources = []
+                tl["requirements"][key] = _to_string_list(inner, game_data_lists, sources_out=sources)
+                if any(s is not None for s in sources):
+                    tl.setdefault("requirementSources", {})[key] = sources
+            if isinstance(value, LuaTable):
+                meta = {
+                    k: _normalize_value(v, game_data_lists)
+                    for k, v in value.items()
+                    if k != "TextLines"
+                }
+                if meta and key not in tl["otherRequirements"]:
+                    tl["otherRequirements"][key] = meta
+        elif key.startswith(NON_DIALOGUE_REQ_PREFIX):
+            if key in tl["otherRequirements"]:
+                continue
+            tl["otherRequirements"][key] = _normalize_value(value, game_data_lists)

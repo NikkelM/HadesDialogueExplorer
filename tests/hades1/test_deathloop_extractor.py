@@ -190,6 +190,160 @@ class TestSingularTextLineSet:
         assert "LineA" in result["DeathArea_StartUnthreadedEvents_0"]["TextLineSet"]
         assert "LineB" in result["DeathAreaBedroom_StartUnthreadedEvents_0"]["TextLineSet"]
 
+
+class TestInspectPointSiblingRequirements:
+    """Inspect-point tables in DeathLoopData.lua almost always declare
+    ``Required*`` fields as direct siblings of ``InteractTextLineSets``,
+    not wrapped inside ``GameStateRequirements``. The walker must lift
+    these onto every textline contained in that inspect point.
+
+    Regression for the case where ``InspectCellar01`` showed up in the
+    viewer with empty ``requirements`` / ``otherRequirements`` because
+    the extractor only looked for the ``GameStateRequirements`` wrapper.
+    """
+
+    def test_sibling_required_textlines_lifted_onto_inspect_point_textlines(self):
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [370001] = {
+                        PlayOnce = true,
+                        UseText = "UseExamineMisc",
+                        Hidden = true,
+                        RequiredMinCompletedRuns = 4,
+                        RequiredFalseFlags = { "InFlashback" },
+                        RequiredTextLines = { "InspectLoungeOpen01" },
+                        RequiredFalseTextLines = { "OlympianReunionQuestComplete" },
+                        InteractTextLineSets = {
+                            InspectCellar01 = { { Text = "An old cellar door." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_370001"]["InteractTextLineSets"]["InspectCellar01"]
+        # Textline-typed requirements feed the dependency graph.
+        assert tl["requirements"]["RequiredTextLines"] == ["InspectLoungeOpen01"]
+        assert tl["requirements"]["RequiredFalseTextLines"] == ["OlympianReunionQuestComplete"]
+        # Non-dialogue requirements are informational metadata.
+        assert tl["otherRequirements"]["RequiredMinCompletedRuns"] == 4
+        assert tl["otherRequirements"]["RequiredFalseFlags"] == ["InFlashback"]
+
+    def test_inspect_point_settings_are_not_treated_as_requirements(self):
+        """Plain inspect-point settings (``PlayOnce``, ``UseText``,
+        ``Hidden``) sit alongside requirement fields on the inspect-point
+        table; only ``Required*`` / count-based fields should be lifted."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [424963] = {
+                        PlayOnce = true,
+                        UseText = "UseExamineMisc",
+                        Hidden = true,
+                        RequiredMinCompletedRuns = 4,
+                        InteractTextLineSets = {
+                            InspectEmployeeOfTheMonth01 = { { Text = "x" } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_424963"]["InteractTextLineSets"]["InspectEmployeeOfTheMonth01"]
+        assert "PlayOnce" not in tl["otherRequirements"]
+        assert "UseText" not in tl["otherRequirements"]
+        assert "Hidden" not in tl["otherRequirements"]
+        assert tl["otherRequirements"]["RequiredMinCompletedRuns"] == 4
+
+    def test_sibling_form_combines_with_explicit_gamestate_requirements_block(self):
+        """Both patterns can coexist on the same node: union them so both
+        gates apply. (Doesn't appear in shipping data, but the helper
+        supports it for forward-compatibility.)"""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [555] = {
+                        RequiredMinCompletedRuns = 4,
+                        GameStateRequirements = {
+                            RequiredTextLines = { "PrereqA" }
+                        },
+                        InteractTextLineSets = {
+                            L = { { Text = "..." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_555"]["InteractTextLineSets"]["L"]
+        assert tl["requirements"]["RequiredTextLines"] == ["PrereqA"]
+        assert tl["otherRequirements"]["RequiredMinCompletedRuns"] == 4
+
+    def test_explicit_textline_requirement_wins_over_ancestor(self):
+        """A textline that declares its own value for a requirement key
+        should keep it instead of inheriting the ancestor's value."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [777] = {
+                        RequiredTextLines = { "AncestorReq" },
+                        InteractTextLineSets = {
+                            L = {
+                                RequiredTextLines = { "OwnReq" },
+                                { Text = "..." }
+                            }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_777"]["InteractTextLineSets"]["L"]
+        assert tl["requirements"]["RequiredTextLines"] == ["OwnReq"]
+
+    def test_inner_inspect_point_reqs_replace_outer_block_reqs(self):
+        """Replace-on-encounter: an inner block declaring its own reqs
+        fully overrides an outer block's reqs (each level gates only its
+        own subtree)."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                RequiredTextLines = { "OuterReq" },
+                InspectPoints = {
+                    [999] = {
+                        RequiredTextLines = { "InnerReq" },
+                        InteractTextLineSets = {
+                            L = { { Text = "..." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_999"]["InteractTextLineSets"]["L"]
+        assert tl["requirements"]["RequiredTextLines"] == ["InnerReq"]
+
+    def test_inspect_point_without_requirements_unchanged(self):
+        """Inspect points with no requirement fields should produce
+        textlines with empty ``requirements`` / ``otherRequirements``."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [100] = {
+                        PlayOnce = true,
+                        InteractTextLineSets = {
+                            L = { { Text = "..." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["InspectPoint_100"]["InteractTextLineSets"]["L"]
+        assert tl["requirements"] == {}
+        assert tl["otherRequirements"] == {}
+
+
     def test_multiple_textline_sets_under_same_owner_table_merged(self):
         """Defensive merge: if two TextLineSet sections somehow end up
         flagged under the same owner name, both textlines must survive."""

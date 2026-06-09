@@ -177,6 +177,25 @@ class TestAncestorRequirements:
         assert tl["requirements"]["RequiredMinAnyTextLines"] == ["A", "B"]
         assert tl["otherRequirements"]["RequiredMinAnyTextLines"]["Count"] == 2
 
+    def test_sibling_level_required_fields_lifted_without_gsr_wrapper(self):
+        """Direct-sibling ``Required*`` fields on a textline-set container
+        get lifted just like a wrapped ``GameStateRequirements`` block.
+        The shipping ``EncounterData`` / ``RoomData`` files use the
+        wrapped form, but the shared walker supports both for parity with
+        ``DeathLoopData`` and forward-compatibility."""
+        result = extract('''RoomSetData.X = {
+            RoomA = { ForcedRewards = { {
+                Name = "Boon",
+                RequiredTextLines = { "PoseidonFirstPickUp" },
+                RequiredMinCompletedRuns = 4,
+                ForcedTextLines = { LineA = { { Text = "Boom." } } }
+            } } }
+        }''', source_file="RoomDataX.lua")
+        tl = result["RoomA"]["ForcedTextLines"]["LineA"]
+        assert tl["requirements"]["RequiredTextLines"] == ["PoseidonFirstPickUp"]
+        assert tl["otherRequirements"]["RequiredMinCompletedRuns"] == 4
+
+
 
 class TestCueSpeakerResolver:
     def test_resolver_extracts_prefix(self):
@@ -282,3 +301,51 @@ class TestCuePathSpeakerCoverage:
             assert speaker == "CharProtag" or speaker == "Storyteller" or speaker.startswith("NPC_"), (
                 f"Cue prefix {prefix!r} maps to suspicious speaker id {speaker!r}"
             )
+
+
+class TestWithinOwnerCollision:
+    """A single encounter / room can declare the same textline name in
+    two different containers (the real-world ``CharonFirstInspect`` case
+    in ``A_Shop01`` is the canonical example). The engine keys
+    ``TextLinesRecord`` globally by name so only one variant ever plays,
+    but the extractor must surface every distinct definition as a
+    variant rather than silently dropping the loser."""
+
+    def test_same_owner_same_name_two_inspect_points_become_variants(self):
+        result = extract('''RoomSetData.Tartarus = {
+            A_Shop01 = {
+                InspectPoints = {
+                    {
+                        ObjectId = 390000,
+                        InteractTextLineSets = {
+                            CharonFirstInspect = {
+                                { Cue = "/VO/Storyteller_0100",
+                                  Text = "The infernal wares of the boatman." }
+                            }
+                        }
+                    },
+                    {
+                        ObjectId = 515864,
+                        GameStateRequirements = { RequiredMinRunsCleared = 1 },
+                        InteractTextLineSets = {
+                            CharonFirstInspect = {
+                                { Cue = "/VO/Storyteller_0101",
+                                  Text = "The River Styx flows through the Underworld." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        tl = result["A_Shop01"]["InteractTextLineSets"]["CharonFirstInspect"]
+        assert tl.get("nameCollision") is True
+        assert len(tl["variants"]) == 2
+        texts = sorted(
+            v["dialogueLines"][0]["text"] for v in tl["variants"]
+            if v.get("dialogueLines")
+        )
+        assert texts == [
+            "The River Styx flows through the Underworld.",
+            "The infernal wares of the boatman.",
+        ]
+

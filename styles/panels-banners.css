@@ -87,3 +87,70 @@
 .blocked-ref:hover {
     color: #fff;
 }
+
+/* Compact "Renamed" badge shown next to the textline name when the
+   tool split a name collision. Tooltip carries the full explanation;
+   the visible label is small enough not to crowd the priority and
+   play-once badges that share the header row. */
+.collision-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #f1c98a;
+    background: rgba(224, 168, 87, 0.16);
+    border: 1px solid rgba(224, 168, 87, 0.4);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    cursor: help;
+}
+
+/* Banner shown below the meta line when the textline was renamed by
+   the tool. Lists the original name and links to the duplicate
+   sibling siblings so the user can quickly compare definitions. The
+   full engine-bug explanation lives on the in-banner "Renamed for
+   Dialogue Explorer" label (matching the header badge tooltip), so
+   hovering the sibling links does not pop up an obscuring tooltip. */
+.collision-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #e0a857;
+    background: rgba(224, 168, 87, 0.10);
+    margin-top: 8px;
+}
+.collision-banner-header {
+    font-size: 12px;
+    color: #f1c98a;
+    line-height: 1.5;
+}
+.collision-banner-label {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+}
+.collision-banner-header code {
+    font-family: 'Consolas', monospace;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0 4px;
+    border-radius: 2px;
+    color: #fff;
+}
+.collision-banner-body {
+    font-size: 12px;
+    color: #e0d6c4;
+    line-height: 1.6;
+}
+.collision-sibling-link {
+    color: #f1c98a;
+    cursor: pointer;
+    text-decoration: underline dotted;
+}
+.collision-sibling-link:hover {
+    color: #fff;
+}

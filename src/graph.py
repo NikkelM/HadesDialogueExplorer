@@ -101,21 +101,33 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                 # pick the canonical (cue-bearing) side over the stub.
                 if tl_data.get("partner"):
                     new_entry["partner"] = tl_data["partner"]
+                # Variants pre-populated by the extractor (within-owner
+                # name collisions caught by ``encounter_room_data.py``).
+                # Surfaced verbatim so the cross-file merge layer can
+                # chain additional variants onto the same entry.
+                if tl_data.get("nameCollision"):
+                    new_entry["nameCollision"] = True
+                if tl_data.get("variants"):
+                    new_entry["variants"] = list(tl_data["variants"])
                 existing = textlines.get(tl_name)
                 if existing is not None:
                     chosen, dropped = resolve_duplicate(existing, new_entry)
                     duplicates.append({
                         "name": tl_name,
                         # `intra-file` = same source file. Within a single
-                        # source (e.g. NPCData.lua) the only known cause is
-                        # the xWithY partner-stub pattern. `cross-file` is
-                        # emitted by ``graph_merge.merge_graph_data`` for
-                        # collisions detected when stitching different
-                        # per-source datasets together.
+                        # source (e.g. NPCData.lua) the historic cause is
+                        # the xWithY partner-stub pattern; the encounter
+                        # /room walker now also flags same-name-different
+                        # -owner collisions inside a single file here.
+                        # `cross-file` is emitted by
+                        # ``graph_merge.merge_graph_data`` for collisions
+                        # detected when stitching different per-source
+                        # datasets together.
                         "scope": "intra-file",
                         "kept": dup_summary(chosen),
                         "dropped": dup_summary(dropped),
                     })
+                    attach_variant(chosen, dropped)
                     textlines[tl_name] = chosen
                 else:
                     textlines[tl_name] = new_entry
@@ -230,6 +242,240 @@ def dup_summary(entry: dict) -> dict:
     if entry.get("partner"):
         summary["partner"] = entry["partner"]
     return summary
+
+
+# Per-entry fields that participate in a variant payload. Both
+# graph-shape entries (with ``owner``/``section`` set) and raw extractor
+# ``tl_data`` (with the outer dict supplying owner/section) flow through
+# :func:`make_variant_summary`; the optional set is kept here so the
+# extractor and the merge layers stay in sync about which fields a
+# variant carries.
+_VARIANT_OPTIONAL_FIELDS = (
+    "requirementSources",
+    "playOnce",
+    "partner",
+    "parentTextline",
+    "choiceText",
+    "isSynthetic",
+    "narrativePrioritySectionTier",
+    "narrativePrioritySetLevel",
+)
+
+
+def make_variant_summary(data: dict, owner: str, section: str) -> dict:
+    """Build a variant payload from either a graph-shape entry or a raw
+    extractor ``tl_data``.
+
+    The variant carries the per-definition fields that differ across
+    name-collision siblings: owner, section, source location, dialogue
+    lines, and requirements (textline + non-textline). ``source`` is
+    intentionally omitted because a name collision only happens within a
+    single parsed dataset; the game label is set on the canonical entry.
+    """
+    v = {
+        "owner": owner,
+        "section": section,
+        "sourceFile": data.get("sourceFile", ""),
+        "sourceLine": data.get("sourceLine"),
+        "dialogueLines": data.get("dialogueLines", []),
+        "requirements": data.get("requirements", {}),
+        "otherRequirements": data.get("otherRequirements", {}),
+    }
+    for opt_key in _VARIANT_OPTIONAL_FIELDS:
+        if data.get(opt_key):
+            v[opt_key] = data[opt_key]
+    return v
+
+
+def attach_variant(
+    kept: dict,
+    dropped: dict,
+    *,
+    kept_owner: str | None = None,
+    kept_section: str | None = None,
+    dropped_owner: str | None = None,
+    dropped_section: str | None = None,
+) -> None:
+    """Promote a duplicate-textline drop into a sibling variant on the
+    kept entry. Mutates ``kept`` in place.
+
+    The viewer renders ``kept["variants"]`` as a single per-textline
+    block with one sub-block per variant, plus a banner explaining the
+    engine's "first variant to trigger wins, others are blocked" rule.
+    The first entry in ``variants`` is always the seed variant (the
+    canonical's own data) so the renderer can iterate variants
+    uniformly without special-casing the canonical.
+
+    Chained collisions are handled by lifting any pre-existing
+    ``variants`` array on ``dropped`` (set when the extractor already
+    detected a within-owner collision, or when an earlier
+    merge-layer pass already attached siblings) onto the kept entry,
+    deduplicated by ``(sourceFile, sourceLine)``.
+
+    ``kept_owner`` / ``kept_section`` (and the ``dropped_*`` pair) are
+    consulted only when the corresponding entry lacks an ``owner`` /
+    ``section`` field, which happens when this is called from inside an
+    extractor on raw ``tl_data``. Graph-shape entries already carry
+    both, so the merge layers can omit the keyword arguments entirely.
+
+    No-op when the dropped side is not a substantive variant:
+
+    * **Synthetic choice variants** are routed through the parent's
+      choice-link UI, not the variant block, so they are intentionally
+      excluded.
+    * **Empty placeholder stubs** (the xWithY partner-stub pattern in
+      ``NPCData.lua``: ``Skip = true`` with no dialogue and no
+      requirements) are the same logical textline registered under the
+      partner NPC so the engine can find it from either side. They
+      carry no distinct content and would just pollute the variant
+      list with empty rows.
+    """
+    if not _is_substantive_variant(dropped):
+        return
+    kept["nameCollision"] = True
+    if "variants" not in kept:
+        kept["variants"] = [make_variant_summary(
+            kept,
+            kept.get("owner", kept_owner),
+            kept.get("section", kept_section),
+        )]
+    dropped_variants = dropped.get("variants")
+    if dropped_variants:
+        candidates = list(dropped_variants)
+    else:
+        candidates = [make_variant_summary(
+            dropped,
+            dropped.get("owner", dropped_owner),
+            dropped.get("section", dropped_section),
+        )]
+    for cand in candidates:
+        if not _variant_already_present(kept["variants"], cand):
+            kept["variants"].append(cand)
+
+
+def _is_substantive_variant(entry: dict) -> bool:
+    """A variant is substantive when it carries content distinct enough
+    to be worth surfacing in the viewer's variant block. Synthetic
+    choice placeholders and empty partner stubs are both excluded; see
+    :func:`attach_variant` for why."""
+    if entry.get("isSynthetic"):
+        return False
+    if entry.get("dialogueLines"):
+        return True
+    if entry.get("requirements"):
+        return True
+    if entry.get("otherRequirements"):
+        return True
+    # An entry whose ``variants`` list has already been populated by an
+    # earlier dedup pass is substantive by definition (each of those
+    # variants was itself substantive when added). Without this branch
+    # a chained merge would lose previously-recorded siblings the
+    # moment a stub drops into the chain.
+    if entry.get("variants"):
+        return True
+    return False
+
+
+def _variant_already_present(variants: list, candidate: dict) -> bool:
+    """Variants are uniquely identified by ``(sourceFile, sourceLine)``.
+
+    Two textline-set tables can never share a source location, and the
+    pair survives any later re-parse of the same source, so it is a
+    stable key for the chained-merge dedup loop in :func:`attach_variant`.
+    """
+    key = (candidate.get("sourceFile"), candidate.get("sourceLine"))
+    return any(
+        (v.get("sourceFile"), v.get("sourceLine")) == key
+        for v in variants
+    )
+
+
+def split_name_collisions(textlines: dict) -> dict:
+    """Replace each ``nameCollision`` entry with one suffixed entry per
+    variant. Mutates ``textlines`` in place and returns it.
+
+    The collisions are real distinct content - different rooms, inspect
+    points or boon sources happen to share a textline name in the
+    game's source data, the engine treats them as the same logical
+    textline (only the first to trigger plays), but to a player they
+    are clearly separate dialogues with separate texts. Surfacing them
+    as separate textlines under suffixed names (``Foo_1``, ``Foo_2``)
+    is more faithful to the player-visible content than merging them
+    into one entry with a variants list. Each new entry carries the
+    rename-aware fields the viewer uses to surface the warning label
+    and link siblings:
+
+    * ``collisionOriginalName`` - the un-suffixed source-data name.
+    * ``collisionIndex`` / ``collisionTotal`` - this entry's 1-based
+      position in the sibling list.
+    * ``collisionSiblings`` - the full ordered list of suffixed names
+      (including this entry) so the viewer can render sibling-link UI
+      without scanning the textline map.
+
+    The original (un-suffixed) name is removed from the map. We
+    verified that no dialogue in the parsed data references any of
+    the colliding names from its requirements, so dropping the
+    original name does not strand any edges; if a future game ships
+    a requirement that DOES reference one, it will surface in
+    ``unresolvedRefs`` and we can revisit the policy.
+
+    Sorted by ``(sourceFile, sourceLine)`` so the suffix is stable
+    across builds even if the upstream dict iteration order changes.
+    """
+    to_add = {}
+    to_remove = []
+    for name, entry in textlines.items():
+        if not entry.get("nameCollision"):
+            continue
+        variants = entry.get("variants") or []
+        if len(variants) < 2:
+            continue
+        sorted_variants = sorted(
+            variants,
+            key=lambda v: (v.get("sourceFile") or "", v.get("sourceLine") or 0),
+        )
+        total = len(sorted_variants)
+        siblings = [f"{name}_{i + 1}" for i in range(total)]
+        for i, variant in enumerate(sorted_variants):
+            to_add[siblings[i]] = _entry_from_variant(
+                entry, variant, name, i + 1, total, siblings,
+            )
+        to_remove.append(name)
+    for name in to_remove:
+        del textlines[name]
+    textlines.update(to_add)
+    return textlines
+
+
+def _entry_from_variant(canonical: dict, variant: dict, original_name: str,
+                        index: int, total: int, siblings: list) -> dict:
+    """Build a fresh textline entry from one collision variant.
+
+    Carries over the canonical's stable shared fields (``source`` game
+    label) plus the variant-specific content (owner, section, source
+    location, dialogue lines, requirements). Strips the
+    ``nameCollision`` / ``variants`` book-keeping (no longer relevant
+    after the split) and adds the rename-aware fields the viewer
+    consumes.
+    """
+    new_entry = {
+        "owner": variant["owner"],
+        "section": variant["section"],
+        "source": canonical.get("source", "Unknown"),
+        "sourceFile": variant.get("sourceFile", ""),
+        "sourceLine": variant.get("sourceLine"),
+        "requirements": variant.get("requirements", {}),
+        "otherRequirements": variant.get("otherRequirements", {}),
+        "dialogueLines": variant.get("dialogueLines", []),
+    }
+    for opt_key in _VARIANT_OPTIONAL_FIELDS:
+        if variant.get(opt_key):
+            new_entry[opt_key] = variant[opt_key]
+    new_entry["collisionOriginalName"] = original_name
+    new_entry["collisionIndex"] = index
+    new_entry["collisionTotal"] = total
+    new_entry["collisionSiblings"] = list(siblings)
+    return new_entry
 
 
 def _build_dependents(textlines: dict) -> dict:

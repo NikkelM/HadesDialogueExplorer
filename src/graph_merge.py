@@ -1,6 +1,11 @@
 """Merge multiple per-source graph datasets into one combined dataset."""
 
-from src.graph import resolve_duplicate, dup_summary
+from src.graph import (
+    resolve_duplicate,
+    dup_summary,
+    attach_variant,
+    split_name_collisions,
+)
 
 
 def merge_graph_data(datasets: list[dict]) -> dict:
@@ -45,6 +50,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                     "kept": dup_summary(chosen),
                     "dropped": dup_summary(dropped),
                 })
+                attach_variant(chosen, dropped)
                 merged_textlines[tl_name] = chosen
             else:
                 merged_textlines[tl_name] = tl_data
@@ -65,6 +71,12 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                     })
                 else:
                     existing[field] = value
+
+    # Split any name-collision entries into one suffixed textline per
+    # variant before building the dependents index, so each split
+    # entry gets its own correct reverse-edges. See
+    # :func:`src.graph.split_name_collisions` for the rationale.
+    split_name_collisions(merged_textlines)
 
     merged_dependents = {}
     for tl_name, tl_data in merged_textlines.items():

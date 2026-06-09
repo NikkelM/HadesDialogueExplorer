@@ -58,13 +58,19 @@ export function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3><span class="name">${escapeHtml(name)}</span>${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
+        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}
             <span>Section: ${renderSectionHtml(tl.section)}</span>
             <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
+
+    // Collision-rename banner: this textline name was duplicated in
+    // the game's source data; the tool renamed it with a numeric
+    // suffix so each definition can be navigated independently. Links
+    // to the sibling variants so the user can quickly compare.
+    html += renderCollisionBannerHtml(tl);
 
     // Blocked banner: this textline can never play because at least one
     // of its hard requirement fields references undefined textlines.
@@ -102,10 +108,26 @@ export function renderInfo(name) {
               + `</span></div>`;
     }
 
-    // Dialogue text with speaker names
-    if (tl.dialogueLines && tl.dialogueLines.length > 0) {
+    // Dialogue + requirements: always rendered as a single block since
+    // ``split_name_collisions`` (see src/graph.py) has already promoted
+    // each collision variant to its own suffixed textline.
+    html += renderDialogueAndRequirementsHtml(tl, name);
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+// Render the dialogue lines + textline-typed requirements + other
+// requirements blocks for one source object - either the textline
+// itself (normal case) or a single variant (name-collision case).
+// Extracted so the variant-rendering loop can reuse the exact same
+// markup as the single-block case without duplication.
+function renderDialogueAndRequirementsHtml(src, textlineName) {
+    let html = '';
+
+    if (src.dialogueLines && src.dialogueLines.length > 0) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
-        for (const line of tl.dialogueLines) {
+        for (const line of src.dialogueLines) {
             if (typeof line === 'object' && line.speaker) {
                 html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
             } else if (typeof line === 'object') {
@@ -117,14 +139,16 @@ export function renderInfo(name) {
         html += `</div>`;
     }
 
-    // Textline requirements
-    for (const [type, refs] of Object.entries(tl.requirements)) {
+    const requirements = src.requirements || {};
+    const otherRequirements = src.otherRequirements || {};
+
+    for (const [type, refs] of Object.entries(requirements)) {
         // Count-based requirement fields stash ``{Count: N}`` in
         // ``otherRequirements`` under the same key as the requirement.
         // Surface the count inline with the header so the
         // user sees ``Required min (any) (3)`` instead of finding the
         // Count duplicated in the Other Requirements section below.
-        const meta = tl.otherRequirements[type];
+        const meta = otherRequirements[type];
         let countSuffix = '';
         if (meta && typeof meta === 'object' && 'Count' in meta) {
             countSuffix = `: ${escapeHtml(String(meta.Count))}`;
@@ -132,38 +156,37 @@ export function renderInfo(name) {
         html += `<div class="req-section req-type-${type}">`
               + `<h4><span class="toggle">\u25BC</span>${renderReqTypeHtml(type)}${countSuffix}</h4>`
               + `<div class="req-section-children expanded">`;
-        const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
+        const sources = (src.requirementSources && src.requirementSources[type]) || [];
         let i = 0;
         while (i < refs.length) {
-            const src = sources[i] || null;
-            if (src) {
+            const srcGroup = sources[i] || null;
+            if (srcGroup) {
                 let j = i;
-                while (j < refs.length && (sources[j] || null) === src) j++;
+                while (j < refs.length && (sources[j] || null) === srcGroup) j++;
                 html += `<div class="gamedata-group-inline">`
                       + `<div class="gamedata-group-header-inline">`
                       + `<span class="toggle">\u25BC</span>`
-                      + `<span class="gamedata-group-label">${escapeHtml(src)}</span>`
+                      + `<span class="gamedata-group-label">${escapeHtml(srcGroup)}</span>`
                       + `<span class="gamedata-group-count">${j - i} textline${j - i === 1 ? '' : 's'}</span>`
                       + `</div>`
                       + `<div class="gamedata-group-children-inline expanded">`;
                 for (let k = i; k < j; k++) {
-                    html += renderReqItem(refs[k], name);
+                    html += renderReqItem(refs[k], textlineName);
                 }
                 html += `</div></div>`;
                 i = j;
             } else {
-                html += renderReqItem(refs[i], name);
+                html += renderReqItem(refs[i], textlineName);
                 i++;
             }
         }
         html += `</div></div>`;
     }
 
-    // Other requirements
-    if (Object.keys(tl.otherRequirements).length > 0) {
+    if (Object.keys(otherRequirements).length > 0) {
         let otherHtml = '';
-        for (const [key, val] of Object.entries(tl.otherRequirements)) {
-            if (key in tl.requirements) {
+        for (const [key, val] of Object.entries(otherRequirements)) {
+            if (key in requirements) {
                 // Already surfaced inline with the requirement-section
                 // header above. Defensively render any non-Count meta
                 // keys to guard against silent data loss if the game
@@ -191,8 +214,64 @@ export function renderInfo(name) {
         }
     }
 
-    html += `</div>`;
-    container.innerHTML = html;
+    return html;
+}
+
+// Shared tooltip text for the collision-rename UI (badge in the header
+// + banner under the meta line). Single source of truth so the badge
+// and the in-banner label can't drift out of sync.
+function collisionTooltipText(tl) {
+    return (
+        `Renamed for Dialogue Explorer. The game's source data has ${tl.collisionTotal} distinct ` +
+        `definitions sharing the name "${tl.collisionOriginalName}". The engine ` +
+        `keys CurrentRun.TextLinesRecord globally by name, so once any one of ` +
+        `these variants triggers, the others are blocked from ever playing in ` +
+        `the same save - almost certainly a base-game bug.`
+    );
+}
+
+// Compact warning badge shown next to the textline name when this
+// entry was renamed by the tool to disambiguate an engine name
+// collision. Tooltip carries the full explanation; the visible label
+// is just enough to draw attention without bloating the header.
+function renderCollisionBadgeHtml(tl) {
+    if (!tl.collisionOriginalName) return '';
+    const tip = collisionTooltipText(tl);
+    return ` <span class="collision-badge" title="${escapeHtml(tip)}">\u26A0 Renamed</span>`;
+}
+
+// Banner shown below the meta line when the textline was renamed by
+// the tool. Surfaces the original name and lists all duplicate
+// siblings (including the currently-selected one) so the user can
+// quickly compare definitions. The full engine-bug explanation is
+// attached to the "Renamed for Dialogue Explorer" label only (via a
+// tooltip) - the rest of the banner, in particular the sibling
+// links, intentionally carries no tooltip so hovering a link does
+// not pop an explanation that obscures the click target.
+function renderCollisionBannerHtml(tl) {
+    if (!tl.collisionOriginalName) return '';
+    const original = tl.collisionOriginalName;
+    const tip = collisionTooltipText(tl);
+    const siblings = Array.isArray(tl.collisionSiblings) ? tl.collisionSiblings : [];
+    const siblingLinks = siblings.map(s => {
+        const sibTl = textlines[s];
+        const label = sibTl
+            ? `#${sibTl.collisionIndex} ${s}`
+            : s;
+        return `<a class="collision-sibling-link" onclick="navigateTo(${jsAttr(s)})">${escapeHtml(label)}</a>`;
+    }).join(' \u00B7 ');
+    return `<div class="collision-banner">`
+         + `<div class="collision-banner-header">`
+         + `<span class="collision-banner-label" title="${escapeHtml(tip)}">`
+         + `\u26A0 Renamed for Dialogue Explorer`
+         + `</span>`
+         + ` \u00B7 Original name: <code>${escapeHtml(original)}</code> `
+         + `\u00B7 Variant ${tl.collisionIndex} of ${tl.collisionTotal}`
+         + `</div>`
+         + (siblingLinks
+             ? `<div class="collision-banner-body">Duplicates of this dialogue: ${siblingLinks}</div>`
+             : '')
+         + `</div>`;
 }
 
 // Click-to-collapse for the requirement-section boxes and the

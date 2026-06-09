@@ -33,12 +33,10 @@ import re
 from ...lua_parser import LuaTable
 from ..textline_set import (
     extract_textline_sections,
-    TEXTLINE_REQ_FIELDS,
-    TEXTLINE_REQ_FIELDS_COUNT,
-    NON_DIALOGUE_REQ_PREFIX,
-    _normalize_value,
-    _to_string_list,
+    collect_local_requirements,
+    merge_ancestor_requirements,
 )
+from ...graph import resolve_duplicate, attach_variant
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 # Defensive cap mirroring the DeathLoopData walker. EncounterData /
@@ -137,7 +135,7 @@ def extract_encounter_room_data(
             if ancestor_reqs is not None:
                 for tl_map in sections.values():
                     for tl in tl_map.values():
-                        _merge_ancestor_requirements(tl, ancestor_reqs, game_data_lists)
+                        merge_ancestor_requirements(tl, ancestor_reqs, game_data_lists)
 
             entry = result.setdefault(owner_name, {"source": source_label})
             for section_key, tl_map in sections.items():
@@ -145,6 +143,40 @@ def extract_encounter_room_data(
                 for tl_name, tl_data in tl_map.items():
                     if tl_name not in existing:
                         existing[tl_name] = tl_data
+                        continue
+                    # Within-owner name collision: multiple containers
+                    # under the same encounter/room name expose the same
+                    # textline name (e.g. ``A_Shop01`` defining
+                    # ``CharonFirstInspect`` in two different inspect
+                    # points). The engine treats these as the same logical
+                    # textline (``TextLinesRecord`` is keyed by name) and
+                    # only ever plays one of them per save. Merge them
+                    # into a single ``variants``-bearing entry so the
+                    # viewer can surface every distinct dialogue text;
+                    # cross-file / cross-owner collisions are caught
+                    # further downstream by ``build_graph_data`` and
+                    # ``graph_merge``.
+                    existing_tl = existing[tl_name]
+                    chosen, dropped = resolve_duplicate(existing_tl, tl_data)
+                    if chosen is tl_data:
+                        existing[tl_name] = tl_data
+                        attach_variant(
+                            tl_data,
+                            existing_tl,
+                            kept_owner=owner_name,
+                            kept_section=section_key,
+                            dropped_owner=owner_name,
+                            dropped_section=section_key,
+                        )
+                    else:
+                        attach_variant(
+                            existing_tl,
+                            tl_data,
+                            kept_owner=owner_name,
+                            kept_section=section_key,
+                            dropped_owner=owner_name,
+                            dropped_section=section_key,
+                        )
 
     return result
 
@@ -153,9 +185,12 @@ def _walk_owners(node, path=(), ancestor_reqs=None):
     """Yield ``(owner_name, owner_table, ancestor_requirements)`` for every
     table that contains at least one textline-set section.
 
-    ``ancestor_requirements`` is the closest enclosing block's
-    ``GameStateRequirements`` LuaTable (replace-on-encounter rather than
-    union: each level's GSR gates only its own subtree).
+    ``ancestor_requirements`` is the nearest enclosing block's combined
+    requirement set: union of any ``GameStateRequirements`` sub-table and
+    any direct-sibling ``Required*`` fields on that block (see
+    ``collect_local_requirements``). Replace-on-encounter rather than
+    union across levels: each level's reqs gate only its own subtree, so
+    a closer block fully overrides an outer one once it declares its own.
     """
     if len(path) > _WALK_OWNERS_MAX_DEPTH:
         tail = " -> ".join(repr(seg) for seg in path[-8:])
@@ -169,8 +204,8 @@ def _walk_owners(node, path=(), ancestor_reqs=None):
     if not isinstance(node, LuaTable):
         return
 
-    own_reqs = node.get("GameStateRequirements")
-    if isinstance(own_reqs, LuaTable):
+    own_reqs = collect_local_requirements(node)
+    if own_reqs is not None:
         ancestor_reqs = own_reqs
 
     if _has_textline_section(node):
@@ -208,47 +243,3 @@ def _owner_name_for(path) -> str:
         if segment[0] == "named":
             return segment[1]
     return "Unnamed"
-
-
-def _merge_ancestor_requirements(tl: dict, gsr: LuaTable, game_data_lists: dict | None) -> None:
-    """Lift fields from an enclosing-block ``GameStateRequirements`` table
-    onto a single extracted textline.
-
-    Textline-typed requirement fields (``TEXTLINE_REQ_FIELDS`` and
-    ``TEXTLINE_REQ_FIELDS_COUNT``) land in ``tl["requirements"]`` and
-    drive the dependency graph. Other ``Require*`` fields land in
-    ``tl["otherRequirements"]`` as informational metadata.
-
-    If the textline already has its own value for a given key (an
-    explicit declaration), that wins - this only fills in missing
-    fields lifted from the ancestor.
-    """
-    for key, value in gsr.items():
-        if key in TEXTLINE_REQ_FIELDS:
-            if key in tl["requirements"]:
-                continue
-            sources = []
-            tl["requirements"][key] = _to_string_list(value, game_data_lists, sources_out=sources)
-            if any(s is not None for s in sources):
-                tl.setdefault("requirementSources", {})[key] = sources
-        elif key in TEXTLINE_REQ_FIELDS_COUNT:
-            if key in tl["requirements"]:
-                continue
-            inner = value.get("TextLines") if isinstance(value, LuaTable) else None
-            if inner is not None:
-                sources = []
-                tl["requirements"][key] = _to_string_list(inner, game_data_lists, sources_out=sources)
-                if any(s is not None for s in sources):
-                    tl.setdefault("requirementSources", {})[key] = sources
-            if isinstance(value, LuaTable):
-                meta = {
-                    k: _normalize_value(v, game_data_lists)
-                    for k, v in value.items()
-                    if k != "TextLines"
-                }
-                if meta and key not in tl["otherRequirements"]:
-                    tl["otherRequirements"][key] = meta
-        elif key.startswith(NON_DIALOGUE_REQ_PREFIX):
-            if key in tl["otherRequirements"]:
-                continue
-            tl["otherRequirements"][key] = _normalize_value(value, game_data_lists)
