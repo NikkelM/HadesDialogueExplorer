@@ -105,7 +105,7 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
 # Per-game label maps (req-type labels, edge labels, display order)
 # live next to each game's section-key allowlist (e.g.
 # ``hades1/req_types.py``). H2's requirement vocabulary is disjoint from
-# H1's, so a per-game seam in ``build_viewer.annotate_label_maps`` merges
+# H1's, so a per-game seam in ``src.label_maps.annotate_label_maps`` merges
 # them rather than shipping a single global map from this module.
 
 

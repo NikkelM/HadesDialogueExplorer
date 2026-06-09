@@ -1,0 +1,26 @@
+/* GameData group framing inside the details panel: same visual language
+   as the tree-view group box, scaled for the denser req-item list. */
+.gamedata-group-inline {
+    border: 1px dashed #4a3a6b;
+    border-radius: 4px;
+    background: rgba(108, 91, 123, 0.08);
+    padding: 4px 6px;
+    margin: 4px 0;
+}
+.gamedata-group-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+.gamedata-group-header-inline .gamedata-group-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #b8a5ff;
+}
+.gamedata-group-header-inline .gamedata-group-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
+}

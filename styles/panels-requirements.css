@@ -1,0 +1,114 @@
+/* Requirement sections inside the details panel: one box per requirement
+   field with category-specific colors so the user can scan a long list
+   and tell required vs forbidden vs any-of at a glance. */
+.req-section {
+    margin-top: 10px;
+    padding: 6px 8px 4px;
+    border-radius: 4px;
+    border-left: 3px solid #555;
+    background: rgba(255, 255, 255, 0.025);
+}
+.req-section h4 {
+    font-size: 11px;
+    margin: 0 0 6px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.req-type-RequiredTextLines           { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
+.req-type-RequiredTextLinesThisRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
+.req-type-RequiredTextLinesLastRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
+.req-type-RequiredAnyTextLines        { border-left-color: #b07a3a; background: rgba(176, 122, 58, 0.06); }
+.req-type-RequiredAnyOtherTextLines   { border-left-color: #b07a3a; background: rgba(176, 122, 58, 0.06); }
+.req-type-RequiredAnyTextLinesThisRun { border-left-color: #b07a3a; background: rgba(176, 122, 58, 0.06); }
+.req-type-RequiredAnyTextLinesLastRun { border-left-color: #b07a3a; background: rgba(176, 122, 58, 0.06); }
+.req-type-RequiredFalseTextLines          { border-left-color: #a83a3a; background: rgba(168, 58, 58, 0.06); }
+.req-type-RequiredFalseQueuedTextLines    { border-left-color: #a83a3a; background: rgba(168, 58, 58, 0.06); }
+.req-type-RequiredFalseTextLinesThisRun   { border-left-color: #a83a3a; background: rgba(168, 58, 58, 0.06); }
+.req-type-RequiredFalseTextLinesLastRun   { border-left-color: #a83a3a; background: rgba(168, 58, 58, 0.06); }
+.req-type-RequiredAnyQueuedTextLines      { border-left-color: #b07a3a; background: rgba(176, 122, 58, 0.06); }
+.req-type-RequiredMinAnyTextLines         { border-left-color: #8d7a4a; background: rgba(141, 122, 74, 0.06); }
+.req-type-RequiredMaxAnyTextLines         { border-left-color: #8d7a4a; background: rgba(141, 122, 74, 0.06); }
+.req-type-MinRunsSinceAnyTextLines        { border-left-color: #4a7882; background: rgba(74, 120, 130, 0.06); }
+.req-type-MaxRunsSinceAnyTextLines        { border-left-color: #4a7882; background: rgba(74, 120, 130, 0.06); }
+.req-type-other { border-left-color: #4a5a78; background: rgba(74, 90, 120, 0.06); }
+.req-type-RequiredTextLines h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredAnyTextLines h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredAnyOtherTextLines h4 { background: #3d2b1f; color: #e9c46a; }
+.req-type-RequiredFalseTextLines h4 { background: #4a1520; color: #f07167; }
+.req-type-RequiredFalseQueuedTextLines h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredFalseTextLinesThisRun h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredFalseTextLinesLastRun h4 { background: #4a1520; color: #f4845f; }
+.req-type-RequiredTextLinesThisRun h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredTextLinesLastRun h4 { background: #1b4332; color: #95d5b2; }
+.req-type-RequiredAnyTextLinesThisRun h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredAnyTextLinesLastRun h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredAnyQueuedTextLines h4 { background: #3d2b1f; color: #f4a261; }
+.req-type-RequiredMinAnyTextLines h4 { background: #2e2818; color: #d4b870; }
+.req-type-RequiredMaxAnyTextLines h4 { background: #2e2818; color: #d4b870; }
+.req-type-MinRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
+.req-type-MaxRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
+.req-type-other h4 { background: #2b2d42; color: #8d99ae; }
+.req-item {
+    padding: 3px 8px;
+    margin: 2px 0;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+}
+/* Tier badge inside a requirement row - sits to the right so badges
+   line up vertically down the requirements list, mirroring the tree
+   view layout. */
+.req-item .priority-badge { margin-left: auto; }
+.req-item:hover { background: #0f3460; }
+.req-item.resolved { color: #a8dadc; }
+.req-item.unresolved { color: #888; font-style: italic; }
+.req-item.unresolved::after { content: " \26A0  external"; font-size: 10px; color: #666; }
+
+/* Category-specific colors for unresolved refs - overrides the generic
+   .unresolved color so the user can visually distinguish intentional
+   (back-compat), buggy (typo-or-bug), missing (cut-content), and
+   not-yet-triaged (uncategorized) references at a glance. */
+.req-item.unresolved.unresolved-cat-back-compatibility {
+    color: #c9a96e;
+}
+.req-item.unresolved.unresolved-cat-back-compatibility::after {
+    content: " \1F501  back-compat";
+    color: #c9a96e;
+}
+.req-item.unresolved.unresolved-cat-typo-or-bug {
+    color: #e07b7b;
+}
+.req-item.unresolved.unresolved-cat-typo-or-bug::after {
+    content: " \26A0  typo/bug";
+    color: #e07b7b;
+}
+.req-item.unresolved.unresolved-cat-cut-content {
+    color: #888;
+}
+.req-item.unresolved.unresolved-cat-cut-content::after {
+    content: " \2702  cut";
+    color: #888;
+}
+.req-item.unresolved.unresolved-cat-uncategorized {
+    color: #d97a7a;
+}
+.req-item.unresolved.unresolved-cat-uncategorized::after {
+    content: " \26A0  uncategorized";
+    color: #d97a7a;
+}
+
+/* "Other requirements" list - non-textline gating fields rendered as
+   monospace key=value lines (no navigation, no hover). */
+.other-req-item {
+    padding: 3px 8px;
+    margin: 2px 0;
+    font-size: 12px;
+    color: #8d99ae;
+    font-family: 'Consolas', monospace;
+}

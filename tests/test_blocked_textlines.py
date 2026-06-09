@@ -5,7 +5,7 @@ which dialogues a given unresolved ref blocks."""
 
 import pytest
 
-from build_viewer import annotate_blocked_textlines
+from src.blocked_textlines import annotate_blocked_textlines
 
 
 def _tl(reqs=None, other=None):
@@ -268,14 +268,14 @@ class TestSemanticsValidator:
     a typo'd fallback branch silently produced an invalid explanation."""
 
     def test_raises_on_unknown_semantics(self):
-        from build_viewer import _assert_viewer_knows_semantics
+        from src.blocked_textlines import _assert_viewer_knows_semantics
         with pytest.raises(ValueError, match="unknown semantics"):
             _assert_viewer_knows_semantics(
                 [{"semantics": "future-thing"}], "TestTextline"
             )
 
     def test_passes_on_known_semantics(self):
-        from build_viewer import (
+        from src.blocked_textlines import (
             _assert_viewer_knows_semantics,
             _VIEWER_KNOWN_SEMANTICS,
         )

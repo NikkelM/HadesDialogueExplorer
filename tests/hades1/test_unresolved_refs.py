@@ -7,7 +7,7 @@ from src.extractors.hades1 import (
     UNRESOLVED_CATEGORY_LABELS,
     UNRESOLVED_CATEGORY_DESCRIPTIONS,
 )
-from build_viewer import annotate_known_unresolved
+from src.known_unresolved import annotate_known_unresolved
 
 
 VALID_CATEGORIES = set(UNRESOLVED_CATEGORY_LABELS.keys())

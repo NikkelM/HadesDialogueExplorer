@@ -1,11 +1,11 @@
-"""Tests for build_viewer.merge_graph_data and graph.resolve_duplicate.
+"""Tests for src.graph_merge.merge_graph_data and src.graph.resolve_duplicate.
 
 The merge combines per-source JSON datasets into one viewer dataset,
 detecting duplicate textline names, rebuilding the dependents index, and
 flagging conflicting speakerNames mappings.
 """
 
-from build_viewer import merge_graph_data
+from src.graph_merge import merge_graph_data
 from src.graph import resolve_duplicate
 
 

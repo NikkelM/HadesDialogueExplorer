@@ -9,7 +9,7 @@ Public API:
 - :func:`resolve_duplicate` and :func:`dup_summary` -- helpers for the
   same-textline-name collision case. Re-exported across module
   boundaries because the cross-source merge in
-  ``build_viewer.merge_graph_data`` reuses them when stitching
+  ``src.graph_merge.merge_graph_data`` reuses them when stitching
   per-source datasets together; keep them stable as part of the
   contract.
 """
@@ -136,7 +136,7 @@ def resolve_duplicate(existing: dict, new: dict) -> tuple:
     Returns (kept, dropped). Ties go to the existing entry (first-wins).
 
     Public alongside :func:`dup_summary` because the merge pipeline in
-    ``build_viewer.merge_graph_data`` reuses these helpers across module
+    ``src.graph_merge.merge_graph_data`` reuses these helpers across module
     boundaries when stitching per-source datasets together.
     """
     existing_synth = bool(existing.get("isSynthetic"))

@@ -26,35 +26,37 @@ Usage:
     python build_viewer.py --split
     python build_viewer.py --bundle
     python build_viewer.py --all
+
+The merge + annotation passes live in ``src/`` so this file stays focused
+on CLI parsing and output writing:
+
+  - ``src/graph_merge.py``       merge per-source datasets into one graph
+  - ``src/known_unresolved.py``  categorize unresolved refs
+  - ``src/blocked_textlines.py`` flag dialogues that can never play
+  - ``src/label_maps.py``        wire viewer-side friendly-name lookups
+
+The viewer JS lives as ES modules under ``templates/viewer/*.js`` for
+clean cross-file analysis (ESLint, IDE jump-to-definition). Those
+modules are concatenated into a single classic ``dist/viewer.js`` here
+because the offline bundle runs from ``file://`` where browsers block
+real ES module imports.
 """
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
-from src.graph import resolve_duplicate, dup_summary
-from src.extractors.textline_set import (
-    REQUIREMENT_BLOCKING_SEMANTICS,
-    TEXTLINE_REQ_FIELDS,
-    TEXTLINE_REQ_FIELDS_COUNT,
-)
-from src.extractors.hades1 import (
-    HADES1_KNOWN_UNRESOLVED_REFS,
-    UNRESOLVED_CATEGORY_LABELS,
-    UNRESOLVED_CATEGORY_DESCRIPTIONS,
-    HADES1_TEXTLINE_SECTION_KEYS,
-    HADES1_SECTION_KEY_LABELS,
-    HADES1_REQ_TYPE_LABELS,
-    HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
-    HADES1_REQ_TYPE_DISPLAY_ORDER,
-)
+from src.graph_merge import merge_graph_data
+from src.known_unresolved import annotate_known_unresolved
+from src.blocked_textlines import annotate_blocked_textlines
+from src.label_maps import annotate_label_maps
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
 INDEX_TEMPLATE = TEMPLATES_DIR / "index.html"
-VIEWER_JS_TEMPLATE = TEMPLATES_DIR / "viewer.js"
+VIEWER_JS_DIR = TEMPLATES_DIR / "viewer"
 STYLES_DIR = PROJECT_DIR / "styles"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
 DIST_DIR = PROJECT_DIR / "dist"
@@ -64,372 +66,6 @@ DIST_DIR = PROJECT_DIR / "dist"
 # dropped in ``dist/`` (e.g. screenshots, release notes).
 _SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
-
-
-def merge_graph_data(datasets: list[dict]) -> dict:
-    """Merge multiple per-source graph datasets into one combined dataset.
-
-    - Detects duplicate textline names across files (these can cause silent
-      dependency mis-resolution and so are surfaced for the developer to
-      fix at the source).
-    - Recomputes `dependents` from the merged textline set rather than
-      unioning per-source maps (which could include stale edges from
-      overwritten textlines).
-    - Recomputes `stats.totalOwners` from the distinct owners in the merged
-      textline set rather than summing per-file counts: summing would
-      double-count any owner name appearing in multiple sources and include
-      skeleton owners that contributed no textlines.
-    - Unions `speakerNames`; conflicting mappings (same id -> different
-      display name) are surfaced as a warning.
-    """
-    merged_textlines = {}
-    merged_speaker_names = {}
-    duplicates = []
-    speaker_name_conflicts = []
-
-    for data in datasets:
-        for tl_name, tl_data in data.get("textlines", {}).items():
-            if tl_name in merged_textlines:
-                chosen, dropped = resolve_duplicate(merged_textlines[tl_name], tl_data)
-                duplicates.append({
-                    "name": tl_name,
-                    "kept": dup_summary(chosen),
-                    "dropped": dup_summary(dropped),
-                })
-                merged_textlines[tl_name] = chosen
-            else:
-                merged_textlines[tl_name] = tl_data
-
-        for sid, name in data.get("speakerNames", {}).items():
-            if sid in merged_speaker_names and merged_speaker_names[sid] != name:
-                speaker_name_conflicts.append({
-                    "id": sid,
-                    "existing": merged_speaker_names[sid],
-                    "new": name,
-                })
-            else:
-                merged_speaker_names[sid] = name
-
-    merged_dependents = {}
-    for tl_name, tl_data in merged_textlines.items():
-        for req_type, req_list in tl_data.get("requirements", {}).items():
-            for dep in req_list:
-                # Self-references (textline lists itself in its own
-                # requirements) always come from cooldown / PlayOnce
-                # fields and are never real graph edges; excluded here
-                # so they don't inflate totalEdges or render as
-                # misleading self-loops in the viewer tree. Mirrors the
-                # filter in src/graph.py:_build_dependents.
-                if dep == tl_name:
-                    continue
-                merged_dependents.setdefault(dep, []).append({
-                    "name": tl_name,
-                    "type": req_type,
-                })
-
-    all_referenced = set()
-    for tl_data in merged_textlines.values():
-        for req_list in tl_data.get("requirements", {}).values():
-            all_referenced.update(req_list)
-
-    if duplicates:
-        print(f"INFO: {len(duplicates)} textline name(s) defined in multiple sources (richer entry kept):")
-        for d in duplicates[:5]:
-            k, dr = d["kept"], d["dropped"]
-            print(f"  {d['name']}: kept {k['owner']}@{k['sourceFile']}:{k['sourceLine']} ({k['dialogueLines']}L/{k['requirementCount']}R), dropped {dr['owner']}@{dr['sourceFile']}:{dr['sourceLine']} ({dr['dialogueLines']}L/{dr['requirementCount']}R)")
-        if len(duplicates) > 5:
-            print(f"  ... and {len(duplicates) - 5} more")
-    if speaker_name_conflicts:
-        print(f"WARNING: {len(speaker_name_conflicts)} speakerNames conflict(s):")
-        for c in speaker_name_conflicts[:5]:
-            print(f"  {c['id']}: {c['existing']!r} vs {c['new']!r}")
-
-    stats = {
-        "totalOwners": len({tl["owner"] for tl in merged_textlines.values()}),
-        "totalTextlines": len(merged_textlines),
-        "totalEdges": sum(len(v) for v in merged_dependents.values()),
-        "unresolvedRefs": sorted(all_referenced - set(merged_textlines.keys())),
-        "duplicates": duplicates,
-    }
-
-    return {
-        "textlines": merged_textlines,
-        "dependents": merged_dependents,
-        "speakerNames": merged_speaker_names,
-        "stats": stats,
-    }
-
-
-def _short_loc(tl_data: dict) -> str:
-    """Compact owner/source/line string for diagnostics."""
-    owner = tl_data.get("owner", "?")
-    sf = tl_data.get("sourceFile", "?")
-    sl = tl_data.get("sourceLine")
-    return f"{owner} @ {sf}:{sl}" if sl is not None else f"{owner} @ {sf}"
-
-
-# Hardcoded per-game known-unresolved maps in priority order. Each entry is
-# ``(game_label, mapping)`` so the audit can identify which game's list is
-# drifting; the warning string interpolates the variable-name suffix from
-# the game prefix (e.g. ``HADES1`` -> ``HADES1_KNOWN_UNRESOLVED_REFS``).
-# Mirrors the ``_SECTION_KEY_LABEL_SOURCES`` convention below so adding H2
-# is a one-line change in both lists.
-_KNOWN_UNRESOLVED_SOURCES = [
-    ("HADES1", HADES1_KNOWN_UNRESOLVED_REFS),
-]
-
-
-def annotate_known_unresolved(graph_data: dict) -> None:
-    """Attach the categorized known-unresolved-refs map to the merged graph
-    data and audit it against what the parser actually computed.
-
-    Adds to ``graph_data``:
-      - ``knownUnresolvedRefs``: ``{name: {category, reason}}`` for every
-        currently-unresolved ref that has a hardcoded entry.
-      - ``unresolvedCategoryLabels``: ``{category: human-label}``.
-      - ``unresolvedCategoryDescriptions``: ``{category: explainer}``.
-      - ``stats.unresolvedByCategory``: ``{category: count}`` (the count of
-        unresolved refs in each category, plus ``uncategorized`` for any
-        ref the hardcoded list doesn't cover).
-
-    Audits and prints warnings for:
-      - hardcoded entries no longer in the unresolved set (parser fix);
-      - unresolved refs missing from every hardcoded list (new content).
-    """
-    unresolved_set = set(graph_data["stats"]["unresolvedRefs"])
-    union_known = {}
-    for game_label, mapping in _KNOWN_UNRESOLVED_SOURCES:
-        stale = sorted(set(mapping) - unresolved_set)
-        if stale:
-            print(
-                f"WARNING: {len(stale)} entry(ies) in "
-                f"{game_label}_KNOWN_UNRESOLVED_REFS are now resolved by "
-                f"the parser - remove them: {stale}"
-            )
-        for name, info in mapping.items():
-            if name in unresolved_set:
-                union_known[name] = info
-
-    untriaged = sorted(unresolved_set - set(union_known))
-    if untriaged:
-        print(
-            f"WARNING: {len(untriaged)} unresolved ref(s) are not "
-            f"categorized in any *_KNOWN_UNRESOLVED_REFS map - triage and "
-            f"add them: {untriaged}"
-        )
-
-    by_category = {"uncategorized": len(untriaged)}
-    for info in union_known.values():
-        by_category[info["category"]] = by_category.get(info["category"], 0) + 1
-
-    graph_data["knownUnresolvedRefs"] = union_known
-    graph_data["unresolvedCategoryLabels"] = dict(UNRESOLVED_CATEGORY_LABELS)
-    graph_data["unresolvedCategoryDescriptions"] = dict(UNRESOLVED_CATEGORY_DESCRIPTIONS)
-    graph_data["stats"]["unresolvedByCategory"] = by_category
-
-
-# Semantics tags ``annotate_blocked_textlines`` is allowed to emit on
-# ``blockingReasons[*]["semantics"]``. ``viewer.js::renderBlockingReason``
-# has a finite branch ladder matching these exact strings; any new value
-# emitted here without a corresponding viewer-side branch would render
-# as a generic fallback line and (historically) hit a
-# ``ReferenceError`` on a typo. Kept as a separate constant from
-# ``textline_set.REQUIREMENT_BLOCKING_SEMANTICS`` because that map also
-# contains ``"none"`` / ``"count-permissive"`` values that are filtered
-# out before reaching ``blockingReasons``.
-_VIEWER_KNOWN_SEMANTICS = frozenset({"all", "any", "count-min"})
-
-
-def _assert_viewer_knows_semantics(reasons: list, textline_name: str) -> None:
-    """Fail loud if ``reasons`` contains any semantics value the viewer
-    doesn't know how to render.
-
-    Called once per textline that gains a ``blockingReasons`` list, so
-    that adding a new semantics branch to ``annotate_blocked_textlines``
-    forces the contributor to either add the matching viewer-side
-    branch or update ``_VIEWER_KNOWN_SEMANTICS`` (which surfaces the
-    drift in code review).
-    """
-    unknown = {r["semantics"] for r in reasons} - _VIEWER_KNOWN_SEMANTICS
-    if unknown:
-        raise ValueError(
-            f"annotate_blocked_textlines emitted unknown semantics "
-            f"{sorted(unknown)} for textline {textline_name!r}. "
-            f"viewer.js::renderBlockingReason only handles "
-            f"{sorted(_VIEWER_KNOWN_SEMANTICS)}; add the new branch(es) "
-            f"there before extending the emit set."
-        )
-
-
-def annotate_blocked_textlines(graph_data: dict) -> None:
-    """Walk every defined textline and flag those whose requirements can
-    never be satisfied because of unresolved references.
-
-    A textline is considered *blocked* when at least one of its requirement
-    fields has a hard failure given the unresolved set:
-
-      - ``RequiredTextLines`` and other ALL-semantics fields: ANY unresolved
-        entry blocks the textline (every entry must have played).
-      - ``RequiredAnyTextLines`` and other ANY-semantics fields: blocks only
-        when EVERY entry in the list is unresolved (no satisfying choice
-        remains).
-      - ``RequiredMinAnyTextLines``: blocks when the requested ``Count``
-        exceeds the number of resolved entries.
-
-    Permissive forms (``RequiredFalse*``, ``RequiredMaxAnyTextLines``,
-    ``MinRunsSinceAnyTextLines``, ``MaxRunsSinceAnyTextLines``) are never
-    blocking from unresolved entries alone - lines that were never defined
-    can never play, so a "must not have played" or "permissive count" check
-    is trivially satisfied.
-
-    Each affected textline gains:
-      ``blocked``: ``True``
-      ``blockingReasons``: list of ``{field, semantics, missingRefs, ...}``
-        - ``field``         the requirement-field name (e.g. RequiredTextLines)
-        - ``semantics``     "all" | "any" | "count-min"
-        - ``missingRefs``   the unresolved names that caused the block
-        - ``totalRefs``     total entries in the field (for context)
-        - ``requiredCount`` (count-min only) the ``Count`` parameter
-        - ``resolvedCount`` (count-min only) entries currently resolved
-
-    Stats: ``stats.blockedTextlines`` is the total blocked count.
-    """
-    textlines = graph_data["textlines"]
-    resolved_names = set(textlines.keys())
-    blocked_count = 0
-    unresolved_blocks: dict = {}
-
-    for name, tl in textlines.items():
-        reasons = []
-        for field, refs in (tl.get("requirements") or {}).items():
-            semantics = REQUIREMENT_BLOCKING_SEMANTICS.get(field)
-            if semantics is None or semantics in ("none", "count-permissive"):
-                continue
-
-            missing = [r for r in refs if r not in resolved_names]
-
-            if semantics == "all" and missing:
-                reasons.append({
-                    "field": field,
-                    "semantics": "all",
-                    "missingRefs": sorted(set(missing)),
-                    "totalRefs": len(refs),
-                })
-            elif semantics == "any":
-                if refs and len(missing) == len(refs):
-                    reasons.append({
-                        "field": field,
-                        "semantics": "any",
-                        "missingRefs": sorted(set(missing)),
-                        "totalRefs": len(refs),
-                    })
-            elif semantics == "count-min":
-                meta = (tl.get("otherRequirements") or {}).get(field) or {}
-                count = meta.get("Count", 1) if isinstance(meta, dict) else 1
-                resolved_count = len(refs) - len(missing)
-                if resolved_count < count:
-                    reasons.append({
-                        "field": field,
-                        "semantics": "count-min",
-                        "missingRefs": sorted(set(missing)),
-                        "totalRefs": len(refs),
-                        "requiredCount": count,
-                        "resolvedCount": resolved_count,
-                    })
-
-        if reasons:
-            _assert_viewer_knows_semantics(reasons, name)
-            tl["blocked"] = True
-            tl["blockingReasons"] = reasons
-            blocked_count += 1
-            # Reverse-index: every unresolved ref that contributed to a
-            # block is recorded against the blocked textline so the
-            # unresolved-ref info-panel can show "blocks: ..." cleanly.
-            for reason in reasons:
-                for ref in reason["missingRefs"]:
-                    unresolved_blocks.setdefault(ref, set()).add(name)
-
-    graph_data["stats"]["blockedTextlines"] = blocked_count
-    graph_data["unresolvedRefBlocks"] = {
-        ref: sorted(names) for ref, names in unresolved_blocks.items()
-    }
-    if blocked_count:
-        print(
-            f"INFO: {blocked_count} textline(s) can never play due to "
-            f"unresolved requirement references."
-        )
-
-
-# Per-game section-key allowlists and their friendly-name maps. Future
-# Hades II support adds its own tuple here so the audit runs against
-# each game's data independently.
-_SECTION_KEY_LABEL_SOURCES = [
-    ("HADES1", HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS),
-]
-
-# Per-game requirement-type label data. Tuple shape:
-#   (game_label, allowed_fields, labels, edge_labels, tooltips, display_order)
-# H1 and H2 use disjoint requirement-field vocabularies (H1: flat
-# ``Required.*TextLine.*`` fields; H2: nested ``GameStateRequirements``
-# with ``HasAny``/``HasAll``/``Path`` records), so each game contributes
-# its own allowlist + maps and the build merges them into a single
-# viewer-side lookup. Mirrors ``_SECTION_KEY_LABEL_SOURCES``. Adding H2
-# is a one-line append once ``hades2/req_types.py`` and the H2-side
-# req-fields allowlist exist.
-_REQ_TYPE_LABEL_SOURCES = [
-    (
-        "HADES1",
-        TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT,
-        HADES1_REQ_TYPE_LABELS,
-        HADES1_REQ_TYPE_EDGE_LABELS,
-        HADES1_REQ_TYPE_TOOLTIPS,
-        HADES1_REQ_TYPE_DISPLAY_ORDER,
-    ),
-]
-
-
-def annotate_label_maps(graph_data: dict) -> None:
-    """Attach the viewer's friendly-name lookups to the merged graph data.
-
-    Adds to ``graph_data``:
-      - ``reqTypeLabels``: ``{field: human-label}`` for the requirement
-        groups shown in the details panel - merged across all games.
-      - ``reqTypeEdgeLabels``: ``{field: short-chip-label}`` for the tree
-        view edge badges - merged across all games.
-      - ``reqTypeTooltips``: ``{field: plain-english-blurb}`` shown as
-        the second line of the hover tooltip on requirement labels
-        (the viewer prepends the internal field name as the first line);
-        merged across all games.
-      - ``reqTypeOrder``: ordered list of fields used to sort tree
-        children into per-type groups - concatenation in game order
-        (later games append after earlier ones; duplicates dropped).
-      - ``sectionKeyLabels``: ``{key: human-label}`` for the per-game
-        union of section-key labels (merged across all games so the
-        viewer can do a single lookup regardless of source).
-    """
-    merged_section_labels: dict[str, str] = {}
-    for _game_label, _section_keys, labels in _SECTION_KEY_LABEL_SOURCES:
-        merged_section_labels.update(labels)
-
-    merged_req_labels: dict[str, str] = {}
-    merged_req_edge_labels: dict[str, str] = {}
-    merged_req_tooltips: dict[str, str] = {}
-    merged_req_order: list[str] = []
-    merged_req_order_seen: set[str] = set()
-    for _game_label, _allowed_fields, labels, edge_labels, tooltips, display_order in _REQ_TYPE_LABEL_SOURCES:
-        merged_req_labels.update(labels)
-        merged_req_edge_labels.update(edge_labels)
-        merged_req_tooltips.update(tooltips)
-        for field in display_order:
-            if field not in merged_req_order_seen:
-                merged_req_order.append(field)
-                merged_req_order_seen.add(field)
-
-    graph_data["reqTypeLabels"] = merged_req_labels
-    graph_data["reqTypeEdgeLabels"] = merged_req_edge_labels
-    graph_data["reqTypeTooltips"] = merged_req_tooltips
-    graph_data["reqTypeOrder"] = merged_req_order
-    graph_data["sectionKeyLabels"] = merged_section_labels
 
 
 def build_css() -> str:
@@ -443,6 +79,73 @@ def build_css() -> str:
         parts.append(f"/* --- {css_file.name} --- */")
         parts.append(css_file.read_text(encoding="utf-8").strip())
     return "\n\n".join(parts)
+
+
+# Single-line ``import { a, b } from './foo.js';`` blocks - the only
+# import shape used in templates/viewer/*.js.
+_JS_IMPORT_RE = re.compile(
+    r"^\s*import\s*\{[^}]*\}\s*from\s*['\"][^'\"]+['\"]\s*;?\s*$",
+    re.MULTILINE,
+)
+
+# ``export function|const|let|async function|class ...`` declarations.
+# The leading whitespace is preserved so indentation stays consistent
+# after the keyword is removed.
+_JS_EXPORT_RE = re.compile(
+    r"^(\s*)export\s+(?=(?:async\s+)?(?:function|const|let|class)\s)",
+    re.MULTILINE,
+)
+
+
+def _strip_module_syntax(js_text: str) -> str:
+    """Strip ES module ``import``/``export`` syntax so the file can be
+    concatenated into a single classic browser script.
+
+    Sources under ``templates/viewer/`` use ES module syntax purely so
+    ESLint can validate cross-file references. The deployed artifact
+    is one concatenated script (``dist/viewer.js``) because the offline
+    bundle runs from ``file://`` where browsers block ES module imports
+    via CORS.
+    """
+    js_text = _JS_IMPORT_RE.sub("", js_text)
+    js_text = _JS_EXPORT_RE.sub(r"\1", js_text)
+    return js_text
+
+
+def build_js() -> str:
+    """Concatenate every ``templates/viewer/*.js`` module into a single
+    classic script.
+
+    Files are sorted alphabetically with ``init.js`` pinned to the end.
+    The pinning matters because ``init.js`` ends with a top-level
+    ``boot()`` call, and ``boot()`` synchronously calls into
+    ``loadData()`` which assigns to the ``let`` bindings declared in
+    ``data.js`` and other modules. Those bindings are in TDZ until
+    their textual declaration is reached, so the call site has to come
+    after every declaration. Function declarations hoist so their
+    ordering doesn't matter.
+
+    Module syntax is stripped so the result runs as a plain script in
+    any browser, including from ``file://`` (the offline bundle case,
+    where browsers block real ES module imports via CORS).
+    """
+    js_files = sorted(VIEWER_JS_DIR.glob("*.js"))
+    if not js_files:
+        raise RuntimeError(f"No viewer JS modules found in {VIEWER_JS_DIR}")
+    init_files = [f for f in js_files if f.name == "init.js"]
+    if not init_files:
+        raise RuntimeError(
+            f"Expected {VIEWER_JS_DIR / 'init.js'} (must contain the "
+            f"top-level boot() call); not found."
+        )
+    other_files = [f for f in js_files if f.name != "init.js"]
+    ordered = other_files + init_files
+
+    parts = []
+    for js_file in ordered:
+        parts.append(f"// --- {js_file.name} ---")
+        parts.append(_strip_module_syntax(js_file.read_text(encoding="utf-8")).strip())
+    return "\n\n".join(parts) + "\n"
 
 
 def _ensure_clean_dist() -> None:
@@ -467,7 +170,7 @@ def build_split(graph_data: dict) -> dict:
     _ensure_clean_dist()
 
     css_data = build_css()
-    js_data = VIEWER_JS_TEMPLATE.read_text(encoding="utf-8")
+    js_data = build_js()
     index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
     json_data = json.dumps(graph_data, separators=(",", ":"))
 

@@ -17,7 +17,7 @@ entirely - a list of ``GameStateRequirements`` records like::
     }
 
 so the H2 viewer-label vocabulary (``HasAny``, ``HasAll``, ``Path``,
-...) is disjoint from H1's. ``build_viewer.annotate_label_maps``
+...) is disjoint from H1's. ``src.label_maps.annotate_label_maps``
 merges each game's maps into one viewer-side lookup (mirroring the
 ``_SECTION_KEY_LABEL_SOURCES`` pattern), and the per-game seam keeps
 each game's vocabulary additive rather than overwriting.

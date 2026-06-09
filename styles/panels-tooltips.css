@@ -1,0 +1,43 @@
+/* Tooltip affordances: every element that gets a [title] tooltip also
+   gets a subtle dotted underline + help cursor so the user knows it's
+   interactive. The friendly-name pattern is reused for speaker names,
+   section names, and requirement-type labels. */
+
+.meta .speaker-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}
+/* Matches the speaker-name affordance: only the friendly form gets the
+   dotted underline + help cursor, so when no friendly mapping exists
+   (raw key shown as-is) the section text looks plain. */
+.meta .section-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}
+.search-item .section-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}
+
+/* Requirement-type label affordance: dotted underline + help cursor when
+   a friendly mapping exists (i.e. the tooltip will reveal the internal
+   field name plus a plain-English blurb of what the check gates on).
+   Mirrors the speaker-name and section-name patterns.
+   The `.blocking-field` variant is bold to keep the visual weight the
+   previous `<strong>` wrapper provided in the blocked-banner copy. */
+.req-section h4 .req-type-name[title] {
+    cursor: help;
+    border-bottom: 1px dotted currentColor;
+    opacity: 0.9;
+}
+.blocked-banner .req-type-name.blocking-field {
+    font-weight: bold;
+}
+.blocked-banner .req-type-name.blocking-field[title] {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}
+.req-type-group-label.has-tooltip {
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}

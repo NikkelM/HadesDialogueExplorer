@@ -1,0 +1,94 @@
+/* Badges shown on textline rows and tree nodes. Each badge type uses
+   distinct colour tones so the user can tell them apart at a glance:
+   warm/cool for repeatability, neutral for self-reference, category
+   hues for unresolved children, and warning red for blocked nodes. */
+
+/* PlayOnce / Repeatable indicator. Always renders one of
+   the two badges in the details-panel header to the right of the
+   priority badges, so the repeatability state is explicit. Warm tone
+   for the hard cap, cool tone for the default repeatable state. */
+.textline-info h3 .play-once-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+.textline-info h3 .play-once-badge.play-once-locked {
+    background: #2e2018;
+    color: #f5b78c;
+    border: 1px solid #5a3a2a;
+}
+.textline-info h3 .play-once-badge.play-once-repeatable {
+    background: #1c2a26;
+    color: #a0d4be;
+    border: 1px solid #2c4a3e;
+}
+
+/* Self-reference marker: a textline that lists itself in one of its
+   own requirement fields. Always a benign cooldown/PlayOnce idiom,
+   never a hard prereq; filtered out of the dependency tree but kept
+   visible here so the user sees the game data faithfully. */
+.req-item.self-ref {
+    opacity: 0.75;
+}
+.self-ref-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 5px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    background: rgba(141, 153, 174, 0.20);
+    color: #b8c2d4;
+    border: 1px solid rgba(141, 153, 174, 0.40);
+}
+
+/* Tree-node badge for unresolved children - small inline pill that
+   inherits the same color language as the req-item categories. */
+.tree-unresolved-badge {
+    font-size: 10px;
+    margin-left: 6px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #888;
+    font-style: italic;
+}
+.tree-unresolved-badge.unresolved-cat-back-compatibility {
+    color: #c9a96e;
+    background: rgba(201, 169, 110, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-typo-or-bug {
+    color: #e07b7b;
+    background: rgba(224, 123, 123, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-cut-content {
+    color: #888;
+    background: rgba(136, 136, 136, 0.10);
+}
+.tree-unresolved-badge.unresolved-cat-uncategorized {
+    color: #d97a7a;
+    background: rgba(217, 122, 122, 0.12);
+}
+
+/* Tree-node badge: marks a dialogue that can never play (either because
+   it is itself blocked, or because it is an unresolved ref that blocks
+   other dialogues). */
+.tree-blocked-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    background: rgba(231, 76, 60, 0.20);
+    color: #ffb3a8;
+    border: 1px solid rgba(231, 76, 60, 0.45);
+}
