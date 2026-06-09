@@ -88,7 +88,6 @@ HADES1_SPEAKERS = {
     "NPC_FurySister_02":        {"name": "Alecto",              "description": "Tormentor of Passions"},
     "NPC_FurySister_03":        {"name": "Tisiphone",           "description": "Tormentor of Murder"},
     "NPC_Hades_01":             {"name": "Hades",               "description": "God of the Dead"},
-    "NPC_Hades_Story_01":       {"name": "Hades (Ending)",      "description": "God of the Dead"},
     "NPC_Hypnos_01":            {"name": "Hypnos",              "description": "Sleep Incarnate"},
     "NPC_Nyx_01":               {"name": "Nyx",                 "description": "Night Incarnate"},
     "NPC_Nyx_Story_01":         {"name": "Nyx (Field)",         "description": "Night Incarnate"},

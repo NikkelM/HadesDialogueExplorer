@@ -5,9 +5,9 @@ These tests act as a guardrail so future additions to
 edits to the per-game label maps) keep the viewer's lookups complete
 and the shorthand chips 1:1.
 
-Issue #29: the edge-label shorthand must be DISTINCT per field so the
-tree view's chips do not collapse semantically different requirement
-types onto the same glyph.
+The edge-label shorthand must be DISTINCT per field so the tree view's
+chips do not collapse semantically different requirement types onto
+the same glyph.
 """
 
 from src.extractors.textline_set import (
@@ -62,9 +62,9 @@ def test_edge_labels_have_no_stale_entries():
 
 
 def test_edge_labels_are_unique_per_field():
-    """Issue #29: every requirement type must have a DISTINCT short
-    chip so the tree view never shows two semantically different
-    field types under the same glyph (e.g. RequiredFalseTextLines vs
+    """Every requirement type must have a DISTINCT short chip so the
+    tree view never shows two semantically different field types
+    under the same glyph (e.g. RequiredFalseTextLines vs
     RequiredFalseTextLinesThisRun both rendering as ``\u00AC``)."""
     seen: dict[str, str] = {}
     collisions: dict[str, list[str]] = {}
@@ -74,6 +74,6 @@ def test_edge_labels_are_unique_per_field():
         else:
             seen[label] = field
     assert not collisions, (
-        "HADES1_REQ_TYPE_EDGE_LABELS must be 1:1 (issue #29) but the "
+        "HADES1_REQ_TYPE_EDGE_LABELS must be 1:1 but the "
         f"following labels are shared by multiple fields: {collisions}"
     )

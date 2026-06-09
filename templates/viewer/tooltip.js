@@ -1,6 +1,6 @@
 // Custom mouse-following tooltip system.
 //
-// Replaces the browser's native ``title`` attribute (issue #45) so the
+// Replaces the browser's native ``title`` attribute so the
 // viewer can offer a tooltip surface with:
 //
 //   - consistent styling across browsers / OSes (the native ``title``

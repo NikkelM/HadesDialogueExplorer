@@ -16,11 +16,11 @@
     border-bottom: 1px dotted #88888866;
 }
 /* Search-dropdown affordances. ``renderSpeakerHtml`` and
-   ``renderSectionHtml`` are both used inside ``.search-item`` (issue
-   #59) so the owner pill and section pill get the same dotted-
-   underline + help-cursor hint as in the details panel. ``.search-item``
-   matches both the name-match rows and the text-match rows (which
-   also carry ``.search-item-text``). */
+   ``renderSectionHtml`` are both used inside ``.search-item`` so the
+   owner pill and section pill get the same dotted-underline +
+   help-cursor hint as in the details panel. ``.search-item`` matches
+   both the name-match rows and the text-match rows (which also carry
+   ``.search-item-text``). */
 .search-item .speaker-name[data-tooltip] {
     cursor: help;
     border-bottom: 1px dotted #88888866;

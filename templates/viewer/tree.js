@@ -139,7 +139,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         // short label (e.g. ``ANY LR`` for ``RequiredAnyTextLinesLastRun``).
         // Surface the full internal name + plain-English blurb on
         // hover so the chip is self-disambiguating on the most
-        // prominent shorthand surface in the viewer (issue #29).
+        // prominent shorthand surface in the viewer.
         // Skipped for unmapped types so the chip stays plain.
         const titleText = reqTypeTitleText(edgeType);
         if (titleText !== null) {

@@ -368,3 +368,127 @@ class TestTextProcessing:
         lines = result["NPC_X_01"]["InteractTextLineSets"]["Line01"]["dialogueLines"]
         assert len(lines) == 1
         assert lines[0]["text"] == "Hi."
+
+class TestExcludedTextlineNames:
+    """`EXCLUDED_TEXTLINE_NAMES` filters dev-test stubs that exist on
+    NPC entries but contain no playable content (no `Cue` / no
+    `Text`). Filtered post-extraction so the empty owner is dropped."""
+
+    def test_test_argument_is_filtered_out(self):
+        """`TestArgument` is Skelly's dev-test stub (NPCData.lua:24671);
+        it carries only `PlayOnce` / `AngleTowardTarget` /
+        `UseableOffSource` and has no spoken content. The NPC entry
+        contains nothing else, so filtering this stub must drop the
+        entire owner from the result."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Skelly_01 = {
+                InteractTextLineSets = {
+                    TestArgument = {
+                        PlayOnce = true,
+                        AngleTowardTarget = 390036,
+                        UseableOffSource = true,
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        assert "NPC_Skelly_01" not in result
+        assert result == {}
+
+    def test_excluded_textline_does_not_remove_sibling_textlines(self):
+        """The filter is per-textline-name, not per-owner: a sibling
+        line in the same section must survive."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Skelly_01 = {
+                InteractTextLineSets = {
+                    TestArgument = { PlayOnce = true },
+                    KeptLine = { { Text = "I survived." } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        assert "NPC_Skelly_01" in result
+        section = result["NPC_Skelly_01"]["InteractTextLineSets"]
+        assert "TestArgument" not in section
+        assert "KeptLine" in section
+
+
+class TestOwnerNameAliases:
+    """`OWNER_NAME_ALIASES` re-keys thin variant NPC entries onto a
+    canonical NPC so all of a character's dialogue accumulates under
+    one owner. Per-line implicit speakers also resolve to the
+    canonical id so the displayed speaker matches the owner."""
+
+    def test_alias_entry_extracted_under_canonical_owner(self):
+        """`NPC_Hades_Story_01` (annotated 'used in special scenes')
+        is aliased to `NPC_Hades_01`. Its textlines must appear
+        under the canonical owner, not the alias."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_Story_01 = {
+                InteractTextLineSets = {
+                    Hades_Flashback_DayNightJob_01 = {
+                        { Cue = "/VO/Hades_0825", Text = "Well? Tardy again." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        assert "NPC_Hades_Story_01" not in result
+        assert "NPC_Hades_01" in result
+        assert "Hades_Flashback_DayNightJob_01" in result["NPC_Hades_01"]["InteractTextLineSets"]
+
+    def test_alias_implicit_speaker_resolves_to_canonical_id(self):
+        """Lines without an explicit `Speaker = ...` must use the
+        canonical id as the fallback speaker, not the alias id."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_Story_01 = {
+                InteractTextLineSets = {
+                    L = { { Cue = "/VO/Hades_0825", Text = "x" } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        line = result["NPC_Hades_01"]["InteractTextLineSets"]["L"]
+        assert line["dialogueLines"][0]["speaker"] == "NPC_Hades_01"
+
+    def test_alias_explicit_speaker_preserved(self):
+        """An explicit `Speaker = "CharProtag"` (or any other id) on
+        a line within an aliased entry is preserved verbatim - only
+        the owner key and implicit speaker fallback get rewritten."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_Story_01 = {
+                InteractTextLineSets = {
+                    L = {
+                        { Cue = "/VO/Hades_0825", Text = "Boy." },
+                        { Cue = "/VO/ZagreusHome_2133", Speaker = "CharProtag", Text = "Father." }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        lines = result["NPC_Hades_01"]["InteractTextLineSets"]["L"]["dialogueLines"]
+        assert lines[0]["speaker"] == "NPC_Hades_01"
+        assert lines[1]["speaker"] == "CharProtag"
+
+    def test_alias_merges_with_existing_canonical_entry(self):
+        """When both the canonical NPC AND its alias define textlines
+        in the same file, sections must merge rather than the second
+        one overwriting the first. Original canonical lines and the
+        aliased lines both end up under the canonical owner."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_01 = {
+                InteractTextLineSets = {
+                    HouseLine01 = { { Cue = "/VO/Hades_0001", Text = "House." } }
+                }
+            },
+            NPC_Hades_Story_01 = {
+                InteractTextLineSets = {
+                    FlashbackLine01 = { { Cue = "/VO/Hades_0825", Text = "Flashback." } }
+                }
+            }
+        }'''
+        result = extract(lua)
+        assert "NPC_Hades_Story_01" not in result
+        section = result["NPC_Hades_01"]["InteractTextLineSets"]
+        assert "HouseLine01" in section
+        assert "FlashbackLine01" in section

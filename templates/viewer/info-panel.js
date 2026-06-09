@@ -62,7 +62,7 @@ export function renderInfo(name) {
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}
-            <span>Section: ${renderSectionHtml(tl.section)}</span>
+            <span>Type: ${renderSectionHtml(tl.section)}</span>
             <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
 

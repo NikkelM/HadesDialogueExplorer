@@ -7,7 +7,7 @@ sometimes under ``ObstacleData`` or other named maps). Singular
 ``TextLineSet`` sections also appear nested inside distance-trigger event
 configurations.
 
-Owner attribution model (issue #71):
+Owner attribution model:
 
   1. **Parametric collapse**: any path containing an idmap segment whose
      parent map is in :data:`IDMAP_PARENT_OWNER_OVERRIDES` collapses to a
@@ -54,8 +54,8 @@ IDMAP_PARENT_OWNER_OVERRIDES = {
 
 # Per-synthetic-id manual attribution map, keyed by the raw synthetic
 # owner name the walker produces (e.g. ``ObstacleData_487120``,
-# ``DeathAreaBedroom_StartUnthreadedEvents_1``). Source of truth: the
-# per-id attribution table in issue #71's comment. Each value:
+# ``DeathAreaBedroom_StartUnthreadedEvents_1``). Hand-maintained: each
+# entry was confirmed against the surrounding Lua context. Each value:
 #
 #   ``owner``    -> real speaker id (must exist in HADES1_SPEAKERS).
 #                   Used both as the owner key in the result dict AND as
@@ -74,9 +74,12 @@ IDMAP_PARENT_OWNER_OVERRIDES = {
 # Notes:
 #   - ``NPC_FurySister_01`` is the canonical id for the "house Megaera"
 #     speaker in this codebase (the boss form is ``Harpy``).
-#   - ``CharProtag`` is the canonical id for Zagreus; the issue comment
-#     wrote ``Zagreus`` as the display name but the speaker id is
-#     ``CharProtag`` (renders as "Zagreus" via HADES1_SPEAKERS).
+#   - ``CharProtag`` is the canonical id for Zagreus (renders as
+#     "Zagreus" via HADES1_SPEAKERS).
+#   - ``TrainingMelee`` is the canonical id for Skelly. He's structurally
+#     an enemy (training-dummy) definition in EnemyData.lua, where the
+#     bulk of his dialogue lives; all his content is consolidated under
+#     that single owner so the viewer surfaces one Skelly entry.
 #   - Unmapped synthetic owners (e.g. a future ``ObstacleData_<newid>``)
 #     keep their raw name rather than silently defaulting to Storyteller;
 #     missing attributions surface visibly in the viewer rather than
@@ -84,9 +87,9 @@ IDMAP_PARENT_OWNER_OVERRIDES = {
 SYNTHETIC_OWNER_OVERRIDES = {
     # ObstacleData_<id>: trophy plinths + flashback obstacle + badge seller.
     "ObstacleData_310036": {"owner": "Storyteller"},
-    "ObstacleData_487120": {"owner": "NPC_Skelly_01"},
-    "ObstacleData_487421": {"owner": "NPC_Skelly_01"},
-    "ObstacleData_487422": {"owner": "NPC_Skelly_01"},
+    "ObstacleData_487120": {"owner": "TrainingMelee"},
+    "ObstacleData_487421": {"owner": "TrainingMelee"},
+    "ObstacleData_487422": {"owner": "TrainingMelee"},
     "ObstacleData_555853": {"owner": "CharProtag"},
     # DeathAreaBedroom_StartUnthreadedEvents_<n>: bedroom-scene triggers.
     "DeathAreaBedroom_StartUnthreadedEvents_1": {"owner": "NPC_FurySister_01"},
@@ -136,7 +139,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
         return result
 
     for synthetic_owner, owner_table, path_default_speaker, ancestor_reqs in _walk_owners(root):
-        # Per-id manual attribution (issue #71). When the walker yields a
+        # Per-id manual attribution. When the walker yields a
         # synthetic owner that the override map recognises, re-key the
         # entry under the real owner AND use the real owner as the
         # default speaker for any line that doesn't declare its own
@@ -184,8 +187,8 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
                     tl.setdefault("partner", partner)
 
         # Defensively merge instead of overwriting: multiple synthetic
-        # owners can collapse to the same real owner (e.g. four
-        # Skelly trophy plinths under ``NPC_Skelly_01``), so accumulate
+        # owners can collapse to the same real owner (e.g. three Skelly
+        # trophy plinths under ``TrainingMelee``), so accumulate
         # textlines per-section rather than overwriting the entry.
         entry = result.setdefault(owner_name, {"source": source_label})
         for section_key, tl_map in sections.items():
@@ -236,7 +239,7 @@ def _walk_owners(node, path=(), ancestor_reqs=None):
         # :data:`IDMAP_PARENT_OWNER_OVERRIDES` (e.g. InspectPoints), or
         # (b) emit a raw synthetic ``<parent_name>_<id>`` name that
         # :data:`SYNTHETIC_OWNER_OVERRIDES` can then re-map to a real
-        # owner. See issue #71 for the two-tier attribution model.
+        # owner. See the module docstring for the two-tier attribution model.
         if k.isdigit() and parent_name is not None:
             yield from _walk_owners(v, path + (("idmap", k, parent_name),), ancestor_reqs)
         else:

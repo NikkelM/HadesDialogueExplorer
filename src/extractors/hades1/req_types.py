@@ -68,7 +68,7 @@ HADES1_REQ_TYPE_LABELS = {
 # Full enumeration: every entry in H1's ``TEXTLINE_REQ_FIELDS`` and
 # ``TEXTLINE_REQ_FIELDS_COUNT`` gets a DISTINCT explicit label so the
 # viewer's pure lookup never collapses two semantically different
-# field types onto the same glyph (issue #29). Pure lookup with no
+# field types onto the same glyph. Pure lookup with no
 # JS heuristics; ``getEdgeLabel`` falls back to ``ALL`` only for
 # genuinely unknown types not present in this map.
 #

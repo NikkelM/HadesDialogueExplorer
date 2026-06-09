@@ -18,9 +18,9 @@ class TestBasicExtraction:
 
     def test_inspect_point_collapses_to_storyteller_owner(self):
         """Inspect-point entries collapse under the ``Storyteller`` owner
-        (the Narrator) instead of producing per-id synthetic owners. See
-        issue #71 for rationale: the synthetic ``InspectPoint_<id>``
-        owner had no presentation value and polluted the owner count."""
+        (the Narrator) instead of producing per-id synthetic owners. The
+        synthetic ``InspectPoint_<id>`` owner had no presentation value
+        and polluted the owner count."""
         lua = '''DeathLoopData = {
             DeathArea = {
                 InspectPoints = {
@@ -79,8 +79,8 @@ class TestNonInspectPointOwners:
     """Numeric-id entries under non-InspectPoints parent maps (e.g.
     ``ObstacleData``) produce a raw synthetic ``<parent>_<id>`` owner
     by default. :data:`SYNTHETIC_OWNER_OVERRIDES` then re-keys known
-    ids under their real speakers (see issue #71's per-id attribution
-    table). Unmapped synthetic owners keep their raw name."""
+    ids under their real speakers. Unmapped synthetic owners keep
+    their raw name."""
 
     def test_mapped_obstacle_data_collapses_to_storyteller(self):
         """``ObstacleData_310036`` (flashback obstacle) is mapped to
@@ -105,10 +105,11 @@ class TestNonInspectPointOwners:
         assert line["dialogueLines"][0]["speaker"] == "Storyteller"
 
     def test_mapped_obstacle_data_attributes_to_skelly(self):
-        """``ObstacleData_487120`` (trophy plinth) is mapped to Skelly;
-        the override must drive both the owner key AND the default
-        speaker fallback so Skelly's TrophyQuest_* lines without an
-        explicit ``Speaker = ...`` aren't misattributed to Storyteller."""
+        """``ObstacleData_487120`` (trophy plinth) is mapped to Skelly's
+        ``TrainingMelee`` enemy id; the override must drive both the
+        owner key AND the default speaker fallback so Skelly's
+        TrophyQuest_* lines without an explicit ``Speaker = ...`` aren't
+        misattributed to Storyteller."""
         lua = '''DeathLoopData = {
             DeathArea = {
                 ObstacleData = {
@@ -121,11 +122,12 @@ class TestNonInspectPointOwners:
             }
         }'''
         result = extract(lua)
-        assert "NPC_Skelly_01" in result
+        assert "TrainingMelee" in result
+        assert "NPC_Skelly_01" not in result
         assert "ObstacleData_487120" not in result
-        line = result["NPC_Skelly_01"]["OnUsedTextLineSets"]["TrophyQuest_GoldUnlocked_01"]
+        line = result["TrainingMelee"]["OnUsedTextLineSets"]["TrophyQuest_GoldUnlocked_01"]
         # Implicit-speaker line falls back to the overridden owner, not Storyteller.
-        assert line["dialogueLines"][0]["speaker"] == "NPC_Skelly_01"
+        assert line["dialogueLines"][0]["speaker"] == "TrainingMelee"
 
     def test_mapped_obstacle_data_attributes_to_zagreus(self):
         """``ObstacleData_555853`` (badge seller) is mapped to Zagreus
@@ -174,7 +176,7 @@ class TestNonInspectPointOwners:
     def test_multiple_skelly_obstacles_accumulate_under_one_owner(self):
         """Many-into-one collapse via the override map: three distinct
         Skelly ObstacleData ids must accumulate under a single
-        ``NPC_Skelly_01`` owner without their textlines overwriting
+        ``TrainingMelee`` owner without their textlines overwriting
         each other (relies on the per-section setdefault merge)."""
         lua = '''DeathLoopData = {
             DeathArea = {
@@ -186,8 +188,8 @@ class TestNonInspectPointOwners:
             }
         }'''
         result = extract(lua)
-        assert set(result.keys()) == {"NPC_Skelly_01"}
-        section = result["NPC_Skelly_01"]["OnUsedTextLineSets"]
+        assert set(result.keys()) == {"TrainingMelee"}
+        section = result["TrainingMelee"]["OnUsedTextLineSets"]
         assert "TrophyQuest_GoldUnlocked_01" in section
         assert "TrophyQuest_SilverUnlocked_01" in section
         assert "TrophyQuest_BronzeUnlocked_01" in section
@@ -214,7 +216,7 @@ class TestNonInspectPointOwners:
     def test_multiple_inspect_points_collapse_and_accumulate_under_storyteller(self):
         """Many-into-one parametric collapse: two distinct inspect-point
         ids must accumulate under the single Storyteller owner without
-        their textlines overwriting each other. See issue #71."""
+        their textlines overwriting each other."""
         lua = '''DeathLoopData = {
             AreaA = {
                 InspectPoints = {
@@ -265,8 +267,7 @@ class TestPathDerivedOwnerOverrides:
     ``DeathArea_StartUnthreadedEvents_4`` for textlines inside
     distance-trigger events) also flow through
     :data:`SYNTHETIC_OWNER_OVERRIDES`. Bedroom and ending scenes are
-    real-character dialogues hiding behind a synthetic container name
-    (issue #71)."""
+    real-character dialogues hiding behind a synthetic container name."""
 
     def test_path_derived_owner_resolves_to_persephone(self):
         """``DeathArea_StartUnthreadedEvents_4`` is the Ending01 trigger;
@@ -385,7 +386,7 @@ class TestPathDerivedOwnerOverrides:
             }
         }'''
         result = extract(lua)
-        line = result["NPC_Skelly_01"]["OnUsedTextLineSets"]["TrophyQuest_GoldUnlocked_01"]
+        line = result["TrainingMelee"]["OnUsedTextLineSets"]["TrophyQuest_GoldUnlocked_01"]
         assert line["dialogueLines"][0]["speaker"] == "NPC_Hades_01"
 
 

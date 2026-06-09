@@ -169,7 +169,6 @@ class TestKnownVariantPairsAreDistinct:
         ("NPC_Cerberus_01", "NPC_Cerberus_Field_01"),
         ("NPC_Orpheus_01", "NPC_Orpheus_Story_01"),
         ("NPC_Achilles_01", "NPC_Achilles_Story_01"),
-        ("NPC_Hades_01", "NPC_Hades_Story_01"),
         ("NPC_Hades_01", "Hades"),               # NPC vs boss
         ("NPC_Nyx_01", "NPC_Nyx_Story_01"),
         ("NPC_Persephone_01", "NPC_Persephone_Home_01"),
@@ -267,7 +266,6 @@ class TestKnownDescriptions:
 
     EXPECTED = {
         "NPC_Hades_01": "God of the Dead",
-        "NPC_Hades_Story_01": "God of the Dead",
         "NPC_Nyx_01": "Night Incarnate",
         "NPC_Achilles_01": "Forgotten Hero",
         "NPC_Orpheus_01": "Court Musician",

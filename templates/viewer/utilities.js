@@ -58,7 +58,7 @@ export function displayName(id) {
 // via a multi-line ``data-tooltip`` popup (rendered by the floating
 // tooltip layer in ``tooltip.js``).
 //
-// Tooltip format (issue #68):
+// Tooltip format:
 //   friendly + description:    "Friendly (internal id)\nDescription"
 //   friendly without quip:     "Friendly (internal id)"
 //   no friendly + description: "Description"          (id already visible)

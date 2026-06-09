@@ -1,7 +1,7 @@
 /* Custom mouse-following tooltip element.
    Hosts the floating popup rendered by the JS layer in
    ``templates/viewer/tooltip.js`` for any element carrying a
-   ``data-tooltip`` attribute (issue #45). One element appended to
+   ``data-tooltip`` attribute. One element appended to
    ``<body>`` at boot, repositioned via inline ``style.left``/``top``
    to follow the cursor, toggled via the ``.visible`` class.
 

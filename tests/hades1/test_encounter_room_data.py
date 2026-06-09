@@ -261,7 +261,13 @@ class TestCueSpeakerResolver:
 
 
 class TestForcedTextLines:
-    def test_forced_textlines_extracted_with_room_owner_and_poseidon_speaker(self):
+    def test_forced_textlines_extracted_with_poseidon_owner_override(self):
+        """``PoseidonWrathIntro01`` is in ``TEXTLINE_OWNER_OVERRIDES``
+        so the rerouting moves it onto ``PoseidonUpgrade`` (where all
+        his other dialogue lives, from LootData). The ancestor
+        requirements must still be lifted onto the rerouted textline.
+        The per-cue resolver still attributes the displayed speaker
+        as ``NPC_Poseidon_01``."""
         result = extract('''RoomSetData.Tartarus = {
             RoomOpening = {
                 ForcedRewards = {
@@ -283,8 +289,9 @@ class TestForcedTextLines:
                 }
             }
         }''', source_file="RoomDataTartarus.lua")
-        assert "RoomOpening" in result
-        tl = result["RoomOpening"]["ForcedTextLines"]["PoseidonWrathIntro01"]
+        assert "RoomOpening" not in result
+        assert "PoseidonUpgrade" in result
+        tl = result["PoseidonUpgrade"]["ForcedTextLines"]["PoseidonWrathIntro01"]
         assert tl["dialogueLines"][0]["speaker"] == "NPC_Poseidon_01"
         assert tl["requirements"]["RequiredTextLines"] == ["PoseidonFirstPickUp"]
         assert tl["requirements"]["RequiredFalseTextLines"] == ["PoseidonWrathIntro01"]
@@ -349,3 +356,350 @@ class TestWithinOwnerCollision:
             "The infernal wares of the boatman.",
         ]
 
+
+class TestInspectPointCollapseAndExcludedTextlines:
+    """RoomData / EncounterData parallel of the DeathLoopData behaviour:
+    textlines inside a ``InspectPoints[<id>]`` idmap container collapse
+    to ``Storyteller`` (the Narrator) instead of taking the
+    room/encounter name as owner. Non-InspectPoint textlines in the
+    same room keep the room name. Also covers the
+    ``EXCLUDED_TEXTLINE_NAMES`` post-extraction filter used to drop the
+    unreachable ``TestNPCs`` dev-test cue."""
+
+    def test_room_inspect_point_textlines_collapse_to_storyteller(self):
+        """A first-inspect ambient narration line in a room's
+        ``InspectPoints[<id>]`` should land under ``Storyteller``, not
+        under the room name (mirrors DeathLoopData behaviour)."""
+        result = extract('''RoomSetData.Tartarus = {
+            A_Boss01 = {
+                InspectPoints = {
+                    [510795] = {
+                        PlayOnce = true,
+                        InteractTextLineSets = {
+                            A_Boss_01_Inspect01 = {
+                                { Cue = "/VO/Storyteller_0411",
+                                  Text = "The Erinyes; trusted sentinels of Lord Hades." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert "Storyteller" in result
+        assert "A_Boss01" not in result
+        line = result["Storyteller"]["InteractTextLineSets"]["A_Boss_01_Inspect01"]
+        assert line["dialogueLines"][0]["speaker"] == "Storyteller"
+
+    def test_room_inspect_point_implicit_speaker_falls_back_to_storyteller(self):
+        """An InspectPoint cue without an explicit ``Speaker`` AND
+        without a recognised cue-path prefix should use Storyteller as
+        the fallback speaker (the collapsed owner), not the room name."""
+        result = extract('''RoomSetData.Tartarus = {
+            SomeRoom = {
+                InspectPoints = {
+                    [100] = {
+                        InteractTextLineSets = {
+                            L1 = { { Text = "Ambient narration." } }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert "Storyteller" in result
+        line = result["Storyteller"]["InteractTextLineSets"]["L1"]
+        assert line["dialogueLines"][0]["speaker"] == "Storyteller"
+
+    def test_room_forced_textlines_keep_room_owner_when_no_override(self):
+        """``ForcedTextLines`` under ``ForcedRewards`` (not under
+        ``InspectPoints``) keep the room name as owner when no
+        per-textline override matches. The room name remains as scene
+        context for the boon-offering event itself; the per-cue
+        speaker resolver still attributes individual lines correctly."""
+        result = extract('''RoomSetData.Tartarus = {
+            RoomOpening = {
+                ForcedRewards = {
+                    {
+                        Name = "Boon",
+                        ForcedTextLines = {
+                            GenericForcedLine01 = {
+                                { Cue = "/VO/Poseidon_0148", Text = "Nephew!" }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        # Owner stays as the room name (not collapsed to Storyteller).
+        assert "RoomOpening" in result
+        assert "Storyteller" not in result
+        line = result["RoomOpening"]["ForcedTextLines"]["GenericForcedLine01"]
+        # Per-cue speaker resolution still gives Poseidon.
+        assert line["dialogueLines"][0]["speaker"] == "NPC_Poseidon_01"
+
+    def test_mixed_room_splits_inspect_points_and_forced_textlines(self):
+        """Same-room split: ``RoomOpening`` (or similar) hosting both
+        inspect-point Storyteller lines AND non-inspect-point speaker
+        lines should produce two owners - Storyteller for the inspects
+        and the room name for the rest. Uses a non-overridden textline
+        name so the rerouting map doesn't move the ForcedRewards line."""
+        result = extract('''RoomSetData.Tartarus = {
+            RoomOpening = {
+                InspectPoints = {
+                    [200] = {
+                        InteractTextLineSets = {
+                            OpeningFirstInspect = {
+                                { Cue = "/VO/Storyteller_0001",
+                                  Text = "The Underworld." }
+                            }
+                        }
+                    }
+                },
+                ForcedRewards = {
+                    {
+                        Name = "Boon",
+                        ForcedTextLines = {
+                            GenericForcedLine02 = {
+                                { Cue = "/VO/Poseidon_0139", Text = "Listen up." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert set(result.keys()) == {"Storyteller", "RoomOpening"}
+        assert "OpeningFirstInspect" in result["Storyteller"]["InteractTextLineSets"]
+        assert "GenericForcedLine02" in result["RoomOpening"]["ForcedTextLines"]
+
+    def test_multiple_rooms_inspect_points_accumulate_under_storyteller(self):
+        """Cross-room collapse: inspect-point textlines from different
+        rooms all land under the single Storyteller owner without
+        overwriting each other."""
+        result = extract('''RoomSetData.Tartarus = {
+            A_Boss01 = {
+                InspectPoints = {
+                    [1] = { InteractTextLineSets = {
+                        Inspect_A = { { Cue = "/VO/Storyteller_0001", Text = "a" } } } }
+                }
+            },
+            B_Intro = {
+                InspectPoints = {
+                    [2] = { InteractTextLineSets = {
+                        Inspect_B = { { Cue = "/VO/Storyteller_0002", Text = "b" } } } }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert set(result.keys()) == {"Storyteller"}
+        section = result["Storyteller"]["InteractTextLineSets"]
+        assert "Inspect_A" in section
+        assert "Inspect_B" in section
+
+    def test_array_form_inspect_points_keep_room_owner(self):
+        """Backward-compatibility: the array-form ``InspectPoints = { {
+        ObjectId = ..., ... } }`` (used in some test fixtures) does NOT
+        match the idmap collapse rule because the entries are positional
+        array elements, not numeric-key map entries. These keep the
+        room name to preserve the existing within-owner-collision
+        behaviour."""
+        result = extract('''RoomSetData.Tartarus = {
+            A_Shop01 = {
+                InspectPoints = {
+                    { ObjectId = 390000, InteractTextLineSets = {
+                        L = { { Cue = "/VO/Storyteller_0100", Text = "x" } } } }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert "A_Shop01" in result
+        assert "Storyteller" not in result
+
+    def test_excluded_textline_is_filtered_out(self):
+        """``PersephoneVOTest1`` (the only textline in the unreachable
+        ``TestNPCs`` dev-test room) is in ``EXCLUDED_TEXTLINE_NAMES``
+        and must be dropped post-extraction. The InspectPoint collapse
+        rule means it would otherwise land under ``Storyteller``."""
+        result = extract('''RoomSetData.Tartarus = {
+            TestNPCs = {
+                InspectPoints = {
+                    [370000] = {
+                        InteractTextLineSets = {
+                            PersephoneVOTest1 = {
+                                { Cue = "/VO/Persephone_0018", Text = "Letter." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomData.lua")
+        # Whole owner is dropped because its only textline was filtered.
+        assert "TestNPCs" not in result
+        assert "Storyteller" not in result
+        assert result == {}
+
+    def test_excluded_textline_does_not_remove_sibling_textlines(self):
+        """The filter is per-textline-name, not per-owner: a sibling
+        line in the same section must survive."""
+        result = extract('''RoomSetData.Tartarus = {
+            SomeRoom = {
+                InspectPoints = {
+                    [42] = {
+                        InteractTextLineSets = {
+                            PersephoneVOTest1 = { { Text = "filter me" } },
+                            KeptLine = { { Text = "keep me" } }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        section = result["Storyteller"]["InteractTextLineSets"]
+        assert "PersephoneVOTest1" not in section
+        assert "KeptLine" in section
+
+
+class TestTextlineOwnerOverrides:
+    """Per-textline-name overrides reroute structurally-synthetic
+    encounter textlines onto a real character owner with the
+    appropriate partner injected (mirrors the explicit
+    ``Partner = "..."`` field NPCData.lua uses on xWithY pairs)."""
+
+    def test_megaera_with_sisyphus_routes_to_sisyphus_with_meg_partner(self):
+        """``Story_Sisyphus_01`` is the structural encounter wrapper;
+        ``MegaeraWithSisyphus01`` is a Sisyphus-led conversation. The
+        override moves the textline under ``NPC_Sisyphus_01`` and
+        injects ``NPC_FurySister_01`` (house Meg) as the partner."""
+        result = extract('''EncounterData = {
+            Story_Sisyphus_01 = {
+                StartRoomUnthreadedEvents = {
+                    { Args = { AddEncounterEvent = { Args = {
+                        TextLineSet = {
+                            MegaeraWithSisyphus01 = {
+                                { Cue = "/VO/Sisyphus_0001", Text = "Hi Meg." },
+                                { Cue = "/VO/MegaeraField_0001", Text = "Hey Sis." }
+                            }
+                        }
+                    } } } }
+                }
+            }
+        }''')
+        assert "Story_Sisyphus_01" not in result
+        assert "NPC_Sisyphus_01" in result
+        tl = result["NPC_Sisyphus_01"]["TextLineSet"]["MegaeraWithSisyphus01"]
+        assert tl["partner"] == "NPC_FurySister_01"
+
+    def test_thanatos_with_sisyphus_routes_to_sisyphus_with_than_partner(self):
+        result = extract('''EncounterData = {
+            Story_Sisyphus_01 = {
+                StartRoomUnthreadedEvents = {
+                    { Args = { AddEncounterEvent = { Args = {
+                        TextLineSet = {
+                            ThanatosWithSisyphus02 = {
+                                { Cue = "/VO/Sisyphus_0010", Text = "Hello Than." }
+                            }
+                        }
+                    } } } }
+                }
+            }
+        }''')
+        assert "NPC_Sisyphus_01" in result
+        tl = result["NPC_Sisyphus_01"]["TextLineSet"]["ThanatosWithSisyphus02"]
+        assert tl["partner"] == "NPC_Thanatos_01"
+
+    def test_override_preserves_non_rerouted_siblings_under_original_owner(self):
+        """A textline NOT in the override map should stay under the
+        original encounter owner even if rerouted siblings exist in the
+        same section."""
+        result = extract('''EncounterData = {
+            Story_Sisyphus_01 = {
+                StartRoomUnthreadedEvents = {
+                    { Args = { AddEncounterEvent = { Args = {
+                        TextLineSet = {
+                            MegaeraWithSisyphus01 = {
+                                { Cue = "/VO/Sisyphus_0001", Text = "Hi." }
+                            },
+                            UnrelatedSisyphusLine = {
+                                { Cue = "/VO/Sisyphus_0099", Text = "Solo line." }
+                            }
+                        }
+                    } } } }
+                }
+            }
+        }''')
+        assert "NPC_Sisyphus_01" in result
+        assert "MegaeraWithSisyphus01" in result["NPC_Sisyphus_01"]["TextLineSet"]
+        # The non-overridden sibling stays under the structural owner.
+        assert "Story_Sisyphus_01" in result
+        assert "UnrelatedSisyphusLine" in result["Story_Sisyphus_01"]["TextLineSet"]
+
+    def test_override_drops_empty_original_owner(self):
+        """When every textline under a structural owner is rerouted,
+        no empty entry should leak into the result for that owner."""
+        result = extract('''EncounterData = {
+            Story_Sisyphus_01 = {
+                StartRoomUnthreadedEvents = {
+                    { Args = { AddEncounterEvent = { Args = {
+                        TextLineSet = {
+                            MegaeraWithSisyphus01 = { { Text = "A" } },
+                            MegaeraWithSisyphus02 = { { Text = "B" } },
+                            ThanatosWithSisyphus01 = { { Text = "C" } }
+                        }
+                    } } } }
+                }
+            }
+        }''')
+        assert "Story_Sisyphus_01" not in result
+        assert set(result["NPC_Sisyphus_01"]["TextLineSet"].keys()) == {
+            "MegaeraWithSisyphus01",
+            "MegaeraWithSisyphus02",
+            "ThanatosWithSisyphus01",
+        }
+
+    def test_override_lifts_ancestor_requirements_onto_rerouted_textline(self):
+        """Rerouted textlines must still receive the encounter event's
+        ``GameStateRequirements`` (gating they'd otherwise lose when
+        moved out of the structural encounter owner)."""
+        result = extract('''EncounterData = {
+            Story_Sisyphus_01 = {
+                StartRoomUnthreadedEvents = {
+                    { Args = { AddEncounterEvent = {
+                        GameStateRequirements = {
+                            RequiredTextLines = { "PrereqLine01" }
+                        },
+                        Args = {
+                            TextLineSet = {
+                                MegaeraWithSisyphus03 = { { Text = "Gated." } }
+                            }
+                        }
+                    } } }
+                }
+            }
+        }''')
+        tl = result["NPC_Sisyphus_01"]["TextLineSet"]["MegaeraWithSisyphus03"]
+        assert tl["requirements"].get("RequiredTextLines") == ["PrereqLine01"]
+
+    def test_poseidon_forced_textlines_route_to_poseidon_owner(self):
+        """``PoseidonFishQuest01`` and ``PoseidonWrathIntro01`` live
+        under ``RoomOpening``'s ``ForcedRewards`` (not ``InspectPoints``)
+        so they bypass the Storyteller collapse. They're solo Poseidon
+        lines, so the override routes them onto ``PoseidonUpgrade``
+        (where his other dialogue from LootData accumulates)."""
+        result = extract('''RoomSetData.Tartarus = {
+            RoomOpening = {
+                ForcedRewards = {
+                    {
+                        Name = "Boon",
+                        ForcedTextLines = {
+                            PoseidonFishQuest01 = {
+                                { Cue = "/VO/Poseidon_0148", Text = "Nephew!" }
+                            },
+                            PoseidonWrathIntro01 = {
+                                { Cue = "/VO/Poseidon_0139", Text = "Listen up." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        assert "RoomOpening" not in result
+        assert "PoseidonUpgrade" in result
+        sect = result["PoseidonUpgrade"]["ForcedTextLines"]
+        assert "PoseidonFishQuest01" in sect
+        assert "PoseidonWrathIntro01" in sect
+        assert sect["PoseidonFishQuest01"].get("partner") is None
