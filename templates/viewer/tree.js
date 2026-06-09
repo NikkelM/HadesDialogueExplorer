@@ -225,31 +225,46 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
 
     node.appendChild(label);
 
-    // Click handler
-    label.addEventListener('click', () => {
-        if (!expandable) {
-            renderInfo(name);
-            return;
-        }
-        let childContainer = label.nextElementSibling;
-        if (childContainer && childContainer.classList.contains('tree-children')) {
-            // Toggle existing children
-            const isExpanded = childContainer.classList.contains('expanded');
-            childContainer.classList.toggle('expanded');
-            toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-            if (!isExpanded) ensureExpandedContentVisible(childContainer);
-        } else {
-            // Lazily create children
-            childContainer = document.createElement('div');
-            childContainer.className = 'tree-children expanded';
-            const newPath = new Set(ancestorPath);
-            newPath.add(name);
-            const kids = getChildren(name, direction);
-            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
-            node.appendChild(childContainer);
-            toggle.textContent = '\u25BC';
-            ensureExpandedContentVisible(childContainer);
-        }
+    // Click handlers: the toggle chevron expands / collapses the row's
+    // children only; everywhere else on the row selects the textline in
+    // the details panel. Keeping the two intents -- "show me what's
+    // under this node" vs. "make this node the focus" -- on separate
+    // hit targets means exploring the tree structure no longer
+    // disturbs the details-panel context. Double-clicking the row
+    // (anywhere, including the toggle) re-roots the panels.
+    if (expandable) {
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let childContainer = label.nextElementSibling;
+            if (childContainer && childContainer.classList.contains('tree-children')) {
+                // Toggle existing children
+                const isExpanded = childContainer.classList.contains('expanded');
+                childContainer.classList.toggle('expanded');
+                toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+                if (!isExpanded) ensureExpandedContentVisible(childContainer);
+            } else {
+                // Lazily create children
+                childContainer = document.createElement('div');
+                childContainer.className = 'tree-children expanded';
+                const newPath = new Set(ancestorPath);
+                newPath.add(name);
+                const kids = getChildren(name, direction);
+                appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
+                node.appendChild(childContainer);
+                toggle.textContent = '\u25BC';
+                ensureExpandedContentVisible(childContainer);
+            }
+        });
+    }
+
+    label.addEventListener('click', (e) => {
+        // Defensive: skip when the click landed inside an active
+        // toggle. Its own handler already calls stopPropagation, so
+        // this guard mainly protects against future child elements
+        // inside `.toggle`. On leaf rows the toggle has no handler
+        // attached and is just a decorative mid-dot, so we still want
+        // clicks on it to select like the rest of the row body.
+        if (expandable && e.target.closest('.toggle')) return;
         renderInfo(name);
     });
 

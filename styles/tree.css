@@ -57,7 +57,14 @@
 .tree-label:hover { background: #0f3460; }
 .tree-label.active { background: #0f3460; color: #e94560; }
 .tree-label .toggle {
-    width: 16px;
+    /* Generous click target so the chevron isn't a pixel-precision
+       target. The arrow stays centered horizontally via `text-align`
+       and vertically via the parent's `align-items: center`. Bumping
+       padding here only is fine because non-expandable rows render a
+       decorative mid-dot (`\u00B7`) in the same span, so the
+       reservation stays consistent across rows. */
+    min-width: 24px;
+    padding: 2px 4px;
     text-align: center;
     color: #888;
     font-size: 11px;
