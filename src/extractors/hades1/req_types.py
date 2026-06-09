@@ -64,34 +64,61 @@ HADES1_REQ_TYPE_LABELS = {
     "MaxRunsSinceAnyTextLines":       "Max runs since played (ANY)",
 }
 
-# Short chips rendered next to each child in the dependency tree. Full
-# enumeration: every entry in H1's ``TEXTLINE_REQ_FIELDS`` and
-# ``TEXTLINE_REQ_FIELDS_COUNT`` gets an explicit label so the viewer can
-# do a pure lookup with no JS heuristics. Symbols: ``\u00AC`` is the
-# logical NOT sign, used as a compact "must not" badge.
+# Short chips rendered next to each child in the dependency tree.
+# Full enumeration: every entry in H1's ``TEXTLINE_REQ_FIELDS`` and
+# ``TEXTLINE_REQ_FIELDS_COUNT`` gets a DISTINCT explicit label so the
+# viewer's pure lookup never collapses two semantically different
+# field types onto the same glyph (issue #29). Pure lookup with no
+# JS heuristics; ``getEdgeLabel`` falls back to ``ALL`` only for
+# genuinely unknown types not present in this map.
+#
+# Symbol legend:
+#   - ``ALL``     - every listed textline must have played (conjunction)
+#   - ``ANY``     - at least one of the listed textlines must have played
+#   - ``\u00AC``      - logical NOT: none of the listed textlines may have played
+#   - ``\u2265 ANY``  - count: at least N of the listed textlines must have played
+#   - ``\u2264 ANY``  - count: at most N of the listed textlines must have played
+#   - ``+R ANY``  - cooldown: at least N runs since any of them was played
+#   - ``-R ANY``  - cooldown: at most N runs since any of them was played
+#
+# Scope suffix legend (appended to the quantifier with a space):
+#   - ``TR``      - this run only (subset of save-wide)
+#   - ``LR``      - last run only (the run before the current one)
+#   - ``R``       - this room only (subset of this run)
+#   - ``Q``       - queued (assigned + waiting, not yet played)
+#   - ``*``       - ``RequiredAnyOtherTextLines`` second disjunctive group
+#                   (logically identical to ``ANY`` but a separate
+#                   field, so the chip is starred to distinguish it
+#                   when both fields coexist on one dialogue)
+#
+# Save-wide variants carry no scope suffix (``ALL`` / ``ANY`` /
+# ``\u00AC``); narrower scopes append the suffix (``ALL TR``, ``ANY LR``,
+# ``\u00AC R``, ...). The full internal field name + plain-English blurb
+# is always reachable on hover via the tooltip wired in
+# ``tree.js`` (per-row chip) and ``tree-renderers.js`` (group header).
 HADES1_REQ_TYPE_EDGE_LABELS = {
     "RequiredTextLines":              "ALL",
-    "RequiredTextLinesThisRun":       "ALL",
-    "RequiredTextLinesLastRun":       "ALL",
-    "RequiredTextLinesThisRoom":      "ALL",
-    "RequiredQueuedTextLines":        "ALL",
+    "RequiredTextLinesThisRun":       "ALL TR",
+    "RequiredTextLinesLastRun":       "ALL LR",
+    "RequiredTextLinesThisRoom":      "ALL R",
+    "RequiredQueuedTextLines":        "ALL Q",
 
     "RequiredAnyTextLines":           "ANY",
-    "RequiredAnyOtherTextLines":      "ANY",
-    "RequiredAnyTextLinesThisRun":    "ANY",
-    "RequiredAnyTextLinesLastRun":    "ANY",
-    "RequiredAnyQueuedTextLines":     "ANY",
+    "RequiredAnyOtherTextLines":      "ANY*",
+    "RequiredAnyTextLinesThisRun":    "ANY TR",
+    "RequiredAnyTextLinesLastRun":    "ANY LR",
+    "RequiredAnyQueuedTextLines":     "ANY Q",
 
     "RequiredFalseTextLines":         "\u00AC",
-    "RequiredFalseTextLinesThisRun":  "\u00AC",
-    "RequiredFalseTextLinesLastRun":  "\u00AC",
-    "RequiredFalseTextLinesThisRoom": "\u00AC",
-    "RequiredFalseQueuedTextLines":   "\u00ACQ",
+    "RequiredFalseTextLinesThisRun":  "\u00AC TR",
+    "RequiredFalseTextLinesLastRun":  "\u00AC LR",
+    "RequiredFalseTextLinesThisRoom": "\u00AC R",
+    "RequiredFalseQueuedTextLines":   "\u00AC Q",
 
-    "RequiredMinAnyTextLines":        "ANY",
-    "RequiredMaxAnyTextLines":        "ANY",
-    "MinRunsSinceAnyTextLines":       "ANY",
-    "MaxRunsSinceAnyTextLines":       "ANY",
+    "RequiredMinAnyTextLines":        "\u2265 ANY",
+    "RequiredMaxAnyTextLines":        "\u2264 ANY",
+    "MinRunsSinceAnyTextLines":       "+R ANY",
+    "MaxRunsSinceAnyTextLines":       "-R ANY",
 }
 
 # Plain-English explanations shown as the second line of the hover

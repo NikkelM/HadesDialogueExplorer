@@ -19,6 +19,7 @@ import {
 import {
     getEdgeClass,
     getEdgeLabel,
+    reqTypeTitleText,
     unresolvedCategoryFor,
     renderTierBadgeHtml,
 } from './utilities.js';
@@ -134,6 +135,16 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         const edge = document.createElement('span');
         edge.className = `edge-type ${getEdgeClass(edgeType)}`;
         edge.textContent = getEdgeLabel(edgeType);
+        // Per-row edge chips collapse the field semantics into a
+        // short label (e.g. ``ANY LR`` for ``RequiredAnyTextLinesLastRun``).
+        // Surface the full internal name + plain-English blurb on
+        // hover so the chip is self-disambiguating on the most
+        // prominent shorthand surface in the viewer (issue #29).
+        // Skipped for unmapped types so the chip stays plain.
+        const titleText = reqTypeTitleText(edgeType);
+        if (titleText !== null) {
+            edge.dataset.tooltip = titleText;
+        }
         label.appendChild(edge);
     }
 
