@@ -129,7 +129,9 @@ export function renderInfo(name) {
         if (meta && typeof meta === 'object' && 'Count' in meta) {
             countSuffix = `: ${escapeHtml(String(meta.Count))}`;
         }
-        html += `<div class="req-section req-type-${type}"><h4>${renderReqTypeHtml(type)}${countSuffix}</h4>`;
+        html += `<div class="req-section req-type-${type}">`
+              + `<h4><span class="toggle">\u25BC</span>${renderReqTypeHtml(type)}${countSuffix}</h4>`
+              + `<div class="req-section-children expanded">`;
         const sources = (tl.requirementSources && tl.requirementSources[type]) || [];
         let i = 0;
         while (i < refs.length) {
@@ -139,20 +141,22 @@ export function renderInfo(name) {
                 while (j < refs.length && (sources[j] || null) === src) j++;
                 html += `<div class="gamedata-group-inline">`
                       + `<div class="gamedata-group-header-inline">`
+                      + `<span class="toggle">\u25BC</span>`
                       + `<span class="gamedata-group-label">${escapeHtml(src)}</span>`
                       + `<span class="gamedata-group-count">${j - i} textline${j - i === 1 ? '' : 's'}</span>`
-                      + `</div>`;
+                      + `</div>`
+                      + `<div class="gamedata-group-children-inline expanded">`;
                 for (let k = i; k < j; k++) {
                     html += renderReqItem(refs[k], name);
                 }
-                html += `</div>`;
+                html += `</div></div>`;
                 i = j;
             } else {
                 html += renderReqItem(refs[i], name);
                 i++;
             }
         }
-        html += `</div>`;
+        html += `</div></div>`;
     }
 
     // Other requirements
@@ -180,10 +184,53 @@ export function renderInfo(name) {
             otherHtml += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
         }
         if (otherHtml) {
-            html += `<div class="req-section req-type-other"><h4>Other Requirements</h4>${otherHtml}</div>`;
+            html += `<div class="req-section req-type-other">`
+                  + `<h4><span class="toggle">\u25BC</span>Other Requirements</h4>`
+                  + `<div class="req-section-children expanded">${otherHtml}</div>`
+                  + `</div>`;
         }
     }
 
     html += `</div>`;
     container.innerHTML = html;
+}
+
+// Click-to-collapse for the requirement-section boxes and the
+// GameData group boxes inside the details panel. Wired once during
+// boot via :func:`init.js`. Uses delegation so it keeps working
+// across every ``renderInfo`` re-render (which replaces the panel's
+// ``innerHTML`` and therefore wipes any per-element listeners).
+// Collapse state is intentionally NOT persisted across re-renders:
+// each ``renderInfo`` call starts with all groups expanded, matching
+// the tree-view group default.
+function toggleSection(headerEl, childrenClass) {
+    const children = headerEl.nextElementSibling;
+    if (!children || !children.classList.contains(childrenClass)) return;
+    const isExpanded = children.classList.contains('expanded');
+    children.classList.toggle('expanded');
+    const toggle = headerEl.querySelector('.toggle');
+    if (toggle) toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+}
+
+export function initInfoPanel() {
+    const container = document.getElementById('info-content');
+    if (!container) return;
+    container.addEventListener('click', (e) => {
+        // Inner collapse target first: a GameData group header. Match
+        // the inner case before the outer so a click deep inside a
+        // group never accidentally toggles the wrapping req-section.
+        const gdHeader = e.target.closest('.gamedata-group-header-inline');
+        if (gdHeader && container.contains(gdHeader)) {
+            toggleSection(gdHeader, 'gamedata-group-children-inline');
+            return;
+        }
+        // Outer collapse target: the requirement-section header (h4).
+        // Scoped to direct h4 children of .req-section so other h4s
+        // (Player Choices, Dialogue) stay non-collapsible.
+        const reqHeader = e.target.closest('.req-section > h4');
+        if (reqHeader && container.contains(reqHeader)) {
+            toggleSection(reqHeader, 'req-section-children');
+            return;
+        }
+    });
 }

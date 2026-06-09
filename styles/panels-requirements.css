@@ -16,7 +16,27 @@
     display: inline-block;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    /* Whole pill acts as the collapse toggle. The colored bg per
+       req-type stays as the visual affordance; cursor signals it's
+       interactive. Wired via delegation in info-panel.js. */
+    cursor: pointer;
 }
+.req-section h4 .toggle {
+    /* Inline chevron prepended inside the colored pill. Inline-block
+       so margin-right stays consistent regardless of the surrounding
+       text run. */
+    display: inline-block;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-right: 4px;
+}
+/* Collapsed by default + override via `.expanded` mirrors the
+   tree-view children box (styles/tree.css) and the GameData inline
+   group children (styles/panels-gamedata.css). Keeping the same
+   idiom across all three collapse targets means the same `.expanded`
+   class controls visibility everywhere in the details panel. */
+.req-section-children { display: none; }
+.req-section-children.expanded { display: block; }
 .req-type-RequiredTextLines           { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
 .req-type-RequiredTextLinesThisRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
 .req-type-RequiredTextLinesLastRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }

@@ -13,6 +13,21 @@
     gap: 8px;
     font-size: 11px;
     margin-bottom: 2px;
+    /* Whole header acts as the collapse toggle - matches the
+       tree-view group header. Wired via delegation in info-panel.js. */
+    cursor: pointer;
+    padding: 2px 4px;
+    margin-left: -4px;
+    margin-right: -4px;
+    border-radius: 3px;
+}
+.gamedata-group-header-inline:hover { background: rgba(108, 91, 123, 0.18); }
+.gamedata-group-header-inline .toggle {
+    min-width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
 }
 .gamedata-group-header-inline .gamedata-group-label {
     font-family: 'Consolas', monospace;
@@ -24,3 +39,9 @@
     color: #888;
     margin-left: auto;
 }
+/* Collapsed by default + override via `.expanded` mirrors the
+   tree-view children box (styles/tree.css). Keeping the same idiom
+   means the same `.expanded` class controls visibility in both
+   places. */
+.gamedata-group-children-inline { display: none; }
+.gamedata-group-children-inline.expanded { display: block; }
