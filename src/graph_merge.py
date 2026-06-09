@@ -5,6 +5,7 @@ from src.graph import (
     dup_summary,
     attach_variant,
     split_name_collisions,
+    count_distinct_speakers,
 )
 
 
@@ -17,10 +18,11 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     - Recomputes `dependents` from the merged textline set rather than
       unioning per-source maps (which could include stale edges from
       overwritten textlines).
-    - Recomputes `stats.totalOwners` from the distinct owners in the merged
-      textline set rather than summing per-file counts: summing would
-      double-count any owner name appearing in multiple sources and include
-      skeleton owners that contributed no textlines.
+    - Recomputes `stats.totalSpeakers` from the distinct owners in the
+      merged textline set (collapsing display-name variants onto one
+      character via the merged speakers map). Summing per-file counts
+      would double-count owners appearing in multiple sources and
+      include skeleton owners that contributed no textlines.
     - Unions `speakers`; conflicting per-id fields (same id ->
       different ``name`` or ``description``) are surfaced as a
       warning. Each subfield is compared independently so a dataset
@@ -123,7 +125,9 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     merged_speakers = {sid: entry for sid, entry in merged_speakers.items() if entry}
 
     stats = {
-        "totalOwners": len({tl["owner"] for tl in merged_textlines.values()}),
+        "totalSpeakers": count_distinct_speakers(
+            {tl["owner"] for tl in merged_textlines.values()}, merged_speakers
+        ),
         "totalTextlines": len(merged_textlines),
         "totalEdges": sum(len(v) for v in merged_dependents.values()),
         "unresolvedRefs": sorted(all_referenced - set(merged_textlines.keys())),

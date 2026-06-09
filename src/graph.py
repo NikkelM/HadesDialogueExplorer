@@ -12,7 +12,40 @@ Public API:
   ``src.graph_merge.merge_graph_data`` reuses them when stitching
   per-source datasets together; keep them stable as part of the
   contract.
+- :func:`count_distinct_speakers` -- character-aware owner-count
+  helper. Reused by :mod:`src.graph_merge` so the per-source and
+  merged stats use identical dedup logic.
 """
+
+import re
+
+
+_VARIANT_SUFFIX_RE = re.compile(r"\s*\([^()]*\)\s*$")
+
+
+def count_distinct_speakers(owner_ids, speakers_map: dict | None = None) -> int:
+    """Count the number of distinct *characters* represented by a set of
+    owner ids.
+
+    Several owner ids can refer to the same character: e.g. the in-house
+    NPC, the field-encounter variant, and the boss form of Hades each
+    use a different internal id but share one character identity. The
+    speakers map encodes that grouping via display names like ``"Hades"``,
+    ``"Hades (Boss)"``, and ``"Hades (Field)"`` - same base name, the
+    parenthetical suffix marks the variant.
+
+    Grouping by stripped base display name lets the viewer's header stat
+    reflect how many actual characters own dialogue, instead of the
+    larger raw owner-id count. Owner ids without a speakers-map entry
+    fall back to the id itself as the key so they still contribute to
+    the count exactly once.
+    """
+    chars = set()
+    smap = speakers_map or {}
+    for oid in owner_ids:
+        disp = (smap.get(oid) or {}).get("name") or oid
+        chars.add(_VARIANT_SUFFIX_RE.sub("", disp).strip() or oid)
+    return len(chars)
 
 
 def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
@@ -41,7 +74,9 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
       - dependents: reverse lookup of what depends on each textline
       - speakers: optional ``id -> {name?, description?}`` map (each
         sub-field is omitted when the source had ``None``)
-      - stats: summary statistics (incl. `totalOwners`)
+      - stats: summary statistics (incl. `totalSpeakers` - a
+        character count that collapses display-name variants like
+        ``"Hades"`` / ``"Hades (Boss)"`` onto one bucket)
     """
     textlines = {}
     duplicates = []
@@ -140,7 +175,9 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
             all_referenced.update(req_list)
 
     stats = {
-        "totalOwners": len({tl["owner"] for tl in textlines.values()}),
+        "totalSpeakers": count_distinct_speakers(
+            {tl["owner"] for tl in textlines.values()}, speakers
+        ),
         "totalTextlines": len(textlines),
         "totalEdges": sum(len(v) for v in dependents.values()),
         "unresolvedRefs": sorted(all_referenced - set(textlines.keys())),

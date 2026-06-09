@@ -149,7 +149,7 @@ def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_
     ``NPC_Neutral``) or empty ``{}`` stubs that inherit from a parent
     NPC. Mirrors the ``if any(sections.values()):`` filter in
     ``enemy_data`` / ``loot_data`` / ``deathloop_data`` so per-file
-    ``stats.totalOwners`` reflects owners that actually contribute
+    ``stats.totalSpeakers`` reflects owners that actually contribute
     dialogue.
 
     The default speaker used to fill in implicit-speaker lines is the

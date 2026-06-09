@@ -36,7 +36,7 @@ def _make_dataset(*textlines, speakers=None, duplicates=None):
         "dependents": {},
         "speakers": speakers or {},
         "stats": {
-            "totalOwners": len(owners),
+            "totalSpeakers": len(owners),
             "totalTextlines": len(tl_map),
             "totalEdges": 0,
             "unresolvedRefs": [],
@@ -161,9 +161,10 @@ class TestMergeDatasets:
         names = sorted(d["name"] for d in deps)
         assert names == ["Alpha", "Beta"]
 
-    def test_merge_counts_distinct_owners_across_sources(self):
-        """Merged ``totalOwners`` is the count of distinct owners surviving
-        into the merged textline set, NOT the sum of per-file owner counts.
+    def test_merge_counts_distinct_speakers_across_sources(self):
+        """Merged ``totalSpeakers`` is the count of distinct characters
+        surviving into the merged textline set, NOT the sum of per-file
+        counts.
 
         Summing per-file counts (the old behaviour) would double-count
         any owner appearing in multiple source files and would also
@@ -180,7 +181,25 @@ class TestMergeDatasets:
             _make_textline("D", "OwnerX"),
         )
         merged = merge_graph_data([ds1, ds2])
-        assert merged["stats"]["totalOwners"] == 3  # OwnerX, OwnerY, OwnerZ
+        assert merged["stats"]["totalSpeakers"] == 3  # OwnerX, OwnerY, OwnerZ
+
+    def test_merge_collapses_speaker_display_name_variants(self):
+        """Variants of the same character (e.g. in-house NPC vs boss form)
+        share a display-name base in the merged speakers map and must
+        therefore collapse to one speaker in the merged count, even when
+        each variant lives in a separate source file."""
+        ds1 = _make_dataset(
+            _make_textline("HouseLine", "NPC_Hades_01"),
+            speakers={"NPC_Hades_01": {"name": "Hades",
+                                       "description": "God of the Dead"}},
+        )
+        ds2 = _make_dataset(
+            _make_textline("BossLine", "Hades"),
+            speakers={"Hades": {"name": "Hades (Boss)",
+                                "description": "God of the Dead"}},
+        )
+        merged = merge_graph_data([ds1, ds2])
+        assert merged["stats"]["totalSpeakers"] == 1
 
     def test_merge_unions_speakers_without_conflict(self):
         ds1 = _make_dataset(_make_textline("A", "X"),

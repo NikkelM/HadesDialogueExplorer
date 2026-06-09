@@ -23,7 +23,7 @@ class TestBasicGraph:
         result = build_graph_data({})
         assert result["textlines"] == {}
         assert result["dependents"] == {}
-        assert result["stats"]["totalOwners"] == 0
+        assert result["stats"]["totalSpeakers"] == 0
         assert result["stats"]["totalTextlines"] == 0
         assert result["stats"]["totalEdges"] == 0
 
@@ -105,7 +105,7 @@ class TestUnresolvedReferences:
 
 
 class TestStats:
-    def test_owner_count(self):
+    def test_speaker_count(self):
         npcs = {
             "NPC_A_01": {"source": "T", "InteractTextLineSets": {
                 "A_Line": make_textline(),
@@ -115,13 +115,13 @@ class TestStats:
             }},
         }
         result = build_graph_data(npcs)
-        assert result["stats"]["totalOwners"] == 2
+        assert result["stats"]["totalSpeakers"] == 2
 
     def test_owners_with_no_textlines_not_counted(self):
         """Owners that contributed no textlines (e.g. NPC entries that are
         pure shared-component templates, or empty {} stubs that inherit
-        from a parent) must not inflate ``totalOwners``. The viewer's
-        owner count reflects distinct dialogue contributors only."""
+        from a parent) must not inflate ``totalSpeakers``. The viewer's
+        speaker count reflects distinct dialogue contributors only."""
         npcs = {
             "NPC_Skeleton": {"source": "T", "InteractTextLineSets": {}},
             "NPC_Real": {"source": "T", "InteractTextLineSets": {
@@ -129,7 +129,42 @@ class TestStats:
             }},
         }
         result = build_graph_data(npcs)
-        assert result["stats"]["totalOwners"] == 1
+        assert result["stats"]["totalSpeakers"] == 1
+
+    def test_speaker_count_collapses_display_name_variants(self):
+        """Owners whose display names share a base (e.g. ``"Hades"`` and
+        ``"Hades (Boss)"``) must collapse to one character in the count.
+        This prevents in-house / field / boss variants of the same
+        character from each adding one to the header stat."""
+        npcs = {
+            "NPC_Hades_01": {"source": "T", "InteractTextLineSets": {
+                "HouseLine": make_textline(),
+            }},
+            "Hades": {"source": "T", "BossPresentationTextLineSets": {
+                "BossLine": make_textline(),
+            }},
+        }
+        speakers = {
+            "NPC_Hades_01": {"name": "Hades", "description": "God of the Dead"},
+            "Hades":        {"name": "Hades (Boss)", "description": "God of the Dead"},
+        }
+        result = build_graph_data(npcs, speakers=speakers)
+        assert result["stats"]["totalSpeakers"] == 1
+
+    def test_speaker_count_owner_without_speakers_entry_falls_back_to_id(self):
+        """An owner missing from the speakers map still contributes one
+        to the count (keyed by its raw id) - the dedup must not silently
+        drop unmapped speakers by collapsing them under an empty key."""
+        npcs = {
+            "OwnerA": {"source": "T", "InteractTextLineSets": {
+                "A": make_textline(),
+            }},
+            "OwnerB": {"source": "T", "InteractTextLineSets": {
+                "B": make_textline(),
+            }},
+        }
+        result = build_graph_data(npcs, speakers={})
+        assert result["stats"]["totalSpeakers"] == 2
 
     def test_textline_and_edge_counts(self):
         npcs = make_npc("NPC_X_01", "InteractTextLineSets", {

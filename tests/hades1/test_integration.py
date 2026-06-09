@@ -100,7 +100,7 @@ def test_required_textlines_not_misclassified(graph_data):
 def test_stats_match_fixture(graph_data):
     stats = graph_data["stats"]
     assert stats["totalTextlines"] == 5
-    assert stats["totalOwners"] == 1
+    assert stats["totalSpeakers"] == 1
     # Edges: Intro<-Followup, Followup<-Secret, Forbidden<-Secret, External<-Repeat
     assert stats["totalEdges"] == 4
 

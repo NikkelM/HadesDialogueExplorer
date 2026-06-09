@@ -8,7 +8,7 @@ export function initStats() {
     const uncategorizedCount = byCat.uncategorized || 0;
 
     let txt =
-        `${stats.totalOwners} owners \u00B7 ${stats.totalTextlines} textlines \u00B7 ${stats.totalEdges} relationships`;
+        `${stats.totalSpeakers} speakers \u00B7 ${stats.totalTextlines} textlines \u00B7 ${stats.totalEdges} relationships`;
 
     if (uncategorizedCount > 0) {
         txt += ` \u00B7 ${uncategorizedCount} external refs`;

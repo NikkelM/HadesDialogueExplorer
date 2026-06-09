@@ -45,7 +45,7 @@ class TestBasicExtraction:
         textlines and must not appear in the extractor output. Mirrors
         the ``if any(sections.values()):`` filter in ``enemy_data`` /
         ``loot_data`` / ``deathloop_data``. Regression guard for the
-        ``stats.totalOwners`` overcount that the filter prevents."""
+        ``stats.totalSpeakers`` overcount that the filter prevents."""
         lua = (
             'UnitSetData.NPCs = { '
             'NPC_Skeleton = { InteractTextLineSets = {} }, '
