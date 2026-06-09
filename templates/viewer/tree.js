@@ -152,8 +152,8 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
             warn.textContent = lbl;
             warn.title = known.reason;
         } else {
-            warn.textContent = '\u26A0 unresolved';
-            warn.title = 'Referenced but not defined; not in the hardcoded known-unresolved list.';
+            warn.textContent = '\u26A0 not in game';
+            warn.title = 'Not found in the parsed game data.';
         }
         label.appendChild(warn);
         const blocks = unresolvedRefBlocks[name] || [];

@@ -1,7 +1,7 @@
 // Tests for ``templates/viewer/search-text.js``.
 //
 // Covers the word-boundary token matcher, the contiguous-phrase
-// detector, and the top-level multi-token text search (issue #22).
+// detector, and the top-level multi-token text search.
 // The fixture seeds three textlines whose dialogue includes the
 // phrases "I knew you", "I think he's", and "I think he'd" so we can
 // exercise the contiguous-run boost and the partial-match fallback.
@@ -93,7 +93,7 @@ test('searchTextLines: ranks textlines that match all tokens above those that ma
     assert.equal(top.runLength, 3);
 });
 
-test('searchTextLines: partial-match fallback (issue #22) - "i think fdfsdfsdfs" still returns matches', () => {
+test('searchTextLines: partial-match fallback - "i think fdfsdfsdfs" still returns matches', () => {
     // No textline contains ``fdfsdfsdfs``, but "i think" matches three
     // dialogues. Result must be non-empty and prioritise the lines
     // where the most query tokens are present.

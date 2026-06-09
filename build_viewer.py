@@ -125,6 +125,14 @@ def build_js() -> str:
     after every declaration. Function declarations hoist so their
     ordering doesn't matter.
 
+    The same TDZ trap applies to top-level ``const`` declarations:
+    invoking a function whose body dereferences a later-declared
+    ``const`` from an earlier-concatenated file throws
+    ``ReferenceError`` at script-eval time and prevents ``boot()``
+    from ever running. Avoid cross-file top-level calls at module
+    init - keep module top levels free of work that reaches into
+    later-concatenated files.
+
     Module syntax is stripped so the result runs as a plain script in
     any browser, including from ``file://`` (the offline bundle case,
     where browsers block real ES module imports via CORS).

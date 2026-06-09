@@ -49,8 +49,8 @@ export function renderInfo(name) {
             container.innerHTML =
                 `<div class="textline-info"><h3>${escapeHtml(name)}</h3>`
               + `<div class="meta unresolved-banner unresolved-cat-uncategorized">`
-              + `<span class="unresolved-cat-badge">\u26A0 External / unresolved</span>`
-              + `<span class="unresolved-cat-reason">Referenced as a requirement but no definition found in any parsed source file, and not categorized in the hardcoded known-unresolved list.</span>`
+              + `<span class="unresolved-cat-badge">\u26A0 Not in the game</span>`
+              + `<span class="unresolved-cat-reason">No textline with this name was found in the parsed game data.</span>`
               + `</div>`
               + blocksHtml
               + `</div>`;

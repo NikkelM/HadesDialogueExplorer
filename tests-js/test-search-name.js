@@ -1,7 +1,7 @@
 // Tests for ``templates/viewer/search-name.js``.
 //
-// Covers the per-token tier ranking (issue #27) and the
-// per-query lexicographic ordering across tokens (issue #66).
+// Covers the per-token tier ranking and the
+// per-query lexicographic ordering across tokens.
 
 import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
@@ -78,7 +78,7 @@ test('searchNameMatches: AND across tokens (every token must match)', () => {
     assert.deepEqual(names.sort(), ['AphroditeWithZeus01', 'ZeusWithAphrodite01']);
 });
 
-test('searchNameMatches: query token order dominates ranking (issue #66)', () => {
+test('searchNameMatches: query token order dominates ranking', () => {
     // "zeus aphrodite" - first token's tier is the dominant axis, so
     // ZeusWithAphrodite01 (tiers 0,2) must outrank AphroditeWithZeus01
     // (tiers 2,2) regardless of any later-token differences.
