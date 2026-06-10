@@ -32,8 +32,8 @@ HADES2_TEXTLINE_SECTION_KEYS = frozenset({
     # LootData_<God> (boon owners) - dialogue sets per pickup context.
     "BoughtTextLines",            # 10 - god boon shop purchase
     "DuoPickupTextLines",         # 10 - duo boon pickup
-    "MakeUpTextLines",            # 9 - "Trial of the Gods" completion (rename)
-    "RejectionTextLines",         # 9 - "Trial of the Gods" displeased (rename)
+    "MakeUpTextLines",            # 9 - "Family Dispute" completion (H2 rename of H1 "Trial of the Gods")
+    "RejectionTextLines",         # 9 - "Family Dispute" displeased (H2 rename of H1 "Trial of the Gods")
 
     # EnemyData_<Boss> - boss encounter banter.
     "BossIntroTextLineSets",      # 9 (H2 rename of H1 BossPresentationIntroTextLineSets)
@@ -74,8 +74,8 @@ HADES2_SECTION_KEY_LABELS = {
     "GiftTextLineSets":              "NPC gifting",
     "BoughtTextLines":               "God boon shop purchase",
     "DuoPickupTextLines":            "Duo boon pickup",
-    "MakeUpTextLines":               "\"Trial of the Gods\" - Completion",
-    "RejectionTextLines":            "\"Trial of the Gods\" - Displeased",
+    "MakeUpTextLines":               "\"Family Dispute\" - Completion",
+    "RejectionTextLines":            "\"Family Dispute\" - Displeased",
     "BossIntroTextLineSets":         "Boss introduction",
     "BossOutroTextLineSets":         "Boss outro",
     "BossPhaseChangeTextLineSets":   "Boss phase transition",

@@ -13,7 +13,7 @@ Apollo -> ApolloUpgrade, ...), with two exceptions documented in
 :data:`LOOT_DEFAULT_SPEAKERS`:
 
 * ``LootSetData.Chaos`` -> ``TrialUpgrade`` (the boon offered by
-  Chaos's Trial of the Gods event, not a regular "<God>Upgrade").
+  Chaos's Trial event, not a regular "<God>Upgrade").
 * ``LootSetData.Selene`` -> ``SpellDrop`` (Selene grants Hex spells,
   not boons - the H2 vocabulary keeps the data shape but renames the
   owner accordingly).
