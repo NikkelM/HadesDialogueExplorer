@@ -346,6 +346,19 @@ class TestKnownDescriptions:
         # flashback variant carries the nymph quip.
         "PlayerUnit": "Princess of the Underworld",
         "PlayerUnit_Flashback": "Chthonic Nymph",
+        # Boss-fight speaker entries. The bare boss container key from
+        # ``UnitSetData.<Char>.<Char>`` is the speaker id; display name
+        # disambiguates with ``"(Boss)"`` when the character also has a
+        # walking-NPC form, or ``"(Summit)"`` for the Typhon alt-fight
+        # apparition voice (Chronos under another mask). Descriptions
+        # mirror the canonical HelpText quip from the matching NPC
+        # entry verbatim - same convention as the H1 ``Hades`` /
+        # ``Harpy`` / ``Minotaur`` entries.
+        "Hecate": "Witch of the Crossroads",
+        "Eris": "Strife Incarnate",
+        "Chronos": "Titan of Time",
+        "Zagreus": "Prince of the Underworld",
+        "TyphonHead": "Titan of Time",
     }
 
     def test_descriptions_match_expected(self):

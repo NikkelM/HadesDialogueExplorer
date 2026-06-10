@@ -30,24 +30,35 @@ every mook ``EnemyData_<Mook>.lua`` that has no dialogue sections,
 without any per-file gating - any future enemy that grows dialogue
 sections will automatically surface.
 
-Speaker mapping (see :data:`ENEMY_DEFAULT_SPEAKERS`): the boss owner
-keys are bare names that are explicitly NOT registered as speakers in
-:data:`src.extractors.hades2.speakers.HADES2_SPEAKERS` (they are
-non-interactive combat-bark tags - the docstring there enumerates
-them). Each boss is mapped to its canonical NPC speaker id so cue
-lines without an explicit ``Speaker`` field surface under the right
-character in the viewer. Special cases:
+Owner routing (mirrors H1's :mod:`src.extractors.hades1.enemy_data`):
 
-* ``Polyphemus`` -> ``NPC_Cyclops_01`` (Polyphemus IS the canonical
-  Cyclops speaker; the display name "Polyphemus" lives on that id).
-* ``InfestedCerberus`` -> ``Speaker_Homer`` (Cerberus does not speak;
-  the bulk of unattributed lines on the boss-outro encounter are
-  Homer-style narration of Melinoë reuniting with the watchdog).
-* ``TyphonHead`` -> ``NPC_Chronos_01`` (Typhon has no NPC speaker;
-  the unattributed cues on the alt-fight intro are Chronos taunting
-  Melinoë through the apparition. The explicit phase-change lines
-  tagged ``Speaker = "PlayerUnit_Flashback"`` resolve via the cue's
-  own Speaker field and remain unaffected).
+* The bare owner key (``Hecate``, ``Chronos``, ``Polyphemus``, ...)
+  is kept as the dict key, and the speaker fallback for unattributed
+  cues defaults to :data:`ENEMY_DEFAULT_SPEAKERS[owner]` if present
+  or the owner id itself otherwise (see ``_resolve_cue_speaker`` in
+  :mod:`.textline_set`).
+* For bosses whose character also appears as a walking NPC (Hecate,
+  Eris, Chronos, Zagreus) the bare owner key is its own speaker
+  entry in :data:`src.extractors.hades2.speakers.HADES2_SPEAKERS`
+  with display name ``"<Char> (Boss)"`` - this keeps the boss-fight
+  dialogue distinct from the walking-NPC form's
+  ``NPC_<Char>_01`` / etc. The Surface alt-fight container
+  ``TyphonHead`` is similarly registered, with display name
+  ``"Chronos (Summit)"`` because Typhon never speaks and every
+  unattributed cue is Chronos via the apparition.
+* Boss-only owners (``Polyphemus`` / ``Prometheus`` / ``Scylla``) are
+  routed onto the canonical NPC speaker via
+  :data:`ENEMY_DEFAULT_SPEAKERS` - those characters have no separate
+  hub-NPC / boss split worth distinguishing, the NPC form carries
+  the same voice / description.
+* ``InfestedCerberus`` is the special case: Cerberus does not speak,
+  and the unattributed lines on the boss-outro encounter are
+  Homer-style narration of Melinoë reuniting with the watchdog, so
+  the default speaker maps to ``Speaker_Homer``.
+
+Explicit per-cue ``Speaker = "..."`` and ``UsePlayerSource = true``
+tags always win over the owner / default-speaker fallback (see
+``_resolve_cue_speaker`` in :mod:`.textline_set`).
 """
 
 import re
@@ -66,26 +77,23 @@ from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 _UNIT_SET_DATA_RE = re.compile(r"^UnitSetData\.\w+$")
 
 
-# Maps the per-boss owner key to the canonical NPC speaker id used
-# for cue lines without an explicit ``Speaker`` field. The owner key
-# itself is intentionally NOT a registered speaker id - boss-fight
-# bare names like ``Chronos`` / ``Hecate`` / ``Polyphemus`` exist in
-# the engine only as combat-bark tags (see HADES2_SPEAKERS docstring).
-# Mapping each to its NPC form ensures the dialogue surfaces under
-# the right character in the viewer.
+# Override for the speaker attribution of unattributed cue lines on
+# bosses whose bare owner-key fallback isn't appropriate. Bosses NOT
+# listed here use their bare owner id as the cue speaker (registered
+# as a disambiguated ``"<Char> (Boss)"`` / ``"Chronos (Summit)"``
+# entry in :data:`HADES2_SPEAKERS` for the walking-NPC overlap cases,
+# or as a bare-name entry otherwise).
 ENEMY_DEFAULT_SPEAKERS = {
-    "Chronos":          "NPC_Chronos_01",
-    "Eris":             "NPC_Eris_01",
-    "Hecate":           "NPC_Hecate_01",
+    # Polyphemus IS the Cyclops; Prometheus / Scylla similarly have no
+    # walking-NPC vs boss distinction worth a separate speaker entry,
+    # so unattributed cues attribute to the canonical NPC form.
     "Polyphemus":       "NPC_Cyclops_01",
     "Prometheus":       "NPC_Prometheus_01",
     "Scylla":           "NPC_Scylla_01",
-    "Zagreus":          "NPC_Zagreus_01",
-    # Bosses without their own NPC speaker form - mapped to the
-    # closest sensible substitute based on the dominant unattributed
-    # speaker on the boss's textlines (see module docstring).
+    # Cerberus does not speak; the unattributed lines on the
+    # boss-outro encounter are Homer-style narration of Melinoë
+    # reuniting with the watchdog.
     "InfestedCerberus": "Speaker_Homer",
-    "TyphonHead":       "NPC_Chronos_01",
 }
 
 
@@ -100,8 +108,7 @@ def extract_enemy_data(
 ) -> dict:
     """Extract H2 boss encounter dialogue data from a parsed Lua file.
 
-    Returns a dict keyed by owner id (``Hecate`` / ``Chronos`` / ...)
-    shaped like::
+    Returns a dict keyed by the bare boss owner id, shaped like::
 
         {
             "Hecate": {
@@ -111,6 +118,13 @@ def extract_enemy_data(
             },
             ...
         }
+
+    The bare owner key is also the speaker id for unattributed cues
+    (except where :data:`ENEMY_DEFAULT_SPEAKERS` overrides it). The
+    viewer's friendly display name is resolved separately via
+    :data:`HADES2_SPEAKERS` and disambiguates boss-fight forms from
+    walking-NPC forms with a ``"(Boss)"`` / ``"(Summit)"`` qualifier
+    where needed.
 
     Owners with zero non-empty sections are dropped so the master
     file's ``UnitSetData.Enemies`` templates and all the mook

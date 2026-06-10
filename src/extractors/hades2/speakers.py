@@ -45,20 +45,25 @@ Labelling conventions:
     bare name - the in-game framing is continuous with their base
     appearance, and the description quip differentiates contexts.
   * Mystery / first-meeting variants keep the ``? ? ? (Char)`` shape.
-  * Boss-only characters (Scylla, Theseus, Prometheus, ...) use the
-    bare character name regardless of cutscene / dream-run / alt-fight
-    sub-variant, mirroring H1. Characters who are *both* a boss and a
-    walking NPC (Hecate, Eris, Nemesis) get ``(Boss)`` on the boss
-    form - those cutscene variants are added on demand as the
-    EnemyData extractor wires them up.
+  * Boss-only characters (Polyphemus, Prometheus, Theseus, ...) use
+    the bare character name regardless of cutscene / dream-run /
+    alt-fight sub-variant, mirroring H1. Characters who are *both* a
+    boss and a walking NPC (Hecate, Eris, Chronos, Zagreus) get
+    ``(Boss)`` on the boss form, registered under the bare boss
+    container key from ``UnitSetData.<Char>`` (matches the H1
+    convention - see ``Hades`` / ``Harpy`` entries in
+    :mod:`src.extractors.hades1.speakers`). The Surface alt-fight
+    container ``TyphonHead`` displays as ``"Chronos (Summit)"`` for
+    the same reason - Typhon never speaks, and the apparition voice
+    is Chronos in a context distinct from his Erebus boss
+    appearance.
   * **Environmental / combat-bark speakers are NOT included.** Bare
-    names like ``Chronos``, ``Hecate``, ``Polyphemus``, ``Scylla``,
-    ``Eris``, ``Zagreus``, ``TyphonHead``, ``Medea``, ``Heracles``,
-    ``InfestedCerberus`` (in ``EnemyData_*.lua`` and ``AudioData.lua``)
-    are non-interactive voice tags for boss-fight callouts /
-    environmental quips with no portrait or textbox - they are not
-    "dialogue speakers" and the corresponding interactive forms
-    already live in the dict as ``NPC_<Char>_01``.
+    names like ``Medea``, ``Heracles``, ``InfestedCerberus`` (in
+    ``EnemyData_*.lua`` / ``AudioData.lua``) are non-interactive
+    voice tags for boss-fight callouts / environmental quips with no
+    portrait or textbox - they are not "dialogue speakers" and the
+    corresponding interactive forms already live in the dict as
+    ``NPC_<Char>_01``.
 
 Source notes:
   * Initial dump generated once from H2 1.x
@@ -255,6 +260,30 @@ HADES2_SPEAKERS = {
     "NPC_Zagreus_Past_01":  {"name": "Zagreus",     "description": "Prince of the Underworld"},
     "NPC_Zeus_01":          {"name": "Zeus",        "description": "King of the Olympians"},
     "NPC_Zeus_Story_01":    {"name": "Zeus (Olympus)", "description": "King of the Olympians"},
+
+    # Boss-fight speaker entries. The H2 ``EnemyData_*.lua`` files use
+    # bare character names as the boss container key
+    # (``UnitSetData.Hecate.Hecate`` etc.), and the EnemyData extractor
+    # keeps them as the owner id and the cue-speaker fallback. Each id
+    # below gets a display name that disambiguates the boss-fight form
+    # from any walking-NPC overlap: characters who also appear as a
+    # hub / Crossroads NPC use ``"(Boss)"`` to separate their boss
+    # dialogue from ``NPC_<Char>_01`` (Hecate, Eris, Chronos,
+    # Zagreus); the Surface alt-fight ``TyphonHead`` displays as
+    # ``"Chronos (Summit)"`` because Typhon never speaks and every
+    # unattributed cue is Chronos taunting Melinoë via the
+    # apparition, distinct from both the Erebus ``Chronos`` boss and
+    # the NPC forms (``NPC_Chronos_01`` / ``_Story_01`` / ``_02``).
+    # Descriptions mirror the canonical HelpText quip from the
+    # matching NPC entry verbatim (no boss-form embellishment),
+    # following the H1 ``Hades`` / ``Harpy`` convention - the
+    # contextual flavour lives in the ``(Boss)`` / ``(Summit)``
+    # display-name qualifier, not in the description.
+    "Hecate":               {"name": "Hecate (Boss)",  "description": "Witch of the Crossroads"},
+    "Eris":                 {"name": "Eris (Boss)",    "description": "Strife Incarnate"},
+    "Chronos":              {"name": "Chronos (Boss)", "description": "Titan of Time"},
+    "Zagreus":              {"name": "Zagreus (Boss)", "description": "Prince of the Underworld"},
+    "TyphonHead":           {"name": "Chronos (Summit)", "description": "Titan of Time"},
 
     # Non-character narrative tags. ``Speaker_Anonymous`` is used
     # for unattributed system / environment lines; ``Speaker_Homer``

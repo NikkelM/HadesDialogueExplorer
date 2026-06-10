@@ -9,10 +9,15 @@ Covers the discovery and speaker-mapping contracts of
 * Owners with zero non-empty section keys are dropped so the master
   file's ``UnitSetData.Enemies`` mook templates and every dialogue-less
   ``EnemyData_<Mook>.lua`` file are filtered.
-* ``ENEMY_DEFAULT_SPEAKERS`` maps each boss owner key to its canonical
-  NPC speaker id; bosses without an NPC speaker form
-  (``InfestedCerberus`` / ``TyphonHead``) fall through to documented
-  substitutes.
+* The bare owner key is kept as the dict key and used as the cue
+  speaker fallback for unattributed lines, unless overridden by
+  :data:`ENEMY_DEFAULT_SPEAKERS`. The 5 overlapping bosses (Hecate,
+  Eris, Chronos, Zagreus, TyphonHead) are registered as their own
+  speaker entries in :data:`HADES2_SPEAKERS` with disambiguating
+  ``"(Boss)"`` / ``"(Summit)"`` display names; boss-only owners
+  (Polyphemus, Prometheus, Scylla) route to the canonical NPC
+  speaker via :data:`ENEMY_DEFAULT_SPEAKERS`; ``InfestedCerberus``
+  routes to ``Speaker_Homer`` because Cerberus does not speak.
 * Output shape mirrors the NPC and Loot extractors (``source`` +
   per-section dicts).
 """
@@ -22,6 +27,7 @@ from src.extractors.hades2.enemy_data import (
     ENEMY_DEFAULT_SPEAKERS,
     extract_enemy_data,
 )
+from src.extractors.hades2.speakers import HADES2_SPEAKERS
 
 
 def _parse(lua_text):
@@ -87,7 +93,12 @@ class TestDiscovery:
 
 
 class TestSpeakerMapping:
-    def test_chronos_maps_to_chronos_npc(self):
+    def test_chronos_owner_keeps_bare_key_as_speaker(self):
+        # The bare ``Chronos`` owner is the Erebus boss form, registered
+        # as its own speaker entry in HADES2_SPEAKERS with display name
+        # "Chronos (Boss)" so it doesn't collide with NPC_Chronos_01 /
+        # NPC_Chronos_Story_01 / NPC_Chronos_02. Unattributed cues
+        # attribute to the bare owner id.
         parsed = _parse("""
             UnitSetData.Chronos = {
                 Chronos = {
@@ -99,10 +110,12 @@ class TestSpeakerMapping:
         """)
         owners = extract_enemy_data(parsed, source_label="Hades 2", source_file="EnemyData_Chronos.lua")
         line = owners["Chronos"]["BossIntroTextLineSets"]["Foo"]["dialogueLines"][0]
-        assert line["speaker"] == "NPC_Chronos_01"
+        assert line["speaker"] == "Chronos"
 
-    def test_polyphemus_maps_to_cyclops_npc(self):
-        # Polyphemus is the boss owner key; the canonical speaker id is NPC_Cyclops_01.
+    def test_polyphemus_routes_to_cyclops_npc(self):
+        # Polyphemus is a boss-only owner with no walking-NPC vs boss
+        # split worth distinguishing - ENEMY_DEFAULT_SPEAKERS routes
+        # unattributed cues onto the canonical NPC speaker.
         parsed = _parse("""
             UnitSetData.Polyphemus = {
                 Polyphemus = {
@@ -132,8 +145,11 @@ class TestSpeakerMapping:
         line = owners["InfestedCerberus"]["BossOutroTextLineSets"]["Foo"]["dialogueLines"][0]
         assert line["speaker"] == "Speaker_Homer"
 
-    def test_typhon_head_maps_to_chronos(self):
-        # Typhon has no NPC speaker; unattributed cues are Chronos.
+    def test_typhon_head_owner_voice_is_chronos_summit(self):
+        # Typhon never speaks; every unattributed cue is Chronos via the
+        # apparition. The bare ``TyphonHead`` owner is registered as a
+        # speaker with display name "Chronos (Summit)" - distinct from
+        # the Erebus boss form (``Chronos``) and the NPC forms.
         parsed = _parse("""
             UnitSetData.TyphonHead = {
                 TyphonHead = {
@@ -145,7 +161,7 @@ class TestSpeakerMapping:
         """)
         owners = extract_enemy_data(parsed, source_label="Hades 2", source_file="EnemyData_TyphonHead.lua")
         line = owners["TyphonHead"]["BossIntroTextLineSets"]["Foo"]["dialogueLines"][0]
-        assert line["speaker"] == "NPC_Chronos_01"
+        assert line["speaker"] == "TyphonHead"
 
     def test_explicit_speaker_overrides_default(self):
         # The TyphonHead phase-change sets cover lines explicitly tagged
@@ -179,15 +195,21 @@ class TestSpeakerMapping:
         line = owners["Hecate"]["BossIntroTextLineSets"]["Foo"]["dialogueLines"][0]
         assert line["speaker"] == "PlayerUnit"
 
-    def test_all_known_boss_owners_covered(self):
+    def test_all_known_boss_owners_resolvable(self):
         # The 9 bosses with textlines are the entire population that this
-        # extractor needs to map (verified by audit). A missing entry
-        # would silently fall back to the bare owner key, which is NOT a
-        # registered speaker - lock the set in.
+        # extractor needs to map (verified by audit). Each must be
+        # resolvable to a registered speaker either by the
+        # ENEMY_DEFAULT_SPEAKERS override or by the bare owner key being
+        # a speaker entry in HADES2_SPEAKERS - anything else would
+        # silently render as an unknown speaker id in the viewer.
         for owner in ("Chronos", "Eris", "Hecate", "InfestedCerberus",
                       "Polyphemus", "Prometheus", "Scylla", "TyphonHead",
                       "Zagreus"):
-            assert owner in ENEMY_DEFAULT_SPEAKERS
+            resolved = ENEMY_DEFAULT_SPEAKERS.get(owner, owner)
+            assert resolved in HADES2_SPEAKERS, (
+                f"boss owner {owner!r} resolves to {resolved!r} which is "
+                f"not a registered HADES2_SPEAKERS entry"
+            )
 
 
 class TestSections:
