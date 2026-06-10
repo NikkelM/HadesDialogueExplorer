@@ -15,24 +15,34 @@ from src.extractors.hades1 import (
     HADES1_CHOICE_NAMES,
     HADES1_META_UPGRADE_NAMES,
 )
+from src.extractors.hades2 import (
+    HADES2_TEXTLINE_SECTION_KEYS,
+    HADES2_SECTION_KEY_LABELS,
+    HADES2_REQ_OPERATORS,
+    HADES2_REQ_TYPE_LABELS,
+    HADES2_REQ_TYPE_EDGE_LABELS,
+    HADES2_REQ_TYPE_TOOLTIPS,
+    HADES2_REQ_TYPE_DISPLAY_ORDER,
+)
 
 
-# Per-game section-key allowlists and their friendly-name maps. Future
-# Hades II support adds its own tuple here so the audit runs against
-# each game's data independently.
+# Per-game section-key allowlists and their friendly-name maps. Each
+# tuple is ``(game_label, allowed_keys, label_map)``; the merge below
+# unions every label_map into ``graph_data["sectionKeyLabels"]``.
 _SECTION_KEY_LABEL_SOURCES = [
     ("HADES1", HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS),
+    ("HADES2", HADES2_TEXTLINE_SECTION_KEYS, HADES2_SECTION_KEY_LABELS),
 ]
 
 # Per-game requirement-type label data. Tuple shape:
 #   (game_label, allowed_fields, labels, edge_labels, tooltips, display_order)
 # H1 and H2 use disjoint requirement-field vocabularies (H1: flat
-# ``Required.*TextLine.*`` fields; H2: nested ``GameStateRequirements``
-# with ``HasAny``/``HasAll``/``Path`` records), so each game contributes
-# its own allowlist + maps and the build merges them into a single
-# viewer-side lookup. Mirrors ``_SECTION_KEY_LABEL_SOURCES``. Adding H2
-# is a one-line append once ``hades2/req_types.py`` and the H2-side
-# req-fields allowlist exist.
+# ``Required.*TextLine.*`` fields; H2: ``GameStateRequirements`` records
+# whose primary operator is one of ``HasAny``/``HasAll``/``IsAny``/
+# ``Comparison``/``OrRequirements``/``NamedRequirements``/...), so each
+# game contributes its own allowlist + maps and the build merges them
+# into a single viewer-side lookup. Mirrors
+# ``_SECTION_KEY_LABEL_SOURCES``.
 _REQ_TYPE_LABEL_SOURCES = [
     (
         "HADES1",
@@ -41,6 +51,14 @@ _REQ_TYPE_LABEL_SOURCES = [
         HADES1_REQ_TYPE_EDGE_LABELS,
         HADES1_REQ_TYPE_TOOLTIPS,
         HADES1_REQ_TYPE_DISPLAY_ORDER,
+    ),
+    (
+        "HADES2",
+        HADES2_REQ_OPERATORS,
+        HADES2_REQ_TYPE_LABELS,
+        HADES2_REQ_TYPE_EDGE_LABELS,
+        HADES2_REQ_TYPE_TOOLTIPS,
+        HADES2_REQ_TYPE_DISPLAY_ORDER,
     ),
 ]
 
