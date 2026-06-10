@@ -28,6 +28,12 @@ from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
 )
+from .textline_set import (
+    PLAYER_SPEAKER_ID,
+    extract_textline_sections,
+    extract_textline,
+)
+from .npc_data import extract_npc_data
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -41,4 +47,8 @@ __all__ = [
     "extract_named_requirements",
     "HADES2_REQUIREMENT_SET_FIELDS",
     "extract_requirements",
+    "PLAYER_SPEAKER_ID",
+    "extract_textline_sections",
+    "extract_textline",
+    "extract_npc_data",
 ]
