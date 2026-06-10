@@ -34,6 +34,10 @@ from .textline_set import (
     extract_textline,
 )
 from .npc_data import extract_npc_data
+from .loot_data import (
+    LOOT_DEFAULT_SPEAKERS,
+    extract_loot_data,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -51,4 +55,6 @@ __all__ = [
     "extract_textline_sections",
     "extract_textline",
     "extract_npc_data",
+    "LOOT_DEFAULT_SPEAKERS",
+    "extract_loot_data",
 ]
