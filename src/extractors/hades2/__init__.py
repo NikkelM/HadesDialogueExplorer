@@ -42,6 +42,10 @@ from .enemy_data import (
     ENEMY_DEFAULT_SPEAKERS,
     extract_enemy_data,
 )
+from .deathloop_data import (
+    HUB_NARRATOR_SPEAKER,
+    extract_deathloop_data,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -63,4 +67,6 @@ __all__ = [
     "extract_loot_data",
     "ENEMY_DEFAULT_SPEAKERS",
     "extract_enemy_data",
+    "HUB_NARRATOR_SPEAKER",
+    "extract_deathloop_data",
 ]

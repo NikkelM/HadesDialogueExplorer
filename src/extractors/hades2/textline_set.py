@@ -293,3 +293,52 @@ def _merge_requirement_result(data: dict, result: dict) -> None:
         data["orBranches"].append(branch)
     for flag_key, flag_value in result.get("flags", {}).items():
         data["flags"][flag_key] = flag_value
+
+
+def merge_ancestor_requirements_h2(
+    tl_data: dict,
+    ancestor: LuaTable,
+    named_requirements: dict = None,
+) -> None:
+    """Lift RequirementSet-bearing fields from an ancestor container onto
+    a single extracted textline.
+
+    H2's structured-record requirement schema is identical whether the
+    fields live on the textline itself or on an enclosing container, so
+    the merge logic is the same as the per-textline path: each
+    ``HADES2_REQUIREMENT_SET_FIELDS`` entry on the ancestor is walked
+    through :func:`extract_requirements` and the result merged into the
+    textline's data via :func:`_merge_requirement_result`. All
+    requirements (ancestor-level and textline-level alike) are
+    AND-evaluated by the engine, so unioning is the correct merge.
+
+    Used by extractors whose data shape places gating on the container
+    one (or more) levels up from the textline itself:
+
+    * DeathLoopData inspect points carry ``SetupGameStateRequirements``
+      as a sibling of ``InteractTextLineSets``.
+    * Encounter / room blocks carry encounter-level
+      ``GameStateRequirements`` as a sibling of any nested textline
+      containers.
+
+    :func:`extract_textline` prunes the ``orBranches`` and ``flags``
+    keys when empty so the JSON stays small; this function honours that
+    convention by re-pruning after the merge if it didn't actually add
+    anything.
+    """
+    had_or_branches = "orBranches" in tl_data
+    had_flags = "flags" in tl_data
+    tl_data.setdefault("orBranches", [])
+    tl_data.setdefault("flags", {})
+
+    for field in HADES2_REQUIREMENT_SET_FIELDS:
+        req_set = ancestor.get(field)
+        if not isinstance(req_set, LuaTable):
+            continue
+        result = extract_requirements(req_set, named_requirements)
+        _merge_requirement_result(tl_data, result)
+
+    if not tl_data["orBranches"] and not had_or_branches:
+        del tl_data["orBranches"]
+    if not tl_data["flags"] and not had_flags:
+        del tl_data["flags"]

@@ -406,10 +406,38 @@ class LuaParser:
                 if self.current.type == T_EQUALS:
                     self.advance()
                     value = self.parse_value()
+                    # Consume Lua expression continuations like ``X or {}`` /
+                    # ``X and Y`` after the RHS value. The initial operand is
+                    # what we care about; the rest of the expression is
+                    # short-circuit noise from the dialogue extractor's point
+                    # of view but must be consumed so we don't bleed into the
+                    # next statement. The ``X = X or {}`` idiom is used
+                    # throughout H2 to lazily initialise top-level tables
+                    # before populating them via ``OverwriteTableKeys`` (e.g.
+                    # ``HubRoomData = HubRoomData or {}`` at the top of
+                    # ``DeathLoopData.lua``).
+                    while (self.current.type == T_IDENT
+                           and self.current.value in ('or', 'and')):
+                        self.advance()
+                        self.parse_value()
                     result[name] = value
                     # Skip optional comma/semicolon
                     if self.current.type in (T_COMMA, T_SEMICOL):
                         self.advance()
+                elif name == 'OverwriteTableKeys' and self.current.type == T_LPAREN:
+                    # H2 EncounterData_*.lua and DeathLoopData.lua dump their
+                    # payload directly inside this call rather than first
+                    # assigning it to a named identifier
+                    # (``OverwriteTableKeys( HubRoomData, { Hub_Main = ... } )``).
+                    # Capture the inline table as if it had been assigned to
+                    # the target name so the rest of the pipeline can treat
+                    # it uniformly. When the second argument is itself an
+                    # identifier (the H1 / H2 NPCData / LootData pattern,
+                    # ``OverwriteTableKeys( EnemyData, UnitSetData.NPC_Hecate )``)
+                    # there is nothing inline to capture - the source data is
+                    # already in ``result`` under its own name, and we skip
+                    # the wrapper call as a no-op.
+                    self._capture_overwrite_table_keys(result)
                 else:
                     # Not an assignment - skip rest of statement
                     self._skip_statement()
@@ -632,6 +660,70 @@ class LuaParser:
                 peek_tok = self.peek()
                 if peek_tok.type == T_EQUALS or peek_tok.type == T_DOT:
                     return
+            self.advance()
+
+
+    def _capture_overwrite_table_keys(self, result: dict) -> None:
+        """Handle a top-level ``OverwriteTableKeys( TARGET, ... )`` call.
+
+        Called when the parser has already consumed the ``OverwriteTableKeys``
+        identifier and is positioned on the opening ``(``. Parses the target
+        identifier (possibly dotted) and, if the second argument is an inline
+        table literal, captures it as if it had been assigned to the target
+        name. Tables captured this way merge into any existing entry under the
+        same target so that multiple files contributing to the same global
+        (e.g. ``EncounterData`` across the ``EncounterData_*.lua`` set) stack
+        correctly when their parsed dicts are merged downstream.
+
+        When the second argument is itself an identifier (the standard
+        ``OverwriteTableKeys( EnemyData, UnitSetData.NPC_Hecate )`` pattern
+        used by NPCData / LootData / EnemyData files), the source data is
+        already present in ``result`` under its own name and the wrapper call
+        is skipped as a no-op.
+
+        The method always consumes the rest of the call up to and including
+        the closing ``)`` so the main loop can resume cleanly.
+        """
+        self.advance()  # consume '('
+
+        # Parse the target identifier (possibly dotted).
+        target_name = None
+        if self.current.type == T_IDENT:
+            target_name = self.advance().value
+            while self.current.type == T_DOT:
+                self.advance()
+                if self.current.type == T_IDENT:
+                    target_name += '.' + self.advance().value
+
+        # Expect ',' then either '{' (inline table) or another value to skip.
+        if target_name is not None and self.current.type == T_COMMA:
+            self.advance()
+            if self.current.type == T_LBRACE:
+                table = self.parse_table()
+                existing = result.get(target_name)
+                if isinstance(existing, LuaTable):
+                    for k, v in table.named.items():
+                        existing.named[k] = v
+                    existing.array.extend(table.array)
+                else:
+                    result[target_name] = table
+
+        # Consume everything up to and including the call's closing ')'.
+        # parse_table left us past the inline table's '}'; whatever remains
+        # is trailing arguments and the close paren.
+        paren_depth = 1
+        while self.current.type != T_EOF and paren_depth > 0:
+            t = self.current.type
+            if t == T_LPAREN:
+                paren_depth += 1
+            elif t == T_RPAREN:
+                paren_depth -= 1
+                if paren_depth == 0:
+                    self.advance()
+                    break
+            self.advance()
+        # Skip optional trailing comma/semicolon between statements.
+        if self.current.type in (T_COMMA, T_SEMICOL):
             self.advance()
 
 

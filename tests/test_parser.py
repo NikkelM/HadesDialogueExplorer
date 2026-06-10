@@ -245,3 +245,111 @@ class TestLineTracking:
         assert x.line == 1
         assert x.array[0].line == 2
         assert x.array[1].line == 3
+
+
+class TestOverwriteTableKeys:
+    """The parser unwraps ``OverwriteTableKeys( TARGET, { ... } )`` calls
+    so the inline payload surfaces under ``TARGET`` in the parsed dict.
+
+    H2 ``EncounterData_*.lua`` and ``DeathLoopData.lua`` use this pattern
+    rather than first assigning the data to a named identifier; without
+    the unwrap, every dialogue-bearing key in those files would be
+    silently lost.
+    """
+
+    def test_inline_table_assigned_to_target_name(self):
+        text = """
+            OverwriteTableKeys( EncounterData, {
+                Story_Arachne_01 = { InheritFrom = { "NonCombat" } },
+                Story_Echo_01    = { InheritFrom = { "NonCombat" } },
+            } )
+        """
+        result = parse_file(text)
+        ed = result.get("EncounterData")
+        assert isinstance(ed, LuaTable)
+        assert set(ed.named.keys()) == {"Story_Arachne_01", "Story_Echo_01"}
+
+    def test_lazy_init_idiom_then_overwrite_captures_payload(self):
+        # The ``X = X or {}`` idiom must not bleed into the next statement;
+        # the OverwriteTableKeys call following it should still parse and
+        # overwrite the LuaIdentifier placeholder with the captured table.
+        text = """
+            HubRoomData = HubRoomData or {}
+            OverwriteTableKeys( HubRoomData, {
+                Hub_Main = { ObjectiveStartX = 40 },
+            } )
+        """
+        result = parse_file(text)
+        hr = result.get("HubRoomData")
+        assert isinstance(hr, LuaTable)
+        assert "Hub_Main" in hr.named
+
+    def test_dotted_target_supported(self):
+        text = """
+            OverwriteTableKeys( GameData.Some.Path, {
+                Key = "value",
+            } )
+        """
+        result = parse_file(text)
+        assert isinstance(result.get("GameData.Some.Path"), LuaTable)
+
+    def test_identifier_second_arg_is_skipped_as_noop(self):
+        # The NPCData / LootData / EnemyData pattern: the source is a
+        # named identifier already assigned elsewhere, not an inline
+        # table. The wrapper call is a no-op for our purposes; we must
+        # not synthesise an empty entry under the target name.
+        text = """
+            UnitSetData.NPC_Hecate = { NPC_Hecate = { Health = 100 } }
+            OverwriteTableKeys( EnemyData, UnitSetData.NPC_Hecate )
+        """
+        result = parse_file(text)
+        assert isinstance(result.get("UnitSetData.NPC_Hecate"), LuaTable)
+        assert "EnemyData" not in result
+
+    def test_does_not_bleed_into_next_statement(self):
+        text = """
+            OverwriteTableKeys( EncounterData, {
+                Story_Echo_01 = { InheritFrom = { "NonCombat" } },
+            } )
+            AnotherKey = "after the call"
+        """
+        result = parse_file(text)
+        assert isinstance(result.get("EncounterData"), LuaTable)
+        assert result.get("AnotherKey") == "after the call"
+
+    def test_multiple_calls_merge_into_same_target(self):
+        # Two OverwriteTableKeys calls targeting the same identifier
+        # should merge keys (later definitions win on collision). This
+        # mirrors the engine's runtime merge semantics.
+        text = """
+            OverwriteTableKeys( EncounterData, {
+                A = { x = 1 },
+            } )
+            OverwriteTableKeys( EncounterData, {
+                B = { y = 2 },
+            } )
+        """
+        result = parse_file(text)
+        ed = result["EncounterData"]
+        assert set(ed.named.keys()) == {"A", "B"}
+
+
+class TestExpressionContinuations:
+    """``X or Y`` and ``X and Y`` continuations after an RHS value must be
+    consumed so they don't leak into the next statement. The
+    ``X = X or {}`` lazy-init idiom is the primary motivation: without
+    this, the following statement would never be parsed as a top-level
+    assignment.
+    """
+
+    def test_or_continuation_consumed(self):
+        text = "X = SomeIdentifier or {}\nY = \"after\""
+        result = parse_file(text)
+        assert isinstance(result["X"], LuaIdentifier)
+        assert result["Y"] == "after"
+
+    def test_and_continuation_consumed(self):
+        text = "X = a and b\nY = \"after\""
+        result = parse_file(text)
+        assert isinstance(result["X"], LuaIdentifier)
+        assert result["Y"] == "after"
