@@ -1,7 +1,7 @@
 """
-Parse Hades 1 game source files and generate per-source JSON data files
-into ``outputs/``. Stale JSONs are removed before generation so that
-renames or removed sources can't leave orphans behind.
+Parse Hades 1 and Hades 2 game source files and generate per-source JSON
+data files into ``outputs/``. Stale JSONs are removed before generation so
+that renames or removed sources can't leave orphans behind.
 
 Local paths (which Steam install to read from) live in ``config.toml`` at
 the repo root - copy ``config.example.toml`` to ``config.toml`` and edit
@@ -28,6 +28,17 @@ from src.extractors.hades1 import (
     HADES1_PRESET_CHOICES,
     HADES1_SPEAKERS,
 )
+from src.extractors.hades2 import (
+    extract_npc_data as h2_extract_npc_data,
+    extract_deathloop_data as h2_extract_deathloop_data,
+    extract_loot_data as h2_extract_loot_data,
+    extract_enemy_data as h2_extract_enemy_data,
+    extract_encounter_room_data as h2_extract_encounter_room_data,
+    extract_narrative_priorities,
+    apply_narrative_priorities,
+    HADES2_SPEAKERS,
+)
+from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.graph import build_graph_data
 
 # Each entry: (output filename, source label, lua filename, extractor function)
@@ -51,6 +62,32 @@ HADES1_SOURCES = [
 # It is NOT a per-source dataset and so does not get its own output JSON
 # (build_viewer.py would otherwise try to merge it as a graph dataset).
 HADES1_TEXTLINE_SETS = "TextLineSets.lua"
+
+# H2 splits per-character / per-god / per-biome / per-encounter dialogue
+# data across many files, so the H2 sources are declared as globs that
+# expand to one output JSON per matched Lua file at runtime. Each entry:
+# (output prefix, source label, glob pattern, extractor function); the
+# resulting output filename is ``{prefix}_{lua_stem}.json``.
+HADES2_SOURCES = [
+    ("hades2_npc",       "Hades 2", "NPCData_*.lua",      h2_extract_npc_data),
+    ("hades2_deathloop", "Hades 2", "DeathLoopData.lua",  h2_extract_deathloop_data),
+    ("hades2_loot",      "Hades 2", "LootData*.lua",      h2_extract_loot_data),
+    ("hades2_enemy",     "Hades 2", "EnemyData.lua",      h2_extract_enemy_data),
+    ("hades2_encounter", "Hades 2", "EncounterData*.lua", h2_extract_encounter_room_data),
+    ("hades2_room",      "Hades 2", "RoomData*.lua",      h2_extract_encounter_room_data),
+]
+
+# RequirementsData.lua holds H2's ``NamedRequirementsData`` registry that
+# textline-set ``NamedRequirements = { "Name" }`` refs resolve against; it
+# is loaded once and passed into every H2 extractor so inline expansion
+# of named refs uses the shared registry rather than re-parsing per file.
+HADES2_NAMED_REQUIREMENTS_FILE = "RequirementsData.lua"
+
+# NarrativeData.lua holds H2's per-textline priority annotations, loaded
+# once and applied (in-place) to each per-file owners dict after
+# extraction. Owners / textlines absent from a given file are silently
+# skipped by ``apply_narrative_priorities``.
+HADES2_NARRATIVE_DATA_FILE = "NarrativeData.lua"
 
 OUTPUT_DIR = Path(__file__).parent / "outputs"
 
@@ -112,6 +149,81 @@ def generate_source(
     return graph_data
 
 
+def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict]:
+    """Load H2's shared cross-file context: NamedRequirements registry
+    and NarrativeData priority annotations.
+
+    Both files are optional - returns an empty mapping for each when the
+    corresponding source isn't present, so the H2 pipeline still runs
+    (named refs surface as unresolved, priorities go unattached).
+    """
+    nr_path = hades2_scripts / HADES2_NAMED_REQUIREMENTS_FILE
+    if nr_path.exists():
+        print(f"Parsing Hades 2: {nr_path}")
+        named_reqs = extract_named_requirements(parse_lua_file(str(nr_path)))
+        print(f"  NamedRequirements: {len(named_reqs)}")
+    else:
+        print(f"SKIP {HADES2_NAMED_REQUIREMENTS_FILE}: file not found at {nr_path}")
+        named_reqs = {}
+
+    nd_path = hades2_scripts / HADES2_NARRATIVE_DATA_FILE
+    if nd_path.exists():
+        print(f"Parsing Hades 2: {nd_path}")
+        priorities = extract_narrative_priorities(parse_lua_file(str(nd_path)))
+        priority_count = sum(
+            len(tl_map)
+            for owner_sections in priorities.values()
+            for tl_map in owner_sections.values()
+        )
+        print(f"  Narrative priorities: {priority_count} textline records across {len(priorities)} owners")
+    else:
+        print(f"SKIP {HADES2_NARRATIVE_DATA_FILE}: file not found at {nd_path}")
+        priorities = {}
+
+    return named_reqs, priorities
+
+
+def generate_hades2_source(
+    output_prefix: str,
+    source_label: str,
+    lua_path: Path,
+    extractor,
+    named_requirements: dict,
+    narrative_priorities: dict,
+) -> tuple[str, dict]:
+    """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
+
+    Applies the shared narrative-priority annotations in place before
+    building the graph, so the JSON the build pipeline consumes already
+    carries the priority badges the viewer renders.
+    """
+    print(f"Parsing {source_label}: {lua_path}")
+    parsed = parse_lua_file(str(lua_path))
+
+    owners = extractor(
+        parsed,
+        source_label=source_label,
+        source_file=lua_path.name,
+        named_requirements=named_requirements,
+    )
+    print(f"  Owners: {len(owners)}")
+
+    attached = apply_narrative_priorities(owners, narrative_priorities)
+    if attached:
+        print(f"  Narrative priorities attached: {attached}")
+
+    graph_data = build_graph_data(owners, speakers=HADES2_SPEAKERS)
+
+    stats = graph_data["stats"]
+    print(f"  Textlines: {stats['totalTextlines']}")
+    print(f"  Dependency edges: {stats['totalEdges']}")
+    if stats["duplicates"]:
+        print(f"  Duplicate textline names within this file: {len(stats['duplicates'])}")
+
+    output_name = f"{output_prefix}_{lua_path.stem}.json"
+    return output_name, graph_data
+
+
 def main():
     try:
         cfg = load_config()
@@ -120,6 +232,7 @@ def main():
         sys.exit(1)
 
     hades1_scripts = cfg.hades1_scripts
+    hades2_scripts = cfg.hades2_scripts
 
     OUTPUT_DIR.mkdir(exist_ok=True)
 
@@ -127,6 +240,10 @@ def main():
     for stale in OUTPUT_DIR.glob("*.json"):
         stale.unlink()
 
+    # --- Hades 1 ---
+    print("=" * 60)
+    print("Hades 1")
+    print("=" * 60)
     game_data_lists = load_game_data_lists(hades1_scripts)
 
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
@@ -141,6 +258,30 @@ def main():
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {out_path}")
+
+    # --- Hades 2 ---
+    print()
+    print("=" * 60)
+    print("Hades 2")
+    print("=" * 60)
+    named_reqs, narrative_priorities = load_hades2_context(hades2_scripts)
+
+    for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
+        matched_files = sorted(hades2_scripts.glob(pattern))
+        if not matched_files:
+            print(f"  SKIP {pattern}: no matching files in {hades2_scripts}")
+            continue
+        print(f"\n{source_label} source family: {pattern} ({len(matched_files)} files)")
+        for lua_path in matched_files:
+            output_name, data = generate_hades2_source(
+                output_prefix, source_label, lua_path, extractor,
+                named_reqs, narrative_priorities,
+            )
+            out_path = OUTPUT_DIR / output_name
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
+                f.write("\n")
+            print(f"  Written to: {out_path}")
 
     print("\nDone!")
 
