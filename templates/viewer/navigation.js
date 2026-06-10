@@ -1,16 +1,23 @@
 // URL-hash navigation between viewer states. Selecting a textline
 // updates all three panels (info, upstream, downstream) and pushes
-// a canonical ``view=...&dialogue=...`` state into
+// a canonical ``game=...&view=...&dialogue=...`` state into
 // ``window.location.hash`` so the URL is shareable.
 //
 // The URL scheme itself - parsing, serialization, key order - lives
 // in ``./url.js``. This module owns the DOM-facing side: choosing
 // which view to render for a parsed state, syncing the search box,
-// and the hashchange listener that drives back/forward navigation.
+// the hashchange listener that drives back/forward navigation, and
+// the per-game data swap that fires when the URL's ``game`` key
+// changes (toggle clicks and shared deep links both go through here).
 
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
+import { setActiveGame, getActiveGame, resolveGame } from './data.js';
+import { buildLinesIndex } from './search-text.js';
+import { buildNameIndex } from './search-name.js';
+import { initStats } from './stats.js';
+import { renderGameToggle } from './game-toggle.js';
 
 // Tracks the canonical serialization of the state currently
 // reflected in ``window.location.hash`` so the ``hashchange``
@@ -44,26 +51,60 @@ export function navigateTo(name) {
     navigateToState({ view: 'dialogue', dialogue: name });
 }
 
+// Switch the viewer to a different game: swap every per-game data
+// binding, rebuild the search indices against the new textlines,
+// re-render the stats line, and refresh the toggle highlight. Does
+// NOT touch the URL hash - the caller decides whether the switch
+// flows through ``navigateToState`` (toggle click) or precedes it
+// (deep-link load).
+export function switchToGame(gameId) {
+    setActiveGame(gameId);
+    buildLinesIndex();
+    buildNameIndex();
+    initStats();
+    renderGameToggle();
+}
+
 // Write ``state`` into the URL hash and refresh the panels to
 // reflect it. Both the change-detection key and the
 // ``window.location.hash`` assignment go through the same
 // serializer so the resulting ``hashchange`` event is recognised
 // as a self-write and skipped.
+//
+// Always emits the current ``game`` so the URL stays canonical
+// even when the caller didn't think to set it (every
+// non-toggle-click navigation - search, tree click, inline link -
+// implicitly stays in the active game).
 export function navigateToState(state) {
-    const serialized = serializeUrlState(state);
+    const fullState = Object.assign({ game: getActiveGame() }, state || {});
+    const requestedGame = fullState.game;
+    if (requestedGame && requestedGame !== getActiveGame()) {
+        switchToGame(requestedGame);
+    }
+    const serialized = serializeUrlState(fullState);
     urlSelection = serialized;
     window.location.hash = serialized;
-    applyState(state);
+    applyState(fullState);
 }
 
 // Read ``window.location.hash``, parse it under the key=value
 // scheme, and sync the viewer to whatever it points to. Used on
 // initial page load and on every browser back/forward.
+//
+// If the parsed state names a different game than the active one
+// (browser back across a toggle, shared deep link into the other
+// game), swap data bindings first so the rest of the state
+// resolves against the right namespace.
 export function applyHashFromUrl() {
     const state = parseUrlState(window.location.hash);
+    const resolvedGame = resolveGame(state.game);
+    state.game = resolvedGame;
     const key = urlStateKey(state);
     if (key === urlSelection) return;
     urlSelection = key;
+    if (resolvedGame !== getActiveGame()) {
+        switchToGame(resolvedGame);
+    }
     applyState(state);
 }
 

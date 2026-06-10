@@ -38,7 +38,7 @@ class TestAnnotateKnownUnresolved:
 
     def test_known_unresolved_attached_with_category(self, make_graph_data):
         gd = make_graph_data(unresolved=["ThanatosGift010", "Fury3SisterUnionWithMeg02"])
-        annotate_known_unresolved(gd)
+        annotate_known_unresolved(gd, "hades1")
         assert "ThanatosGift010" in gd["knownUnresolvedRefs"]
         assert gd["knownUnresolvedRefs"]["ThanatosGift010"]["category"] == "typo-or-bug"
         assert gd["knownUnresolvedRefs"]["Fury3SisterUnionWithMeg02"]["category"] == "back-compatibility"
@@ -48,19 +48,19 @@ class TestAnnotateKnownUnresolved:
         not appear in knownUnresolvedRefs - only currently-unresolved refs
         carry over."""
         gd = make_graph_data()  # no unresolved refs
-        annotate_known_unresolved(gd)
+        annotate_known_unresolved(gd, "hades1")
         assert gd["knownUnresolvedRefs"] == {}
 
     def test_uncategorized_unresolved_listed_by_category(self, make_graph_data):
         gd = make_graph_data(unresolved=["SomeBrandNewRef", "ThanatosGift010"])
-        annotate_known_unresolved(gd)
+        annotate_known_unresolved(gd, "hades1")
         by_cat = gd["stats"]["unresolvedByCategory"]
         assert by_cat["uncategorized"] == 1
         assert by_cat["typo-or-bug"] == 1
 
     def test_labels_and_descriptions_attached(self, make_graph_data):
         gd = make_graph_data(unresolved=["ThanatosGift010"])
-        annotate_known_unresolved(gd)
+        annotate_known_unresolved(gd, "hades1")
         assert gd["unresolvedCategoryLabels"] == UNRESOLVED_CATEGORY_LABELS
         assert gd["unresolvedCategoryDescriptions"] == UNRESOLVED_CATEGORY_DESCRIPTIONS
 
@@ -71,20 +71,48 @@ class TestAuditWarnings:
 
     def test_warns_when_hardcoded_entry_is_now_resolved(self, capsys, make_graph_data):
         # Empty unresolved set means EVERY hardcoded entry is stale.
-        annotate_known_unresolved(make_graph_data())
+        annotate_known_unresolved(make_graph_data(), "hades1")
         out = capsys.readouterr().out
         assert "HADES1_KNOWN_UNRESOLVED_REFS" in out
         assert "now resolved" in out
 
     def test_warns_when_unresolved_ref_not_categorized(self, capsys, make_graph_data):
-        annotate_known_unresolved(make_graph_data(unresolved=["UnknownNewRefThatNoOneClassified"]))
+        annotate_known_unresolved(make_graph_data(unresolved=["UnknownNewRefThatNoOneClassified"]), "hades1")
         out = capsys.readouterr().out
         assert "not categorized" in out
         assert "UnknownNewRefThatNoOneClassified" in out
 
     def test_no_warnings_when_lists_match_exactly(self, capsys, make_graph_data):
         gd = make_graph_data(unresolved=list(HADES1_KNOWN_UNRESOLVED_REFS.keys()))
-        annotate_known_unresolved(gd)
+        annotate_known_unresolved(gd, "hades1")
         out = capsys.readouterr().out
         assert "now resolved" not in out
         assert "not categorized" not in out
+
+
+class TestPerGameRouting:
+    """The annotate step must accept a ``game`` argument and only consult
+    that game's hardcoded list."""
+
+    def test_unknown_game_id_raises(self, make_graph_data):
+        import pytest as _pytest
+        with _pytest.raises(ValueError, match="Unknown game id"):
+            annotate_known_unresolved(make_graph_data(), "hades3")
+
+    def test_hades2_has_empty_curated_list(self, capsys, make_graph_data):
+        # H2 has no curated entries yet so an unresolved ref under H2 is
+        # always "uncategorized" and surfaces as a triage warning.
+        gd = make_graph_data(unresolved=["ThanatosGift010"])
+        annotate_known_unresolved(gd, "hades2")
+        assert gd["knownUnresolvedRefs"] == {}
+        assert gd["stats"]["unresolvedByCategory"]["uncategorized"] == 1
+        out = capsys.readouterr().out
+        assert "HADES2_KNOWN_UNRESOLVED_REFS" in out
+        assert "not categorized" in out
+
+    def test_hades1_curated_does_not_leak_into_hades2(self, make_graph_data):
+        # ThanatosGift010 is in HADES1_KNOWN_UNRESOLVED_REFS; under H2
+        # it should NOT be considered known (strict per-game separation).
+        gd = make_graph_data(unresolved=["ThanatosGift010"])
+        annotate_known_unresolved(gd, "hades2")
+        assert "ThanatosGift010" not in gd["knownUnresolvedRefs"]

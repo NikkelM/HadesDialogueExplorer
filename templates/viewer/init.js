@@ -3,23 +3,27 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData } from './data.js';
-import { initStats } from './stats.js';
-import { buildLinesIndex } from './search-text.js';
-import { buildNameIndex } from './search-name.js';
+import { loadData, resolveGame } from './data.js';
+import { switchToGame, applyHashFromUrl } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
-import { applyHashFromUrl } from './navigation.js';
 import { initTooltip } from './tooltip.js';
+import { initGameToggle } from './game-toggle.js';
+import { parseUrlState } from './url.js';
 
 function init(data) {
     loadData(data);
-    buildLinesIndex();
-    buildNameIndex();
-    initStats();
+    // Resolve the initial game from the URL hash before building any
+    // game-specific state. Deep links carry ``game=`` so a shared URL
+    // lands the user in the right game's namespace; anything else
+    // falls back to the build-time default game.
+    const initialState = parseUrlState(window.location.hash);
+    const initialGame = resolveGame(initialState.game);
+    switchToGame(initialGame);
     initSearch();
     initInfoPanel();
     initTooltip();
+    initGameToggle();
     applyHashFromUrl();
     window.addEventListener('hashchange', applyHashFromUrl);
 }
