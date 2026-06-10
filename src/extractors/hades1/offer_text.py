@@ -25,11 +25,11 @@ of reference data in this package (``HADES1_SPEAKERS``,
     existing; only ``Scripts/*.lua`` is required.
   * No SJSON parser to maintain.
 
-If a new offer/choice cue is added in a future game patch and starts
-referencing an Id that isn't in this map, the viewer will surface the
-raw identifier - which is the same visible failure mode any other
-unresolved reference produces. Re-run the audit (scan the Lua sources
-for ``Text = "*_OfferText##"`` / ``Text = "*_ChoiceText##"``) to refresh.
+If a referenced offer/choice Id isn't in this map, the viewer will
+surface the raw identifier - which is the same visible failure mode
+any other unresolved reference produces. Re-run the audit (scan the
+Lua sources for ``Text = "*_OfferText##"`` / ``Text = "*_ChoiceText##"``)
+to refresh if a gap is spotted.
 
 DisplayName values are stored with their ``{#...Format}`` runtime
 presentation tags already stripped - the viewer renders plain text.
