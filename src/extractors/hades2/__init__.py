@@ -38,6 +38,10 @@ from .loot_data import (
     LOOT_DEFAULT_SPEAKERS,
     extract_loot_data,
 )
+from .enemy_data import (
+    ENEMY_DEFAULT_SPEAKERS,
+    extract_enemy_data,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -57,4 +61,6 @@ __all__ = [
     "extract_npc_data",
     "LOOT_DEFAULT_SPEAKERS",
     "extract_loot_data",
+    "ENEMY_DEFAULT_SPEAKERS",
+    "extract_enemy_data",
 ]
