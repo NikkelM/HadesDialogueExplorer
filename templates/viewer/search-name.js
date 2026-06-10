@@ -6,6 +6,100 @@
 // section of the dropdown.
 
 import { textlines, allNames, speakers } from './data.js';
+import { computeIdf, candidateTokenWeight } from './idf.js';
+
+// Token -> IDF weight, computed over the name corpus (textline names
+// tokenised on PascalCase / digit transitions, owner display names
+// tokenised on whitespace). Rebuilt by :func:`buildNameIndex` on each
+// dataset load so the weights always reflect the live corpus.
+export let nameIdf;
+
+// Per-candidate token list, keyed by textline name. Stored alongside
+// the IDF map so :func:`searchNameMatches` can prefix-resolve
+// mid-typing query tokens (``zeu`` -> ``zeus``) against the actual
+// tokens present on each candidate, rather than guessing.
+let nameTokens;
+
+// Split a textline name (PascalCase identifier) into its constituent
+// segments. Boundaries are:
+//   - Non-word -> word transition (e.g. ``_`` between segments).
+//   - lower-or-digit -> upper transition (PascalCase break:
+//     ``OrpheusWith`` -> ``Orpheus``, ``With``).
+//   - letter <-> digit transition (``Eurydice01`` -> ``Eurydice``,
+//     ``01``).
+// Returns lowercased tokens so callers can compare without further
+// case folding. Empty / falsy input returns an empty array.
+export function tokeniseTextlineName(name) {
+    const tokens = [];
+    if (!name) return tokens;
+    const charType = (c) => {
+        if (c >= 65 && c <= 90) return 'U';   // A-Z
+        if (c >= 97 && c <= 122) return 'L';  // a-z
+        if (c >= 48 && c <= 57) return 'D';   // 0-9
+        return 'X';                            // anything else
+    };
+    let start = -1;
+    let prevType = 'X';
+    for (let i = 0; i < name.length; i++) {
+        const t = charType(name.charCodeAt(i));
+        if (t === 'X') {
+            if (start >= 0) {
+                tokens.push(name.slice(start, i).toLowerCase());
+                start = -1;
+            }
+        } else if (start < 0) {
+            start = i;
+        } else {
+            const subBoundary =
+                ((prevType === 'L' || prevType === 'D') && t === 'U') ||
+                (prevType === 'L' && t === 'D') ||
+                (prevType === 'D' && (t === 'L' || t === 'U'));
+            if (subBoundary) {
+                tokens.push(name.slice(start, i).toLowerCase());
+                start = i;
+            }
+        }
+        prevType = t;
+    }
+    if (start >= 0) tokens.push(name.slice(start).toLowerCase());
+    return tokens;
+}
+
+// Split an owner display name (e.g. ``"Megaera (Boss)"``) on
+// whitespace. The variant suffix in parentheses stays attached to
+// the preceding token; the IDF formula then treats e.g. ``(boss)`` as
+// its own rare segment, which is fine because the matcher does a
+// substring check rather than an exact-token check, so the weight
+// just biases ranking without affecting recall.
+export function tokeniseOwnerDisplay(display) {
+    if (!display) return [];
+    return display.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+}
+
+// Rebuild the name-corpus IDF map from the currently-loaded dataset.
+// One document per textline: tokens combine PascalCase segments from
+// the textline name with whitespace segments from the owner display
+// name. Owner ids are deliberately NOT included in the corpus -
+// they're cryptic (``NPC_FurySister_01``) and would otherwise dilute
+// the per-token document-frequency signal with synthetic noise.
+// Called from ``init.js`` after ``loadData`` and from
+// ``loadFixtureData`` in tests.
+export function buildNameIndex() {
+    const docs = [];
+    nameTokens = new Map();
+    for (const name of allNames) {
+        const tl = textlines[name];
+        if (!tl) continue;
+        const tokens = tokeniseTextlineName(name);
+        const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
+        if (ownerDisplay) {
+            for (const t of tokeniseOwnerDisplay(ownerDisplay)) tokens.push(t);
+        }
+        nameTokens.set(name, tokens);
+        docs.push(tokens);
+    }
+    nameIdf = computeIdf(docs, (d) => d);
+}
 
 // Rank a single search token against one candidate textline. Lower is
 // better; -1 means no match. Tiers:
@@ -18,11 +112,9 @@ import { textlines, allNames, speakers } from './data.js';
 //   3 = token anywhere else in the textline name (mid-segment)
 //   4 = token anywhere in the owner display name or internal id
 //
-// Aggregate ranking compares the per-token tiers lexicographically so
-// earlier query tokens dominate later ones. For ``Zeus with aphrodite``
-// this means ``ZeusWithAphrodite01`` (tiers 0,2,2) outranks
-// ``AphroditeWithZeus01`` (tiers 2,2,0) - the token the user typed first
-// is treated as the most important one to satisfy strongly.
+// Kept pure (tier only, no IDF weighting) so per-token tier logic
+// stays unit-testable in isolation. Weighting happens in
+// :func:`searchNameMatches`.
 export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower) {
     if (nameLower.startsWith(token)) return 0;
     if (ownerIdLower.startsWith(token)) return 1;
@@ -44,32 +136,59 @@ export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ow
     return -1;
 }
 
-// Compute the ranked name matches for a tokenised query. Extracted
-// so text and name search can share the same tokeniser and so the
-// search code path stays small enough to read at a glance.
+// Compute the ranked name matches for a tokenised query.
+//
+// Ranking axes, in priority order:
+//   1. Weighted tier tuple, compared lexicographically. Each entry
+//      is ``tier_i * candidate_weight_i`` - the candidate-specific
+//      IDF weight for the i-th query token (via per-candidate prefix
+//      resolution so mid-typing queries like ``zeu`` resolve to the
+//      weight of the actual matched corpus token ``zeus``). Lex
+//      comparison from position 0 onwards preserves
+//      "earlier-typed-token-dominates": the rank is driven first by
+//      where the user's first query token landed, then by the
+//      second, and so on - the same priority order the user
+//      conveyed by typing the tokens in that sequence. Multiplying
+//      tier by weight only changes the comparison when per-candidate
+//      weights diverge for the same query position (e.g. prefix
+//      ``z`` matching ``Zeus`` in one candidate and ``Zagreus`` in
+//      another); in that edge case the candidate where the rare
+//      parent token sits at the better tier wins.
+//   2. Alphabetical fall-through via the ``allNames`` scan order.
+//
+// Single-token queries skip IDF entirely (a single weighted entry
+// reduces to plain tier comparison either way) so per-keystroke
+// results stay deterministic while the user is still typing the
+// first segment.
 export function searchNameMatches(tokens, limit) {
+    const useIdf = tokens.length > 1 && nameIdf;
+
     const ranked = [];
     for (const n of allNames) {
         const tl = textlines[n];
         if (!tl) continue;
         const nameLower = n.toLowerCase();
         const ownerIdLower = tl.owner.toLowerCase();
-        const ownerDisplay = speakers[tl.owner]?.name;
+        const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
         const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
+        const candidateTokens = (nameTokens && nameTokens.get(n)) || [];
 
-        const tierTuple = [];
+        const weightedTiers = [];
         let allMatched = true;
-        for (const token of tokens) {
-            const r = rankSearchToken(token, n, nameLower, ownerIdLower, ownerDisplayLower);
+        for (let i = 0; i < tokens.length; i++) {
+            const r = rankSearchToken(tokens[i], n, nameLower, ownerIdLower, ownerDisplayLower);
             if (r < 0) { allMatched = false; break; }
-            tierTuple.push(r);
+            const w = useIdf
+                ? candidateTokenWeight(nameIdf, candidateTokens, tokens[i])
+                : 1;
+            weightedTiers.push(r * w);
         }
-        if (allMatched) ranked.push({ name: n, tiers: tierTuple });
+        if (allMatched) ranked.push({ name: n, weightedTiers });
     }
     ranked.sort((a, b) => {
-        const len = a.tiers.length;
+        const len = a.weightedTiers.length;
         for (let i = 0; i < len; i++) {
-            const diff = a.tiers[i] - b.tiers[i];
+            const diff = a.weightedTiers[i] - b.weightedTiers[i];
             if (diff !== 0) return diff;
         }
         return 0;

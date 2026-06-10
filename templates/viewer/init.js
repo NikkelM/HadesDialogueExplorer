@@ -6,6 +6,7 @@
 import { loadData } from './data.js';
 import { initStats } from './stats.js';
 import { buildLinesIndex } from './search-text.js';
+import { buildNameIndex } from './search-name.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { applyHashFromUrl } from './navigation.js';
@@ -14,6 +15,7 @@ import { initTooltip } from './tooltip.js';
 function init(data) {
     loadData(data);
     buildLinesIndex();
+    buildNameIndex();
     initStats();
     initSearch();
     initInfoPanel();

@@ -15,8 +15,12 @@ import {
     findContiguousPhrasePosition,
     searchTextLines,
     buildSnippetHtml,
+    buildLinesIndex,
+    tokeniseLineText,
+    linesIdf,
 } from '../templates/viewer/search-text.js';
-import { loadFixtureData } from './fixtures.js';
+import { loadData } from '../templates/viewer/data.js';
+import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 before(() => {
     loadFixtureData();
@@ -169,4 +173,183 @@ test('buildSnippetHtml: prepends / appends ellipsis when the window is clipped',
 test('buildSnippetHtml: no matches -> escaped text unchanged', () => {
     const html = buildSnippetHtml('plain & simple', ['foo'], [[]], -1);
     assert.equal(html, 'plain &amp; simple');
+});
+
+// ---- IDF-weighted ranking ----
+
+test('tokeniseLineText splits on non-word characters and keeps alphanumerics', () => {
+    const tokens = tokeniseLineText("i think he's joking, about it!");
+    assert.deepEqual(tokens, ['i', 'think', 'he', 's', 'joking', 'about', 'it']);
+});
+
+test('linesIdf: rare tokens carry strictly higher weight than common ones', () => {
+    // ``i`` shows up in four of the six dialogue lines in the fixture,
+    // ``knew`` only in one - the IDF weight must reflect that
+    // ordering so the ranker has a rare-vs-common signal to act on.
+    assert.ok(linesIdf.get('knew') > linesIdf.get('i'));
+    // Every weight is strictly positive so multi-token sums never
+    // collapse to zero, preserving the all-matches-beats-subset
+    // promise.
+    assert.ok(linesIdf.get('i') > 0);
+});
+
+test('searchTextLines: rare-token match outranks common-only match when matchedCount ties', () => {
+    // Query ``i think knew``: three textlines match exactly two of the
+    // tokens, but ZeusWithAphrodite01 is the only one whose pair
+    // includes the rare ``knew``. The old matchedCount-only sort fell
+    // back to alphabetical (AchillesAboutThanatos01 first); the IDF
+    // ranker must surface ZeusWithAphrodite01 instead because
+    // ``knew``'s weight dominates the common-token pairs.
+    const matches = searchTextLines(['i', 'think', 'knew'], new Set(), 50);
+    assert.equal(matches[0].entry.name, 'ZeusWithAphrodite01');
+    assert.equal(matches[0].matchedCount, 2);
+    // Sanity: the next results still match the same count but with
+    // common-only token pairs, scoring lower than the rare-anchored top.
+    assert.ok(matches[1].matchedCount === 2);
+    assert.ok(matches[1].score < matches[0].score);
+});
+
+test('searchTextLines: all-matches still beats subset-matches with IDF weighting', () => {
+    // The IDF formula is strictly positive, so a line matching every
+    // query token always scores higher than any line matching a
+    // proper subset of the same query. Regression guard against an
+    // implementation that could be tempted to subtract a per-line
+    // penalty or otherwise let subset-matches overtake full-matches.
+    const matches = searchTextLines(['i', 'knew', 'you'], new Set(), 50);
+    assert.equal(matches[0].entry.name, 'ZeusWithAphrodite01');
+    assert.equal(matches[0].matchedCount, 3);
+});
+
+test('searchTextLines: stopword-only query degenerates to count-style ordering', () => {
+    // Every token is high-frequency in this corpus, so weights are
+    // similar; the line that matches all three still ranks first
+    // (AchillesAboutThanatos01 contains ``i``, ``think``, and ``you``)
+    // because more matches => higher weighted sum even when each
+    // weight is small. No special fallback branch needed.
+    const matches = searchTextLines(['i', 'think', 'you'], new Set(), 50);
+    assert.equal(matches[0].entry.name, 'AchillesAboutThanatos01');
+    assert.equal(matches[0].matchedCount, 3);
+});
+
+test('searchTextLines: single-token query skips IDF and preserves alphabetical ordering', () => {
+    // With only one token there is nothing to rank against, so every
+    // matching line scores the same (1) and the sort falls back to
+    // the alphabetical scan order from ``allNames``. First match must
+    // therefore be the alphabetically first textline that contains
+    // ``i`` as a word boundary - AchillesAboutThanatos01.
+    const matches = searchTextLines(['i'], new Set(), 50);
+    assert.equal(matches[0].entry.name, 'AchillesAboutThanatos01');
+    // Every result scores 1 (single-token, IDF skipped).
+    for (const m of matches) {
+        assert.equal(m.score, 1);
+    }
+});
+
+test('linesIdf is rebuilt whenever buildLinesIndex runs against a fresh corpus', () => {
+    // Reload with a tiny single-document corpus so the IDF map is
+    // forced to recompute. After the rebuild the only token in the
+    // new corpus carries the singleton weight; tokens from the
+    // previous fixture must not leak through.
+    loadData({
+        textlines: {
+            Tiny01: {
+                owner: 'NPC_X_01',
+                section: 'InteractTextLineSets',
+                playOnce: false,
+                narrativePrioritySectionTier: 'normal',
+                narrativePrioritySetLevel: null,
+                dialogueLines: [{ speaker: 'NPC_X_01', text: 'unique-word.' }],
+            },
+        },
+        dependents: {},
+        stats: { totalTextlines: 1, totalEdges: 0, unresolvedRefs: [] },
+        speakers: {},
+        knownUnresolvedRefs: {},
+        unresolvedCategoryLabels: {},
+        unresolvedCategoryDescriptions: {},
+        unresolvedRefBlocks: {},
+        reqTypeLabels: {},
+        reqTypeEdgeLabels: {},
+        reqTypeTooltips: {},
+        reqTypeOrder: [],
+        sectionKeyLabels: {},
+    });
+    buildLinesIndex();
+    assert.equal(linesIdf.get('unique'), Math.log(2 / 2) + 1); // log(1)+1 = 1
+    assert.equal(linesIdf.get('word'), 1);
+    assert.equal(linesIdf.get('knew'), undefined);
+
+    // Restore the shared fixture so subsequent tests in the file see
+    // the baseline corpus.
+    loadFixtureData();
+    assert.ok(linesIdf.get('knew') !== undefined);
+});
+
+// Reset to the shared fixture so the smoke-test suite (which runs
+// after this file) sees a known state regardless of which test ran
+// last.
+
+test('searchTextLines: candidate with more adjacent query-token pairs ranks above one with fewer', () => {
+    // Both lines contain every query token (same weighted score) and
+    // both have at most a single 2-run (same ``runLength``). The
+    // ``adjacentPairs`` tiebreaker is what differentiates them - the
+    // line that hits ``i think`` AND ``and Eurydice`` as separate
+    // 2-runs deserves to rank above the one that only has ``i think``.
+    loadData({
+        textlines: {
+            LineSingleFragment01: {
+                owner: 'NPC_X_01',
+                section: 'InteractTextLineSets',
+                playOnce: false,
+                narrativePrioritySectionTier: 'normal',
+                narrativePrioritySetLevel: null,
+                dialogueLines: [
+                    { speaker: 'NPC_X_01', text: "I think Eurydice should know, and that is final." },
+                ],
+            },
+            LineTwoFragments02: {
+                owner: 'NPC_X_01',
+                section: 'InteractTextLineSets',
+                playOnce: false,
+                narrativePrioritySectionTier: 'normal',
+                narrativePrioritySetLevel: null,
+                dialogueLines: [
+                    { speaker: 'NPC_X_01', text: "I think it is decided - we shall send a chorus and Eurydice will follow." },
+                ],
+            },
+        },
+        dependents: {},
+        stats: { totalTextlines: 2, totalEdges: 0, unresolvedRefs: [] },
+        speakers: { NPC_X_01: { name: 'X' } },
+        knownUnresolvedRefs: {},
+        unresolvedCategoryLabels: {},
+        unresolvedCategoryDescriptions: {},
+        unresolvedRefBlocks: {},
+        reqTypeLabels: {},
+        reqTypeEdgeLabels: {},
+        reqTypeTooltips: {},
+        reqTypeOrder: [],
+        sectionKeyLabels: {},
+    });
+    buildLinesIndex();
+
+    const matches = searchTextLines(['i', 'think', 'and', 'eurydice'], new Set(), 10);
+    // Sanity: both lines matched all four query tokens.
+    assert.equal(matches.length, 2);
+    assert.equal(matches[0].matchedCount, 4);
+    assert.equal(matches[1].matchedCount, 4);
+    // The two-fragment line wins: two adjacent pairs (``i think`` +
+    // ``and Eurydice``) vs the single-fragment line's one pair
+    // (``i think`` only).
+    assert.equal(matches[0].entry.name, 'LineTwoFragments02');
+    assert.equal(matches[0].adjacentPairs, 2);
+    assert.equal(matches[1].entry.name, 'LineSingleFragment01');
+    assert.equal(matches[1].adjacentPairs, 1);
+
+    loadFixtureData();
+});
+
+test('teardown: restore shared fixture', () => {
+    loadData(buildFixtureData());
+    buildLinesIndex();
 });

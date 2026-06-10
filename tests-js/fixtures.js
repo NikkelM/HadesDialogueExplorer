@@ -15,6 +15,7 @@
 
 import { loadData } from '../templates/viewer/data.js';
 import { buildLinesIndex } from '../templates/viewer/search-text.js';
+import { buildNameIndex } from '../templates/viewer/search-name.js';
 
 // Minimal but representative dataset:
 //   - Several NPCs with friendly labels.
@@ -129,9 +130,10 @@ export function buildFixtureData() {
 }
 
 // Reset the viewer's module-level state to the shared fixture and
-// rebuild the line index. Call from a ``before`` (or per-test
+// rebuild the search indices. Call from a ``before`` (or per-test
 // ``beforeEach``) hook.
 export function loadFixtureData() {
     loadData(buildFixtureData());
     buildLinesIndex();
+    buildNameIndex();
 }

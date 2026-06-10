@@ -1,22 +1,54 @@
 // Text-content search engine.
 //
 // Scans the flattened dialogue-line index for word-boundary token
-// matches, ranks by token-count then longest contiguous phrase, and
-// renders highlighted snippets for the dropdown's lower section. Used
-// by ``search-ui.js`` behind a 120 ms debounce because it touches
-// every dialogue line.
+// matches, ranks by an IDF-weighted score then longest contiguous
+// phrase, and renders highlighted snippets for the dropdown's lower
+// section. Used by ``search-ui.js`` behind a 120 ms debounce because
+// it touches every dialogue line.
 
 import { textlines, allNames } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
+import { computeIdf, idfWeight } from './idf.js';
 
 // Flattened index of every dialogue line for fast text-content search.
 // Each entry: ``{name, lineIdx, speaker, textOriginal, textLower}``.
 // Populated by :func:`buildLinesIndex` once during ``init()``.
 export let linesIndex;
 
+// Token -> IDF weight, computed over ``linesIndex`` once per
+// rebuild. Used to weight multi-token query matches so a line
+// containing a rare token outranks a line that only matches common
+// ones for the same query. Kept module-level (rather than re-derived
+// per keystroke) so per-keystroke ranking stays O(query-tokens
+// * lines).
+export let linesIdf;
+
+// Tokenise a dialogue-line string into the same word units that the
+// search matcher considers - runs of alphanumerics (per
+// ``_isWordCharCode``), lowercased. Shared between IDF building and
+// any future caller that needs the corpus tokenisation contract.
+export function tokeniseLineText(textLower) {
+    const tokens = [];
+    const total = textLower.length;
+    let start = -1;
+    for (let i = 0; i < total; i++) {
+        if (_isWordCharCode(textLower.charCodeAt(i))) {
+            if (start < 0) start = i;
+        } else if (start >= 0) {
+            tokens.push(textLower.slice(start, i));
+            start = -1;
+        }
+    }
+    if (start >= 0) tokens.push(textLower.slice(start));
+    return tokens;
+}
+
 // Build the flat per-line search index from the loaded dataset.
 // Called once during ``init()``. Storing the lowercased text once
-// up-front avoids re-lowercasing on every keystroke.
+// up-front avoids re-lowercasing on every keystroke. The IDF map is
+// rebuilt alongside the index so the two always reflect the same
+// corpus snapshot - a single export point keeps callers from
+// accidentally consulting a stale weight map.
 export function buildLinesIndex() {
     const out = [];
     for (const name of allNames) {
@@ -37,6 +69,7 @@ export function buildLinesIndex() {
         }
     }
     linesIndex = out;
+    linesIdf = computeIdf(out, (entry) => tokeniseLineText(entry.textLower));
 }
 
 // Test whether a character code is alphanumeric (a-z, A-Z, 0-9).
@@ -103,21 +136,36 @@ export function findContiguousPhrasePosition(textLower, phraseTokens, firstToken
 
 // Scan the dialogue-line index for entries where at LEAST ONE search
 // token appears as a whole word within the SAME line. Rank by the
-// number of query tokens that matched (more first), then by the
-// length of the longest contiguous run of query tokens (in original
-// query order) that appears as a phrase in the line. A full-query
-// run beats a partial run, which beats fully-scattered tokens. Ties
-// preserve alphabetical order from ``allNames``. Returns at most
-// ``limit`` matches, one per textline (the first matching line).
-// ``excludeNames`` skips textlines already represented in the
-// name-match section so the dropdown stays free of duplicates.
+// IDF-weighted sum of matched-token contributions (rare tokens
+// dominate), then by the length of the longest contiguous run of
+// query tokens (in original query order) that appears as a phrase in
+// the line. A full-query run beats a partial run, which beats
+// fully-scattered tokens. Ties preserve alphabetical order from
+// ``allNames``. Returns at most ``limit`` matches, one per textline
+// (the first matching line). ``excludeNames`` skips textlines
+// already represented in the name-match section so the dropdown
+// stays free of duplicates.
 //
 // Partial matching means a query like ``I think fdfsdfsdfs`` still
 // surfaces lines containing ``I think`` even though the third token
 // does not exist anywhere; lines that match all tokens always
-// outrank lines that match a subset of the same query.
+// outrank lines that match a subset of the same query (every IDF
+// weight is positive, so each additional matched token strictly
+// increases the score).
+//
+// Stopword-only queries (every token is high-frequency) fall out of
+// the weighted ranking the same way the old flat ranking would have
+// resolved them - all tokens carry similar small weights, so the
+// weighted sum's ordering collapses back to count order. No special
+// fallback branch is needed.
+//
+// Single-token queries skip IDF entirely: there is only one possible
+// weight, so the ordering relative to the existing scan order
+// (alphabetical via ``allNames``) is preserved by scoring every
+// match as 1.
 export function searchTextLines(tokens, excludeNames, limit) {
     const N = tokens.length;
+    const useIdf = N > 1 && linesIdf;
     const ranked = [];
     const seen = new Set();
     for (const entry of linesIndex) {
@@ -126,12 +174,14 @@ export function searchTextLines(tokens, excludeNames, limit) {
 
         const positionsByToken = new Array(N);
         let matchedCount = 0;
+        let score = 0;
         let firstMatchAnchor = -1;
         for (let i = 0; i < N; i++) {
             const positions = findWordPositions(entry.textLower, tokens[i]);
             positionsByToken[i] = positions;
             if (positions.length > 0) {
                 matchedCount++;
+                score += useIdf ? idfWeight(linesIdf, tokens[i]) : 1;
                 if (firstMatchAnchor < 0) firstMatchAnchor = positions[0];
             }
         }
@@ -159,15 +209,39 @@ export function searchTextLines(tokens, excludeNames, limit) {
             }
         }
 
+        // Count adjacent query-token pairs that appear as a phrase
+        // somewhere in the line. Two disjoint 2-runs (``[i think]
+        // ... [and Eurydice]`` for query ``i think and eurydice``)
+        // count as 2 pairs; a single 3-run (``[i think and]`` with
+        // ``eurydice`` scattered) also counts as 2 pairs. The
+        // ``runLength`` axis below then differentiates those - one
+        // contiguous run of length K is preferred over disjoint runs
+        // summing to the same pair count, since longer runs convey
+        // more shared context.
+        let adjacentPairs = 0;
+        for (let i = 0; i + 1 < N; i++) {
+            if (positionsByToken[i].length === 0 || positionsByToken[i + 1].length === 0) continue;
+            const pos = findContiguousPhrasePosition(
+                entry.textLower,
+                [tokens[i], tokens[i + 1]],
+                positionsByToken[i],
+            );
+            if (pos >= 0) adjacentPairs++;
+        }
+
         seen.add(entry.name);
-        ranked.push({ entry, matchedCount, runLength, runAnchor, positionsByToken });
+        ranked.push({ entry, matchedCount, score, adjacentPairs, runLength, runAnchor, positionsByToken });
     }
 
-    // Stable sort: more tokens matched first, then longer contiguous
-    // runs, then alphabetical from the allNames-ordered scan above.
+    // Stable sort: higher weighted score first, then more adjacent
+    // query-token pairs matched as phrases, then longer single
+    // contiguous runs, then alphabetical from the allNames-ordered
+    // scan above.
     ranked.sort((a, b) => {
-        const dc = b.matchedCount - a.matchedCount;
-        if (dc !== 0) return dc;
+        const ds = b.score - a.score;
+        if (ds !== 0) return ds;
+        const dp = b.adjacentPairs - a.adjacentPairs;
+        if (dp !== 0) return dp;
         return b.runLength - a.runLength;
     });
     return ranked.slice(0, limit);
