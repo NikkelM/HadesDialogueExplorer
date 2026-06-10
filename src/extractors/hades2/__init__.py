@@ -24,6 +24,10 @@ from .req_types import (
     HADES2_REQ_TYPE_DISPLAY_ORDER,
 )
 from .named_requirements import extract_named_requirements
+from .req_extractor import (
+    HADES2_REQUIREMENT_SET_FIELDS,
+    extract_requirements,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -35,4 +39,6 @@ __all__ = [
     "HADES2_REQ_TYPE_TOOLTIPS",
     "HADES2_REQ_TYPE_DISPLAY_ORDER",
     "extract_named_requirements",
+    "HADES2_REQUIREMENT_SET_FIELDS",
+    "extract_requirements",
 ]
