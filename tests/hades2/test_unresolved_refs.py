@@ -47,11 +47,10 @@ class TestAnnotateKnownUnresolved:
     and attaches category metadata for the viewer."""
 
     def test_known_unresolved_attached_with_category(self, make_graph_data):
-        gd = make_graph_data(unresolved=["MedeaHubMeeting01", "NemesisShopping01"])
+        gd = make_graph_data(unresolved=["MedeaHubMeeting01"])
         annotate_known_unresolved(gd, "hades2")
         assert "MedeaHubMeeting01" in gd["knownUnresolvedRefs"]
         assert gd["knownUnresolvedRefs"]["MedeaHubMeeting01"]["category"] == "cut-content"
-        assert gd["knownUnresolvedRefs"]["NemesisShopping01"]["category"] == "extractor-deferred"
 
     def test_resolved_entries_not_attached(self, make_graph_data):
         gd = make_graph_data()  # no unresolved refs

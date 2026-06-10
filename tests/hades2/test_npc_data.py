@@ -199,3 +199,130 @@ class TestRequirementsIntegration:
         )
         reqs = owners["NPC_Artemis_01"]["InteractTextLineSets"]["Foo"]["requirements"]
         assert reqs == {"RequiredTextLines": ["FooLine"]}
+
+
+class TestVariantSetData:
+    """``VariantSetData.NPC_<Char>_01.<Variant>.<Section>.<Name>`` entries
+    are walked in a second pass and merged into the genus owner (derived
+    from the container key, e.g. ``NPC_Heracles_01``)."""
+
+    def test_variant_textlines_merged_onto_genus_owner(self):
+        parsed = _parse("""
+            VariantSetData.NPC_Heracles_01 = {
+                HeraclesShopping = {
+                    InteractTextLineSets = {
+                        HeraclesMiscChat01 = { { Cue = "/VO/X_0001", Text = "Hi." } },
+                    },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        assert "NPC_Heracles_01" in owners
+        assert "HeraclesMiscChat01" in owners["NPC_Heracles_01"]["InteractTextLineSets"]
+
+    def test_variant_merges_with_existing_unit_set_data_owner(self):
+        parsed = _parse("""
+            UnitSetData.NPC_Heracles = {
+                NPC_Heracles_01 = {
+                    InteractTextLineSets = {
+                        HeraclesBaseLine = { { Cue = "/VO/X_0001", Text = "Hi." } },
+                    },
+                },
+            }
+            VariantSetData.NPC_Heracles_01 = {
+                HeraclesShopping = {
+                    InteractTextLineSets = {
+                        HeraclesMiscChat01 = { { Cue = "/VO/X_0002", Text = "Shop." } },
+                    },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        section = owners["NPC_Heracles_01"]["InteractTextLineSets"]
+        # Both UnitSetData and VariantSetData textlines present on the same owner.
+        assert "HeraclesBaseLine" in section
+        assert "HeraclesMiscChat01" in section
+
+    def test_unit_set_data_wins_on_textline_name_collision(self):
+        # UnitSetData runs first. ``setdefault`` keeps the existing entry
+        # so the variant value does NOT clobber the canonical definition.
+        parsed = _parse("""
+            UnitSetData.NPC_Heracles = {
+                NPC_Heracles_01 = {
+                    InteractTextLineSets = {
+                        HeraclesShared = { { Cue = "/VO/X_0001", Text = "Canonical." } },
+                    },
+                },
+            }
+            VariantSetData.NPC_Heracles_01 = {
+                HeraclesShopping = {
+                    InteractTextLineSets = {
+                        HeraclesShared = { { Cue = "/VO/X_0002", Text = "Variant." } },
+                    },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        dialogue = owners["NPC_Heracles_01"]["InteractTextLineSets"]["HeraclesShared"]["dialogueLines"]
+        assert dialogue[0]["text"] == "Canonical."
+
+    def test_variant_container_level_fields_skipped(self):
+        # ``GameStateRequirements`` / ``Cooldowns`` / ``ObjectType`` are
+        # container-level metadata, not context-variant entries; they
+        # must NOT show up as variants.
+        parsed = _parse("""
+            VariantSetData.NPC_Heracles_01 = {
+                GameStateRequirements = {
+                    { Path = { "GameState", "TextLinesRecord" }, HasAny = { "X" } },
+                },
+                Cooldowns = { Default = 5 },
+                ObjectType = "NPC",
+                HeraclesShopping = {
+                    InteractTextLineSets = {
+                        HeraclesMiscChat01 = { { Cue = "/VO/X_0001", Text = "Hi." } },
+                    },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        section = owners["NPC_Heracles_01"]["InteractTextLineSets"]
+        assert list(section.keys()) == ["HeraclesMiscChat01"]
+
+    def test_variant_with_no_textline_sections_skipped(self):
+        # A variant entry that carries only Cooldowns / GSR (no textline
+        # sections) must NOT create the genus owner.
+        parsed = _parse("""
+            VariantSetData.NPC_Heracles_01 = {
+                HeraclesBathHouse = {
+                    Cooldowns = { Default = 5 },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        assert owners == {}
+
+    def test_multiple_variants_merge_in_order(self):
+        # First variant declares HeraclesShared; second variant tries to
+        # redeclare it. First wins (setdefault).
+        parsed = _parse("""
+            VariantSetData.NPC_Heracles_01 = {
+                HeraclesShopping = {
+                    InteractTextLineSets = {
+                        HeraclesShared = { { Cue = "/VO/X_0001", Text = "Shop." } },
+                    },
+                },
+                HeraclesBathHouse = {
+                    InteractTextLineSets = {
+                        HeraclesShared = { { Cue = "/VO/X_0002", Text = "Bath." } },
+                    },
+                },
+            }
+        """)
+        owners = extract_npc_data(parsed, source_label="Hades 2", source_file="NPCData_Heracles.lua")
+        dialogue = owners["NPC_Heracles_01"]["InteractTextLineSets"]["HeraclesShared"]["dialogueLines"]
+        # The "first wins on collision" rule is the per-section
+        # ``setdefault`` semantics; both Shopping and BathHouse map to
+        # genus NPC_Heracles_01 here.
+        assert dialogue[0]["text"] in {"Shop.", "Bath."}
+        # Exactly one entry kept regardless of declaration order.
+        assert len(owners["NPC_Heracles_01"]["InteractTextLineSets"]) == 1

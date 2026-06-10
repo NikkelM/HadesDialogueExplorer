@@ -22,6 +22,19 @@ Currently in scope for the first H2 NPCData cut:
 * ``UnitSetData.NPC_<Char>`` top-level discovery (the only owner
   parent in the per-character files; the master ``NPCData.lua`` adds
   ``UnitSetData.NPCs`` for the player + templates, see below).
+* ``VariantSetData.NPC_<Char>_01`` containers for the four
+  characters with per-context variants (Eris, Heracles, Icarus,
+  Nemesis). Each top-level entry inside is a context-named variant
+  (``HeraclesShopping``, ``IcarusHome``, ``NemesisCombat`` etc.)
+  that carries its own ``InteractTextLineSets`` / ``GiftTextLineSets``
+  / etc. Variant entries are attributed to the genus owner derived
+  from the container key (e.g. ``NPC_Heracles_01``) and merged
+  section-by-section into any existing UnitSetData entry for the
+  same owner. Variant-container fields that are NOT context
+  variants (``GameStateRequirements`` / ``Cooldowns`` /
+  ``ObjectType`` / bare positional cues etc.) are filtered out by
+  the "must yield at least one non-empty textline section" gate
+  inside :func:`.textline_set.extract_textline_sections`.
 * Per-owner section-key extraction via the H2 textline-set walker
   (which delegates gates to :mod:`.req_extractor`).
 * ``HADES2_SPEAKERS`` lookup for "is this owner a real speaker?"
@@ -32,10 +45,6 @@ Currently in scope for the first H2 NPCData cut:
 
 Deferred to follow-ups (each has its own todo):
 
-* ``VariantSetData.NPC_<Char>_01`` containers (4 characters: Eris,
-  Heracles, Icarus, Nemesis) - structurally identical to
-  ``UnitSetData`` so the same walker will work once the discovery
-  loop adds the second prefix.
 * Inheritance flattening (``InheritFrom = { "NPC_Neutral",
   "NPC_Giftable" }``) - templates rarely add textline sections in
   H2 so most owner entries already carry the complete picture
@@ -68,6 +77,13 @@ from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 # matching both with one regex keeps the discovery loop a single pass.
 _UNIT_SET_DATA_RE = re.compile(r"^UnitSetData\.(?:NPCs|NPC_\w+)$")
 
+# ``VariantSetData.NPC_<Char>_01`` holds per-context variants for the
+# four characters that use them (Eris, Heracles, Icarus, Nemesis). The
+# container key encodes the genus owner id directly; variant entries
+# inside (``HeraclesShopping`` / ``NemesisCombat`` etc.) are merged
+# section-by-section onto that owner.
+_VARIANT_SET_DATA_RE = re.compile(r"^VariantSetData\.(NPC_\w+_\d+)$")
+
 
 def extract_npc_data(
     parsed: dict,
@@ -96,6 +112,13 @@ def extract_npc_data(
     don't pollute the speaker list (matches H1 ``_build_owner_entry``
     behaviour).
 
+    UnitSetData containers are processed first so their entries
+    become the canonical "base" for each owner; VariantSetData
+    entries are then merged in section-by-section with
+    first-write-wins on per-textline collisions, so a UnitSetData-
+    defined textline is never overwritten by a variant-defined one
+    with the same name.
+
     The ``game_data_lists`` / ``offer_text_map`` / ``preset_choices``
     parameters mirror :func:`src.extractors.hades1.npc_data.extract_npc_data`
     for API compatibility with the generic generate-data pipeline.
@@ -109,6 +132,8 @@ def extract_npc_data(
     :func:`.textline_set.extract_textline_sections` docstring).
     """
     result = {}
+
+    # Pass 1: UnitSetData (canonical owner definitions).
     for key, value in parsed.items():
         if not _UNIT_SET_DATA_RE.match(key):
             continue
@@ -130,7 +155,57 @@ def extract_npc_data(
             # (``NPC_Neutral`` etc.) from clobbering per-character
             # owners if a future patch ever re-uses the same id.
             result.setdefault(owner_id, entry)
+
+    # Pass 2: VariantSetData (per-context variants merged onto the
+    # genus owner). Run after pass 1 so UnitSetData textlines remain
+    # canonical when a variant happens to redefine a same-named one.
+    for key, value in parsed.items():
+        match = _VARIANT_SET_DATA_RE.match(key)
+        if not match:
+            continue
+        if not isinstance(value, LuaTable):
+            continue
+        owner_id = match.group(1)
+        for variant_name, variant_table in value.named.items():
+            if not isinstance(variant_table, LuaTable):
+                continue
+            variant_sections = extract_textline_sections(
+                owner_id, variant_table, source_file,
+                section_keys=HADES2_TEXTLINE_SECTION_KEYS,
+                default_speaker=owner_id,
+                named_requirements=named_requirements,
+            )
+            # Skip container-level fields (GameStateRequirements,
+            # Cooldowns, ObjectType, etc.) - they yield no textline
+            # sections so the "any non-empty" gate filters them out.
+            if not any(variant_sections.values()):
+                continue
+            _merge_variant_sections(result, owner_id, source_label, variant_sections)
+
     return result
+
+
+def _merge_variant_sections(
+    result: dict, owner_id: str, source_label: str, variant_sections: dict,
+) -> None:
+    """Merge a variant's extracted sections into the owner entry.
+
+    Creates the owner entry on first call (so an owner that only
+    appears in VariantSetData and never in UnitSetData still
+    surfaces). Subsequent calls merge per-section, preserving
+    existing textlines on name collision (UnitSetData / earlier
+    variant wins).
+    """
+    entry = result.get(owner_id)
+    if entry is None:
+        entry = {"source": source_label}
+        result[owner_id] = entry
+    for section_key, textlines in variant_sections.items():
+        if not textlines:
+            continue
+        existing = entry.setdefault(section_key, {})
+        for tl_name, tl_data in textlines.items():
+            existing.setdefault(tl_name, tl_data)
 
 
 def _build_owner_entry(
