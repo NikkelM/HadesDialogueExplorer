@@ -51,6 +51,10 @@ from .encounter_room_data import (
     IDMAP_PARENT_OWNER_OVERRIDES,
     extract_encounter_room_data,
 )
+from .narrative_data import (
+    extract_narrative_priorities,
+    apply_narrative_priorities,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -77,4 +81,6 @@ __all__ = [
     "TEXTLINE_OWNER_OVERRIDES",
     "IDMAP_PARENT_OWNER_OVERRIDES",
     "extract_encounter_room_data",
+    "extract_narrative_priorities",
+    "apply_narrative_priorities",
 ]
