@@ -23,6 +23,7 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_EDGE_LABELS,
     HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_CHOICE_NAMES,
 )
 
 
@@ -68,15 +69,18 @@ _REQ_TYPE_LABEL_SOURCES = [
 # own choice vocabulary so the tuple is per-game.
 _CHOICE_NAME_SOURCES = [
     ("HADES1", HADES1_CHOICE_NAMES),
+    ("HADES2", HADES2_CHOICE_NAMES),
 ]
 
 # Per-game friendly-name maps for Mirror of Night / meta upgrade ids
 # referenced from preset choice tables (see ``HADES1_PRESET_CHOICES``).
 # Same merge-and-attach pattern as the choice name sources above.
+# H2 deliberately omitted: H2 has no named-upgrade refs in
+# RequirementSets (only count-based ``RequiredMetaUpgradesMin/Max``
+# gates, which need no friendly-label lookup).
 _META_UPGRADE_NAME_SOURCES = [
     ("HADES1", HADES1_META_UPGRADE_NAMES),
 ]
-
 
 def annotate_label_maps(graph_data: dict) -> None:
     """Attach the viewer's friendly-name lookups to the merged graph data.
