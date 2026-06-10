@@ -55,6 +55,7 @@ from .narrative_data import (
     extract_narrative_priorities,
     apply_narrative_priorities,
 )
+from .choice_names import HADES2_CHOICE_NAMES
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -83,4 +84,5 @@ __all__ = [
     "extract_encounter_room_data",
     "extract_narrative_priorities",
     "apply_narrative_priorities",
+    "HADES2_CHOICE_NAMES",
 ]

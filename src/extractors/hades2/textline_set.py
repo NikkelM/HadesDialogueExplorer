@@ -140,6 +140,26 @@ def extract_textline_sections(
                 tl_name, tl_table, fallback_speaker, source_file,
                 named_requirements=named_requirements,
             )
+        # Synthesise per-choice child textlines (one per ChoiceText) for
+        # every cue in this section that declares an inline
+        # ``Choices = {...}`` block. Synthetic names are
+        # ``<parent><ChoiceText>`` (no separator) to match the
+        # ``TextLinesChoiceRecord`` key the engine records when the
+        # player picks that option, so requirement gates that reference
+        # it (``IsAny = { "Choice_NemesisAccept" }``) line up.
+        # A real (hand-written) textline with the same name always
+        # wins via _merge_synthetic - none currently exist for H2 but
+        # the safety net mirrors H1.
+        for tl_name in list(section.keys()):
+            tl_table = value.get(tl_name)
+            if not isinstance(tl_table, LuaTable):
+                continue
+            variants = _extract_choice_variants(
+                tl_name, tl_table, fallback_speaker, source_file,
+                named_requirements=named_requirements,
+            )
+            for syn_name, syn_data in variants.items():
+                _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
     return sections
 
@@ -194,7 +214,7 @@ def extract_textline(
     if isinstance(partner_value, str) and partner_value:
         data["partner"] = partner_value
 
-    # Cue array -> dialogue lines.
+    # Cue array -> dialogue lines (with optional choice-prompt attachment).
     for entry in tl_table.array:
         if not isinstance(entry, LuaTable):
             continue
@@ -203,7 +223,20 @@ def extract_textline(
             continue
         text = _FORMAT_TAG_RE.sub("", text)
         speaker = _resolve_cue_speaker(entry, fallback_speaker)
-        data["dialogueLines"].append({"speaker": speaker, "text": text})
+        line = {"speaker": speaker, "text": text}
+        # Choice-prompt cue: attach the option metadata so the viewer
+        # can render the prompt as a structured choice block rather
+        # than a single dialogue line. Synthetic target name is
+        # ``<parent><ChoiceText>`` (matches the
+        # ``TextLinesChoiceRecord`` engine key) so the option's
+        # follow-up dialogue is reachable via click-through to the
+        # corresponding synthetic child textline produced by
+        # :func:`_extract_choice_variants`.
+        choices = _collect_cue_choices(entry, tl_name)
+        if choices is not None:
+            line["kind"] = "choicePrompt"
+            line["choices"] = choices
+        data["dialogueLines"].append(line)
 
     # Drop empty containers so downstream code's
     # ``data.get("orBranches") or []`` idiom keeps working and merged
@@ -364,3 +397,134 @@ def has_local_h2_requirements(node) -> bool:
         if isinstance(node.get(field), LuaTable):
             return True
     return False
+
+
+def _collect_cue_choices(cue: LuaTable, parent_name: str):
+    """Return the list of ``{internal, targetTextline}`` choice entries
+    declared on a single cue, or ``None`` when the cue has no
+    ``Choices`` field.
+
+    H2 only supports the inline-table shape::
+
+        Choices = {
+            { ChoiceText = "Choice_<NPC>Accept",  ... cue array ... },
+            { ChoiceText = "Choice_<NPC>Decline", ... cue array ... },
+        },
+
+    Unlike H1, there is NO ``Choices = PresetEventArgs.<Name>``
+    indirection in H2 (every observed Choices block embeds its
+    options inline; ``PresetEventArgs.X`` is reserved for other
+    callsites like ``PostLineFunctionArgs``).
+
+    Each option's ``targetTextline`` is the synthetic name
+    ``<parent_name><ChoiceText>`` (matches what
+    :func:`_extract_choice_variants` produces and what the engine
+    records under ``GameState.TextLinesChoiceRecord.<parent>`` when
+    the player picks the option). The viewer wraps these as
+    click-through links.
+
+    Choices missing a string ``ChoiceText`` are silently skipped; an
+    empty Choices block still returns ``[]`` (rather than None) so
+    the cue is flagged as a ``choicePrompt`` even when no usable
+    options are declared - matches the H1 walker.
+    """
+    choices_field = cue.get("Choices")
+    if not isinstance(choices_field, LuaTable):
+        return None
+    out: list = []
+    for choice_item in choices_field.array:
+        if not isinstance(choice_item, LuaTable):
+            continue
+        choice_text = choice_item.get("ChoiceText")
+        if not isinstance(choice_text, str) or not choice_text:
+            continue
+        out.append({
+            "internal": choice_text,
+            "targetTextline": parent_name + choice_text,
+        })
+    return out
+
+
+def _extract_choice_variants(
+    parent_name: str,
+    tl_table: LuaTable,
+    fallback_speaker: str,
+    source_file: str,
+    *,
+    named_requirements: dict = None,
+) -> dict:
+    """Find every inline ``Choices = {...}`` block nested in the
+    parent's cues and materialise each option as a synthetic child
+    textline.
+
+    The synthetic name is ``<parent_name><ChoiceText>`` (no
+    separator) to match the engine flag recorded under
+    ``GameState.TextLinesChoiceRecord.<parent>`` when the player
+    picks that option. Requirements that gate on the pick (e.g.
+    ``IsAny = { "Choice_NemesisAccept" }``) thus reference the same
+    name the synthetic carries.
+
+    Each synthetic textline:
+
+    * reuses :func:`extract_textline` on the choice item so any
+      explicit requirement fields declared on the choice option are
+      preserved verbatim (a choice option may itself carry
+      ``GameStateRequirements`` to model "only show this option if
+      ...");
+    * gets an implicit ``RequiredTextLines: [parent_name]``
+      dependency prepended so the variant is reachable in the graph
+      only via the parent textline;
+    * carries ``parentTextline`` + ``choiceText`` metadata for the
+      viewer (rendered as a "Variant of <parent>" header with the
+      choice label as the subtitle);
+    * is flagged ``isSynthetic = True`` so :func:`_merge_synthetic`
+      can prefer a real (hand-written) definition when one exists.
+    """
+    variants: dict = {}
+    for cue in tl_table.array:
+        if not isinstance(cue, LuaTable):
+            continue
+        choices_field = cue.get("Choices")
+        if not isinstance(choices_field, LuaTable):
+            continue
+        for choice_item in choices_field.array:
+            if not isinstance(choice_item, LuaTable):
+                continue
+            choice_text = choice_item.get("ChoiceText")
+            if not isinstance(choice_text, str) or not choice_text:
+                continue
+            synthetic_name = parent_name + choice_text
+            child = extract_textline(
+                synthetic_name, choice_item, fallback_speaker, source_file,
+                named_requirements=named_requirements,
+            )
+            existing = child["requirements"].setdefault("RequiredTextLines", [])
+            if parent_name not in existing:
+                existing.insert(0, parent_name)
+            child["parentTextline"] = parent_name
+            child["choiceText"] = choice_text
+            child["isSynthetic"] = True
+            variants[synthetic_name] = child
+    return variants
+
+
+def _merge_synthetic(section: dict, name: str, data: dict) -> None:
+    """Add a synthetic textline to a section, deferring to any real
+    definition (synthetic loses) and to the first synthetic when two
+    synthetics collide (first-wins, deterministic on source order).
+
+    The "real wins" rule guards the (currently theoretical for H2 but
+    long-standing for H1) case where a future game patch hand-defines
+    a textline with a name that happens to match a synthetic the
+    extractor would produce - the hand-written definition is always
+    canonical.
+    """
+    existing = section.get(name)
+    if existing is None:
+        section[name] = data
+        return
+    # Real beats synthetic.
+    if not existing.get("isSynthetic"):
+        return
+    # Two synthetics: first wins (deterministic on iteration order).
+    return

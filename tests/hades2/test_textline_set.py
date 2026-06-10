@@ -332,3 +332,264 @@ class TestSectionExtraction:
             section_keys={"InteractTextLineSets"},
         )
         assert set(sections["InteractTextLineSets"].keys()) == {"Line02"}
+
+
+class TestInlineChoices:
+    """Inline ``Choices = {...}`` on cues + synthetic-variant
+    expansion.
+
+    H2 NPCs encode branching dialogue as an inline Choices block on a
+    "prompt" cue: each option carries a ``ChoiceText`` id plus its
+    own positional cue array of follow-up dialogue. The extractor must
+
+    1. attach ``kind: "choicePrompt"`` + a ``choices`` list to the
+       prompt cue's dialogue-line entry, with each entry shaped
+       ``{ internal: "Choice_<X>", targetTextline: "<parent><Choice_<X>>" }``;
+    2. synthesise a child textline per choice option (named
+       ``<parent_name><ChoiceText>``, matching the
+       ``TextLinesChoiceRecord`` engine key) carrying the follow-up
+       cues as its dialogue, plus implicit
+       ``RequiredTextLines: [<parent>]`` so the variant is reachable
+       only through its parent, plus ``parentTextline`` / ``choiceText``
+       / ``isSynthetic = True`` metadata.
+
+    Real (hand-defined) textlines that happen to collide with a
+    synthetic name take precedence over the synthetic version
+    (forward-compat safety; no real H2 collision exists today).
+    """
+
+    def test_cue_choices_attaches_kind_and_choices(self):
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", Text = "Will you accept?",
+              Choices = {
+                  { ChoiceText = "Choice_Accept",
+                    { Cue = "/VO/X_0002", Text = "I accept." },
+                  },
+                  { ChoiceText = "Choice_Decline",
+                    { Cue = "/VO/X_0003", Text = "I decline." },
+                  },
+              },
+            },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        assert len(data["dialogueLines"]) == 1
+        line = data["dialogueLines"][0]
+        assert line["kind"] == "choicePrompt"
+        assert line["choices"] == [
+            {"internal": "Choice_Accept",
+             "targetTextline": "FooChoice_Accept"},
+            {"internal": "Choice_Decline",
+             "targetTextline": "FooChoice_Decline"},
+        ]
+
+    def test_cue_without_choices_has_no_choice_attachment(self):
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", Text = "Hi." },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        line = data["dialogueLines"][0]
+        assert "kind" not in line
+        assert "choices" not in line
+
+    def test_empty_choices_block_still_flagged_as_prompt(self):
+        # An empty Choices = {} block is still a prompt cue
+        # structurally; the viewer renders the (empty) options list.
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", Text = "Ask?", Choices = { } },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        line = data["dialogueLines"][0]
+        assert line["kind"] == "choicePrompt"
+        assert line["choices"] == []
+
+    def test_choices_missing_choice_text_skipped(self):
+        # An entry without a string ChoiceText is silently skipped;
+        # the rest are still extracted.
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", Text = "Ask?",
+              Choices = {
+                  { { Cue = "/VO/X_0002", Text = "no label" } },
+                  { ChoiceText = "Choice_Accept",
+                    { Cue = "/VO/X_0003", Text = "Yes." } },
+              },
+            },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        line = data["dialogueLines"][0]
+        assert line["choices"] == [
+            {"internal": "Choice_Accept",
+             "targetTextline": "FooChoice_Accept"},
+        ]
+
+    def test_synthetic_variants_created_per_choice(self):
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask?",
+                      Choices = {
+                          { ChoiceText = "Choice_Accept",
+                            { Cue = "/VO/X_0002", UsePlayerSource = true,
+                              Text = "Yes." },
+                          },
+                          { ChoiceText = "Choice_Decline",
+                            { Cue = "/VO/X_0003", UsePlayerSource = true,
+                              Text = "No." },
+                          },
+                      },
+                    },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        section = sections["InteractTextLineSets"]
+        assert set(section.keys()) == {
+            "Prompt01",
+            "Prompt01Choice_Accept",
+            "Prompt01Choice_Decline",
+        }
+
+    def test_synthetic_metadata_and_implicit_parent_dep(self):
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask?",
+                      Choices = {
+                          { ChoiceText = "Choice_Accept",
+                            { Cue = "/VO/X_0002", UsePlayerSource = true,
+                              Text = "Yes." },
+                          },
+                      },
+                    },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        syn = sections["InteractTextLineSets"]["Prompt01Choice_Accept"]
+        assert syn["parentTextline"] == "Prompt01"
+        assert syn["choiceText"] == "Choice_Accept"
+        assert syn["isSynthetic"] is True
+        # Implicit dep on the parent textline.
+        assert syn["requirements"]["RequiredTextLines"] == ["Prompt01"]
+        # Follow-up cue's dialogue carried with proper speaker
+        # resolution (UsePlayerSource -> PlayerUnit).
+        assert syn["dialogueLines"] == [
+            {"speaker": PLAYER_SPEAKER_ID, "text": "Yes."},
+        ]
+
+    def test_synthetic_preserves_choice_level_requirements(self):
+        # A choice option can declare its own GameStateRequirements
+        # (e.g. "only show this option if X"). The synthetic textline
+        # must surface those alongside the implicit parent dep.
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask?",
+                      Choices = {
+                          { ChoiceText = "Choice_Special",
+                            GameStateRequirements = {
+                                { Path = { "GameState", "TextLinesRecord" },
+                                  HasAll = { "Prereq01" } },
+                            },
+                            { Cue = "/VO/X_0002", Text = "Yes." },
+                          },
+                      },
+                    },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        syn = sections["InteractTextLineSets"]["Prompt01Choice_Special"]
+        # Parent dep prepended, choice's own dep preserved.
+        assert syn["requirements"]["RequiredTextLines"] == [
+            "Prompt01", "Prereq01",
+        ]
+
+    def test_real_textline_wins_over_synthetic_collision(self):
+        # If a hand-written textline happens to share its name with a
+        # synthetic the extractor would produce, the hand-written
+        # version wins (synthetic is dropped).
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask?",
+                      Choices = {
+                          { ChoiceText = "Choice_Accept",
+                            { Cue = "/VO/X_0002", Text = "synthetic" },
+                          },
+                      },
+                    },
+                },
+                Prompt01Choice_Accept = {
+                    { Cue = "/VO/X_0099", Text = "hand-written" },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        section = sections["InteractTextLineSets"]
+        # The collision: hand-written wins.
+        kept = section["Prompt01Choice_Accept"]
+        assert kept.get("isSynthetic") is not True
+        assert kept["dialogueLines"][0]["text"] == "hand-written"
+
+    def test_multiple_choices_blocks_in_same_textline(self):
+        # A textline whose cue array carries two separate Choices
+        # blocks (rare but possible) should yield variants for both.
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask first?",
+                      Choices = {
+                          { ChoiceText = "Choice_AcceptOne",
+                            { Cue = "/VO/X_0002", Text = "Yes." },
+                          },
+                      },
+                    },
+                    { Cue = "/VO/X_0003", Text = "Ask second?",
+                      Choices = {
+                          { ChoiceText = "Choice_AcceptTwo",
+                            { Cue = "/VO/X_0004", Text = "Also yes." },
+                          },
+                      },
+                    },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        section = sections["InteractTextLineSets"]
+        assert "Prompt01Choice_AcceptOne" in section
+        assert "Prompt01Choice_AcceptTwo" in section
+
+    def test_choices_field_must_be_table(self):
+        # A scalar ``Choices = "foo"`` is silently ignored (no
+        # attachment, no synthetics).
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Prompt01 = {
+                    { Cue = "/VO/X_0001", Text = "Ask?", Choices = "foo" },
+                },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+        )
+        section = sections["InteractTextLineSets"]
+        assert list(section.keys()) == ["Prompt01"]
+        line = section["Prompt01"]["dialogueLines"][0]
+        assert "kind" not in line
+        assert "choices" not in line
