@@ -69,10 +69,24 @@ HADES1_TEXTLINE_SETS = "TextLineSets.lua"
 # (output prefix, source label, glob pattern, extractor function); the
 # resulting output filename is ``{prefix}_{lua_stem}.json``.
 HADES2_SOURCES = [
-    ("hades2_npc",       "Hades 2", "NPCData_*.lua",      h2_extract_npc_data),
+    # ``NPCData*.lua`` (no underscore enforced) matches both the master
+    # ``NPCData.lua`` and the 23 per-character ``NPCData_<Char>.lua``
+    # files. The master holds palace/Story NPCs (NPC_Nyx_01,
+    # NPC_Zeus_Palace_01, NPC_Demeter_Palace_01, NPC_Zagreus_Past_01,
+    # etc.) under ``UnitSetData.NPCs`` - the same regex-driven walker
+    # picks them up since the extractor's discovery regex matches both
+    # ``UnitSetData.NPCs`` and ``UnitSetData.NPC_<Char>``.
+    ("hades2_npc",       "Hades 2", "NPCData*.lua",       h2_extract_npc_data),
     ("hades2_deathloop", "Hades 2", "DeathLoopData.lua",  h2_extract_deathloop_data),
     ("hades2_loot",      "Hades 2", "LootData*.lua",      h2_extract_loot_data),
-    ("hades2_enemy",     "Hades 2", "EnemyData.lua",      h2_extract_enemy_data),
+    # ``EnemyData*.lua`` matches both the master ``EnemyData.lua`` (mook
+    # templates, no dialogue) and the per-boss ``EnemyData_<Boss>.lua``
+    # files (Hecate, Chronos, Prometheus, Eris, Scylla, Polyphemus,
+    # Zagreus, InfestedCerberus, TyphonHead) carrying
+    # BossIntroTextLineSets / BossOutroTextLineSets /
+    # BossPhaseChangeTextLineSets. The empty-owner filter drops the
+    # master's templates and any mook file with no dialogue sections.
+    ("hades2_enemy",     "Hades 2", "EnemyData*.lua",     h2_extract_enemy_data),
     ("hades2_encounter", "Hades 2", "EncounterData*.lua", h2_extract_encounter_room_data),
     ("hades2_room",      "Hades 2", "RoomData*.lua",      h2_extract_encounter_room_data),
 ]

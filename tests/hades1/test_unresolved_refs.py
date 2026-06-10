@@ -99,20 +99,14 @@ class TestPerGameRouting:
         with _pytest.raises(ValueError, match="Unknown game id"):
             annotate_known_unresolved(make_graph_data(), "hades3")
 
-    def test_hades2_has_empty_curated_list(self, capsys, make_graph_data):
-        # H2 has no curated entries yet so an unresolved ref under H2 is
-        # always "uncategorized" and surfaces as a triage warning.
+    def test_hades1_curated_does_not_leak_into_hades2(self, capsys, make_graph_data):
+        # ThanatosGift010 is in HADES1_KNOWN_UNRESOLVED_REFS but not in
+        # the H2 curated list; under H2 it must surface as a triage
+        # warning rather than being silently absorbed by the H1 entry.
         gd = make_graph_data(unresolved=["ThanatosGift010"])
         annotate_known_unresolved(gd, "hades2")
-        assert gd["knownUnresolvedRefs"] == {}
+        assert "ThanatosGift010" not in gd["knownUnresolvedRefs"]
         assert gd["stats"]["unresolvedByCategory"]["uncategorized"] == 1
         out = capsys.readouterr().out
         assert "HADES2_KNOWN_UNRESOLVED_REFS" in out
         assert "not categorized" in out
-
-    def test_hades1_curated_does_not_leak_into_hades2(self, make_graph_data):
-        # ThanatosGift010 is in HADES1_KNOWN_UNRESOLVED_REFS; under H2
-        # it should NOT be considered known (strict per-game separation).
-        gd = make_graph_data(unresolved=["ThanatosGift010"])
-        annotate_known_unresolved(gd, "hades2")
-        assert "ThanatosGift010" not in gd["knownUnresolvedRefs"]

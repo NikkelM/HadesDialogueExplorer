@@ -3,8 +3,13 @@ and audit it against the parser's actual unresolved set."""
 
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
-    UNRESOLVED_CATEGORY_LABELS,
-    UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    UNRESOLVED_CATEGORY_LABELS as _HADES1_CATEGORY_LABELS,
+    UNRESOLVED_CATEGORY_DESCRIPTIONS as _HADES1_CATEGORY_DESCRIPTIONS,
+)
+from src.extractors.hades2 import (
+    HADES2_KNOWN_UNRESOLVED_REFS,
+    HADES2_UNRESOLVED_CATEGORY_LABELS,
+    HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
 )
 
 
@@ -14,12 +19,19 @@ from src.extractors.hades1 import (
 # output, so an unresolved ref appearing only in H1 is not "covered"
 # by an H2 entry and vice-versa (the strict per-game viewer split
 # means cross-game ref bleed-through cannot happen at any layer).
-#
-# H2 has no curated entries yet; surfacing untriaged H2 refs as
-# WARNINGS is the desired signal until they're triaged.
 _KNOWN_UNRESOLVED_BY_GAME = {
-    "hades1": ("HADES1", HADES1_KNOWN_UNRESOLVED_REFS),
-    "hades2": ("HADES2", {}),
+    "hades1": (
+        "HADES1",
+        HADES1_KNOWN_UNRESOLVED_REFS,
+        _HADES1_CATEGORY_LABELS,
+        _HADES1_CATEGORY_DESCRIPTIONS,
+    ),
+    "hades2": (
+        "HADES2",
+        HADES2_KNOWN_UNRESOLVED_REFS,
+        HADES2_UNRESOLVED_CATEGORY_LABELS,
+        HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    ),
 }
 
 
@@ -31,8 +43,10 @@ def annotate_known_unresolved(graph_data: dict, game: str) -> None:
       - ``knownUnresolvedRefs``: ``{name: {category, reason}}`` for every
         currently-unresolved ref that has a hardcoded entry in this
         game's map.
-      - ``unresolvedCategoryLabels``: ``{category: human-label}``.
-      - ``unresolvedCategoryDescriptions``: ``{category: explainer}``.
+      - ``unresolvedCategoryLabels``: ``{category: human-label}`` (this
+        game's category vocabulary only).
+      - ``unresolvedCategoryDescriptions``: ``{category: explainer}``
+        (this game's category vocabulary only).
       - ``stats.unresolvedByCategory``: ``{category: count}`` (the count of
         unresolved refs in each category, plus ``uncategorized`` for any
         ref the hardcoded list doesn't cover).
@@ -46,7 +60,7 @@ def annotate_known_unresolved(graph_data: dict, game: str) -> None:
             f"Unknown game id {game!r}; expected one of "
             f"{sorted(_KNOWN_UNRESOLVED_BY_GAME)}"
         )
-    game_label, mapping = _KNOWN_UNRESOLVED_BY_GAME[game]
+    game_label, mapping, labels, descriptions = _KNOWN_UNRESOLVED_BY_GAME[game]
 
     unresolved_set = set(graph_data["stats"]["unresolvedRefs"])
 
@@ -73,6 +87,6 @@ def annotate_known_unresolved(graph_data: dict, game: str) -> None:
         by_category[info["category"]] = by_category.get(info["category"], 0) + 1
 
     graph_data["knownUnresolvedRefs"] = known
-    graph_data["unresolvedCategoryLabels"] = dict(UNRESOLVED_CATEGORY_LABELS)
-    graph_data["unresolvedCategoryDescriptions"] = dict(UNRESOLVED_CATEGORY_DESCRIPTIONS)
+    graph_data["unresolvedCategoryLabels"] = dict(labels)
+    graph_data["unresolvedCategoryDescriptions"] = dict(descriptions)
     graph_data["stats"]["unresolvedByCategory"] = by_category

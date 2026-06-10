@@ -19,9 +19,9 @@ import paths that won't drift. Three rules are enforced:
 
 The audit deliberately does NOT check for a complete H1 mirror -
 H2 intentionally omits some H1-only modules (``preset_choices``,
-``offer_text``, ``text_line_sets``, ``meta_upgrades``,
-``unresolved_refs``) per the module docstring. Those omissions are
-documented inline in :mod:`src.extractors.hades2`.
+``offer_text``, ``text_line_sets``, ``meta_upgrades``) per the
+module docstring. Those omissions are documented inline in
+:mod:`src.extractors.hades2`.
 """
 
 import src.extractors.hades2 as h2
@@ -40,6 +40,9 @@ CRITICAL_EXPORTS = frozenset({
     # Cross-cutting pass.
     "extract_narrative_priorities",
     "apply_narrative_priorities",
+    "HADES2_KNOWN_UNRESOLVED_REFS",
+    "HADES2_UNRESOLVED_CATEGORY_LABELS",
+    "HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS",
     # Label / vocabulary maps consumed by src.label_maps.
     "HADES2_TEXTLINE_SECTION_KEYS",
     "HADES2_SECTION_KEY_LABELS",
@@ -137,6 +140,9 @@ class TestExportShape:
             "ENEMY_DEFAULT_SPEAKERS",
             "TEXTLINE_OWNER_OVERRIDES",
             "IDMAP_PARENT_OWNER_OVERRIDES",
+            "HADES2_KNOWN_UNRESOLVED_REFS",
+            "HADES2_UNRESOLVED_CATEGORY_LABELS",
+            "HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS",
         ):
             assert isinstance(getattr(h2, name), dict), f"{name} not a dict"
 

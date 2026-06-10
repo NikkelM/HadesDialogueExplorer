@@ -60,9 +60,9 @@ H1 features intentionally NOT mirrored:
   system entirely; priority is now ordinal via
   :func:`extract_narrative_priorities` reading
   ``NarrativeData.lua``.
-* ``HADES1_KNOWN_UNRESOLVED_REFS`` - deferred until the H2 pipeline
-  is wired end-to-end and ``build_viewer.py`` can audit which refs
-  the parser fails to resolve.
+* ``HADES1_KNOWN_UNRESOLVED_REFS`` - the H2 equivalent
+  (``HADES2_KNOWN_UNRESOLVED_REFS``) is exported alongside its own
+  category label / description maps, see :mod:`.unresolved_refs`.
 """
 
 # Vocabulary / label data
@@ -115,6 +115,11 @@ from .narrative_data import (
     extract_narrative_priorities,
     apply_narrative_priorities,
 )
+from .unresolved_refs import (
+    HADES2_KNOWN_UNRESOLVED_REFS,
+    HADES2_UNRESOLVED_CATEGORY_LABELS,
+    HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+)
 
 
 __all__ = [
@@ -149,4 +154,7 @@ __all__ = [
     # Cross-cutting passes
     "extract_narrative_priorities",
     "apply_narrative_priorities",
+    "HADES2_KNOWN_UNRESOLVED_REFS",
+    "HADES2_UNRESOLVED_CATEGORY_LABELS",
+    "HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS",
 ]
