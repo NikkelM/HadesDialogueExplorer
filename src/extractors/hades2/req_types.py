@@ -59,11 +59,26 @@ Operator-vs-parameter split:
   * Two non-operator fields are tolerated inside requirement sets and
     must be silently skipped by the extractor:
     ``Append = true`` (table-merge directive consumed by the data
-    inheritance pre-pass, used in ``RoomDataI.lua``) and
+    inheritance pre-pass, used in ``RoomDataI.lua``),
+    ``DeepInheritance = true`` (companion data-merge directive used
+    pervasively across EnemyData / WeaponData / AllyData), and
     ``PlayFirst = true`` (cue-level metadata accidentally placed
     inside a ``GameStateRequirements`` block in ``HeroData.lua``).
-    Neither is read by ``IsGameStateEligible``.
+    None of these are read by ``IsGameStateEligible``.
 
+Canonical operator/parameter source: the engine itself enumerates the
+legal keys in the tail of ``Content/Scripts/RequirementsData.lua``::
+
+    DebugData.LegalGenericRequirementKeys = ToLookup({ ... 28 keys ... })
+    DebugData.LegalNonGenericRequirementKeys = ToLookup({
+        "Skip", "Force", "ChanceToPlay", "NamedRequirements",
+        "NamedRequirementsFalse", "OrRequirements",
+        "DeepInheritance", "Append",
+    })
+
+The 18 operators below are the union of the 6 set-level operators
+(non-generic, minus the 2 data-merge directives) and the 12 per-record
+predicates (the generic list minus the 16 parameters/modifiers).
 Mirrors the same merge-and-attach pattern as
 :mod:`src.extractors.hades1.req_types` - ``src.label_maps`` unions
 both games' maps into a single viewer-side lookup so the JS code does
@@ -85,13 +100,20 @@ canonical reference list to lint against).
 # are not operators - they are properties of the record's primary
 # operator and get surfaced inline in the rendered record string.
 #
-# Coverage source: walked every callsite of
-# ``IsGameStateEligible(*, x.<FieldName>)`` to enumerate the 72 known
-# requirement-set fields, then audited every key appearing at either
-# the set or record level inside those fields across all 479 H2
-# ``Scripts/*.lua`` files. The 18 operators below are the complete
-# vocabulary the evaluator actually checks; the modifiers/parameters
-# enumerated in the module docstring are the complete companion set.
+# Coverage source: the engine's own debug-validation enumeration at
+# the tail of ``Content/Scripts/RequirementsData.lua``
+# (``DebugData.LegalGenericRequirementKeys`` for per-record keys,
+# ``DebugData.LegalNonGenericRequirementKeys`` for set-level keys).
+# The 18 operators below are the union of those two lists minus 2
+# data-merge directives (``DeepInheritance`` / ``Append``) and 16
+# parameters/modifiers (``Path`` / ``Value`` / ``CountOf`` / ...) -
+# those entries configure operators rather than being operators
+# themselves. Cross-checked against an exhaustive parse of all 479 H2
+# ``Scripts/*.lua`` files: every key found at either the set or record
+# level inside one of the 72 known requirement-set fields (the field
+# names the engine actually passes to ``IsGameStateEligible``) is
+# accounted for by either an entry below or one of the documented
+# parameter / non-operator categories above.
 HADES2_REQ_OPERATORS = frozenset({
     # Set-level short-circuits (apply to the entire RequirementSet
     # before any per-record check; only one of these per set, but
