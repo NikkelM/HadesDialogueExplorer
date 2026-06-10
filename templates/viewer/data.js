@@ -17,6 +17,8 @@ export let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescript
 export let unresolvedRefBlocks;
 export let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
 export let sectionKeyLabels;
+export let choiceNames;
+export let metaUpgradeNames;
 export let allNames;
 
 // Pre-built index for O(1) lookups when sorting tree children into
@@ -39,6 +41,8 @@ export function loadData(DATA) {
     reqTypeTooltips = DATA.reqTypeTooltips || {};
     reqTypeOrder = DATA.reqTypeOrder || [];
     sectionKeyLabels = DATA.sectionKeyLabels || {};
+    choiceNames = DATA.choiceNames || {};
+    metaUpgradeNames = DATA.metaUpgradeNames || {};
     allNames = Object.keys(DATA.textlines).sort();
 
     _reqTypeOrderIndex = {};

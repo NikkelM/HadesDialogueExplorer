@@ -18,7 +18,9 @@ import {
     renderPlayOnceBadgeHtml,
     renderBlockingReason,
     renderReqItem,
+    renderChoiceNameHtml,
 } from './utilities.js';
+import { choiceNames, metaUpgradeNames } from './data.js';
 
 export function renderInfo(name) {
     const tl = textlines[name];
@@ -86,24 +88,44 @@ export function renderInfo(name) {
     // Choice-variant banner: this textline is a synthetic child of a
     // dialogue choice picked by the player at runtime.
     if (tl.isSynthetic && tl.parentTextline && tl.choiceText) {
-        html += `<div class="meta synthetic-banner">`
+        html += `<div class="synthetic-banner">`
               + `<span>\u21B3 Choice variant of `
               + `<a class="choice-link" onclick="navigateTo(${jsAttr(tl.parentTextline)})">${escapeHtml(tl.parentTextline)}</a>`
-              + ` \u00B7 ChoiceText: <code>${escapeHtml(tl.choiceText)}</code>`
+              + ` \u00B7 ChoiceText: ${renderChoiceNameHtml(tl.choiceText)}`
               + `</span></div>`;
     }
 
     // Forward links to any choice variants of this parent textline.
+    // Order matches the Lua source (i.e. the same order the engine
+    // shows the options to the player, and the same order the
+    // dialogue-line ``Choice:`` block below uses) by reading the
+    // parent's own ``choicePrompt`` cues. Iterating ``textlines``
+    // directly would order them alphabetically, which diverges from
+    // both renderings. Anything still missing after walking the
+    // prompts is appended in iteration order as a defensive
+    // fallback so synthetic children never silently disappear.
     const childChoices = [];
+    const seenTargets = new Set();
+    for (const line of (tl.dialogueLines || [])) {
+        if (line && line.kind === 'choicePrompt' && Array.isArray(line.choices)) {
+            for (const c of line.choices) {
+                if (textlines[c.targetTextline] && !seenTargets.has(c.targetTextline)) {
+                    childChoices.push({ name: c.targetTextline, choice: c.internal });
+                    seenTargets.add(c.targetTextline);
+                }
+            }
+        }
+    }
     for (const [n, t] of Object.entries(textlines)) {
-        if (t.isSynthetic && t.parentTextline === name) {
+        if (t.isSynthetic && t.parentTextline === name && !seenTargets.has(n)) {
             childChoices.push({ name: n, choice: t.choiceText });
+            seenTargets.add(n);
         }
     }
     if (childChoices.length > 0) {
-        html += `<div class="meta synthetic-banner"><span>Choices: `
+        html += `<div class="synthetic-banner"><span>Choices: `
               + childChoices.map(c =>
-                    `<a class="choice-link" onclick="navigateTo(${jsAttr(c.name)})">${escapeHtml(c.choice)}</a>`
+                    `<a class="choice-link" onclick="navigateTo(${jsAttr(c.name)})">${renderChoiceNameHtml(c.choice)}</a>`
                 ).join(' \u00B7 ')
               + `</span></div>`;
     }
@@ -117,6 +139,44 @@ export function renderInfo(name) {
     container.innerHTML = html;
 }
 
+// Compute the per-option label letters for a choice-prompt's option
+// list. Consecutive options that share a ``requiredMetaUpgrade``
+// restriction are mutually exclusive at runtime (the player can only
+// have one Mirror of Night upgrade variant active per row), so they
+// share a single base letter and get numeric suffixes (A1, A2, ...)
+// to flag the grouping. Solo gated options (no adjacent siblings with
+// the same restriction shape) and ungated options each consume their
+// own base letter (A, B, C, ...).
+//
+// Returns a parallel array of label strings aligned with the input
+// ``choices`` array.
+function computeChoiceLetters(choices) {
+    const labels = new Array(choices.length);
+    let baseIdx = 0;
+    let i = 0;
+    while (i < choices.length) {
+        const baseLetter = String.fromCharCode(65 + baseIdx);
+        if (choices[i].requiredMetaUpgrade) {
+            let j = i;
+            while (j < choices.length && choices[j].requiredMetaUpgrade) j++;
+            const runLength = j - i;
+            if (runLength === 1) {
+                labels[i] = baseLetter;
+            } else {
+                for (let k = 0; k < runLength; k++) {
+                    labels[i + k] = baseLetter + (k + 1);
+                }
+            }
+            i = j;
+        } else {
+            labels[i] = baseLetter;
+            i++;
+        }
+        baseIdx++;
+    }
+    return labels;
+}
+
 // Render the dialogue lines + textline-typed requirements + other
 // requirements blocks for one source object - either the textline
 // itself (normal case) or a single variant (name-collision case).
@@ -128,7 +188,47 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     if (src.dialogueLines && src.dialogueLines.length > 0) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
         for (const line of src.dialogueLines) {
-            if (typeof line === 'object' && line.speaker) {
+            if (typeof line === 'object' && line.kind === 'choicePrompt' && Array.isArray(line.choices)
+                && line.choices.length > 0
+                && line.choices.every(c => choiceNames[c.internal])) {
+                // Structured choice-prompt rendering: only kicks in when
+                // every option has a friendly label in
+                // ``HADES1_CHOICE_NAMES``. Unmapped prompts (Hermes
+                // squelch / Orpheus jukebox today) fall through to the
+                // regular speaker-line rendering so we never
+                // accidentally surface a bare internal id as the
+                // player-facing prompt label.
+                //
+                // ``targetTextline`` distinguishes two flavours of
+                // choice: inline ``Choices = {...}`` options (romance
+                // prompts) have a synthetic follow-up textline name and
+                // get wrapped in a click-through link; preset-referenced
+                // ``Choices = PresetEventArgs.X`` options (boon vendor
+                // menus) carry ``targetTextline: null`` because the
+                // engine calls the choice's function directly with no
+                // follow-up dialogue, so the option renders as a plain
+                // friendly-label span (tooltip still surfaces the
+                // internal id).
+                html += `<div class="dialogue-line choice-prompt"><span class="choice-prompt-label">Choice:</span> ${escapeHtml(line.text)}</div>`;
+                const letters = computeChoiceLetters(line.choices);
+                for (let i = 0; i < line.choices.length; i++) {
+                    const c = line.choices[i];
+                    const letter = letters[i];
+                    let extraTooltip = null;
+                    if (c.requiredMetaUpgrade) {
+                        const friendly = metaUpgradeNames[c.requiredMetaUpgrade] || c.requiredMetaUpgrade;
+                        extraTooltip = `Requires ${friendly} (Mirror of Night)`;
+                    }
+                    const labelHtml = renderChoiceNameHtml(c.internal, extraTooltip);
+                    const optionHtml = c.targetTextline
+                        ? `<a class="choice-link" onclick="navigateTo(${jsAttr(c.targetTextline)})">${labelHtml}</a>`
+                        : labelHtml;
+                    html += `<div class="dialogue-line choice-option">`
+                          + `<span class="choice-option-letter">${letter}:</span> `
+                          + optionHtml
+                          + `</div>`;
+                }
+            } else if (typeof line === 'object' && line.speaker) {
                 html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
             } else if (typeof line === 'object') {
                 html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;

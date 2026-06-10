@@ -28,3 +28,48 @@
     color: #e94560;
     margin-right: 4px;
 }
+
+/* Structured choice-prompt rendering: cues that declare
+   ``Choices = {...}`` get a three-line block - the prompt itself
+   followed by one ``A: …`` / ``B: …`` line per option. The prompt
+   gets the same border colour as a normal dialogue line; the option
+   lines step the accent over to the same purple the synthetic-banner
+   uses so they read as a structural branch point, not as additional
+   spoken text. */
+.dialogue-line.choice-prompt .choice-prompt-label {
+    font-style: normal;
+    font-weight: 600;
+    color: #e94560;
+    margin-right: 4px;
+}
+.dialogue-line.choice-option {
+    border-left-color: #6c5b7b;
+    background: #1b1b2e;
+    margin-left: 16px;
+}
+.dialogue-line.choice-option .choice-option-letter {
+    font-style: normal;
+    font-weight: 600;
+    color: #b8a5ff;
+    margin-right: 4px;
+}
+.dialogue-line .choice-link {
+    color: #b8a5ff;
+    cursor: pointer;
+    text-decoration: underline;
+    font-style: normal;
+}
+.dialogue-line .choice-link:hover { color: #fff; }
+.choice-name {
+    font-style: normal;
+}
+.choice-name[data-tooltip] {
+    cursor: help;
+}
+/* When a choice-name sits inside a clickable choice-link the link
+   action dominates the affordance: keep the cursor as ``pointer`` so
+   the user sees "clickable" first; the tooltip still fires on hover
+   regardless of cursor. */
+.choice-link .choice-name[data-tooltip] {
+    cursor: pointer;
+}

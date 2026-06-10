@@ -24,6 +24,8 @@ from src.extractors.hades1 import (
     extract_enemy_data,
     extract_encounter_room_data,
     extract_game_data_lists,
+    HADES1_OFFER_TEXT_MAP,
+    HADES1_PRESET_CHOICES,
     HADES1_SPEAKERS,
 )
 from src.graph import build_graph_data
@@ -94,6 +96,8 @@ def generate_source(
         source_label=source_label,
         source_file=lua_path.name,
         game_data_lists=game_data_lists,
+        offer_text_map=HADES1_OFFER_TEXT_MAP,
+        preset_choices=HADES1_PRESET_CHOICES,
     )
     print(f"  Owners: {len(owners)}")
 

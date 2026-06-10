@@ -126,7 +126,7 @@ GENERIC_PATH_NAMES = {
 _WALK_OWNERS_MAX_DEPTH = 64
 
 
-def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
+def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None, offer_text_map: dict = None, preset_choices: dict = None) -> dict:
     """
     Walk the DeathLoopData tree and pull out every owner that contains at
     least one `*TextLineSets` (or singular `TextLineSet`) section. Returns
@@ -161,6 +161,8 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
             default_speaker=owner_default_speaker,
             game_data_lists=game_data_lists,
             section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
+            offer_text_map=offer_text_map,
+            preset_choices=preset_choices,
         )
         if not any(sections.values()):
             continue

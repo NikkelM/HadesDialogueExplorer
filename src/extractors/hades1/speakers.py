@@ -70,6 +70,13 @@ HADES1_SPEAKERS = {
     # The protagonist. No HelpText entry; the quip is the one used
     # throughout the game's marketing and narrative voice-over.
     "CharProtag": {"name": "Zagreus", "description": "Prince of the Underworld"},
+    # PlayerUnit / PlayerUnit_Intro: alternate Zagreus speaker tags
+    # used in cutscene cues (``Ending01``, ``Flashback05``) and the
+    # intro voiceover (``AthenaFirstPickUp``). Same character, kept
+    # as separate ids so the source-level speaker attribution stays
+    # accurate when surfaced in the viewer.
+    "PlayerUnit":       {"name": "Zagreus", "description": "Prince of the Underworld"},
+    "PlayerUnit_Intro": {"name": "Zagreus", "description": "Prince of the Underworld"},
 
     # House of Hades regulars + their Field / Story / House / Unnamed
     # variants. Variant ids resolve to the same parent description in
@@ -87,6 +94,13 @@ HADES1_SPEAKERS = {
     "NPC_FurySister_01":        {"name": "Megaera",             "description": "First of the Furies"},
     "NPC_FurySister_02":        {"name": "Alecto",              "description": "Tormentor of Passions"},
     "NPC_FurySister_03":        {"name": "Tisiphone",           "description": "Tormentor of Murder"},
+    # Mystery variants used for the lesser Furies' first appearance
+    # cues (``Fury2FirstAppearance`` / ``Fury3FirstAppearance``).
+    # Same ``? ? ? (X)`` masking pattern as the other ``_Unnamed_``
+    # speakers - identity hidden until the player has actually met
+    # the character in-game.
+    "NPC_FurySister_Unnamed_02":{"name": "? ? ? (Alecto)",      "description": None},
+    "NPC_FurySister_Unnamed_03":{"name": "? ? ? (Tisiphone)",   "description": None},
     "NPC_Hades_01":             {"name": "Hades",               "description": "God of the Dead"},
     "NPC_Hypnos_01":            {"name": "Hypnos",              "description": "Sleep Incarnate"},
     "NPC_Nyx_01":               {"name": "Nyx",                 "description": "Night Incarnate"},
@@ -105,6 +119,12 @@ HADES1_SPEAKERS = {
     "NPC_Sisyphus_01":          {"name": "Sisyphus",            "description": "Tortured Soul"},
     "NPC_SisyphusAndBouldy_01": {"name": "Sisyphus & Bouldy",   "description": None},
     "NPC_Skelly_01":            {"name": "Skelly",              "description": "Training Dummy"},
+    # Backstory speaker tag used for Skelly's flashback cues
+    # (``SkellyBackstory03/05``) where he recalls his living days as
+    # a Cretan captain named Schelemeus. Same character as
+    # ``NPC_Skelly_01`` but kept on a distinct id with a different
+    # quip so the flashback flavour stays visible in the viewer.
+    "SkellyBackstory":          {"name": "Skelly",              "description": "Schelemeus, Former Captain"},
     "NPC_Thanatos_01":          {"name": "Thanatos",            "description": "Death Incarnate"},
     "NPC_Thanatos_Field_01":    {"name": "Thanatos (Field)",    "description": "Death Incarnate"},
 
@@ -141,6 +161,12 @@ HADES1_SPEAKERS = {
     # TrialUpgrade in HelpText reads "Origin of Creation" - a deeper
     # narrative gloss for the trial-of-the-gods variant; preserved.
     "TrialUpgrade":             {"name": "Chaos",               "description": "Origin of Creation"},
+    # MysteryUpgrade is the masked Chaos speaker for the very first
+    # encounter cue (``ChaosFirstPickUp``) before the player has met
+    # Chaos. Same ``? ? ? (X)`` masking pattern used for the
+    # ``NPC_*_Unnamed_*`` first-meeting variants - identity hidden
+    # until the in-game reveal.
+    "MysteryUpgrade":           {"name": "? ? ? (Chaos)",       "description": None},
 
     # Enemy / boss owners from EnemyData.lua. Only Megaera / Charon /
     # Hades get a "(Boss)" qualifier - they each have substantial NPC

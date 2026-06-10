@@ -46,7 +46,7 @@ OWNER_NAME_ALIASES = {
 }
 
 
-def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
+def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None, offer_text_map: dict = None, preset_choices: dict = None) -> dict:
     """
     Extract NPC dialogue data from a parsed Lua file.
 
@@ -97,14 +97,14 @@ def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = ""
     if npcs_table:
         for npc_name, npc_data in npcs_table.items():
             if isinstance(npc_data, LuaTable) and "NPC_" in npc_name:
-                _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists)
+                _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map, preset_choices)
 
     for npc_name, npc_data in individual_npcs.items():
         # The dedup check uses the resolved (post-alias) owner key so
         # an alias entry doesn't get extracted twice when it appears
         # in both ``individual_npcs`` and ``npcs_table``.
         if _resolve_owner(npc_name) not in result or npc_name not in result:
-            _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists)
+            _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map, preset_choices)
 
     return result
 
@@ -115,12 +115,12 @@ def _resolve_owner(npc_name: str) -> str:
     return OWNER_NAME_ALIASES.get(npc_name, npc_name)
 
 
-def _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists):
+def _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map=None, preset_choices=None):
     """Build an owner entry for ``npc_name`` and merge it into ``result``
     under the resolved (post-alias) owner key. Aliased entries
     accumulate their sections into the canonical owner's existing
     entry without overwriting same-named textlines."""
-    entry = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists)
+    entry = _build_owner_entry(npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map, preset_choices)
     if entry is None:
         return
     owner_key = _resolve_owner(npc_name)
@@ -140,7 +140,7 @@ def _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_
             existing.setdefault(tl_name, tl_data)
 
 
-def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_data_lists=None):
+def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_data_lists=None, offer_text_map=None, preset_choices=None):
     """Return an owner entry for the NPC, or ``None`` if it contributed
     no textline sections.
 
@@ -163,6 +163,8 @@ def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_
         default_speaker=default_speaker,
         game_data_lists=game_data_lists,
         section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
+        offer_text_map=offer_text_map,
+        preset_choices=preset_choices,
     )
     if EXCLUDED_TEXTLINE_NAMES:
         for tl_map in sections.values():

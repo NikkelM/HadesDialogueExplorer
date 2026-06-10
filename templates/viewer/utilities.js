@@ -15,6 +15,7 @@ import {
     _reqTypeOrderIndex,
     knownUnresolved,
     unresolvedCategoryLabels,
+    choiceNames,
 } from './data.js';
 
 // Escape a string for safe embedding into HTML, covering both text
@@ -159,6 +160,38 @@ export function renderSectionHtml(key) {
         return `<span class="section-name" data-tooltip="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="section-name">${escapeHtml(key)}</span>`;
+}
+
+// Render a choice ``ChoiceText`` identifier as HTML: friendly label
+// with the internal id available as a custom tooltip popup when a
+// mapping exists, falling back to the raw internal id otherwise.
+// Mirrors :func:`renderSectionHtml` / :func:`renderSpeakerHtml` so the
+// hover-to-reveal-internal-name affordance is consistent across the
+// label families. Returns the inner ``<span>`` only - the call site is
+// responsible for wrapping it in a clickable element when navigation
+// is desired (see ``info-panel.js`` choice-summary box).
+//
+// ``extraTooltipLine`` (optional) appends a second line to the tooltip
+// after the internal id. Used by gated boon-vendor choices to surface
+// the required Mirror of Night upgrade ("Requires Death Defiance
+// (Mirror of Night)") without crowding the dialogue layout. The extra
+// line is shown even when the friendly label equals the internal id
+// (so unmapped gated choices still surface the requirement).
+//
+// Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
+// call site - the friendly label, internal-key tooltip, and extra
+// tooltip line are all routed through escapeHtml below.
+export function renderChoiceNameHtml(internal, extraTooltipLine = null) {
+    const friendly = choiceNames[internal];
+    const hasFriendly = friendly && friendly !== internal;
+    const tooltipParts = [];
+    if (hasFriendly) tooltipParts.push(internal);
+    if (extraTooltipLine) tooltipParts.push(extraTooltipLine);
+    const tooltipAttr = tooltipParts.length > 0
+        ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n'))}"`
+        : '';
+    const visible = hasFriendly ? friendly : internal;
+    return `<span class="choice-name"${tooltipAttr}>${escapeHtml(visible)}</span>`;
 }
 
 // Returns the category id ('back-compatibility', 'typo-or-bug', 'cut-content')

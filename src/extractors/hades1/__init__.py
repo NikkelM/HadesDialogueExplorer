@@ -16,6 +16,10 @@ from .loot_data import extract_loot_data, LOOT_DEFAULT_SPEAKERS
 from .enemy_data import extract_enemy_data
 from .encounter_room_data import extract_encounter_room_data
 from .text_line_sets import extract_game_data_lists
+from .offer_text import HADES1_OFFER_TEXT_MAP
+from .choice_names import HADES1_CHOICE_NAMES
+from .preset_choices import HADES1_PRESET_CHOICES
+from .meta_upgrades import HADES1_META_UPGRADE_NAMES
 from .speakers import HADES1_SPEAKERS
 from .section_keys import (
     HADES1_TEXTLINE_SECTION_KEYS,
@@ -42,6 +46,10 @@ __all__ = [
     "extract_enemy_data",
     "extract_encounter_room_data",
     "extract_game_data_lists",
+    "HADES1_OFFER_TEXT_MAP",
+    "HADES1_CHOICE_NAMES",
+    "HADES1_PRESET_CHOICES",
+    "HADES1_META_UPGRADE_NAMES",
     "HADES1_SPEAKERS",
     "HADES1_TEXTLINE_SECTION_KEYS",
     "HADES1_SECTION_KEY_LABELS",

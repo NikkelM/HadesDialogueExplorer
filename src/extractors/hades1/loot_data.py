@@ -28,7 +28,7 @@ LOOT_DEFAULT_SPEAKERS = {
 }
 
 
-def extract_loot_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None) -> dict:
+def extract_loot_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None, offer_text_map: dict = None, preset_choices: dict = None) -> dict:
     result = {}
 
     root = parsed.get("LootData")
@@ -44,6 +44,8 @@ def extract_loot_data(parsed: dict, source_label: str = "", source_file: str = "
             default_speaker=LOOT_DEFAULT_SPEAKERS.get(owner_name),
             game_data_lists=game_data_lists,
             section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
+            offer_text_map=offer_text_map,
+            preset_choices=preset_choices,
         )
         if any(sections.values()):
             entry = {"source": source_label}

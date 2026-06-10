@@ -61,7 +61,13 @@ ALLOWED_NAME_COLLISIONS = {
     "Alecto": {"NPC_FurySister_02", "Harpy2"},
     "Tisiphone": {"NPC_FurySister_03", "Harpy3"},
     # Training dummy shares Skelly's identity - it's the same character.
-    "Skelly": {"NPC_Skelly_01", "TrainingMelee"},
+    # ``SkellyBackstory`` is the flashback speaker tag (different
+    # description quip, but same character).
+    "Skelly": {"NPC_Skelly_01", "TrainingMelee", "SkellyBackstory"},
+    # Protagonist: the canonical ``CharProtag`` speaker plus the
+    # ``PlayerUnit`` / ``PlayerUnit_Intro`` cutscene + intro speaker
+    # tags - all the same character.
+    "Zagreus": {"CharProtag", "PlayerUnit", "PlayerUnit_Intro"},
 }
 
 
@@ -81,6 +87,9 @@ INTENTIONALLY_EMPTY_DESCRIPTIONS = {
     # doesn't accidentally reveal that identity in the dev tool.
     "NPC_Patroclus_Unnamed_01": "Mystery variant; quip would leak the identity.",
     "NPC_Persephone_Unnamed_01": "Mystery variant; quip would leak the identity.",
+    "NPC_FurySister_Unnamed_02": "Mystery variant; quip would leak the identity.",
+    "NPC_FurySister_Unnamed_03": "Mystery variant; quip would leak the identity.",
+    "MysteryUpgrade":            "Mystery variant; quip would leak the identity.",
 }
 
 

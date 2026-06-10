@@ -123,6 +123,8 @@ def extract_textline_sections(
     game_data_lists: dict = None,
     section_priority_tiers: dict = None,
     cue_speaker_resolver=None,
+    offer_text_map: dict = None,
+    preset_choices: dict = None,
 ) -> dict:
     """Extract every textline-set section from a single owner table.
 
@@ -164,6 +166,24 @@ def extract_textline_sections(
     textline-set without per-line speakers (e.g. EncounterData / RoomData
     where the speaker has to be derived from the cue path) can use this
     to recover the speaker before the owner-name fallback kicks in.
+
+    `offer_text_map`, when provided, is an ``{Id: DisplayName}`` map
+    loaded from ``Game/Text/en/MiscText.en.sjson`` (see
+    :func:`src.extractors.hades1.misc_text.load_misc_text`). Cue ``Text``
+    values that are exact keys in this map are substituted to the
+    mapped flavour text so the viewer shows
+    ``"Eurydice offers several delectable treats."`` rather than the raw
+    ``"Eurydice_OfferText02"`` identifier. Only exact matches are
+    substituted; real voice lines that happen to look identifier-like
+    pass through unchanged.
+
+    `preset_choices`, when provided, is a ``{preset_name:
+    [ChoiceText id, ...]}`` map (see
+    :data:`src.extractors.hades1.preset_choices.HADES1_PRESET_CHOICES`)
+    used to resolve boon-vendor cue choice references shaped like
+    ``Choices = PresetEventArgs.EurydiceBenefitChoices``. Our Lua
+    parser can't follow the reference across the file, so without
+    this map those cues would render without their A/B/C choice list.
     """
     sections = {}
     fallback_speaker = default_speaker or owner_name
@@ -182,6 +202,8 @@ def extract_textline_sections(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
                 cue_speaker_resolver=cue_speaker_resolver,
+                offer_text_map=offer_text_map,
+                preset_choices=preset_choices,
             )
             if section_tier is not None:
                 section[tl_name]["narrativePrioritySectionTier"] = section_tier
@@ -193,6 +215,8 @@ def extract_textline_sections(
                 tl_name, tl_table, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
                 cue_speaker_resolver=cue_speaker_resolver,
+                offer_text_map=offer_text_map,
+                preset_choices=preset_choices,
             ).items():
                 if section_tier is not None:
                     syn_data["narrativePrioritySectionTier"] = section_tier
@@ -208,6 +232,8 @@ def extract_textline(
     source_file: str,
     game_data_lists: dict = None,
     cue_speaker_resolver=None,
+    offer_text_map: dict = None,
+    preset_choices: dict = None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single textline table."""
     data = {
@@ -279,15 +305,120 @@ def extract_textline(
         text = entry.get("Text")
         if not isinstance(text, str):
             continue
+        # Resolve MiscText.en.sjson Ids (e.g. ``Eurydice_OfferText02``)
+        # to their flavour text before tag stripping. Substituted values
+        # are already tag-stripped at load time, so the strip below is a
+        # no-op for them; bare voice lines still get stripped normally.
+        if offer_text_map is not None:
+            text = offer_text_map.get(text, text)
         text = _FORMAT_TAG_RE.sub("", text)
         speaker = entry.get("Speaker")
         if isinstance(speaker, str):
-            data["dialogueLines"].append({"speaker": speaker, "text": text})
+            line: dict = {"speaker": speaker, "text": text}
         else:
             derived = cue_speaker_resolver(entry) if cue_speaker_resolver is not None else None
-            data["dialogueLines"].append({"speaker": derived or fallback_speaker, "text": text})
+            line = {"speaker": derived or fallback_speaker, "text": text}
+        # Choice-prompt cue: when a cue declares a ``Choices = {...}``
+        # table (or a ``Choices = PresetEventArgs.<Name>`` reference to
+        # a vendored preset) the prompt isn't just narration, it's the
+        # runtime branch point. Attach the option metadata so the viewer
+        # can render it as a structured choice block rather than a
+        # single dialogue line. Inline-choice synthetic naming is
+        # ``<parent_name><ChoiceText>`` (mirrors
+        # :func:`_extract_choice_variants`); preset-referenced boon
+        # choices have no follow-up textline (``targetTextline = None``)
+        # because the engine immediately calls the choice's
+        # ``PostLineFunctionName`` to grant the benefit.
+        choices = _collect_cue_choices(entry, tl_name, preset_choices)
+        if choices is not None:
+            line["kind"] = "choicePrompt"
+            line["choices"] = choices
+        data["dialogueLines"].append(line)
 
     return data
+
+
+def _collect_cue_choices(cue: LuaTable, parent_name: str, preset_choices: dict = None):
+    """Return the list of ``{internal, targetTextline}`` choice entries
+    declared on a single cue, or ``None`` when the cue has no
+    ``Choices`` field (or the field is an unresolvable reference).
+
+    Two ``Choices`` shapes are recognised:
+
+    * Inline ``Choices = {...}`` table - each ``ChoiceText`` becomes a
+      navigable option whose ``targetTextline`` is the synthetic
+      textline name :func:`_extract_choice_variants` produces
+      (``<parent><ChoiceText>``). The viewer wraps these in
+      click-through links.
+    * Preset reference ``Choices = PresetEventArgs.<Name>`` - looks
+      ``<Name>`` up in ``preset_choices`` (typically
+      :data:`HADES1_PRESET_CHOICES`). Each entry becomes a
+      non-navigable option (``targetTextline = None``) because the
+      engine calls the boon-vendor function directly instead of
+      branching into another textline. Returns ``None`` if the
+      preset isn't in the map - that's the same visible failure mode
+      as an unrecognised ``Text =`` reference: the cue renders as a
+      plain dialogue line. Preset entries may be bare ``str`` ids
+      (unconditional) or ``dict`` records carrying extra metadata
+      (e.g. ``requiredMetaUpgrade``); any non-``id`` keys are passed
+      through verbatim to the emitted choice dict so the viewer can
+      group and annotate gated options without server-side semantics.
+
+    Choices missing a string ``ChoiceText`` are silently skipped; an
+    all-empty list still flags the prompt as a ``choicePrompt`` so the
+    viewer can render its structural role even if no usable options
+    are declared.
+    """
+    choices_field = cue.get("Choices")
+    # Inline table: extract per-choice ChoiceText + computed synthetic target.
+    if isinstance(choices_field, LuaTable):
+        out: list = []
+        for choice_item in choices_field.array:
+            if not isinstance(choice_item, LuaTable):
+                continue
+            choice_text = choice_item.get("ChoiceText")
+            if not isinstance(choice_text, str) or not choice_text:
+                continue
+            out.append({
+                "internal": choice_text,
+                "targetTextline": parent_name + choice_text,
+            })
+        return out
+    # Preset reference: look up the vendored choice list. Only the
+    # ``PresetEventArgs.<Name>`` namespace is supported - other Lua
+    # identifier references aren't preset choice tables.
+    if isinstance(choices_field, LuaIdentifier) and preset_choices is not None:
+        prefix = "PresetEventArgs."
+        if not choices_field.name.startswith(prefix):
+            return None
+        preset_name = choices_field.name[len(prefix):]
+        preset = preset_choices.get(preset_name)
+        if preset is None:
+            return None
+        # Preset entries are either bare ``str`` ids (unconditional
+        # option) or ``dict`` records with ``id`` + optional metadata
+        # fields like ``requiredMetaUpgrade``. Surface any non-id keys
+        # verbatim on the emitted choice so the viewer can render
+        # gated options with extra context (grouped letters, tooltip
+        # annotations) without the extractor needing to know the
+        # semantics. Skip malformed entries silently.
+        out: list = []
+        for entry in preset:
+            if isinstance(entry, str) and entry:
+                out.append({"internal": entry, "targetTextline": None})
+                continue
+            if isinstance(entry, dict):
+                cid = entry.get("id")
+                if not isinstance(cid, str) or not cid:
+                    continue
+                choice: dict = {"internal": cid, "targetTextline": None}
+                for key, value in entry.items():
+                    if key == "id":
+                        continue
+                    choice[key] = value
+                out.append(choice)
+        return out
+    return None
 
 
 def _extract_choice_variants(
@@ -297,6 +428,8 @@ def _extract_choice_variants(
     source_file: str,
     game_data_lists: dict = None,
     cue_speaker_resolver=None,
+    offer_text_map: dict = None,
+    preset_choices: dict = None,
 ) -> dict:
     """Find every ``Choices = {...}`` array nested in the parent's cues and
     materialise each choice as a synthetic child textline.
@@ -312,6 +445,12 @@ def _extract_choice_variants(
       - carries ``parentTextline`` + ``choiceText`` metadata for the viewer
       - is flagged ``isSynthetic = True`` so collision resolution can
         prefer a real definition when one exists
+
+    Preset-referenced ``Choices = PresetEventArgs.X`` cues (boon
+    vendors) deliberately do NOT produce synthetic variants - the engine
+    branches into a function call rather than another textline, so
+    there's no flag to materialise. ``preset_choices`` is accepted for
+    signature symmetry with :func:`extract_textline` but unused here.
     """
     variants = {}
     for cue in tl_table.array:
@@ -331,6 +470,8 @@ def _extract_choice_variants(
                 synthetic_name, choice_item, fallback_speaker, source_file,
                 game_data_lists=game_data_lists,
                 cue_speaker_resolver=cue_speaker_resolver,
+                offer_text_map=offer_text_map,
+                preset_choices=preset_choices,
             )
             # Implicit parent dependency so the choice variant is reachable
             # in the graph only via the parent textline.

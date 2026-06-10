@@ -169,3 +169,87 @@ test('non-collision textlines never render the collision badge or banner', () =>
     assert.doesNotMatch(lastHtml, /collision-banner/);
 });
 
+
+// Build a fixture with a Patroclus-style boon-vendor textline whose
+// choicePrompt mixes meta-upgrade-gated and unconditional options. Used
+// by the grouping / tooltip tests below.
+function fixtureWithBoonVendorChoices() {
+    const data = buildFixtureData();
+    data.textlines.PatroclusFirstMeeting01 = {
+        owner: 'NPC_Patroclus_01',
+        section: 'InteractTextLineSets',
+        playOnce: false,
+        narrativePrioritySectionTier: 'normal',
+        narrativePrioritySetLevel: null,
+        dialogueLines: [
+            { speaker: 'NPC_Patroclus_01', text: 'Patroclus offers a token of his favour.',
+              kind: 'choicePrompt',
+              choices: [
+                  { internal: 'ChoiceText_BuffExtraChance',          targetTextline: null,
+                    requiredMetaUpgrade: 'ExtraChanceMetaUpgrade' },
+                  { internal: 'ChoiceText_BuffExtraChanceReplenish', targetTextline: null,
+                    requiredMetaUpgrade: 'ExtraChanceReplenishMetaUpgrade' },
+                  { internal: 'ChoiceText_BuffHealing',              targetTextline: null },
+                  { internal: 'ChoiceText_BuffWeapon',               targetTextline: null },
+              ] },
+        ],
+        requirements: {},
+        otherRequirements: {},
+    };
+    data.choiceNames = {
+        ChoiceText_BuffExtraChance:          'Kiss of Styx Premium',
+        ChoiceText_BuffExtraChanceReplenish: 'Touch of Styx Dark',
+        ChoiceText_BuffHealing:              'HydraLite Gold',
+        ChoiceText_BuffWeapon:               'Cyclops Jerky Select',
+    };
+    data.metaUpgradeNames = {
+        ExtraChanceMetaUpgrade:          'Death Defiance',
+        ExtraChanceReplenishMetaUpgrade: 'Stubborn Defiance',
+    };
+    return data;
+}
+
+
+test('consecutive meta-upgrade-gated boon choices share a base letter with numeric suffixes', () => {
+    loadData(fixtureWithBoonVendorChoices());
+    renderInfo('PatroclusFirstMeeting01');
+    // The two gated choices form a single mutually-exclusive group
+    // (same Mirror of Night row) so they share base letter A as A1/A2;
+    // the two unconditional choices each consume their own letter (B, C).
+    assert.match(lastHtml, /choice-option-letter">A1:/);
+    assert.match(lastHtml, /choice-option-letter">A2:/);
+    assert.match(lastHtml, /choice-option-letter">B:/);
+    assert.match(lastHtml, /choice-option-letter">C:/);
+    // No stray A3 / D - confirms the group is exactly the first two.
+    assert.doesNotMatch(lastHtml, /choice-option-letter">A3:/);
+    assert.doesNotMatch(lastHtml, /choice-option-letter">D:/);
+});
+
+
+test('meta-upgrade-gated choices append a Mirror of Night requirement to their tooltip', () => {
+    loadData(fixtureWithBoonVendorChoices());
+    renderInfo('PatroclusFirstMeeting01');
+    // Each gated choice's choice-name span carries a two-line tooltip:
+    // internal id + "Requires <FriendlyMirrorUpgradeName> (Mirror of Night)".
+    // The tooltip lines are joined with a literal newline, which
+    // ``escapeHtml`` passes through verbatim (the floating tooltip
+    // layer in tooltip.js splits on \n at render time).
+    const a1Match = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffExtraChance\nRequires Death Defiance \(Mirror of Night\)"/);
+    assert.ok(a1Match, 'expected A1 to surface Death Defiance in its tooltip');
+    const a2Match = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffExtraChanceReplenish\nRequires Stubborn Defiance \(Mirror of Night\)"/);
+    assert.ok(a2Match, 'expected A2 to surface Stubborn Defiance in its tooltip');
+    // Unconditional choices keep the original tooltip shape (internal id only).
+    const bMatch = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffHealing"/);
+    assert.ok(bMatch, 'expected the ungated HydraLite Gold tooltip to stay internal-id only');
+});
+
+
+test('boon-vendor choice options render without a click-through link when targetTextline is null', () => {
+    loadData(fixtureWithBoonVendorChoices());
+    renderInfo('PatroclusFirstMeeting01');
+    // The boon-vendor cues call a function directly so there is no
+    // follow-up textline to navigate to. The choice-option block must
+    // not wrap the friendly label in a ``<a class="choice-link">``.
+    assert.doesNotMatch(lastHtml, /<a class="choice-link"/);
+});
+

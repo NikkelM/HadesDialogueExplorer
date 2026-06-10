@@ -157,6 +157,8 @@ def extract_encounter_room_data(
     source_label: str = "",
     source_file: str = "",
     game_data_lists: dict = None,
+    offer_text_map: dict = None,
+    preset_choices: dict = None,
 ) -> dict:
     """Walk every EncounterData / RoomSetData.* root in ``parsed`` and pull
     out every container that holds at least one textline-set section.
@@ -185,6 +187,8 @@ def extract_encounter_room_data(
                 game_data_lists=game_data_lists,
                 section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
                 cue_speaker_resolver=_cue_speaker_resolver,
+                offer_text_map=offer_text_map,
+                preset_choices=preset_choices,
             )
 
             # Drop dev-test / unwanted textlines before the empty-sections
