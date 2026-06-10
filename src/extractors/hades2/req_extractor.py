@@ -112,6 +112,7 @@ HADES2_REQUIREMENT_SET_FIELDS = frozenset({
     "MaxedRequirement",                # singular - lives on TraitData entries
     "PartnerCueGameStateRequirements",
     "OnUseGameStateRequirements",
+    "OnUsedGameStateRequirements",     # gates obstacle / NPC interaction (Q_Story01 ObstacleData; NPCData_Nemesis OnQueuedFunctionArgs)
     "OnGiveGameStateRequirements",
     "OnFireGameStateRequirements",
     "PlayerReactionRequirements",

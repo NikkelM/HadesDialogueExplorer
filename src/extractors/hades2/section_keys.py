@@ -49,6 +49,18 @@ HADES2_TEXTLINE_SECTION_KEYS = frozenset({
     # Hub only.
     "PostPortraitTextLines",      # 1 - dialogue after a portrait reveal
     "BathHouseIntroTextLines",    # 1 - bath house intro
+
+    # Encounter / inspect-point inline single-textline container. Unlike
+    # all of the above ``...TextLineSets`` / ``...TextLines`` plurals
+    # (which map a name to many textlines), ``TextLineSet`` (singular)
+    # always wraps a single named textline keyed by its own name. Used
+    # for narrative-beat dialogue embedded inside event ``Args`` blocks:
+    # 5 occurrences in EncounterData_Story.lua (Story_Narcissus_01
+    # NemesisWithNarcissus01/02, Story_EndCredits TrueEndingFinale01),
+    # 2 in DeathLoopData.lua (Flashback_Hub_Main flashbacks
+    # HecateHideAndSeekIntro01, HadesWithHecate01), 1 in RoomDataI.lua
+    # (the TrueEnding02 family-reunion scene in I_Story01).
+    "TextLineSet",
 })
 
 
@@ -72,4 +84,5 @@ HADES2_SECTION_KEY_LABELS = {
     "OnHitTextLineSets":             "NPC interaction (on hit)",
     "PostPortraitTextLines":         "Post-portrait dialogue",
     "BathHouseIntroTextLines":       "Bath House introduction",
+    "TextLineSet":                   "Event narrative dialogue",
 }

@@ -342,3 +342,25 @@ def merge_ancestor_requirements_h2(
         del tl_data["orBranches"]
     if not tl_data["flags"] and not had_flags:
         del tl_data["flags"]
+
+
+def has_local_h2_requirements(node) -> bool:
+    """Return True if ``node`` declares at least one field in
+    :data:`HADES2_REQUIREMENT_SET_FIELDS` (with a ``LuaTable`` value).
+
+    Used by tree-walking extractors (encounter / room) to identify the
+    nearest enclosing block carrying requirements so its fields can be
+    lifted onto contained textlines via
+    :func:`merge_ancestor_requirements_h2`.
+
+    Bare presence is enough; empty RequirementSet tables (which the
+    engine treats as "no constraint") still count - the merge is a
+    no-op in that case and updating the ancestor pointer keeps the
+    walker semantics simple.
+    """
+    if not isinstance(node, LuaTable):
+        return False
+    for field in HADES2_REQUIREMENT_SET_FIELDS:
+        if isinstance(node.get(field), LuaTable):
+            return True
+    return False

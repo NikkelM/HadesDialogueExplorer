@@ -46,6 +46,11 @@ from .deathloop_data import (
     HUB_NARRATOR_SPEAKER,
     extract_deathloop_data,
 )
+from .encounter_room_data import (
+    TEXTLINE_OWNER_OVERRIDES,
+    IDMAP_PARENT_OWNER_OVERRIDES,
+    extract_encounter_room_data,
+)
 
 __all__ = [
     "HADES2_TEXTLINE_SECTION_KEYS",
@@ -69,4 +74,7 @@ __all__ = [
     "extract_enemy_data",
     "HUB_NARRATOR_SPEAKER",
     "extract_deathloop_data",
+    "TEXTLINE_OWNER_OVERRIDES",
+    "IDMAP_PARENT_OWNER_OVERRIDES",
+    "extract_encounter_room_data",
 ]

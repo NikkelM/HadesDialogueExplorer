@@ -233,3 +233,127 @@ class TestAncestorRequirements:
         # PathTrue:CurrentRun.RoomsEntered.I_DeathAreaRestored synthetic key
         # under otherRequirements (not a textline reference).
         assert "PathTrue:CurrentRun.RoomsEntered.I_DeathAreaRestored" in tl["otherRequirements"]
+
+
+class TestEventTextLineSets:
+    """Tests for inline ``Args.TextLineSet`` flashback narrative beats
+    embedded in ``StartUnthreadedEvents`` / ``UnthreadedEvents`` event
+    blocks. These are routed via :data:`TEXTLINE_OWNER_OVERRIDES` so
+    mixed-speaker xWithY dialogue lands under its natural NPC owner
+    rather than collapsing to Homer.
+    """
+
+    def test_event_textline_set_routed_via_override(self):
+        # HadesWithHecate01 in the override map -> NPC_LordHades_01.
+        parsed = _parse("""
+            OverwriteTableKeys( HubRoomData, {
+                Flashback_Hub = {
+                    StartUnthreadedEvents = {
+                        {
+                            FunctionName = "SurpriseNPCPresentation",
+                            Args = {
+                                SourceId = 560340,
+                                TextLineSet = {
+                                    HadesWithHecate01 = {
+                                        { Cue = "/VO/Hades_0048", Speaker = "NPC_LordHades_01",
+                                          Text = "You have your orders." },
+                                        { Cue = "/VO/Hecate_0208", Speaker = "NPC_Hecate_01",
+                                          Text = "No harm shall come to young Melinoë." },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            } )
+        """)
+        result = extract_deathloop_data(parsed, source_label="Hades 2", source_file="DeathLoopData.lua")
+        assert "NPC_LordHades_01" in result
+        tl = result["NPC_LordHades_01"]["TextLineSet"]["HadesWithHecate01"]
+        assert tl["partner"] == "NPC_Hecate_01"
+        assert len(tl["dialogueLines"]) == 2
+
+    def test_narrator_routed_event_collapses_to_homer(self):
+        # HecateHideAndSeekIntro01 in the override map -> Speaker_Homer
+        # (pure narrator prologue). Should NOT create a separate owner.
+        parsed = _parse("""
+            OverwriteTableKeys( HubRoomData, {
+                Flashback_Hub_Main = {
+                    StartUnthreadedEvents = {
+                        {
+                            FunctionName = "SetupFlashback01",
+                            Args = {
+                                TextLineSet = {
+                                    HecateHideAndSeekIntro01 = {
+                                        { Cue = "/VO/Storyteller_0235", IsNarration = true,
+                                          Text = "It is the dead of night..." },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            } )
+        """)
+        result = extract_deathloop_data(parsed, source_label="Hades 2", source_file="DeathLoopData.lua")
+        # Routed to Homer (override owner == HUB_NARRATOR_SPEAKER) -
+        # surfaces under the same single owner as the inspect-point
+        # narration, not as a separate entry.
+        assert list(result.keys()) == [HUB_NARRATOR_SPEAKER]
+        assert "HecateHideAndSeekIntro01" in result[HUB_NARRATOR_SPEAKER]["TextLineSet"]
+
+    def test_unknown_event_textline_falls_back_to_homer(self):
+        # A textline name NOT in TEXTLINE_OWNER_OVERRIDES defaults to
+        # the narrator collapse (defensive against future flashback
+        # additions before their override is wired).
+        parsed = _parse("""
+            OverwriteTableKeys( HubRoomData, {
+                Flashback_Hub = {
+                    UnthreadedEvents = {
+                        {
+                            FunctionName = "X",
+                            Args = {
+                                TextLineSet = {
+                                    SomeNewUnknownFlashback01 = {
+                                        { Cue = "/VO/Storyteller_0001", Text = "Narration." },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            } )
+        """)
+        result = extract_deathloop_data(parsed, source_label="Hades 2", source_file="DeathLoopData.lua")
+        assert list(result.keys()) == [HUB_NARRATOR_SPEAKER]
+        assert "SomeNewUnknownFlashback01" in result[HUB_NARRATOR_SPEAKER]["TextLineSet"]
+
+    def test_event_game_state_requirements_lifted_onto_event_textline(self):
+        # GameStateRequirements on the event level is lifted onto the
+        # TextLineSet textline same as the existing OnLoadEvents path.
+        parsed = _parse("""
+            OverwriteTableKeys( HubRoomData, {
+                Flashback_Hub = {
+                    StartUnthreadedEvents = {
+                        {
+                            FunctionName = "SurpriseNPCPresentation",
+                            GameStateRequirements = {
+                                {
+                                    PathFalse = { "GameState", "TextLinesRecord", "ChronosNightmare01" },
+                                },
+                            },
+                            Args = {
+                                TextLineSet = {
+                                    HadesWithHecate01 = {
+                                        { Cue = "/VO/Hades_0048", Text = "..." },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            } )
+        """)
+        result = extract_deathloop_data(parsed, source_label="Hades 2", source_file="DeathLoopData.lua")
+        tl = result["NPC_LordHades_01"]["TextLineSet"]["HadesWithHecate01"]
+        assert tl["requirements"].get("RequiredFalseTextLines") == ["ChronosNightmare01"]
