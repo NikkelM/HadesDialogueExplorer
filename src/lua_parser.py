@@ -449,13 +449,20 @@ class LuaParser:
             if self.current.type == T_LPAREN:
                 raw = ident_tok.value + self._consume_balanced('(', ')')
                 return LuaExpression(raw)
-            # Check for table access: ident.field or ident.field(...)
-            if self.current.type == T_DOT:
+            # Check for table access: ident.field, ident.field[N], or ident.field(...).
+            # ``[N]`` subscripts (e.g. ``ScreenData.GhostAdmin.ItemCategories[1]`` in
+            # H2 NPCData_Hecate / NPCData_Nemesis / RequirementsData) are captured
+            # verbatim into the identifier name; we never resolve them ourselves,
+            # they just need to round-trip through the parser without erroring.
+            if self.current.type in (T_DOT, T_LBRACKET):
                 name = ident_tok.value
-                while self.current.type == T_DOT:
-                    self.advance()
-                    if self.current.type == T_IDENT:
-                        name += '.' + self.advance().value
+                while self.current.type in (T_DOT, T_LBRACKET):
+                    if self.current.type == T_DOT:
+                        self.advance()
+                        if self.current.type == T_IDENT:
+                            name += '.' + self.advance().value
+                    else:
+                        name += self._consume_balanced('[', ']')
                 if self.current.type == T_LPAREN:
                     raw = name + self._consume_balanced('(', ')')
                     return LuaExpression(raw)
@@ -549,8 +556,12 @@ class LuaParser:
 
     def _consume_balanced(self, open_char: str, close_char: str) -> str:
         """Consume balanced delimiters and return raw text including delimiters."""
-        open_type = T_LPAREN if open_char == '(' else T_LBRACE
-        close_type = T_RPAREN if close_char == ')' else T_RBRACE
+        delim_type = {
+            '(': (T_LPAREN, T_RPAREN),
+            '{': (T_LBRACE, T_RBRACE),
+            '[': (T_LBRACKET, T_RBRACKET),
+        }
+        open_type, close_type = delim_type[open_char]
         result = open_char
         self.advance()  # consume opening
         depth = 1
@@ -566,10 +577,12 @@ class LuaParser:
             elif self.current.type == T_STRING:
                 result += f'"{self.current.value}"'
                 self.advance()
-            elif self.current.type == T_LBRACE:
+            elif self.current.type == T_LBRACE and open_char != '{':
                 result += self._consume_balanced('{', '}')
             elif self.current.type == T_LPAREN and open_char != '(':
                 result += self._consume_balanced('(', ')')
+            elif self.current.type == T_LBRACKET and open_char != '[':
+                result += self._consume_balanced('[', ']')
             else:
                 result += str(self.current.value) if self.current.value is not None else ''
                 self.advance()
@@ -626,5 +639,7 @@ def parse_lua_file(filepath: str) -> dict:
     """Parse a Lua data file and return top-level assignments as a dict."""
     with open(filepath, 'r', encoding='utf-8') as f:
         text = f.read()
+    if text.startswith('\ufeff'):
+        text = text.lstrip('\ufeff')
     parser = LuaParser(text)
     return parser.parse_file()

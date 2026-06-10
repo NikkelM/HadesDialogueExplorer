@@ -122,6 +122,21 @@ class TestIdentifiersAndExpressions:
         assert isinstance(t.named["a"], LuaIdentifier)
         assert t.named["a"].name == "Module.Constant"
 
+    def test_dotted_identifier_with_numeric_subscript(self):
+        # H2 RequirementsData.lua / NPCData_Hecate.lua / NPCData_Nemesis.lua
+        # reference table entries via ``Module.Sub.Field[1]`` - the bracketed
+        # subscript is captured verbatim into the identifier name so the
+        # parser doesn't lose data and downstream code can detect/skip the
+        # whole reference uniformly.
+        t = parse_value('{ a = ScreenData.GhostAdmin.ItemCategories[1] }')
+        assert isinstance(t.named["a"], LuaIdentifier)
+        assert t.named["a"].name == "ScreenData.GhostAdmin.ItemCategories[1]"
+
+    def test_dotted_identifier_with_string_subscript(self):
+        t = parse_value('{ a = Foo.Bar["baz"] }')
+        assert isinstance(t.named["a"], LuaIdentifier)
+        assert t.named["a"].name == 'Foo.Bar["baz"]'
+
 
 class TestStringConcatenation:
     def test_simple_concat(self):
