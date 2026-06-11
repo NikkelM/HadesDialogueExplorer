@@ -114,15 +114,30 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                 for opt_key in ("parentTextline", "choiceText", "isSynthetic"):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
-                # Narrative-priority fields, when present. Two distinct
-                # sources, both meaningful:
+                # Narrative-priority fields, when present. Each game uses
+                # a different model and the fields are mutually exclusive
+                # per textline:
+                #   H1 (intrinsic, encoded by container shape):
                 #   - section-tier: which container the textline lives in
                 #     (the engine cascades super-tier sections before
                 #     priority-tier sections before plain).
                 #   - set-level: `Priority`/`SuperPriority` boolean on the
                 #     textline-set table itself (biases random selection
                 #     within whichever section is being consulted).
-                for opt_key in ("narrativePrioritySectionTier", "narrativePrioritySetLevel"):
+                #   H2 (extrinsic, looked up from NarrativeData.lua):
+                #   - ordinal: 1-based rank in the priority registry list
+                #     for this owner+section.
+                #   - section-size: total number of priority slots in the
+                #     list (so the viewer can render "#1/47").
+                #   - cluster-members: sibling textline names tied at the
+                #     same ordinal (inline sub-array in the priority list).
+                for opt_key in (
+                    "narrativePrioritySectionTier",
+                    "narrativePrioritySetLevel",
+                    "narrativePriorityOrdinal",
+                    "narrativePrioritySectionSize",
+                    "narrativePriorityClusterMembers",
+                ):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
                 # PlayOnce flag (once per save). Surfaced in the details
@@ -296,6 +311,9 @@ _VARIANT_OPTIONAL_FIELDS = (
     "isSynthetic",
     "narrativePrioritySectionTier",
     "narrativePrioritySetLevel",
+    "narrativePriorityOrdinal",
+    "narrativePrioritySectionSize",
+    "narrativePriorityClusterMembers",
 )
 
 

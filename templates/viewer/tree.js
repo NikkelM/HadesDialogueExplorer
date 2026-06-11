@@ -21,7 +21,7 @@ import {
     getEdgeLabel,
     reqTypeTitleText,
     unresolvedCategoryFor,
-    renderTierBadgeHtml,
+    renderPrimaryPriorityBadgeHtml,
 } from './utilities.js';
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
@@ -195,14 +195,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         label.appendChild(cycleSpan);
     }
 
-    // Narrative-priority tier badge. Tree view shows
-    // only the section-tier badge to keep rows uncluttered; the
-    // set-level (SP/P) and PlayOnce indicators are reserved for the
-    // details panel. Placed inside the right-aligned cluster of the
-    // row so badges line up across rows regardless of name length.
+    // Narrative-priority badge. Tree view shows a single compact
+    // badge (H1 tier or H2 ordinal) to keep rows uncluttered; the
+    // set-level (SP/P) pill and PlayOnce indicator are reserved for
+    // the details panel. Placed inside the right-aligned cluster of
+    // the row so badges line up across rows regardless of name length.
     // Only relevant for resolved textlines (`tl != null`).
     if (tl) {
-        const tierHtml = renderTierBadgeHtml(tl);
+        const tierHtml = renderPrimaryPriorityBadgeHtml(tl);
         if (tierHtml) {
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tierHtml;

@@ -96,6 +96,29 @@ class TestMakeVariantSummary:
         assert "playOnce" not in v
         assert "isSynthetic" not in v
 
+    def test_preserves_h1_priority_fields(self):
+        data = _entry("A", dialogue=[{"text": "x"}])
+        data["narrativePrioritySectionTier"] = "super"
+        data["narrativePrioritySetLevel"] = "priority"
+        v = make_variant_summary(data, "A", "InteractTextLineSets")
+        assert v["narrativePrioritySectionTier"] == "super"
+        assert v["narrativePrioritySetLevel"] == "priority"
+
+    def test_preserves_h2_priority_fields(self):
+        # H2 textlines pick up ordinal priority via the NarrativeData
+        # post-extraction merge. When dedup discards a duplicate that
+        # carried the only copy of those fields, the variant summary
+        # must retain them so the viewer can still render the badge
+        # on the kept side via the variant trail.
+        data = _entry("A", dialogue=[{"text": "x"}])
+        data["narrativePriorityOrdinal"] = 3
+        data["narrativePrioritySectionSize"] = 12
+        data["narrativePriorityClusterMembers"] = ["Sib1", "Sib2"]
+        v = make_variant_summary(data, "A", "InteractTextLineSets")
+        assert v["narrativePriorityOrdinal"] == 3
+        assert v["narrativePrioritySectionSize"] == 12
+        assert v["narrativePriorityClusterMembers"] == ["Sib1", "Sib2"]
+
 
 class TestAttachVariant:
     def test_seeds_variants_with_kept_then_appends_dropped(self):

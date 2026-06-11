@@ -107,6 +107,18 @@
 .priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
 .priority-normal { background: #1c2530; color: #8fb3d1; border: 1px solid #2c4258; }
 .priority-low { background: #20242a; color: #8a98a8; border: 1px solid #3a4350; }
+/* H2 ordinal-rank badge ("#N/M"). Neutral monospace styling - the
+   ordinal/size pair is purely positional information, so a tinted
+   colour would suggest a qualitative tier that the H2 data does not
+   express. The badge sits in the same slot as the H1 tier badge so
+   they share placement rules. */
+.priority-ordinal {
+    background: #1d242c;
+    color: #c7d2dc;
+    border: 1px solid #303a47;
+    font-family: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+}
 
 /* Set-level priority badge (SP / P). Surfaces the per-textline-set
    `Priority` / `SuperPriority` boolean as a small standalone pill to

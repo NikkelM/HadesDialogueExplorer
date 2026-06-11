@@ -319,3 +319,61 @@ class TestSpeakersDefault:
         first["speakers"]["bogus"] = {"name": "leak"}
         second = build_graph_data({})
         assert second["speakers"] == {}
+
+
+class TestNarrativePriorityFieldForwarding:
+    """``build_graph_data`` must forward every narrative-priority field
+    from the per-source ``owners_data`` extracted by the per-game
+    extractors onto each merged textline entry. Each game uses a
+    different priority model (H1 intrinsic tier/setlevel vs H2
+    extrinsic ordinal/sectionSize/clusterMembers) and the viewer
+    dispatches on which fields are present, so silently dropping any
+    of them at the merge step strands the badge in the source JSON.
+    """
+
+    def test_h1_priority_fields_forwarded(self):
+        npcs = make_npc("NPC_Zeus_01", "InteractTextLineSets", {
+            "ZeusFirstMeeting": {
+                **make_textline(),
+                "narrativePrioritySectionTier": "super",
+                "narrativePrioritySetLevel": "priority",
+            },
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["ZeusFirstMeeting"]
+        assert tl["narrativePrioritySectionTier"] == "super"
+        assert tl["narrativePrioritySetLevel"] == "priority"
+
+    def test_h2_priority_fields_forwarded(self):
+        npcs = make_npc("NPC_Hecate_01", "GiftTextLineSets", {
+            "HecateGift01": {
+                **make_textline(),
+                "narrativePriorityOrdinal": 1,
+                "narrativePrioritySectionSize": 18,
+                "narrativePriorityClusterMembers": ["HecateGift02", "HecateGift03"],
+            },
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["HecateGift01"]
+        assert tl["narrativePriorityOrdinal"] == 1
+        assert tl["narrativePrioritySectionSize"] == 18
+        assert tl["narrativePriorityClusterMembers"] == ["HecateGift02", "HecateGift03"]
+
+    def test_priority_fields_omitted_when_absent(self):
+        """Textlines without priority data must NOT have any priority
+        keys synthesised - the viewer dispatcher relies on
+        ``in textline`` checks to decide whether to render a badge,
+        so silently writing ``None`` here would change the dispatch."""
+        npcs = make_npc("NPC_Test_01", "InteractTextLineSets", {
+            "PlainLine": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["PlainLine"]
+        for field in (
+            "narrativePrioritySectionTier",
+            "narrativePrioritySetLevel",
+            "narrativePriorityOrdinal",
+            "narrativePrioritySectionSize",
+            "narrativePriorityClusterMembers",
+        ):
+            assert field not in tl, f"unexpected {field} on plain textline"
