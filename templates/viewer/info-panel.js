@@ -22,7 +22,7 @@ import {
     renderChoiceNameHtml,
     reqTypeOrderIndex,
 } from './utilities.js';
-import { choiceNames, metaUpgradeNames, gameDataRefs } from './data.js';
+import { choiceNames, metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 
 // Render an ``otherRequirements`` key. H2 synthesises compound keys
 // like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
@@ -718,33 +718,127 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     // base AND requirements above so the reader sees both at a glance
     // - the base block is what MUST always hold, the OR block lists
     // the options where any one is sufficient.
-    const orBranches = Array.isArray(src.orBranches) ? src.orBranches : [];
-    if (orBranches.length > 0) {
-        const total = orBranches.length;
-        const groupLabel = `At least one of these ${total} branch${total === 1 ? '' : 'es'}`;
-        html += `<div class="req-section req-type-or-group">`
-              + `<h4><span class="toggle">\u25BC</span>${escapeHtml(groupLabel)}</h4>`
-              + `<div class="req-section-children expanded">`;
-        for (let bi = 0; bi < orBranches.length; bi++) {
-            const branch = orBranches[bi] || {};
-            html += `<div class="or-branch">`
-                  + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
-                  + `Option ${bi + 1} of ${total}</h5>`
-                  + `<div class="or-branch-children expanded">`;
-            html += renderRequirementsAndOtherHtml(
-                branch.requirements || {},
-                branch.otherRequirements || {},
-                {
-                    textlineName,
-                    sourcesByType: {},
-                    otherHeaderLabel: null,
-                }
-            );
-            html += `</div></div>`;
-        }
+    html += renderOrBranchesSectionHtml(src.orBranches, textlineName);
+
+    return html;
+}
+
+
+// Render the OR-branches section ("At least one of these N branches")
+// for a host textline or for a named-requirement expansion. Extracted
+// so both call sites use the exact same layout, branch numbering, and
+// collapse semantics. Returns an empty string when ``orBranches`` is
+// missing, not an array, or has no entries.
+function renderOrBranchesSectionHtml(orBranches, textlineName) {
+    const branches = Array.isArray(orBranches) ? orBranches : [];
+    if (branches.length === 0) return '';
+    const total = branches.length;
+    const groupLabel = `At least one of these ${total} branch${total === 1 ? '' : 'es'}`;
+    let html = `<div class="req-section req-type-or-group">`
+             + `<h4><span class="toggle">\u25BC</span>${escapeHtml(groupLabel)}</h4>`
+             + `<div class="req-section-children expanded">`;
+    for (let bi = 0; bi < branches.length; bi++) {
+        const branch = branches[bi] || {};
+        html += `<div class="or-branch">`
+              + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
+              + `Option ${bi + 1} of ${total}</h5>`
+              + `<div class="or-branch-children expanded">`;
+        html += renderRequirementsAndOtherHtml(
+            branch.requirements || {},
+            branch.otherRequirements || {},
+            {
+                textlineName,
+                sourcesByType: {},
+                otherHeaderLabel: null,
+            }
+        );
         html += `</div></div>`;
     }
+    html += `</div></div>`;
+    return html;
+}
 
+
+// Set-level keys whose values carry a list of NamedRequirements names
+// that can be drilled into. The pre-resolved ``namedRequirements``
+// registry shipped in the per-game payload supplies the inner
+// requirement chain to render inside each expander.
+const _NAMED_REQ_EXPANSION_KEYS = new Set([
+    'NamedRequirements',
+    'NamedRequirementsFalse',
+    'NamedRequirementsCycle',
+]);
+
+// Semantic suffix shown next to the name inside the expander header.
+// Mirrors the engine semantics each set-level key implies so the
+// reader knows whether the resolved chain "must pass" (the default,
+// surfaces here only for unresolved names the registry didn't cover)
+// or "must FAIL" / signals a cycle.
+const _NAMED_REQ_SEMANTIC_SUFFIX = {
+    'NamedRequirements':      'must pass',
+    'NamedRequirementsFalse': 'must NOT pass',
+    'NamedRequirementsCycle': 'recursive reference cycle',
+};
+
+
+function _namedReqIsEmpty(resolved) {
+    if (!resolved) return true;
+    const reqEmpty = !resolved.requirements || Object.keys(resolved.requirements).length === 0;
+    const otherEmpty = !resolved.otherRequirements
+        || Object.keys(resolved.otherRequirements).length === 0;
+    const orEmpty = !Array.isArray(resolved.orBranches) || resolved.orBranches.length === 0;
+    return reqEmpty && otherEmpty && orEmpty;
+}
+
+
+// Render the host-side ``otherRequirements`` entry for one of the
+// set-level NamedRequirements* keys. ``names`` is a list of names
+// the extractor surfaced (the engine forbids ``NamedRequirements*``
+// of length 0). For each name, looks up the resolved inner chain in
+// the per-game ``namedRequirements`` registry and renders either:
+//   - an expandable section (``.named-req-expand`` with a collapsible
+//     ``.named-req-children`` body) when the inner chain has content;
+//     the body uses the same ``renderRequirementsAndOtherHtml`` +
+//     ``renderOrBranchesSectionHtml`` machinery the host textline uses.
+//   - a flat chip (``.named-req-flat``) when the registry has no
+//     entry (truly unresolved) or the entry resolves to an empty
+//     requirement set (e.g. all gates inlined elsewhere).
+// Returns ``null`` when ``names`` is not a non-empty array so the
+// caller can fall through to the existing flat-list rendering.
+function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
+    if (!Array.isArray(names) || names.length === 0) return null;
+    const suffix = _NAMED_REQ_SEMANTIC_SUFFIX[key] || '';
+    let html = `<div class="other-req-item named-req-item">`
+             + `<div class="named-req-label">${renderOtherReqKeyHtml(key)}:</div>`
+             + `<div class="named-req-list">`;
+    for (const name of names) {
+        const resolved = namedRequirements ? namedRequirements[name] : null;
+        const safeName = escapeHtml(name);
+        const safeSuffix = suffix ? ` <span class="named-req-suffix">(${escapeHtml(suffix)})</span>` : '';
+        if (_namedReqIsEmpty(resolved)) {
+            html += `<div class="named-req-flat">`
+                  + `<code class="named-req-name">${safeName}</code>${safeSuffix}`
+                  + `</div>`;
+            continue;
+        }
+        const inner = renderRequirementsAndOtherHtml(
+            resolved.requirements || {},
+            resolved.otherRequirements || {},
+            {
+                textlineName: hostTextlineName,
+                sourcesByType: {},
+                otherHeaderLabel: null,
+            }
+        ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName);
+        html += `<div class="named-req-expand">`
+              + `<h5 class="named-req-header">`
+              + `<span class="toggle">\u25BC</span>`
+              + `<code class="named-req-name">${safeName}</code>${safeSuffix}`
+              + `</h5>`
+              + `<div class="named-req-children expanded">${inner}</div>`
+              + `</div>`;
+    }
+    html += `</div></div>`;
     return html;
 }
 
@@ -841,6 +935,18 @@ function renderRequirementsAndOtherHtml(requirements, otherRequirements, options
                     }
                 }
                 continue;
+            }
+            // NamedRequirements* set-level keys: render each name as
+            // a collapsible expander whose body shows the resolved
+            // inner requirement chain. Falls back to the flat-list
+            // rendering below if the helper returns null (empty /
+            // non-array value).
+            if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
+                const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
+                if (expandedHtml !== null) {
+                    otherHtml += expandedHtml;
+                    continue;
+                }
             }
             const tooltip = renderOtherReqTooltip(key, val);
             const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
@@ -948,6 +1054,15 @@ export function initInfoPanel() {
         const gdHeader = e.target.closest('.gamedata-group-header-inline');
         if (gdHeader && container.contains(gdHeader)) {
             toggleSection(gdHeader, 'gamedata-group-children-inline');
+            return;
+        }
+        // NamedRequirements expander header: matched before the OR
+        // branch header so a click on a named-req expander deep inside
+        // an OR branch toggles the expander rather than collapsing the
+        // whole branch above it.
+        const namedReqHeader = e.target.closest('.named-req-header');
+        if (namedReqHeader && container.contains(namedReqHeader)) {
+            toggleSection(namedReqHeader, 'named-req-children');
             return;
         }
         // OR-branch header (h5) inside an Alternative Requirement

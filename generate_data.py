@@ -40,6 +40,7 @@ from src.extractors.hades2 import (
 )
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.named_requirements import extract_named_requirements
+from src.extractors.hades2.req_extractor import extract_requirements
 from src.graph import build_graph_data
 
 # Each entry: (output filename, source label, lua filename, extractor function)
@@ -283,17 +284,36 @@ def main():
 
     # Standalone metadata payload: GameData/ScreenData/QuestOrderData
     # registry tables that ``otherRequirements`` records reference via
-    # ``<ref:Name>`` placeholders. Shipped as a separate JSON so the
-    # build_viewer pipeline can attach it to the H2 graph_data without
-    # going through the textline merger (which would drop the extra
-    # top-level field). The file has no ``textlines`` key, which is the
-    # signal build_viewer uses to route it as metadata.
+    # ``<ref:Name>`` placeholders, plus the resolved NamedRequirements
+    # registry so the viewer can inline-expand each NamedRequirements*
+    # entry into the underlying requirement chain. Shipped as a
+    # separate JSON so the build_viewer pipeline can attach it to the
+    # H2 graph_data without going through the textline merger (which
+    # would drop the extra top-level field). The file has no
+    # ``textlines`` key, which is the signal build_viewer uses to
+    # route it as metadata.
     gamedata_refs = extract_gamedata_refs(hades2_scripts)
+    # Pre-resolve every named requirement into the same normalised
+    # ``{requirements, otherRequirements, orBranches, flags}`` shape
+    # the per-textline extractor produces, so the viewer can render
+    # each entry with the exact same machinery used for the host
+    # textline's requirements block. Recursion is bounded by the
+    # walker's built-in ``_visited`` cycle guard.
+    named_req_resolved = {
+        name: extract_requirements(table, named_reqs)
+        for name, table in named_reqs.items()
+    }
+    metadata_payload = {}
     if gamedata_refs:
+        metadata_payload["gameDataRefs"] = gamedata_refs
         print(f"  GameData / ScreenData / QuestOrderData refs: {len(gamedata_refs)} tables")
+    if named_req_resolved:
+        metadata_payload["namedRequirements"] = named_req_resolved
+        print(f"  NamedRequirements (resolved): {len(named_req_resolved)} entries")
+    if metadata_payload:
         metadata_path = OUTPUT_DIR / "hades2_metadata.json"
         with open(metadata_path, "w", encoding="utf-8") as f:
-            json.dump({"gameDataRefs": gamedata_refs}, f, indent=2, sort_keys=True, ensure_ascii=False)
+            json.dump(metadata_payload, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {metadata_path}")
 

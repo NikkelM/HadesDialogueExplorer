@@ -329,12 +329,15 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
         lastHtml,
         /<span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[42\]<\/code>\) = <code>true<\/code>/
     );
-    // Bare key ``NamedRequirementsFalse`` (no colon) -> friendly pill,
-    // value rendered as a compact comma-separated list (no JSON-array
-    // brackets), wrapped in a Lua-form tooltip on the row.
+    // Bare key ``NamedRequirementsFalse`` (no registry entry for the
+    // fixture name ``NoBossActive``) -> friendly pill, value rendered
+    // as the new flat-chip variant of the named-req expansion (no
+    // resolved inner chain available -> chip, no expander). The
+    // semantic suffix carries the ``(must NOT pass)`` clarifier so
+    // the reader knows the operator's intent.
     assert.match(
         lastHtml,
-        /<div class="other-req-item" data-tooltip="NamedRequirementsFalse = \{ &quot;NoBossActive&quot; \}"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>: <code>NoBossActive<\/code><\/div>/
+        /<div class="other-req-item named-req-item"><div class="named-req-label"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>:<\/div><div class="named-req-list"><div class="named-req-flat"><code class="named-req-name">NoBossActive<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div><\/div><\/div>/
     );
 });
 
@@ -1259,4 +1262,185 @@ test('self-referential ref expansion is cycle-guarded so resolution does not inf
         lastHtml,
         /HasAny: \{ GameData\.SelfRef \}/
     );
+});
+
+
+// Fixture variant for NamedRequirements drill-in: ships the
+// ``namedRequirements`` registry so the host textline's
+// ``NamedRequirementsFalse`` entries inline-expand into the resolved
+// inner requirement chain (mirroring the real H2 metadata payload).
+function fixtureWithNamedRequirements() {
+    const data = fixtureWithSimplifiedOtherReqs();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        NamedRequirementsFalse: 'Named requirements must NOT pass',
+    };
+    data.reqTypeTooltips = {
+        ...(data.reqTypeTooltips || {}),
+        NamedRequirementsFalse: 'Named requirements inverse tooltip blurb.',
+    };
+    data.namedRequirements = {
+        // Typical resolved entry: has both a textline edge and a
+        // non-dialogue gate. Expands fully.
+        HecateMissing: {
+            requirements: { RequiredTextLines: ['HecateBossKidnapped01'] },
+            otherRequirements: {
+                'PathFalse:GameState.ReachedTrueEnding': [
+                    { PathFalse: ['GameState', 'ReachedTrueEnding'] },
+                ],
+            },
+            orBranches: [],
+            flags: {},
+        },
+        // Entry with an empty resolution: no edges, no other reqs,
+        // no OR branches. Renders as a flat chip (no expander).
+        EmptyResolution: {
+            requirements: {},
+            otherRequirements: {},
+            orBranches: [],
+            flags: {},
+        },
+        // Entry whose only content is OR branches: expansion must
+        // include the OR-branches section.
+        DreamRunIncorrectBiomeGuess: {
+            requirements: {},
+            otherRequirements: {},
+            orBranches: [
+                {
+                    requirements: { RequiredTextLines: ['DreamRunBiomeGuessA'] },
+                    otherRequirements: {},
+                },
+                {
+                    requirements: { RequiredTextLines: ['DreamRunBiomeGuessB'] },
+                    otherRequirements: {},
+                },
+            ],
+            flags: {},
+        },
+        // Entry that itself references another named requirement via
+        // ``NamedRequirementsFalse``. Exercises recursive expansion:
+        // the host's NamedRequirementsFalse expands into a chain
+        // that itself contains another NamedRequirementsFalse drill-
+        // in expander. The pre-resolved registry breaks any potential
+        // cycles via the Python ``_visited`` guard, so the viewer
+        // never recurses through the same name twice.
+        ScyllaBalladForced: {
+            requirements: { RequiredTextLines: ['ScyllaAboutSongs02'] },
+            otherRequirements: {
+                NamedRequirementsFalse: ['HecateMissing'],
+            },
+            orBranches: [],
+            flags: {},
+        },
+    };
+    data.textlines.NamedReqExpansionDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            NamedRequirementsFalse: [
+                'HecateMissing',         // expands fully
+                'EmptyResolution',       // flat chip (empty inner)
+                'UnknownToRegistry',     // flat chip (no entry at all)
+                'DreamRunIncorrectBiomeGuess',  // OR-branches only
+                'ScyllaBalladForced',    // recursive expansion
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('NamedRequirementsFalse: resolved entry expands into a collapsible inner chain', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // The HecateMissing expander wraps a header (with ``(must NOT
+    // pass)`` semantic suffix), a toggle, and a children container
+    // that holds the resolved inner requirements + otherRequirements.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-expand"><h5 class="named-req-header"><span class="toggle">.<\/span><code class="named-req-name">HecateMissing<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/h5><div class="named-req-children expanded">/
+    );
+    // Inner body re-uses the per-req-type section markup; the
+    // resolved textline edge renders as a clickable ``.req-item``.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-children expanded"><div class="req-section req-type-RequiredTextLines">[^]*HecateBossKidnapped01/
+    );
+    // Inner otherRequirements also renders via the standard
+    // ``.other-req-item`` pipeline (PathFalse here).
+    assert.match(
+        lastHtml,
+        /<div class="named-req-children expanded">[^]*<code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/
+    );
+});
+
+
+test('NamedRequirementsFalse: entry with an empty resolution renders as a flat chip (no expander)', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    assert.match(
+        lastHtml,
+        /<div class="named-req-flat"><code class="named-req-name">EmptyResolution<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div>/
+    );
+});
+
+
+test('NamedRequirementsFalse: unknown name (no registry entry) renders as a flat chip', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // A name the registry doesn't cover falls through to the same
+    // flat-chip variant as the empty-resolution case so the reader
+    // still sees the gate, just without drill-in affordance.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-flat"><code class="named-req-name">UnknownToRegistry<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div>/
+    );
+});
+
+
+test('NamedRequirementsFalse: entry with only OR branches still expands and renders the OR-branches section inside the body', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // DreamRunIncorrectBiomeGuess has no top-level requirements or
+    // otherRequirements; its content lives entirely in orBranches.
+    // The expander body must still surface the "At least one of
+    // these N branches" section so the OR alternatives are visible.
+    assert.match(
+        lastHtml,
+        /<code class="named-req-name">DreamRunIncorrectBiomeGuess<\/code>[^]*?<div class="named-req-children expanded">[^]*?At least one of these 2 branches/
+    );
+});
+
+
+test('NamedRequirementsFalse: recursive expansion - inner chain may itself carry a NamedRequirementsFalse drill-in', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // ScyllaBalladForced expands; its body has a nested
+    // NamedRequirementsFalse pointing at HecateMissing which itself
+    // expands (HecateMissing is also a top-level expander on the
+    // host, so we expect two distinct HecateMissing expander headers
+    // in the rendered HTML).
+    const headers = lastHtml.match(/<code class="named-req-name">HecateMissing<\/code>/g) || [];
+    assert.ok(headers.length >= 2, `expected at least 2 HecateMissing chips (host + nested), got ${headers.length}`);
+});
+
+
+test('NamedRequirementsFalse: per-name label pill is rendered exactly once (above the list, not per-entry)', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // The semantic operator pill ("Named requirements must NOT
+    // pass") wraps the entire list of names, not each entry. Asserts
+    // that exactly one label pill appears on the host textline (the
+    // nested expansions add their own pills inside their bodies).
+    const labels = lastHtml.match(
+        /<div class="named-req-label"><span class="req-type-name"[^>]*>Named requirements must NOT pass<\/span>/g
+    ) || [];
+    // Exactly 2 today: 1 for the host, 1 for the nested expansion in
+    // ScyllaBalladForced. The host always has 1; the nested count is
+    // an artefact of this fixture using ScyllaBalladForced.
+    assert.equal(labels.length, 2);
 });
