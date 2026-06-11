@@ -123,6 +123,10 @@ from .narrative_data import (
     extract_narrative_priorities,
     apply_narrative_priorities,
 )
+from .gamedata_refs import (
+    HADES2_GAMEDATA_REF_SOURCE_FILES,
+    extract_gamedata_refs,
+)
 from .unresolved_refs import (
     HADES2_KNOWN_UNRESOLVED_REFS,
     HADES2_UNRESOLVED_CATEGORY_LABELS,
@@ -163,6 +167,8 @@ __all__ = [
     # Cross-cutting passes
     "extract_narrative_priorities",
     "apply_narrative_priorities",
+    "HADES2_GAMEDATA_REF_SOURCE_FILES",
+    "extract_gamedata_refs",
     "HADES2_KNOWN_UNRESOLVED_REFS",
     "HADES2_UNRESOLVED_CATEGORY_LABELS",
     "HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS",

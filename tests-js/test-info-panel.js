@@ -311,9 +311,11 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
     assert.match(lastHtml, /<h4><span class="toggle">.<\/span>Other Requirements<\/h4>/);
     // ``PathTrue:GameState.ReachedTrueEnding`` -> friendly pill +
     // monospace path tail. Tooltip carries internal name + blurb.
+    // The trailing raw ``= [...]`` suffix is dropped: the path already
+    // lives in the synthetic key so repeating it adds no info.
     assert.match(
         lastHtml,
-        /<span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}"><span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
     );
     // ``PathFalse`` has a label but no tooltip entry: pill renders the
     // friendly text + header-only tooltip (internal name).
@@ -322,18 +324,17 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
         /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
     );
     // ``FunctionName:RequiredAlive`` -> ``RequiredAlive(Ids=[42]) = true``
-    // (the friendly key-pill path is bypassed for FunctionName entries
-    // whose records carry recognisable ``FunctionName`` / ``FunctionArgs``
-    // shape).
+    // (equals separator on the trailing literal).
     assert.match(
         lastHtml,
         /<span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[42\]<\/code>\) = <code>true<\/code>/
     );
     // Bare key ``NamedRequirementsFalse`` (no colon) -> friendly pill,
-    // no path tail.
+    // value rendered as a compact comma-separated list (no JSON-array
+    // brackets), wrapped in a Lua-form tooltip on the row.
     assert.match(
         lastHtml,
-        /<span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span> = \[&quot;NoBossActive&quot;\]/
+        /<div class="other-req-item" data-tooltip="NamedRequirementsFalse = \{ &quot;NoBossActive&quot; \}"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>: <code>NoBossActive<\/code><\/div>/
     );
 });
 
@@ -344,10 +345,12 @@ test('otherRequirements: unknown prefixes fall back to the raw escaped key', () 
     // ``UnknownPrefix`` has no entry in ``reqTypeLabels`` - the
     // renderer must keep the original full key as plain escaped text
     // so nothing is lost when the per-game vocabulary doesn't cover a
-    // newly-introduced operator.
+    // newly-introduced operator. The row still carries a structured-
+    // form tooltip via ``[data-tooltip]`` so the raw value is reachable
+    // on hover even without a friendly summary.
     assert.match(
         lastHtml,
-        /<div class="other-req-item">UnknownPrefix:Foo\.Bar = leave-me-raw<\/div>/
+        /<div class="other-req-item" data-tooltip="UnknownPrefix = &quot;leave-me-raw&quot;">UnknownPrefix:Foo\.Bar = leave-me-raw<\/div>/
     );
     // The unknown key must NOT be wrapped in a req-type pill.
     assert.doesNotMatch(lastHtml, /<span class="req-type-name"[^>]*>UnknownPrefix<\/span>/);
@@ -428,7 +431,7 @@ test('otherRequirements: Path:<head> + Comparison records render as "head op val
     // The user's exact requested format: ``GameState.ClearedUnderworldRunsCache > 2``.
     assert.match(
         lastHtml,
-        /<div class="other-req-item"><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/div>/
     );
 });
 
@@ -439,12 +442,12 @@ test('otherRequirements: Path:<head> + membership records render with a verbal o
     // IsAny -> "is one of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/div>/
     );
     // HasAny -> "contains any of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/div>/
     );
 });
 
@@ -521,7 +524,7 @@ test('otherRequirements: FunctionName records render as "funcName(args) = true"'
     // Single-arg function.
     assert.match(
         lastHtml,
-        /<div class="other-req-item"><span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[558096\]<\/code>\) = <code>true<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[558096\]<\/code>\) = <code>true<\/code><\/div>/
     );
     // Two-arg function with mixed scalar types.
     assert.match(
@@ -536,7 +539,7 @@ test('otherRequirements: FunctionName records with no args render as "func() = t
     renderInfo('FunctionRecordDemo');
     assert.match(
         lastHtml,
-        /<div class="other-req-item"><span class="other-req-func">IsBossDifficultyShrineUpgradeActive<\/span>\(\) = <code>true<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-func">IsBossDifficultyShrineUpgradeActive<\/span>\(\) = <code>true<\/code><\/div>/
     );
 });
 
@@ -782,4 +785,478 @@ test('textlines without orBranches render no option requirement groups section',
     assert.doesNotMatch(lastHtml, /At least one of these/);
     assert.doesNotMatch(lastHtml, /req-type-or-group/);
     assert.doesNotMatch(lastHtml, /or-branch-header/);
+});
+
+
+// New simplified-rendering coverage: every path-op variant (PathTrue,
+// PathFalse, PathEmpty, PathNotEmpty), the CountOf-decorated Path
+// record, and the bare-key compact summaries (scalars, lists, Count-
+// only and Count+Name objects, generic maps). Each row also carries a
+// Lua-form ``data-tooltip`` on the wrapping ``.other-req-item`` so the
+// raw structured value remains reachable on hover.
+function fixtureWithSimplifiedOtherReqs() {
+    const data = buildFixtureData();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue:     'Must be true',
+        PathFalse:    'Must be false',
+        PathEmpty:    'Path must be empty',
+        PathNotEmpty: 'Path must not be empty',
+        RequiresRunCleared:                'Requires run cleared',
+        RequiredMinCompletedRuns:          'Required min completed runs',
+        RequiredRoom:                      'Required room',
+        RequiredFalseFlags:                'Required false flags',
+        RequiredCosmetics:                 'Required cosmetics',
+        MinRunsSinceAnyTextLines:          'Min runs since played (ANY)',
+        RequiredMinActiveMetaUpgradeLevel: 'Required min active meta upgrade level',
+        RequiredKills:                     'Required kills',
+        RequiredMinNPCInteractions:        'Required min NPC interactions',
+    };
+    data.textlines.SimplifiedOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            'PathTrue:GameState.ReachedTrueEnding': [
+                { PathTrue: ['GameState', 'ReachedTrueEnding'] },
+            ],
+            'PathFalse:CurrentRun.Cleared': [
+                { PathFalse: ['CurrentRun', 'Cleared'] },
+            ],
+            'PathEmpty:CurrentRun.Foo': [
+                { PathEmpty: ['CurrentRun', 'Foo'] },
+            ],
+            'PathNotEmpty:CurrentRun.CurrentRoom.FishingPointChoices': [
+                { PathNotEmpty: ['CurrentRun', 'CurrentRoom', 'FishingPointChoices'] },
+            ],
+            // Duplicate PathTrue records (engine permits this; the
+            // extractor preserves both) get repeated friendly key
+            // joined by AND.
+            'PathTrue:GameState.Dup': [
+                { PathTrue: ['GameState', 'Dup'] },
+                { PathTrue: ['GameState', 'Dup'] },
+            ],
+            // CountOf inline list -> "head has at least N of items"
+            'Path:CurrentRun.UseRecord': [
+                {
+                    Comparison: '>=',
+                    CountOf: ['ZeusUpgrade', 'HeraUpgrade', 'PoseidonUpgrade'],
+                    Path: ['CurrentRun', 'UseRecord'],
+                    Value: 2,
+                },
+            ],
+            // CountOf referencing a GameData table -> ref name (the
+            // contents land in the tooltip via a future follow-up).
+            'Path:GameState.WeaponsUnlocked': [
+                {
+                    Comparison: '>=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 1,
+                },
+                {
+                    Comparison: '<=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 8,
+                },
+            ],
+            // Bare keys with friendly labels.
+            RequiresRunCleared:       true,
+            RequiredMinCompletedRuns: 4,
+            RequiredRoom:             'A_Boss02',
+            RequiredFalseFlags:       ['InFlashback'],
+            RequiredCosmetics:        ['QuestLog', 'Cosmetic_X'],
+            MinRunsSinceAnyTextLines: { Count: 8 },
+            RequiredMinActiveMetaUpgradeLevel: { Count: 1, Name: 'BossDifficultyShrineUpgrade' },
+            RequiredKills:               { Harpy: 2 },
+            RequiredMinNPCInteractions:  { 'NPC_Hades_01': 5 },
+        },
+    };
+    return data;
+}
+
+
+test('PathTrue row drops the redundant value suffix and carries a Lua tooltip', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
+    );
+});
+
+
+test('PathFalse row drops the redundant value suffix and carries a Lua tooltip', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /data-tooltip="PathFalse: \{ &quot;CurrentRun&quot;, &quot;Cleared&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
+    );
+});
+
+
+test('PathEmpty / PathNotEmpty rows use the consistent "must (not) be empty" wording', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /Path must be empty<\/span>: <code class="other-req-path">CurrentRun\.Foo<\/code>/);
+    assert.match(lastHtml, /Path must not be empty<\/span>: <code class="other-req-path">CurrentRun\.CurrentRoom\.FishingPointChoices<\/code>/);
+});
+
+
+test('multiple PathTrue records under one key render as friendly key joined by AND', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Two records -> two repeats of the friendly key, joined by AND.
+    // The tooltip lists one record per block; ``escapeHtml`` keeps the
+    // ``\n`` literal so the attribute value contains actual newlines
+    // (matches the existing speaker-name multi-line tooltip convention).
+    // Records are separated by a blank line so multi-field records
+    // stay visually distinct.
+    assert.match(
+        lastHtml,
+        /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
+    );
+});
+
+
+test('Path CountOf records render as "head has at least N of: items"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Inline list: each item is a separate ``<code>`` chip.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">CurrentRun\.UseRecord<\/code> has at least <code>2<\/code> of: <code>ZeusUpgrade<\/code>, <code>HeraUpgrade<\/code>, <code>PoseidonUpgrade<\/code>/
+    );
+});
+
+
+test('Path CountOf referencing a GameData table renders the ref name in the head position', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The ``<ref:GameData.AllWeaponAspects>`` placeholder collapses to
+    // the bare ``GameData.AllWeaponAspects`` identifier in display and
+    // in the tooltip. Two records (range check) AND-joined.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at most <code>8<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+    // Tooltip carries the structured form with the bare ref name (not
+    // the ``<ref:...>`` wrapper, which would clutter the display).
+    assert.match(lastHtml, /data-tooltip="[^"]*CountOf: GameData\.AllWeaponAspects[^"]*"/);
+});
+
+
+test('bare-key scalars render as "Label: value"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Requires run cleared<\/span>: <code>true<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min completed runs<\/span>: <code>4<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required room<\/span>: <code>A_Boss02<\/code>/);
+});
+
+
+test('bare-key list values render as comma-separated chips without JSON brackets', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required false flags<\/span>: <code>InFlashback<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required cosmetics<\/span>: <code>QuestLog<\/code>, <code>Cosmetic_X<\/code>/);
+});
+
+
+test('bare-key {Count} objects collapse to just the count', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Min runs since played \(ANY\)<\/span>: <code>8<\/code>/);
+});
+
+
+test('bare-key {Count, Name} objects render as "Name >= Count"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Required min active meta upgrade level<\/span>: <code>BossDifficultyShrineUpgrade<\/code> &gt;= <code>1<\/code>/
+    );
+});
+
+
+test('bare-key map objects render as "k >= v, k >= v"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required kills<\/span>: <code>Harpy<\/code> &gt;= <code>2<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min NPC interactions<\/span>: <code>NPC_Hades_01<\/code> &gt;= <code>5<\/code>/);
+});
+
+
+test('bare-key rows carry a Lua-form data-tooltip with the raw value', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Scalar.
+    assert.match(lastHtml, /data-tooltip="RequiresRunCleared = true"/);
+    // List of strings -> Lua table braces with quoted entries.
+    assert.match(lastHtml, /data-tooltip="RequiredFalseFlags = \{ &quot;InFlashback&quot; \}"/);
+    // Object with bare-ident keys -> ``{ Count = 8 }``.
+    assert.match(lastHtml, /data-tooltip="MinRunsSinceAnyTextLines = \{ Count = 8 \}"/);
+    // Object with name+count.
+    assert.match(
+        lastHtml,
+        /data-tooltip="RequiredMinActiveMetaUpgradeLevel = \{ Count = 1, Name = &quot;BossDifficultyShrineUpgrade&quot; \}"/
+    );
+});
+
+
+// Build a fixture for the broader-coverage rendering refinements:
+//   - bare keys WITHOUT a friendly label still get the friendly
+//     ``Label: value`` shape (no raw JSON fallback), so lists render
+//     with comma+space separators rather than ``["a","b"]`` blobs.
+//   - membership / CountOf operand lists strip ``<ref:GameData.X>``
+//     placeholders to the bare identifier.
+function fixtureForBareKeyAndRefRefinements() {
+    const data = buildFixtureData();
+    data.textlines.UnlabelledOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            // No reqTypeLabels entry for any of these keys.
+            RequiredAnyEncountersThisRun: [
+                'ThanatosTartarus', 'ThanatosAsphodel',
+                'ThanatosElysium', 'ThanatosElysiumIntro',
+            ],
+            RequiredResourcesMin: { GiftPoints: 1, SuperGiftPoints: 1 },
+            // HasAny operand that is a top-level GameData ref string
+            // (no array wrapper) -> styled as a path chip with the
+            // ``<ref:>`` wrapper stripped.
+            'Path:GameState.AspectsUnlocked': [
+                { HasAny: '<ref:GameData.AllWeaponAspects>',
+                  Path: ['GameState', 'AspectsUnlocked'] },
+            ],
+            // IsAny operand list that contains ref strings -> each
+            // element strips ``<ref:>`` to the bare identifier.
+            'Path:GameState.SelectedAspect': [
+                { IsAny: ['<ref:GameData.WeaponAspectA>', 'PlainString'],
+                  Path: ['GameState', 'SelectedAspect'] },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('unlabelled bare-key lists render as comma-space chips, not raw JSON', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    // The pill carries no tooltip blurb (no reqTypeLabels entry) but
+    // the value renders through the friendly formatter, so each
+    // encounter is a separate ``<code>`` chip with ``", "`` joiners.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name">RequiredAnyEncountersThisRun<\/span>: <code>ThanatosTartarus<\/code>, <code>ThanatosAsphodel<\/code>, <code>ThanatosElysium<\/code>, <code>ThanatosElysiumIntro<\/code>/
+    );
+    // The raw ``["a","b"]`` JSON fallback must NOT appear for this key
+    // anywhere in the output.
+    assert.doesNotMatch(lastHtml, /RequiredAnyEncountersThisRun = \[/);
+});
+
+
+test('unlabelled bare-key map values render as "k >= v" with the raw key as the label', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> &gt;= <code>1<\/code>, <code>SuperGiftPoints<\/code> &gt;= <code>1<\/code>/
+    );
+});
+
+
+test('membership operand that is a top-level GameData ref strips the <ref:> wrapper', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.AspectsUnlocked<\/code> contains any of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+});
+
+
+test('membership operand list strips <ref:> on each element while keeping plain strings as plain chips', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.SelectedAspect<\/code> is one of: <code class="other-req-path">GameData\.WeaponAspectA<\/code>, <code>PlainString<\/code>/
+    );
+});
+
+
+test('compound-record tooltips use newlines between fields in reading order (Path -> Comparison -> Value -> CountOf)', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The CountOf record stored as { Comparison, CountOf, Path, Value }
+    // (JSON-insertion order) must render its tooltip in canonical
+    // reading order: Path first, then Comparison, then Value, then
+    // CountOf - each field on its own line.
+    assert.match(
+        lastHtml,
+        /data-tooltip="Path: \{ &quot;CurrentRun&quot;, &quot;UseRecord&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 2\nCountOf: \{ &quot;ZeusUpgrade&quot;, &quot;HeraUpgrade&quot;, &quot;PoseidonUpgrade&quot; \}"/
+    );
+});
+
+
+test('multi-record compound tooltips separate records with a blank line', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The two-record CountOf (range check on WeaponsUnlocked) renders
+    // each record as its own multi-line block separated by a blank
+    // line so they stay visually distinct from a single tall record.
+    assert.match(
+        lastHtml,
+        /data-tooltip="Path: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 1\nCountOf: GameData\.AllWeaponAspects\n\nPath: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&lt;=&quot;\nValue: 8\nCountOf: GameData\.AllWeaponAspects"/
+    );
+});
+
+
+// Fixture variant that also supplies the ``gameDataRefs`` registry so
+// ``<ref:GameData.X>`` placeholders inside the row tooltip inline-
+// expand to the referenced table's contents. Mirrors the real H2
+// build output (``hades2_metadata.json``) where the registry is shipped
+// alongside the textline data.
+function fixtureWithGameDataRefs() {
+    const data = fixtureWithSimplifiedOtherReqs();
+    data.gameDataRefs = {
+        'GameData.AllWeaponAspects': ['StaffClearCastAspect', 'StaffSelfHitAspect', 'StaffRaiseDeadAspect'],
+        // Nested ScreenData.X table with a child list - exercises the
+        // dotted-path walk for refs like ``ScreenData.Shrine.BountyOrder``.
+        'ScreenData.Shrine': {
+            BountyOrder: ['BountyA', 'BountyB'],
+        },
+        // Self-referential ref - the cycle guard must drop the second
+        // recursion and fall back to the bare identifier.
+        'GameData.SelfRef': ['<ref:GameData.SelfRef>'],
+    };
+    data.textlines.GameDataRefDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            // Top-level GameData ref resolves to the list -> tooltip
+            // shows the inlined contents on the ``CountOf`` line.
+            'Path:GameState.WeaponsUnlocked': [
+                {
+                    Comparison: '>=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 1,
+                },
+            ],
+            // Dotted-path ref (no direct entry) -> walks down through
+            // the captured parent ``ScreenData.Shrine`` to find the
+            // nested ``BountyOrder`` list.
+            'Path:GameState.BountyHistory': [
+                {
+                    HasAny: '<ref:ScreenData.Shrine.BountyOrder>',
+                    Path: ['GameState', 'BountyHistory'],
+                },
+            ],
+            // Unknown ref (no entry, no walkable parent) -> falls back
+            // to the bare identifier (existing behaviour).
+            'Path:GameState.NoEntry': [
+                {
+                    HasAny: '<ref:GameData.NoSuchRegistry>',
+                    Path: ['GameState', 'NoEntry'],
+                },
+            ],
+            // Self-referential ref -> cycle guard kicks in on the
+            // second recursion so the resolved-list contents show the
+            // bare identifier rather than infinite-looping.
+            'Path:GameState.SelfRefCheck': [
+                {
+                    HasAny: '<ref:GameData.SelfRef>',
+                    Path: ['GameState', 'SelfRefCheck'],
+                },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('top-level GameData ref expands inline inside the row tooltip', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The CountOf line now shows the resolved list contents instead
+    // of just the bare ``GameData.AllWeaponAspects`` identifier.
+    assert.match(
+        lastHtml,
+        /CountOf: \{ &quot;StaffClearCastAspect&quot;, &quot;StaffSelfHitAspect&quot;, &quot;StaffRaiseDeadAspect&quot; \}/
+    );
+});
+
+
+test('dotted-path ref walks down through a captured parent table', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // ``ScreenData.Shrine.BountyOrder`` has no direct entry; resolver
+    // descends via the captured ``ScreenData.Shrine`` parent. Tooltip
+    // surfaces the nested list contents on the ``HasAny`` line.
+    assert.match(
+        lastHtml,
+        /HasAny: \{ &quot;BountyA&quot;, &quot;BountyB&quot; \}/
+    );
+});
+
+
+test('unknown ref with no walkable parent falls back to the bare identifier', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The synthesised row body for the ``Path:GameState.NoEntry``
+    // entry must still render the bare identifier as a styled chip.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.NoEntry<\/code> contains any of: <code class="other-req-path">GameData\.NoSuchRegistry<\/code>/
+    );
+    // And the row tooltip falls back to the bare identifier on the
+    // HasAny line (no inline expansion possible).
+    assert.match(
+        lastHtml,
+        /HasAny: GameData\.NoSuchRegistry/
+    );
+});
+
+
+test('row display keeps the bare identifier even when the ref expands in the tooltip', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The display side (the visible row content) intentionally keeps
+    // the bare identifier as a path chip - expansion is tooltip-only
+    // so long lists don't blow up the row width.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+});
+
+
+test('self-referential ref expansion is cycle-guarded so resolution does not infinite-loop', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // First expansion of ``GameData.SelfRef`` reveals its single
+    // element (which is itself a ``<ref:GameData.SelfRef>``); on the
+    // recursive call the cycle guard drops the inner expansion and
+    // falls back to the bare identifier rather than looping forever.
+    assert.match(
+        lastHtml,
+        /HasAny: \{ GameData\.SelfRef \}/
+    );
 });

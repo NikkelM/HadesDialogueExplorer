@@ -132,6 +132,21 @@
     color: #8d99ae;
     font-family: 'Consolas', monospace;
 }
+/* Very light divider between consecutive rows so items that wrap
+   across multiple lines stay visually distinguishable. Only applies
+   from the second row onward; the first row has no separator above. */
+.other-req-item + .other-req-item {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 5px;
+}
+/* Rows that carry a structured-form hover tooltip (every non-trivial
+   ``otherRequirements`` row does) advertise the affordance with a
+   ``cursor: help`` glyph. The tooltip itself is wired by the shared
+   ``[data-tooltip]`` mechanism in ``tooltip.js`` / ``styles/panels-
+   tooltips.css``. */
+.other-req-item[data-tooltip] {
+    cursor: help;
+}
 /* Path tail inside a resolved Path:<head> entry (e.g.
    ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
    nudged slightly to read as a quoted identifier. */

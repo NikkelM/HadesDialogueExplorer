@@ -38,6 +38,7 @@ from src.extractors.hades2 import (
     apply_narrative_priorities,
     HADES2_SPEAKERS,
 )
+from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.graph import build_graph_data
 
@@ -279,6 +280,22 @@ def main():
     print("Hades 2")
     print("=" * 60)
     named_reqs, narrative_priorities = load_hades2_context(hades2_scripts)
+
+    # Standalone metadata payload: GameData/ScreenData/QuestOrderData
+    # registry tables that ``otherRequirements`` records reference via
+    # ``<ref:Name>`` placeholders. Shipped as a separate JSON so the
+    # build_viewer pipeline can attach it to the H2 graph_data without
+    # going through the textline merger (which would drop the extra
+    # top-level field). The file has no ``textlines`` key, which is the
+    # signal build_viewer uses to route it as metadata.
+    gamedata_refs = extract_gamedata_refs(hades2_scripts)
+    if gamedata_refs:
+        print(f"  GameData / ScreenData / QuestOrderData refs: {len(gamedata_refs)} tables")
+        metadata_path = OUTPUT_DIR / "hades2_metadata.json"
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            json.dump({"gameDataRefs": gamedata_refs}, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(f"  Written to: {metadata_path}")
 
     for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
         matched_files = sorted(hades2_scripts.glob(pattern))

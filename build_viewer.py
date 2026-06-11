@@ -332,12 +332,32 @@ def _route_dataset(json_name: str) -> str:
 
 
 def _build_game(game: str, datasets: list[dict]) -> dict:
-    """Run the full merge + annotation pipeline for one game's datasets."""
-    if len(datasets) == 1:
-        graph_data = datasets[0]
+    """Run the full merge + annotation pipeline for one game's datasets.
+
+    Metadata-only datasets (no ``textlines`` key) are peeled off before
+    merging and their top-level fields are attached to the resulting
+    ``graph_data``. This is the channel used by ``hades2_metadata.json``
+    to ship registry tables (``gameDataRefs``) alongside the textline
+    data without going through ``merge_graph_data`` (which only
+    preserves ``textlines`` / ``dependents`` / ``speakers`` / ``stats``).
+    """
+    metadata = [d for d in datasets if "textlines" not in d]
+    regular = [d for d in datasets if "textlines" in d]
+
+    if not regular:
+        raise RuntimeError(
+            f"{game}: no datasets with a 'textlines' key - cannot build graph data."
+        )
+
+    if len(regular) == 1:
+        graph_data = regular[0]
     else:
-        print(f"  Merging {len(datasets)} datasets for {game}...")
-        graph_data = merge_graph_data(datasets)
+        print(f"  Merging {len(regular)} datasets for {game}...")
+        graph_data = merge_graph_data(regular)
+
+    for meta in metadata:
+        for key, value in meta.items():
+            graph_data[key] = value
 
     annotate_known_unresolved(graph_data, game)
     annotate_blocked_textlines(graph_data)

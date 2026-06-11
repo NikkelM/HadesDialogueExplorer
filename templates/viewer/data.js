@@ -45,6 +45,7 @@ export let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
 export let sectionKeyLabels;
 export let choiceNames;
 export let metaUpgradeNames;
+export let gameDataRefs;
 export let allNames;
 
 // Pre-built index for O(1) lookups when sorting tree children into
@@ -119,6 +120,7 @@ export function setActiveGame(gameId) {
     sectionKeyLabels = gd.sectionKeyLabels || {};
     choiceNames = gd.choiceNames || {};
     metaUpgradeNames = gd.metaUpgradeNames || {};
+    gameDataRefs = gd.gameDataRefs || {};
     allNames = Object.keys(textlines).sort();
 
     _reqTypeOrderIndex = {};

@@ -243,7 +243,7 @@ HADES2_REQ_TYPE_LABELS = {
     "PathTrue":               "Must be true",
     "PathFalse":              "Must be false",
     "PathEmpty":              "Path must be empty",
-    "PathNotEmpty":           "Path must be non-empty",
+    "PathNotEmpty":           "Path must not be empty",
     "HasAny":                 "Must include (ANY)",
     "HasAll":                 "Must include (ALL)",
     "HasNone":                "Must NOT include (ANY)",
