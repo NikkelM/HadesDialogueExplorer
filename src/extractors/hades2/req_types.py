@@ -382,36 +382,46 @@ HADES2_REQ_TYPE_TOOLTIPS = {
 }
 
 
-# Display order for requirement-type groupings in the dependency tree.
-# Dialogue dependency edges (H1 synthetic textline fields, re-keyed by
-# the H2 extractor from ``HasAll`` / ``HasAny`` / ``HasNone`` records
-# against ``TextLinesRecord`` paths) come first - they describe the
-# graph the viewer is built to explore, so users see them above the
-# more incidental gameplay-state predicates. The H2 native operators
-# follow: set-level short-circuits first (they suppress everything
-# else), then probability and composition, then positive predicates,
-# then negatives, then function checks. Anything not listed sorts to
-# the end.
+# Display order for requirement-type groupings in the dependency tree
+# and details panel. Dialogue dependency edges (H1 synthetic textline
+# fields, re-keyed by the H2 extractor from ``HasAll`` / ``HasAny`` /
+# ``HasNone`` records against ``TextLinesRecord`` paths) come first -
+# they describe the graph the viewer is built to explore, so users
+# see them above the more incidental gameplay-state predicates.
+#
+# Within the dialogue-edge block the band scheme mirrors H1 1:1 so the
+# same colour / quantifier sequence appears in both games:
+#   ALL -> ANY -> NONE -> MIN -> MAX
+# Inner scope (broadest -> most immediate):
+#   cross-run -> this-run -> last-run -> this-room -> queued.
+# (H2 has no ``this-room`` scope and no ``Any-Other`` variant.)
+#
+# The H2 native operators follow: set-level short-circuits first (they
+# suppress everything else), then probability and composition, then
+# positive per-record predicates, then negatives, then function
+# checks. Anything not listed sorts to the end.
 HADES2_REQ_TYPE_DISPLAY_ORDER = [
-    # Dialogue dependency edges - positive cross-run.
+    # ALL band - dialogue must have played all of the named lines.
     "RequiredTextLines",
-    "RequiredAnyTextLines",
-    # Dialogue dependency edges - positive scoped.
     "RequiredTextLinesThisRun",
-    "RequiredAnyTextLinesThisRun",
     "RequiredTextLinesLastRun",
-    "RequiredAnyTextLinesLastRun",
     "RequiredQueuedTextLines",
+    # ANY band - dialogue must have played at least one of the named
+    # lines.
+    "RequiredAnyTextLines",
+    "RequiredAnyTextLinesThisRun",
+    "RequiredAnyTextLinesLastRun",
     "RequiredAnyQueuedTextLines",
-    # Cross-run "min runs since" thresholds slot next to the positive
-    # textline rows since they're a temporal gate on the same record.
-    "MinRunsSinceAnyTextLines",
-    "MaxRunsSinceAnyTextLines",
-    # Dialogue dependency edges - negative.
+    # NONE band - dialogue must NOT have played any of the named lines.
     "RequiredFalseTextLines",
     "RequiredFalseTextLinesThisRun",
     "RequiredFalseTextLinesLastRun",
     "RequiredFalseQueuedTextLines",
+    # MIN / MAX bands - runs-since-played thresholds (synthesised from
+    # ``FunctionName: RequireRunsSinceTextLines`` records; H2 has no
+    # explicit RequiredMin/MaxAnyTextLines counterparts).
+    "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
     # Set-level overrides surface next so their effect is obvious.
     "Skip",
     "Force",

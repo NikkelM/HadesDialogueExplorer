@@ -560,3 +560,118 @@ test('otherRequirements: FunctionName records with unknown extra fields fall bac
     assert.match(lastHtml, /ExtraMeta/);
 });
 
+
+// The details panel must group its requirement sections AND its
+// Other Requirements entries in ``reqTypeOrderIndex`` order so the
+// reading order matches the tree view (both surfaces consume the
+// single per-game ``reqTypeOrder`` array). Insertion order from the
+// JSON data is NOT a stable signal - the H1 alphabetical-ish layout
+// happened to be close to correct but H2 entries arrive in extractor
+// emission order which is unrelated to the display banding.
+function fixtureWithReqOrdering() {
+    const data = buildFixtureData();
+    // Extend the fixture's order vocabulary so the assertions below
+    // can pin a deterministic header sequence. The chosen positions
+    // mirror the real H1/H2 unified scheme:
+    // ALL -> ANY -> NONE -> MIN -> MAX, with compound otherReq
+    // prefixes appended after the textline block.
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        RequiredMinAnyTextLines: 'Required min (ANY)',
+        RequiredMaxAnyTextLines: 'Required max (ANY)',
+        PathTrue: 'Must be true',
+        FunctionName: 'Custom function check',
+    };
+    data.reqTypeEdgeLabels = {
+        ...data.reqTypeEdgeLabels,
+        RequiredMinAnyTextLines: 'MIN',
+        RequiredMaxAnyTextLines: 'MAX',
+    };
+    data.reqTypeOrder = [
+        'RequiredTextLines',         // ALL
+        'RequiredAnyTextLines',      // ANY
+        'RequiredFalseTextLines',    // NONE
+        'RequiredMinAnyTextLines',   // MIN
+        'RequiredMaxAnyTextLines',   // MAX
+        'PathTrue',                  // operator block
+        'FunctionName',
+    ];
+    data.textlines.OrderingDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        // Insertion order is deliberately reversed vs reqTypeOrder so
+        // the test fails if the renderer falls back to insertion order.
+        requirements: {
+            RequiredMaxAnyTextLines: ['LateA'],
+            RequiredMinAnyTextLines: ['LateB'],
+            RequiredFalseTextLines: ['Negative'],
+            RequiredAnyTextLines: ['Either'],
+            RequiredTextLines: ['Always'],
+        },
+        otherRequirements: {
+            // ``FunctionName`` should sort after ``PathTrue`` per the
+            // order array above; bare ``RequiredFalseTextLines`` (with a
+            // ``Count`` companion - shared with the requirements entry)
+            // is suppressed by the ``key in requirements`` guard so it
+            // shouldn't appear on its own. Two ``PathTrue`` records test
+            // stable sort: their relative order must match insertion.
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [1] } },
+            ],
+            'PathTrue:GameState.A': [{ PathTrue: ['GameState', 'A'] }],
+            'PathTrue:GameState.B': [{ PathTrue: ['GameState', 'B'] }],
+        },
+    };
+    return data;
+}
+
+
+test('requirement sections render in reqTypeOrderIndex order, not insertion order', () => {
+    loadData(fixtureWithReqOrdering());
+    renderInfo('OrderingDemo');
+    // Extract the indices of each section header in the rendered HTML.
+    // The five sections must appear in the order ALL -> ANY -> NONE ->
+    // MIN -> MAX even though the requirements dict listed them
+    // reversed.
+    const headerOrder = [
+        'Required (ALL)',
+        'Required (ANY)',
+        'Not played (NONE)',
+        'Required min (ANY)',
+        'Required max (ANY)',
+    ];
+    const positions = headerOrder.map((label) => lastHtml.indexOf(label));
+    for (let i = 0; i < positions.length; i++) {
+        assert.notEqual(positions[i], -1, `header "${headerOrder[i]}" missing from rendered HTML`);
+    }
+    for (let i = 1; i < positions.length; i++) {
+        assert.ok(
+            positions[i - 1] < positions[i],
+            `header "${headerOrder[i - 1]}" should render before "${headerOrder[i]}" `
+            + `(positions ${positions[i - 1]} vs ${positions[i]})`
+        );
+    }
+});
+
+
+test('otherRequirements entries render in reqTypeOrderIndex order by prefix, stable within prefix', () => {
+    loadData(fixtureWithReqOrdering());
+    renderInfo('OrderingDemo');
+    // ``PathTrue`` is positioned before ``FunctionName`` in the
+    // fixture's reqTypeOrder. The two PathTrue records must precede
+    // the FunctionName record, and the two PathTrue records must
+    // appear in insertion order (stable sort) - A before B.
+    const pathA = lastHtml.indexOf('GameState.A');
+    const pathB = lastHtml.indexOf('GameState.B');
+    const funcAlive = lastHtml.indexOf('RequiredAlive');
+    assert.notEqual(pathA, -1, 'PathTrue:GameState.A missing');
+    assert.notEqual(pathB, -1, 'PathTrue:GameState.B missing');
+    assert.notEqual(funcAlive, -1, 'FunctionName:RequiredAlive missing');
+    assert.ok(pathA < pathB, 'stable sort within same prefix violated (A should precede B)');
+    assert.ok(pathB < funcAlive, 'PathTrue entries should precede FunctionName entries');
+});
+
+

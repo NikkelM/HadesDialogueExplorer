@@ -20,6 +20,7 @@ import {
     renderBlockingReason,
     renderReqItem,
     renderChoiceNameHtml,
+    reqTypeOrderIndex,
 } from './utilities.js';
 import { choiceNames, metaUpgradeNames } from './data.js';
 
@@ -44,6 +45,17 @@ function renderOtherReqKeyHtml(key) {
             : head;
     }
     return escapeHtml(key);
+}
+
+// Lookup key for ``reqTypeOrderIndex`` over an ``otherRequirements``
+// entry. Compound keys (``Path:<head>``, ``FunctionName:<name>``)
+// share their parent prefix's order slot; bare operator keys map
+// straight through. Used to sort the Other Requirements section by
+// the same canonical per-game display order the dialogue-edge
+// sections use above it.
+function _otherReqOrderKey(key) {
+    const colonIdx = key.indexOf(':');
+    return colonIdx >= 0 ? key.slice(0, colonIdx) : key;
 }
 
 // Verbal form for each per-record membership operator on a Path:<head>
@@ -382,7 +394,16 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     const requirements = src.requirements || {};
     const otherRequirements = src.otherRequirements || {};
 
-    for (const [type, refs] of Object.entries(requirements)) {
+    // Sort requirement sections by the canonical per-game display
+    // order so the panel reads with the same ALL -> ANY -> NONE ->
+    // MIN -> MAX banding as the tree view (both surfaces consume the
+    // single ``reqTypeOrder`` per game). Unknown types fall to the
+    // 999 sentinel and trail in stable insertion order amongst
+    // themselves.
+    const sortedReqEntries = Object.entries(requirements).sort(
+        ([a], [b]) => reqTypeOrderIndex(a) - reqTypeOrderIndex(b)
+    );
+    for (const [type, refs] of sortedReqEntries) {
         // Count-based requirement fields stash ``{Count: N}`` in
         // ``otherRequirements`` under the same key as the requirement.
         // Surface the count inline with the header so the
@@ -425,7 +446,15 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
 
     if (Object.keys(otherRequirements).length > 0) {
         let otherHtml = '';
-        for (const [key, val] of Object.entries(otherRequirements)) {
+        // Sort otherRequirements by the canonical per-game display
+        // order too. Compound keys (``Path:<head>``, ``FunctionName:
+        // <name>``) are looked up by their prefix; bare operator keys
+        // and unknown prefixes fall through to the 999 sentinel.
+        const sortedOtherEntries = Object.entries(otherRequirements).sort(
+            ([a], [b]) => reqTypeOrderIndex(_otherReqOrderKey(a))
+                        - reqTypeOrderIndex(_otherReqOrderKey(b))
+        );
+        for (const [key, val] of sortedOtherEntries) {
             if (key in requirements) {
                 // Already surfaced inline with the requirement-section
                 // header above. Defensively render any non-Count meta
