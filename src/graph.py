@@ -188,6 +188,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                         "kept": dup_summary(chosen),
                         "dropped": dup_summary(dropped),
                     })
+                    transfer_orphan_annotations(chosen, dropped)
                     attach_variant(chosen, dropped)
                     textlines[tl_name] = chosen
                 else:
@@ -461,6 +462,52 @@ def _variant_already_present(variants: list, candidate: dict) -> bool:
         (v.get("sourceFile"), v.get("sourceLine")) == key
         for v in variants
     )
+
+
+# Annotation fields that can legitimately live on either side of a
+# duplicate pair and must not be silently dropped when ``resolve_duplicate``
+# picks one side as the canonical entry. All five are H2 NarrativeData
+# priority fields: ``NarrativeData_<NPC>.lua`` registers each textline
+# name under exactly one NPC's owner table, and for the xWithY partner
+# pattern that NPC is sometimes the partner-stub side (zero dialogue,
+# zero requirements) rather than the cue-bearing canonical side. The
+# stub then loses to the canonical entry under ``resolve_duplicate``'s
+# richness comparison, and the priority annotation rides off with it
+# unless we transfer it across first. H1 is unaffected (its priority
+# data is intrinsic to the canonical entry's container shape, so the
+# transfer is a no-op there).
+_TRANSFERABLE_ORPHAN_FIELDS = (
+    "narrativePrioritySectionTier",
+    "narrativePrioritySetLevel",
+    "narrativePriorityOrdinal",
+    "narrativePrioritySectionSize",
+    "narrativePriorityClusterMembers",
+)
+
+
+def transfer_orphan_annotations(kept: dict, dropped: dict) -> None:
+    """Copy annotation fields from a dropped duplicate onto the kept
+    entry whenever the kept entry lacks them. Mutates ``kept`` in place.
+
+    Currently scoped to H2 NarrativeData priority fields (see
+    :data:`_TRANSFERABLE_ORPHAN_FIELDS` for the list and rationale).
+    Fields already populated on the kept side are never overwritten:
+    the dedup pipeline picks ``kept`` as the canonical entry first,
+    so its annotations always win when both sides supply a value.
+
+    Called from both :func:`build_graph_data` (intra-file dedup) and
+    :func:`src.graph_merge.merge_graph_data` (cross-file dedup) right
+    after :func:`resolve_duplicate` and before :func:`attach_variant`:
+
+    * After ``resolve_duplicate`` -- so we know which side won.
+    * Before ``attach_variant`` -- so the variant payload generated from
+      ``dropped`` reflects its original annotation state; the transfer
+      onto ``kept`` is a separate concern from preserving the dropped
+      entry as a distinct-content sibling.
+    """
+    for key in _TRANSFERABLE_ORPHAN_FIELDS:
+        if key not in kept and key in dropped:
+            kept[key] = dropped[key]
 
 
 def split_name_collisions(textlines: dict) -> dict:

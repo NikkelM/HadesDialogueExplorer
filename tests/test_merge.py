@@ -323,6 +323,59 @@ class TestOrBranchesAtMerge:
         assert merged["stats"]["totalEdges"] == 0
 
 
+class TestOrphanAnnotationsAtMerge:
+    """When the same textline appears in two per-source datasets (an H2
+    xWithY partner pair: canonical cue-bearing side in one file, empty
+    partner-stub side in another), the dedup pipeline picks the
+    canonical side and would silently drop the stub. NarrativeData
+    priority fields can legitimately live on the stub side -- the
+    partner NPC's ``NarrativeData_<Partner>.lua`` registers the
+    textline name -- so the merge layer must transfer those annotations
+    onto the kept entry before the stub is discarded.
+    """
+
+    def test_priority_fields_from_stub_side_transferred_to_canonical(self):
+        # Mirrors IcarusWithEris01: NPCData_Icarus.lua ships the
+        # cue-bearing entry (dialogue lines, requirements); the
+        # NPCData_Eris.lua partner-stub side ships zero content but
+        # NarrativeData_Eris.lua tags it with ordinal 40 of 44.
+        canonical = _make_textline(
+            "IcarusWithEris01", "NPC_Icarus_01",
+            partner="NPC_Eris_01",
+            source_file="NPCData_Icarus.lua",
+            dialogue_lines=[{"speaker": "NPC_Icarus_01", "text": "hi"}],
+        )
+        stub = _make_textline(
+            "IcarusWithEris01", "NPC_Eris_01",
+            partner="NPC_Icarus_01",
+            source_file="NPCData_Eris.lua",
+        )
+        stub["narrativePriorityOrdinal"] = 40
+        stub["narrativePrioritySectionSize"] = 44
+        ds_canonical = _make_dataset(canonical)
+        ds_stub = _make_dataset(stub)
+        merged = merge_graph_data([ds_canonical, ds_stub])
+        kept = merged["textlines"]["IcarusWithEris01"]
+        assert kept["owner"] == "NPC_Icarus_01"
+        assert kept["narrativePriorityOrdinal"] == 40
+        assert kept["narrativePrioritySectionSize"] == 44
+
+    def test_canonical_side_priority_fields_not_overwritten_by_stub(self):
+        # Defensive symmetry: when both sides happen to ship a value
+        # the kept (canonical) side's data wins. ``resolve_duplicate``
+        # has already picked it as authoritative.
+        canonical = _make_textline(
+            "Shared", "NPC_A",
+            partner="NPC_B",
+            dialogue_lines=[{"speaker": "NPC_A", "text": "hi"}],
+        )
+        canonical["narrativePriorityOrdinal"] = 5
+        stub = _make_textline("Shared", "NPC_B", partner="NPC_A")
+        stub["narrativePriorityOrdinal"] = 99
+        merged = merge_graph_data([_make_dataset(canonical), _make_dataset(stub)])
+        assert merged["textlines"]["Shared"]["narrativePriorityOrdinal"] == 5
+
+
 class TestDuplicateStatsPropagation:
     """``stats.duplicates`` from each input dataset (intra-file partner-stub
     pattern) must be carried into the merged dataset alongside any new

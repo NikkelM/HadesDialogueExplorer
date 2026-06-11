@@ -4,6 +4,7 @@ from src.graph import (
     resolve_duplicate,
     dup_summary,
     attach_variant,
+    transfer_orphan_annotations,
     split_name_collisions,
     count_distinct_speakers,
 )
@@ -52,6 +53,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                     "kept": dup_summary(chosen),
                     "dropped": dup_summary(dropped),
                 })
+                transfer_orphan_annotations(chosen, dropped)
                 attach_variant(chosen, dropped)
                 merged_textlines[tl_name] = chosen
             else:
