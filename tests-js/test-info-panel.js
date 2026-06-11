@@ -321,10 +321,13 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
         lastHtml,
         /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
     );
-    // ``FunctionName:RequiredAlive`` -> friendly pill + tail.
+    // ``FunctionName:RequiredAlive`` -> ``RequiredAlive(Ids=[42]) = true``
+    // (the friendly key-pill path is bypassed for FunctionName entries
+    // whose records carry recognisable ``FunctionName`` / ``FunctionArgs``
+    // shape).
     assert.match(
         lastHtml,
-        /<span class="req-type-name" data-tooltip="Internal name: FunctionName\n\nCustom predicate tooltip blurb\.">Custom function check<\/span>: <code class="other-req-path">RequiredAlive<\/code>/
+        /<span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[42\]<\/code>\) = <code>true<\/code>/
     );
     // Bare key ``NamedRequirementsFalse`` (no colon) -> friendly pill,
     // no path tail.
@@ -466,5 +469,94 @@ test('otherRequirements: Path:<head> records with unknown modifiers fall back to
     // The raw JSON dump preserves all fields verbatim.
     assert.match(lastHtml, /Path:GameState\.NonClean = /);
     assert.match(lastHtml, /SumPrevRuns/);
+});
+
+
+// ``FunctionName:<name>`` compound keys carry a record array whose
+// entries each have ``FunctionName`` + optional ``FunctionArgs``. The
+// renderer must format each as ``funcName(arg1=val1, arg2=val2) = true``
+// with multiple records AND-joined, falling back to raw JSON for
+// shapes that don't match.
+function fixtureWithFunctionRecords() {
+    const data = buildFixtureData();
+    data.textlines.FunctionRecordDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            // Real-data shape - one of the most common H2 functions.
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [558096] } },
+            ],
+            // Argless function - args field absent entirely.
+            'FunctionName:IsBossDifficultyShrineUpgradeActive': [
+                { FunctionName: 'IsBossDifficultyShrineUpgradeActive' },
+            ],
+            // Two-argument function.
+            'FunctionName:RequiredHealthFraction': [
+                { FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.49 } },
+            ],
+            // Multiple records under the same key get AND-joined.
+            'FunctionName:RequiredAliveMulti': [
+                { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [1] } },
+                { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [2] } },
+            ],
+            // Decorated record carrying an unknown extra field - the
+            // renderer must NOT pretend it's a clean function call.
+            'FunctionName:Mystery': [
+                { FunctionName: 'Mystery', FunctionArgs: {}, ExtraMeta: 'unexpected' },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: FunctionName records render as "funcName(args) = true"', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    // Single-arg function.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"><span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[558096\]<\/code>\) = <code>true<\/code><\/div>/
+    );
+    // Two-arg function with mixed scalar types.
+    assert.match(
+        lastHtml,
+        /<span class="other-req-func">RequiredHealthFraction<\/span>\(Comparison=<code>&lt;=<\/code>, Value=<code>0\.49<\/code>\) = <code>true<\/code>/
+    );
+});
+
+
+test('otherRequirements: FunctionName records with no args render as "func() = true"', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"><span class="other-req-func">IsBossDifficultyShrineUpgradeActive<\/span>\(\) = <code>true<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: multiple FunctionName records under one key are AND-joined', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    assert.match(
+        lastHtml,
+        /<span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[1\]<\/code>\) = <code>true<\/code> <span class="other-req-and">AND<\/span> <span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[2\]<\/code>\) = <code>true<\/code>/
+    );
+});
+
+
+test('otherRequirements: FunctionName records with unknown extra fields fall back to raw JSON', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    // The renderer must NOT silently drop ExtraMeta - it fails the
+    // clean-record check and we fall back to ``key = JSON.stringify(val)``.
+    assert.match(lastHtml, /FunctionName:Mystery = /);
+    assert.match(lastHtml, /ExtraMeta/);
 });
 

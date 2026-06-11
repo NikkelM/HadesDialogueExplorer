@@ -406,3 +406,184 @@ class TestPublicAPI:
             "MaxedRequirement",            # singular
         ):
             assert fld in HADES2_REQUIREMENT_SET_FIELDS, fld
+
+
+class TestFunctionTextlineRouting:
+    """Custom ``FunctionName`` predicates with textline semantics are
+    re-routed into the H1-compatible ``requirements`` channel so they
+    show up as dialogue edges in the tree alongside container-form
+    records. The shared H1 field names also let the viewer reuse H1's
+    friendly labels and styling unchanged.
+    """
+
+    def test_require_runs_since_textlines_min_only(self):
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { TextLines = { "FooTextLine" }, Min = 3 },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "MinRunsSinceAnyTextLines": ["FooTextLine"],
+        }
+        assert result["otherRequirements"] == {
+            "MinRunsSinceAnyTextLines": {"Count": 3},
+        }
+
+    def test_require_runs_since_textlines_max_only(self):
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { TextLines = { "BarTextLine" }, Max = 5 },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "MaxRunsSinceAnyTextLines": ["BarTextLine"],
+        }
+        assert result["otherRequirements"] == {
+            "MaxRunsSinceAnyTextLines": {"Count": 5},
+        }
+
+    def test_require_runs_since_textlines_both_min_and_max(self):
+        """A single record can declare both thresholds; both synthetic
+        keys get emitted and each owns its own ``Count`` metadata."""
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { TextLines = { "Tl1", "Tl2" }, Min = 2, Max = 7 },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "MinRunsSinceAnyTextLines": ["Tl1", "Tl2"],
+            "MaxRunsSinceAnyTextLines": ["Tl1", "Tl2"],
+        }
+        assert result["otherRequirements"] == {
+            "MinRunsSinceAnyTextLines": {"Count": 2},
+            "MaxRunsSinceAnyTextLines": {"Count": 7},
+        }
+
+    def test_require_runs_since_textlines_multiple_records_keep_strictest_count(self):
+        """Multiple Min records on the same parent merge textlines and
+        keep the LARGEST Min (the most restrictive threshold)."""
+        lua = '''
+        {
+            {
+                FunctionName = "RequireRunsSinceTextLines",
+                FunctionArgs = { TextLines = { "TlA" }, Min = 3 },
+            },
+            {
+                FunctionName = "RequireRunsSinceTextLines",
+                FunctionArgs = { TextLines = { "TlB" }, Min = 5 },
+            },
+            {
+                FunctionName = "RequireRunsSinceTextLines",
+                FunctionArgs = { TextLines = { "TlC" }, Min = 1 },
+            },
+        }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"]["MinRunsSinceAnyTextLines"] == [
+            "TlA", "TlB", "TlC",
+        ]
+        # Strictest Min wins (5 > 3 > 1).
+        assert result["otherRequirements"]["MinRunsSinceAnyTextLines"] == {"Count": 5}
+
+    def test_require_runs_since_textlines_multiple_max_keep_strictest(self):
+        """For Max thresholds the SMALLEST value is the most restrictive."""
+        lua = '''
+        {
+            {
+                FunctionName = "RequireRunsSinceTextLines",
+                FunctionArgs = { TextLines = { "TlA" }, Max = 10 },
+            },
+            {
+                FunctionName = "RequireRunsSinceTextLines",
+                FunctionArgs = { TextLines = { "TlB" }, Max = 4 },
+            },
+        }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["otherRequirements"]["MaxRunsSinceAnyTextLines"] == {"Count": 4}
+
+    def test_require_runs_since_textlines_no_threshold_falls_through(self):
+        """Without Min OR Max the record carries no useful semantics -
+        leave it in otherRequirements so nothing is silently dropped."""
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { TextLines = { "Foo" } },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {}
+        assert "FunctionName:RequireRunsSinceTextLines" in result["otherRequirements"]
+
+    def test_require_runs_since_textlines_no_textlines_falls_through(self):
+        """Args without a TextLines array can't produce dialogue edges -
+        leave the record visible in otherRequirements."""
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { Min = 3 },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {}
+        assert "FunctionName:RequireRunsSinceTextLines" in result["otherRequirements"]
+
+    def test_required_queued_textline_is_any(self):
+        lua = '''
+        { {
+            FunctionName = "RequiredQueuedTextLine",
+            FunctionArgs = { IsAny = { "Tl1", "Tl2" } },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredAnyQueuedTextLines": ["Tl1", "Tl2"],
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_required_queued_textline_is_none(self):
+        lua = '''
+        { {
+            FunctionName = "RequiredQueuedTextLine",
+            FunctionArgs = { IsNone = { "BlockedTl" } },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredFalseQueuedTextLines": ["BlockedTl"],
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_required_queued_textline_is_any_and_is_none(self):
+        lua = '''
+        { {
+            FunctionName = "RequiredQueuedTextLine",
+            FunctionArgs = { IsAny = { "A" }, IsNone = { "B" } },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredAnyQueuedTextLines": ["A"],
+            "RequiredFalseQueuedTextLines": ["B"],
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_non_textline_function_stays_in_other_requirements(self):
+        """Functions outside the textline allowlist (RequiredAlive,
+        RequiredHealthFraction, etc.) keep their otherRequirements
+        home so the new routing doesn't accidentally swallow them."""
+        lua = '''
+        { {
+            FunctionName = "RequiredAlive",
+            FunctionArgs = { Ids = { 42 } },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {}
+        assert "FunctionName:RequiredAlive" in result["otherRequirements"]

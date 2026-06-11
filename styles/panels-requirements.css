@@ -149,3 +149,10 @@
     margin: 0 4px;
     letter-spacing: 0.5px;
 }
+/* Function name inside a rendered FunctionName:<name> entry (e.g.
+   ``RequiredAlive(Ids=[42]) = true``). Subtle tint to separate the
+   identifier from the surrounding argument list. */
+.other-req-item .other-req-func {
+    color: #c9d1d9;
+    font-weight: 600;
+}

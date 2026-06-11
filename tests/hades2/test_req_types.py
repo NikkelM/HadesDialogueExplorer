@@ -33,7 +33,10 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_DISPLAY_ORDER,
 )
-from src.extractors.hades2.req_extractor import _TEXTLINE_PATH_PREFIXES
+from src.extractors.hades2.req_extractor import (
+    _FUNCTION_TEXTLINE_SYNTHETIC_KEYS,
+    _TEXTLINE_PATH_PREFIXES,
+)
 
 
 # Combined "expected key" set: every entry in the H2 label maps must
@@ -163,19 +166,22 @@ def test_h2_operator_vocabulary_is_disjoint_from_h1_operator_vocabulary():
 
 def test_textline_dependency_fields_match_extractor_outputs():
     """The borrowed-from-H1 field set must exactly match the
-    synthetic H1 keys the H2 extractor actually produces (the values
-    in :data:`_TEXTLINE_PATH_PREFIXES`). A drift between the two
-    would either leave a real synthetic field without a friendly
-    label (regression) or pollute the label maps with entries the
-    extractor can never emit (dead code)."""
+    synthetic H1 keys the H2 extractor actually produces, from both
+    sources: ``_TEXTLINE_PATH_PREFIXES`` (container-form Path records)
+    and ``_FUNCTION_TEXTLINE_SYNTHETIC_KEYS`` (FunctionName records
+    with textline semantics). A drift between the two would either
+    leave a real synthetic field without a friendly label (regression)
+    or pollute the label maps with entries the extractor can never
+    emit (dead code)."""
     emitted = {
         field
         for path_ops in _TEXTLINE_PATH_PREFIXES.values()
         for field in path_ops.values()
-    }
+    } | set(_FUNCTION_TEXTLINE_SYNTHETIC_KEYS)
     assert HADES2_TEXTLINE_DEPENDENCY_FIELDS == emitted, (
         f"HADES2_TEXTLINE_DEPENDENCY_FIELDS does not match the synthetic "
-        f"keys produced by _TEXTLINE_PATH_PREFIXES:\n"
+        f"keys produced by _TEXTLINE_PATH_PREFIXES + "
+        f"_FUNCTION_TEXTLINE_SYNTHETIC_KEYS:\n"
         f"  missing from constant: {sorted(emitted - HADES2_TEXTLINE_DEPENDENCY_FIELDS)}\n"
         f"  extra in constant:     {sorted(HADES2_TEXTLINE_DEPENDENCY_FIELDS - emitted)}"
     )

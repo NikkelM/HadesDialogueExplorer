@@ -209,6 +209,12 @@ HADES2_TEXTLINE_DEPENDENCY_FIELDS = frozenset({
     "RequiredQueuedTextLines",
     "RequiredAnyQueuedTextLines",
     "RequiredFalseQueuedTextLines",
+    # Cross-run "min/max runs since" thresholds. H2 doesn't store
+    # these as path records on TextLinesRecord; they're synthesised by
+    # ``_try_classify_textline_function`` from
+    # ``FunctionName: RequireRunsSinceTextLines`` calls.
+    "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
 })
 
 
@@ -397,6 +403,10 @@ HADES2_REQ_TYPE_DISPLAY_ORDER = [
     "RequiredAnyTextLinesLastRun",
     "RequiredQueuedTextLines",
     "RequiredAnyQueuedTextLines",
+    # Cross-run "min runs since" thresholds slot next to the positive
+    # textline rows since they're a temporal gate on the same record.
+    "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
     # Dialogue dependency edges - negative.
     "RequiredFalseTextLines",
     "RequiredFalseTextLinesThisRun",

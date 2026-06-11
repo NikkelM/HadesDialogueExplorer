@@ -98,6 +98,29 @@ function _renderPathRecord(head, rec) {
     return null;
 }
 
+// Format a single ``FunctionName`` record as
+// ``funcName(arg1=val1, arg2=val2) = true``. Returns null if the record
+// shape is unrecognised so the caller can fall back to raw JSON.
+function _renderFunctionRecord(fnName, rec) {
+    if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
+    if (rec.FunctionName !== fnName) return null;
+    for (const k of Object.keys(rec)) {
+        if (k !== 'FunctionName' && k !== 'FunctionArgs') return null;
+    }
+    const args = rec.FunctionArgs;
+    let argsHtml = '';
+    if (args && typeof args === 'object' && !Array.isArray(args)) {
+        const parts = [];
+        for (const [k, v] of Object.entries(args)) {
+            parts.push(`${escapeHtml(k)}=<code>${escapeHtml(_formatScalar(v))}</code>`);
+        }
+        argsHtml = parts.join(', ');
+    } else if (args !== undefined) {
+        return null;
+    }
+    return `<span class="other-req-func">${escapeHtml(fnName)}</span>(${argsHtml}) = <code>true</code>`;
+}
+
 // Resolve a single ``otherRequirements`` entry to its full inner HTML
 // (the friendly-key prefix already rendered upstream is REPLACED here
 // for ``Path:<head>`` entries whose records have a recognisable inner
@@ -110,6 +133,21 @@ function renderOtherReqEntryHtml(key, val) {
         const parts = [];
         for (const rec of val) {
             const formatted = _renderPathRecord(head, rec);
+            if (formatted === null) {
+                parts.length = 0;
+                break;
+            }
+            parts.push(formatted);
+        }
+        if (parts.length) {
+            return parts.join(' <span class="other-req-and">AND</span> ');
+        }
+    }
+    if (key.startsWith('FunctionName:') && Array.isArray(val) && val.length > 0) {
+        const fnName = key.slice('FunctionName:'.length);
+        const parts = [];
+        for (const rec of val) {
+            const formatted = _renderFunctionRecord(fnName, rec);
             if (formatted === null) {
                 parts.length = 0;
                 break;

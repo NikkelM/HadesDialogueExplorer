@@ -284,8 +284,9 @@ def _classify_record(record, result):
     """Bucket a single record into ``requirements`` or ``otherRequirements``.
 
     Tries the dialogue-edge mappings first (container-form Path then
-    direct-path PathTrue/PathFalse). Falls back to a structured
-    ``otherRequirements`` entry for everything else.
+    direct-path PathTrue/PathFalse, then a small allowlist of
+    ``FunctionName`` calls that gate on textline records). Falls back
+    to a structured ``otherRequirements`` entry for everything else.
     """
     # Container-form: Path = { prefix..., TextLinesRecord }, HasX = { ... }
     path_segs = _string_path(record.named.get("Path"))
@@ -315,8 +316,125 @@ def _classify_record(record, result):
             _extend_requirements(result, syn_key, [leaf])
             return
 
+    # FunctionName-based predicates with textline semantics route to
+    # dialogue edges (see ``_TEXTLINE_FUNCTION_HANDLERS``).
+    if _try_classify_textline_function(record, result):
+        return
+
     # Everything else goes to otherRequirements as a structured blob.
     _add_record_as_other(record, result)
+
+
+# ---------------------------------------------------------------------------
+# FunctionName-based textline gates
+# ---------------------------------------------------------------------------
+# A small allowlist of custom requirement functions (defined in
+# Hades II's ``RequirementsLogic.lua``) whose semantics gate the parent
+# dialogue on textline-record state. Each handler is allowed to mutate
+# ``result`` and return True if it consumed the record (no fallthrough).
+#
+# Why route these into the H1-compatible ``requirements`` bucket
+# instead of leaving them in ``otherRequirements``:
+#
+# * The textlines referenced in ``FunctionArgs.TextLines`` (etc.) are
+#   real dialogue dependencies - the parent dialogue is gated on those
+#   textlines having (or not having) been played. Surfacing them as
+#   dialogue edges puts them in the tree alongside other dependency
+#   requirements rather than burying them in the Other Requirements
+#   section.
+# * H1 has equivalent first-class fields for the same semantics
+#   (``MinRunsSinceAnyTextLines`` / ``MaxRunsSinceAnyTextLines`` /
+#   ``RequiredAnyQueuedTextLines`` / ``RequiredFalseQueuedTextLines``).
+#   Routing H2 into the same field names keeps both games' dependency
+#   graphs uniform and reuses H1's friendly labels via the borrowed
+#   ``HADES2_TEXTLINE_DEPENDENCY_FIELDS`` set in
+#   :mod:`.req_types`.
+
+
+def _set_count_extreme(result, syn_key, value, strict):
+    """Stash a ``Count`` metadata value under ``otherRequirements[syn_key]``,
+    composing across multiple records on the same parent. ``strict`` is
+    either ``max`` (for Min thresholds: larger = stricter) or ``min``
+    (for Max thresholds: smaller = stricter)."""
+    bucket = result["otherRequirements"].setdefault(syn_key, {})
+    if isinstance(bucket, dict):
+        existing = bucket.get("Count")
+        bucket["Count"] = value if existing is None else strict(existing, value)
+
+
+def _try_classify_textline_function(record, result):
+    """Re-route a ``FunctionName`` record into the dialogue-edge graph
+    when its semantics gate on textline records. Returns ``True`` if
+    the record was consumed (no otherRequirements fallthrough)."""
+    fn = record.named.get("FunctionName")
+    if not isinstance(fn, str):
+        return False
+    args_table = record.named.get("FunctionArgs")
+    if not isinstance(args_table, LuaTable):
+        return False
+
+    if fn == "RequireRunsSinceTextLines":
+        # Semantics (RequirementsLogic.lua::RequireRunsSinceTextLines):
+        # for each textline in ``TextLines``, walk GameState.RunHistory
+        # backwards. If ``Min = N`` is set, the textline must either
+        # not appear in any prev run or last appear at least N runs
+        # ago. If ``Max = N`` is set, the textline must appear within
+        # the last N runs (else returns false).
+        #
+        # H1 analogues:
+        #   Min -> MinRunsSinceAnyTextLines (Count = N)
+        #   Max -> MaxRunsSinceAnyTextLines (Count = N)
+        textlines = _string_list(args_table.named.get("TextLines"))
+        if not textlines:
+            return False
+        consumed = False
+        min_val = args_table.named.get("Min")
+        if isinstance(min_val, (int, float)):
+            _extend_requirements(result, "MinRunsSinceAnyTextLines", textlines)
+            _set_count_extreme(result, "MinRunsSinceAnyTextLines", int(min_val), max)
+            consumed = True
+        max_val = args_table.named.get("Max")
+        if isinstance(max_val, (int, float)):
+            _extend_requirements(result, "MaxRunsSinceAnyTextLines", textlines)
+            _set_count_extreme(result, "MaxRunsSinceAnyTextLines", int(max_val), min)
+            consumed = True
+        return consumed
+
+    if fn == "RequiredQueuedTextLine":
+        # Semantics (RequirementsLogic.lua::RequiredQueuedTextLine):
+        # ``IsAny`` requires at least one of the listed textlines to be
+        # queued on an active enemy unit (NextInteractLines /
+        # QueuedBossIntroTextLines). ``IsNone`` requires none of them
+        # to be queued.
+        #
+        # H1 analogues:
+        #   IsAny  -> RequiredAnyQueuedTextLines
+        #   IsNone -> RequiredFalseQueuedTextLines
+        is_any = _string_list(args_table.named.get("IsAny"))
+        is_none = _string_list(args_table.named.get("IsNone"))
+        consumed = False
+        if is_any:
+            _extend_requirements(result, "RequiredAnyQueuedTextLines", is_any)
+            consumed = True
+        if is_none:
+            _extend_requirements(result, "RequiredFalseQueuedTextLines", is_none)
+            consumed = True
+        return consumed
+
+    return False
+
+
+# Synthetic H1-shaped requirement field names this module produces
+# from ``FunctionName`` records via
+# :func:`_try_classify_textline_function`. Keep in sync with the
+# handler body above; pinned by
+# :func:`tests.hades2.test_req_types.test_textline_dependency_fields_match_extractor_outputs`.
+_FUNCTION_TEXTLINE_SYNTHETIC_KEYS = frozenset({
+    "MinRunsSinceAnyTextLines",
+    "MaxRunsSinceAnyTextLines",
+    "RequiredAnyQueuedTextLines",
+    "RequiredFalseQueuedTextLines",
+})
 
 
 def _add_record_as_other(record, result):

@@ -46,8 +46,15 @@ NarrativeData priorities
 
 H1 features intentionally NOT mirrored:
 
-* ``extract_game_data_lists`` - H2 has no ``GameData.X`` bare-
-  identifier indirection in cue text or requirements.
+* ``extract_game_data_lists`` - H1 had ``GameData.X`` bare-identifier
+  indirection in cue text and most requirement fields; H2 has nearly
+  eliminated this pattern. The exception (~47 occurrences) is
+  ``FunctionName: RequireRunsSinceTextLines`` whose ``TextLines``
+  argument can be a ``GameData.X`` identifier defined in
+  NarrativeData.lua (e.g. ``GameData.AthenaKeepsakeEvents``). These
+  currently render in the viewer as raw identifier refs rather than
+  expanded dialogue edges; a dedicated resolver would lift them like
+  H1 does. See ``h2-function-textline-gamedata`` follow-up.
 * ``HADES1_OFFER_TEXT_MAP`` - H2 has no ``MiscText.en.sjson`` offer-
   text indirection on boon vendor lines.
 * ``HADES1_PRESET_CHOICES`` - H2 inline ``Choices = {...}`` blocks

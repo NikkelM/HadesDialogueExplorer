@@ -34,7 +34,7 @@ explanation):
 """
 
 HADES2_KNOWN_UNRESOLVED_REFS = {
-    # --- cut-content (8) ---
+    # --- cut-content (9) ---
     "ChronosBossPreTrueEndingOutro01": {
         "category": "cut-content",
         "reason": "Cut textline; referenced only as a defensive PathFalse "
@@ -77,6 +77,14 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
                   "(HasAll on GameState.TextLinesRecord alongside MedeaGift04 "
                   "and ZeusPalacePostTrueEnding01); cut, so MedeaHubMeeting02 "
                   "can never play.",
+    },
+    "NemesisWithMoros03": {
+        "category": "cut-content",
+        "reason": "Cut textline; surfaced via the FunctionName: "
+                  "RequiredQueuedTextLine routing. Listed in an IsNone "
+                  "queued-textlines check on InspectNemesis01 in "
+                  "DeathLoopData.lua alongside the surviving "
+                  "NemesisWithMoros01 / 02 (trivially satisfied).",
     },
     "TyphonHeadAltFight01": {
         "category": "cut-content",
