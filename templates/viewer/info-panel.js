@@ -7,6 +7,7 @@ import {
     unresolvedCategoryLabels,
     unresolvedCategoryDescriptions,
     unresolvedRefBlocks,
+    reqTypeLabels,
 } from './data.js';
 import {
     escapeHtml,
@@ -21,6 +22,107 @@ import {
     renderChoiceNameHtml,
 } from './utilities.js';
 import { choiceNames, metaUpgradeNames } from './data.js';
+
+// Render an ``otherRequirements`` key. H2 synthesises compound keys
+// like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
+// the path tail) and ``FunctionName:RequiredAlive``; H1 keeps bare
+// field names like ``RequiredFalseFlags``. When the prefix has a
+// friendly label in ``reqTypeLabels`` we render it as a hover-tooltip
+// pill (internal name + plain-English blurb) and keep the path tail
+// readable in monospace. Unknown prefixes fall back to the raw
+// pre-escaped key so nothing is lost - the goal is additive: no
+// regression for unlabelled keys, friendly labels surface where the
+// per-game label vocabulary covers the prefix.
+function renderOtherReqKeyHtml(key) {
+    const colonIdx = key.indexOf(':');
+    const prefix = colonIdx >= 0 ? key.slice(0, colonIdx) : key;
+    const tail = colonIdx >= 0 ? key.slice(colonIdx + 1) : '';
+    if (reqTypeLabels[prefix]) {
+        const head = renderReqTypeHtml(prefix);
+        return tail
+            ? `${head}: <code class="other-req-path">${escapeHtml(tail)}</code>`
+            : head;
+    }
+    return escapeHtml(key);
+}
+
+// Verbal form for each per-record membership operator on a Path:<head>
+// entry. Comparison is handled separately because its rendering reuses
+// the comparator string directly (``>``, ``<=`` etc.).
+const _PATH_RECORD_MEMBERSHIP_VERBS = {
+    IsAny:     'is one of',
+    IsNone:    'is none of',
+    HasAny:    'contains any of',
+    HasAll:    'contains all of',
+    HasNone:   'contains none of',
+    NotHasAll: 'does not contain all of',
+};
+
+// Allowed keys on a ``Path:<head>`` value record we know how to render
+// in a human-friendly form. Records carrying any additional modifier
+// (CountOf, SumOf, SumPrevRuns, UseLength, ...) fall back to the raw
+// JSON display so no information is silently dropped.
+const _PATH_RECORD_CLEAN_EXTRA_KEYS = new Set(['Path']);
+
+function _isCleanPathRecord(rec, opKey) {
+    for (const k of Object.keys(rec)) {
+        if (k === opKey) continue;
+        if (opKey === 'Comparison' && k === 'Value') continue;
+        if (!_PATH_RECORD_CLEAN_EXTRA_KEYS.has(k)) return false;
+    }
+    return true;
+}
+
+function _formatScalar(v) {
+    return typeof v === 'string' ? v : JSON.stringify(v);
+}
+
+function _renderOperandList(items) {
+    if (!Array.isArray(items)) {
+        return `<code>${escapeHtml(_formatScalar(items))}</code>`;
+    }
+    return items.map(v => `<code>${escapeHtml(_formatScalar(v))}</code>`).join(', ');
+}
+
+function _renderPathRecord(head, rec) {
+    if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
+    const headHtml = `<code class="other-req-path">${escapeHtml(head)}</code>`;
+    if ('Comparison' in rec && 'Value' in rec && _isCleanPathRecord(rec, 'Comparison')) {
+        return `${headHtml} ${escapeHtml(String(rec.Comparison))} <code>${escapeHtml(_formatScalar(rec.Value))}</code>`;
+    }
+    for (const [op, verb] of Object.entries(_PATH_RECORD_MEMBERSHIP_VERBS)) {
+        if (op in rec && _isCleanPathRecord(rec, op)) {
+            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}`;
+        }
+    }
+    return null;
+}
+
+// Resolve a single ``otherRequirements`` entry to its full inner HTML
+// (the friendly-key prefix already rendered upstream is REPLACED here
+// for ``Path:<head>`` entries whose records have a recognisable inner
+// test op, because the synthetic ``Path`` prefix carries no operator
+// information and the real op only appears inside the value records).
+// Returns the inner HTML to wrap in a ``<div class="other-req-item">``.
+function renderOtherReqEntryHtml(key, val) {
+    if (key.startsWith('Path:') && Array.isArray(val) && val.length > 0) {
+        const head = key.slice('Path:'.length);
+        const parts = [];
+        for (const rec of val) {
+            const formatted = _renderPathRecord(head, rec);
+            if (formatted === null) {
+                parts.length = 0;
+                break;
+            }
+            parts.push(formatted);
+        }
+        if (parts.length) {
+            return parts.join(' <span class="other-req-and">AND</span> ');
+        }
+    }
+    const display = typeof val === 'object' ? JSON.stringify(val) : String(val);
+    return `${renderOtherReqKeyHtml(key)} = ${escapeHtml(display)}`;
+}
 
 export function renderInfo(name) {
     const tl = textlines[name];
@@ -298,13 +400,12 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                         if (k !== 'Count') extras[k] = v;
                     }
                     if (Object.keys(extras).length > 0) {
-                        otherHtml += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(JSON.stringify(extras))}</div>`;
+                        otherHtml += `<div class="other-req-item">${renderOtherReqKeyHtml(key)} = ${escapeHtml(JSON.stringify(extras))}</div>`;
                     }
                 }
                 continue;
             }
-            const display = typeof val === 'object' ? JSON.stringify(val) : String(val);
-            otherHtml += `<div class="other-req-item">${escapeHtml(key)} = ${escapeHtml(display)}</div>`;
+            otherHtml += `<div class="other-req-item">${renderOtherReqEntryHtml(key, val)}</div>`;
         }
         if (otherHtml) {
             html += `<div class="req-section req-type-other">`

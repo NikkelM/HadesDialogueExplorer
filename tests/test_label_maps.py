@@ -13,6 +13,7 @@ from src.extractors.hades2 import (
     HADES2_CHOICE_NAMES,
     HADES2_SECTION_KEY_LABELS,
     HADES2_REQ_TYPE_LABELS,
+    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
 )
 from src.extractors.hades1 import (
     HADES1_CHOICE_NAMES,
@@ -102,18 +103,45 @@ class TestStrictPerGameSeparation:
         assert sample in _annotated("hades2")["reqTypeLabels"]
 
     def test_hades1_req_labels_disjoint_from_hades2(self):
-        # H1's RequirementSet field vocabulary
-        # (``RequiredTextLines`` etc.) is completely disjoint from H2's
-        # operator vocabulary (``HasAny`` etc.), so H1 entries must not
-        # leak into H2's reqTypeLabels.
+        # H1's H1-only fields (counts, room-scoped, ANY-other, etc.)
+        # must never appear in H2's reqTypeLabels. The 12 textline-
+        # dependency fields in HADES2_TEXTLINE_DEPENDENCY_FIELDS are
+        # the DELIBERATE shared subset (H2's extractor re-keys
+        # textline records into those H1 field names so dialogue
+        # edges render uniformly across both games); they are
+        # exempted from this disjoint check.
         annotated_h2 = _annotated("hades2")["reqTypeLabels"]
-        for k in HADES1_REQ_TYPE_LABELS:
-            assert k not in annotated_h2, f"H1 req label {k!r} leaked into H2"
+        h1_only = set(HADES1_REQ_TYPE_LABELS) - HADES2_TEXTLINE_DEPENDENCY_FIELDS
+        for k in h1_only:
+            assert k not in annotated_h2, f"H1-only req label {k!r} leaked into H2"
 
     def test_hades2_req_labels_disjoint_from_hades1(self):
+        # H2's operator vocabulary (HasAny / HasNone / Path* / ...)
+        # must never appear in H1's reqTypeLabels. The 12 borrowed
+        # textline-dependency fields are exempt (same rationale as
+        # above - they're H1 field names borrowed by H2).
         annotated_h1 = _annotated("hades1")["reqTypeLabels"]
-        for k in HADES2_REQ_TYPE_LABELS:
-            assert k not in annotated_h1, f"H2 req label {k!r} leaked into H1"
+        h2_only = set(HADES2_REQ_TYPE_LABELS) - HADES2_TEXTLINE_DEPENDENCY_FIELDS
+        for k in h2_only:
+            assert k not in annotated_h1, f"H2-only req label {k!r} leaked into H1"
+
+    def test_textline_dependency_fields_shared_across_games(self):
+        # Pin the cross-game shared subset: every borrowed key must
+        # appear in BOTH games' annotated label maps with identical
+        # values. This is the structural inverse of the two disjoint
+        # checks above - we positively assert sharing for the
+        # documented overlap layer so a future refactor that
+        # accidentally drops the borrow has to update either this
+        # test or HADES2_TEXTLINE_DEPENDENCY_FIELDS deliberately.
+        h1_labels = _annotated("hades1")["reqTypeLabels"]
+        h2_labels = _annotated("hades2")["reqTypeLabels"]
+        for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS:
+            assert k in h1_labels, f"Shared field {k!r} missing from H1"
+            assert k in h2_labels, f"Shared field {k!r} missing from H2"
+            assert h1_labels[k] == h2_labels[k], (
+                f"Shared field {k!r} wording diverges: "
+                f"H1={h1_labels[k]!r}, H2={h2_labels[k]!r}"
+            )
 
 
 class TestChoiceNames:

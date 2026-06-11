@@ -132,3 +132,20 @@
     color: #8d99ae;
     font-family: 'Consolas', monospace;
 }
+/* Path tail inside a resolved Path:<head> entry (e.g.
+   ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
+   nudged slightly to read as a quoted identifier. */
+.other-req-item .other-req-path {
+    color: #c9d1d9;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0 4px;
+    border-radius: 3px;
+}
+/* AND joiner between multiple comparison/membership records that share
+   a Path:<head> key (engine AND-combines them). */
+.other-req-item .other-req-and {
+    color: #6b7280;
+    font-weight: 600;
+    margin: 0 4px;
+    letter-spacing: 0.5px;
+}

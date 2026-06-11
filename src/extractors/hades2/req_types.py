@@ -40,6 +40,24 @@ chip / display order / tooltip the viewer renders.
 :mod:`src.extractors.hades2` registration to enforce per-game label
 completeness.
 
+Two vocabulary tiers coexist in the same label maps:
+
+1. **H2 operators** (the ``HADES2_REQ_OPERATORS`` set). These are the
+   primary keys the engine actually inspects and they get H2-native
+   wording / chips ("Must include (ANY)", "\u220BANY", etc.).
+2. **H1 synthetic textline-dependency fields** (the
+   ``HADES2_TEXTLINE_DEPENDENCY_FIELDS`` set). H2's req extractor
+   re-keys ``HasAll`` / ``HasAny`` / ``HasNone`` records against
+   ``GameState.TextLinesRecord`` (and friends) into these 12 H1 field
+   names so the graph builder produces dialogue dependency edges
+   uniformly across both games (see :data:`_TEXTLINE_PATH_PREFIXES`
+   in :mod:`.req_extractor`). The label entries for those 12 keys are
+   imported verbatim from :mod:`src.extractors.hades1.req_types` so
+   the viewer reads identical headers / tooltips / chips for
+   identical semantics in both games. Adding a new textline path
+   prefix in ``req_extractor.py`` therefore needs a matching entry in
+   ``HADES2_TEXTLINE_DEPENDENCY_FIELDS`` here.
+
 Operator-vs-parameter split:
   * Operators carry semantic intent (``HasAny`` / ``IsNone`` /
     ``Comparison`` / ``OrRequirements`` / ``Skip`` / ``Force`` / ...).
@@ -80,16 +98,25 @@ The 18 operators below are the union of the 6 set-level operators
 (non-generic, minus the 2 data-merge directives) and the 12 per-record
 predicates (the generic list minus the 16 parameters/modifiers).
 Mirrors the same merge-and-attach pattern as
-:mod:`src.extractors.hades1.req_types` - ``src.label_maps`` unions
-both games' maps into a single viewer-side lookup so the JS code does
-one dictionary lookup regardless of source game. Vocabularies are
-disjoint so the union is safe.
+:mod:`src.extractors.hades1.req_types` - ``src.label_maps`` plugs the
+finished maps directly into the per-game viewer bundle. Cross-game
+vocabularies remain operationally disjoint at the operator level
+(``HADES2_REQ_OPERATORS`` shares no keys with H1's
+``TEXTLINE_REQ_FIELDS``); the textline-field overlap is intentional
+because both games render the same semantics under the same field
+name.
 
 Keep the operator allowlist in sync with the parser's primary-key
 detection in :mod:`src.extractors.hades2.requirements` (once that
 module lands - this label module is built first so the parser has a
 canonical reference list to lint against).
 """
+
+from src.extractors.hades1.req_types import (
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_TOOLTIPS,
+)
 
 # Primary requirement-operator allowlist. Every entry here is a key
 # that can lead a requirement record or sit at the set-level of a
@@ -153,23 +180,62 @@ HADES2_REQ_OPERATORS = frozenset({
 })
 
 
+# H1 synthetic textline-dependency fields produced by H2's req
+# extractor when it re-keys ``HasAll`` / ``HasAny`` / ``HasNone``
+# records against the four ``TextLinesRecord`` / ``QueuedTextLines``
+# path prefixes (see :data:`_TEXTLINE_PATH_PREFIXES` in
+# :mod:`.req_extractor`). The graph builder then emits dialogue
+# dependency edges under these H1 field names uniformly across both
+# games. Listed here so the viewer can look up the same friendly
+# label as H1 for identical semantics, and so the
+# ``test_req_types.py`` invariants can extend their "expected
+# allowlist" beyond ``HADES2_REQ_OPERATORS``. Keep in sync with
+# ``_TEXTLINE_PATH_PREFIXES``: a 1:1 cross-check is enforced by
+# :func:`tests.hades2.test_req_types.test_textline_dependency_fields_match_extractor_outputs`.
+HADES2_TEXTLINE_DEPENDENCY_FIELDS = frozenset({
+    # Cross-run history (GameState.TextLinesRecord)
+    "RequiredTextLines",
+    "RequiredAnyTextLines",
+    "RequiredFalseTextLines",
+    # Current-run only (CurrentRun.TextLinesRecord)
+    "RequiredTextLinesThisRun",
+    "RequiredAnyTextLinesThisRun",
+    "RequiredFalseTextLinesThisRun",
+    # Last completed run only (PrevRun.TextLinesRecord)
+    "RequiredTextLinesLastRun",
+    "RequiredAnyTextLinesLastRun",
+    "RequiredFalseTextLinesLastRun",
+    # Queued for play this run (CurrentRun.QueuedTextLines)
+    "RequiredQueuedTextLines",
+    "RequiredAnyQueuedTextLines",
+    "RequiredFalseQueuedTextLines",
+})
+
+
 # Friendly headers shown above each requirement group in the details
 # panel (also used in unresolved-ref reason text). Every entry in
-# ``HADES2_REQ_OPERATORS`` must be covered.
+# ``HADES2_REQ_OPERATORS`` must be covered, plus every entry in
+# ``HADES2_TEXTLINE_DEPENDENCY_FIELDS`` (the H1 synthetic field names
+# the extractor re-keys textline records into). The textline-field
+# half is imported verbatim from H1's labels so the viewer renders
+# identical wording for identical semantics in both games.
 #
 # Naming scheme: positive predicates start with "Must" / "Path must";
 # negatives use "Must NOT" / "Path must NOT". Quantifier (ALL / ANY /
 # NONE) is in parens where applicable. Set-level short-circuits use
 # "Always".
 HADES2_REQ_TYPE_LABELS = {
+    # H1 synthetic textline-dependency fields (shared wording).
+    **{k: HADES1_REQ_TYPE_LABELS[k] for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS},
+    # H2-native operators.
     "Skip":                   "Always blocked (Skip)",
     "Force":                  "Always passes (Force)",
     "ChanceToPlay":           "Probability gate",
     "NamedRequirements":      "Named requirements must pass",
     "NamedRequirementsFalse": "Named requirements must NOT pass",
     "OrRequirements":         "At least one nested group must pass (OR)",
-    "PathTrue":               "Path must be truthy",
-    "PathFalse":              "Path must be falsy",
+    "PathTrue":               "Must be true",
+    "PathFalse":              "Must be false",
     "PathEmpty":              "Path must be empty",
     "PathNotEmpty":           "Path must be non-empty",
     "HasAny":                 "Must include (ANY)",
@@ -208,6 +274,9 @@ HADES2_REQ_TYPE_LABELS = {
 #                        render inline; the chip just marks the type)
 #   - ``\u0192``            - function-based custom predicate
 HADES2_REQ_TYPE_EDGE_LABELS = {
+    # H1 synthetic textline-dependency fields (shared chips).
+    **{k: HADES1_REQ_TYPE_EDGE_LABELS[k] for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS},
+    # H2-native operators.
     "Skip":                   "SKIP",
     "Force":                  "FORCE",
     "ChanceToPlay":           "%",
@@ -237,6 +306,9 @@ HADES2_REQ_TYPE_EDGE_LABELS = {
 # what the check actually gates on. Every entry in
 # ``HADES2_REQ_OPERATORS`` should be covered.
 HADES2_REQ_TYPE_TOOLTIPS = {
+    # H1 synthetic textline-dependency fields (shared blurbs).
+    **{k: HADES1_REQ_TYPE_TOOLTIPS[k] for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS},
+    # H2-native operators.
     "Skip":
         "Set-level escape hatch. When Skip = true sits at the top of a "
         "RequirementSet, IsGameStateEligible short-circuits to false and the "
@@ -263,10 +335,10 @@ HADES2_REQ_TYPE_TOOLTIPS = {
         "AND-combined RequirementSet.",
     "PathTrue":
         "This dialogue is only eligible if the value at the given GameState "
-        "path is truthy (non-nil, non-false, non-zero for numbers).",
+        "path is true (non-nil, non-false, non-zero for numbers).",
     "PathFalse":
         "This dialogue is only eligible if the value at the given GameState "
-        "path is falsy (nil, false, or zero for numbers).",
+        "path is false (nil, false, or zero for numbers).",
     "PathEmpty":
         "This dialogue is only eligible if the container (table) at the given "
         "GameState path is empty.",
@@ -305,11 +377,32 @@ HADES2_REQ_TYPE_TOOLTIPS = {
 
 
 # Display order for requirement-type groupings in the dependency tree.
-# Set-level short-circuits first (they suppress everything else), then
-# probability and composition, then positive predicates, then negatives,
-# then function checks. Anything not listed sorts to the end.
+# Dialogue dependency edges (H1 synthetic textline fields, re-keyed by
+# the H2 extractor from ``HasAll`` / ``HasAny`` / ``HasNone`` records
+# against ``TextLinesRecord`` paths) come first - they describe the
+# graph the viewer is built to explore, so users see them above the
+# more incidental gameplay-state predicates. The H2 native operators
+# follow: set-level short-circuits first (they suppress everything
+# else), then probability and composition, then positive predicates,
+# then negatives, then function checks. Anything not listed sorts to
+# the end.
 HADES2_REQ_TYPE_DISPLAY_ORDER = [
-    # Set-level overrides surface first so their effect is obvious.
+    # Dialogue dependency edges - positive cross-run.
+    "RequiredTextLines",
+    "RequiredAnyTextLines",
+    # Dialogue dependency edges - positive scoped.
+    "RequiredTextLinesThisRun",
+    "RequiredAnyTextLinesThisRun",
+    "RequiredTextLinesLastRun",
+    "RequiredAnyTextLinesLastRun",
+    "RequiredQueuedTextLines",
+    "RequiredAnyQueuedTextLines",
+    # Dialogue dependency edges - negative.
+    "RequiredFalseTextLines",
+    "RequiredFalseTextLinesThisRun",
+    "RequiredFalseTextLinesLastRun",
+    "RequiredFalseQueuedTextLines",
+    # Set-level overrides surface next so their effect is obvious.
     "Skip",
     "Force",
     "ChanceToPlay",

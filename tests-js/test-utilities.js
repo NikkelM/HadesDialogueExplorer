@@ -210,8 +210,11 @@ test('renderOrdinalBadgeHtml renders #N/M for H2 textlines and is empty without 
     assert.ok(full.includes('priority-ordinal'));
     assert.ok(full.includes('#3/12'));
     // Cluster members should surface inside the tooltip so the tree
-    // row stays compact.
-    assert.ok(full.includes('SiblingA, SiblingB'));
+    // row stays compact. User-controlled wording uses a newline-
+    // separated list so each member reads on its own line.
+    assert.ok(full.includes('Tied at the same rank with:'));
+    assert.ok(full.includes('SiblingA'));
+    assert.ok(full.includes('SiblingB'));
 
     const solo = renderOrdinalBadgeHtml({
         narrativePriorityOrdinal: 1,

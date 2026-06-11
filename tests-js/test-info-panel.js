@@ -253,3 +253,218 @@ test('boon-vendor choice options render without a click-through link when target
     assert.doesNotMatch(lastHtml, /<a class="choice-link"/);
 });
 
+
+// Build a fixture for the H2 ``otherRequirements`` rendering path: the
+// data carries compound operator-prefixed keys (PathTrue:..., Path:...,
+// FunctionName:...) plus a bare label-less key. The viewer must
+// surface friendly pills for the prefixed keys whose prefix has a label
+// in ``reqTypeLabels``, while keeping unknown-prefix keys verbatim.
+function fixtureWithOtherRequirements() {
+    const data = buildFixtureData();
+    // Borrow H2's operator-prefix labels for this fixture so the
+    // viewer can resolve ``PathTrue`` / ``PathFalse`` / ``FunctionName``
+    // / ``NamedRequirementsFalse`` prefixes encountered below.
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue: 'Must be true',
+        PathFalse: 'Must be false',
+        FunctionName: 'Custom function check',
+        NamedRequirementsFalse: 'Named requirements must NOT pass',
+    };
+    data.reqTypeTooltips = {
+        ...data.reqTypeTooltips,
+        PathTrue: 'Truthy-path check tooltip blurb.',
+        // ``PathFalse`` deliberately has no tooltip entry to exercise the
+        // header-only branch of ``reqTypeTitleText`` inside the renderer.
+        FunctionName: 'Custom predicate tooltip blurb.',
+        NamedRequirementsFalse: 'Named requirements inverse tooltip blurb.',
+    };
+    data.textlines.OrpheusOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            'PathTrue:GameState.ReachedTrueEnding': [
+                { PathTrue: ['GameState', 'ReachedTrueEnding'] },
+            ],
+            'PathFalse:CurrentRun.Cleared': [
+                { PathFalse: ['CurrentRun', 'Cleared'] },
+            ],
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [42] } },
+            ],
+            NamedRequirementsFalse: ['NoBossActive'],
+            'UnknownPrefix:Foo.Bar': 'leave-me-raw',
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: known operator prefixes render as friendly pills with tooltips', () => {
+    loadData(fixtureWithOtherRequirements());
+    renderInfo('OrpheusOtherReqDemo');
+    // ``Other Requirements`` section header should be present.
+    assert.match(lastHtml, /<h4><span class="toggle">.<\/span>Other Requirements<\/h4>/);
+    // ``PathTrue:GameState.ReachedTrueEnding`` -> friendly pill +
+    // monospace path tail. Tooltip carries internal name + blurb.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/
+    );
+    // ``PathFalse`` has a label but no tooltip entry: pill renders the
+    // friendly text + header-only tooltip (internal name).
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
+    );
+    // ``FunctionName:RequiredAlive`` -> friendly pill + tail.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name" data-tooltip="Internal name: FunctionName\n\nCustom predicate tooltip blurb\.">Custom function check<\/span>: <code class="other-req-path">RequiredAlive<\/code>/
+    );
+    // Bare key ``NamedRequirementsFalse`` (no colon) -> friendly pill,
+    // no path tail.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span> = \[&quot;NoBossActive&quot;\]/
+    );
+});
+
+
+test('otherRequirements: unknown prefixes fall back to the raw escaped key', () => {
+    loadData(fixtureWithOtherRequirements());
+    renderInfo('OrpheusOtherReqDemo');
+    // ``UnknownPrefix`` has no entry in ``reqTypeLabels`` - the
+    // renderer must keep the original full key as plain escaped text
+    // so nothing is lost when the per-game vocabulary doesn't cover a
+    // newly-introduced operator.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item">UnknownPrefix:Foo\.Bar = leave-me-raw<\/div>/
+    );
+    // The unknown key must NOT be wrapped in a req-type pill.
+    assert.doesNotMatch(lastHtml, /<span class="req-type-name"[^>]*>UnknownPrefix<\/span>/);
+});
+
+
+// ``Path:<head>`` compound keys synthesised by ``_synth_other_key``
+// carry no operator info in the prefix - the actual test op lives
+// inside the value records. The renderer must pull the inner op into
+// a human-readable line (``head <comparator> value`` for Comparison,
+// ``head <verb>: <items>`` for membership tests).
+function fixtureWithPathRecords() {
+    const data = buildFixtureData();
+    data.textlines.PathRecordDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            // Clean numeric comparison - the user's exact example.
+            'Path:GameState.ClearedUnderworldRunsCache': [
+                {
+                    Comparison: '>',
+                    Path: ['GameState', 'ClearedUnderworldRunsCache'],
+                    Value: 2,
+                },
+            ],
+            // IsAny membership test against a scalar value at the path.
+            'Path:AudioState.AmbientTrackName': [
+                {
+                    IsAny: ['/Music/ArtemisSong_MC', '/Music/IrisEndThemeCrossroads_MC'],
+                    Path: ['AudioState', 'AmbientTrackName'],
+                },
+            ],
+            // HasAny membership test against a container at the path.
+            'Path:CurrentRun.RoomsEntered': [
+                {
+                    HasAny: ['O_Boss01', 'O_Boss02'],
+                    Path: ['CurrentRun', 'RoomsEntered'],
+                },
+            ],
+            // Two records under the same Path:<head> key get AND-joined.
+            'Path:GameState.Resources.GiftPointsRare': [
+                {
+                    Comparison: '>=',
+                    Path: ['GameState', 'Resources', 'GiftPointsRare'],
+                    Value: 1,
+                },
+                {
+                    Comparison: '<',
+                    Path: ['GameState', 'Resources', 'GiftPointsRare'],
+                    Value: 5,
+                },
+            ],
+            // Decorated record carrying a SumPrevRuns modifier - we
+            // don't know how to render those today, so the renderer
+            // must fall back to the raw JSON dump rather than silently
+            // drop the modifier.
+            'Path:GameState.NonClean': [
+                {
+                    Comparison: '>=',
+                    Path: ['GameState', 'NonClean'],
+                    SumPrevRuns: 3,
+                    Value: 1,
+                },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: Path:<head> + Comparison records render as "head op value"', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // The user's exact requested format: ``GameState.ClearedUnderworldRunsCache > 2``.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: Path:<head> + membership records render with a verbal operator', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // IsAny -> "is one of": <items>
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/div>/
+    );
+    // HasAny -> "contains any of": <items>
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: multiple Path:<head> records under one key are AND-joined', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // Two Comparison records on the same path get joined with a
+    // visible AND separator (the engine AND-combines them).
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &gt;= <code>1<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &lt; <code>5<\/code>/
+    );
+});
+
+
+test('otherRequirements: Path:<head> records with unknown modifiers fall back to raw JSON', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // ``SumPrevRuns`` is a known modifier we don't render specially
+    // yet - the renderer must NOT pretend it's a clean comparison.
+    // The raw JSON dump preserves all fields verbatim.
+    assert.match(lastHtml, /Path:GameState\.NonClean = /);
+    assert.match(lastHtml, /SumPrevRuns/);
+});
+
