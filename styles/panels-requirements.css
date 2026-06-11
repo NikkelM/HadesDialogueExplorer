@@ -156,3 +156,47 @@
     color: #c9d1d9;
     font-weight: 600;
 }
+
+/* Alternative Requirement Groups (H2 ``OrRequirements``): a parent
+   ``.req-section.req-type-or-group`` wraps one ``.or-branch`` per
+   alternative. Distinctive amber accent so the reader can tell at a
+   glance "any one of these branches is enough" vs the AND base block
+   above ("all of these must hold"). The branch headers use ``<h5>``
+   instead of ``<h4>`` to differentiate visually from the per-req-type
+   sub-headers inside each branch. */
+.req-type-or-group {
+    border-left-color: #b07a3a;
+    background: rgba(176, 122, 58, 0.05);
+}
+.req-type-or-group > h4 {
+    background: #3d2b1f;
+    color: #f4a261;
+}
+.or-branch {
+    margin-top: 6px;
+    padding: 4px 6px 4px 10px;
+    border-left: 2px dashed rgba(176, 122, 58, 0.55);
+    border-radius: 2px;
+    background: rgba(176, 122, 58, 0.025);
+}
+.or-branch:first-child { margin-top: 2px; }
+.or-branch-header {
+    font-size: 11px;
+    margin: 0 0 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    background: rgba(176, 122, 58, 0.15);
+    color: #e9c46a;
+}
+.or-branch-header .toggle {
+    display: inline-block;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-right: 4px;
+}
+.or-branch-children { display: none; }
+.or-branch-children.expanded { display: block; }

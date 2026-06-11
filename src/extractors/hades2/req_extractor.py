@@ -270,6 +270,14 @@ def extract_requirements(req_set, named_requirements=None, *, _visited=frozenset
                         or branch_result["otherRequirements"]
                         or branch_result["orBranches"]
                         or branch_result["flags"]):
+                    # Prune empty containers from each per-branch
+                    # payload before it lands on ``result["orBranches"]``
+                    # so the serialised JSON stays compact (the viewer
+                    # uses ``branch.requirements`` / ``branch.flags``
+                    # with ``?.`` checks, so absent keys are fine).
+                    for k in ("requirements", "otherRequirements", "orBranches", "flags"):
+                        if not branch_result[k]:
+                            del branch_result[k]
                     result["orBranches"].append(branch_result)
 
     # --- Per-record array entries ------------------------------------------

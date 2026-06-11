@@ -675,3 +675,111 @@ test('otherRequirements entries render in reqTypeOrderIndex order by prefix, sta
 });
 
 
+
+
+// H2 OrRequirements (alternative requirement groups). The details panel
+// must surface every branch under a dedicated "Alternative Requirement
+// Groups (OR)" section so the reader can see that the parent textline
+// is satisfied if ANY one branch passes - this is a fundamentally
+// different gating semantic to the AND base block above. Each branch
+// renders its own per-req-type sub-sections + inline otherRequirements
+// (no nested "Other Requirements" header inside a branch, since the
+// branch header already provides scope).
+function fixtureWithOrBranches() {
+    const data = buildFixtureData();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue: 'Must be true',
+    };
+    data.textlines.OrDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'or demo' }],
+        requirements: {
+            RequiredTextLines: ['BaseDep'],
+        },
+        otherRequirements: {},
+        orBranches: [
+            {
+                requirements: { RequiredTextLines: ['BranchOneDep'] },
+                otherRequirements: { 'PathTrue:GameState.X': { Path: ['GameState', 'X'] } },
+            },
+            {
+                requirements: { RequiredAnyTextLines: ['BranchTwoDepA', 'BranchTwoDepB'] },
+                otherRequirements: {},
+            },
+        ],
+    };
+    return data;
+}
+
+
+test('OR branches render a dedicated option requirement groups section', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    assert.match(lastHtml, /At least one of these 2 branches/);
+    assert.match(lastHtml, /req-type-or-group/);
+    // The wrapping section is a regular collapsible req-section so it
+    // can be folded away if the user doesn't want to see the OR
+    // alternatives detail.
+    assert.match(lastHtml, /class="req-section req-type-or-group"/);
+});
+
+
+test('OR branches render one per-branch sub-header with the canonical "Option N of M" label', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    const headerCount = (lastHtml.match(/class="or-branch-header"/g) || []).length;
+    assert.equal(headerCount, 2);
+    assert.match(lastHtml, /Option 1 of 2/);
+    assert.match(lastHtml, /Option 2 of 2/);
+});
+
+
+test('OR branches still render their textline children inside req-type sub-sections', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    // Each branch carries its own `.req-section.req-type-<X>` block
+    // for textline-typed requirements so the per-branch contents read
+    // with the same structure as the AND base block above.
+    assert.match(lastHtml, /BranchOneDep/);
+    assert.match(lastHtml, /BranchTwoDepA/);
+    assert.match(lastHtml, /BranchTwoDepB/);
+    // The branch with otherRequirements inlines them WITHOUT a nested
+    // "Other Requirements" header (the surrounding branch already
+    // provides scope) - exactly one Other Requirements header should
+    // appear in the rendered HTML, only when the base block has its
+    // own otherRequirements. The fixture's base has none, so the
+    // header should not appear at all.
+    const otherHeaders = (lastHtml.match(/Other Requirements/g) || []).length;
+    assert.equal(otherHeaders, 0);
+});
+
+
+test('OR branches preserve the base AND block above with its own requirements', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    // The base requirements must still render as a top-level section
+    // separate from the OR group: a textline can have BOTH an AND
+    // base block ("must always hold") and an OR alternatives block
+    // ("any one of these as well"), and the reader needs to see
+    // both clearly differentiated.
+    assert.match(lastHtml, /BaseDep/);
+    // The base RequiredTextLines section appears before the OR group
+    // wrapper in the rendered HTML.
+    const baseIdx = lastHtml.indexOf('BaseDep');
+    const orIdx = lastHtml.indexOf('req-type-or-group');
+    assert.ok(baseIdx > -1 && orIdx > -1);
+    assert.ok(baseIdx < orIdx, 'base AND requirements should render before the OR alternatives section');
+});
+
+
+test('textlines without orBranches render no option requirement groups section', () => {
+    loadData(buildFixtureData());
+    renderInfo('OrpheusSingsAgain02');
+    assert.doesNotMatch(lastHtml, /At least one of these/);
+    assert.doesNotMatch(lastHtml, /req-type-or-group/);
+    assert.doesNotMatch(lastHtml, /or-branch-header/);
+});

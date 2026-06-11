@@ -103,6 +103,17 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                     "otherRequirements": tl_data.get("otherRequirements", {}),
                     "dialogueLines": tl_data.get("dialogueLines", []),
                 }
+                # H2 alternative requirement groups (set-level
+                # ``OrRequirements`` on the source RequirementSet). Each
+                # branch is itself a {requirements, otherRequirements,
+                # flags} record produced by the H2 req walker. The
+                # viewer renders them as collapsible OR-group boxes
+                # alongside the base AND requirements; the dependent
+                # builder also walks them so OR-branch textline edges
+                # remain navigable downstream (tagged with branch index
+                # for visual disambiguation).
+                if tl_data.get("orBranches"):
+                    new_entry["orBranches"] = tl_data["orBranches"]
                 # Per-requirement-type provenance: each entry in
                 # `requirements[type]` is paired 1:1 with an entry here that
                 # is either a "GameData.X" group name (the expansion source)
@@ -188,6 +199,12 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
     for tl_data in textlines.values():
         for req_list in tl_data["requirements"].values():
             all_referenced.update(req_list)
+        # H2 OR-branch textline edges also count as references for
+        # unresolved-ref reporting: an OR alternative pointing at a
+        # missing textline is just as broken as a base requirement.
+        for branch in tl_data.get("orBranches") or []:
+            for req_list in (branch.get("requirements") or {}).values():
+                all_referenced.update(req_list)
 
     stats = {
         "totalSpeakers": count_distinct_speakers(
@@ -304,6 +321,7 @@ def dup_summary(entry: dict) -> dict:
 # variant carries.
 _VARIANT_OPTIONAL_FIELDS = (
     "requirementSources",
+    "orBranches",
     "playOnce",
     "partner",
     "parentTextline",
@@ -534,7 +552,7 @@ def _entry_from_variant(canonical: dict, variant: dict, original_name: str,
 
 
 def _build_dependents(textlines: dict) -> dict:
-    """Reverse-index requirements: dep_name -> [{name, type}, ...].
+    """Reverse-index requirements: dep_name -> [{name, type, ...}, ...].
 
     Self-references are intentionally excluded. They always come from
     cooldown / PlayOnce-style fields (``MinRunsSinceAnyTextLines``,
@@ -542,6 +560,12 @@ def _build_dependents(textlines: dict) -> dict:
     they are idiomatic game-data patterns rather than real graph edges.
     Including them would inflate ``stats.totalEdges`` and produce
     misleading "cycle" markers in the viewer's tree.
+
+    H2 ``orBranches`` (alternative requirement groups) are walked as
+    well so OR-branch textline edges remain navigable from the
+    downstream side. Each OR-branch edge carries ``orBranchIndex``
+    (1-based) and ``orBranchTotal`` so the viewer can tag the
+    dependent as "(OR alt N of M)" rather than a hard requirement.
     """
     dependents = {}
     for tl_name, tl_data in textlines.items():
@@ -550,4 +574,18 @@ def _build_dependents(textlines: dict) -> dict:
                 if dep == tl_name:
                     continue
                 dependents.setdefault(dep, []).append({"name": tl_name, "type": req_type})
+        or_branches = tl_data.get("orBranches") or []
+        total_branches = len(or_branches)
+        for branch_index, branch in enumerate(or_branches, start=1):
+            branch_reqs = (branch or {}).get("requirements") or {}
+            for req_type, req_list in branch_reqs.items():
+                for dep in req_list:
+                    if dep == tl_name:
+                        continue
+                    dependents.setdefault(dep, []).append({
+                        "name": tl_name,
+                        "type": req_type,
+                        "orBranchIndex": branch_index,
+                        "orBranchTotal": total_branches,
+                    })
     return dependents

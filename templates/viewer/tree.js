@@ -45,7 +45,32 @@ export function getChildren(name, direction) {
                         name: refs[i],
                         edgeType: type,
                         group: sources[i] || null,
+                        orBranchIndex: null,
+                        orBranchTotal: null,
                     });
+                }
+            }
+            // H2 alternative requirement groups (``OrRequirements``).
+            // Each branch contributes its own textline-typed children
+            // tagged with the 1-based branch index + total. The tree
+            // renderer partitions kids on these tags so OR-tagged
+            // children render under a dedicated Alternative wrapper,
+            // separated from the AND base block above.
+            const orBranches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
+            const total = orBranches.length;
+            for (let bi = 0; bi < total; bi++) {
+                const branchReqs = (orBranches[bi] && orBranches[bi].requirements) || {};
+                for (const [type, refs] of Object.entries(branchReqs)) {
+                    for (let i = 0; i < refs.length; i++) {
+                        if (refs[i] === name) continue;
+                        children.push({
+                            name: refs[i],
+                            edgeType: type,
+                            group: null,
+                            orBranchIndex: bi + 1,
+                            orBranchTotal: total,
+                        });
+                    }
                 }
             }
         }
@@ -55,7 +80,21 @@ export function getChildren(name, direction) {
             // index by graph.py, but guard defensively in case the
             // upstream data ever changes.
             if (dep.name === name) continue;
-            children.push({ name: dep.name, edgeType: dep.type, group: null });
+            // OR-branch tagging on dep edges (``orBranchIndex`` /
+            // ``orBranchTotal``) is preserved so the tree renderer
+            // can route the dependent under a dedicated "Optional
+            // gate (via OR option)" section -- mixing OR-routed
+            // dependents in with strict AND-dependents would falsely
+            // imply the dependent requires this textline, when in
+            // truth the dependent's OR group is satisfied by any one
+            // option (this textline being one of them).
+            children.push({
+                name: dep.name,
+                edgeType: dep.type,
+                group: null,
+                orBranchIndex: dep.orBranchIndex || null,
+                orBranchTotal: dep.orBranchTotal || null,
+            });
         }
     }
     return children;
@@ -67,9 +106,16 @@ export function hasChildren(name, direction) {
         if (!tl) return false;
         // Mirror getChildren's self-filter so a textline whose only
         // requirement is a self-reference renders as a leaf.
-        return Object.values(tl.requirements).some(
+        const baseHas = Object.values(tl.requirements).some(
             r => r.some(ref => ref !== name)
         );
+        if (baseHas) return true;
+        // Any OrRequirements branches at all count as expandable - even
+        // branches without textline-typed children render as
+        // placeholder rows in the OR group, so users can see the
+        // alternative count and the pointer to the details panel.
+        const orBranches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
+        return orBranches.length > 0;
     }
     return (dependents[name] || []).some(d => d.name !== name);
 }
@@ -106,7 +152,7 @@ export function ensureExpandedContentVisible(container) {
     });
 }
 
-export function createNodeEl(name, edgeType, direction, ancestorPath) {
+export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
     const tl = textlines[name];
     // Use the friendly display name for the owner tag when available,
     // otherwise fall back to a stripped-down version of the internal ID.
@@ -193,6 +239,21 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         cycleSpan.className = 'cycle-marker';
         cycleSpan.textContent = ' \u21A9 cycle';
         label.appendChild(cycleSpan);
+    }
+
+    // OR-routed dep badge (downstream only). Indicates this row
+    // satisfies the dependent's OR group via a specific option, so
+    // the dependent does NOT strictly require this textline -- any
+    // one option in its group satisfies the gate. The badge is the
+    // only place the option index/total surfaces in the tree; the
+    // containing ".or-downstream-section" wrapper carries the
+    // higher-level "this section is OR-routed" framing.
+    if (edgeOpts && edgeOpts.orBranchIndex && edgeOpts.orBranchTotal) {
+        const orAlt = document.createElement('span');
+        orAlt.className = 'or-alt-badge';
+        orAlt.textContent = `option ${edgeOpts.orBranchIndex}/${edgeOpts.orBranchTotal}`;
+        orAlt.dataset.tooltip = `Routed via option ${edgeOpts.orBranchIndex} of ${edgeOpts.orBranchTotal} in this dependent's OR group. The dependent does not strictly need this textline; any one option in its OR group satisfies the gate.`;
+        label.appendChild(orAlt);
     }
 
     // Narrative-priority badge. Tree view shows a single compact

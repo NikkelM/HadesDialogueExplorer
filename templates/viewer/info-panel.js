@@ -394,6 +394,74 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     const requirements = src.requirements || {};
     const otherRequirements = src.otherRequirements || {};
 
+    html += renderRequirementsAndOtherHtml(
+        requirements,
+        otherRequirements,
+        {
+            textlineName,
+            sourcesByType: src.requirementSources || {},
+            // The base requirements block uses sectioned ``<h4>``
+            // headers per requirement type with a final "Other
+            // Requirements" section header. OR-branch payloads reuse
+            // this helper with ``compact: true`` to suppress the
+            // "Other Requirements" header (the surrounding branch
+            // header already provides scope context).
+            otherHeaderLabel: 'Other Requirements',
+        }
+    );
+
+    // H2 alternative requirement groups (set-level ``OrRequirements``
+    // on the source RequirementSet). Each branch is itself a set of
+    // requirements + otherRequirements that, taken together, satisfies
+    // the group; the group as a whole satisfies the parent textline if
+    // ANY one branch passes. Rendered as a sibling section to the
+    // base AND requirements above so the reader sees both at a glance
+    // - the base block is what MUST always hold, the OR block lists
+    // the options where any one is sufficient.
+    const orBranches = Array.isArray(src.orBranches) ? src.orBranches : [];
+    if (orBranches.length > 0) {
+        const total = orBranches.length;
+        const groupLabel = `At least one of these ${total} branch${total === 1 ? '' : 'es'}`;
+        html += `<div class="req-section req-type-or-group">`
+              + `<h4><span class="toggle">\u25BC</span>${escapeHtml(groupLabel)}</h4>`
+              + `<div class="req-section-children expanded">`;
+        for (let bi = 0; bi < orBranches.length; bi++) {
+            const branch = orBranches[bi] || {};
+            html += `<div class="or-branch">`
+                  + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
+                  + `Option ${bi + 1} of ${total}</h5>`
+                  + `<div class="or-branch-children expanded">`;
+            html += renderRequirementsAndOtherHtml(
+                branch.requirements || {},
+                branch.otherRequirements || {},
+                {
+                    textlineName,
+                    sourcesByType: {},
+                    otherHeaderLabel: null,
+                }
+            );
+            html += `</div></div>`;
+        }
+        html += `</div></div>`;
+    }
+
+    return html;
+}
+
+
+// Render the requirements + otherRequirements blocks for one set of
+// requirement data - the textline's base AND set, or a single OR
+// branch. Extracted from ``renderDialogueAndRequirementsHtml`` so OR
+// branches can reuse the exact same per-section markup, sort order,
+// inline GameData grouping, and Count-on-header merging as the base
+// block. The only difference between the two call sites is the
+// "Other Requirements" outer header: the base wraps its non-textline
+// gates in a labelled ``<h4>`` section, OR branches inline them
+// directly under the branch header (which already provides scope).
+function renderRequirementsAndOtherHtml(requirements, otherRequirements, options) {
+    const { textlineName, sourcesByType, otherHeaderLabel } = options;
+    let html = '';
+
     // Sort requirement sections by the canonical per-game display
     // order so the panel reads with the same ALL -> ANY -> NONE ->
     // MIN -> MAX banding as the tree view (both surfaces consume the
@@ -417,7 +485,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
         html += `<div class="req-section req-type-${type}">`
               + `<h4><span class="toggle">\u25BC</span>${renderReqTypeHtml(type)}${countSuffix}</h4>`
               + `<div class="req-section-children expanded">`;
-        const sources = (src.requirementSources && src.requirementSources[type]) || [];
+        const sources = (sourcesByType && sourcesByType[type]) || [];
         let i = 0;
         while (i < refs.length) {
             const srcGroup = sources[i] || null;
@@ -475,10 +543,17 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
             otherHtml += `<div class="other-req-item">${renderOtherReqEntryHtml(key, val)}</div>`;
         }
         if (otherHtml) {
-            html += `<div class="req-section req-type-other">`
-                  + `<h4><span class="toggle">\u25BC</span>Other Requirements</h4>`
-                  + `<div class="req-section-children expanded">${otherHtml}</div>`
-                  + `</div>`;
+            if (otherHeaderLabel) {
+                html += `<div class="req-section req-type-other">`
+                      + `<h4><span class="toggle">\u25BC</span>${escapeHtml(otherHeaderLabel)}</h4>`
+                      + `<div class="req-section-children expanded">${otherHtml}</div>`
+                      + `</div>`;
+            } else {
+                // Compact (OR-branch) mode: inline the items directly
+                // under the surrounding branch header without an extra
+                // section wrapper.
+                html += otherHtml;
+            }
         }
     }
 
@@ -569,6 +644,15 @@ export function initInfoPanel() {
         const gdHeader = e.target.closest('.gamedata-group-header-inline');
         if (gdHeader && container.contains(gdHeader)) {
             toggleSection(gdHeader, 'gamedata-group-children-inline');
+            return;
+        }
+        // OR-branch header (h5) inside an Alternative Requirement
+        // Groups section. Matched before the wrapping req-section h4
+        // so a click on a branch header never bubbles up and folds
+        // the whole OR group.
+        const orBranchHeader = e.target.closest('.or-branch-header');
+        if (orBranchHeader && container.contains(orBranchHeader)) {
+            toggleSection(orBranchHeader, 'or-branch-children');
             return;
         }
         // Outer collapse target: the requirement-section header (h4).
