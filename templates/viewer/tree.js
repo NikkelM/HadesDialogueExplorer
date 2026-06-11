@@ -236,48 +236,72 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
 
     node.appendChild(label);
 
-    // Click handlers: the toggle chevron expands / collapses the row's
-    // children only; everywhere else on the row selects the textline in
-    // the details panel. Keeping the two intents -- "show me what's
-    // under this node" vs. "make this node the focus" -- on separate
-    // hit targets means exploring the tree structure no longer
-    // disturbs the details-panel context. Double-clicking the row
-    // (anywhere, including the toggle) re-roots the panels.
+    // Click handlers: the toggle chevron is a pure expand / collapse
+    // toggle (no selection change), so the user can fold a branch
+    // back up without re-rooting the details panel. Clicking the row
+    // body anywhere else both selects the textline in the details
+    // panel AND ensures its children are expanded -- exploring deeper
+    // is the natural follow-up to "show me this dialogue". The body
+    // click is expand-only (never collapses) so a re-click on an
+    // already-open row doesn't surprise-fold it; collapsing is the
+    // chevron's job. Double-clicking the row (anywhere, including the
+    // toggle) re-roots the panels.
     if (expandable) {
-        toggle.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Idempotent expand: builds the children container the first
+        // time, then marks it expanded if it isn't already. Returns
+        // the children container so callers can scroll it into view.
+        const expandNode = () => {
             let childContainer = label.nextElementSibling;
             if (childContainer && childContainer.classList.contains('tree-children')) {
-                // Toggle existing children
-                const isExpanded = childContainer.classList.contains('expanded');
-                childContainer.classList.toggle('expanded');
-                toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-                if (!isExpanded) ensureExpandedContentVisible(childContainer);
-            } else {
-                // Lazily create children
-                childContainer = document.createElement('div');
-                childContainer.className = 'tree-children expanded';
-                const newPath = new Set(ancestorPath);
-                newPath.add(name);
-                const kids = getChildren(name, direction);
-                appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
-                node.appendChild(childContainer);
-                toggle.textContent = '\u25BC';
-                ensureExpandedContentVisible(childContainer);
+                if (!childContainer.classList.contains('expanded')) {
+                    childContainer.classList.add('expanded');
+                    toggle.textContent = '\u25BC';
+                    ensureExpandedContentVisible(childContainer);
+                }
+                return childContainer;
             }
+            childContainer = document.createElement('div');
+            childContainer.className = 'tree-children expanded';
+            const newPath = new Set(ancestorPath);
+            newPath.add(name);
+            const kids = getChildren(name, direction);
+            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
+            node.appendChild(childContainer);
+            toggle.textContent = '\u25BC';
+            ensureExpandedContentVisible(childContainer);
+            return childContainer;
+        };
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const childContainer = label.nextElementSibling;
+            if (childContainer
+                && childContainer.classList.contains('tree-children')
+                && childContainer.classList.contains('expanded')) {
+                // Collapse only when the chevron is clicked. The row
+                // body click never reaches this branch (its handler
+                // calls expandNode which never collapses).
+                childContainer.classList.remove('expanded');
+                toggle.textContent = '\u25B6';
+                return;
+            }
+            expandNode();
+        });
+
+        label.addEventListener('click', (e) => {
+            // Defensive: skip when the click landed inside the toggle
+            // chevron. The toggle's own handler already calls
+            // stopPropagation, so this guard mainly protects against
+            // future child elements inside `.toggle`.
+            if (e.target.closest('.toggle')) return;
+            renderInfo(name);
+            expandNode();
+        });
+    } else {
+        label.addEventListener('click', () => {
+            renderInfo(name);
         });
     }
-
-    label.addEventListener('click', (e) => {
-        // Defensive: skip when the click landed inside an active
-        // toggle. Its own handler already calls stopPropagation, so
-        // this guard mainly protects against future child elements
-        // inside `.toggle`. On leaf rows the toggle has no handler
-        // attached and is just a decorative mid-dot, so we still want
-        // clicks on it to select like the rest of the row body.
-        if (expandable && e.target.closest('.toggle')) return;
-        renderInfo(name);
-    });
 
     label.addEventListener('dblclick', () => navigateTo(name));
 
