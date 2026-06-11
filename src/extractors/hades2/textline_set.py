@@ -43,6 +43,8 @@ documented in the project plan):
 
     UsePlayerSource = true   -> ``PlayerUnit`` (Melinoe)
     Speaker = "Bare"          -> the literal string from the cue
+    Source = "NPC_X_01"       -> the per-cue actor override (resolved
+                                 via ``HADES2_SPEAKERS`` in the viewer)
     /VO/<Char>_NNNN cue id    -> deferred (handled by a future
                                  cue_speaker_resolver hook, mirroring
                                  the H1 EncounterRoomData pattern)
@@ -269,7 +271,17 @@ def _resolve_cue_speaker(cue: LuaTable, fallback_speaker: str) -> str:
     2. Explicit ``Speaker = "..."`` field. May be a bare name string
        (``"Artemis"``) which will need a bare-name-to-id map in a
        follow-up; for now the literal flows through.
-    3. Fallback to the owner's id (passed in by the caller).
+    3. Explicit ``Source = "<NPC_X_01>"`` field. The engine uses this
+       to attach the cue to a non-owner actor's entity (commonly a
+       second NPC sharing a scene, e.g. Chronos cues inside the Hecate
+       boss textline ``HecateBossKidnapped01``). The string value is
+       itself a canonical speaker id, so it flows through unchanged
+       and the viewer maps it to the friendly name via
+       ``HADES2_SPEAKERS``. Sits below ``Speaker`` because the latter
+       is a more explicit subtitle-label override; sits above the
+       owner fallback because per-cue ``Source`` should beat the
+       containing textline's default speaker whenever both are set.
+    4. Fallback to the owner's id (passed in by the caller).
 
     A future hook for cue-id-prefix resolution (``/VO/<Char>_NNNN`` ->
     canonical id) mirroring H1's ``cue_speaker_resolver`` parameter
@@ -282,6 +294,9 @@ def _resolve_cue_speaker(cue: LuaTable, fallback_speaker: str) -> str:
     speaker = cue.get("Speaker")
     if isinstance(speaker, str) and speaker:
         return speaker
+    source = cue.get("Source")
+    if isinstance(source, str) and source:
+        return source
     return fallback_speaker
 
 

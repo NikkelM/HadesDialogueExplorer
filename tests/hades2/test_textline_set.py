@@ -161,6 +161,40 @@ class TestSpeakerResolution:
         data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
         assert data["dialogueLines"][0]["speaker"] == PLAYER_SPEAKER_ID
 
+    def test_source_field_overrides_owner_fallback(self):
+        # Engine attaches the cue to the entity named by ``Source``,
+        # which the viewer maps to a canonical speaker via
+        # ``HADES2_SPEAKERS``. The owner here is Hecate but Chronos
+        # voices the line - matches the real H2 case in
+        # ``HecateBossKidnapped01`` where Chronos lines sit inside a
+        # textline owned by Hecate.
+        tl = _parse_textline("""{
+            { Cue = "/VO/Chronos_0973", Source = "NPC_Chronos_01", Text = "Hi." },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Hecate_01", "Test.lua")
+        assert data["dialogueLines"][0]["speaker"] == "NPC_Chronos_01"
+
+    def test_explicit_speaker_wins_over_source(self):
+        # ``Speaker`` is the explicit subtitle-label override and beats
+        # the per-cue ``Source`` actor reference - any real cue that
+        # sets both intends the Speaker as the displayed name.
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", Speaker = "Hermes", Source = "NPC_Chronos_01", Text = "Hi." },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        assert data["dialogueLines"][0]["speaker"] == "Hermes"
+
+    def test_use_player_source_wins_over_source(self):
+        # Even with a non-player ``Source`` set explicitly,
+        # ``UsePlayerSource = true`` still routes the cue through the
+        # player's subtitle stream (matches the documented engine
+        # precedence for the boolean shortcut).
+        tl = _parse_textline("""{
+            { Cue = "/VO/X_0001", UsePlayerSource = true, Source = "NPC_Chronos_01", Text = "Hi." },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        assert data["dialogueLines"][0]["speaker"] == PLAYER_SPEAKER_ID
+
 
 class TestRequirementsRouting:
     def test_textline_path_becomes_dialogue_edge(self):
