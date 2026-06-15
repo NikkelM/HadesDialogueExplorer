@@ -22,6 +22,8 @@ from src.lua_parser import LuaParser
 from src.extractors.hades2.narrative_data import (
     apply_narrative_priorities,
     extract_narrative_priorities,
+    find_unattached_priority_groups,
+    iter_priority_keys,
 )
 
 
@@ -301,6 +303,209 @@ class TestApply:
         count = apply_narrative_priorities(owners, self._priorities())
         assert count == 1
         assert owners["NPC_Hecate_01"]["InteractTextLineSets"]["HecateA"]["narrativePriorityOrdinal"] == 1
+
+
+class TestOrphanPriorityAudit:
+    """Cross-source orphan-priority audit primitives.
+
+    The build pipeline accumulates the ``(owner, section, textline)``
+    tuples actually attached across all H2 source calls and subtracts
+    them from ``iter_priority_keys`` to surface NarrativeData records
+    no source consumed. These tests cover the building blocks: the
+    flattener and the accumulator wiring on
+    :func:`apply_narrative_priorities`.
+    """
+
+    def _priorities(self):
+        return {
+            "NPC_Hecate_01": {
+                "InteractTextLineSets": {
+                    "HecateA": {"narrativePriorityOrdinal": 1, "narrativePrioritySectionSize": 2, "narrativePriorityClusterMembers": []},
+                    "HecateB": {"narrativePriorityOrdinal": 2, "narrativePrioritySectionSize": 2, "narrativePriorityClusterMembers": []},
+                },
+                "GiftTextLineSets": {
+                    "HecateGift1": {"narrativePriorityOrdinal": 1, "narrativePrioritySectionSize": 1, "narrativePriorityClusterMembers": []},
+                },
+            },
+            "NPC_Nemesis_01": {
+                "InteractTextLineSets": {
+                    "NemX": {"narrativePriorityOrdinal": 1, "narrativePrioritySectionSize": 1, "narrativePriorityClusterMembers": []},
+                },
+            },
+        }
+
+    def test_iter_priority_keys_flattens_full_tree(self):
+        keys = set(iter_priority_keys(self._priorities()))
+        assert keys == {
+            ("NPC_Hecate_01", "InteractTextLineSets", "HecateA"),
+            ("NPC_Hecate_01", "InteractTextLineSets", "HecateB"),
+            ("NPC_Hecate_01", "GiftTextLineSets", "HecateGift1"),
+            ("NPC_Nemesis_01", "InteractTextLineSets", "NemX"),
+        }
+
+    def test_iter_priority_keys_handles_empty_input(self):
+        assert list(iter_priority_keys({})) == []
+
+    def test_attached_keys_records_only_successful_attachments(self):
+        # Hecate source has only HecateA + the gift; the cross-source
+        # orphan set (computed by main()) should then include HecateB
+        # and the unrelated Nemesis record.
+        owners = {
+            "NPC_Hecate_01": {
+                "source": "Hades 2",
+                "InteractTextLineSets": {"HecateA": {"dialogueLines": []}},
+                "GiftTextLineSets": {"HecateGift1": {"dialogueLines": []}},
+            },
+        }
+        accumulator: set = set()
+        count = apply_narrative_priorities(
+            owners, self._priorities(), attached_keys=accumulator,
+        )
+        assert count == 2
+        assert accumulator == {
+            ("NPC_Hecate_01", "InteractTextLineSets", "HecateA"),
+            ("NPC_Hecate_01", "GiftTextLineSets", "HecateGift1"),
+        }
+        # Orphan set is the full key set minus what was attached.
+        orphans = set(iter_priority_keys(self._priorities())) - accumulator
+        assert orphans == {
+            ("NPC_Hecate_01", "InteractTextLineSets", "HecateB"),
+            ("NPC_Nemesis_01", "InteractTextLineSets", "NemX"),
+        }
+
+    def test_attached_keys_accumulates_across_multiple_calls(self):
+        # Simulate two sources: NPC_Hecate_01 in one file,
+        # NPC_Nemesis_01 in another. Only after both sources have run
+        # is the orphan set known. HecateB stays orphaned because no
+        # source ships it.
+        priorities = self._priorities()
+        accumulator: set = set()
+        apply_narrative_priorities(
+            {
+                "NPC_Hecate_01": {
+                    "source": "Hades 2",
+                    "InteractTextLineSets": {"HecateA": {}},
+                    "GiftTextLineSets": {"HecateGift1": {}},
+                },
+            },
+            priorities,
+            attached_keys=accumulator,
+        )
+        apply_narrative_priorities(
+            {
+                "NPC_Nemesis_01": {
+                    "source": "Hades 2",
+                    "InteractTextLineSets": {"NemX": {}},
+                },
+            },
+            priorities,
+            attached_keys=accumulator,
+        )
+        orphans = set(iter_priority_keys(priorities)) - accumulator
+        assert orphans == {
+            ("NPC_Hecate_01", "InteractTextLineSets", "HecateB"),
+        }
+
+    def test_attached_keys_absent_keeps_existing_behaviour(self):
+        # Backward-compat: existing callers that don't pass
+        # ``attached_keys`` get the same return value with no
+        # observable side effect.
+        owners = {
+            "NPC_Hecate_01": {
+                "source": "Hades 2",
+                "InteractTextLineSets": {"HecateA": {}, "HecateB": {}},
+            },
+        }
+        count = apply_narrative_priorities(owners, self._priorities())
+        assert count == 2
+
+
+class TestFindUnattachedPriorityGroups:
+    """``find_unattached_priority_groups`` filters cluster sub-entries
+    whose leader did attach, so only likely-real drift is surfaced."""
+
+    def _priorities_with_cluster(self):
+        # Ordinal 1 is solo "Lead"; ordinal 2 is a 3-member cluster
+        # {"AltA", "AltB", "AltC"}. Each cluster member's record lists
+        # the other two as siblings.
+        return {
+            "NPC_X_01": {
+                "InteractTextLineSets": {
+                    "Lead": {
+                        "narrativePriorityOrdinal": 1,
+                        "narrativePrioritySectionSize": 2,
+                        "narrativePriorityClusterMembers": [],
+                    },
+                    "AltA": {
+                        "narrativePriorityOrdinal": 2,
+                        "narrativePrioritySectionSize": 2,
+                        "narrativePriorityClusterMembers": ["AltB", "AltC"],
+                    },
+                    "AltB": {
+                        "narrativePriorityOrdinal": 2,
+                        "narrativePrioritySectionSize": 2,
+                        "narrativePriorityClusterMembers": ["AltA", "AltC"],
+                    },
+                    "AltC": {
+                        "narrativePriorityOrdinal": 2,
+                        "narrativePrioritySectionSize": 2,
+                        "narrativePriorityClusterMembers": ["AltA", "AltB"],
+                    },
+                },
+            },
+        }
+
+    def test_returns_empty_when_all_attached(self):
+        priorities = self._priorities_with_cluster()
+        attached = set(iter_priority_keys(priorities))
+        assert find_unattached_priority_groups(priorities, attached) == []
+
+    def test_cluster_sub_entry_orphan_filtered_when_sibling_attached(self):
+        priorities = self._priorities_with_cluster()
+        # Lead attached + only AltA attached from the cluster. AltB
+        # and AltC are pure ordering hints and should NOT surface.
+        attached = {
+            ("NPC_X_01", "InteractTextLineSets", "Lead"),
+            ("NPC_X_01", "InteractTextLineSets", "AltA"),
+        }
+        assert find_unattached_priority_groups(priorities, attached) == []
+
+    def test_entire_cluster_orphan_surfaces(self):
+        priorities = self._priorities_with_cluster()
+        # Only Lead attached; the whole 3-member cluster orphaned -
+        # all three should surface because no sibling attached.
+        attached = {("NPC_X_01", "InteractTextLineSets", "Lead")}
+        assert find_unattached_priority_groups(priorities, attached) == [
+            ("NPC_X_01", "InteractTextLineSets", "AltA"),
+            ("NPC_X_01", "InteractTextLineSets", "AltB"),
+            ("NPC_X_01", "InteractTextLineSets", "AltC"),
+        ]
+
+    def test_solo_orphan_surfaces(self):
+        priorities = self._priorities_with_cluster()
+        # Cluster attached fully; Lead orphaned solo (no cluster, no
+        # siblings to absorb it) - surfaces.
+        attached = {
+            ("NPC_X_01", "InteractTextLineSets", "AltA"),
+            ("NPC_X_01", "InteractTextLineSets", "AltB"),
+            ("NPC_X_01", "InteractTextLineSets", "AltC"),
+        }
+        assert find_unattached_priority_groups(priorities, attached) == [
+            ("NPC_X_01", "InteractTextLineSets", "Lead"),
+        ]
+
+    def test_returns_deterministic_order(self):
+        priorities = {
+            "Z_Owner": {"Section": {"Z": {"narrativePriorityClusterMembers": []}}},
+            "A_Owner": {"Section": {"A": {"narrativePriorityClusterMembers": []}}},
+            "M_Owner": {"Section": {"M": {"narrativePriorityClusterMembers": []}}},
+        }
+        result = find_unattached_priority_groups(priorities, set())
+        assert result == [
+            ("A_Owner", "Section", "A"),
+            ("M_Owner", "Section", "M"),
+            ("Z_Owner", "Section", "Z"),
+        ]
 
 
 class TestRealData:

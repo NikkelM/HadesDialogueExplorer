@@ -124,6 +124,8 @@ from .encounter_room_data import extract_encounter_room_data
 from .narrative_data import (
     extract_narrative_priorities,
     apply_narrative_priorities,
+    iter_priority_keys,
+    find_unattached_priority_groups,
 )
 from .gamedata_refs import (
     HADES2_GAMEDATA_REF_SOURCE_FILES,
@@ -171,6 +173,8 @@ __all__ = [
     # Cross-cutting passes
     "extract_narrative_priorities",
     "apply_narrative_priorities",
+    "iter_priority_keys",
+    "find_unattached_priority_groups",
     "HADES2_GAMEDATA_REF_SOURCE_FILES",
     "extract_gamedata_refs",
     "HADES2_KNOWN_UNRESOLVED_REFS",

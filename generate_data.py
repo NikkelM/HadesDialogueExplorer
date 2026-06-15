@@ -36,6 +36,7 @@ from src.extractors.hades2 import (
     extract_encounter_room_data as h2_extract_encounter_room_data,
     extract_narrative_priorities,
     apply_narrative_priorities,
+    find_unattached_priority_groups,
     HADES2_SPEAKERS,
 )
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
@@ -206,12 +207,17 @@ def generate_hades2_source(
     extractor,
     named_requirements: dict,
     narrative_priorities: dict,
+    attached_priority_keys: set,
 ) -> tuple[str, dict]:
     """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
 
     Applies the shared narrative-priority annotations in place before
     building the graph, so the JSON the build pipeline consumes already
     carries the priority badges the viewer renders.
+    ``attached_priority_keys`` is a shared accumulator; every
+    ``(owner, section, textline)`` tuple this source attached is
+    recorded into it so :func:`main` can report unconsumed priority
+    records at the end of the H2 pass.
     """
     print(f"Parsing {source_label}: {lua_path}")
     parsed = parse_lua_file(str(lua_path))
@@ -224,7 +230,9 @@ def generate_hades2_source(
     )
     print(f"  Owners: {len(owners)}")
 
-    attached = apply_narrative_priorities(owners, narrative_priorities)
+    attached = apply_narrative_priorities(
+        owners, narrative_priorities, attached_keys=attached_priority_keys,
+    )
     if attached:
         print(f"  Narrative priorities attached: {attached}")
 
@@ -253,8 +261,12 @@ def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
 
     # Clear stale output JSONs (renames/removed sources must not linger).
-    for stale in OUTPUT_DIR.glob("*.json"):
-        stale.unlink()
+    # Restricted to the prefixes this script writes (``hades1_*``,
+    # ``hades2_*``) so user-dropped diagnostic JSONs, saved queries, or
+    # release notes in ``outputs/`` aren't wiped on rebuilds.
+    for stale_pattern in ("hades1_*.json", "hades2_*.json"):
+        for stale in OUTPUT_DIR.glob(stale_pattern):
+            stale.unlink()
 
     # --- Hades 1 ---
     print("=" * 60)
@@ -281,6 +293,15 @@ def main():
     print("Hades 2")
     print("=" * 60)
     named_reqs, narrative_priorities = load_hades2_context(hades2_scripts)
+
+    # Accumulator for cross-source orphan-priority audit (see end of
+    # this function). Every ``apply_narrative_priorities`` call below
+    # records its attached ``(owner, section, textline)`` tuples here;
+    # the difference against the full key set surfaces NarrativeData
+    # records that no source consumed - typically a sign that an
+    # extractor section-key rename has drifted from the NarrativeData
+    # reference.
+    attached_priority_keys: set = set()
 
     # Standalone metadata payload: GameData/ScreenData/QuestOrderData
     # registry tables that ``otherRequirements`` records reference via
@@ -328,6 +349,7 @@ def main():
             output_name, data = generate_hades2_source(
                 output_prefix, source_label, lua_path, extractor,
                 named_reqs, narrative_priorities,
+                attached_priority_keys,
             )
             # Skip writing per-source JSONs that hold zero textlines.
             # Each empty stub still carries the full ~9 KB speakers /
@@ -347,6 +369,30 @@ def main():
             print(f"  Written to: {out_path}")
         if skipped_empty:
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
+
+    # Cross-source orphan-priority audit: every (owner, section,
+    # textline) tuple present in ``narrative_priorities`` should have
+    # been attached by exactly one source's call to
+    # ``apply_narrative_priorities``. Residuals indicate the
+    # extractor section-key allowlist, an owner id, or a textline name
+    # has drifted from the NarrativeData reference - dropping them
+    # silently would violate the "audits over silent skips" doctrine.
+    # ``find_unattached_priority_groups`` filters out cluster sub-
+    # entries whose leader did attach (pure ordering hints with no
+    # body), so the surfaced list focuses on likely real drift.
+    orphan_priority_keys = find_unattached_priority_groups(
+        narrative_priorities, attached_priority_keys,
+    )
+    if orphan_priority_keys:
+        print(
+            f"\nWARNING: {len(orphan_priority_keys)} NarrativeData priority "
+            f"group(s) had no matching textline in any H2 source. "
+            f"Likely an owner / section-key / textline-name rename."
+        )
+        for owner_id, section_key, textline_name in orphan_priority_keys[:10]:
+            print(f"  {owner_id}.{section_key}.{textline_name}")
+        if len(orphan_priority_keys) > 10:
+            print(f"  ... and {len(orphan_priority_keys) - 10} more")
 
     print("\nDone!")
 

@@ -128,8 +128,19 @@ _JS_EXPORT_RE = re.compile(
     re.MULTILINE,
 )
 
+# Post-strip safety net: any line whose first non-whitespace token is
+# ``import`` or ``export`` indicates the strip pass missed a module-
+# syntax shape (e.g. ``export default``, ``export *``, ``export {name}
+# from ...``, ``import *``, ``import name``). The concatenated bundle
+# would throw ``SyntaxError`` at script-eval time, so we raise here
+# with a precise file:line pointer instead.
+_JS_LEFTOVER_MODULE_KEYWORD_RE = re.compile(
+    r"^\s*(?:import|export)\b",
+    re.MULTILINE,
+)
 
-def _strip_module_syntax(js_text: str) -> str:
+
+def _strip_module_syntax(js_text: str, source_name: str = "<viewer module>") -> str:
     """Strip ES module ``import``/``export`` syntax so the file can be
     concatenated into a single classic browser script.
 
@@ -138,9 +149,30 @@ def _strip_module_syntax(js_text: str) -> str:
     is one concatenated script (``dist/viewer.js``) because the offline
     bundle runs from ``file://`` where browsers block ES module imports
     via CORS.
+
+    After stripping, the result is asserted to contain no remaining
+    top-level ``import``/``export`` keywords. The strip regexes only
+    cover the shapes used today (single-line ``import { ... } from`` and
+    ``export {function|const|let|class}``); anything else (``export
+    default``, ``export *``, ``export { name } from ...``, ``import *``,
+    ``import name``) would otherwise pass through verbatim and produce a
+    ``SyntaxError`` at script-eval time of the concatenated bundle. The
+    assertion turns that runtime failure into a build-time error with a
+    pointer to the offending module.
     """
     js_text = _JS_IMPORT_RE.sub("", js_text)
     js_text = _JS_EXPORT_RE.sub(r"\1", js_text)
+    leftover = _JS_LEFTOVER_MODULE_KEYWORD_RE.search(js_text)
+    if leftover is not None:
+        line_no = js_text.count("\n", 0, leftover.start()) + 1
+        line_text = js_text.splitlines()[line_no - 1].rstrip()
+        raise RuntimeError(
+            f"{source_name}:{line_no}: leftover ES module keyword after strip pass: "
+            f"{line_text!r}. _JS_IMPORT_RE / _JS_EXPORT_RE only cover the shapes used "
+            f"by templates/viewer/*.js today (single-line ``import {{ ... }} from`` and "
+            f"``export {{function|const|let|class}}``). Extend the regexes to cover the "
+            f"new shape, or rewrite the module to use a supported one."
+        )
     return js_text
 
 
@@ -184,7 +216,12 @@ def build_js() -> str:
     parts = []
     for js_file in ordered:
         parts.append(f"// --- {js_file.name} ---")
-        parts.append(_strip_module_syntax(js_file.read_text(encoding="utf-8")).strip())
+        parts.append(
+            _strip_module_syntax(
+                js_file.read_text(encoding="utf-8"),
+                source_name=str(js_file.relative_to(PROJECT_DIR)) if js_file.is_relative_to(PROJECT_DIR) else js_file.name,
+            ).strip()
+        )
     return "\n\n".join(parts) + "\n"
 
 

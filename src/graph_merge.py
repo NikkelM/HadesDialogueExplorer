@@ -7,6 +7,7 @@ from src.graph import (
     transfer_orphan_annotations,
     split_name_collisions,
     count_distinct_speakers,
+    build_dependents,
 )
 
 
@@ -82,41 +83,13 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     # :func:`src.graph.split_name_collisions` for the rationale.
     split_name_collisions(merged_textlines)
 
-    merged_dependents = {}
-    for tl_name, tl_data in merged_textlines.items():
-        for req_type, req_list in tl_data.get("requirements", {}).items():
-            for dep in req_list:
-                # Self-references (textline lists itself in its own
-                # requirements) always come from cooldown / PlayOnce
-                # fields and are never real graph edges; excluded here
-                # so they don't inflate totalEdges or render as
-                # misleading self-loops in the viewer tree. Mirrors the
-                # filter in src/graph.py:_build_dependents.
-                if dep == tl_name:
-                    continue
-                merged_dependents.setdefault(dep, []).append({
-                    "name": tl_name,
-                    "type": req_type,
-                })
-        # H2 OR-branch textline edges: walk each branch and tag the
-        # dependent entry with 1-based branch index + total so the
-        # viewer can render the dependent as a conditional alternative
-        # rather than a hard requirement. Mirrors the OR-walking pass
-        # in src/graph.py:_build_dependents.
-        or_branches = tl_data.get("orBranches") or []
-        total_branches = len(or_branches)
-        for branch_index, branch in enumerate(or_branches, start=1):
-            branch_reqs = (branch or {}).get("requirements") or {}
-            for req_type, req_list in branch_reqs.items():
-                for dep in req_list:
-                    if dep == tl_name:
-                        continue
-                    merged_dependents.setdefault(dep, []).append({
-                        "name": tl_name,
-                        "type": req_type,
-                        "orBranchIndex": branch_index,
-                        "orBranchTotal": total_branches,
-                    })
+    # Reverse-index over the merged textline set rather than unioning
+    # per-source dependents maps, since per-source maps can include
+    # stale edges from textlines that lost the cross-file dedup. The
+    # shared helper handles self-reference filtering and ``orBranches``
+    # tagging so the merge path stays in lockstep with the per-source
+    # pass in ``build_graph_data``.
+    merged_dependents = build_dependents(merged_textlines)
 
     all_referenced = set()
     for tl_data in merged_textlines.values():

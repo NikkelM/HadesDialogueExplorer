@@ -153,7 +153,7 @@ export function initSearch() {
         for (const m of nameMatches) {
             const tl = textlines[m.name];
             const id = optionId('name', m.name);
-            parts.push(`<div class="search-item" role="option" id="${id}" aria-selected="false" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`);
+            parts.push(`<div class="search-item" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div>`);
         }
         namesList.innerHTML = parts.join('');
     }

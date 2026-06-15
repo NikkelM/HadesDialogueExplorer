@@ -112,8 +112,13 @@ function _formatScalar(v) {
 // Returns ``null`` for non-string or non-ref values.
 function _strRefName(s) {
     if (typeof s !== 'string') return null;
-    if (s.startsWith('<ref:') && s.endsWith('>')) return s.slice(5, -1);
-    return null;
+    if (!s.startsWith('<ref:') || !s.endsWith('>')) return null;
+    // Reject malformed shapes like ``<ref:foo>bar<ref:baz>`` whose
+    // first ``>`` sits before the end of the string; the slice would
+    // otherwise extract a body containing literal ``>`` / ``<ref:`` and
+    // confuse downstream rendering.
+    if (s.indexOf('>') !== s.length - 1) return null;
+    return s.slice(5, -1);
 }
 
 // Resolve a dotted ``GameData`` / ``ScreenData`` / ``QuestOrderData``

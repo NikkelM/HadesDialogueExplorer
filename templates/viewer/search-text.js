@@ -378,7 +378,7 @@ export function renderTextMatchHtml(match, tokens, optionId) {
     const prefixHtml = entry.isChoiceOption
         ? `<span class="snippet-choice-label">Choice option:</span>`
         : `<span class="snippet-speaker">${renderSpeakerHtml(entry.speaker)}:</span>`;
-    const idAttr = optionId ? ` id="${optionId}"` : '';
+    const idAttr = optionId ? ` id="${escapeHtml(optionId)}"` : '';
     return `<div class="search-item search-item-text" role="option"${idAttr} aria-selected="false" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet">${prefixHtml} ${snippetHtml}</div></div>`;
 }
 

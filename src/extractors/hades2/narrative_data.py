@@ -231,9 +231,68 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
     return result
 
 
+def iter_priority_keys(
+    priorities: Dict[str, Dict[str, Dict[str, dict]]],
+):
+    """Yield every ``(owner_id, section_key, textline_name)`` tuple present
+    in a ``priorities`` mapping.
+
+    Pairs with the ``attached_keys`` accumulator parameter on
+    :func:`apply_narrative_priorities` so the caller can compute the
+    difference (priority records that no source ever consumed) at the
+    end of the H2 generation pass.
+
+    See :func:`find_unattached_priority_groups` for the noise-filtered
+    audit variant that is what callers usually want; this raw iterator
+    is exposed for tests and ad-hoc diagnostics.
+    """
+    for owner_id, sections in priorities.items():
+        for section_key, textline_map in sections.items():
+            for textline_name in textline_map:
+                yield (owner_id, section_key, textline_name)
+
+
+def find_unattached_priority_groups(
+    priorities: Dict[str, Dict[str, Dict[str, dict]]],
+    attached_keys: set,
+) -> list:
+    """Return ``(owner_id, section_key, textline_name)`` tuples for
+    priority records whose entire cluster failed to attach to any
+    source.
+
+    Cluster sub-entries are expected orphans when their cluster leader
+    has a dialogue body but they don't (a pure ordering hint). Filtering
+    those out keeps the surfaced list focused on records that likely
+    indicate real drift between NarrativeData and the per-source
+    extractors (renamed owner, renamed section key, renamed textline,
+    or extractor not yet wired).
+
+    Sorted for deterministic build output. Returns an empty list when
+    every priority record is accounted for either directly or via a
+    cluster sibling.
+    """
+    unattached = []
+    for owner_id, sections in priorities.items():
+        for section_key, textline_map in sections.items():
+            for textline_name, record in textline_map.items():
+                key = (owner_id, section_key, textline_name)
+                if key in attached_keys:
+                    continue
+                cluster_members = record.get("narrativePriorityClusterMembers") or []
+                if any(
+                    (owner_id, section_key, sibling) in attached_keys
+                    for sibling in cluster_members
+                ):
+                    continue
+                unattached.append(key)
+    unattached.sort()
+    return unattached
+
+
 def apply_narrative_priorities(
     owners_data: Dict[str, dict],
     priorities: Dict[str, Dict[str, Dict[str, dict]]],
+    attached_keys: Optional[set] = None,
 ) -> int:
     """Attach narrative-priority annotations from ``priorities`` onto
     each matching textline in ``owners_data`` in place.
@@ -248,6 +307,13 @@ def apply_narrative_priorities(
         ...}, 'source': str}}``.
     priorities:
         Output of :func:`extract_narrative_priorities`.
+    attached_keys:
+        Optional mutable set into which every successfully-attached
+        ``(owner_id, section_key, textline_name)`` tuple is recorded.
+        The build pipeline passes a shared accumulator across all H2
+        sources so unattached priority records can be reported at the
+        end of the pass (see :func:`iter_priority_keys`). Omitted by
+        the unit tests, which only assert the return-value count.
 
     Returns
     -------
@@ -256,11 +322,13 @@ def apply_narrative_priorities(
         for build-pipeline diagnostics ("attached N of M priority
         records").
 
-    Priority records referencing owners or textlines absent from
-    ``owners_data`` are silently dropped - NarrativeData may register
-    priorities for textlines whose owning data file isn't yet wired
-    into the build, or for cluster sub-entries that don't have their
-    own dialogue body (a pure ordering hint).
+    Per-call mismatches are expected: ``apply_narrative_priorities`` is
+    invoked once per H2 source file with the *global* ``priorities``
+    dict but only the *per-source* ``owners_data``. A priority record
+    correctly attaches to whichever single source ships its target
+    textline; the global cross-source orphan check happens in the
+    caller via ``iter_priority_keys`` minus the accumulated
+    ``attached_keys`` set.
     """
     attached = 0
     for owner_id, sections in priorities.items():
@@ -277,4 +345,6 @@ def apply_narrative_priorities(
                     continue
                 textline_data.update(priority_record)
                 attached += 1
+                if attached_keys is not None:
+                    attached_keys.add((owner_id, section_key, textline_name))
     return attached

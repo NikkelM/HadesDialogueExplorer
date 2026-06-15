@@ -194,7 +194,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                 else:
                     textlines[tl_name] = new_entry
 
-    dependents = _build_dependents(textlines)
+    dependents = build_dependents(textlines)
 
     all_referenced = set()
     for tl_data in textlines.values():
@@ -598,7 +598,7 @@ def _entry_from_variant(canonical: dict, variant: dict, original_name: str,
     return new_entry
 
 
-def _build_dependents(textlines: dict) -> dict:
+def build_dependents(textlines: dict) -> dict:
     """Reverse-index requirements: dep_name -> [{name, type, ...}, ...].
 
     Self-references are intentionally excluded. They always come from

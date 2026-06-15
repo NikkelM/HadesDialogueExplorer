@@ -247,7 +247,7 @@ class TestMergeDatasets:
         """Self-references (textline lists itself in own requirements)
         are kept in the textline's requirements map but filtered from
         the merged dependents reverse-index and from totalEdges. This
-        mirrors src/graph.py:_build_dependents."""
+        mirrors src/graph.py:build_dependents."""
         ds = _make_dataset(
             _make_textline(
                 "Solo", "X",
@@ -275,7 +275,7 @@ class TestOrBranchesAtMerge:
     """``orBranches`` survives the cross-file merge layer, and its
     textline edges produce dependent entries tagged with
     ``orBranchIndex`` / ``orBranchTotal`` in the merged dependents map.
-    Mirrors the per-source pass in src/graph.py:_build_dependents."""
+    Mirrors the per-source pass in src/graph.py:build_dependents."""
 
     def test_or_branches_preserved_on_kept_entry(self):
         gate = _make_textline("Gate", "NPC_A")
