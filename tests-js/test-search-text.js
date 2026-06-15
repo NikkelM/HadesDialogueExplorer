@@ -22,11 +22,21 @@ import {
     renderTextMatchHtml,
 } from '../templates/viewer/search-text.js';
 import { loadData, textlines } from '../templates/viewer/data.js';
+import { emptyQuery } from '../templates/viewer/query-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 before(() => {
     loadFixtureData();
 });
+
+// Wrap a positive-token array in the structured query the engine
+// now expects, with every other operator bucket left empty. Lets
+// the older ranking tests keep their compact ``[token, ...]`` input
+// shape while the new tests exercise filters and exclusions against
+// full query objects.
+function _q(positive, extras = {}) {
+    return { ...emptyQuery(), positive, ...extras };
+}
 
 test('_isWordCharCode covers a-z, A-Z, 0-9 and rejects whitespace and punctuation', () => {
     assert.equal(_isWordCharCode('a'.charCodeAt(0)), true);
@@ -89,7 +99,7 @@ test('findContiguousPhrasePosition with a single token returns the first positio
 
 test('searchTextLines: ranks textlines that match all tokens above those that match a subset', () => {
     // "i knew you" matches ZeusWithAphrodite01 (line: "I knew you would seek me out...").
-    const matches = searchTextLines(['i', 'knew', 'you'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'knew', 'you']), new Set(), 50);
     assert.ok(matches.length >= 1);
     const top = matches[0];
     assert.equal(top.entry.name, 'ZeusWithAphrodite01');
@@ -103,7 +113,7 @@ test('searchTextLines: partial-match fallback - "i think fdfsdfsdfs" still retur
     // No textline contains ``fdfsdfsdfs``, but "i think" matches three
     // dialogues. Result must be non-empty and prioritise the lines
     // where the most query tokens are present.
-    const matches = searchTextLines(['i', 'think', 'fdfsdfsdfs'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'think', 'fdfsdfsdfs']), new Set(), 50);
     assert.ok(matches.length >= 1);
     // Top match should have matchedCount == 2 (both "i" and "think"
     // present) and runLength == 2 (the two tokens are contiguous).
@@ -116,9 +126,9 @@ test('searchTextLines: partial-match fallback - "i think fdfsdfsdfs" still retur
 });
 
 test('searchTextLines: excludeNames skips already-shown textlines', () => {
-    const without = searchTextLines(['i', 'think'], new Set(), 50);
+    const without = searchTextLines(_q(['i', 'think']), new Set(), 50);
     const withExclude = searchTextLines(
-        ['i', 'think'],
+        _q(['i', 'think']),
         new Set(['AchillesAboutThanatos01']),
         50,
     );
@@ -131,7 +141,7 @@ test('searchTextLines: word-boundary search does NOT match "i" inside "his", "th
     // The "MysteriousVoice01" line contains the letters "i" in "whisper"
     // and "in" but no standalone "I" word - so a lone "i" query must
     // not surface this textline.
-    const matches = searchTextLines(['i'], new Set(), 50);
+    const matches = searchTextLines(_q(['i']), new Set(), 50);
     const names = matches.map((m) => m.entry.name);
     assert.ok(!names.includes('MysteriousVoice01'));
 });
@@ -140,13 +150,13 @@ test('searchTextLines: returns at most one entry per textline (first-matching-li
     // ZeusWithAphrodite01 has TWO dialogue lines that contain "i"
     // (one with "I knew you", one with "I think"). The search must
     // collapse to a single match per textline.
-    const matches = searchTextLines(['i'], new Set(), 50);
+    const matches = searchTextLines(_q(['i']), new Set(), 50);
     const zeusCount = matches.filter((m) => m.entry.name === 'ZeusWithAphrodite01').length;
     assert.equal(zeusCount, 1);
 });
 
 test('searchTextLines: limit caps result count', () => {
-    const matches = searchTextLines(['i'], new Set(), 1);
+    const matches = searchTextLines(_q(['i']), new Set(), 1);
     assert.equal(matches.length, 1);
 });
 
@@ -202,7 +212,7 @@ test('searchTextLines: rare-token match outranks common-only match when matchedC
     // back to alphabetical (AchillesAboutThanatos01 first); the IDF
     // ranker must surface ZeusWithAphrodite01 instead because
     // ``knew``'s weight dominates the common-token pairs.
-    const matches = searchTextLines(['i', 'think', 'knew'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'think', 'knew']), new Set(), 50);
     assert.equal(matches[0].entry.name, 'ZeusWithAphrodite01');
     assert.equal(matches[0].matchedCount, 2);
     // Sanity: the next results still match the same count but with
@@ -217,7 +227,7 @@ test('searchTextLines: all-matches still beats subset-matches with IDF weighting
     // proper subset of the same query. Regression guard against an
     // implementation that could be tempted to subtract a per-line
     // penalty or otherwise let subset-matches overtake full-matches.
-    const matches = searchTextLines(['i', 'knew', 'you'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'knew', 'you']), new Set(), 50);
     assert.equal(matches[0].entry.name, 'ZeusWithAphrodite01');
     assert.equal(matches[0].matchedCount, 3);
 });
@@ -228,7 +238,7 @@ test('searchTextLines: stopword-only query degenerates to count-style ordering',
     // (AchillesAboutThanatos01 contains ``i``, ``think``, and ``you``)
     // because more matches => higher weighted sum even when each
     // weight is small. No special fallback branch needed.
-    const matches = searchTextLines(['i', 'think', 'you'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'think', 'you']), new Set(), 50);
     assert.equal(matches[0].entry.name, 'AchillesAboutThanatos01');
     assert.equal(matches[0].matchedCount, 3);
 });
@@ -239,7 +249,7 @@ test('searchTextLines: single-token query skips IDF and preserves alphabetical o
     // the alphabetical scan order from ``allNames``. First match must
     // therefore be the alphabetically first textline that contains
     // ``i`` as a word boundary - AchillesAboutThanatos01.
-    const matches = searchTextLines(['i'], new Set(), 50);
+    const matches = searchTextLines(_q(['i']), new Set(), 50);
     assert.equal(matches[0].entry.name, 'AchillesAboutThanatos01');
     // Every result scores 1 (single-token, IDF skipped).
     for (const m of matches) {
@@ -335,7 +345,7 @@ test('searchTextLines: candidate with more adjacent query-token pairs ranks abov
     });
     buildLinesIndex();
 
-    const matches = searchTextLines(['i', 'think', 'and', 'eurydice'], new Set(), 10);
+    const matches = searchTextLines(_q(['i', 'think', 'and', 'eurydice']), new Set(), 10);
     // Sanity: both lines matched all four query tokens.
     assert.equal(matches.length, 2);
     assert.equal(matches[0].matchedCount, 4);
@@ -426,7 +436,7 @@ test('searchTextLines: surfaces choicePrompt textline via choice-option label se
     // option labels. The search must still find the parent prompt
     // textline because ``buildLinesIndex`` pushed synthetic entries
     // for each option.
-    const matches = searchTextLines(['go', 'to', 'her'], new Set(), 50);
+    const matches = searchTextLines(_q(['go', 'to', 'her']), new Set(), 50);
     assert.ok(matches.length >= 1);
     assert.equal(matches[0].entry.name, 'BecameCloseWithMegaera01');
     assert.equal(matches[0].entry.isChoiceOption, true);
@@ -439,7 +449,7 @@ test('searchTextLines: choice-option search returns one row per parent textline 
     // per parent (the first-iterated entry wins - here, the prompt
     // text entry doesn't match ``back her``, so the first matching
     // synthetic choice entry surfaces).
-    const matches = searchTextLines(['back', 'her'], new Set(), 50);
+    const matches = searchTextLines(_q(['back', 'her']), new Set(), 50);
     const becameClose = matches.filter((m) => m.entry.name === 'BecameCloseWithMegaera01');
     assert.equal(becameClose.length, 1);
 });
@@ -452,7 +462,7 @@ test('searchTextLines: regular dialogue text wins over choice-option match on th
     // ``seen`` set keeps the regular (non-choice) entry. Asserts
     // we prefer "real" dialogue over a synthetic choice label when
     // both match.
-    const matches = searchTextLines(['with'], new Set(), 50);
+    const matches = searchTextLines(_q(['with']), new Set(), 50);
     const becameClose = matches.find((m) => m.entry.name === 'BecameCloseWithMegaera01');
     assert.ok(becameClose);
     assert.notEqual(becameClose.entry.isChoiceOption, true);
@@ -462,7 +472,7 @@ test('searchTextLines: internal-id fallback is searchable for unmapped options',
     // ``Meg_UnknownInternalOnly`` has no friendly label, so the
     // raw internal id is the indexed text. Searching for a unique
     // fragment of the id surfaces the parent textline.
-    const matches = searchTextLines(['unknowninternalonly'], new Set(), 50);
+    const matches = searchTextLines(_q(['unknowninternalonly']), new Set(), 50);
     assert.ok(matches.length >= 1);
     assert.equal(matches[0].entry.name, 'BecameCloseWithMegaera01');
     assert.equal(matches[0].entry.isChoiceOption, true);
@@ -470,7 +480,7 @@ test('searchTextLines: internal-id fallback is searchable for unmapped options',
 });
 
 test('renderTextMatchHtml: choice-option entry renders the "Choice option:" marker, not a speaker prefix', () => {
-    const matches = searchTextLines(['go', 'to', 'her'], new Set(), 50);
+    const matches = searchTextLines(_q(['go', 'to', 'her']), new Set(), 50);
     assert.ok(matches.length >= 1);
     const html = renderTextMatchHtml(matches[0], ['go', 'to', 'her']);
     // The synthetic prefix replaces the speaker label entirely - no
@@ -486,11 +496,330 @@ test('renderTextMatchHtml: regular dialogue match still renders the speaker pref
     // existing speaker-label rendering. The Achilles textline has
     // no friendly speaker description but does carry a name, so the
     // speaker prefix surfaces with that label.
-    const matches = searchTextLines(['i', 'think'], new Set(), 50);
+    const matches = searchTextLines(_q(['i', 'think']), new Set(), 50);
     const achilles = matches.find((m) => m.entry.name === 'AchillesAboutThanatos01');
     assert.ok(achilles);
     const html = renderTextMatchHtml(achilles, ['i', 'think']);
     assert.ok(html.includes('snippet-speaker'));
     assert.ok(!html.includes('snippet-choice-label'));
     assert.ok(!html.includes('Choice option:'));
+});
+
+// ---- Query-operator filters: phrases, exclusions, speaker:, section: ----
+//
+// The structured-query plumbing lets the search bar express hard
+// filters that the older bare-token interface couldn't. Tests below
+// pin down the contract: every operator is a HARD reject (no
+// ranking workaround), filters apply uniformly to choicePrompt
+// synthetic entries via their parent textline, and back-compat
+// behaviour is preserved when an operator class is absent.
+
+test('searchTextLines: phrase filter requires contiguous match (drops candidates that have only scattered tokens)', () => {
+    // ``i knew you`` matches ZeusWithAphrodite01 contiguously
+    // ("I knew you would seek me out..."). Other textlines contain
+    // ``i`` and ``you`` separately - those must be dropped by the
+    // hard phrase filter.
+    const q = { ..._q([]), phrases: ['i knew you'], positive: ['i', 'knew', 'you'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.equal(matches.length, 1);
+    assert.equal(matches[0].entry.name, 'ZeusWithAphrodite01');
+});
+
+test('searchTextLines: phrase filter rejects when tokens are present but not contiguous', () => {
+    // No textline in the fixture contains the literal phrase
+    // ``think knew`` even though both words appear in
+    // ZeusWithAphrodite01 (on different lines, and in the wrong
+    // order within the second line). The phrase filter is strict
+    // about per-line contiguity.
+    const q = { ..._q([]), phrases: ['think knew'], positive: ['think', 'knew'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.equal(matches.length, 0);
+});
+
+test('searchTextLines: -word excludes candidates whose line contains the word', () => {
+    // Three textlines contain ``i think`` - excluding the one with
+    // ``joking`` removes only ZeusWithAphrodite01's matching line.
+    // Note: the per-textline dedup already collapses to one entry
+    // per name, and ZeusWithAphrodite01's matching line is the
+    // ``I think he's joking about it.`` one (the ``i knew`` line
+    // doesn't contain ``think``), so the exclusion strips that
+    // textline entirely.
+    const q = { ..._q(['i', 'think']), negative: ['joking'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+    assert.ok(names.includes('AchillesAboutThanatos01'));
+});
+
+test('searchTextLines: -word exclusion respects word boundaries (does not match substrings)', () => {
+    // ``-his`` must NOT reject candidates whose line contains
+    // ``this`` - same word-boundary semantics as positive
+    // matching. The fixture has no line containing ``this``
+    // anyway, but the principle matters for future fixtures.
+    const q = { ..._q(['i', 'think']), negative: ['his'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    // Achilles line is "I think he'd want you to know." - ``he'd``
+    // tokenises as ``he`` + ``d``; ``his`` is not a whole word
+    // anywhere, so the line must survive.
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('AchillesAboutThanatos01'));
+});
+
+test('searchTextLines: -"phrase" excludes any textline whose lines contain the contiguous phrase', () => {
+    // ZeusWithAphrodite01 contains ``i knew you`` on its first
+    // line. Excluding the phrase removes the whole textline,
+    // including its ``i think he's joking`` line. AchillesAboutThanatos01
+    // and OrpheusSingsAgain02 don't contain the phrase, so they
+    // survive.
+    const q = { ..._q(['i', 'think']), negativePhrases: ['i knew you'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('AchillesAboutThanatos01'));
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: -"phrase" with no contiguous hit anywhere keeps the textline', () => {
+    // ``i think knew`` is never contiguous in any line; the
+    // negative phrase has no effect and ZeusWithAphrodite01 still
+    // ranks via its positive token matches on ``i think``.
+    const q = { ..._q(['i', 'think']), negativePhrases: ['i think knew'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: speaker: filter restricts results by owner', () => {
+    // ``speaker:Zeus`` matches the owner of ZeusWithAphrodite01;
+    // other textlines drop out even though they contain the
+    // positive token ``i``.
+    const q = { ..._q(['i']), speakers: ['zeus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.deepEqual(names, ['ZeusWithAphrodite01']);
+});
+
+test('searchTextLines: speaker: filter also matches per-line speakers (not just owner)', () => {
+    // ZeusWithAphrodite01 is owned by Zeus, but its second line
+    // is spoken by Zagreus. A ``speaker:Zagreus`` filter must
+    // include this textline too via the per-line-speaker arm of
+    // the speakerHaystack.
+    const q = { ..._q(['i']), speakers: ['zagreus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: speaker: filter is case-insensitive and matches friendly OR internal id', () => {
+    // Both the internal id full form (``NPC_Orpheus_01`` lowercased)
+    // and the friendly name (``Orpheus``) point at the same textline.
+    // The internal-id arm exercises the exact-full-identifier match;
+    // the friendly arm exercises the prefix-token match against the
+    // ``orpheus`` token.
+    const matchesByInternal = searchTextLines(
+        { ..._q(['voice']), speakers: ['npc_orpheus_01'] },
+        new Set(),
+        50,
+    );
+    const matchesByFriendly = searchTextLines(
+        { ..._q(['voice']), speakers: ['orpheus'] },
+        new Set(),
+        50,
+    );
+    assert.ok(matchesByInternal.some((m) => m.entry.name === 'OrpheusSingsAgain02'));
+    assert.ok(matchesByFriendly.some((m) => m.entry.name === 'OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: multiple speaker: filters apply as OR (any matches qualifies)', () => {
+    // Both Zeus and Orpheus own a textline containing positive
+    // token ``i``. Listing both speakers ORs them - results
+    // include textlines for either owner.
+    const q = { ..._q(['i']), speakers: ['zeus', 'orpheus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: -speaker: filter excludes candidates with matching speaker', () => {
+    // ``-speaker:Zagreus`` removes ZeusWithAphrodite01 (Zagreus
+    // speaks on its second line) AND BecameCloseWithMegaera01
+    // (owner Zagreus), but keeps Aphrodite / Orpheus / Achilles /
+    // MysteriousVoice textlines.
+    const q = { ..._q(['i']), negativeSpeakers: ['zagreus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+    assert.ok(!names.includes('BecameCloseWithMegaera01'));
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: section: filter accepts the friendly label', () => {
+    const q = { ..._q(['i']), sections: ['interact'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+    assert.ok(names.includes('AchillesAboutThanatos01'));
+    // Gift-section textline must be dropped.
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: section: filter also accepts the internal section key', () => {
+    const q = { ..._q(['i']), sections: ['interacttextlinesets'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: -section: filter excludes matching section', () => {
+    const q = { ..._q(['i']), negativeSections: ['interact'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+    assert.ok(!names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: choicePrompt entries respect speaker: filter via parent textline owner', () => {
+    // BecameCloseWithMegaera01 is owned by Zagreus and contains
+    // a choicePrompt. ``speaker:Zagreus`` keeps the synthetic
+    // choice-option entries; ``speaker:Orpheus`` drops them even
+    // though the choice labels match the positive token.
+    const matchesByZag = searchTextLines(
+        { ..._q(['her']), speakers: ['zagreus'] },
+        new Set(),
+        50,
+    );
+    assert.ok(matchesByZag.some((m) => m.entry.name === 'BecameCloseWithMegaera01'));
+    const matchesByOrpheus = searchTextLines(
+        { ..._q(['her']), speakers: ['orpheus'] },
+        new Set(),
+        50,
+    );
+    assert.ok(!matchesByOrpheus.some((m) => m.entry.name === 'BecameCloseWithMegaera01'));
+});
+
+test('searchTextLines: filter-only query (no positive tokens / phrases) returns nothing for text search', () => {
+    // Text search owns ranking + highlighting of dialogue lines;
+    // without any positive signal there's nothing to rank or mark
+    // up, so it stays out of the dropdown's text-match section.
+    // The name-match section is what carries filter-only queries.
+    const q = { ..._q([]), speakers: ['zeus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.equal(matches.length, 0);
+});
+
+test('searchTextLines: combined positive + phrase + speaker + negative still returns the intersection', () => {
+    // ``"my voice" speaker:Orpheus -hated`` should keep
+    // OrpheusSingsAgain02 ("I think I've found my voice again, at
+    // last.") because Orpheus is the owner, the phrase matches
+    // contiguously, and ``hated`` is not in the line.
+    const q = {
+        ..._q([]),
+        positive: ['my', 'voice'],
+        phrases: ['my voice'],
+        speakers: ['orpheus'],
+        negative: ['hated'],
+    };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.equal(matches.length, 1);
+    assert.equal(matches[0].entry.name, 'OrpheusSingsAgain02');
+});
+
+// ---- Asymmetric filter semantics: prefix-token positive, exact-token negative ----
+//
+// Substring matching turned ``-speaker:A`` into a corpus-wiping
+// accident (every name containing the letter 'a' got excluded).
+// The fix is asymmetric: positive filters still tolerate partial
+// input via prefix-token matching, but negative filters require
+// exact equality against a token or a full identifier so the
+// destructive operator stays precise.
+
+test('searchTextLines: positive speaker: matches by prefix of any token', () => {
+    // ``orph`` is a prefix of the token ``orpheus`` in
+    // OrpheusSingsAgain02's owner haystack. Forgiving prefix
+    // semantics let the user filter without typing the full name.
+    const q = { ..._q(['voice']), speakers: ['orph'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.ok(matches.some((m) => m.entry.name === 'OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: positive speaker: also matches an exact full identifier (e.g. NPC_Zeus_01)', () => {
+    // ``NPC_Zeus_01`` doesn't tokenise into a single token but
+    // the whole lowercased id matches via the full-identifier arm.
+    const q = { ..._q(['knew']), speakers: ['npc_zeus_01'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    assert.ok(matches.some((m) => m.entry.name === 'ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: negative -speaker:A does NOT exclude names just containing the letter A', () => {
+    // Regression guard for the substring-matching bug: a single
+    // letter as a negative filter must match no tokens (none of
+    // the fixture's tokens are literally ``a``), so all candidates
+    // survive.
+    const q = { ..._q(['you']), negativeSpeakers: ['a'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    // ZeusWithAphrodite01 ("you would seek me out"),
+    // AphroditeWithZeus01 ("see you again"), AchillesAboutThanatos01
+    // ("want you to know") all carry an 'a' in their owner names -
+    // all must survive under the strict-token rule.
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('AphroditeWithZeus01'));
+    assert.ok(names.includes('AchillesAboutThanatos01'));
+});
+
+test('searchTextLines: negative -speaker:zeu (prefix) also does NOT exclude Zeus (strict equality required)', () => {
+    // Exclusion is strict: a prefix that doesn't equal a full
+    // token must not trigger removal. Users wanting to drop Zeus
+    // need ``-speaker:zeus`` or ``-speaker:NPC_Zeus_01``.
+    const q = { ..._q(['knew']), negativeSpeakers: ['zeu'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: negative -speaker:zeus (exact token) excludes Zeus', () => {
+    const q = { ..._q(['knew']), negativeSpeakers: ['zeus'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: negative -speaker:NPC_Zeus_01 (full identifier) also excludes Zeus', () => {
+    const q = { ..._q(['knew']), negativeSpeakers: ['npc_zeus_01'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: positive section:gif matches Gift via prefix-token', () => {
+    const q = { ..._q(['knew']), sections: ['gif'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+    assert.ok(!names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: negative -section:gif (prefix only) does NOT exclude Gift (strict equality required)', () => {
+    const q = { ..._q(['knew']), negativeSections: ['gif'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+});
+
+test('searchTextLines: negative -section:Gift (exact token) excludes Gift', () => {
+    const q = { ..._q(['voice']), negativeSections: ['gift'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('OrpheusSingsAgain02'));
+});
+
+test('searchTextLines: negative -section:GiftTextLineSets (full internal key) also excludes Gift', () => {
+    const q = { ..._q(['knew']), negativeSections: ['gifttextlinesets'] };
+    const matches = searchTextLines(q, new Set(), 50);
+    const names = matches.map((m) => m.entry.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
 });

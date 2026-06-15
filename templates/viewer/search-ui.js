@@ -1,12 +1,16 @@
 // Search dropdown wiring: keystroke handling, debouncing, and result
 // rendering. Synchronously runs the name search on every keystroke
 // and debounces the text-content search behind a 120 ms timer so
-// fast typing doesn't trigger N redundant scans.
+// fast typing doesn't trigger N redundant scans. The raw input
+// string is funnelled through ``parseQuery`` first so operators
+// (``"phrase"``, ``-word``, ``speaker:X``, ``section:X``) are
+// applied uniformly to both result sections.
 
 import { textlines } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
+import { parseQuery, isQueryEmpty } from './query-parser.js';
 import { navigateTo } from './navigation.js';
 
 export function initSearch() {
@@ -20,7 +24,7 @@ export function initSearch() {
 
     function hide() { searchResults.classList.remove('visible'); }
 
-    function renderResults(tokens, nameMatches, textMatches) {
+    function renderResults(query, nameMatches, textMatches) {
         if (nameMatches.length === 0 && textMatches.length === 0) {
             hide();
             return;
@@ -39,7 +43,11 @@ export function initSearch() {
                 parts.push(`<div class="search-section-header">Text matches</div>`);
             }
             for (const m of textMatches) {
-                parts.push(renderTextMatchHtml(m, tokens));
+                // ``renderTextMatchHtml`` highlights matched positive
+                // tokens; phrase contents already live in
+                // ``query.positive`` (seeded by the parser) so phrase
+                // matches get highlighted without a separate code path.
+                parts.push(renderTextMatchHtml(m, query.positive));
             }
         }
         searchResults.innerHTML = parts.join('');
@@ -50,29 +58,34 @@ export function initSearch() {
         const seq = ++searchSeq;
         clearTimeout(textSearchTimer);
 
-        const q = searchInput.value.toLowerCase().trim();
-        if (!q) { hide(); return; }
-        const tokens = q.split(/\s+/).filter(t => t.length > 0);
-        if (tokens.length === 0) { hide(); return; }
+        const raw = searchInput.value;
+        const query = parseQuery(raw);
+        if (isQueryEmpty(query)) { hide(); return; }
 
         // Name search runs synchronously so the dropdown updates on
         // every keystroke without perceptible lag.
-        const nameMatches = searchNameMatches(tokens, 30);
-        renderResults(tokens, nameMatches, []);
+        const nameMatches = searchNameMatches(query, 30);
+        renderResults(query, nameMatches, []);
 
         // Text content search is debounced because it scans every
         // dialogue line. A short delay coalesces fast keystrokes
-        // without making the UI feel sluggish. Very short queries
-        // (under 3 non-whitespace characters) are skipped to avoid
-        // swamping the dropdown with generic single-letter hits like
-        // ``a`` or ``I``; ``I shall`` and similar still pass the gate.
-        const nonSpaceLen = tokens.reduce((acc, t) => acc + t.length, 0);
-        if (nonSpaceLen < 3) return;
+        // without making the UI feel sluggish. Very short positive
+        // signals (under 3 non-whitespace characters across positive
+        // tokens + phrases) are skipped to avoid swamping the
+        // dropdown with generic single-letter hits like ``a`` or
+        // ``I``; ``I shall`` and similar still pass the gate.
+        // Filter-only queries also short-circuit here - they carry
+        // no text signal for the engine to rank or highlight.
+        if (query.positive.length === 0 && query.phrases.length === 0) return;
+        let signalLen = 0;
+        for (const t of query.positive) signalLen += t.length;
+        for (const p of query.phrases) signalLen += p.replace(/\s+/g, '').length;
+        if (signalLen < 3) return;
         const nameMatchNames = new Set(nameMatches.map(m => m.name));
         textSearchTimer = setTimeout(() => {
             if (seq !== searchSeq) return;
-            const textMatches = searchTextLines(tokens, nameMatchNames, 30);
-            renderResults(tokens, nameMatches, textMatches);
+            const textMatches = searchTextLines(query, nameMatchNames, 30);
+            renderResults(query, nameMatches, textMatches);
         }, 120);
     }
 

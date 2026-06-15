@@ -9,6 +9,7 @@
 import { textlines, allNames, choiceNames } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { computeIdf, idfWeight } from './idf.js';
+import { passesTextlineFilters } from './query-filters.js';
 
 // Flattened index of every dialogue line for fast text-content search.
 // Each entry: ``{name, lineIdx, speaker, textOriginal, textLower,
@@ -165,71 +166,144 @@ export function findContiguousPhrasePosition(textLower, phraseTokens, firstToken
     return -1;
 }
 
-// Scan the dialogue-line index for entries where at LEAST ONE search
-// token appears as a whole word within the SAME line. Rank by the
-// IDF-weighted sum of matched-token contributions (rare tokens
-// dominate), then by the length of the longest contiguous run of
-// query tokens (in original query order) that appears as a phrase in
-// the line. A full-query run beats a partial run, which beats
-// fully-scattered tokens. Ties preserve alphabetical order from
-// ``allNames``. Returns at most ``limit`` matches, one per textline
-// (the first matching line). ``excludeNames`` skips textlines
-// already represented in the name-match section so the dropdown
-// stays free of duplicates.
+// Phrase existence check on a single line: tokenises the phrase on
+// whitespace, then reuses ``findContiguousPhrasePosition`` so the
+// phrase has to match as adjacent whole words (the same semantics
+// the ranking layer uses for contiguous-run boosts). Returns true
+// when the phrase exists in the line text.
+function phraseExistsInLine(textLower, phrase) {
+    const tokens = phrase.split(/\s+/).filter((t) => t.length > 0);
+    if (tokens.length === 0) return false;
+    const firstPositions = findWordPositions(textLower, tokens[0]);
+    if (firstPositions.length === 0) return false;
+    return findContiguousPhrasePosition(textLower, tokens, firstPositions) >= 0;
+}
+
+// Composite negative-content check at the TEXTLINE level: returns
+// true when ANY dialogue line of the textline contains one of the
+// query's negative tokens (whole-word) or negative phrases
+// (contiguous). Hoisted out of the per-line loop in
+// :func:`searchTextLines` so a single hit on any line excludes the
+// whole textline - matches user intent when they type ``-joking``
+// (they want the textline gone, not just the joking line). Cached
+// per call by the caller so each textline is scanned at most once.
+function textlineHasNegativeContent(tl, negative, negativePhrases) {
+    if (!tl || !Array.isArray(tl.dialogueLines)) return false;
+    if (negative.length === 0 && negativePhrases.length === 0) return false;
+    for (const line of tl.dialogueLines) {
+        if (!line || !line.text) continue;
+        const lower = line.text.toLowerCase();
+        for (const t of negative) {
+            if (t && findWordPositions(lower, t).length > 0) return true;
+        }
+        for (const p of negativePhrases) {
+            if (p && phraseExistsInLine(lower, p)) return true;
+        }
+    }
+    return false;
+}
+
+// Scan the dialogue-line index for entries matching the structured
+// query. The query carries positive tokens (drive existing IDF
+// ranking), hard phrase requirements (every phrase must exist as a
+// contiguous run), negative tokens / phrases (hard exclusions), and
+// ``speaker:`` / ``section:`` filter sets. Returns at most ``limit``
+// matches, one per textline (the first matching line). ``excludeNames``
+// skips textlines already represented in the name-match section so
+// the dropdown stays free of duplicates.
 //
-// Partial matching means a query like ``I think fdfsdfsdfs`` still
-// surfaces lines containing ``I think`` even though the third token
-// does not exist anywhere; lines that match all tokens always
-// outrank lines that match a subset of the same query (every IDF
-// weight is positive, so each additional matched token strictly
-// increases the score).
-//
-// Stopword-only queries (every token is high-frequency) fall out of
-// the weighted ranking the same way the old flat ranking would have
-// resolved them - all tokens carry similar small weights, so the
-// weighted sum's ordering collapses back to count order. No special
-// fallback branch is needed.
-//
-// Single-token queries skip IDF entirely: there is only one possible
-// weight, so the ordering relative to the existing scan order
-// (alphabetical via ``allNames``) is preserved by scoring every
-// match as 1.
-export function searchTextLines(tokens, excludeNames, limit) {
-    const N = tokens.length;
+// Filter semantics:
+//   - All filters and exclusions are HARD - failure to satisfy drops
+//     the candidate before ranking even runs.
+//   - Positive tokens still rank by IDF (rare-token dominance) +
+//     longest contiguous run + adjacent-pair count, exactly as before.
+//   - Phrases also seed positive tokens (via the parser) so a query
+//     like ``"my voice"`` ranks at least as well as ``my voice``
+//     would have, with the extra hard contiguous-match filter on top.
+//   - When the query has phrases but no positive bare tokens, every
+//     surviving candidate scores identically and sorts alphabetically
+//     from ``allNames``.
+//   - When the query has only filters (no positive / phrase signal),
+//     text search returns nothing - the name search owns that case.
+export function searchTextLines(query, excludeNames, limit) {
+    const positive = query.positive || [];
+    const phrases = query.phrases || [];
+    const negative = query.negative || [];
+    const negativePhrases = query.negativePhrases || [];
+
+    // Filter-only queries have nothing for text search to rank or
+    // highlight - the dropdown's name-match section owns that case.
+    if (positive.length === 0 && phrases.length === 0) return [];
+
+    const N = positive.length;
     const useIdf = N > 1 && linesIdf;
     const ranked = [];
     const seen = new Set();
+    // Per-textline filter result cache so we evaluate the speaker /
+    // section haystacks and the negative-content scan at most once
+    // per textline even when the index has multiple lines per name.
+    const tlPassCache = new Map();
+    const tlNegCache = new Map();
     for (const entry of linesIndex) {
         if (excludeNames.has(entry.name)) continue;
         if (seen.has(entry.name)) continue;
+        let tlPass = tlPassCache.get(entry.name);
+        if (tlPass === undefined) {
+            tlPass = passesTextlineFilters(textlines[entry.name], query);
+            tlPassCache.set(entry.name, tlPass);
+        }
+        if (!tlPass) continue;
+        let tlNeg = tlNegCache.get(entry.name);
+        if (tlNeg === undefined) {
+            tlNeg = textlineHasNegativeContent(
+                textlines[entry.name],
+                negative,
+                negativePhrases,
+            );
+            tlNegCache.set(entry.name, tlNeg);
+        }
+        if (tlNeg) continue;
+
+        // Hard phrase requirement: every positive phrase must exist
+        // as a contiguous run on this line.
+        let phraseOk = true;
+        for (const p of phrases) {
+            if (!phraseExistsInLine(entry.textLower, p)) { phraseOk = false; break; }
+        }
+        if (!phraseOk) continue;
 
         const positionsByToken = new Array(N);
         let matchedCount = 0;
         let score = 0;
         let firstMatchAnchor = -1;
         for (let i = 0; i < N; i++) {
-            const positions = findWordPositions(entry.textLower, tokens[i]);
+            const positions = findWordPositions(entry.textLower, positive[i]);
             positionsByToken[i] = positions;
             if (positions.length > 0) {
                 matchedCount++;
-                score += useIdf ? idfWeight(linesIdf, tokens[i]) : 1;
+                score += useIdf ? idfWeight(linesIdf, positive[i]) : 1;
                 if (firstMatchAnchor < 0) firstMatchAnchor = positions[0];
             }
         }
-        if (matchedCount === 0) continue;
+        // No positive-token hits: only acceptable when the candidate
+        // is qualifying purely on phrase matches (phrases seed
+        // positive tokens, so this branch is rare in practice but
+        // defensible). Anchor the snippet on the start of the line.
+        if (matchedCount === 0 && phrases.length === 0) continue;
+        if (matchedCount === 0) firstMatchAnchor = 0;
 
         // Find longest contiguous run. Subsequences whose first token
         // has no occurrences (or whose middle tokens are absent) are
         // naturally skipped by ``findContiguousPhrasePosition``
         // returning -1, so this loop handles partial matches without
         // any extra bookkeeping.
-        let runLength = 1;
+        let runLength = matchedCount === 0 ? 0 : 1;
         let runAnchor = firstMatchAnchor;
         outer: for (let len = N; len >= 2; len--) {
             for (let start = 0; start + len <= N; start++) {
                 const pos = findContiguousPhrasePosition(
                     entry.textLower,
-                    tokens.slice(start, start + len),
+                    positive.slice(start, start + len),
                     positionsByToken[start],
                 );
                 if (pos >= 0) {
@@ -254,7 +328,7 @@ export function searchTextLines(tokens, excludeNames, limit) {
             if (positionsByToken[i].length === 0 || positionsByToken[i + 1].length === 0) continue;
             const pos = findContiguousPhrasePosition(
                 entry.textLower,
-                [tokens[i], tokens[i + 1]],
+                [positive[i], positive[i + 1]],
                 positionsByToken[i],
             );
             if (pos >= 0) adjacentPairs++;

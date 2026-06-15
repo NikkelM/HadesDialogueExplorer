@@ -7,6 +7,7 @@
 
 import { textlines, allNames, speakers } from './data.js';
 import { computeIdf, candidateTokenWeight } from './idf.js';
+import { passesTextlineFilters } from './query-filters.js';
 
 // Token -> IDF weight, computed over the name corpus (textline names
 // tokenised on PascalCase / digit transitions, owner display names
@@ -136,7 +137,22 @@ export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ow
     return -1;
 }
 
-// Compute the ranked name matches for a tokenised query.
+// Compute the ranked name matches for a structured query.
+//
+// The query carries:
+//   - ``positive`` tokens: must ALL match per the existing tier
+//     ranking (a missing token disqualifies the candidate). Phrase
+//     contents already live in this list (the parser seeds them)
+//     so phrase queries get the same ranking signal as their
+//     individual words.
+//   - ``negative`` tokens / ``negativePhrases``: any substring hit
+//     against the candidate name / owner id / owner display name
+//     disqualifies the candidate. Negatives are applied as raw
+//     lowercased substring matches (no PascalCase / word-boundary
+//     awareness) because the name search itself is substring-based.
+//   - ``speakers`` / ``sections`` (positive + negative): hard
+//     textline filters shared with the text search engine via
+//     ``passesTextlineFilters``.
 //
 // Ranking axes, in priority order:
 //   1. Weighted tier tuple, compared lexicographically. Each entry
@@ -160,26 +176,57 @@ export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ow
 // reduces to plain tier comparison either way) so per-keystroke
 // results stay deterministic while the user is still typing the
 // first segment.
-export function searchNameMatches(tokens, limit) {
-    const useIdf = tokens.length > 1 && nameIdf;
+//
+// Filter-only queries (no positive tokens, no phrases) still run
+// the scan - all candidates pass the per-token tier check
+// vacuously and tier weights collapse to identical zero-length
+// tuples, so the result is just every textline that survives the
+// filters, alphabetically. That gives users a useful "list every
+// Zeus textline" search without forcing a dummy keyword.
+export function searchNameMatches(query, limit) {
+    const positive = (query && query.positive) || [];
+    const negative = (query && query.negative) || [];
+    const negativePhrases = (query && query.negativePhrases) || [];
+    const useIdf = positive.length > 1 && nameIdf;
 
     const ranked = [];
     for (const n of allNames) {
         const tl = textlines[n];
         if (!tl) continue;
+        if (!passesTextlineFilters(tl, query)) continue;
+
         const nameLower = n.toLowerCase();
         const ownerIdLower = tl.owner.toLowerCase();
         const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
         const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
+
+        // Combined haystack for negative substring matching. Mirrors
+        // the surfaces the positive tier matcher already considers,
+        // so ``-zeus`` excludes every candidate the user can SEE Zeus
+        // referenced on (name or owner).
+        let negHit = false;
+        if (negative.length || negativePhrases.length) {
+            const negHay = nameLower + '\n' + ownerIdLower + '\n' + ownerDisplayLower;
+            for (const t of negative) {
+                if (t && negHay.includes(t)) { negHit = true; break; }
+            }
+            if (!negHit) {
+                for (const p of negativePhrases) {
+                    if (p && negHay.includes(p)) { negHit = true; break; }
+                }
+            }
+        }
+        if (negHit) continue;
+
         const candidateTokens = (nameTokens && nameTokens.get(n)) || [];
 
         const weightedTiers = [];
         let allMatched = true;
-        for (let i = 0; i < tokens.length; i++) {
-            const r = rankSearchToken(tokens[i], n, nameLower, ownerIdLower, ownerDisplayLower);
+        for (let i = 0; i < positive.length; i++) {
+            const r = rankSearchToken(positive[i], n, nameLower, ownerIdLower, ownerDisplayLower);
             if (r < 0) { allMatched = false; break; }
             const w = useIdf
-                ? candidateTokenWeight(nameIdf, candidateTokens, tokens[i])
+                ? candidateTokenWeight(nameIdf, candidateTokens, positive[i])
                 : 1;
             weightedTiers.push(r * w);
         }
