@@ -254,6 +254,35 @@ test('boon-vendor choice options render without a click-through link when target
 });
 
 
+test('choicePrompt with a partially-unmapped option list still renders as a structured choice block', () => {
+    // ``BecameCloseWithMegaera01`` in the shared fixture has three
+    // choices, one of which (``Meg_UnknownInternalOnly``) deliberately
+    // has no entry in ``choiceNames``. The previous implementation
+    // gated structured choice rendering on EVERY option having a
+    // friendly label, which silently demoted the whole prompt to a
+    // bare speaker line. Option A from the issue drops that gate -
+    // ``renderChoiceNameHtml`` already falls back to the internal id
+    // for unmapped options, so the prompt now stays visible and the
+    // unmapped id surfaces as a concrete string for the next
+    // contributor to map.
+    loadData(buildFixtureData());
+    renderInfo('BecameCloseWithMegaera01');
+    // Structured choice-prompt scaffolding is present.
+    assert.match(lastHtml, /class="dialogue-line choice-prompt"/);
+    assert.match(lastHtml, /class="choice-prompt-label">Choice:/);
+    // All three options render with letters A / B / C.
+    assert.match(lastHtml, /choice-option-letter">A:/);
+    assert.match(lastHtml, /choice-option-letter">B:/);
+    assert.match(lastHtml, /choice-option-letter">C:/);
+    // Mapped options render their friendly labels.
+    assert.match(lastHtml, />Go to Her</);
+    assert.match(lastHtml, />Back Off</);
+    // The unmapped option surfaces its internal id verbatim instead
+    // of being silently dropped.
+    assert.match(lastHtml, />Meg_UnknownInternalOnly</);
+});
+
+
 // Build a fixture for the H2 ``otherRequirements`` rendering path: the
 // data carries compound operator-prefixed keys (PathTrue:..., Path:...,
 // FunctionName:...) plus a bare label-less key. The viewer must

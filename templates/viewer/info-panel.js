@@ -22,7 +22,7 @@ import {
     renderChoiceNameHtml,
     reqTypeOrderIndex,
 } from './utilities.js';
-import { choiceNames, metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
+import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 
 // Render an ``otherRequirements`` key. H2 synthesises compound keys
 // like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
@@ -641,15 +641,13 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
         for (const line of src.dialogueLines) {
             if (typeof line === 'object' && line.kind === 'choicePrompt' && Array.isArray(line.choices)
-                && line.choices.length > 0
-                && line.choices.every(c => choiceNames[c.internal])) {
-                // Structured choice-prompt rendering: only kicks in when
-                // every option has a friendly label in
-                // ``HADES1_CHOICE_NAMES``. Unmapped prompts (Hermes
-                // squelch / Orpheus jukebox today) fall through to the
-                // regular speaker-line rendering so we never
-                // accidentally surface a bare internal id as the
-                // player-facing prompt label.
+                && line.choices.length > 0) {
+                // Structured choice-prompt rendering. ``renderChoiceNameHtml``
+                // falls back to the raw internal id when an option is
+                // missing from ``HADES1_CHOICE_NAMES`` / ``HADES2_CHOICE_NAMES``,
+                // so partially-unmapped prompts still surface their
+                // option list (with a concrete id string for whoever
+                // adds the missing label).
                 //
                 // ``targetTextline`` distinguishes two flavours of
                 // choice: inline ``Choices = {...}`` options (romance
