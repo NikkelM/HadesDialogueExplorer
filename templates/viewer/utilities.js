@@ -16,6 +16,7 @@ import {
     knownUnresolved,
     unresolvedCategoryLabels,
     choiceNames,
+    getActiveGame,
 } from './data.js';
 
 // Escape a string for safe embedding into HTML, covering both text
@@ -204,23 +205,44 @@ export function unresolvedCategoryFor(name) {
 }
 
 // Render narrative-priority badges as HTML for either the tree or the
-// details panel. Two independent signals are surfaced
-// side-by-side:
+// details panel. The two games use independent priority models and we
+// dispatch per active game:
 //
-//   1. Tier badge - derived purely from the parent section the textline
-//      lives in. The engine cascades through priority-tagged sibling
-//      containers at the call site (super -> priority -> normal -> low),
-//      so this is the dominant scheduling axis.
+//   - Hades I: tier badge (super / priority / normal / low) + optional
+//     set-level pill (SP / P). Tier is derived from the parent section
+//     the textline lives in; the engine cascades through priority-
+//     tagged sibling containers at the call site, so this is the
+//     dominant scheduling axis. The set-level boolean
+//     (``Priority`` / ``SuperPriority`` on the set table) only biases
+//     random selection *within* a section, so it gets its own pill.
+//     Every textline gets at least the tier badge (default "normal")
+//     so tree rows align on the right edge.
 //
-//   2. Set-level badge (optional) - the per-textline-set `Priority` /
-//      `SuperPriority` boolean. This only biases random selection
-//      *within* a section, never across sections, so it gets its own
-//      small "SP" / "P" pill rather than collapsing into the tier badge.
-//
-// Always returns at least one badge (the tier badge) so every row in
-// the tree has a priority tag for visual alignment.
+//   - Hades II: ordinal badge ("#N/M") sourced from NarrativeData.lua.
+//     H2 uses an ordered list per owner+section rather than the H1
+//     tier enum, so the rank is shown literally with the section size
+//     for context. Cluster members tied at the same rank surface in
+//     the tooltip. Textlines absent from NarrativeData (not every
+//     textline is listed) render no badge.
 export function renderPriorityBadgeHtml(tl) {
+    if (!tl) return '';
+    if (getActiveGame() === 'hades2') {
+        return renderOrdinalBadgeHtml(tl);
+    }
     return renderTierBadgeHtml(tl) + renderSetLevelBadgeHtml(tl);
+}
+
+// Compact single-badge dispatch for contexts that only have room for
+// one priority indicator per row (tree rows, dependency-ref pills).
+// Returns the tier badge for H1 and the ordinal badge for H2; the
+// set-level (SP / P) pill is intentionally omitted here and reserved
+// for the wider info-panel header.
+export function renderPrimaryPriorityBadgeHtml(tl) {
+    if (!tl) return '';
+    if (getActiveGame() === 'hades2') {
+        return renderOrdinalBadgeHtml(tl);
+    }
+    return renderTierBadgeHtml(tl);
 }
 
 export function renderTierBadgeHtml(tl) {
@@ -262,6 +284,30 @@ export function renderSetLevelBadgeHtml(tl) {
     const word = isSuper ? 'super-priority' : 'priority';
     const tip = `Within its own set, this dialogue will be played with ${word} before other eligible dialogues from the same set.`;
     return `<span class="set-priority-badge ${cls}" data-tooltip="${escapeHtml(tip)}">${text}</span>`;
+}
+
+// H2 ordinal-rank priority badge. Hades II keeps narrative priority in
+// a separate NarrativeData.lua registry (ordered list per owner-and-
+// section); this renders the textline's 1-based position as "#N/M".
+// Cluster members (sibling textlines tied at the same ordinal slot)
+// are listed in the tooltip so the tree row stays compact. Returns the
+// empty string when no ordinal is set (textline absent from the
+// NarrativeData registry).
+export function renderOrdinalBadgeHtml(tl) {
+    if (!tl) return '';
+    const ord = tl.narrativePriorityOrdinal;
+    if (!Number.isInteger(ord) || ord < 1) return '';
+    const size = tl.narrativePrioritySectionSize;
+    const haveSize = Number.isInteger(size) && size > 0;
+    const label = haveSize ? `#${ord}/${size}` : `#${ord}`;
+    const cluster = Array.isArray(tl.narrativePriorityClusterMembers) ? tl.narrativePriorityClusterMembers : [];
+    const tipParts = [
+        `Narrative priority rank ${ord}${haveSize ? ` of ${size}` : ''} for this owner. Out of all eligible dialogues, the smallest numbered one will play first. If multiple dialogues have the same rank, one will be chosen at random.`,
+    ];
+    if (cluster.length) {
+        tipParts.push(`Tied at the same rank with:\n${cluster.join('\n')}`);
+    }
+    return `<span class="priority-badge priority-ordinal" data-tooltip="${escapeHtml(tipParts.join(' '))}">${escapeHtml(label)}</span>`;
 }
 
 // PlayOnce / Repeatable indicator. Always renders one of
@@ -311,7 +357,7 @@ export function renderReqItem(ref, selfName) {
     // Skipped for unresolved/self refs since the former has no textline
     // data and the latter is a known cooldown/PlayOnce idiom.
     const refTl = (cat === null && !isSelf) ? textlines[ref] : null;
-    const tierBadge = refTl ? renderTierBadgeHtml(refTl) : '';
+    const tierBadge = refTl ? renderPrimaryPriorityBadgeHtml(refTl) : '';
     return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}${tierBadge}</div>`;
 }
 

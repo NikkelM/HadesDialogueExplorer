@@ -4,6 +4,7 @@ from src.graph import (
     resolve_duplicate,
     dup_summary,
     attach_variant,
+    transfer_orphan_annotations,
     split_name_collisions,
     count_distinct_speakers,
 )
@@ -52,6 +53,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                     "kept": dup_summary(chosen),
                     "dropped": dup_summary(dropped),
                 })
+                transfer_orphan_annotations(chosen, dropped)
                 attach_variant(chosen, dropped)
                 merged_textlines[tl_name] = chosen
             else:
@@ -96,11 +98,36 @@ def merge_graph_data(datasets: list[dict]) -> dict:
                     "name": tl_name,
                     "type": req_type,
                 })
+        # H2 OR-branch textline edges: walk each branch and tag the
+        # dependent entry with 1-based branch index + total so the
+        # viewer can render the dependent as a conditional alternative
+        # rather than a hard requirement. Mirrors the OR-walking pass
+        # in src/graph.py:_build_dependents.
+        or_branches = tl_data.get("orBranches") or []
+        total_branches = len(or_branches)
+        for branch_index, branch in enumerate(or_branches, start=1):
+            branch_reqs = (branch or {}).get("requirements") or {}
+            for req_type, req_list in branch_reqs.items():
+                for dep in req_list:
+                    if dep == tl_name:
+                        continue
+                    merged_dependents.setdefault(dep, []).append({
+                        "name": tl_name,
+                        "type": req_type,
+                        "orBranchIndex": branch_index,
+                        "orBranchTotal": total_branches,
+                    })
 
     all_referenced = set()
     for tl_data in merged_textlines.values():
         for req_list in tl_data.get("requirements", {}).values():
             all_referenced.update(req_list)
+        # Include OR-branch textline edges in the unresolved-ref
+        # accounting so an OR alternative pointing at a missing
+        # textline is reported alongside base requirements.
+        for branch in tl_data.get("orBranches") or []:
+            for req_list in (branch.get("requirements") or {}).values():
+                all_referenced.update(req_list)
 
     cross_file = [d for d in duplicates if d.get("scope") == "cross-file"]
     intra_file = [d for d in duplicates if d.get("scope") == "intra-file"]

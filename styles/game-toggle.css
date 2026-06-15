@@ -1,0 +1,36 @@
+/* Game toggle: two side-by-side pill buttons in the header that
+   swap the viewer's active game. Styled to read as a segmented
+   control so users can tell it's a single binary choice, not two
+   independent actions. */
+
+.game-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.game-toggle[hidden] { display: none; }
+.game-toggle-btn {
+    appearance: none;
+    border: none;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-right: 1px solid #0f3460;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+.game-toggle-btn:last-child { border-right: none; }
+.game-toggle-btn:hover { background: #0f3460; }
+.game-toggle-btn.active {
+    background: #e94560;
+    color: #1a1a2e;
+    font-weight: 600;
+}
+.game-toggle-btn:focus-visible {
+    outline: 2px solid #e94560;
+    outline-offset: -2px;
+}

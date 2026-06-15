@@ -180,29 +180,41 @@ HADES1_REQ_TYPE_TOOLTIPS = {
 }
 
 
-# Display order for requirement-type groupings in the dependency tree.
-# The viewer sorts each level's children by this index so the same colour
-# bands appear in a consistent semantic order: hard requirements first,
-# then optional, then counts, then exclusions, then cooldowns. Anything
-# not listed sorts to the end.
+# Display order for requirement-type groupings in the dependency tree
+# and details panel. The viewer sorts each level's children by this
+# index so the same colour bands appear in a consistent semantic
+# order. Anything not listed sorts to the end.
+#
+# Outer band: ALL -> ANY -> NONE -> MIN -> MAX.
+# Inner scope (broadest -> most immediate):
+#   cross-run -> this-run -> last-run -> this-room -> queued.
+# Within MIN / MAX: explicit count thresholds before runs-since.
 HADES1_REQ_TYPE_DISPLAY_ORDER = [
+    # ALL band - dialogue must have played all of the named lines.
     "RequiredTextLines",
     "RequiredTextLinesThisRun",
     "RequiredTextLinesLastRun",
     "RequiredTextLinesThisRoom",
     "RequiredQueuedTextLines",
+    # ANY band - dialogue must have played at least one of the named
+    # lines (RequiredAnyOtherTextLines is a cross-run "any except the
+    # parent itself" variant - slotted adjacent to RequiredAnyTextLines).
     "RequiredAnyTextLines",
     "RequiredAnyOtherTextLines",
     "RequiredAnyTextLinesThisRun",
     "RequiredAnyTextLinesLastRun",
     "RequiredAnyQueuedTextLines",
-    "RequiredMinAnyTextLines",
-    "RequiredMaxAnyTextLines",
+    # NONE band - dialogue must NOT have played any of the named lines.
     "RequiredFalseTextLines",
-    "RequiredFalseQueuedTextLines",
     "RequiredFalseTextLinesThisRun",
     "RequiredFalseTextLinesLastRun",
     "RequiredFalseTextLinesThisRoom",
+    "RequiredFalseQueuedTextLines",
+    # MIN band - thresholds (count of textlines played vs runs since
+    # any one of them last played).
+    "RequiredMinAnyTextLines",
     "MinRunsSinceAnyTextLines",
+    # MAX band - mirror of MIN.
+    "RequiredMaxAnyTextLines",
     "MaxRunsSinceAnyTextLines",
 ]

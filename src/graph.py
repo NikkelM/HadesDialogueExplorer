@@ -103,6 +103,17 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                     "otherRequirements": tl_data.get("otherRequirements", {}),
                     "dialogueLines": tl_data.get("dialogueLines", []),
                 }
+                # H2 alternative requirement groups (set-level
+                # ``OrRequirements`` on the source RequirementSet). Each
+                # branch is itself a {requirements, otherRequirements,
+                # flags} record produced by the H2 req walker. The
+                # viewer renders them as collapsible OR-group boxes
+                # alongside the base AND requirements; the dependent
+                # builder also walks them so OR-branch textline edges
+                # remain navigable downstream (tagged with branch index
+                # for visual disambiguation).
+                if tl_data.get("orBranches"):
+                    new_entry["orBranches"] = tl_data["orBranches"]
                 # Per-requirement-type provenance: each entry in
                 # `requirements[type]` is paired 1:1 with an entry here that
                 # is either a "GameData.X" group name (the expansion source)
@@ -114,15 +125,30 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                 for opt_key in ("parentTextline", "choiceText", "isSynthetic"):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
-                # Narrative-priority fields, when present. Two distinct
-                # sources, both meaningful:
+                # Narrative-priority fields, when present. Each game uses
+                # a different model and the fields are mutually exclusive
+                # per textline:
+                #   H1 (intrinsic, encoded by container shape):
                 #   - section-tier: which container the textline lives in
                 #     (the engine cascades super-tier sections before
                 #     priority-tier sections before plain).
                 #   - set-level: `Priority`/`SuperPriority` boolean on the
                 #     textline-set table itself (biases random selection
                 #     within whichever section is being consulted).
-                for opt_key in ("narrativePrioritySectionTier", "narrativePrioritySetLevel"):
+                #   H2 (extrinsic, looked up from NarrativeData.lua):
+                #   - ordinal: 1-based rank in the priority registry list
+                #     for this owner+section.
+                #   - section-size: total number of priority slots in the
+                #     list (so the viewer can render "#1/47").
+                #   - cluster-members: sibling textline names tied at the
+                #     same ordinal (inline sub-array in the priority list).
+                for opt_key in (
+                    "narrativePrioritySectionTier",
+                    "narrativePrioritySetLevel",
+                    "narrativePriorityOrdinal",
+                    "narrativePrioritySectionSize",
+                    "narrativePriorityClusterMembers",
+                ):
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
                 # PlayOnce flag (once per save). Surfaced in the details
@@ -162,6 +188,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                         "kept": dup_summary(chosen),
                         "dropped": dup_summary(dropped),
                     })
+                    transfer_orphan_annotations(chosen, dropped)
                     attach_variant(chosen, dropped)
                     textlines[tl_name] = chosen
                 else:
@@ -173,6 +200,12 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
     for tl_data in textlines.values():
         for req_list in tl_data["requirements"].values():
             all_referenced.update(req_list)
+        # H2 OR-branch textline edges also count as references for
+        # unresolved-ref reporting: an OR alternative pointing at a
+        # missing textline is just as broken as a base requirement.
+        for branch in tl_data.get("orBranches") or []:
+            for req_list in (branch.get("requirements") or {}).values():
+                all_referenced.update(req_list)
 
     stats = {
         "totalSpeakers": count_distinct_speakers(
@@ -289,6 +322,7 @@ def dup_summary(entry: dict) -> dict:
 # variant carries.
 _VARIANT_OPTIONAL_FIELDS = (
     "requirementSources",
+    "orBranches",
     "playOnce",
     "partner",
     "parentTextline",
@@ -296,6 +330,9 @@ _VARIANT_OPTIONAL_FIELDS = (
     "isSynthetic",
     "narrativePrioritySectionTier",
     "narrativePrioritySetLevel",
+    "narrativePriorityOrdinal",
+    "narrativePrioritySectionSize",
+    "narrativePriorityClusterMembers",
 )
 
 
@@ -427,6 +464,52 @@ def _variant_already_present(variants: list, candidate: dict) -> bool:
     )
 
 
+# Annotation fields that can legitimately live on either side of a
+# duplicate pair and must not be silently dropped when ``resolve_duplicate``
+# picks one side as the canonical entry. All five are H2 NarrativeData
+# priority fields: ``NarrativeData_<NPC>.lua`` registers each textline
+# name under exactly one NPC's owner table, and for the xWithY partner
+# pattern that NPC is sometimes the partner-stub side (zero dialogue,
+# zero requirements) rather than the cue-bearing canonical side. The
+# stub then loses to the canonical entry under ``resolve_duplicate``'s
+# richness comparison, and the priority annotation rides off with it
+# unless we transfer it across first. H1 is unaffected (its priority
+# data is intrinsic to the canonical entry's container shape, so the
+# transfer is a no-op there).
+_TRANSFERABLE_ORPHAN_FIELDS = (
+    "narrativePrioritySectionTier",
+    "narrativePrioritySetLevel",
+    "narrativePriorityOrdinal",
+    "narrativePrioritySectionSize",
+    "narrativePriorityClusterMembers",
+)
+
+
+def transfer_orphan_annotations(kept: dict, dropped: dict) -> None:
+    """Copy annotation fields from a dropped duplicate onto the kept
+    entry whenever the kept entry lacks them. Mutates ``kept`` in place.
+
+    Currently scoped to H2 NarrativeData priority fields (see
+    :data:`_TRANSFERABLE_ORPHAN_FIELDS` for the list and rationale).
+    Fields already populated on the kept side are never overwritten:
+    the dedup pipeline picks ``kept`` as the canonical entry first,
+    so its annotations always win when both sides supply a value.
+
+    Called from both :func:`build_graph_data` (intra-file dedup) and
+    :func:`src.graph_merge.merge_graph_data` (cross-file dedup) right
+    after :func:`resolve_duplicate` and before :func:`attach_variant`:
+
+    * After ``resolve_duplicate`` -- so we know which side won.
+    * Before ``attach_variant`` -- so the variant payload generated from
+      ``dropped`` reflects its original annotation state; the transfer
+      onto ``kept`` is a separate concern from preserving the dropped
+      entry as a distinct-content sibling.
+    """
+    for key in _TRANSFERABLE_ORPHAN_FIELDS:
+        if key not in kept and key in dropped:
+            kept[key] = dropped[key]
+
+
 def split_name_collisions(textlines: dict) -> dict:
     """Replace each ``nameCollision`` entry with one suffixed entry per
     variant. Mutates ``textlines`` in place and returns it.
@@ -516,7 +599,7 @@ def _entry_from_variant(canonical: dict, variant: dict, original_name: str,
 
 
 def _build_dependents(textlines: dict) -> dict:
-    """Reverse-index requirements: dep_name -> [{name, type}, ...].
+    """Reverse-index requirements: dep_name -> [{name, type, ...}, ...].
 
     Self-references are intentionally excluded. They always come from
     cooldown / PlayOnce-style fields (``MinRunsSinceAnyTextLines``,
@@ -524,6 +607,12 @@ def _build_dependents(textlines: dict) -> dict:
     they are idiomatic game-data patterns rather than real graph edges.
     Including them would inflate ``stats.totalEdges`` and produce
     misleading "cycle" markers in the viewer's tree.
+
+    H2 ``orBranches`` (alternative requirement groups) are walked as
+    well so OR-branch textline edges remain navigable from the
+    downstream side. Each OR-branch edge carries ``orBranchIndex``
+    (1-based) and ``orBranchTotal`` so the viewer can tag the
+    dependent as "(OR alt N of M)" rather than a hard requirement.
     """
     dependents = {}
     for tl_name, tl_data in textlines.items():
@@ -532,4 +621,18 @@ def _build_dependents(textlines: dict) -> dict:
                 if dep == tl_name:
                     continue
                 dependents.setdefault(dep, []).append({"name": tl_name, "type": req_type})
+        or_branches = tl_data.get("orBranches") or []
+        total_branches = len(or_branches)
+        for branch_index, branch in enumerate(or_branches, start=1):
+            branch_reqs = (branch or {}).get("requirements") or {}
+            for req_type, req_list in branch_reqs.items():
+                for dep in req_list:
+                    if dep == tl_name:
+                        continue
+                    dependents.setdefault(dep, []).append({
+                        "name": tl_name,
+                        "type": req_type,
+                        "orBranchIndex": branch_index,
+                        "orBranchTotal": total_branches,
+                    })
     return dependents

@@ -17,16 +17,22 @@
 // Scheme (extensible - any unknown keys are preserved when parsing
 // and ignored by renderers that don't recognise them):
 //
-//   #view=<viewName>&dialogue=<TextlineName>
-//   #view=<viewName>&speaker=<SpeakerId>
-//   #view=<viewName>&dialogue=<TextlineName>&...viewSpecificKeys
+//   #game=<gameId>&view=<viewName>&dialogue=<TextlineName>
+//   #game=<gameId>&view=<viewName>&speaker=<SpeakerId>
+//   #game=<gameId>&view=<viewName>&dialogue=<TextlineName>&...viewSpecificKeys
 //
 // Defaults / fallback:
 //
-//   - Empty / missing hash -> empty state, nothing selected. The
+//   - Empty / missing hash -> empty state under the build-time
+//     default game (``defaultGame`` in the data payload). The
 //     viewer renders its placeholder panels (see
 //     ``templates/index.html``) so the page matches its first-load
 //     appearance.
+//   - ``game`` missing -> default game from the data payload (the
+//     ``data.js`` ``resolveGame`` helper handles this). Unknown
+//     game ids likewise fall back to the default with a console
+//     warning so shared deep links never land the viewer in an
+//     empty-data limbo.
 //   - ``view`` missing but ``dialogue=X`` present -> dialogue
 //     detail view of ``X``. This keeps hand-authored URLs short
 //     and matches the only ``view`` the viewer implements today.
@@ -40,8 +46,10 @@
 //
 // Known/canonical keys (currently used or reserved for upcoming
 // views) are written in a fixed order so the serialized URL is
-// stable across renders. Extra keys follow in insertion order.
-const KEY_ORDER = ['view', 'dialogue', 'speaker'];
+// stable across renders. ``game`` comes first because it bounds
+// the namespace every other key resolves against (textline names
+// are NOT unique cross-game). Extra keys follow in insertion order.
+const KEY_ORDER = ['game', 'view', 'dialogue', 'speaker'];
 
 // Parse a hash fragment (with or without the leading ``#``) into a
 // plain object. Returns ``{}`` for an empty / missing hash or for a

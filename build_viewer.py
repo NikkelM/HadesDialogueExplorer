@@ -2,6 +2,13 @@
 Build the final HTML viewer by combining all JSON datasets in ``outputs/``
 with the HTML template.
 
+The viewer is **strictly per-game**: H1 and H2 are loaded as two
+entirely separate datasets and the UI toggles between them. They are
+never merged, unioned, or otherwise conflated at any layer (data,
+labels, indices, render). Each input JSON in ``outputs/`` carries a
+``source`` field ("Hades 1" / "Hades 2") used to route it to the right
+game bucket; the merge + annotation pipeline runs once per bucket.
+
 Two output flavours are supported:
 
   - ``--split`` (default): writes ``dist/index.html`` + ``dist/viewer.js``
@@ -66,6 +73,31 @@ DIST_DIR = PROJECT_DIR / "dist"
 # dropped in ``dist/`` (e.g. screenshots, release notes).
 _SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
+
+# Map each per-source JSON filename prefix to the canonical game id
+# used as a key in the final ``games`` map and in the URL hash. The
+# prefix is the canonical routing signal - ``generate_data.py`` writes
+# every output as ``{prefix}*.json`` and the prefix uniquely identifies
+# which game's pipeline produced the file (vs. sniffing the ``source``
+# field on a textline, which doesn't work for files that contain no
+# textlines, like H2 encounter files that only hold VoiceLines).
+_FILENAME_PREFIX_TO_GAME = (
+    ("hades1_", "hades1"),
+    ("hades2_", "hades2"),
+)
+
+# Display labels for the game toggle UI. Order is preserved by the
+# viewer's toggle renderer (so swapping the order here swaps the
+# button order).
+_GAME_LABELS = {
+    "hades1": "Hades",
+    "hades2": "Hades II",
+}
+
+# Default game shown when no ``game=`` URL hash key is present. Kept as
+# a top-level constant so the choice is one obvious edit away from the
+# build entry point.
+_DEFAULT_GAME = "hades2"
 
 
 def build_css() -> str:
@@ -168,8 +200,11 @@ def _ensure_clean_dist() -> None:
             target.unlink()
 
 
-def build_split(graph_data: dict) -> dict:
+def build_split(payload: dict) -> dict:
     """Write the canonical split-build outputs into ``dist/``.
+
+    ``payload`` is the per-game-bundled dict produced by :func:`main`
+    (``{games: {hades1: {...}, hades2: {...}}, defaultGame, gameLabels}``).
 
     Returns a dict mapping output name -> file size in bytes, used by
     the caller for reporting and by ``build_bundle`` to inline the same
@@ -180,7 +215,7 @@ def build_split(graph_data: dict) -> dict:
     css_data = build_css()
     js_data = build_js()
     index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
-    json_data = json.dumps(graph_data, separators=(",", ":"))
+    json_data = json.dumps(payload, separators=(",", ":"))
 
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
     (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
@@ -276,37 +311,113 @@ def _parse_args(argv):
     return parser.parse_args(argv)
 
 
+def _route_dataset(json_name: str) -> str:
+    """Return the canonical game id for a per-source JSON dataset based
+    on its filename prefix.
+
+    ``generate_data.py`` emits every output as ``{prefix}*.json`` where
+    the prefix uniquely identifies which game's pipeline produced the
+    file. Any unknown prefix is a hard error because silently dropping
+    a dataset on the floor would manifest as a mystery missing-textlines
+    bug in the viewer rather than a build failure.
+    """
+    for prefix, game in _FILENAME_PREFIX_TO_GAME:
+        if json_name.startswith(prefix):
+            return game
+    raise RuntimeError(
+        f"{json_name}: cannot route dataset - no entry in "
+        f"_FILENAME_PREFIX_TO_GAME ({[p for p, _ in _FILENAME_PREFIX_TO_GAME]!r}). "
+        f"Add the new prefix to build_viewer.py."
+    )
+
+
+def _build_game(game: str, datasets: list[dict]) -> dict:
+    """Run the full merge + annotation pipeline for one game's datasets.
+
+    Metadata-only datasets (no ``textlines`` key) are peeled off before
+    merging and their top-level fields are attached to the resulting
+    ``graph_data``. This is the channel used by ``hades2_metadata.json``
+    to ship registry tables (``gameDataRefs``) alongside the textline
+    data without going through ``merge_graph_data`` (which only
+    preserves ``textlines`` / ``dependents`` / ``speakers`` / ``stats``).
+    """
+    metadata = [d for d in datasets if "textlines" not in d]
+    regular = [d for d in datasets if "textlines" in d]
+
+    if not regular:
+        raise RuntimeError(
+            f"{game}: no datasets with a 'textlines' key - cannot build graph data."
+        )
+
+    if len(regular) == 1:
+        graph_data = regular[0]
+    else:
+        print(f"  Merging {len(regular)} datasets for {game}...")
+        graph_data = merge_graph_data(regular)
+
+    for meta in metadata:
+        for key, value in meta.items():
+            graph_data[key] = value
+
+    annotate_known_unresolved(graph_data, game)
+    annotate_blocked_textlines(graph_data)
+    annotate_label_maps(graph_data, game)
+
+    return graph_data
+
+
 def main(argv=None):
     args = _parse_args(argv if argv is not None else sys.argv[1:])
 
-    datasets = []
     json_files = sorted(OUTPUT_DIR.glob("*.json"))
-
     if not json_files:
         print("ERROR: No JSON files found in outputs/. Run generate_data.py first.")
         sys.exit(1)
 
+    # Route every per-source JSON to its game bucket. The pipeline then
+    # runs independently per bucket so cross-game name collisions
+    # cannot ever conflate textlines or speakers.
+    datasets_by_game: dict[str, list[dict]] = {}
     for json_file in json_files:
         print(f"Loading: {json_file.name}")
+        game = _route_dataset(json_file.name)
         with open(json_file, "r", encoding="utf-8") as f:
-            datasets.append(json.load(f))
+            data = json.load(f)
+        datasets_by_game.setdefault(game, []).append(data)
 
-    if len(datasets) == 1:
-        graph_data = datasets[0]
-    else:
-        print(f"Merging {len(datasets)} datasets...")
-        graph_data = merge_graph_data(datasets)
+    games_payload: dict[str, dict] = {}
+    for game in sorted(datasets_by_game):
+        print(f"\n=== {game} ===")
+        graph_data = _build_game(game, datasets_by_game[game])
+        stats = graph_data["stats"]
+        print(
+            f"  Total: {stats['totalTextlines']} textlines, "
+            f"{stats['totalEdges']} edges, "
+            f"{len(stats['unresolvedRefs'])} external refs"
+        )
+        games_payload[game] = graph_data
 
-    annotate_known_unresolved(graph_data)
-    annotate_blocked_textlines(graph_data)
-    annotate_label_maps(graph_data)
+    if _DEFAULT_GAME not in games_payload:
+        raise RuntimeError(
+            f"Default game {_DEFAULT_GAME!r} has no datasets in outputs/. "
+            f"Either generate its sources or change _DEFAULT_GAME in "
+            f"build_viewer.py."
+        )
 
-    print(f"Total: {graph_data['stats']['totalTextlines']} textlines, "
-          f"{graph_data['stats']['totalEdges']} edges, "
-          f"{len(graph_data['stats']['unresolvedRefs'])} external refs")
+    # Final wire-up: a single payload with both games' graphs plus the
+    # UI hints (default game + display labels) the viewer needs to
+    # render the toggle. Per-game graphs keep the same shape they had
+    # in the H1-only era, so all the existing per-game render code is
+    # unchanged - the viewer just swaps which game's blob feeds its
+    # let bindings on toggle.
+    payload = {
+        "games": games_payload,
+        "defaultGame": _DEFAULT_GAME,
+        "gameLabels": {gid: _GAME_LABELS[gid] for gid in games_payload},
+    }
 
     if args.mode in ("split", "all"):
-        sizes = build_split(graph_data)
+        sizes = build_split(payload)
     else:
         sizes = {}
 
@@ -314,7 +425,7 @@ def main(argv=None):
         if args.mode == "bundle":
             # Bundle-only run still needs the split outputs to stitch
             # from; refresh them so we don't bundle stale content.
-            sizes = build_split(graph_data)
+            sizes = build_split(payload)
         build_bundle(sizes)
 
 

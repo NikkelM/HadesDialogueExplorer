@@ -16,19 +16,7 @@ def _write(tmp_path: Path, content: str) -> Path:
 # --- Happy path ---
 
 
-def test_loads_required_hades1_scripts(tmp_path: Path):
-    scripts = tmp_path / "scripts"
-    scripts.mkdir()
-    cfg_path = _write(tmp_path, f'[paths]\nhades1_scripts = "{scripts.as_posix()}"\n')
-
-    result = load_config(cfg_path)
-
-    assert isinstance(result, Config)
-    assert result.hades1_scripts == scripts
-    assert result.hades2_scripts is None
-
-
-def test_loads_optional_hades2_scripts(tmp_path: Path):
+def test_loads_required_paths(tmp_path: Path):
     scripts1 = tmp_path / "h1"
     scripts2 = tmp_path / "h2"
     scripts1.mkdir()
@@ -42,33 +30,50 @@ def test_loads_optional_hades2_scripts(tmp_path: Path):
 
     result = load_config(cfg_path)
 
+    assert isinstance(result, Config)
     assert result.hades1_scripts == scripts1
     assert result.hades2_scripts == scripts2
 
 
 def test_expands_user_home_in_paths(tmp_path: Path, monkeypatch):
     fake_home = tmp_path / "home"
-    target = fake_home / "Games" / "Hades" / "Scripts"
-    target.mkdir(parents=True)
+    h1_target = fake_home / "Games" / "Hades" / "Scripts"
+    h2_target = fake_home / "Games" / "HadesII" / "Scripts"
+    h1_target.mkdir(parents=True)
+    h2_target.mkdir(parents=True)
     monkeypatch.setenv("HOME", str(fake_home))
     monkeypatch.setenv("USERPROFILE", str(fake_home))  # Windows
 
-    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = "~/Games/Hades/Scripts"\n')
+    cfg_path = _write(
+        tmp_path,
+        '[paths]\n'
+        'hades1_scripts = "~/Games/Hades/Scripts"\n'
+        'hades2_scripts = "~/Games/HadesII/Scripts"\n',
+    )
 
     result = load_config(cfg_path)
 
-    assert result.hades1_scripts == target
+    assert result.hades1_scripts == h1_target
+    assert result.hades2_scripts == h2_target
 
 
 def test_resolves_relative_paths_against_config_file_dir(tmp_path: Path):
     """Relative paths should resolve relative to the config file, not cwd."""
-    nested = tmp_path / "subdir" / "scripts"
-    nested.mkdir(parents=True)
-    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = "subdir/scripts"\n')
+    h1_nested = tmp_path / "subdir" / "h1"
+    h2_nested = tmp_path / "subdir" / "h2"
+    h1_nested.mkdir(parents=True)
+    h2_nested.mkdir(parents=True)
+    cfg_path = _write(
+        tmp_path,
+        '[paths]\n'
+        'hades1_scripts = "subdir/h1"\n'
+        'hades2_scripts = "subdir/h2"\n',
+    )
 
     result = load_config(cfg_path)
 
-    assert result.hades1_scripts == nested.resolve()
+    assert result.hades1_scripts == h1_nested.resolve()
+    assert result.hades2_scripts == h2_nested.resolve()
 
 
 # --- Error path: file missing / malformed ---
@@ -107,14 +112,20 @@ def test_raises_on_missing_hades1_scripts_key(tmp_path: Path):
         load_config(cfg_path, validate_paths=False)
 
 
+def test_raises_on_missing_hades2_scripts_key(tmp_path: Path):
+    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = "/tmp"\n')
+    with pytest.raises(ConfigError, match="hades2_scripts"):
+        load_config(cfg_path, validate_paths=False)
+
+
 def test_raises_on_non_string_value(tmp_path: Path):
-    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = 123\n')
+    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = 123\nhades2_scripts = "/tmp"\n')
     with pytest.raises(ConfigError, match="must be a string"):
         load_config(cfg_path, validate_paths=False)
 
 
 def test_raises_on_empty_string_value(tmp_path: Path):
-    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = ""\n')
+    cfg_path = _write(tmp_path, '[paths]\nhades1_scripts = ""\nhades2_scripts = "/tmp"\n')
     with pytest.raises(ConfigError, match="non-empty"):
         load_config(cfg_path, validate_paths=False)
 
@@ -123,20 +134,34 @@ def test_raises_on_empty_string_value(tmp_path: Path):
 
 
 def test_raises_when_hades1_path_does_not_exist(tmp_path: Path):
-    cfg_path = _write(tmp_path, f'[paths]\nhades1_scripts = "{(tmp_path / "nope").as_posix()}"\n')
+    h2 = tmp_path / "h2"
+    h2.mkdir()
+    cfg_path = _write(
+        tmp_path,
+        f'[paths]\n'
+        f'hades1_scripts = "{(tmp_path / "nope").as_posix()}"\n'
+        f'hades2_scripts = "{h2.as_posix()}"\n',
+    )
     with pytest.raises(ConfigError, match="does not exist"):
         load_config(cfg_path)
 
 
 def test_raises_when_hades1_path_is_a_file(tmp_path: Path):
+    h2 = tmp_path / "h2"
+    h2.mkdir()
     not_a_dir = tmp_path / "scripts.lua"
     not_a_dir.write_text("", encoding="utf-8")
-    cfg_path = _write(tmp_path, f'[paths]\nhades1_scripts = "{not_a_dir.as_posix()}"\n')
+    cfg_path = _write(
+        tmp_path,
+        f'[paths]\n'
+        f'hades1_scripts = "{not_a_dir.as_posix()}"\n'
+        f'hades2_scripts = "{h2.as_posix()}"\n',
+    )
     with pytest.raises(ConfigError, match="must point at a directory"):
         load_config(cfg_path)
 
 
-def test_raises_when_optional_hades2_path_invalid(tmp_path: Path):
+def test_raises_when_hades2_path_invalid(tmp_path: Path):
     scripts1 = tmp_path / "h1"
     scripts1.mkdir()
     cfg_path = _write(
@@ -156,11 +181,14 @@ def test_validate_paths_false_skips_filesystem_checks(tmp_path: Path):
     """Parse-only mode should accept non-existent paths."""
     cfg_path = _write(
         tmp_path,
-        '[paths]\nhades1_scripts = "/definitely/does/not/exist"\n',
+        '[paths]\n'
+        'hades1_scripts = "/definitely/does/not/exist"\n'
+        'hades2_scripts = "/also/does/not/exist"\n',
     )
-    # Should NOT raise even though path doesn't exist.
+    # Should NOT raise even though paths don't exist.
     result = load_config(cfg_path, validate_paths=False)
     assert str(result.hades1_scripts).endswith("exist")
+    assert str(result.hades2_scripts).endswith("exist")
 
 
 def test_validate_paths_is_keyword_only():

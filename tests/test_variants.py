@@ -12,6 +12,7 @@ from src.graph import (
     attach_variant,
     make_variant_summary,
     split_name_collisions,
+    transfer_orphan_annotations,
     _is_substantive_variant,
     _variant_already_present,
 )
@@ -96,6 +97,29 @@ class TestMakeVariantSummary:
         assert "playOnce" not in v
         assert "isSynthetic" not in v
 
+    def test_preserves_h1_priority_fields(self):
+        data = _entry("A", dialogue=[{"text": "x"}])
+        data["narrativePrioritySectionTier"] = "super"
+        data["narrativePrioritySetLevel"] = "priority"
+        v = make_variant_summary(data, "A", "InteractTextLineSets")
+        assert v["narrativePrioritySectionTier"] == "super"
+        assert v["narrativePrioritySetLevel"] == "priority"
+
+    def test_preserves_h2_priority_fields(self):
+        # H2 textlines pick up ordinal priority via the NarrativeData
+        # post-extraction merge. When dedup discards a duplicate that
+        # carried the only copy of those fields, the variant summary
+        # must retain them so the viewer can still render the badge
+        # on the kept side via the variant trail.
+        data = _entry("A", dialogue=[{"text": "x"}])
+        data["narrativePriorityOrdinal"] = 3
+        data["narrativePrioritySectionSize"] = 12
+        data["narrativePriorityClusterMembers"] = ["Sib1", "Sib2"]
+        v = make_variant_summary(data, "A", "InteractTextLineSets")
+        assert v["narrativePriorityOrdinal"] == 3
+        assert v["narrativePrioritySectionSize"] == 12
+        assert v["narrativePriorityClusterMembers"] == ["Sib1", "Sib2"]
+
 
 class TestAttachVariant:
     def test_seeds_variants_with_kept_then_appends_dropped(self):
@@ -178,6 +202,81 @@ class TestAttachVariant:
         )
         assert kept["variants"][0]["owner"] == "RoomA"
         assert kept["variants"][1]["owner"] == "RoomB"
+
+
+class TestTransferOrphanAnnotations:
+    """``transfer_orphan_annotations`` copies NarrativeData priority
+    fields from a dropped duplicate onto the kept entry whenever the
+    kept entry lacks them. Covers the H2 xWithY partner-stub case
+    where ``NarrativeData_<Partner>.lua`` registers the textline name
+    under the partner NPC (zero-content stub side), but the canonical
+    entry the dedup pipeline keeps is the cue-bearing side from
+    ``NPCData_<Canonical>.lua``."""
+
+    def test_transfers_all_priority_fields_when_kept_lacks_them(self):
+        kept = _entry("NPC_Icarus_01", source_line=10,
+                      dialogue=[{"text": "hi"}])
+        dropped = _entry("NPC_Eris_01", source_line=20)
+        dropped["narrativePrioritySectionTier"] = "super"
+        dropped["narrativePrioritySetLevel"] = "priority"
+        dropped["narrativePriorityOrdinal"] = 40
+        dropped["narrativePrioritySectionSize"] = 44
+        dropped["narrativePriorityClusterMembers"] = ["IcarusWithEris01"]
+        transfer_orphan_annotations(kept, dropped)
+        assert kept["narrativePrioritySectionTier"] == "super"
+        assert kept["narrativePrioritySetLevel"] == "priority"
+        assert kept["narrativePriorityOrdinal"] == 40
+        assert kept["narrativePrioritySectionSize"] == 44
+        assert kept["narrativePriorityClusterMembers"] == ["IcarusWithEris01"]
+
+    def test_does_not_overwrite_existing_kept_fields(self):
+        # Kept entry's own annotations always win; the helper only fills
+        # in missing fields. This mirrors the dedup pipeline contract:
+        # ``resolve_duplicate`` already picked ``kept`` as canonical, so
+        # its data is authoritative whenever both sides supply a value.
+        kept = _entry("NPC_Icarus_01", dialogue=[{"text": "hi"}])
+        kept["narrativePriorityOrdinal"] = 10
+        kept["narrativePrioritySectionSize"] = 50
+        dropped = _entry("NPC_Eris_01")
+        dropped["narrativePriorityOrdinal"] = 99
+        dropped["narrativePrioritySectionSize"] = 99
+        transfer_orphan_annotations(kept, dropped)
+        assert kept["narrativePriorityOrdinal"] == 10
+        assert kept["narrativePrioritySectionSize"] == 50
+
+    def test_partial_transfer_when_kept_has_some_fields(self):
+        # Kept has tier already; dropped supplies ordinal/size. After the
+        # transfer both sources are represented on kept without overlap.
+        kept = _entry("A", dialogue=[{"text": "hi"}])
+        kept["narrativePrioritySectionTier"] = "priority"
+        dropped = _entry("B")
+        dropped["narrativePrioritySectionTier"] = "super"  # ignored
+        dropped["narrativePriorityOrdinal"] = 7
+        dropped["narrativePrioritySectionSize"] = 12
+        transfer_orphan_annotations(kept, dropped)
+        assert kept["narrativePrioritySectionTier"] == "priority"
+        assert kept["narrativePriorityOrdinal"] == 7
+        assert kept["narrativePrioritySectionSize"] == 12
+
+    def test_noop_when_neither_side_has_annotations(self):
+        # H1 dedup is the everyday no-op case: H1 textlines never carry
+        # the H2 priority fields, so the helper is a free pass-through.
+        kept = _entry("A", dialogue=[{"text": "hi"}])
+        kept_snapshot = dict(kept)
+        dropped = _entry("B")
+        transfer_orphan_annotations(kept, dropped)
+        assert kept == kept_snapshot
+
+    def test_noop_when_only_kept_has_annotations(self):
+        # If the stub side ships no annotations there is nothing to
+        # transfer; the helper must not strip kept's own fields.
+        kept = _entry("A", dialogue=[{"text": "hi"}])
+        kept["narrativePriorityOrdinal"] = 3
+        kept["narrativePrioritySectionSize"] = 5
+        dropped = _entry("B")
+        transfer_orphan_annotations(kept, dropped)
+        assert kept["narrativePriorityOrdinal"] == 3
+        assert kept["narrativePrioritySectionSize"] == 5
 
 
 class TestSplitNameCollisions:

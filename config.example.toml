@@ -9,6 +9,6 @@
 # Typical Steam install on Windows:
 hades1_scripts = "C:/Program Files (x86)/Steam/steamapps/common/Hades/Content/Scripts"
 
-# Optional: directory containing the Hades II Lua scripts. Leave commented
-# out until the Hades II extractors are wired up.
-# hades2_scripts = "C:/Program Files (x86)/Steam/steamapps/common/Hades II/Content/Scripts"
+# Required: directory containing the Hades II Lua scripts.
+# Typical Steam install on Windows:
+hades2_scripts = "C:/Program Files (x86)/Steam/steamapps/common/Hades II/Content/Scripts"

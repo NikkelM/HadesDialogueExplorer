@@ -22,9 +22,12 @@ import {
     renderReqTypeHtml,
     renderTierBadgeHtml,
     renderSetLevelBadgeHtml,
+    renderOrdinalBadgeHtml,
+    renderPriorityBadgeHtml,
+    renderPrimaryPriorityBadgeHtml,
     renderPlayOnceBadgeHtml,
 } from '../templates/viewer/utilities.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, setActiveGame } from '../templates/viewer/data.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 before(() => {
@@ -196,6 +199,122 @@ test('renderSetLevelBadgeHtml emits SP / P / empty for the three input states', 
     assert.ok(renderSetLevelBadgeHtml({ narrativePrioritySetLevel: 'priority' }).includes('>P<'));
     assert.equal(renderSetLevelBadgeHtml({ narrativePrioritySetLevel: null }), '');
     assert.equal(renderSetLevelBadgeHtml({}), '');
+});
+
+test('renderOrdinalBadgeHtml renders #N/M for H2 textlines and is empty without ordinal', () => {
+    const full = renderOrdinalBadgeHtml({
+        narrativePriorityOrdinal: 3,
+        narrativePrioritySectionSize: 12,
+        narrativePriorityClusterMembers: ['SiblingA', 'SiblingB'],
+    });
+    assert.ok(full.includes('priority-ordinal'));
+    assert.ok(full.includes('#3/12'));
+    // Cluster members should surface inside the tooltip so the tree
+    // row stays compact. User-controlled wording uses a newline-
+    // separated list so each member reads on its own line.
+    assert.ok(full.includes('Tied at the same rank with:'));
+    assert.ok(full.includes('SiblingA'));
+    assert.ok(full.includes('SiblingB'));
+
+    const solo = renderOrdinalBadgeHtml({
+        narrativePriorityOrdinal: 1,
+        narrativePrioritySectionSize: 5,
+        narrativePriorityClusterMembers: [],
+    });
+    assert.ok(solo.includes('#1/5'));
+    // Solo entries (no cluster) omit the "Tied at the same rank" hint.
+    assert.ok(!solo.includes('Tied at the same rank'));
+
+    // Section size is optional: falls back to bare ordinal.
+    const noSize = renderOrdinalBadgeHtml({ narrativePriorityOrdinal: 4 });
+    assert.ok(noSize.includes('>#4<'));
+    assert.ok(!noSize.includes('#4/'));
+
+    // Missing or invalid ordinal -> empty (H1 textline, or H2 textline
+    // not listed in NarrativeData).
+    assert.equal(renderOrdinalBadgeHtml({}), '');
+    assert.equal(renderOrdinalBadgeHtml(null), '');
+    assert.equal(renderOrdinalBadgeHtml({ narrativePriorityOrdinal: 0 }), '');
+    assert.equal(renderOrdinalBadgeHtml({ narrativePriorityOrdinal: '2' }), '');
+});
+
+test('renderPriorityBadgeHtml dispatches between H1 tier+setlevel and H2 ordinal by active game', () => {
+    // Default fixture is single-game (hades1) - dispatch returns the
+    // H1 tier + set-level pair, ignoring any ordinal fields that
+    // happen to be present.
+    const h1Html = renderPriorityBadgeHtml({
+        narrativePrioritySectionTier: 'priority',
+        narrativePrioritySetLevel: 'super',
+        narrativePriorityOrdinal: 7,
+        narrativePrioritySectionSize: 9,
+    });
+    assert.ok(h1Html.includes('priority-priority'));
+    assert.ok(h1Html.includes('>SP<'));
+    assert.ok(!h1Html.includes('priority-ordinal'));
+
+    // Multi-game fixture: load both games, activate H2, verify
+    // dispatch flips to the ordinal badge.
+    const h1 = buildFixtureData();
+    const h2 = buildFixtureData();
+    loadData({
+        games: { hades1: h1, hades2: h2 },
+        defaultGame: 'hades1',
+        gameLabels: { hades1: 'Hades I', hades2: 'Hades II' },
+    });
+    setActiveGame('hades2');
+    const h2Html = renderPriorityBadgeHtml({
+        narrativePrioritySectionTier: 'priority',
+        narrativePrioritySetLevel: 'super',
+        narrativePriorityOrdinal: 7,
+        narrativePrioritySectionSize: 9,
+        narrativePriorityClusterMembers: [],
+    });
+    assert.ok(h2Html.includes('priority-ordinal'));
+    assert.ok(h2Html.includes('#7/9'));
+    // H1 tier + set-level pair must NOT leak into the H2 dispatch.
+    assert.ok(!h2Html.includes('priority-priority'));
+    assert.ok(!h2Html.includes('>SP<'));
+
+    // H2 textline with no ordinal renders nothing (not every H2
+    // textline is listed in NarrativeData).
+    assert.equal(renderPriorityBadgeHtml({}), '');
+
+    // Restore the shared fixture for downstream tests.
+    loadFixtureData();
+});
+
+test('renderPrimaryPriorityBadgeHtml returns one badge per row, omitting the SP/P pill', () => {
+    // Default fixture (hades1) - returns the tier badge only; the
+    // set-level pill is reserved for the wider info-panel header.
+    const h1Html = renderPrimaryPriorityBadgeHtml({
+        narrativePrioritySectionTier: 'priority',
+        narrativePrioritySetLevel: 'super',
+    });
+    assert.ok(h1Html.includes('priority-priority'));
+    assert.ok(!h1Html.includes('>SP<'));
+    assert.ok(!h1Html.includes('set-priority-super'));
+
+    // Activate H2 and verify the dispatch flips to the ordinal badge.
+    const h1 = buildFixtureData();
+    const h2 = buildFixtureData();
+    loadData({
+        games: { hades1: h1, hades2: h2 },
+        defaultGame: 'hades1',
+        gameLabels: { hades1: 'Hades I', hades2: 'Hades II' },
+    });
+    setActiveGame('hades2');
+    const h2Html = renderPrimaryPriorityBadgeHtml({
+        narrativePriorityOrdinal: 2,
+        narrativePrioritySectionSize: 6,
+        narrativePriorityClusterMembers: [],
+    });
+    assert.ok(h2Html.includes('priority-ordinal'));
+    assert.ok(h2Html.includes('#2/6'));
+
+    // Null textline (e.g. unresolved ref) renders nothing.
+    assert.equal(renderPrimaryPriorityBadgeHtml(null), '');
+
+    loadFixtureData();
 });
 
 test('renderPlayOnceBadgeHtml distinguishes locked vs repeatable variants', () => {

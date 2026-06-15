@@ -21,7 +21,7 @@ import {
     getEdgeLabel,
     reqTypeTitleText,
     unresolvedCategoryFor,
-    renderTierBadgeHtml,
+    renderPrimaryPriorityBadgeHtml,
 } from './utilities.js';
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
@@ -45,7 +45,32 @@ export function getChildren(name, direction) {
                         name: refs[i],
                         edgeType: type,
                         group: sources[i] || null,
+                        orBranchIndex: null,
+                        orBranchTotal: null,
                     });
+                }
+            }
+            // H2 alternative requirement groups (``OrRequirements``).
+            // Each branch contributes its own textline-typed children
+            // tagged with the 1-based branch index + total. The tree
+            // renderer partitions kids on these tags so OR-tagged
+            // children render under a dedicated Alternative wrapper,
+            // separated from the AND base block above.
+            const orBranches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
+            const total = orBranches.length;
+            for (let bi = 0; bi < total; bi++) {
+                const branchReqs = (orBranches[bi] && orBranches[bi].requirements) || {};
+                for (const [type, refs] of Object.entries(branchReqs)) {
+                    for (let i = 0; i < refs.length; i++) {
+                        if (refs[i] === name) continue;
+                        children.push({
+                            name: refs[i],
+                            edgeType: type,
+                            group: null,
+                            orBranchIndex: bi + 1,
+                            orBranchTotal: total,
+                        });
+                    }
                 }
             }
         }
@@ -55,7 +80,21 @@ export function getChildren(name, direction) {
             // index by graph.py, but guard defensively in case the
             // upstream data ever changes.
             if (dep.name === name) continue;
-            children.push({ name: dep.name, edgeType: dep.type, group: null });
+            // OR-branch tagging on dep edges (``orBranchIndex`` /
+            // ``orBranchTotal``) is preserved so the tree renderer
+            // can route the dependent under a dedicated "Optional
+            // gate (via OR option)" section -- mixing OR-routed
+            // dependents in with strict AND-dependents would falsely
+            // imply the dependent requires this textline, when in
+            // truth the dependent's OR group is satisfied by any one
+            // option (this textline being one of them).
+            children.push({
+                name: dep.name,
+                edgeType: dep.type,
+                group: null,
+                orBranchIndex: dep.orBranchIndex || null,
+                orBranchTotal: dep.orBranchTotal || null,
+            });
         }
     }
     return children;
@@ -67,9 +106,16 @@ export function hasChildren(name, direction) {
         if (!tl) return false;
         // Mirror getChildren's self-filter so a textline whose only
         // requirement is a self-reference renders as a leaf.
-        return Object.values(tl.requirements).some(
+        const baseHas = Object.values(tl.requirements).some(
             r => r.some(ref => ref !== name)
         );
+        if (baseHas) return true;
+        // Any OrRequirements branches at all count as expandable - even
+        // branches without textline-typed children render as
+        // placeholder rows in the OR group, so users can see the
+        // alternative count and the pointer to the details panel.
+        const orBranches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
+        return orBranches.length > 0;
     }
     return (dependents[name] || []).some(d => d.name !== name);
 }
@@ -106,7 +152,7 @@ export function ensureExpandedContentVisible(container) {
     });
 }
 
-export function createNodeEl(name, edgeType, direction, ancestorPath) {
+export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
     const tl = textlines[name];
     // Use the friendly display name for the owner tag when available,
     // otherwise fall back to a stripped-down version of the internal ID.
@@ -195,14 +241,29 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
         label.appendChild(cycleSpan);
     }
 
-    // Narrative-priority tier badge. Tree view shows
-    // only the section-tier badge to keep rows uncluttered; the
-    // set-level (SP/P) and PlayOnce indicators are reserved for the
-    // details panel. Placed inside the right-aligned cluster of the
-    // row so badges line up across rows regardless of name length.
+    // OR-routed dep badge (downstream only). Indicates this row
+    // satisfies the dependent's OR group via a specific option, so
+    // the dependent does NOT strictly require this textline -- any
+    // one option in its group satisfies the gate. The badge is the
+    // only place the option index/total surfaces in the tree; the
+    // containing ".or-downstream-section" wrapper carries the
+    // higher-level "this section is OR-routed" framing.
+    if (edgeOpts && edgeOpts.orBranchIndex && edgeOpts.orBranchTotal) {
+        const orAlt = document.createElement('span');
+        orAlt.className = 'or-alt-badge';
+        orAlt.textContent = `option ${edgeOpts.orBranchIndex}/${edgeOpts.orBranchTotal}`;
+        orAlt.dataset.tooltip = `Routed via option ${edgeOpts.orBranchIndex} of ${edgeOpts.orBranchTotal} in this dependent's OR group. The dependent does not strictly need this textline; any one option in its OR group satisfies the gate.`;
+        label.appendChild(orAlt);
+    }
+
+    // Narrative-priority badge. Tree view shows a single compact
+    // badge (H1 tier or H2 ordinal) to keep rows uncluttered; the
+    // set-level (SP/P) pill and PlayOnce indicator are reserved for
+    // the details panel. Placed inside the right-aligned cluster of
+    // the row so badges line up across rows regardless of name length.
     // Only relevant for resolved textlines (`tl != null`).
     if (tl) {
-        const tierHtml = renderTierBadgeHtml(tl);
+        const tierHtml = renderPrimaryPriorityBadgeHtml(tl);
         if (tierHtml) {
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tierHtml;
@@ -236,48 +297,72 @@ export function createNodeEl(name, edgeType, direction, ancestorPath) {
 
     node.appendChild(label);
 
-    // Click handlers: the toggle chevron expands / collapses the row's
-    // children only; everywhere else on the row selects the textline in
-    // the details panel. Keeping the two intents -- "show me what's
-    // under this node" vs. "make this node the focus" -- on separate
-    // hit targets means exploring the tree structure no longer
-    // disturbs the details-panel context. Double-clicking the row
-    // (anywhere, including the toggle) re-roots the panels.
+    // Click handlers: the toggle chevron is a pure expand / collapse
+    // toggle (no selection change), so the user can fold a branch
+    // back up without re-rooting the details panel. Clicking the row
+    // body anywhere else both selects the textline in the details
+    // panel AND ensures its children are expanded -- exploring deeper
+    // is the natural follow-up to "show me this dialogue". The body
+    // click is expand-only (never collapses) so a re-click on an
+    // already-open row doesn't surprise-fold it; collapsing is the
+    // chevron's job. Double-clicking the row (anywhere, including the
+    // toggle) re-roots the panels.
     if (expandable) {
-        toggle.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Idempotent expand: builds the children container the first
+        // time, then marks it expanded if it isn't already. Returns
+        // the children container so callers can scroll it into view.
+        const expandNode = () => {
             let childContainer = label.nextElementSibling;
             if (childContainer && childContainer.classList.contains('tree-children')) {
-                // Toggle existing children
-                const isExpanded = childContainer.classList.contains('expanded');
-                childContainer.classList.toggle('expanded');
-                toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-                if (!isExpanded) ensureExpandedContentVisible(childContainer);
-            } else {
-                // Lazily create children
-                childContainer = document.createElement('div');
-                childContainer.className = 'tree-children expanded';
-                const newPath = new Set(ancestorPath);
-                newPath.add(name);
-                const kids = getChildren(name, direction);
-                appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
-                node.appendChild(childContainer);
-                toggle.textContent = '\u25BC';
-                ensureExpandedContentVisible(childContainer);
+                if (!childContainer.classList.contains('expanded')) {
+                    childContainer.classList.add('expanded');
+                    toggle.textContent = '\u25BC';
+                    ensureExpandedContentVisible(childContainer);
+                }
+                return childContainer;
             }
+            childContainer = document.createElement('div');
+            childContainer.className = 'tree-children expanded';
+            const newPath = new Set(ancestorPath);
+            newPath.add(name);
+            const kids = getChildren(name, direction);
+            appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
+            node.appendChild(childContainer);
+            toggle.textContent = '\u25BC';
+            ensureExpandedContentVisible(childContainer);
+            return childContainer;
+        };
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const childContainer = label.nextElementSibling;
+            if (childContainer
+                && childContainer.classList.contains('tree-children')
+                && childContainer.classList.contains('expanded')) {
+                // Collapse only when the chevron is clicked. The row
+                // body click never reaches this branch (its handler
+                // calls expandNode which never collapses).
+                childContainer.classList.remove('expanded');
+                toggle.textContent = '\u25B6';
+                return;
+            }
+            expandNode();
+        });
+
+        label.addEventListener('click', (e) => {
+            // Defensive: skip when the click landed inside the toggle
+            // chevron. The toggle's own handler already calls
+            // stopPropagation, so this guard mainly protects against
+            // future child elements inside `.toggle`.
+            if (e.target.closest('.toggle')) return;
+            renderInfo(name);
+            expandNode();
+        });
+    } else {
+        label.addEventListener('click', () => {
+            renderInfo(name);
         });
     }
-
-    label.addEventListener('click', (e) => {
-        // Defensive: skip when the click landed inside an active
-        // toggle. Its own handler already calls stopPropagation, so
-        // this guard mainly protects against future child elements
-        // inside `.toggle`. On leaf rows the toggle has no handler
-        // attached and is just a decorative mid-dot, so we still want
-        // clicks on it to select like the rest of the row body.
-        if (expandable && e.target.closest('.toggle')) return;
-        renderInfo(name);
-    });
 
     label.addEventListener('dblclick', () => navigateTo(name));
 

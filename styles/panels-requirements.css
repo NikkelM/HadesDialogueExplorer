@@ -132,3 +132,149 @@
     color: #8d99ae;
     font-family: 'Consolas', monospace;
 }
+/* Very light divider between consecutive rows so items that wrap
+   across multiple lines stay visually distinguishable. Only applies
+   from the second row onward; the first row has no separator above. */
+.other-req-item + .other-req-item {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 5px;
+}
+/* Rows that carry a structured-form hover tooltip (every non-trivial
+   ``otherRequirements`` row does) advertise the affordance with a
+   ``cursor: help`` glyph. The tooltip itself is wired by the shared
+   ``[data-tooltip]`` mechanism in ``tooltip.js`` / ``styles/panels-
+   tooltips.css``. */
+.other-req-item[data-tooltip] {
+    cursor: help;
+}
+/* Path tail inside a resolved Path:<head> entry (e.g.
+   ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
+   nudged slightly to read as a quoted identifier. */
+.other-req-item .other-req-path {
+    color: #c9d1d9;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0 4px;
+    border-radius: 3px;
+}
+/* AND joiner between multiple comparison/membership records that share
+   a Path:<head> key (engine AND-combines them). */
+.other-req-item .other-req-and {
+    color: #6b7280;
+    font-weight: 600;
+    margin: 0 4px;
+    letter-spacing: 0.5px;
+}
+/* Function name inside a rendered FunctionName:<name> entry (e.g.
+   ``RequiredAlive(Ids=[42]) = true``). Subtle tint to separate the
+   identifier from the surrounding argument list. */
+.other-req-item .other-req-func {
+    color: #c9d1d9;
+    font-weight: 600;
+}
+
+/* Alternative Requirement Groups (H2 ``OrRequirements``): a parent
+   ``.req-section.req-type-or-group`` wraps one ``.or-branch`` per
+   alternative. Distinctive amber accent so the reader can tell at a
+   glance "any one of these branches is enough" vs the AND base block
+   above ("all of these must hold"). The branch headers use ``<h5>``
+   instead of ``<h4>`` to differentiate visually from the per-req-type
+   sub-headers inside each branch. */
+.req-type-or-group {
+    border-left-color: #b07a3a;
+    background: rgba(176, 122, 58, 0.05);
+}
+.req-type-or-group > h4 {
+    background: #3d2b1f;
+    color: #f4a261;
+}
+.or-branch {
+    margin-top: 6px;
+    padding: 4px 6px 4px 10px;
+    border-left: 2px dashed rgba(176, 122, 58, 0.55);
+    border-radius: 2px;
+    background: rgba(176, 122, 58, 0.025);
+}
+.or-branch:first-child { margin-top: 2px; }
+.or-branch-header {
+    font-size: 11px;
+    margin: 0 0 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    background: rgba(176, 122, 58, 0.15);
+    color: #e9c46a;
+}
+.or-branch-header .toggle {
+    display: inline-block;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-right: 4px;
+}
+.or-branch-children { display: none; }
+.or-branch-children.expanded { display: block; }
+
+/* NamedRequirements drill-in (H2): per-name expander rows inside an
+   ``otherRequirements`` row keyed on ``NamedRequirements`` /
+   ``NamedRequirementsFalse`` / ``NamedRequirementsCycle``. Each name
+   becomes its own collapsible expander whose body re-renders the
+   resolved inner requirement chain via the same machinery the host
+   textline uses. A subtle teal accent distinguishes them from the
+   amber OR-branch boxes (they share the "drill into a sub-set of
+   requirements" idea but the semantics differ: NamedRequirements is
+   an indirected reuse of a named gate, OrRequirements is a disjunctive
+   composition). */
+.named-req-item .named-req-label {
+    font-weight: 600;
+    color: #c9d1d9;
+    margin-bottom: 8px;
+}
+.named-req-list {
+    margin-left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.named-req-flat,
+.named-req-expand {
+    padding: 2px 6px 2px 8px;
+    border-left: 2px dashed rgba(80, 160, 160, 0.55);
+    border-radius: 2px;
+    background: rgba(80, 160, 160, 0.03);
+}
+.named-req-name {
+    color: #c9d1d9;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0 4px;
+    border-radius: 3px;
+}
+.named-req-suffix {
+    color: #6b7280;
+    font-size: 11px;
+    margin-left: 4px;
+}
+.named-req-header {
+    font-size: 11px;
+    margin: 0 0 2px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: rgba(80, 160, 160, 0.10);
+    color: #5dbfbf;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.named-req-header:hover {
+    background: rgba(80, 160, 160, 0.18);
+}
+.named-req-header .toggle {
+    display: inline-block;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-right: 4px;
+}
+.named-req-children { display: none; padding: 4px 0 2px 4px; }
+.named-req-children.expanded { display: block; }

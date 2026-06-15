@@ -89,6 +89,12 @@ header h1 {
     font-weight: bold;
     margin-right: 2px;
 }
+.search-item-text .snippet-choice-label {
+    color: #888;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 2px;
+}
 .search-item mark {
     background: #e94560;
     color: #fff;

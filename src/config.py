@@ -38,7 +38,7 @@ class Config:
     """
 
     hades1_scripts: Path
-    hades2_scripts: Optional[Path] = None
+    hades2_scripts: Path
 
 
 def _example_hint() -> str:
@@ -135,14 +135,15 @@ def load_config(
     hades1_raw = _require_string(paths_section["hades1_scripts"], "paths.hades1_scripts", path)
     hades1 = _resolve_path(hades1_raw, path.parent)
 
-    hades2: Optional[Path] = None
-    if "hades2_scripts" in paths_section:
-        hades2_raw = _require_string(paths_section["hades2_scripts"], "paths.hades2_scripts", path)
-        hades2 = _resolve_path(hades2_raw, path.parent)
+    if "hades2_scripts" not in paths_section:
+        raise ConfigError(
+            f"{path.name}: missing required key 'paths.hades2_scripts'.\n{_example_hint()}"
+        )
+    hades2_raw = _require_string(paths_section["hades2_scripts"], "paths.hades2_scripts", path)
+    hades2 = _resolve_path(hades2_raw, path.parent)
 
     if validate_paths:
         _require_dir(hades1, "paths.hades1_scripts", path)
-        if hades2 is not None:
-            _require_dir(hades2, "paths.hades2_scripts", path)
+        _require_dir(hades2, "paths.hades2_scripts", path)
 
     return Config(hades1_scripts=hades1, hades2_scripts=hades2)

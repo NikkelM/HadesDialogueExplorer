@@ -107,6 +107,18 @@
 .priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
 .priority-normal { background: #1c2530; color: #8fb3d1; border: 1px solid #2c4258; }
 .priority-low { background: #20242a; color: #8a98a8; border: 1px solid #3a4350; }
+/* H2 ordinal-rank badge ("#N/M"). Neutral monospace styling - the
+   ordinal/size pair is purely positional information, so a tinted
+   colour would suggest a qualitative tier that the H2 data does not
+   express. The badge sits in the same slot as the H1 tier badge so
+   they share placement rules. */
+.priority-ordinal {
+    background: #1d242c;
+    color: #c7d2dc;
+    border: 1px solid #303a47;
+    font-family: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+}
 
 /* Set-level priority badge (SP / P). Surfaces the per-textline-set
    `Priority` / `SuperPriority` boolean as a small standalone pill to
@@ -250,3 +262,183 @@
 .req-type-group-children > .gamedata-group {
     margin-left: 8px;
 }
+
+
+/* OR-alternative grouping for H2 `OrRequirements`. The outer
+   `.or-group-box` wraps one `.or-branch-box` per alternative;
+   each branch contains its own `.req-type-group` children sharing
+   the same structure as the AND base block. Amber accent across the
+   whole stack so the user can tell at a glance "any one of these"
+   from the surrounding "all of these". */
+.or-group-box {
+    margin: 6px 0 4px 16px;
+    border-left: 3px solid #b07a3a;
+    border-radius: 3px;
+    background: rgba(176, 122, 58, 0.04);
+    padding: 2px 4px 4px 4px;
+}
+.or-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.or-group-header:hover { background: rgba(176, 122, 58, 0.08); }
+.or-group-header .toggle {
+    width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.or-group-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #f4a261;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+    cursor: help;
+}
+.or-group-children { display: none; padding-top: 2px; }
+.or-group-children.expanded { display: block; }
+
+/* One alternative inside an OR group. Dashed left accent to
+   visually distinguish "this is one of several branches" from the
+   surrounding solid-accented OR wrapper. */
+.or-branch-box {
+    margin: 4px 0 4px 8px;
+    border-left: 2px dashed rgba(176, 122, 58, 0.55);
+    border-radius: 2px;
+    background: rgba(176, 122, 58, 0.02);
+    padding: 2px 4px 4px 4px;
+}
+.or-branch-box-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.or-branch-box-header:hover { background: rgba(176, 122, 58, 0.06); }
+.or-branch-box-header .toggle {
+    width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.or-branch-box-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #e9c46a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+}
+.or-branch-box-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
+}
+.or-branch-box-children { display: none; padding-top: 2px; }
+.or-branch-box-children.expanded { display: block; }
+/* Direct child req-type-groups inside a branch lose extra indent
+   so the branch box itself frames them. */
+.or-branch-box-children > .req-type-group {
+    margin-left: 8px;
+}
+
+/* Placeholder row for an OR branch whose gates are non-textline only.
+   Renders as a single header (no children container) so it visually
+   reads as "this slot exists, here's the alt index, full content
+   lives elsewhere" without taking up the vertical space of a real
+   expandable branch. The italic hint + tooltip carry the routing
+   pointer to the details panel. */
+.or-branch-box-placeholder {
+    padding-bottom: 2px;
+}
+.or-branch-box-header-placeholder {
+    cursor: help;
+}
+.or-branch-box-header-placeholder:hover {
+    background: transparent;
+}
+.or-branch-placeholder-note {
+    margin-left: auto;
+    font-size: 10px;
+    font-style: italic;
+    color: #999;
+}
+
+/* Downstream OR-routed dependents section. Mirrors the upstream
+   ``.or-group-box`` amber accent for visual consistency, but its
+   inner structure is simpler: a single header + a flat list of
+   req-type groups (no per-branch sub-boxes -- each dependent has
+   its own branch count which surfaces via the per-row badge). */
+.or-downstream-section {
+    margin: 6px 0 4px 16px;
+    border-left: 3px solid #b07a3a;
+    border-radius: 3px;
+    background: rgba(176, 122, 58, 0.04);
+    padding: 2px 4px 4px 4px;
+}
+.or-downstream-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.or-downstream-header:hover { background: rgba(176, 122, 58, 0.08); }
+.or-downstream-header .toggle {
+    width: 12px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.or-downstream-label {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #f4a261;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+    cursor: help;
+}
+.or-downstream-count {
+    font-size: 10px;
+    color: #888;
+    margin-left: auto;
+}
+.or-downstream-children { display: none; padding-top: 2px; }
+.or-downstream-children.expanded { display: block; }
+/* Direct child req-type-groups inside the downstream OR section lose
+   extra indent so the section box itself frames them. */
+.or-downstream-children > .req-type-group {
+    margin-left: 8px;
+}
+
+/* Per-row badge for OR-routed downstream dependents. Indicates which
+   option of the dependent's OR group routes via the rooted textline.
+   Compact monospace amber chip, matching the section accent. */
+.or-alt-badge {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    background: rgba(176, 122, 58, 0.15);
+    color: #f4a261;
+    border: 1px solid rgba(176, 122, 58, 0.4);
+    font-family: 'Consolas', monospace;
+    font-variant-numeric: tabular-nums;
+}
+.or-alt-badge[data-tooltip] { cursor: help; }

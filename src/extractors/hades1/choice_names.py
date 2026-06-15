@@ -14,8 +14,7 @@ browsing dialogue.
 This map hand-authors a friendly label for every romance-prompt choice
 id, every boon-vendor (Sisyphus/Patroclus/Eurydice) benefit choice id,
 Hermes's voiceline-squelch toggle prompts, and Orpheus's jukebox song
-picker. New choice families introduced in future patches will need
-their own entries here; until then they fall back to the raw
+picker. Choice ids without an entry here fall back to the raw
 identifier (see below).
 
 When the viewer renders a choice id it falls back to the raw

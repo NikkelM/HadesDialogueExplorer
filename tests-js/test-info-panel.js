@@ -253,3 +253,1194 @@ test('boon-vendor choice options render without a click-through link when target
     assert.doesNotMatch(lastHtml, /<a class="choice-link"/);
 });
 
+
+// Build a fixture for the H2 ``otherRequirements`` rendering path: the
+// data carries compound operator-prefixed keys (PathTrue:..., Path:...,
+// FunctionName:...) plus a bare label-less key. The viewer must
+// surface friendly pills for the prefixed keys whose prefix has a label
+// in ``reqTypeLabels``, while keeping unknown-prefix keys verbatim.
+function fixtureWithOtherRequirements() {
+    const data = buildFixtureData();
+    // Borrow H2's operator-prefix labels for this fixture so the
+    // viewer can resolve ``PathTrue`` / ``PathFalse`` / ``FunctionName``
+    // / ``NamedRequirementsFalse`` prefixes encountered below.
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue: 'Must be true',
+        PathFalse: 'Must be false',
+        FunctionName: 'Custom function check',
+        NamedRequirementsFalse: 'Named requirements must NOT pass',
+    };
+    data.reqTypeTooltips = {
+        ...data.reqTypeTooltips,
+        PathTrue: 'Truthy-path check tooltip blurb.',
+        // ``PathFalse`` deliberately has no tooltip entry to exercise the
+        // header-only branch of ``reqTypeTitleText`` inside the renderer.
+        FunctionName: 'Custom predicate tooltip blurb.',
+        NamedRequirementsFalse: 'Named requirements inverse tooltip blurb.',
+    };
+    data.textlines.OrpheusOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            'PathTrue:GameState.ReachedTrueEnding': [
+                { PathTrue: ['GameState', 'ReachedTrueEnding'] },
+            ],
+            'PathFalse:CurrentRun.Cleared': [
+                { PathFalse: ['CurrentRun', 'Cleared'] },
+            ],
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [42] } },
+            ],
+            NamedRequirementsFalse: ['NoBossActive'],
+            'UnknownPrefix:Foo.Bar': 'leave-me-raw',
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: known operator prefixes render as friendly pills with tooltips', () => {
+    loadData(fixtureWithOtherRequirements());
+    renderInfo('OrpheusOtherReqDemo');
+    // ``Other Requirements`` section header should be present.
+    assert.match(lastHtml, /<h4><span class="toggle">.<\/span>Other Requirements<\/h4>/);
+    // ``PathTrue:GameState.ReachedTrueEnding`` -> friendly pill +
+    // monospace path tail. Tooltip carries internal name + blurb.
+    // The trailing raw ``= [...]`` suffix is dropped: the path already
+    // lives in the synthetic key so repeating it adds no info.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}"><span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
+    );
+    // ``PathFalse`` has a label but no tooltip entry: pill renders the
+    // friendly text + header-only tooltip (internal name).
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
+    );
+    // ``FunctionName:RequiredAlive`` -> ``RequiredAlive(Ids=[42]) = true``
+    // (equals separator on the trailing literal).
+    assert.match(
+        lastHtml,
+        /<span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[42\]<\/code>\) = <code>true<\/code>/
+    );
+    // Bare key ``NamedRequirementsFalse`` (no registry entry for the
+    // fixture name ``NoBossActive``) -> friendly pill, value rendered
+    // as the new flat-chip variant of the named-req expansion (no
+    // resolved inner chain available -> chip, no expander). The
+    // semantic suffix carries the ``(must NOT pass)`` clarifier so
+    // the reader knows the operator's intent.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item named-req-item"><div class="named-req-label"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>:<\/div><div class="named-req-list"><div class="named-req-flat"><code class="named-req-name">NoBossActive<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div><\/div><\/div>/
+    );
+});
+
+
+test('otherRequirements: unknown prefixes fall back to the raw escaped key', () => {
+    loadData(fixtureWithOtherRequirements());
+    renderInfo('OrpheusOtherReqDemo');
+    // ``UnknownPrefix`` has no entry in ``reqTypeLabels`` - the
+    // renderer must keep the original full key as plain escaped text
+    // so nothing is lost when the per-game vocabulary doesn't cover a
+    // newly-introduced operator. The row still carries a structured-
+    // form tooltip via ``[data-tooltip]`` so the raw value is reachable
+    // on hover even without a friendly summary.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item" data-tooltip="UnknownPrefix = &quot;leave-me-raw&quot;">UnknownPrefix:Foo\.Bar = leave-me-raw<\/div>/
+    );
+    // The unknown key must NOT be wrapped in a req-type pill.
+    assert.doesNotMatch(lastHtml, /<span class="req-type-name"[^>]*>UnknownPrefix<\/span>/);
+});
+
+
+// ``Path:<head>`` compound keys synthesised by ``_synth_other_key``
+// carry no operator info in the prefix - the actual test op lives
+// inside the value records. The renderer must pull the inner op into
+// a human-readable line (``head <comparator> value`` for Comparison,
+// ``head <verb>: <items>`` for membership tests).
+function fixtureWithPathRecords() {
+    const data = buildFixtureData();
+    data.textlines.PathRecordDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            // Clean numeric comparison - the user's exact example.
+            'Path:GameState.ClearedUnderworldRunsCache': [
+                {
+                    Comparison: '>',
+                    Path: ['GameState', 'ClearedUnderworldRunsCache'],
+                    Value: 2,
+                },
+            ],
+            // IsAny membership test against a scalar value at the path.
+            'Path:AudioState.AmbientTrackName': [
+                {
+                    IsAny: ['/Music/ArtemisSong_MC', '/Music/IrisEndThemeCrossroads_MC'],
+                    Path: ['AudioState', 'AmbientTrackName'],
+                },
+            ],
+            // HasAny membership test against a container at the path.
+            'Path:CurrentRun.RoomsEntered': [
+                {
+                    HasAny: ['O_Boss01', 'O_Boss02'],
+                    Path: ['CurrentRun', 'RoomsEntered'],
+                },
+            ],
+            // Two records under the same Path:<head> key get AND-joined.
+            'Path:GameState.Resources.GiftPointsRare': [
+                {
+                    Comparison: '>=',
+                    Path: ['GameState', 'Resources', 'GiftPointsRare'],
+                    Value: 1,
+                },
+                {
+                    Comparison: '<',
+                    Path: ['GameState', 'Resources', 'GiftPointsRare'],
+                    Value: 5,
+                },
+            ],
+            // Decorated record carrying a SumPrevRuns modifier - we
+            // don't know how to render those today, so the renderer
+            // must fall back to the raw JSON dump rather than silently
+            // drop the modifier.
+            'Path:GameState.NonClean': [
+                {
+                    Comparison: '>=',
+                    Path: ['GameState', 'NonClean'],
+                    SumPrevRuns: 3,
+                    Value: 1,
+                },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: Path:<head> + Comparison records render as "head op value"', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // The user's exact requested format: ``GameState.ClearedUnderworldRunsCache > 2``.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: Path:<head> + membership records render with a verbal operator', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // IsAny -> "is one of": <items>
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/div>/
+    );
+    // HasAny -> "contains any of": <items>
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: multiple Path:<head> records under one key are AND-joined', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // Two Comparison records on the same path get joined with a
+    // visible AND separator (the engine AND-combines them).
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &gt;= <code>1<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &lt; <code>5<\/code>/
+    );
+});
+
+
+test('otherRequirements: Path:<head> records with unknown modifiers fall back to raw JSON', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // ``SumPrevRuns`` is a known modifier we don't render specially
+    // yet - the renderer must NOT pretend it's a clean comparison.
+    // The raw JSON dump preserves all fields verbatim.
+    assert.match(lastHtml, /Path:GameState\.NonClean = /);
+    assert.match(lastHtml, /SumPrevRuns/);
+});
+
+
+// ``FunctionName:<name>`` compound keys carry a record array whose
+// entries each have ``FunctionName`` + optional ``FunctionArgs``. The
+// renderer must format each as ``funcName(arg1=val1, arg2=val2) = true``
+// with multiple records AND-joined, falling back to raw JSON for
+// shapes that don't match.
+function fixtureWithFunctionRecords() {
+    const data = buildFixtureData();
+    data.textlines.FunctionRecordDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            // Real-data shape - one of the most common H2 functions.
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [558096] } },
+            ],
+            // Argless function - args field absent entirely.
+            'FunctionName:IsBossDifficultyShrineUpgradeActive': [
+                { FunctionName: 'IsBossDifficultyShrineUpgradeActive' },
+            ],
+            // Two-argument function.
+            'FunctionName:RequiredHealthFraction': [
+                { FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.49 } },
+            ],
+            // Multiple records under the same key get AND-joined.
+            'FunctionName:RequiredAliveMulti': [
+                { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [1] } },
+                { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [2] } },
+            ],
+            // Decorated record carrying an unknown extra field - the
+            // renderer must NOT pretend it's a clean function call.
+            'FunctionName:Mystery': [
+                { FunctionName: 'Mystery', FunctionArgs: {}, ExtraMeta: 'unexpected' },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('otherRequirements: FunctionName records render as "funcName(args) = true"', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    // Single-arg function.
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[558096\]<\/code>\) = <code>true<\/code><\/div>/
+    );
+    // Two-arg function with mixed scalar types.
+    assert.match(
+        lastHtml,
+        /<span class="other-req-func">RequiredHealthFraction<\/span>\(Comparison=<code>&lt;=<\/code>, Value=<code>0\.49<\/code>\) = <code>true<\/code>/
+    );
+});
+
+
+test('otherRequirements: FunctionName records with no args render as "func() = true"', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><span class="other-req-func">IsBossDifficultyShrineUpgradeActive<\/span>\(\) = <code>true<\/code><\/div>/
+    );
+});
+
+
+test('otherRequirements: multiple FunctionName records under one key are AND-joined', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    assert.match(
+        lastHtml,
+        /<span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[1\]<\/code>\) = <code>true<\/code> <span class="other-req-and">AND<\/span> <span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[2\]<\/code>\) = <code>true<\/code>/
+    );
+});
+
+
+test('otherRequirements: FunctionName records with unknown extra fields fall back to raw JSON', () => {
+    loadData(fixtureWithFunctionRecords());
+    renderInfo('FunctionRecordDemo');
+    // The renderer must NOT silently drop ExtraMeta - it fails the
+    // clean-record check and we fall back to ``key = JSON.stringify(val)``.
+    assert.match(lastHtml, /FunctionName:Mystery = /);
+    assert.match(lastHtml, /ExtraMeta/);
+});
+
+
+// The details panel must group its requirement sections AND its
+// Other Requirements entries in ``reqTypeOrderIndex`` order so the
+// reading order matches the tree view (both surfaces consume the
+// single per-game ``reqTypeOrder`` array). Insertion order from the
+// JSON data is NOT a stable signal - the H1 alphabetical-ish layout
+// happened to be close to correct but H2 entries arrive in extractor
+// emission order which is unrelated to the display banding.
+function fixtureWithReqOrdering() {
+    const data = buildFixtureData();
+    // Extend the fixture's order vocabulary so the assertions below
+    // can pin a deterministic header sequence. The chosen positions
+    // mirror the real H1/H2 unified scheme:
+    // ALL -> ANY -> NONE -> MIN -> MAX, with compound otherReq
+    // prefixes appended after the textline block.
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        RequiredMinAnyTextLines: 'Required min (ANY)',
+        RequiredMaxAnyTextLines: 'Required max (ANY)',
+        PathTrue: 'Must be true',
+        FunctionName: 'Custom function check',
+    };
+    data.reqTypeEdgeLabels = {
+        ...data.reqTypeEdgeLabels,
+        RequiredMinAnyTextLines: 'MIN',
+        RequiredMaxAnyTextLines: 'MAX',
+    };
+    data.reqTypeOrder = [
+        'RequiredTextLines',         // ALL
+        'RequiredAnyTextLines',      // ANY
+        'RequiredFalseTextLines',    // NONE
+        'RequiredMinAnyTextLines',   // MIN
+        'RequiredMaxAnyTextLines',   // MAX
+        'PathTrue',                  // operator block
+        'FunctionName',
+    ];
+    data.textlines.OrderingDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        // Insertion order is deliberately reversed vs reqTypeOrder so
+        // the test fails if the renderer falls back to insertion order.
+        requirements: {
+            RequiredMaxAnyTextLines: ['LateA'],
+            RequiredMinAnyTextLines: ['LateB'],
+            RequiredFalseTextLines: ['Negative'],
+            RequiredAnyTextLines: ['Either'],
+            RequiredTextLines: ['Always'],
+        },
+        otherRequirements: {
+            // ``FunctionName`` should sort after ``PathTrue`` per the
+            // order array above; bare ``RequiredFalseTextLines`` (with a
+            // ``Count`` companion - shared with the requirements entry)
+            // is suppressed by the ``key in requirements`` guard so it
+            // shouldn't appear on its own. Two ``PathTrue`` records test
+            // stable sort: their relative order must match insertion.
+            'FunctionName:RequiredAlive': [
+                { FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [1] } },
+            ],
+            'PathTrue:GameState.A': [{ PathTrue: ['GameState', 'A'] }],
+            'PathTrue:GameState.B': [{ PathTrue: ['GameState', 'B'] }],
+        },
+    };
+    return data;
+}
+
+
+test('requirement sections render in reqTypeOrderIndex order, not insertion order', () => {
+    loadData(fixtureWithReqOrdering());
+    renderInfo('OrderingDemo');
+    // Extract the indices of each section header in the rendered HTML.
+    // The five sections must appear in the order ALL -> ANY -> NONE ->
+    // MIN -> MAX even though the requirements dict listed them
+    // reversed.
+    const headerOrder = [
+        'Required (ALL)',
+        'Required (ANY)',
+        'Not played (NONE)',
+        'Required min (ANY)',
+        'Required max (ANY)',
+    ];
+    const positions = headerOrder.map((label) => lastHtml.indexOf(label));
+    for (let i = 0; i < positions.length; i++) {
+        assert.notEqual(positions[i], -1, `header "${headerOrder[i]}" missing from rendered HTML`);
+    }
+    for (let i = 1; i < positions.length; i++) {
+        assert.ok(
+            positions[i - 1] < positions[i],
+            `header "${headerOrder[i - 1]}" should render before "${headerOrder[i]}" `
+            + `(positions ${positions[i - 1]} vs ${positions[i]})`
+        );
+    }
+});
+
+
+test('otherRequirements entries render in reqTypeOrderIndex order by prefix, stable within prefix', () => {
+    loadData(fixtureWithReqOrdering());
+    renderInfo('OrderingDemo');
+    // ``PathTrue`` is positioned before ``FunctionName`` in the
+    // fixture's reqTypeOrder. The two PathTrue records must precede
+    // the FunctionName record, and the two PathTrue records must
+    // appear in insertion order (stable sort) - A before B.
+    const pathA = lastHtml.indexOf('GameState.A');
+    const pathB = lastHtml.indexOf('GameState.B');
+    const funcAlive = lastHtml.indexOf('RequiredAlive');
+    assert.notEqual(pathA, -1, 'PathTrue:GameState.A missing');
+    assert.notEqual(pathB, -1, 'PathTrue:GameState.B missing');
+    assert.notEqual(funcAlive, -1, 'FunctionName:RequiredAlive missing');
+    assert.ok(pathA < pathB, 'stable sort within same prefix violated (A should precede B)');
+    assert.ok(pathB < funcAlive, 'PathTrue entries should precede FunctionName entries');
+});
+
+
+
+
+// H2 OrRequirements (alternative requirement groups). The details panel
+// must surface every branch under a dedicated "Alternative Requirement
+// Groups (OR)" section so the reader can see that the parent textline
+// is satisfied if ANY one branch passes - this is a fundamentally
+// different gating semantic to the AND base block above. Each branch
+// renders its own per-req-type sub-sections + inline otherRequirements
+// (no nested "Other Requirements" header inside a branch, since the
+// branch header already provides scope).
+function fixtureWithOrBranches() {
+    const data = buildFixtureData();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue: 'Must be true',
+    };
+    data.textlines.OrDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'or demo' }],
+        requirements: {
+            RequiredTextLines: ['BaseDep'],
+        },
+        otherRequirements: {},
+        orBranches: [
+            {
+                requirements: { RequiredTextLines: ['BranchOneDep'] },
+                otherRequirements: { 'PathTrue:GameState.X': { Path: ['GameState', 'X'] } },
+            },
+            {
+                requirements: { RequiredAnyTextLines: ['BranchTwoDepA', 'BranchTwoDepB'] },
+                otherRequirements: {},
+            },
+        ],
+    };
+    return data;
+}
+
+
+test('OR branches render a dedicated option requirement groups section', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    assert.match(lastHtml, /At least one of these 2 branches/);
+    assert.match(lastHtml, /req-type-or-group/);
+    // The wrapping section is a regular collapsible req-section so it
+    // can be folded away if the user doesn't want to see the OR
+    // alternatives detail.
+    assert.match(lastHtml, /class="req-section req-type-or-group"/);
+});
+
+
+test('OR branches render one per-branch sub-header with the canonical "Option N of M" label', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    const headerCount = (lastHtml.match(/class="or-branch-header"/g) || []).length;
+    assert.equal(headerCount, 2);
+    assert.match(lastHtml, /Option 1 of 2/);
+    assert.match(lastHtml, /Option 2 of 2/);
+});
+
+
+test('OR branches still render their textline children inside req-type sub-sections', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    // Each branch carries its own `.req-section.req-type-<X>` block
+    // for textline-typed requirements so the per-branch contents read
+    // with the same structure as the AND base block above.
+    assert.match(lastHtml, /BranchOneDep/);
+    assert.match(lastHtml, /BranchTwoDepA/);
+    assert.match(lastHtml, /BranchTwoDepB/);
+    // The branch with otherRequirements inlines them WITHOUT a nested
+    // "Other Requirements" header (the surrounding branch already
+    // provides scope) - exactly one Other Requirements header should
+    // appear in the rendered HTML, only when the base block has its
+    // own otherRequirements. The fixture's base has none, so the
+    // header should not appear at all.
+    const otherHeaders = (lastHtml.match(/Other Requirements/g) || []).length;
+    assert.equal(otherHeaders, 0);
+});
+
+
+test('OR branches preserve the base AND block above with its own requirements', () => {
+    loadData(fixtureWithOrBranches());
+    renderInfo('OrDemo');
+    // The base requirements must still render as a top-level section
+    // separate from the OR group: a textline can have BOTH an AND
+    // base block ("must always hold") and an OR alternatives block
+    // ("any one of these as well"), and the reader needs to see
+    // both clearly differentiated.
+    assert.match(lastHtml, /BaseDep/);
+    // The base RequiredTextLines section appears before the OR group
+    // wrapper in the rendered HTML.
+    const baseIdx = lastHtml.indexOf('BaseDep');
+    const orIdx = lastHtml.indexOf('req-type-or-group');
+    assert.ok(baseIdx > -1 && orIdx > -1);
+    assert.ok(baseIdx < orIdx, 'base AND requirements should render before the OR alternatives section');
+});
+
+
+test('textlines without orBranches render no option requirement groups section', () => {
+    loadData(buildFixtureData());
+    renderInfo('OrpheusSingsAgain02');
+    assert.doesNotMatch(lastHtml, /At least one of these/);
+    assert.doesNotMatch(lastHtml, /req-type-or-group/);
+    assert.doesNotMatch(lastHtml, /or-branch-header/);
+});
+
+
+// New simplified-rendering coverage: every path-op variant (PathTrue,
+// PathFalse, PathEmpty, PathNotEmpty), the CountOf-decorated Path
+// record, and the bare-key compact summaries (scalars, lists, Count-
+// only and Count+Name objects, generic maps). Each row also carries a
+// Lua-form ``data-tooltip`` on the wrapping ``.other-req-item`` so the
+// raw structured value remains reachable on hover.
+function fixtureWithSimplifiedOtherReqs() {
+    const data = buildFixtureData();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        PathTrue:     'Must be true',
+        PathFalse:    'Must be false',
+        PathEmpty:    'Path must be empty',
+        PathNotEmpty: 'Path must not be empty',
+        RequiresRunCleared:                'Requires run cleared',
+        RequiredMinCompletedRuns:          'Required min completed runs',
+        RequiredRoom:                      'Required room',
+        RequiredFalseFlags:                'Required false flags',
+        RequiredCosmetics:                 'Required cosmetics',
+        MinRunsSinceAnyTextLines:          'Min runs since played (ANY)',
+        RequiredMinActiveMetaUpgradeLevel: 'Required min active meta upgrade level',
+        RequiredKills:                     'Required kills',
+        RequiredMinNPCInteractions:        'Required min NPC interactions',
+    };
+    data.textlines.SimplifiedOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            'PathTrue:GameState.ReachedTrueEnding': [
+                { PathTrue: ['GameState', 'ReachedTrueEnding'] },
+            ],
+            'PathFalse:CurrentRun.Cleared': [
+                { PathFalse: ['CurrentRun', 'Cleared'] },
+            ],
+            'PathEmpty:CurrentRun.Foo': [
+                { PathEmpty: ['CurrentRun', 'Foo'] },
+            ],
+            'PathNotEmpty:CurrentRun.CurrentRoom.FishingPointChoices': [
+                { PathNotEmpty: ['CurrentRun', 'CurrentRoom', 'FishingPointChoices'] },
+            ],
+            // Duplicate PathTrue records (engine permits this; the
+            // extractor preserves both) get repeated friendly key
+            // joined by AND.
+            'PathTrue:GameState.Dup': [
+                { PathTrue: ['GameState', 'Dup'] },
+                { PathTrue: ['GameState', 'Dup'] },
+            ],
+            // CountOf inline list -> "head has at least N of items"
+            'Path:CurrentRun.UseRecord': [
+                {
+                    Comparison: '>=',
+                    CountOf: ['ZeusUpgrade', 'HeraUpgrade', 'PoseidonUpgrade'],
+                    Path: ['CurrentRun', 'UseRecord'],
+                    Value: 2,
+                },
+            ],
+            // CountOf referencing a GameData table -> ref name (the
+            // contents land in the tooltip via a future follow-up).
+            'Path:GameState.WeaponsUnlocked': [
+                {
+                    Comparison: '>=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 1,
+                },
+                {
+                    Comparison: '<=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 8,
+                },
+            ],
+            // Bare keys with friendly labels.
+            RequiresRunCleared:       true,
+            RequiredMinCompletedRuns: 4,
+            RequiredRoom:             'A_Boss02',
+            RequiredFalseFlags:       ['InFlashback'],
+            RequiredCosmetics:        ['QuestLog', 'Cosmetic_X'],
+            MinRunsSinceAnyTextLines: { Count: 8 },
+            RequiredMinActiveMetaUpgradeLevel: { Count: 1, Name: 'BossDifficultyShrineUpgrade' },
+            RequiredKills:               { Harpy: 2 },
+            RequiredMinNPCInteractions:  { 'NPC_Hades_01': 5 },
+        },
+    };
+    return data;
+}
+
+
+test('PathTrue row drops the redundant value suffix and carries a Lua tooltip', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
+    );
+});
+
+
+test('PathFalse row drops the redundant value suffix and carries a Lua tooltip', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /data-tooltip="PathFalse: \{ &quot;CurrentRun&quot;, &quot;Cleared&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
+    );
+});
+
+
+test('PathEmpty / PathNotEmpty rows use the consistent "must (not) be empty" wording', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /Path must be empty<\/span>: <code class="other-req-path">CurrentRun\.Foo<\/code>/);
+    assert.match(lastHtml, /Path must not be empty<\/span>: <code class="other-req-path">CurrentRun\.CurrentRoom\.FishingPointChoices<\/code>/);
+});
+
+
+test('multiple PathTrue records under one key render as friendly key joined by AND', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Two records -> two repeats of the friendly key, joined by AND.
+    // The tooltip lists one record per block; ``escapeHtml`` keeps the
+    // ``\n`` literal so the attribute value contains actual newlines
+    // (matches the existing speaker-name multi-line tooltip convention).
+    // Records are separated by a blank line so multi-field records
+    // stay visually distinct.
+    assert.match(
+        lastHtml,
+        /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
+    );
+});
+
+
+test('Path CountOf records render as "head has at least N of: items"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Inline list: each item is a separate ``<code>`` chip.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">CurrentRun\.UseRecord<\/code> has at least <code>2<\/code> of: <code>ZeusUpgrade<\/code>, <code>HeraUpgrade<\/code>, <code>PoseidonUpgrade<\/code>/
+    );
+});
+
+
+test('Path CountOf referencing a GameData table renders the ref name in the head position', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The ``<ref:GameData.AllWeaponAspects>`` placeholder collapses to
+    // the bare ``GameData.AllWeaponAspects`` identifier in display and
+    // in the tooltip. Two records (range check) AND-joined.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at most <code>8<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+    // Tooltip carries the structured form with the bare ref name (not
+    // the ``<ref:...>`` wrapper, which would clutter the display).
+    assert.match(lastHtml, /data-tooltip="[^"]*CountOf: GameData\.AllWeaponAspects[^"]*"/);
+});
+
+
+test('bare-key scalars render as "Label: value"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Requires run cleared<\/span>: <code>true<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min completed runs<\/span>: <code>4<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required room<\/span>: <code>A_Boss02<\/code>/);
+});
+
+
+test('bare-key list values render as comma-separated chips without JSON brackets', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required false flags<\/span>: <code>InFlashback<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required cosmetics<\/span>: <code>QuestLog<\/code>, <code>Cosmetic_X<\/code>/);
+});
+
+
+test('bare-key {Count} objects collapse to just the count', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Min runs since played \(ANY\)<\/span>: <code>8<\/code>/);
+});
+
+
+test('bare-key {Count, Name} objects render as "Name >= Count"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Required min active meta upgrade level<\/span>: <code>BossDifficultyShrineUpgrade<\/code> &gt;= <code>1<\/code>/
+    );
+});
+
+
+test('bare-key map objects render as "k >= v, k >= v"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required kills<\/span>: <code>Harpy<\/code> &gt;= <code>2<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min NPC interactions<\/span>: <code>NPC_Hades_01<\/code> &gt;= <code>5<\/code>/);
+});
+
+
+test('bare-key rows carry a Lua-form data-tooltip with the raw value', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // Scalar.
+    assert.match(lastHtml, /data-tooltip="RequiresRunCleared = true"/);
+    // List of strings -> Lua table braces with quoted entries.
+    assert.match(lastHtml, /data-tooltip="RequiredFalseFlags = \{ &quot;InFlashback&quot; \}"/);
+    // Object with bare-ident keys -> ``{ Count = 8 }``.
+    assert.match(lastHtml, /data-tooltip="MinRunsSinceAnyTextLines = \{ Count = 8 \}"/);
+    // Object with name+count.
+    assert.match(
+        lastHtml,
+        /data-tooltip="RequiredMinActiveMetaUpgradeLevel = \{ Count = 1, Name = &quot;BossDifficultyShrineUpgrade&quot; \}"/
+    );
+});
+
+
+// Build a fixture for the broader-coverage rendering refinements:
+//   - bare keys WITHOUT a friendly label still get the friendly
+//     ``Label: value`` shape (no raw JSON fallback), so lists render
+//     with comma+space separators rather than ``["a","b"]`` blobs.
+//   - membership / CountOf operand lists strip ``<ref:GameData.X>``
+//     placeholders to the bare identifier.
+function fixtureForBareKeyAndRefRefinements() {
+    const data = buildFixtureData();
+    data.textlines.UnlabelledOtherReqDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            // No reqTypeLabels entry for any of these keys.
+            RequiredAnyEncountersThisRun: [
+                'ThanatosTartarus', 'ThanatosAsphodel',
+                'ThanatosElysium', 'ThanatosElysiumIntro',
+            ],
+            RequiredResourcesMin: { GiftPoints: 1, SuperGiftPoints: 1 },
+            // HasAny operand that is a top-level GameData ref string
+            // (no array wrapper) -> styled as a path chip with the
+            // ``<ref:>`` wrapper stripped.
+            'Path:GameState.AspectsUnlocked': [
+                { HasAny: '<ref:GameData.AllWeaponAspects>',
+                  Path: ['GameState', 'AspectsUnlocked'] },
+            ],
+            // IsAny operand list that contains ref strings -> each
+            // element strips ``<ref:>`` to the bare identifier.
+            'Path:GameState.SelectedAspect': [
+                { IsAny: ['<ref:GameData.WeaponAspectA>', 'PlainString'],
+                  Path: ['GameState', 'SelectedAspect'] },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('unlabelled bare-key lists render as comma-space chips, not raw JSON', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    // The pill carries no tooltip blurb (no reqTypeLabels entry) but
+    // the value renders through the friendly formatter, so each
+    // encounter is a separate ``<code>`` chip with ``", "`` joiners.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name">RequiredAnyEncountersThisRun<\/span>: <code>ThanatosTartarus<\/code>, <code>ThanatosAsphodel<\/code>, <code>ThanatosElysium<\/code>, <code>ThanatosElysiumIntro<\/code>/
+    );
+    // The raw ``["a","b"]`` JSON fallback must NOT appear for this key
+    // anywhere in the output.
+    assert.doesNotMatch(lastHtml, /RequiredAnyEncountersThisRun = \[/);
+});
+
+
+test('unlabelled bare-key map values render as "k >= v" with the raw key as the label', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> &gt;= <code>1<\/code>, <code>SuperGiftPoints<\/code> &gt;= <code>1<\/code>/
+    );
+});
+
+
+test('membership operand that is a top-level GameData ref strips the <ref:> wrapper', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.AspectsUnlocked<\/code> contains any of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+});
+
+
+test('membership operand list strips <ref:> on each element while keeping plain strings as plain chips', () => {
+    loadData(fixtureForBareKeyAndRefRefinements());
+    renderInfo('UnlabelledOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.SelectedAspect<\/code> is one of: <code class="other-req-path">GameData\.WeaponAspectA<\/code>, <code>PlainString<\/code>/
+    );
+});
+
+
+test('compound-record tooltips use newlines between fields in reading order (Path -> Comparison -> Value -> CountOf)', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The CountOf record stored as { Comparison, CountOf, Path, Value }
+    // (JSON-insertion order) must render its tooltip in canonical
+    // reading order: Path first, then Comparison, then Value, then
+    // CountOf - each field on its own line.
+    assert.match(
+        lastHtml,
+        /data-tooltip="Path: \{ &quot;CurrentRun&quot;, &quot;UseRecord&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 2\nCountOf: \{ &quot;ZeusUpgrade&quot;, &quot;HeraUpgrade&quot;, &quot;PoseidonUpgrade&quot; \}"/
+    );
+});
+
+
+test('multi-record compound tooltips separate records with a blank line', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // The two-record CountOf (range check on WeaponsUnlocked) renders
+    // each record as its own multi-line block separated by a blank
+    // line so they stay visually distinct from a single tall record.
+    assert.match(
+        lastHtml,
+        /data-tooltip="Path: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 1\nCountOf: GameData\.AllWeaponAspects\n\nPath: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&lt;=&quot;\nValue: 8\nCountOf: GameData\.AllWeaponAspects"/
+    );
+});
+
+
+// Fixture variant that also supplies the ``gameDataRefs`` registry so
+// ``<ref:GameData.X>`` placeholders inside the row tooltip inline-
+// expand to the referenced table's contents. Mirrors the real H2
+// build output (``hades2_metadata.json``) where the registry is shipped
+// alongside the textline data.
+function fixtureWithGameDataRefs() {
+    const data = fixtureWithSimplifiedOtherReqs();
+    data.gameDataRefs = {
+        'GameData.AllWeaponAspects': ['StaffClearCastAspect', 'StaffSelfHitAspect', 'StaffRaiseDeadAspect'],
+        // Nested ScreenData.X table with a child list - exercises the
+        // dotted-path walk for refs like ``ScreenData.Shrine.BountyOrder``.
+        'ScreenData.Shrine': {
+            BountyOrder: ['BountyA', 'BountyB'],
+        },
+        // Self-referential ref - the cycle guard must drop the second
+        // recursion and fall back to the bare identifier.
+        'GameData.SelfRef': ['<ref:GameData.SelfRef>'],
+    };
+    data.textlines.GameDataRefDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            // Top-level GameData ref resolves to the list -> tooltip
+            // shows the inlined contents on the ``CountOf`` line.
+            'Path:GameState.WeaponsUnlocked': [
+                {
+                    Comparison: '>=',
+                    CountOf: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'WeaponsUnlocked'],
+                    Value: 1,
+                },
+            ],
+            // Dotted-path ref (no direct entry) -> walks down through
+            // the captured parent ``ScreenData.Shrine`` to find the
+            // nested ``BountyOrder`` list.
+            'Path:GameState.BountyHistory': [
+                {
+                    HasAny: '<ref:ScreenData.Shrine.BountyOrder>',
+                    Path: ['GameState', 'BountyHistory'],
+                },
+            ],
+            // Unknown ref (no entry, no walkable parent) -> falls back
+            // to the bare identifier (existing behaviour).
+            'Path:GameState.NoEntry': [
+                {
+                    HasAny: '<ref:GameData.NoSuchRegistry>',
+                    Path: ['GameState', 'NoEntry'],
+                },
+            ],
+            // Self-referential ref -> cycle guard kicks in on the
+            // second recursion so the resolved-list contents show the
+            // bare identifier rather than infinite-looping.
+            'Path:GameState.SelfRefCheck': [
+                {
+                    HasAny: '<ref:GameData.SelfRef>',
+                    Path: ['GameState', 'SelfRefCheck'],
+                },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('top-level GameData ref expands inline inside the row tooltip', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The CountOf line now shows the resolved list contents instead
+    // of just the bare ``GameData.AllWeaponAspects`` identifier.
+    assert.match(
+        lastHtml,
+        /CountOf: \{ &quot;StaffClearCastAspect&quot;, &quot;StaffSelfHitAspect&quot;, &quot;StaffRaiseDeadAspect&quot; \}/
+    );
+});
+
+
+test('dotted-path ref walks down through a captured parent table', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // ``ScreenData.Shrine.BountyOrder`` has no direct entry; resolver
+    // descends via the captured ``ScreenData.Shrine`` parent. Tooltip
+    // surfaces the nested list contents on the ``HasAny`` line.
+    assert.match(
+        lastHtml,
+        /HasAny: \{ &quot;BountyA&quot;, &quot;BountyB&quot; \}/
+    );
+});
+
+
+test('unknown ref with no walkable parent falls back to the bare identifier', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The synthesised row body for the ``Path:GameState.NoEntry``
+    // entry must still render the bare identifier as a styled chip.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.NoEntry<\/code> contains any of: <code class="other-req-path">GameData\.NoSuchRegistry<\/code>/
+    );
+    // And the row tooltip falls back to the bare identifier on the
+    // HasAny line (no inline expansion possible).
+    assert.match(
+        lastHtml,
+        /HasAny: GameData\.NoSuchRegistry/
+    );
+});
+
+
+test('row display keeps the bare identifier even when the ref expands in the tooltip', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // The display side (the visible row content) intentionally keeps
+    // the bare identifier as a path chip - expansion is tooltip-only
+    // so long lists don't blow up the row width.
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+    );
+});
+
+
+test('self-referential ref expansion is cycle-guarded so resolution does not infinite-loop', () => {
+    loadData(fixtureWithGameDataRefs());
+    renderInfo('GameDataRefDemo');
+    // First expansion of ``GameData.SelfRef`` reveals its single
+    // element (which is itself a ``<ref:GameData.SelfRef>``); on the
+    // recursive call the cycle guard drops the inner expansion and
+    // falls back to the bare identifier rather than looping forever.
+    assert.match(
+        lastHtml,
+        /HasAny: \{ GameData\.SelfRef \}/
+    );
+});
+
+
+// Fixture variant for NamedRequirements drill-in: ships the
+// ``namedRequirements`` registry so the host textline's
+// ``NamedRequirementsFalse`` entries inline-expand into the resolved
+// inner requirement chain (mirroring the real H2 metadata payload).
+function fixtureWithNamedRequirements() {
+    const data = fixtureWithSimplifiedOtherReqs();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        NamedRequirementsFalse: 'Named requirements must NOT pass',
+    };
+    data.reqTypeTooltips = {
+        ...(data.reqTypeTooltips || {}),
+        NamedRequirementsFalse: 'Named requirements inverse tooltip blurb.',
+    };
+    data.namedRequirements = {
+        // Typical resolved entry: has both a textline edge and a
+        // non-dialogue gate. Expands fully.
+        HecateMissing: {
+            requirements: { RequiredTextLines: ['HecateBossKidnapped01'] },
+            otherRequirements: {
+                'PathFalse:GameState.ReachedTrueEnding': [
+                    { PathFalse: ['GameState', 'ReachedTrueEnding'] },
+                ],
+            },
+            orBranches: [],
+            flags: {},
+        },
+        // Entry with an empty resolution: no edges, no other reqs,
+        // no OR branches. Renders as a flat chip (no expander).
+        EmptyResolution: {
+            requirements: {},
+            otherRequirements: {},
+            orBranches: [],
+            flags: {},
+        },
+        // Entry whose only content is OR branches: expansion must
+        // include the OR-branches section.
+        DreamRunIncorrectBiomeGuess: {
+            requirements: {},
+            otherRequirements: {},
+            orBranches: [
+                {
+                    requirements: { RequiredTextLines: ['DreamRunBiomeGuessA'] },
+                    otherRequirements: {},
+                },
+                {
+                    requirements: { RequiredTextLines: ['DreamRunBiomeGuessB'] },
+                    otherRequirements: {},
+                },
+            ],
+            flags: {},
+        },
+        // Entry that itself references another named requirement via
+        // ``NamedRequirementsFalse``. Exercises recursive expansion:
+        // the host's NamedRequirementsFalse expands into a chain
+        // that itself contains another NamedRequirementsFalse drill-
+        // in expander. The pre-resolved registry breaks any potential
+        // cycles via the Python ``_visited`` guard, so the viewer
+        // never recurses through the same name twice.
+        ScyllaBalladForced: {
+            requirements: { RequiredTextLines: ['ScyllaAboutSongs02'] },
+            otherRequirements: {
+                NamedRequirementsFalse: ['HecateMissing'],
+            },
+            orBranches: [],
+            flags: {},
+        },
+    };
+    data.textlines.NamedReqExpansionDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo' }],
+        requirements: {},
+        otherRequirements: {
+            NamedRequirementsFalse: [
+                'HecateMissing',         // expands fully
+                'EmptyResolution',       // flat chip (empty inner)
+                'UnknownToRegistry',     // flat chip (no entry at all)
+                'DreamRunIncorrectBiomeGuess',  // OR-branches only
+                'ScyllaBalladForced',    // recursive expansion
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('NamedRequirementsFalse: resolved entry expands into a collapsible inner chain', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // The HecateMissing expander wraps a header (with ``(must NOT
+    // pass)`` semantic suffix), a toggle, and a children container
+    // that holds the resolved inner requirements + otherRequirements.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-expand"><h5 class="named-req-header"><span class="toggle">.<\/span><code class="named-req-name">HecateMissing<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/h5><div class="named-req-children expanded">/
+    );
+    // Inner body re-uses the per-req-type section markup; the
+    // resolved textline edge renders as a clickable ``.req-item``.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-children expanded"><div class="req-section req-type-RequiredTextLines">[^]*HecateBossKidnapped01/
+    );
+    // Inner otherRequirements also renders via the standard
+    // ``.other-req-item`` pipeline (PathFalse here).
+    assert.match(
+        lastHtml,
+        /<div class="named-req-children expanded">[^]*<code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/
+    );
+});
+
+
+test('NamedRequirementsFalse: entry with an empty resolution renders as a flat chip (no expander)', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    assert.match(
+        lastHtml,
+        /<div class="named-req-flat"><code class="named-req-name">EmptyResolution<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div>/
+    );
+});
+
+
+test('NamedRequirementsFalse: unknown name (no registry entry) renders as a flat chip', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // A name the registry doesn't cover falls through to the same
+    // flat-chip variant as the empty-resolution case so the reader
+    // still sees the gate, just without drill-in affordance.
+    assert.match(
+        lastHtml,
+        /<div class="named-req-flat"><code class="named-req-name">UnknownToRegistry<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div>/
+    );
+});
+
+
+test('NamedRequirementsFalse: entry with only OR branches still expands and renders the OR-branches section inside the body', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // DreamRunIncorrectBiomeGuess has no top-level requirements or
+    // otherRequirements; its content lives entirely in orBranches.
+    // The expander body must still surface the "At least one of
+    // these N branches" section so the OR alternatives are visible.
+    assert.match(
+        lastHtml,
+        /<code class="named-req-name">DreamRunIncorrectBiomeGuess<\/code>[^]*?<div class="named-req-children expanded">[^]*?At least one of these 2 branches/
+    );
+});
+
+
+test('NamedRequirementsFalse: recursive expansion - inner chain may itself carry a NamedRequirementsFalse drill-in', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // ScyllaBalladForced expands; its body has a nested
+    // NamedRequirementsFalse pointing at HecateMissing which itself
+    // expands (HecateMissing is also a top-level expander on the
+    // host, so we expect two distinct HecateMissing expander headers
+    // in the rendered HTML).
+    const headers = lastHtml.match(/<code class="named-req-name">HecateMissing<\/code>/g) || [];
+    assert.ok(headers.length >= 2, `expected at least 2 HecateMissing chips (host + nested), got ${headers.length}`);
+});
+
+
+test('NamedRequirementsFalse: per-name label pill is rendered exactly once (above the list, not per-entry)', () => {
+    loadData(fixtureWithNamedRequirements());
+    renderInfo('NamedReqExpansionDemo');
+    // The semantic operator pill ("Named requirements must NOT
+    // pass") wraps the entire list of names, not each entry. Asserts
+    // that exactly one label pill appears on the host textline (the
+    // nested expansions add their own pills inside their bodies).
+    const labels = lastHtml.match(
+        /<div class="named-req-label"><span class="req-type-name"[^>]*>Named requirements must NOT pass<\/span>/g
+    ) || [];
+    // Exactly 2 today: 1 for the host, 1 for the nested expansion in
+    // ScyllaBalladForced. The host always has 1; the nested count is
+    // an artefact of this fixture using ScyllaBalladForced.
+    assert.equal(labels.length, 2);
+});

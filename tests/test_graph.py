@@ -319,3 +319,190 @@ class TestSpeakersDefault:
         first["speakers"]["bogus"] = {"name": "leak"}
         second = build_graph_data({})
         assert second["speakers"] == {}
+
+
+class TestNarrativePriorityFieldForwarding:
+    """``build_graph_data`` must forward every narrative-priority field
+    from the per-source ``owners_data`` extracted by the per-game
+    extractors onto each merged textline entry. Each game uses a
+    different priority model (H1 intrinsic tier/setlevel vs H2
+    extrinsic ordinal/sectionSize/clusterMembers) and the viewer
+    dispatches on which fields are present, so silently dropping any
+    of them at the merge step strands the badge in the source JSON.
+    """
+
+    def test_h1_priority_fields_forwarded(self):
+        npcs = make_npc("NPC_Zeus_01", "InteractTextLineSets", {
+            "ZeusFirstMeeting": {
+                **make_textline(),
+                "narrativePrioritySectionTier": "super",
+                "narrativePrioritySetLevel": "priority",
+            },
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["ZeusFirstMeeting"]
+        assert tl["narrativePrioritySectionTier"] == "super"
+        assert tl["narrativePrioritySetLevel"] == "priority"
+
+    def test_h2_priority_fields_forwarded(self):
+        npcs = make_npc("NPC_Hecate_01", "GiftTextLineSets", {
+            "HecateGift01": {
+                **make_textline(),
+                "narrativePriorityOrdinal": 1,
+                "narrativePrioritySectionSize": 18,
+                "narrativePriorityClusterMembers": ["HecateGift02", "HecateGift03"],
+            },
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["HecateGift01"]
+        assert tl["narrativePriorityOrdinal"] == 1
+        assert tl["narrativePrioritySectionSize"] == 18
+        assert tl["narrativePriorityClusterMembers"] == ["HecateGift02", "HecateGift03"]
+
+    def test_priority_fields_omitted_when_absent(self):
+        """Textlines without priority data must NOT have any priority
+        keys synthesised - the viewer dispatcher relies on
+        ``in textline`` checks to decide whether to render a badge,
+        so silently writing ``None`` here would change the dispatch."""
+        npcs = make_npc("NPC_Test_01", "InteractTextLineSets", {
+            "PlainLine": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        tl = result["textlines"]["PlainLine"]
+        for field in (
+            "narrativePrioritySectionTier",
+            "narrativePrioritySetLevel",
+            "narrativePriorityOrdinal",
+            "narrativePrioritySectionSize",
+            "narrativePriorityClusterMembers",
+        ):
+            assert field not in tl, f"unexpected {field} on plain textline"
+
+
+class TestOrBranches:
+    """H2 alternative requirement groups (``orBranches``) must survive
+    the graph build, and their textline edges must reach
+    ``dependents`` tagged with 1-based branch index + total branch
+    count so the viewer can render the dependent as a conditional
+    alternative rather than a hard requirement."""
+
+    def test_or_branches_passed_through_entry(self):
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Gate": make_textline(),
+            "Host": {
+                "requirements": {},
+                "otherRequirements": {},
+                "dialogueLines": [],
+                "orBranches": [
+                    {"requirements": {"RequiredTextLines": ["Gate"]}},
+                    {"otherRequirements": {"PathTrue:GameState.X": [{"PathTrue": ["GameState", "X"]}]}},
+                ],
+            },
+        })
+        result = build_graph_data(npcs)
+        host = result["textlines"]["Host"]
+        assert "orBranches" in host
+        assert len(host["orBranches"]) == 2
+        assert host["orBranches"][0]["requirements"]["RequiredTextLines"] == ["Gate"]
+
+    def test_or_branches_absent_when_empty(self):
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Plain": make_textline(),
+        })
+        result = build_graph_data(npcs)
+        assert "orBranches" not in result["textlines"]["Plain"]
+
+    def test_or_branch_textline_edges_reach_dependents_with_tag(self):
+        """An OR-branch textline edge produces a dependent entry that
+        carries ``orBranchIndex`` (1-based) and ``orBranchTotal`` so
+        the viewer can render "(OR alt N of M)"."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Gate": make_textline(),
+            "Other": make_textline(),
+            "Host": {
+                "requirements": {},
+                "otherRequirements": {},
+                "dialogueLines": [],
+                "orBranches": [
+                    {"requirements": {"RequiredTextLines": ["Gate"]}},
+                    {"requirements": {"RequiredAnyTextLines": ["Other"]}},
+                ],
+            },
+        })
+        result = build_graph_data(npcs)
+        gate_deps = result["dependents"]["Gate"]
+        assert gate_deps == [{
+            "name": "Host",
+            "type": "RequiredTextLines",
+            "orBranchIndex": 1,
+            "orBranchTotal": 2,
+        }]
+        other_deps = result["dependents"]["Other"]
+        assert other_deps == [{
+            "name": "Host",
+            "type": "RequiredAnyTextLines",
+            "orBranchIndex": 2,
+            "orBranchTotal": 2,
+        }]
+
+    def test_or_branch_and_base_dependents_coexist(self):
+        """Same target as base + OR branch: both edges appear in
+        ``dependents``, only the OR-branch one carries the tag."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Gate": make_textline(),
+            "Host": {
+                "requirements": {"RequiredTextLines": ["Gate"]},
+                "otherRequirements": {},
+                "dialogueLines": [],
+                "orBranches": [
+                    {"requirements": {"RequiredAnyTextLines": ["Gate"]}},
+                ],
+            },
+        })
+        result = build_graph_data(npcs)
+        deps = result["dependents"]["Gate"]
+        assert len(deps) == 2
+        base = [d for d in deps if "orBranchIndex" not in d]
+        or_edge = [d for d in deps if "orBranchIndex" in d]
+        assert base == [{"name": "Host", "type": "RequiredTextLines"}]
+        assert or_edge == [{
+            "name": "Host",
+            "type": "RequiredAnyTextLines",
+            "orBranchIndex": 1,
+            "orBranchTotal": 1,
+        }]
+
+    def test_or_branch_self_ref_excluded_from_dependents(self):
+        """Mirror the base self-ref filter: a textline that lists
+        itself inside one of its OR-branch requirements (e.g. a
+        cooldown-style field on a per-alternative branch) must not
+        produce a self-edge in dependents."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Host": {
+                "requirements": {},
+                "otherRequirements": {},
+                "dialogueLines": [],
+                "orBranches": [
+                    {"requirements": {"MinRunsSinceAnyTextLines": ["Host"]}},
+                ],
+            },
+        })
+        result = build_graph_data(npcs)
+        assert "Host" not in result["dependents"]
+        assert result["stats"]["totalEdges"] == 0
+
+    def test_or_branch_textline_edges_count_as_unresolved_refs(self):
+        """An OR-branch alternative pointing at a missing textline is
+        reported in ``stats.unresolvedRefs`` alongside base refs."""
+        npcs = make_npc("NPC_X_01", "InteractTextLineSets", {
+            "Host": {
+                "requirements": {},
+                "otherRequirements": {},
+                "dialogueLines": [],
+                "orBranches": [
+                    {"requirements": {"RequiredTextLines": ["DoesNotExist"]}},
+                ],
+            },
+        })
+        result = build_graph_data(npcs)
+        assert "DoesNotExist" in result["stats"]["unresolvedRefs"]

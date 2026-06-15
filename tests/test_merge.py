@@ -11,7 +11,7 @@ from src.graph import resolve_duplicate
 
 def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
                    source_file="X.lua", source_line=None, other_reqs=None,
-                   partner=None):
+                   partner=None, or_branches=None):
     tl = {
         "name": name,
         "owner": owner,
@@ -25,6 +25,8 @@ def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,
     }
     if partner is not None:
         tl["partner"] = partner
+    if or_branches is not None:
+        tl["orBranches"] = or_branches
     return tl
 
 
@@ -267,6 +269,111 @@ class TestMergeDatasets:
         ]
         # Edge count excludes the two self-edges.
         assert merged["stats"]["totalEdges"] == 1
+
+
+class TestOrBranchesAtMerge:
+    """``orBranches`` survives the cross-file merge layer, and its
+    textline edges produce dependent entries tagged with
+    ``orBranchIndex`` / ``orBranchTotal`` in the merged dependents map.
+    Mirrors the per-source pass in src/graph.py:_build_dependents."""
+
+    def test_or_branches_preserved_on_kept_entry(self):
+        gate = _make_textline("Gate", "NPC_A")
+        host = _make_textline(
+            "Host", "NPC_B",
+            or_branches=[{"requirements": {"RequiredTextLines": ["Gate"]}}],
+        )
+        merged = merge_graph_data([_make_dataset(gate, host)])
+        assert "orBranches" in merged["textlines"]["Host"]
+        assert merged["textlines"]["Host"]["orBranches"][0][
+            "requirements"]["RequiredTextLines"] == ["Gate"]
+
+    def test_or_branch_dependent_tagged_in_merged_dependents(self):
+        gate = _make_textline("Gate", "NPC_A")
+        host = _make_textline(
+            "Host", "NPC_B",
+            or_branches=[
+                {"requirements": {"RequiredTextLines": ["Gate"]}},
+                {"otherRequirements": {"PathTrue:GameState.X": [{"PathTrue": ["GameState", "X"]}]}},
+            ],
+        )
+        merged = merge_graph_data([_make_dataset(gate, host)])
+        assert merged["dependents"]["Gate"] == [{
+            "name": "Host",
+            "type": "RequiredTextLines",
+            "orBranchIndex": 1,
+            "orBranchTotal": 2,
+        }]
+
+    def test_or_branch_unresolved_ref_reported(self):
+        host = _make_textline(
+            "Host", "NPC_B",
+            or_branches=[{"requirements": {"RequiredTextLines": ["Missing"]}}],
+        )
+        merged = merge_graph_data([_make_dataset(host)])
+        assert "Missing" in merged["stats"]["unresolvedRefs"]
+
+    def test_or_branch_self_ref_excluded_from_merged_dependents(self):
+        host = _make_textline(
+            "Host", "NPC_B",
+            or_branches=[{"requirements": {"MinRunsSinceAnyTextLines": ["Host"]}}],
+        )
+        merged = merge_graph_data([_make_dataset(host)])
+        assert "Host" not in merged["dependents"]
+        assert merged["stats"]["totalEdges"] == 0
+
+
+class TestOrphanAnnotationsAtMerge:
+    """When the same textline appears in two per-source datasets (an H2
+    xWithY partner pair: canonical cue-bearing side in one file, empty
+    partner-stub side in another), the dedup pipeline picks the
+    canonical side and would silently drop the stub. NarrativeData
+    priority fields can legitimately live on the stub side -- the
+    partner NPC's ``NarrativeData_<Partner>.lua`` registers the
+    textline name -- so the merge layer must transfer those annotations
+    onto the kept entry before the stub is discarded.
+    """
+
+    def test_priority_fields_from_stub_side_transferred_to_canonical(self):
+        # Mirrors IcarusWithEris01: NPCData_Icarus.lua ships the
+        # cue-bearing entry (dialogue lines, requirements); the
+        # NPCData_Eris.lua partner-stub side ships zero content but
+        # NarrativeData_Eris.lua tags it with ordinal 40 of 44.
+        canonical = _make_textline(
+            "IcarusWithEris01", "NPC_Icarus_01",
+            partner="NPC_Eris_01",
+            source_file="NPCData_Icarus.lua",
+            dialogue_lines=[{"speaker": "NPC_Icarus_01", "text": "hi"}],
+        )
+        stub = _make_textline(
+            "IcarusWithEris01", "NPC_Eris_01",
+            partner="NPC_Icarus_01",
+            source_file="NPCData_Eris.lua",
+        )
+        stub["narrativePriorityOrdinal"] = 40
+        stub["narrativePrioritySectionSize"] = 44
+        ds_canonical = _make_dataset(canonical)
+        ds_stub = _make_dataset(stub)
+        merged = merge_graph_data([ds_canonical, ds_stub])
+        kept = merged["textlines"]["IcarusWithEris01"]
+        assert kept["owner"] == "NPC_Icarus_01"
+        assert kept["narrativePriorityOrdinal"] == 40
+        assert kept["narrativePrioritySectionSize"] == 44
+
+    def test_canonical_side_priority_fields_not_overwritten_by_stub(self):
+        # Defensive symmetry: when both sides happen to ship a value
+        # the kept (canonical) side's data wins. ``resolve_duplicate``
+        # has already picked it as authoritative.
+        canonical = _make_textline(
+            "Shared", "NPC_A",
+            partner="NPC_B",
+            dialogue_lines=[{"speaker": "NPC_A", "text": "hi"}],
+        )
+        canonical["narrativePriorityOrdinal"] = 5
+        stub = _make_textline("Shared", "NPC_B", partner="NPC_A")
+        stub["narrativePriorityOrdinal"] = 99
+        merged = merge_graph_data([_make_dataset(canonical), _make_dataset(stub)])
+        assert merged["textlines"]["Shared"]["narrativePriorityOrdinal"] == 5
 
 
 class TestDuplicateStatsPropagation:
