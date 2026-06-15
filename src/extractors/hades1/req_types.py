@@ -38,7 +38,7 @@ reach the viewer).
 # Quantifier (``ALL`` / ``ANY``) and scope (``this run`` / ``last run``
 # / ``this room``) are in parens; every label carries an explicit
 # quantifier marker so the headers are self-describing. Count-based
-# fields use ``at least`` / ``at most`` / ``Min/Max runs since played``
+# fields use ``at least`` / ``at most`` / ``Min./Max. runs since played``
 # forms - the ``Count`` parameter is appended by the viewer as a
 # trailing ``: N``, so e.g. ``Must have played at least (ANY)``
 # renders as ``Must have played at least (ANY): 3``.
@@ -60,8 +60,8 @@ HADES1_REQ_TYPE_LABELS = {
     "RequiredFalseTextLinesThisRoom": "Must NOT have played (this room)",
     "RequiredMinAnyTextLines":        "Must have played at least (ANY)",
     "RequiredMaxAnyTextLines":        "Must have played at most (ANY)",
-    "MinRunsSinceAnyTextLines":       "Min runs since played (ANY)",
-    "MaxRunsSinceAnyTextLines":       "Max runs since played (ANY)",
+    "MinRunsSinceAnyTextLines":       "Min. runs since played (ANY)",
+    "MaxRunsSinceAnyTextLines":       "Max. runs since played (ANY)",
 }
 
 # Short chips rendered next to each child in the dependency tree.

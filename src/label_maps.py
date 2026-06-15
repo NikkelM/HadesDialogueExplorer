@@ -14,6 +14,8 @@ from src.extractors.hades1 import (
     HADES1_REQ_TYPE_EDGE_LABELS,
     HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_OTHER_REQ_LABELS,
+    HADES1_OTHER_REQ_TOOLTIPS,
     HADES1_CHOICE_NAMES,
     HADES1_META_UPGRADE_NAMES,
 )
@@ -43,9 +45,15 @@ from src.extractors.hades2 import (
 _GAME_LABELS = {
     "hades1": {
         "sectionKeyLabels": HADES1_SECTION_KEY_LABELS,
-        "reqTypeLabels": HADES1_REQ_TYPE_LABELS,
+        # H1's reqTypeLabels / reqTypeTooltips merge two source maps:
+        # the textline-dependency vocabulary (req_types.py) and the
+        # non-textline ``otherRequirements`` vocabulary
+        # (other_req_types.py). Vocabularies are disjoint by
+        # construction (see test_other_req_types.py); the viewer
+        # consumes a single flat dict per game.
+        "reqTypeLabels": {**HADES1_REQ_TYPE_LABELS, **HADES1_OTHER_REQ_LABELS},
         "reqTypeEdgeLabels": HADES1_REQ_TYPE_EDGE_LABELS,
-        "reqTypeTooltips": HADES1_REQ_TYPE_TOOLTIPS,
+        "reqTypeTooltips": {**HADES1_REQ_TYPE_TOOLTIPS, **HADES1_OTHER_REQ_TOOLTIPS},
         "reqTypeOrder": HADES1_REQ_TYPE_DISPLAY_ORDER,
         "choiceNames": HADES1_CHOICE_NAMES,
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,

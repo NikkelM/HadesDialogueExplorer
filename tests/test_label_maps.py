@@ -20,6 +20,7 @@ from src.extractors.hades1 import (
     HADES1_SECTION_KEY_LABELS,
     HADES1_META_UPGRADE_NAMES,
     HADES1_REQ_TYPE_LABELS,
+    HADES1_OTHER_REQ_LABELS,
 )
 
 
@@ -124,6 +125,19 @@ class TestStrictPerGameSeparation:
         h2_only = set(HADES2_REQ_TYPE_LABELS) - HADES2_TEXTLINE_DEPENDENCY_FIELDS
         for k in h2_only:
             assert k not in annotated_h1, f"H2-only req label {k!r} leaked into H1"
+
+    def test_hades1_other_req_labels_disjoint_from_hades2(self):
+        # H1's non-textline ``otherRequirements`` vocabulary (e.g.
+        # RequiredFalseFlags, RequiredKills, RequiredMinPlayTime) is
+        # merged into the H1 reqTypeLabels bundle. None of those
+        # field names exist in H2's schema (H2 uses operator-prefixed
+        # records under Path), so they must never leak into the H2
+        # annotated label map.
+        annotated_h2 = _annotated("hades2")["reqTypeLabels"]
+        for k in HADES1_OTHER_REQ_LABELS:
+            assert k not in annotated_h2, (
+                f"H1 OtherReq label {k!r} leaked into H2"
+            )
 
     def test_textline_dependency_fields_shared_across_games(self):
         # Pin the cross-game shared subset: every borrowed key must
