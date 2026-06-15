@@ -4,23 +4,26 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 
 ## Features
 
-- Browse NPC dialogue from Hades 1
+- Browse NPC dialogue from Hades 1 and Hades II
 - Visualise prerequisite chains as interactive trees, with upstream prerequisites and downstream dependents in separate panels
 - Read dialogue text with speaker attribution
+- Switch between games from the header toggle
 - Use the hosted viewer online, or download a single self-contained HTML file for offline use
 
 ## Using the viewer
 
-- **Search** - type a textline name in the search bar
-- **Click** a tree node - expands/collapses children and shows details
-- **Double-click** a tree node - navigates to it (refocuses the tree)
-- **⤴ button** - appears on hover, navigates to that dialogue
-- **Details panel** - shows dialogue text, requirements, and metadata
+- **Search** - type a textline name or dialogue text in the search bar.
+  Use Up / Down + Enter to pick a result, or click it.
+- **Click** a tree row - selects it (shows details in the side panel) and expands its children.
+- **Click** the row's chevron (▶ / ▼) - toggles expand / collapse without changing the selection.
+- **Double-click** a tree row - re-roots the panels on that textline.
+- **Details panel** - shows dialogue text, requirements, and metadata.
 
 ## Development Setup
 
 1. Copy `config.example.toml` to `config.toml` in the repo root.
-2. Edit `config.toml` so `paths.hades1_scripts` points at your local Hades install's `Scripts` directory.
+2. Edit `config.toml` so `paths.hades1_scripts` and `paths.hades2_scripts` both point at the `Scripts` directory inside the respective game's install.
+   Both keys are required; the generator validates that each path exists before parsing.
    `config.toml` is git-ignored.
 3. On Python < 3.11, `pip install -r requirements.txt` for the TOML parser (`tomli`).
    On 3.11+ this is a no-op.
