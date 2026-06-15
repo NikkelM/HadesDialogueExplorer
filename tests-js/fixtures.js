@@ -84,9 +84,36 @@ export function buildFixtureData() {
                     { speaker: 'NPC_Unknown_01', text: 'A whisper in the dark.' },
                 ],
             },
+            // Choice-prompt textline. The prompt itself indexes via
+            // ``line.text`` like any normal line; in addition each
+            // option is pushed as a synthetic ``isChoiceOption: true``
+            // entry by ``buildLinesIndex`` so text search can find the
+            // player-facing button labels ("Go to Her" / "Back Off")
+            // even though those words never appear in dialogue. The
+            // third option intentionally has no entry in
+            // ``choiceNames`` so tests can exercise the internal-id
+            // fallback path.
+            BecameCloseWithMegaera01: {
+                owner: 'NPC_Zagreus_01',
+                section: 'InteractTextLineSets',
+                playOnce: true,
+                narrativePrioritySectionTier: 'normal',
+                narrativePrioritySetLevel: null,
+                dialogueLines: [
+                    {
+                        kind: 'choicePrompt',
+                        text: 'Be with Megaera? (Follow your heart.)',
+                        choices: [
+                            { internal: 'Meg_GoToHer', targetTextline: 'BecameCloseWithMegaera01Meg_GoToHer' },
+                            { internal: 'Meg_BackOff', targetTextline: 'BecameCloseWithMegaera01Meg_BackOff' },
+                            { internal: 'Meg_UnknownInternalOnly', targetTextline: null },
+                        ],
+                    },
+                ],
+            },
         },
         dependents: {},
-        stats: { totalTextlines: 5, totalEdges: 0, unresolvedRefs: [] },
+        stats: { totalTextlines: 6, totalEdges: 0, unresolvedRefs: [] },
         speakers: {
             NPC_Zeus_01:      { name: 'Zeus',      description: 'King of the Olympians' },
             NPC_Aphrodite_01: { name: 'Aphrodite', description: 'Goddess of Love' },
@@ -95,6 +122,14 @@ export function buildFixtureData() {
             // description) so tests can exercise the "friendly name
             // only, no description" branch.
             NPC_Achilles_01:  { name: 'Achilles' },
+            NPC_Zagreus_01:   { name: 'Zagreus',   description: 'Prince of the Underworld' },
+        },
+        choiceNames: {
+            Meg_GoToHer: 'Go to Her',
+            Meg_BackOff: 'Back Off',
+            // Meg_UnknownInternalOnly intentionally absent so the
+            // fallback-to-internal-id branch in buildLinesIndex has a
+            // dedicated case.
         },
         knownUnresolvedRefs: {},
         unresolvedCategoryLabels: {},

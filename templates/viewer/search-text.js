@@ -6,13 +6,18 @@
 // section. Used by ``search-ui.js`` behind a 120 ms debounce because
 // it touches every dialogue line.
 
-import { textlines, allNames } from './data.js';
+import { textlines, allNames, choiceNames } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { computeIdf, idfWeight } from './idf.js';
 
 // Flattened index of every dialogue line for fast text-content search.
-// Each entry: ``{name, lineIdx, speaker, textOriginal, textLower}``.
-// Populated by :func:`buildLinesIndex` once during ``init()``.
+// Each entry: ``{name, lineIdx, speaker, textOriginal, textLower,
+// isChoiceOption?}``. ``isChoiceOption`` is set for synthetic entries
+// pushed for each player-facing choice button label so a search for
+// "Lament" / "Go to Her" / etc. surfaces the parent prompt textline
+// even though those words only appear on the button, not in the
+// prompt text. Populated by :func:`buildLinesIndex` once during
+// ``init()``.
 export let linesIndex;
 
 // Token -> IDF weight, computed over ``linesIndex`` once per
@@ -49,6 +54,15 @@ export function tokeniseLineText(textLower) {
 // rebuilt alongside the index so the two always reflect the same
 // corpus snapshot - a single export point keeps callers from
 // accidentally consulting a stale weight map.
+//
+// For ``kind === 'choicePrompt'`` lines we also push one synthetic
+// entry per choice option, using the friendly label from
+// ``choiceNames`` (fallback: the raw internal id when no friendly
+// label is registered). Those entries share the parent prompt's
+// ``name`` / ``lineIdx`` so click-through still lands on the prompt
+// row, and carry ``isChoiceOption: true`` so the renderer can
+// substitute the speaker label with a ``Choice option:`` marker
+// (the option has no real speaker - it's a player-facing button).
 export function buildLinesIndex() {
     const out = [];
     for (const name of allNames) {
@@ -58,14 +72,31 @@ export function buildLinesIndex() {
         if (!lines || lines.length === 0) continue;
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            if (!line || !line.text) continue;
-            out.push({
-                name,
-                lineIdx: i,
-                speaker: line.speaker || '',
-                textOriginal: line.text,
-                textLower: line.text.toLowerCase(),
-            });
+            if (!line) continue;
+            if (line.text) {
+                out.push({
+                    name,
+                    lineIdx: i,
+                    speaker: line.speaker || '',
+                    textOriginal: line.text,
+                    textLower: line.text.toLowerCase(),
+                });
+            }
+            if (line.kind === 'choicePrompt' && Array.isArray(line.choices)) {
+                for (const c of line.choices) {
+                    if (!c || !c.internal) continue;
+                    const friendly = choiceNames[c.internal] || c.internal;
+                    if (!friendly) continue;
+                    out.push({
+                        name,
+                        lineIdx: i,
+                        speaker: '',
+                        isChoiceOption: true,
+                        textOriginal: friendly,
+                        textLower: friendly.toLowerCase(),
+                    });
+                }
+            }
         }
     }
     linesIndex = out;
@@ -250,6 +281,10 @@ export function searchTextLines(tokens, excludeNames, limit) {
 // Render a single text-match dropdown row, including a highlighted
 // snippet of the matched line. Click navigation reuses the standard
 // ``data-name`` attribute consumed by ``initSearch``'s click handler.
+// Choice-option entries (synthetic per-button rows pushed by
+// :func:`buildLinesIndex` for ``choicePrompt`` lines) have no real
+// speaker - the snippet is the player-facing button label - so the
+// speaker prefix is swapped for a ``Choice option:`` marker.
 export function renderTextMatchHtml(match, tokens) {
     const entry = match.entry;
     const tl = textlines[entry.name];
@@ -259,7 +294,10 @@ export function renderTextMatchHtml(match, tokens) {
         match.positionsByToken,
         match.runAnchor,
     );
-    return `<div class="search-item search-item-text" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet"><span class="snippet-speaker">${renderSpeakerHtml(entry.speaker)}:</span> ${snippetHtml}</div></div>`;
+    const prefixHtml = entry.isChoiceOption
+        ? `<span class="snippet-choice-label">Choice option:</span>`
+        : `<span class="snippet-speaker">${renderSpeakerHtml(entry.speaker)}:</span>`;
+    return `<div class="search-item search-item-text" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet">${prefixHtml} ${snippetHtml}</div></div>`;
 }
 
 // Build the highlighted-snippet HTML for a single matched dialogue

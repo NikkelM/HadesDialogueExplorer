@@ -18,8 +18,10 @@ import {
     buildLinesIndex,
     tokeniseLineText,
     linesIdf,
+    linesIndex,
+    renderTextMatchHtml,
 } from '../templates/viewer/search-text.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, textlines } from '../templates/viewer/data.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 before(() => {
@@ -352,4 +354,143 @@ test('searchTextLines: candidate with more adjacent query-token pairs ranks abov
 test('teardown: restore shared fixture', () => {
     loadData(buildFixtureData());
     buildLinesIndex();
+});
+
+// ---- Choice-option indexing (issue #77) ----
+//
+// ``buildLinesIndex`` pushes one synthetic entry per choice option for
+// every ``kind === 'choicePrompt'`` dialogue line, so a search for the
+// player-facing button label ("Lament", "Go to Her", ...) surfaces
+// the parent prompt textline even when those words never appear in
+// the prompt text itself. The fixture's ``BecameCloseWithMegaera01``
+// textline carries three options: two with friendly labels in
+// ``choiceNames`` and one intentionally absent so the
+// fallback-to-internal-id path has a dedicated case.
+
+test('buildLinesIndex: pushes synthetic entries for each choice option', () => {
+    // Three choices on BecameCloseWithMegaera01 -> three synthetic
+    // ``isChoiceOption`` entries, one per option.
+    const choiceEntries = linesIndex.filter(
+        (e) => e.name === 'BecameCloseWithMegaera01' && e.isChoiceOption,
+    );
+    assert.equal(choiceEntries.length, 3);
+    // Plus the prompt's own text entry (the regular line with
+    // ``text: "Be with Megaera? (Follow your heart.)"``).
+    const promptEntries = linesIndex.filter(
+        (e) => e.name === 'BecameCloseWithMegaera01' && !e.isChoiceOption,
+    );
+    assert.equal(promptEntries.length, 1);
+    assert.equal(promptEntries[0].textOriginal, 'Be with Megaera? (Follow your heart.)');
+});
+
+test('buildLinesIndex: choice-option entries use friendly label from choiceNames', () => {
+    const labels = linesIndex
+        .filter((e) => e.name === 'BecameCloseWithMegaera01' && e.isChoiceOption)
+        .map((e) => e.textOriginal);
+    assert.ok(labels.includes('Go to Her'));
+    assert.ok(labels.includes('Back Off'));
+});
+
+test('buildLinesIndex: choice-option entries fall back to internal id when no friendly label', () => {
+    // ``Meg_UnknownInternalOnly`` has no entry in ``choiceNames``,
+    // so the raw internal id is used as the indexed text - keeping
+    // the option searchable even before its label is hand-curated.
+    const labels = linesIndex
+        .filter((e) => e.name === 'BecameCloseWithMegaera01' && e.isChoiceOption)
+        .map((e) => e.textOriginal);
+    assert.ok(labels.includes('Meg_UnknownInternalOnly'));
+});
+
+test('buildLinesIndex: choice-option entries share parent name and prompt lineIdx', () => {
+    // Click-through must land on the parent prompt textline, not on
+    // a synthetic name - the entry carries the parent's ``name``
+    // verbatim. ``lineIdx`` points at the prompt line so any
+    // snippet-anchoring logic can locate the correct dialogue row.
+    const promptIdx = textlines.BecameCloseWithMegaera01.dialogueLines.findIndex(
+        (l) => l && l.kind === 'choicePrompt',
+    );
+    assert.ok(promptIdx >= 0);
+    const choiceEntries = linesIndex.filter(
+        (e) => e.name === 'BecameCloseWithMegaera01' && e.isChoiceOption,
+    );
+    for (const e of choiceEntries) {
+        assert.equal(e.name, 'BecameCloseWithMegaera01');
+        assert.equal(e.lineIdx, promptIdx);
+        assert.equal(e.speaker, '');
+    }
+});
+
+test('searchTextLines: surfaces choicePrompt textline via choice-option label search', () => {
+    // "Go to Her" / "Back Off" / "Lament" appear nowhere in any
+    // dialogue text in the fixture - they ONLY exist as choice
+    // option labels. The search must still find the parent prompt
+    // textline because ``buildLinesIndex`` pushed synthetic entries
+    // for each option.
+    const matches = searchTextLines(['go', 'to', 'her'], new Set(), 50);
+    assert.ok(matches.length >= 1);
+    assert.equal(matches[0].entry.name, 'BecameCloseWithMegaera01');
+    assert.equal(matches[0].entry.isChoiceOption, true);
+});
+
+test('searchTextLines: choice-option search returns one row per parent textline (dedup)', () => {
+    // Both "Go to Her" and "Back Off" match the query ``back her``
+    // via different choice options on the same parent textline.
+    // The seen-set dedup must collapse the result to a single row
+    // per parent (the first-iterated entry wins - here, the prompt
+    // text entry doesn't match ``back her``, so the first matching
+    // synthetic choice entry surfaces).
+    const matches = searchTextLines(['back', 'her'], new Set(), 50);
+    const becameClose = matches.filter((m) => m.entry.name === 'BecameCloseWithMegaera01');
+    assert.equal(becameClose.length, 1);
+});
+
+test('searchTextLines: regular dialogue text wins over choice-option match on the same parent', () => {
+    // The prompt's own text contains "with". For query "with", BOTH
+    // the regular prompt entry AND the choice-option entries are
+    // candidates, but ``buildLinesIndex`` pushes the regular entry
+    // before the choice entries for the same line, so the dedup
+    // ``seen`` set keeps the regular (non-choice) entry. Asserts
+    // we prefer "real" dialogue over a synthetic choice label when
+    // both match.
+    const matches = searchTextLines(['with'], new Set(), 50);
+    const becameClose = matches.find((m) => m.entry.name === 'BecameCloseWithMegaera01');
+    assert.ok(becameClose);
+    assert.notEqual(becameClose.entry.isChoiceOption, true);
+});
+
+test('searchTextLines: internal-id fallback is searchable for unmapped options', () => {
+    // ``Meg_UnknownInternalOnly`` has no friendly label, so the
+    // raw internal id is the indexed text. Searching for a unique
+    // fragment of the id surfaces the parent textline.
+    const matches = searchTextLines(['unknowninternalonly'], new Set(), 50);
+    assert.ok(matches.length >= 1);
+    assert.equal(matches[0].entry.name, 'BecameCloseWithMegaera01');
+    assert.equal(matches[0].entry.isChoiceOption, true);
+    assert.equal(matches[0].entry.textOriginal, 'Meg_UnknownInternalOnly');
+});
+
+test('renderTextMatchHtml: choice-option entry renders the "Choice option:" marker, not a speaker prefix', () => {
+    const matches = searchTextLines(['go', 'to', 'her'], new Set(), 50);
+    assert.ok(matches.length >= 1);
+    const html = renderTextMatchHtml(matches[0], ['go', 'to', 'her']);
+    // The synthetic prefix replaces the speaker label entirely - no
+    // ``snippet-speaker`` element should appear for a choice-option
+    // row.
+    assert.ok(html.includes('snippet-choice-label'));
+    assert.ok(html.includes('Choice option:'));
+    assert.ok(!html.includes('snippet-speaker'));
+});
+
+test('renderTextMatchHtml: regular dialogue match still renders the speaker prefix', () => {
+    // Regression guard: a normal (non-choice) match must keep the
+    // existing speaker-label rendering. The Achilles textline has
+    // no friendly speaker description but does carry a name, so the
+    // speaker prefix surfaces with that label.
+    const matches = searchTextLines(['i', 'think'], new Set(), 50);
+    const achilles = matches.find((m) => m.entry.name === 'AchillesAboutThanatos01');
+    assert.ok(achilles);
+    const html = renderTextMatchHtml(achilles, ['i', 'think']);
+    assert.ok(html.includes('snippet-speaker'));
+    assert.ok(!html.includes('snippet-choice-label'));
+    assert.ok(!html.includes('Choice option:'));
 });
