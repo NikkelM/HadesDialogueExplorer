@@ -359,7 +359,14 @@ export function searchTextLines(query, excludeNames, limit) {
 // :func:`buildLinesIndex` for ``choicePrompt`` lines) have no real
 // speaker - the snippet is the player-facing button label - so the
 // speaker prefix is swapped for a ``Choice option:`` marker.
-export function renderTextMatchHtml(match, tokens) {
+//
+// ``optionId`` is the DOM id the row should carry as an ARIA
+// listbox option (set by ``search-ui.js`` so ``aria-activedescendant``
+// can resolve a single keyboard-focused row). Optional - the row
+// still renders without it; the combobox just can't track focus on
+// it. Always set in production; omitted by ranking unit tests that
+// don't exercise the DOM.
+export function renderTextMatchHtml(match, tokens, optionId) {
     const entry = match.entry;
     const tl = textlines[entry.name];
     const snippetHtml = buildSnippetHtml(
@@ -371,7 +378,8 @@ export function renderTextMatchHtml(match, tokens) {
     const prefixHtml = entry.isChoiceOption
         ? `<span class="snippet-choice-label">Choice option:</span>`
         : `<span class="snippet-speaker">${renderSpeakerHtml(entry.speaker)}:</span>`;
-    return `<div class="search-item search-item-text" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet">${prefixHtml} ${snippetHtml}</div></div>`;
+    const idAttr = optionId ? ` id="${optionId}"` : '';
+    return `<div class="search-item search-item-text" role="option"${idAttr} aria-selected="false" data-name="${escapeHtml(entry.name)}"><div class="search-item-head">${escapeHtml(entry.name)}<span class="npc">${renderSpeakerHtml(tl.owner)} \u00B7 ${renderSectionHtml(tl.section)}</span></div><div class="search-snippet">${prefixHtml} ${snippetHtml}</div></div>`;
 }
 
 // Build the highlighted-snippet HTML for a single matched dialogue

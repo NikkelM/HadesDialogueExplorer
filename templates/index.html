@@ -11,12 +11,14 @@
     <h1>Hades Dialogue Dependency Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game"></div>
     <div class="search-container">
-        <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off">
-        <div id="search-results">
-            <div id="search-names-header" class="search-section-header" hidden>Name matches</div>
-            <div id="search-names-list"></div>
-            <div id="search-text-header" class="search-section-header" hidden>Text matches</div>
-            <div id="search-text-list"></div>
+        <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off"
+               role="combobox" aria-autocomplete="list" aria-expanded="false"
+               aria-controls="search-results" aria-haspopup="listbox">
+        <div id="search-results" role="listbox" aria-label="Search results">
+            <div id="search-names-header" class="search-section-header" hidden role="presentation">Name matches</div>
+            <div id="search-names-list" role="presentation"></div>
+            <div id="search-text-header" class="search-section-header" hidden role="presentation">Text matches</div>
+            <div id="search-text-list" role="presentation"></div>
         </div>
     </div>
     <div class="stats" id="stats"></div>

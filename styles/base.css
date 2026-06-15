@@ -73,7 +73,18 @@ header h1 {
     font-size: 13px;
     border-bottom: 1px solid #0f346040;
 }
-.search-item:hover { background: #0f3460; }
+.search-item:hover,
+.search-item.is-active { background: #0f3460; }
+/* Suppress the pure-CSS :hover highlight while the user is driving
+   the dropdown from the keyboard. Without this, a row that happens
+   to sit under the mouse cursor when ArrowUp/ArrowDown is pressed
+   stays visually highlighted alongside the keyboard-active row,
+   making it ambiguous which one Enter will commit. The ``kbd-mode``
+   class is added by ``search-ui.js`` on arrow-key navigation and
+   removed on the next real mouse movement, so visible state always
+   matches the latest input modality. */
+#search-results.kbd-mode .search-item:hover { background: transparent; }
+#search-results.kbd-mode .search-item.is-active { background: #0f3460; }
 .search-item .npc { color: #888; font-size: 11px; margin-left: 8px; }
 .search-item-text .search-item-head { font-size: 13px; }
 .search-item-text .search-snippet {
