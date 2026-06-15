@@ -1,8 +1,11 @@
 """Tests for the NPCData extractor."""
 
+from unittest.mock import patch
+
 import pytest
 
 from src.lua_parser import LuaParser
+from src.extractors.hades1 import npc_data as npc_data_mod
 from src.extractors.hades1.npc_data import extract_npc_data
 
 
@@ -492,3 +495,41 @@ class TestOwnerNameAliases:
         section = result["NPC_Hades_01"]["InteractTextLineSets"]
         assert "HouseLine01" in section
         assert "FlashbackLine01" in section
+
+    def test_alias_in_both_containers_processed_once(self):
+        """When an aliased NPC appears in BOTH ``UnitSetData.NPCs``
+        (the ``npcs_table`` loop) AND as a top-level assignment
+        (the ``individual_npcs`` loop), ``_add_entry`` must be invoked
+        exactly once for it. Locks down the dedup guard: because
+        ``_add_entry`` stores aliased entries under the *resolved*
+        owner key (never the alias name), the alias-key half of the
+        guard is always True, so the resolved-key half is what
+        actually controls the skip. A previous version used ``or``
+        which silently bypassed the guard for aliases - harmless
+        today because the downstream merge is idempotent, but it
+        would re-introduce double-processing the moment any
+        non-idempotent merge logic landed."""
+        lua = '''UnitSetData.NPCs = {
+            NPC_Hades_Story_01 = {
+                InteractTextLineSets = {
+                    FlashbackLine01 = { { Cue = "/VO/Hades_0825", Text = "Flashback." } }
+                }
+            }
+        }
+        NPC_Hades_Story_01 = {
+            InteractTextLineSets = {
+                FlashbackLine01 = { { Cue = "/VO/Hades_0825", Text = "Flashback." } }
+            }
+        }'''
+        real_add_entry = npc_data_mod._add_entry
+        parsed = LuaParser(lua).parse_file()
+        with patch.object(npc_data_mod, "_add_entry", wraps=real_add_entry) as spy:
+            result = npc_data_mod.extract_npc_data(parsed, source_label="Test")
+        # Exactly one ``_add_entry`` call for the aliased NPC: the
+        # ``npcs_table`` loop processes it, then the dedup guard in
+        # the ``individual_npcs`` loop skips the duplicate.
+        assert spy.call_count == 1
+        # Result shape is unchanged: alias stored under canonical key.
+        assert "NPC_Hades_01" in result
+        assert "NPC_Hades_Story_01" not in result
+        assert "FlashbackLine01" in result["NPC_Hades_01"]["InteractTextLineSets"]

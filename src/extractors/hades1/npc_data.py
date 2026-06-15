@@ -100,10 +100,14 @@ def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = ""
                 _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map, preset_choices)
 
     for npc_name, npc_data in individual_npcs.items():
-        # The dedup check uses the resolved (post-alias) owner key so
-        # an alias entry doesn't get extracted twice when it appears
-        # in both ``individual_npcs`` and ``npcs_table``.
-        if _resolve_owner(npc_name) not in result or npc_name not in result:
+        # Dedup guard: skip when the canonical owner has already been
+        # populated by the ``npcs_table`` loop above. ``_add_entry``
+        # stores aliased entries under the *resolved* owner key (never
+        # the alias name), so ``npc_name not in result`` is always True
+        # for aliases - we need both checks AND-ed so the resolved-key
+        # check controls for aliased names and either check controls
+        # for plain names (where they're equivalent).
+        if _resolve_owner(npc_name) not in result and npc_name not in result:
             _add_entry(result, npc_name, npc_data, source_label, source_file, game_data_lists, offer_text_map, preset_choices)
 
     return result
