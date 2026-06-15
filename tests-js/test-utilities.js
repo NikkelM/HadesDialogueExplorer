@@ -173,6 +173,79 @@ test('renderReqTypeHtml applies an extra CSS class when one is passed', () => {
     assert.ok(html.includes('class="req-type-name unresolved-cat"'));
 });
 
+test('formatReqType returns the dependents-perspective label when direction is downstream', () => {
+    assert.equal(
+        formatReqType('RequiredTextLines', 'downstream'),
+        'Required as prerequisite (in ALL group)',
+    );
+    // Upstream remains the default - explicit 'upstream' matches no
+    // direction arg.
+    assert.equal(
+        formatReqType('RequiredTextLines', 'upstream'),
+        'Required (ALL)',
+    );
+});
+
+test('formatReqType downstream falls back to the upstream label when no dependents entry exists', () => {
+    // RequiredFalseTextLines is in reqTypeLabels but NOT in
+    // reqTypeLabelsDependents - downstream must degrade gracefully
+    // through the upstream map before degrading to the raw field
+    // name.
+    assert.equal(
+        formatReqType('RequiredFalseTextLines', 'downstream'),
+        'Not played (NONE)',
+    );
+    // Unknown type degrades all the way through to the raw field
+    // name in both directions.
+    assert.equal(
+        formatReqType('SomeUnmappedType', 'downstream'),
+        'SomeUnmappedType',
+    );
+});
+
+test('reqTypeTitleText returns the dependents-perspective blurb when direction is downstream', () => {
+    const text = reqTypeTitleText('RequiredTextLines', 'downstream');
+    assert.equal(
+        text,
+        'Internal name: RequiredTextLines\n\n'
+        + 'Each dependent below has this textline in its ALL group: every listed textline must have been played for the dependent to be eligible.',
+    );
+});
+
+test('reqTypeTitleText downstream falls back to header-only when no dependents blurb exists', () => {
+    // RequiredAnyTextLines has a dependents label but no dependents
+    // tooltip - the header line should appear without an appended
+    // blurb (matching the upstream header-only branch behaviour).
+    assert.equal(
+        reqTypeTitleText('RequiredAnyTextLines', 'downstream'),
+        'Internal name: RequiredAnyTextLines',
+    );
+});
+
+test('reqTypeTitleText downstream falls back to the upstream blurb when no dependents wording exists', () => {
+    // RequiredFalseTextLines: no dependents label OR tooltip, but
+    // upstream label exists. Fallback chain hands the call off to
+    // the upstream maps so the tooltip still renders the upstream
+    // wording rather than degrading to header-only or null.
+    assert.equal(
+        reqTypeTitleText('RequiredFalseTextLines', 'downstream'),
+        'Internal name: RequiredFalseTextLines',
+    );
+});
+
+test('renderReqTypeHtml downstream embeds the dependents-perspective label and tooltip', () => {
+    const html = renderReqTypeHtml('RequiredTextLines', null, 'downstream');
+    assert.ok(html.startsWith('<span class="req-type-name"'));
+    assert.ok(html.includes('data-tooltip="Internal name: RequiredTextLines'));
+    assert.ok(html.includes('Each dependent below has this textline in its ALL group'));
+    assert.ok(html.includes('>Required as prerequisite (in ALL group)<'));
+});
+
+test('renderReqTypeHtml downstream falls back to upstream wording for fields missing from the dependents map', () => {
+    const html = renderReqTypeHtml('RequiredFalseTextLines', null, 'downstream');
+    assert.ok(html.includes('>Not played (NONE)<'));
+});
+
 test('renderTierBadgeHtml emits the correct icon and class for each section tier', () => {
     const superHtml = renderTierBadgeHtml({ narrativePrioritySectionTier: 'super' });
     assert.ok(superHtml.includes('priority-super'));

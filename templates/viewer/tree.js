@@ -187,7 +187,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         // hover so the chip is self-disambiguating on the most
         // prominent shorthand surface in the viewer.
         // Skipped for unmapped types so the chip stays plain.
-        const titleText = reqTypeTitleText(edgeType);
+        const titleText = reqTypeTitleText(edgeType, direction);
         if (titleText !== null) {
             edge.dataset.tooltip = titleText;
         }

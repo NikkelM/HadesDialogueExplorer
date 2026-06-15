@@ -42,6 +42,7 @@ export let textlines, dependents, speakers, stats;
 export let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions;
 export let unresolvedRefBlocks;
 export let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
+export let reqTypeLabelsDependents, reqTypeTooltipsDependents;
 export let sectionKeyLabels;
 export let choiceNames;
 export let metaUpgradeNames;
@@ -118,6 +119,8 @@ export function setActiveGame(gameId) {
     reqTypeEdgeLabels = gd.reqTypeEdgeLabels || {};
     reqTypeTooltips = gd.reqTypeTooltips || {};
     reqTypeOrder = gd.reqTypeOrder || [];
+    reqTypeLabelsDependents = gd.reqTypeLabelsDependents || {};
+    reqTypeTooltipsDependents = gd.reqTypeTooltipsDependents || {};
     sectionKeyLabels = gd.sectionKeyLabels || {};
     choiceNames = gd.choiceNames || {};
     metaUpgradeNames = gd.metaUpgradeNames || {};

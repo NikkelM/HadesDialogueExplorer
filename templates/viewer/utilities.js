@@ -12,6 +12,8 @@ import {
     reqTypeLabels,
     reqTypeEdgeLabels,
     reqTypeTooltips,
+    reqTypeLabelsDependents,
+    reqTypeTooltipsDependents,
     _reqTypeOrderIndex,
     knownUnresolved,
     unresolvedCategoryLabels,
@@ -101,7 +103,17 @@ export function getEdgeLabel(type) {
     return reqTypeEdgeLabels[type] || 'ALL';
 }
 
-export function formatReqType(type) {
+// Direction-aware friendly label for a requirement type. The downstream
+// (dependents) tree describes how the rooted textline gates a list of
+// dependent textlines, so the wording flips perspective. Both maps
+// share the same field-name keys; the dependents map is a strict
+// subset (only textline-dependency fields can surface as downstream
+// edges) so missing-key fallback chains through the upstream label
+// before degrading to the raw field name.
+export function formatReqType(type, direction = 'upstream') {
+    if (direction === 'downstream') {
+        return reqTypeLabelsDependents[type] || reqTypeLabels[type] || type;
+    }
     return reqTypeLabels[type] || type;
 }
 
@@ -115,11 +127,21 @@ export function formatReqType(type) {
 // Returns ``null`` when no friendly label exists either: in that case
 // the rendered span already shows the internal name as its text, so an
 // echoing tooltip would be redundant.
-export function reqTypeTitleText(type) {
-    const friendly = reqTypeLabels[type];
+//
+// ``direction`` switches between the upstream (prerequisites) and
+// downstream (dependents) wording. Same fallback chain as
+// ``formatReqType``: dependents map -> upstream map -> bare field name.
+// The header line always shows the internal field name regardless of
+// direction.
+export function reqTypeTitleText(type, direction = 'upstream') {
+    const friendly = (direction === 'downstream'
+        ? (reqTypeLabelsDependents[type] || reqTypeLabels[type])
+        : reqTypeLabels[type]);
     if (!friendly || friendly === type) return null;
     const header = `Internal name: ${type}`;
-    const blurb = reqTypeTooltips[type];
+    const blurb = (direction === 'downstream'
+        ? (reqTypeTooltipsDependents[type] || reqTypeTooltips[type])
+        : reqTypeTooltips[type]);
     return blurb ? `${header}\n\n${blurb}` : header;
 }
 
@@ -129,13 +151,18 @@ export function reqTypeTitleText(type) {
 // ``renderSectionHtml`` so the hover-to-reveal-internal-name affordance
 // is consistent across the three label families.
 //
+// ``direction`` (``'upstream'`` | ``'downstream'``) picks the
+// perspective-appropriate label / tooltip wording.
+//
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at
 // the call site - both the friendly label and the tooltip text are
 // already routed through escapeHtml below.
-export function renderReqTypeHtml(type, extraClass) {
-    const friendly = reqTypeLabels[type];
+export function renderReqTypeHtml(type, extraClass, direction = 'upstream') {
+    const friendly = (direction === 'downstream'
+        ? (reqTypeLabelsDependents[type] || reqTypeLabels[type])
+        : reqTypeLabels[type]);
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
-    const titleText = reqTypeTitleText(type);
+    const titleText = reqTypeTitleText(type, direction);
     if (titleText !== null) {
         return `<span class="${cls}" data-tooltip="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
     }

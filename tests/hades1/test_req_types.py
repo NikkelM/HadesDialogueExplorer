@@ -19,6 +19,8 @@ from src.extractors.hades1 import (
     HADES1_REQ_TYPE_EDGE_LABELS,
     HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 
 
@@ -76,4 +78,38 @@ def test_edge_labels_are_unique_per_field():
     assert not collisions, (
         "HADES1_REQ_TYPE_EDGE_LABELS must be 1:1 but the "
         f"following labels are shared by multiple fields: {collisions}"
+    )
+
+
+def test_dependents_labels_cover_every_known_field():
+    """The dependents tree view labels every textline-dependency
+    field with a perspective-flipped wording, so the map must cover
+    every field that can ever surface as a downstream edge."""
+    missing = ALL_FIELDS - set(HADES1_REQ_TYPE_LABELS_DEPENDENTS)
+    assert not missing, (
+        "HADES1_REQ_TYPE_LABELS_DEPENDENTS is missing entries for: "
+        f"{sorted(missing)}"
+    )
+
+
+def test_dependents_tooltips_cover_every_known_field():
+    missing = ALL_FIELDS - set(HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS)
+    assert not missing, (
+        "HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS is missing entries for: "
+        f"{sorted(missing)}"
+    )
+
+
+def test_dependents_label_keys_match_tooltip_keys():
+    """Every dependents label must have a matching tooltip blurb
+    and vice versa; the viewer renders them together as one unit."""
+    only_labels = set(HADES1_REQ_TYPE_LABELS_DEPENDENTS) - set(
+        HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS
+    )
+    only_tooltips = set(HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS) - set(
+        HADES1_REQ_TYPE_LABELS_DEPENDENTS
+    )
+    assert not only_labels and not only_tooltips, (
+        f"label-only fields: {sorted(only_labels)}; "
+        f"tooltip-only fields: {sorted(only_tooltips)}"
     )

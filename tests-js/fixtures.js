@@ -157,6 +157,20 @@ export function buildFixtureData() {
             'RequiredAnyTextLines',
             'RequiredFalseTextLines',
         ],
+        reqTypeLabelsDependents: {
+            RequiredTextLines: 'Required as prerequisite (in ALL group)',
+            RequiredAnyTextLines: 'Required as prerequisite (in ANY group)',
+            // RequiredFalseTextLines deliberately omitted from the
+            // dependents map so tests can exercise the upstream-map
+            // fallback branch.
+        },
+        reqTypeTooltipsDependents: {
+            RequiredTextLines:
+                'Each dependent below has this textline in its ALL group: every listed textline must have been played for the dependent to be eligible.',
+            // RequiredAnyTextLines deliberately has no tooltip entry
+            // so tests can exercise the downstream "header-only"
+            // branch of reqTypeTitleText.
+        },
         sectionKeyLabels: {
             GiftTextLineSets: 'Gift',
             InteractTextLineSets: 'Interact',

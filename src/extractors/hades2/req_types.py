@@ -116,6 +116,8 @@ from src.extractors.hades1.req_types import (
     HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_EDGE_LABELS,
     HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 
 # Primary requirement-operator allowlist. Every entry here is a key
@@ -446,3 +448,30 @@ HADES2_REQ_TYPE_DISPLAY_ORDER = [
     # extractor; rendered as a passthrough chip).
     "FunctionName",
 ]
+
+
+# Friendly headers shown above each requirement group in the
+# DEPENDENTS view. Restricted to ``HADES2_TEXTLINE_DEPENDENCY_FIELDS``:
+# the dependents tree only ever traverses textline-reference edges
+# (H2-native operators like ``PathTrue`` / ``HasAll`` against non-
+# TextLinesRecord paths produce no dialogue edges, so they never
+# surface as a downstream group header). Wording mirrors H1 1:1 so the
+# same field name reads identically in both games. Imported from H1
+# rather than redefined inline so a future wording revision in H1
+# automatically propagates to H2.
+HADES2_REQ_TYPE_LABELS_DEPENDENTS = {
+    k: HADES1_REQ_TYPE_LABELS_DEPENDENTS[k]
+    for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS
+}
+
+
+# Plain-English explanations shown as the second line of the hover
+# tooltip on every DEPENDENTS-view requirement-type label. Same
+# restriction as ``HADES2_REQ_TYPE_LABELS_DEPENDENTS``: only the
+# textline-dependency fields surface in the dependents tree. Imported
+# from H1 verbatim so the perspective-flipped wording stays in lock-
+# step across games.
+HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS = {
+    k: HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS[k]
+    for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS
+}

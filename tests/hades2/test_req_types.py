@@ -24,6 +24,8 @@ from src.extractors.hades1 import (
     HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_EDGE_LABELS,
     HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 from src.extractors.hades2 import (
     HADES2_REQ_OPERATORS,
@@ -32,6 +34,8 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_EDGE_LABELS,
     HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 from src.extractors.hades2.req_extractor import (
     _FUNCTION_TEXTLINE_SYNTHETIC_KEYS,
@@ -209,4 +213,68 @@ def test_textline_dependency_labels_mirror_h1_wording():
             f"H2 tooltip for {key!r} diverges from H1's "
             f"({HADES2_REQ_TYPE_TOOLTIPS[key]!r} vs "
             f"{HADES1_REQ_TYPE_TOOLTIPS[key]!r})."
+        )
+
+
+def test_dependents_labels_cover_every_textline_dependency_field():
+    """The dependents tree view in H2 only traverses textline-
+    dependency edges (H2-native operators like ``PathTrue`` never
+    produce a downstream edge), so the dependents-perspective map
+    must cover exactly that subset."""
+    missing = HADES2_TEXTLINE_DEPENDENCY_FIELDS - set(
+        HADES2_REQ_TYPE_LABELS_DEPENDENTS
+    )
+    assert not missing, (
+        "HADES2_REQ_TYPE_LABELS_DEPENDENTS is missing entries for: "
+        f"{sorted(missing)}"
+    )
+
+
+def test_dependents_tooltips_cover_every_textline_dependency_field():
+    missing = HADES2_TEXTLINE_DEPENDENCY_FIELDS - set(
+        HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS
+    )
+    assert not missing, (
+        "HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS is missing entries for: "
+        f"{sorted(missing)}"
+    )
+
+
+def test_dependents_maps_have_no_stale_entries():
+    """H2 has no native dependent-edge operators, so the dependents
+    maps must not carry entries beyond
+    ``HADES2_TEXTLINE_DEPENDENCY_FIELDS``."""
+    label_extras = (
+        set(HADES2_REQ_TYPE_LABELS_DEPENDENTS) - HADES2_TEXTLINE_DEPENDENCY_FIELDS
+    )
+    tooltip_extras = (
+        set(HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS)
+        - HADES2_TEXTLINE_DEPENDENCY_FIELDS
+    )
+    assert not label_extras and not tooltip_extras, (
+        f"HADES2_REQ_TYPE_LABELS_DEPENDENTS extras: {sorted(label_extras)}; "
+        f"HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS extras: {sorted(tooltip_extras)}"
+    )
+
+
+def test_dependents_maps_mirror_h1_wording():
+    """H2's dependents labels / tooltips are sliced directly out of
+    H1's so identical-semantics keys always read identically across
+    games."""
+    for key in HADES2_TEXTLINE_DEPENDENCY_FIELDS:
+        assert (
+            HADES2_REQ_TYPE_LABELS_DEPENDENTS[key]
+            == HADES1_REQ_TYPE_LABELS_DEPENDENTS[key]
+        ), (
+            f"H2 dependents label for {key!r} diverges from H1's "
+            f"({HADES2_REQ_TYPE_LABELS_DEPENDENTS[key]!r} vs "
+            f"{HADES1_REQ_TYPE_LABELS_DEPENDENTS[key]!r})."
+        )
+        assert (
+            HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS[key]
+            == HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS[key]
+        ), (
+            f"H2 dependents tooltip for {key!r} diverges from H1's "
+            f"({HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS[key]!r} vs "
+            f"{HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS[key]!r})."
         )

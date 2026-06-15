@@ -29,6 +29,8 @@ _DOCUMENTED_KEYS = (
     "reqTypeEdgeLabels",
     "reqTypeTooltips",
     "reqTypeOrder",
+    "reqTypeLabelsDependents",
+    "reqTypeTooltipsDependents",
     "sectionKeyLabels",
     "choiceNames",
     "metaUpgradeNames",

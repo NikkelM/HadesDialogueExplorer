@@ -51,6 +51,8 @@ CRITICAL_EXPORTS = frozenset({
     "HADES2_REQ_TYPE_EDGE_LABELS",
     "HADES2_REQ_TYPE_TOOLTIPS",
     "HADES2_REQ_TYPE_DISPLAY_ORDER",
+    "HADES2_REQ_TYPE_LABELS_DEPENDENTS",
+    "HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS",
     "HADES2_CHOICE_NAMES",
     "HADES2_SPEAKERS",
     # Per-extractor default-speaker maps consumed by generate_data.
@@ -134,6 +136,8 @@ class TestExportShape:
             "HADES2_REQ_TYPE_LABELS",
             "HADES2_REQ_TYPE_EDGE_LABELS",
             "HADES2_REQ_TYPE_TOOLTIPS",
+            "HADES2_REQ_TYPE_LABELS_DEPENDENTS",
+            "HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS",
             "HADES2_CHOICE_NAMES",
             "HADES2_SPEAKERS",
             "LOOT_DEFAULT_SPEAKERS",

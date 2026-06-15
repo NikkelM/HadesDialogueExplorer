@@ -218,3 +218,95 @@ HADES1_REQ_TYPE_DISPLAY_ORDER = [
     "RequiredMaxAnyTextLines",
     "MaxRunsSinceAnyTextLines",
 ]
+
+
+# Friendly headers shown above each requirement group in the
+# DEPENDENTS view (per-section headers describing how each dependent
+# below references the current textline). The upstream
+# ``HADES1_REQ_TYPE_LABELS`` reads "this textline requires X"; this
+# parallel map flips the perspective so the same field name reads
+# "each dependent below has this textline somewhere in its X group".
+# Every entry in ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT``
+# must be covered so the dependents view always renders the
+# perspective-correct wording.
+#
+# Naming scheme: positives use "Required as prerequisite (in X group)"
+# / "Required as queued (in X group)"; negatives use "Excluded as
+# prerequisite (must NOT have played, ...)" / "Excluded as queued
+# (must NOT be queued)". Count-based fields use "Counts towards X"
+# since the dependent's own count threshold (not the current
+# textline's) is what's checked - the threshold value still renders
+# inline as the trailing ``: N``.
+HADES1_REQ_TYPE_LABELS_DEPENDENTS = {
+    "RequiredTextLines":              "Required as prerequisite (in ALL group)",
+    "RequiredAnyTextLines":           "Required as prerequisite (in ANY group)",
+    "RequiredAnyOtherTextLines":      "Required as prerequisite (in ANY-other group)",
+    "RequiredTextLinesThisRun":       "Required as prerequisite (in ALL group, this run)",
+    "RequiredTextLinesLastRun":       "Required as prerequisite (in ALL group, last run)",
+    "RequiredTextLinesThisRoom":      "Required as prerequisite (in ALL group, this room)",
+    "RequiredAnyTextLinesThisRun":    "Required as prerequisite (in ANY group, this run)",
+    "RequiredAnyTextLinesLastRun":    "Required as prerequisite (in ANY group, last run)",
+    "RequiredQueuedTextLines":        "Required as queued (in ALL group)",
+    "RequiredAnyQueuedTextLines":     "Required as queued (in ANY group)",
+    "RequiredFalseTextLines":         "Excluded as prerequisite (must NOT have played)",
+    "RequiredFalseQueuedTextLines":   "Excluded as queued (must NOT be queued)",
+    "RequiredFalseTextLinesThisRun":  "Excluded as prerequisite (must NOT have played, this run)",
+    "RequiredFalseTextLinesLastRun":  "Excluded as prerequisite (must NOT have played, last run)",
+    "RequiredFalseTextLinesThisRoom": "Excluded as prerequisite (must NOT have played, this room)",
+    "RequiredMinAnyTextLines":        "Counts towards 'at least' (ANY)",
+    "RequiredMaxAnyTextLines":        "Counts towards 'at most' (ANY)",
+    "MinRunsSinceAnyTextLines":       "Counts towards Min. runs since played (ANY)",
+    "MaxRunsSinceAnyTextLines":       "Counts towards Max. runs since played (ANY)",
+}
+
+
+# Plain-English explanations shown as the second line of the hover
+# tooltip on every dependents-view requirement-type label (tree-view
+# group headers in the dependents tree, per-row edge chips when the
+# row sits under a dependents-direction parent). Wording mirrors
+# ``HADES1_REQ_TYPE_TOOLTIPS`` but inverts the subject: instead of
+# "this dialogue is eligible if EVERY listed textline ..." it reads
+# "each dependent below requires every textline in its ALL group ...".
+# Every entry in ``TEXTLINE_REQ_FIELDS`` and ``TEXTLINE_REQ_FIELDS_COUNT``
+# should be covered; unmapped types fall back to the internal-name-only
+# tooltip the viewer otherwise uses.
+HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS = {
+    "RequiredTextLines":
+        "Each dependent below has this textline in its ALL-prerequisites group, where EVERY listed textline must have been played at some point in a save.",
+    "RequiredAnyTextLines":
+        "Each dependent below has this textline in its ANY-prerequisites group, where AT LEAST ONE listed textline must have been played at some point in a save.",
+    "RequiredAnyOtherTextLines":
+        "Each dependent below has this textline in its second ANY-prerequisites group, used as a disjunctive group alongside RequiredAnyTextLines when two independent 'any' checks are needed on the same dialogue.",
+    "RequiredTextLinesThisRun":
+        "Each dependent below has this textline in its ALL-prerequisites (this run) group, where EVERY listed textline must have been played within the current run.",
+    "RequiredTextLinesLastRun":
+        "Each dependent below has this textline in its ALL-prerequisites (last run) group, where EVERY listed textline must have been played during the previous run.",
+    "RequiredTextLinesThisRoom":
+        "Each dependent below has this textline in its ALL-prerequisites (this room) group, where EVERY listed textline must have been played within the current room.",
+    "RequiredAnyTextLinesThisRun":
+        "Each dependent below has this textline in its ANY-prerequisites (this run) group, where AT LEAST ONE listed textline must have been played within the current run.",
+    "RequiredAnyTextLinesLastRun":
+        "Each dependent below has this textline in its ANY-prerequisites (last run) group, where AT LEAST ONE listed textline must have been played during the previous run.",
+    "RequiredQueuedTextLines":
+        "Each dependent below has this textline in its queued ALL-prerequisites group, where EVERY listed textline must be currently queued to play (assigned and waiting) but not yet played.",
+    "RequiredAnyQueuedTextLines":
+        "Each dependent below has this textline in its queued ANY-prerequisites group, where AT LEAST ONE listed textline must be currently queued to play (assigned and waiting) but not yet played.",
+    "RequiredFalseTextLines":
+        "Each dependent below has this textline in its excluded-prerequisites group, where NONE of the listed textlines may have been played at any point in a save.",
+    "RequiredFalseQueuedTextLines":
+        "Each dependent below has this textline in its excluded-queued group, where NONE of the listed textlines may be currently queued to play.",
+    "RequiredFalseTextLinesThisRun":
+        "Each dependent below has this textline in its excluded-prerequisites (this run) group, where NONE of the listed textlines may have been played within the current run.",
+    "RequiredFalseTextLinesLastRun":
+        "Each dependent below has this textline in its excluded-prerequisites (last run) group, where NONE of the listed textlines may have been played during the previous run.",
+    "RequiredFalseTextLinesThisRoom":
+        "Each dependent below has this textline in its excluded-prerequisites (this room) group, where NONE of the listed textlines may have been played within the current room.",
+    "RequiredMinAnyTextLines":
+        "Each dependent below has this textline in its 'at least X' threshold group, where AT LEAST X of the listed textlines must have been played at some point in a save.",
+    "RequiredMaxAnyTextLines":
+        "Each dependent below has this textline in its 'at most X' threshold group, where AT MOST X of the listed textlines must have been played at some point in a save.",
+    "MinRunsSinceAnyTextLines":
+        "Each dependent below has this textline in its 'min runs since played' threshold group, where AT LEAST X runs must have passed since any of the listed textlines was last played.",
+    "MaxRunsSinceAnyTextLines":
+        "Each dependent below has this textline in its 'max runs since played' threshold group, where AT MOST X runs must have passed since any of the listed textlines was last played.",
+}

@@ -14,6 +14,8 @@ from src.extractors.hades1 import (
     HADES1_REQ_TYPE_EDGE_LABELS,
     HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
     HADES1_OTHER_REQ_LABELS,
     HADES1_OTHER_REQ_TOOLTIPS,
     HADES1_CHOICE_NAMES,
@@ -25,6 +27,8 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_EDGE_LABELS,
     HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
     HADES2_CHOICE_NAMES,
 )
 
@@ -55,6 +59,14 @@ _GAME_LABELS = {
         "reqTypeEdgeLabels": HADES1_REQ_TYPE_EDGE_LABELS,
         "reqTypeTooltips": {**HADES1_REQ_TYPE_TOOLTIPS, **HADES1_OTHER_REQ_TOOLTIPS},
         "reqTypeOrder": HADES1_REQ_TYPE_DISPLAY_ORDER,
+        # Dependents-perspective labels / tooltips for the downstream
+        # tree view. Only textline-dependency fields appear as
+        # downstream edges, so this map is a strict subset of the
+        # upstream ``reqTypeLabels``. The viewer falls back to the
+        # upstream label (then to the raw field name) when the
+        # dependents map has no entry.
+        "reqTypeLabelsDependents": HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+        "reqTypeTooltipsDependents": HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES1_CHOICE_NAMES,
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
     },
@@ -64,6 +76,8 @@ _GAME_LABELS = {
         "reqTypeEdgeLabels": HADES2_REQ_TYPE_EDGE_LABELS,
         "reqTypeTooltips": HADES2_REQ_TYPE_TOOLTIPS,
         "reqTypeOrder": HADES2_REQ_TYPE_DISPLAY_ORDER,
+        "reqTypeLabelsDependents": HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+        "reqTypeTooltipsDependents": HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES2_CHOICE_NAMES,
         "metaUpgradeNames": {},
     },
@@ -87,6 +101,13 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
         (the viewer prepends the internal field name as the first line).
       - ``reqTypeOrder``: ordered list of fields used to sort tree
         children into per-type groups.
+      - ``reqTypeLabelsDependents`` / ``reqTypeTooltipsDependents``:
+        perspective-flipped labels and tooltips for the downstream
+        (dependents) tree view, where each requirement field instead
+        describes how the rooted textline gates a list of dependent
+        textlines. Restricted to textline-dependency fields (the only
+        fields that can surface as downstream edges). The viewer falls
+        back to the upstream maps when a key is missing.
       - ``sectionKeyLabels``: ``{key: human-label}`` for textline
         section keys (``InteractTextLineSets``, ``GiftTextLineSets``,
         ...).
@@ -110,5 +131,9 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
     graph_data["reqTypeEdgeLabels"] = dict(bundle["reqTypeEdgeLabels"])
     graph_data["reqTypeTooltips"] = dict(bundle["reqTypeTooltips"])
     graph_data["reqTypeOrder"] = list(bundle["reqTypeOrder"])
+    graph_data["reqTypeLabelsDependents"] = dict(bundle["reqTypeLabelsDependents"])
+    graph_data["reqTypeTooltipsDependents"] = dict(
+        bundle["reqTypeTooltipsDependents"]
+    )
     graph_data["choiceNames"] = dict(bundle["choiceNames"])
     graph_data["metaUpgradeNames"] = dict(bundle["metaUpgradeNames"])

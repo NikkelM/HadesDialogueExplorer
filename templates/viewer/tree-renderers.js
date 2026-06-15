@@ -156,7 +156,7 @@ function appendByReqTypeGroups(container, kids, direction, ancestorPath, parentN
         let j = i;
         while (j < sorted.length && sorted[j].edgeType === edgeType && sorted[j]._count === groupCount) j++;
         const chunk = sorted.slice(i, j);
-        const box = createReqTypeGroup(edgeType, chunk.length, groupCount);
+        const box = createReqTypeGroup(edgeType, chunk.length, groupCount, direction);
         const groupChildren = box.querySelector('.req-type-group-children');
         appendGroupedChildren(groupChildren, chunk, direction, ancestorPath);
         container.appendChild(box);
@@ -354,7 +354,7 @@ export function createOrBranchBox(index, total, count) {
     return box;
 }
 
-export function createReqTypeGroup(edgeType, count, requirementCount) {
+export function createReqTypeGroup(edgeType, count, requirementCount, direction = 'upstream') {
     const box = document.createElement('div');
     box.className = `req-type-group req-type-${edgeType}`;
 
@@ -376,7 +376,7 @@ export function createReqTypeGroup(edgeType, count, requirementCount) {
     // Append the count threshold for count-based requirement fields
     // so the tree-view header matches the detail-view format
     // ``Must have played at least (ANY): 3``.
-    const friendlyLabel = formatReqType(edgeType);
+    const friendlyLabel = formatReqType(edgeType, direction);
     label.textContent = requirementCount != null
         ? `${friendlyLabel}: ${requirementCount}`
         : friendlyLabel;
@@ -387,7 +387,7 @@ export function createReqTypeGroup(edgeType, count, requirementCount) {
     // ``[data-tooltip]`` attribute is the single source for both the
     // floating-popup payload (``tooltip.js``) and the dotted-underline
     // / help-cursor affordance (``panels-tooltips.css``).
-    const titleText = reqTypeTitleText(edgeType);
+    const titleText = reqTypeTitleText(edgeType, direction);
     if (titleText !== null) {
         label.dataset.tooltip = titleText;
         edgeChip.dataset.tooltip = titleText;
