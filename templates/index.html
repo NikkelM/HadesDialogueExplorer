@@ -12,7 +12,12 @@
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game"></div>
     <div class="search-container">
         <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off">
-        <div id="search-results"></div>
+        <div id="search-results">
+            <div id="search-names-header" class="search-section-header" hidden>Name matches</div>
+            <div id="search-names-list"></div>
+            <div id="search-text-header" class="search-section-header" hidden>Text matches</div>
+            <div id="search-text-list"></div>
+        </div>
     </div>
     <div class="stats" id="stats"></div>
 </header>
