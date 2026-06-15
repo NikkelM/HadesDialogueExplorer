@@ -323,16 +323,30 @@ def main():
             print(f"  SKIP {pattern}: no matching files in {hades2_scripts}")
             continue
         print(f"\n{source_label} source family: {pattern} ({len(matched_files)} files)")
+        skipped_empty = 0
         for lua_path in matched_files:
             output_name, data = generate_hades2_source(
                 output_prefix, source_label, lua_path, extractor,
                 named_reqs, narrative_priorities,
             )
+            # Skip writing per-source JSONs that hold zero textlines.
+            # Each empty stub still carries the full ~9 KB speakers /
+            # stats scaffolding even though it contributes nothing to
+            # the merged graph; ~100 H2 files (most EnemyData_* mooks
+            # and EncounterData_* / RoomData* without dialogue) fall
+            # into this bucket. Skipping them keeps ``outputs/``
+            # readable when investigating real data and avoids
+            # re-writing identical-shaped stubs on every run.
+            if not data.get("textlines"):
+                skipped_empty += 1
+                continue
             out_path = OUTPUT_DIR / output_name
             with open(out_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
                 f.write("\n")
             print(f"  Written to: {out_path}")
+        if skipped_empty:
+            print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
 
     print("\nDone!")
 
