@@ -4,9 +4,14 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 
 ## Features
 
-- Browse NPC dialogue from Hades 1 and Hades II
-- Visualise prerequisite chains as interactive trees, with upstream prerequisites and downstream dependents in separate panels
+- Browse NPC dialogue from Hades 1 and Hades II with full prerequisite chains
+- Visualise upstream prerequisites and downstream dependents as interactive trees
 - Read dialogue text with speaker attribution
+- Upload save files to see dialogue progress (played/eligible/blocked)
+- Eligibility tracer showing what's blocking a specific dialogue
+- Detect and display mutually exclusive alternate dialogues (e.g. `_A`/`_B` variants)
+- Cross-game duplicate detection for dialogues sharing names across both games
+- Speaker overview with per-character stats and dialogue counts
 - Switch between games from the header toggle
 - Use the hosted viewer online, or download a single self-contained HTML file for offline use
 
@@ -19,14 +24,106 @@ Interactive browser-based tool for exploring NPC dialogue dependency graphs from
 - **Double-click** a tree row - re-roots the panels on that textline.
 - **Details panel** - shows dialogue text, requirements, and metadata.
 
+### Save file upload
+
+Upload a Hades or Hades II save file (`Profile1.sav` through `Profile4.sav`) to see dialogue progress directly in the viewer.
+Once loaded, each dialogue gets a status badge:
+
+- **Played** - already in the save's TextLinesRecord
+- **Eligible** - all direct prerequisites are satisfied
+- **Blocked** - one or more prerequisites are still unplayed (click the badge to open the eligibility tracer)
+
+Hades II saves also validate against Hades 1 dialogues (for the [Zagreus' Journey](https://github.com/NikkelM/Hades-II-HadesBiomes) mod).
+
+### Eligibility tracer
+
+The eligibility tracer (accessible via the "Blocked" badge or the nav link when a save is loaded) shows what's preventing a dialogue from becoming eligible.
+It displays a summary, a flat list of unplayed prerequisites sorted by play order, and a collapsible prerequisite tree.
+
+The tracer respects the game's actual requirement semantics:
+- **AND requirements** (`RequiredTextLines`, etc.) - all must be played
+- **OR requirements** (`RequiredAnyTextLines`, etc.) - any one suffices
+- **Negative requirements** (`RequiredFalseTextLines`, etc.) - skipped (blocking conditions, not prerequisites)
+
+## Eligibility API
+
+A lightweight API for programmatic eligibility checks, intended for coding agents debugging dialogue progression.
+
+### CLI mode
+
+```bash
+pip install lz4 luabins-py        # one-time, save parser dependencies
+python api.py check <save_file> <dialogue_name> [--game hades1|hades2]
+```
+
+Example:
+
+```bash
+python api.py check "path/to/Profile1.sav" OrpheusSingsAgain02
+```
+
+### HTTP server mode
+
+```bash
+python api.py serve [--port 8081]
+```
+
+POST to `/eligibility` with either:
+- **multipart/form-data** - fields: `save` (file), `dialogue` (string), `game` (optional)
+- **application/json** - `{"savePath": "/path/to/Profile1.sav", "dialogue": "...", "game": "..."}`
+
+### Response
+
+```json
+{
+  "dialogue": "OrpheusSingsAgain02",
+  "game": "hades1",
+  "saveGame": "hades2",
+  "completedRuns": 86,
+  "status": "blocked",
+  "totalPrereqs": 23,
+  "playedPrereqs": 2,
+  "unplayedPrereqs": 21,
+  "unplayed": [
+    {
+      "name": "EurydiceFirstMeeting01_C",
+      "owner": "NPC_Eurydice_01",
+      "depth": 13,
+      "reqTypes": ["RequiredTextLines"],
+      "neededBy": ["EurydiceFirstMeeting01"]
+    }
+  ],
+  "tree": [
+    {
+      "name": "OrpheusTallTale05",
+      "reqType": "RequiredTextLines",
+      "played": false,
+      "depth": 1,
+      "children": []
+    }
+  ]
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `status` | `played` (in save), `eligible` (all prereqs met), `blocked` (missing prereqs) |
+| `unplayed` | Flat list of unplayed prerequisites, sorted deepest-first (play order) |
+| `tree` | Nested hierarchy; played nodes have no children |
+| `game` | Which game's data was used (auto-detected from dialogue name if not specified) |
+| `saveGame` | Which game the save file belongs to |
+
 ## Development Setup
 
 1. Copy `config.example.toml` to `config.toml` in the repo root.
 2. Edit `config.toml` so `paths.hades1_scripts` and `paths.hades2_scripts` both point at the `Scripts` directory inside the respective game's install.
    Both keys are required; the generator validates that each path exists before parsing.
    `config.toml` is git-ignored.
-3. On Python < 3.11, `pip install -r requirements.txt` for the TOML parser (`tomli`).
-   On 3.11+ this is a no-op.
+3. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Building locally
 
