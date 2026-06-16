@@ -59,6 +59,7 @@ from src.graph_merge import merge_graph_data
 from src.known_unresolved import annotate_known_unresolved
 from src.blocked_textlines import annotate_blocked_textlines
 from src.label_maps import annotate_label_maps
+from src.speaker_overview import annotate_speaker_aggregates
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
@@ -399,6 +400,7 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
     annotate_known_unresolved(graph_data, game)
     annotate_blocked_textlines(graph_data)
     annotate_label_maps(graph_data, game)
+    annotate_speaker_aggregates(graph_data)
 
     return graph_data
 

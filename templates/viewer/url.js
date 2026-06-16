@@ -49,7 +49,7 @@
 // stable across renders. ``game`` comes first because it bounds
 // the namespace every other key resolves against (textline names
 // are NOT unique cross-game). Extra keys follow in insertion order.
-const KEY_ORDER = ['game', 'view', 'dialogue', 'speaker'];
+const KEY_ORDER = ['game', 'view', 'dialogue', 'speaker', 'priority', 'sort'];
 
 // Parse a hash fragment (with or without the leading ``#``) into a
 // plain object. Returns ``{}`` for an empty / missing hash or for a

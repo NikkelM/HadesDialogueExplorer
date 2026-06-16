@@ -193,3 +193,45 @@ test('urlStateKey distinguishes different states', () => {
         urlStateKey({ view: 'dialogue', dialogue: 'Bar' }),
     );
 });
+
+// --- speaker view keys -------------------------------------------
+
+test('serializeUrlState emits priority and sort in canonical positions after speaker', () => {
+    // The speaker view extends the URL with two view-specific keys
+    // (``priority`` filter + ``sort`` axis). Both follow ``speaker``
+    // in ``KEY_ORDER`` so a typical speaker-view URL serialises in
+    // a single stable, human-readable order.
+    assert.equal(
+        serializeUrlState({
+            game: 'hades1',
+            view: 'speaker',
+            speaker: 'NPC_Megaera_01',
+            priority: 'super',
+            sort: 'tier',
+        }),
+        'game=hades1&view=speaker&speaker=NPC_Megaera_01&priority=super&sort=tier',
+    );
+});
+
+test('serializeUrlState pins priority and sort even when given out of order', () => {
+    assert.equal(
+        serializeUrlState({ sort: 'name', priority: 'plain', speaker: 'NPC_X_01', view: 'speaker' }),
+        'view=speaker&speaker=NPC_X_01&priority=plain&sort=name',
+    );
+});
+
+test('parseUrlState reads the speaker-view keys round-trip', () => {
+    const original = {
+        game: 'hades2',
+        view: 'speaker',
+        speaker: 'NPC_Hecate_01',
+        priority: 'priority',
+        sort: 'section',
+    };
+    const serialized = serializeUrlState(original);
+    assert.equal(
+        serialized,
+        'game=hades2&view=speaker&speaker=NPC_Hecate_01&priority=priority&sort=section',
+    );
+    assert.deepEqual(parseUrlState('#' + serialized), original);
+});

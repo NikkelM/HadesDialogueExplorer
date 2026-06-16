@@ -149,3 +149,36 @@ export function passesTextlineFilters(tl, query) {
     }
     return true;
 }
+
+// Build the identifier records for a single speaker id (internal id +
+// friendly name, if any). Mirrors the per-textline ``speakerIdentifiers``
+// shape so the same positive/negative matchers apply.
+function speakerOnlyIdentifiers(speakerId) {
+    if (!speakerId) return [];
+    const out = [];
+    const seenFull = new Set();
+    const push = (s) => {
+        if (!s) return;
+        const full = s.toLowerCase();
+        if (seenFull.has(full)) return;
+        seenFull.add(full);
+        out.push({ full, tokens: tokeniseIdentifier(s) });
+    };
+    push(speakerId);
+    const friendly = speakers[speakerId] && speakers[speakerId].name;
+    if (friendly) push(friendly);
+    return out;
+}
+
+// Speaker-only filter predicate used by the dropdown's speaker
+// section. Only the ``speaker:`` / ``-speaker:`` operators apply -
+// ``section:`` is a per-textline scope and doesn't make sense for a
+// speaker result row.
+export function passesSpeakerFilters(speakerId, query) {
+    if (!speakerId) return false;
+    if (!query.speakers.length && !query.negativeSpeakers.length) return true;
+    const idents = speakerOnlyIdentifiers(speakerId);
+    if (query.speakers.length && !query.speakers.some((v) => positiveMatches(idents, v))) return false;
+    if (query.negativeSpeakers.some((v) => negativeMatches(idents, v))) return false;
+    return true;
+}

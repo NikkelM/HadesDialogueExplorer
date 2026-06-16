@@ -1,0 +1,310 @@
+/* Speaker overview view.
+ *
+ * Hosted by ``#info-content`` (same mount the dialogue detail view
+ * uses). When ``view=speaker`` is active, ``navigation.js`` adds the
+ * ``layout-speaker`` class to ``<body>`` so the upstream + downstream
+ * panels hide and ``#panel-info`` expands to full width.
+ */
+
+body.layout-speaker #panel-upstream,
+body.layout-speaker #panel-downstream {
+    display: none;
+}
+body.layout-speaker #panel-info {
+    flex: 1;
+    border-right: none;
+}
+
+/* Speaker name spans are clickable everywhere they appear (info-panel
+ * Owner/Partner, dialogue line speakers, tree owner tags, ...). The
+ * dotted-underline affordance from ``[data-tooltip]`` already hints at
+ * "more info on hover"; the clickable class adds a pointer cursor and
+ * a hover colour so the click affordance is discoverable too. */
+.speaker-name.clickable,
+.npc-tag.clickable {
+    cursor: pointer;
+}
+.speaker-name.clickable:hover,
+.npc-tag.clickable:hover {
+    color: #e94560;
+}
+
+.speaker-overview {
+    padding: 4px 0 16px;
+}
+.speaker-overview-header h3 {
+    color: #e94560;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+.speaker-overview-header .speaker-id {
+    color: #888;
+    font-size: 13px;
+    font-weight: normal;
+}
+.speaker-overview-header .speaker-description {
+    color: #b8b8b8;
+    font-size: 13px;
+    font-style: italic;
+    margin-bottom: 4px;
+}
+.speaker-overview-header .speaker-game {
+    color: #666;
+    font-size: 11px;
+    margin-bottom: 12px;
+}
+.speaker-overview-header .speaker-game code {
+    color: #888;
+}
+.speaker-overview-header .speaker-ids {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 4px;
+    line-height: 1.6;
+}
+.speaker-overview-header .speaker-ids code {
+    background: #0f3460;
+    color: #b8b8b8;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+.speaker-overview-missing {
+    padding: 16px;
+}
+.speaker-overview-missing h3 {
+    color: #e94560;
+    margin-bottom: 8px;
+}
+.speaker-overview-missing code {
+    background: #0f3460;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+/* Summary section: top-row scalar cells (owned / as-speaker / source
+ * files) plus a second row with sections list + priority chips. */
+.speaker-summary {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.speaker-summary-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.speaker-summary-row + .speaker-summary-row {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #0f3460;
+}
+.speaker-summary-cell {
+    flex: 1;
+    min-width: 160px;
+}
+.speaker-summary-cell h4 {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+.speaker-summary-value {
+    font-size: 22px;
+    color: #e0e0e0;
+}
+.speaker-summary-note {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+.speaker-section-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
+.speaker-section-list li {
+    padding: 2px 0;
+}
+
+.speaker-priority-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.priority-chip,
+.sort-chip {
+    background: #0f3460;
+    color: #b8b8b8;
+    border: 1px solid #1c4584;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+}
+.priority-chip:hover,
+.sort-chip:hover {
+    background: #1c4584;
+    color: #e0e0e0;
+}
+.priority-chip.is-active,
+.sort-chip.is-active {
+    background: #e94560;
+    color: #fff;
+    border-color: #e94560;
+}
+.priority-chip .speaker-count,
+.sort-chip .speaker-count {
+    color: inherit;
+}
+.speaker-count {
+    color: #888;
+    font-size: 11px;
+    margin-left: 4px;
+}
+
+/* Cross-speaker adjacency: two columns side by side. */
+.speaker-adjacency {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.speaker-adjacency-col {
+    flex: 1;
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px 12px;
+    min-width: 0;
+}
+.speaker-adjacency-col h4 {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+.speaker-adjacency-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+.speaker-adjacency-list li {
+    padding: 2px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.speaker-link {
+    color: #b8b8b8;
+    cursor: pointer;
+    text-decoration: none;
+}
+.speaker-link:hover { color: #e94560; }
+.speaker-id-inline {
+    color: #666;
+    font-size: 10px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Textline list (the main body): controls strip + grouped sections. */
+.speaker-textlines {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.speaker-textline-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #0f3460;
+    flex-wrap: wrap;
+}
+.speaker-control-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.speaker-sort-chips {
+    display: flex;
+    gap: 6px;
+}
+.speaker-textlines-empty {
+    color: #666;
+    font-style: italic;
+    padding: 8px 0;
+}
+.speaker-textline-group + .speaker-textline-group {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #0f3460;
+}
+.speaker-textline-group-header {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+.speaker-tier-header.speaker-tier-super { color: #e94560; }
+.speaker-tier-header.speaker-tier-priority { color: #d09010; }
+.speaker-tier-header.speaker-tier-plain { color: #888; }
+.speaker-textline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.speaker-textline-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border-bottom: 1px solid #0f346040;
+}
+.speaker-textline-row:last-child { border-bottom: none; }
+.textline-link {
+    color: #b8b8b8;
+    cursor: pointer;
+    font-size: 13px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.textline-link:hover { color: #e94560; }
+.speaker-textline-badges {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.muted {
+    color: #666;
+    font-style: italic;
+}
+
+/* Search-result rows for the speaker section: matches the existing
+ * search-item rhythm; the npc suffix shows the internal id. */
+.search-item-speaker {
+    font-weight: 500;
+}
+.search-item-speaker .npc {
+    margin-left: 6px;
+}

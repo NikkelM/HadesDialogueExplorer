@@ -16,6 +16,8 @@
 import { loadData } from '../templates/viewer/data.js';
 import { buildLinesIndex } from '../templates/viewer/search-text.js';
 import { buildNameIndex } from '../templates/viewer/search-name.js';
+import { buildSpeakerIndex } from '../templates/viewer/search-speaker.js';
+import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
 
 // Minimal but representative dataset:
 //   - Several NPCs with friendly labels.
@@ -183,6 +185,8 @@ export function buildFixtureData() {
 // ``beforeEach``) hook.
 export function loadFixtureData() {
     loadData(buildFixtureData());
+    resetSpeakerGroups();
     buildLinesIndex();
     buildNameIndex();
+    buildSpeakerIndex();
 }

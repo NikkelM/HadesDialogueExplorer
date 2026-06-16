@@ -25,7 +25,7 @@ import {
 } from './utilities.js';
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
-import { navigateTo } from './navigation.js';
+import { navigateTo, navigateToSpeaker } from './navigation.js';
 
 export function getChildren(name, direction) {
     const children = [];
@@ -274,7 +274,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     }
 
     const npcSpan = document.createElement('span');
-    npcSpan.className = 'npc-tag';
+    npcSpan.className = 'npc-tag clickable';
     npcSpan.textContent = ownerTag;
     if (tl) {
         // Mirror the tooltip format used by renderSpeakerHtml:
@@ -292,6 +292,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         } else if (description) {
             npcSpan.dataset.tooltip = description;
         }
+        // Click the owner tag to jump to the speaker overview.
+        // ``stopPropagation`` keeps the parent row's click handler
+        // (which selects or expands the textline) from firing for
+        // the same gesture.
+        npcSpan.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateToSpeaker(tl.owner);
+        });
     }
     label.appendChild(npcSpan);
 

@@ -24,8 +24,9 @@ import { textlines } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
+import { searchSpeakerMatches } from './search-speaker.js';
 import { parseQuery, isQueryEmpty } from './query-parser.js';
-import { navigateTo } from './navigation.js';
+import { navigateTo, navigateToSpeaker } from './navigation.js';
 
 // Pure arithmetic helper for arrow-key navigation. Returns the next
 // active index given the current one (-1 if nothing is active yet),
@@ -55,6 +56,8 @@ function optionId(section, name) {
 export function initSearch() {
     const searchInput = document.getElementById('search');
     const searchResults = document.getElementById('search-results');
+    const speakersHeader = document.getElementById('search-speakers-header');
+    const speakersList = document.getElementById('search-speakers-list');
     const namesHeader = document.getElementById('search-names-header');
     const namesList = document.getElementById('search-names-list');
     const textHeader = document.getElementById('search-text-header');
@@ -122,30 +125,46 @@ export function initSearch() {
     function hide() {
         searchResults.classList.remove('visible');
         searchResults.classList.remove('kbd-mode');
+        speakersList.innerHTML = '';
         namesList.innerHTML = '';
         textList.innerHTML = '';
+        speakersHeader.hidden = true;
         namesHeader.hidden = true;
         textHeader.hidden = true;
         clearActive();
         searchInput.setAttribute('aria-expanded', 'false');
     }
 
-    // Both section headers ("Name matches" / "Text matches") only
-    // appear when both sections have content. With one section the
-    // dropdown is unambiguous; with two the headers disambiguate
-    // which engine produced which entry. ARIA ``aria-expanded`` on
-    // the input mirrors the dropdown's visibility so screen readers
-    // know when the listbox is open.
+    // Section headers only appear when 2+ sections have content; with a
+    // single populated section the dropdown is unambiguous. ARIA
+    // ``aria-expanded`` on the input mirrors the dropdown's visibility
+    // so screen readers know when the listbox is open.
     function refreshHeadersAndVisibility() {
+        const hasSpeakers = speakersList.children.length > 0;
         const hasNames = namesList.children.length > 0;
         const hasText = textList.children.length > 0;
-        const showBothHeaders = hasNames && hasText;
-        namesHeader.hidden = !showBothHeaders;
-        textHeader.hidden = !showBothHeaders;
-        const visible = hasNames || hasText;
+        const populatedSections = (hasSpeakers ? 1 : 0) + (hasNames ? 1 : 0) + (hasText ? 1 : 0);
+        const showHeaders = populatedSections > 1;
+        speakersHeader.hidden = !(showHeaders && hasSpeakers);
+        namesHeader.hidden = !(showHeaders && hasNames);
+        textHeader.hidden = !(showHeaders && hasText);
+        const visible = populatedSections > 0;
         searchResults.classList.toggle('visible', visible);
         searchInput.setAttribute('aria-expanded', visible ? 'true' : 'false');
         reapplyActive();
+    }
+
+    function renderSpeakersSection(speakerMatches) {
+        const parts = [];
+        for (const m of speakerMatches) {
+            const id = optionId('speaker', m.id);
+            const friendly = m.friendly && m.friendly !== m.id ? m.friendly : m.id;
+            const idSuffix = (m.friendly && m.friendly !== m.id)
+                ? `<span class="npc">(${escapeHtml(m.id)})</span>`
+                : '';
+            parts.push(`<div class="search-item search-item-speaker" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}">${escapeHtml(friendly)}${idSuffix}</div>`);
+        }
+        speakersList.innerHTML = parts.join('');
     }
 
     function renderNameSection(nameMatches) {
@@ -184,6 +203,12 @@ export function initSearch() {
         const raw = searchInput.value;
         const query = parseQuery(raw);
         if (isQueryEmpty(query)) { hide(); return; }
+
+        // Speaker search runs synchronously - the per-game speaker
+        // set is small (~65 H1 / ~89 H2) so even a cold scan is well
+        // under a frame's worth of work.
+        const speakerMatches = searchSpeakerMatches(query, 8);
+        renderSpeakersSection(speakerMatches);
 
         // Name search runs synchronously so the dropdown updates on
         // every keystroke without perceptible lag. The text section
@@ -232,7 +257,11 @@ export function initSearch() {
 
     function commitOption(target) {
         if (!target) return;
-        navigateTo(target.dataset.name);
+        if (target.dataset.speaker) {
+            navigateToSpeaker(target.dataset.speaker);
+        } else {
+            navigateTo(target.dataset.name);
+        }
         hide();
     }
 

@@ -6,7 +6,7 @@
 <title>Hades Dialogue Dependency Explorer</title>
 <link rel="stylesheet" href="viewer.css">
 </head>
-<body>
+<body class="layout-dialogue">
 <header>
     <h1>Hades Dialogue Dependency Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game"></div>
@@ -15,6 +15,8 @@
                role="combobox" aria-autocomplete="list" aria-expanded="false"
                aria-controls="search-results" aria-haspopup="listbox">
         <div id="search-results" role="listbox" aria-label="Search results">
+            <div id="search-speakers-header" class="search-section-header" hidden role="presentation">Speaker matches</div>
+            <div id="search-speakers-list" role="presentation"></div>
             <div id="search-names-header" class="search-section-header" hidden role="presentation">Name matches</div>
             <div id="search-names-list" role="presentation"></div>
             <div id="search-text-header" class="search-section-header" hidden role="presentation">Text matches</div>

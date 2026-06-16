@@ -66,7 +66,7 @@ test('renderSpeakerHtml: friendly + description -> "Friendly (id)\\nDescription"
     // Zeus has both a friendly label and a description quip in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Zeus_01'),
-        '<span class="speaker-name" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
+        '<span class="speaker-name clickable" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Zeus_01&quot;)">Zeus</span>',
     );
 });
 
@@ -74,14 +74,14 @@ test('renderSpeakerHtml: friendly without description -> "Friendly (id)" tooltip
     // Achilles has a friendly label but no description in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Achilles_01'),
-        '<span class="speaker-name" data-tooltip="Achilles (NPC_Achilles_01)">Achilles</span>',
+        '<span class="speaker-name clickable" data-tooltip="Achilles (NPC_Achilles_01)" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Achilles_01&quot;)">Achilles</span>',
     );
 });
 
-test('renderSpeakerHtml: no friendly, no description -> bare span (no tooltip)', () => {
+test('renderSpeakerHtml: no friendly, no description -> bare span with click handler (no tooltip)', () => {
     assert.equal(
         renderSpeakerHtml('NPC_Unknown_01'),
-        '<span class="speaker-name">NPC_Unknown_01</span>',
+        '<span class="speaker-name clickable" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Unknown_01&quot;)">NPC_Unknown_01</span>',
     );
 });
 
@@ -95,7 +95,7 @@ test('renderSpeakerHtml: description without friendly label -> description-only 
     });
     assert.equal(
         renderSpeakerHtml('Zagreus'),
-        '<span class="speaker-name" data-tooltip="Prince of the Underworld">Zagreus</span>',
+        '<span class="speaker-name clickable" data-tooltip="Prince of the Underworld" onclick="event.stopPropagation(); navigateToSpeaker(&quot;Zagreus&quot;)">Zagreus</span>',
     );
     // Restore the shared fixture so subsequent tests aren't affected.
     loadFixtureData();
@@ -108,7 +108,7 @@ test('renderSpeakerHtml: tooltip parts are HTML-escaped', () => {
     });
     assert.equal(
         renderSpeakerHtml('NPC_<X>_01'),
-        '<span class="speaker-name" data-tooltip="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;">X&amp;Y</span>',
+        '<span class="speaker-name clickable" data-tooltip="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_&lt;X&gt;_01&quot;)">X&amp;Y</span>',
     );
     loadFixtureData();
 });
