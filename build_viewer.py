@@ -405,6 +405,39 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
     return graph_data
 
 
+def _compute_cross_game_duplicates(games_payload):
+    """Find textline names that exist in both games.
+
+    Returns a sorted list of dicts, one per duplicate name::
+
+        {"name": "...", "hades1": {"owner": "...", "section": "..."},
+                        "hades2": {"owner": "...", "section": "..."}}
+
+    Returns an empty list when fewer than two games are loaded (the
+    feature only makes sense with a cross-game comparison).
+    """
+    if len(games_payload) < 2:
+        return []
+    game_ids = sorted(games_payload.keys())
+    if len(game_ids) != 2:
+        return []
+    g1, g2 = game_ids
+    tl1 = games_payload[g1].get("textlines", {})
+    tl2 = games_payload[g2].get("textlines", {})
+    shared = sorted(set(tl1) & set(tl2))
+    results = []
+    for name in shared:
+        entry = {"name": name}
+        for gid, tls in ((g1, tl1), (g2, tl2)):
+            tl = tls[name]
+            entry[gid] = {
+                "owner": tl.get("owner", ""),
+                "section": tl.get("section", ""),
+            }
+        results.append(entry)
+    return results
+
+
 def main(argv=None):
     args = _parse_args(argv if argv is not None else sys.argv[1:])
 
@@ -443,6 +476,13 @@ def main(argv=None):
             f"build_viewer.py."
         )
 
+    # Cross-game duplicate detection: textline names that appear in
+    # both games. These are surfaced in a dedicated viewer page so
+    # modders can identify naming collisions when porting content.
+    duplicates = _compute_cross_game_duplicates(games_payload)
+    if duplicates:
+        print(f"\nCross-game duplicates: {len(duplicates)} textline names appear in both games")
+
     # Final wire-up: a single payload with both games' graphs plus the
     # UI hints (default game + display labels) the viewer needs to
     # render the toggle. Per-game graphs keep the same shape they had
@@ -453,6 +493,7 @@ def main(argv=None):
         "games": games_payload,
         "defaultGame": _DEFAULT_GAME,
         "gameLabels": {gid: _GAME_LABELS[gid] for gid in games_payload},
+        "duplicates": duplicates,
     }
 
     if args.mode in ("split", "all"):

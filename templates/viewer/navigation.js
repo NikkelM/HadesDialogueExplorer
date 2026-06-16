@@ -13,6 +13,7 @@
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseSort } from './speaker-view.js';
+import { renderDuplicates, canonicaliseDuplicatesFilter } from './duplicates-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
 import { setActiveGame, getActiveGame, resolveGame, speakers } from './data.js';
 import { buildLinesIndex } from './search-text.js';
@@ -90,6 +91,32 @@ export function sortSpeakerTextlines(speakerId, sort) {
     });
 }
 
+// Navigate to the cross-game duplicates view. Preserves existing
+// filter/query state when called without arguments.
+export function navigateToDuplicates(opts) {
+    const state = { view: 'duplicates' };
+    if (opts && opts.filter) state.filter = opts.filter;
+    if (opts && opts.q) state.q = opts.q;
+    navigateToState(state);
+}
+
+// Filter-chip click target for the duplicates view. Preserves the
+// current search query.
+export function filterDuplicates(filter) {
+    const state = parseUrlState(window.location.hash);
+    navigateToDuplicates({ filter, q: state.q || '' });
+}
+
+// Search input handler for the duplicates view. Preserves the current
+// filter chip selection.
+export function searchDuplicates(query) {
+    const state = parseUrlState(window.location.hash);
+    navigateToDuplicates({
+        filter: canonicaliseDuplicatesFilter(state.filter),
+        q: query,
+    });
+}
+
 // Switch the viewer to a different game: swap every per-game data
 // binding, rebuild the search indices against the new textlines,
 // re-render the stats line, and refresh the toggle highlight. Does
@@ -149,8 +176,8 @@ export function applyHashFromUrl() {
     applyState(state);
 }
 
-// Dispatch the parsed state to the appropriate view. Two views are
-// implemented today:
+// Dispatch the parsed state to the appropriate view. Three views are
+// implemented:
 //
 //   - ``view=dialogue`` (default when ``dialogue=X`` is present, or
 //     when an unknown view name is paired with a ``dialogue`` entity
@@ -158,9 +185,9 @@ export function applyHashFromUrl() {
 //     gracefully): renders the 3-panel dialogue detail view.
 //   - ``view=speaker``: renders the single-panel speaker overview
 //     into ``#info-content`` and hides the upstream / downstream
-//     panels via the ``layout-speaker`` body class. Without a
-//     ``speaker`` entity the view renders the empty-state placeholder
-//     so the user can pick a speaker from the search bar.
+//     panels via the ``layout-speaker`` body class.
+//   - ``view=duplicates``: renders the cross-game duplicates table
+//     into the single-panel layout.
 //
 // States that name no entity reset the viewer to its empty-state
 // placeholders in the default dialogue layout.
@@ -173,15 +200,22 @@ function applyState(state) {
             priority: canonicalisePriority(state.priority),
             sort: canonicaliseSort(state.sort),
         });
-        // Reflect the active speaker in the search box so it
-        // becomes a no-op edit affordance (the user can refine
-        // from the same starting point).
         const searchInput = document.getElementById('search');
         if (searchInput) {
             const entry = speakerId ? speakers[speakerId] : null;
             const friendly = entry && entry.name && entry.name !== speakerId ? entry.name : (speakerId || '');
             searchInput.value = friendly;
         }
+        return;
+    }
+    if (view === 'duplicates') {
+        applyLayoutMode('duplicates');
+        renderDuplicates({
+            filter: canonicaliseDuplicatesFilter(state.filter),
+            q: state.q || '',
+        });
+        const searchInput = document.getElementById('search');
+        if (searchInput) searchInput.value = '';
         return;
     }
     applyLayoutMode('dialogue');
@@ -195,19 +229,22 @@ function applyState(state) {
 }
 
 // Toggle the body's layout class so CSS can swap between the
-// 3-panel dialogue layout and the single-panel speaker layout.
-// Also retitles the info-panel header so the surrounding chrome
-// matches the active view; the original "Textline Details" string
-// is restored on the way out.
+// 3-panel dialogue layout, single-panel speaker layout, and
+// single-panel duplicates layout. Also retitles the info-panel
+// header so the surrounding chrome matches the active view.
 function applyLayoutMode(mode) {
     const body = document.body;
     if (!body) return;
     const wantSpeaker = mode === 'speaker';
-    body.classList.toggle('layout-speaker', wantSpeaker);
-    body.classList.toggle('layout-dialogue', !wantSpeaker);
+    const wantDuplicates = mode === 'duplicates';
+    const wantSinglePanel = wantSpeaker || wantDuplicates;
+    body.classList.toggle('layout-speaker', wantSinglePanel);
+    body.classList.toggle('layout-dialogue', !wantSinglePanel);
     const header = document.querySelector('#panel-info > h2');
     if (header) {
-        header.textContent = wantSpeaker ? 'Speaker Overview' : 'Textline Details';
+        if (wantDuplicates) header.textContent = 'Cross-game Duplicates';
+        else if (wantSpeaker) header.textContent = 'Speaker Overview';
+        else header.textContent = 'Textline Details';
     }
 }
 

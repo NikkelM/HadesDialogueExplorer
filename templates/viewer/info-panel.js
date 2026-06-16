@@ -8,6 +8,9 @@ import {
     unresolvedCategoryDescriptions,
     unresolvedRefBlocks,
     reqTypeLabels,
+    duplicates,
+    getActiveGame,
+    gameLabels,
 } from './data.js';
 import {
     escapeHtml,
@@ -479,6 +482,31 @@ function renderOtherReqEntryHtml(key, val) {
     return `${renderOtherReqKeyHtml(key)} = ${escapeHtml(display)}`;
 }
 
+// Cross-game duplicate badge. Rendered as a small clickable pill in the
+// textline detail header when the same name exists in the other game.
+// Clicking it switches to the other game and navigates to the same name.
+let _duplicateNameSet = null;
+function _getDuplicateNameSet() {
+    if (_duplicateNameSet === null) {
+        _duplicateNameSet = new Set((duplicates || []).map(d => d.name));
+    }
+    return _duplicateNameSet;
+}
+
+export function resetDuplicateNameSet() {
+    _duplicateNameSet = null;
+}
+
+function renderCrossGameBadgeHtml(name) {
+    if (!_getDuplicateNameSet().has(name)) return '';
+    const active = getActiveGame();
+    const otherGame = active === 'hades1' ? 'hades2' : 'hades1';
+    const otherLabel = (gameLabels && gameLabels[otherGame]) || otherGame;
+    return ` <a class="cross-game-badge" title="Also exists in ${otherLabel} - click to navigate" `
+        + `onclick="event.stopPropagation(); navigateToState({game:${jsAttr(otherGame)}, view:'dialogue', dialogue:${jsAttr(name)}})">`
+        + `\u21C4 ${escapeHtml(otherLabel)}</a>`;
+}
+
 export function renderInfo(name) {
     const tl = textlines[name];
     const container = document.getElementById('info-content');
@@ -517,7 +545,7 @@ export function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
+        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderCrossGameBadgeHtml(name)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}

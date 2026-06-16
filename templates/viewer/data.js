@@ -27,6 +27,11 @@
 // hash key is present.
 export let games, gameIds, gameLabels, defaultGame;
 
+// Cross-game duplicate textline names. Populated once by ``loadData``
+// from the top-level ``duplicates`` array in the JSON payload. Each
+// entry is ``{name, hades1: {owner, section}, hades2: {owner, section}}``.
+export let duplicates;
+
 // Currently-active game id. ``null`` until ``setActiveGame`` is
 // first called (during boot). Consumers MUST go through
 // ``getActiveGame()`` rather than reading this binding directly, so
@@ -90,6 +95,7 @@ export function loadData(DATA) {
     gameIds = norm.gameIds;
     gameLabels = norm.gameLabels;
     defaultGame = norm.defaultGame;
+    duplicates = (DATA && DATA.duplicates) || [];
     currentGame = null;
     // Single-game fixtures that don't call setActiveGame themselves
     // expect the per-binding state to be live after loadData returns,

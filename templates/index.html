@@ -10,6 +10,9 @@
 <header>
     <h1>Hades Dialogue Dependency Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game"></div>
+    <nav class="header-nav">
+        <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()">Cross-game duplicates</a>
+    </nav>
     <div class="search-container">
         <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off"
                role="combobox" aria-autocomplete="list" aria-expanded="false"

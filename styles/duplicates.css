@@ -1,0 +1,123 @@
+/* Cross-game duplicates view. */
+
+.duplicates-view {
+    padding: 0.5rem 0;
+}
+
+.duplicates-header h3 {
+    margin: 0 0 0.4rem;
+}
+
+.duplicates-subtitle {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.duplicates-controls {
+    margin-bottom: 1rem;
+}
+
+.duplicates-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.duplicates-filter-row .filter-chip {
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 1rem;
+    background: transparent;
+    color: var(--text-color, #ccc);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.duplicates-filter-row .filter-chip:hover {
+    border-color: var(--accent-color, #58a6ff);
+}
+
+.duplicates-filter-row .filter-chip.is-active {
+    background: var(--accent-color, #58a6ff);
+    border-color: var(--accent-color, #58a6ff);
+    color: #fff;
+}
+
+.duplicates-count {
+    margin-left: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.duplicates-search-row {
+    margin-top: 0.4rem;
+}
+
+.duplicates-search {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 4px;
+    background: var(--input-bg, #1e1e1e);
+    color: var(--text-color, #ccc);
+    font-size: 0.85rem;
+}
+
+.duplicates-search:focus {
+    outline: none;
+    border-color: var(--accent-color, #58a6ff);
+}
+
+.duplicates-empty {
+    margin-top: 1rem;
+}
+
+.duplicates-table-wrap {
+    overflow-x: auto;
+}
+
+.duplicates-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.duplicates-table th,
+.duplicates-table td {
+    text-align: left;
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--border-color, #333);
+    white-space: nowrap;
+}
+
+.duplicates-table th {
+    position: sticky;
+    top: 0;
+    background: var(--panel-bg, #1e1e1e);
+    font-weight: 600;
+    color: var(--text-color, #ccc);
+}
+
+.duplicates-table td code {
+    font-size: 0.8rem;
+    color: var(--code-color, #79c0ff);
+}
+
+.duplicates-table .textline-link {
+    color: var(--link-color, #58a6ff);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.duplicates-table .textline-link:hover {
+    text-decoration: underline;
+}
+
+.duplicates-diff-owner {
+    background: rgba(255, 166, 87, 0.08);
+}

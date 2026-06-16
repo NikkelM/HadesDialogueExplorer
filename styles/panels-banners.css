@@ -108,6 +108,26 @@
     cursor: help;
 }
 
+.cross-game-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #7ee8fa;
+    background: rgba(88, 166, 255, 0.12);
+    border: 1px solid rgba(88, 166, 255, 0.4);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.cross-game-badge:hover {
+    background: rgba(88, 166, 255, 0.25);
+    border-color: rgba(88, 166, 255, 0.7);
+}
+
 /* Banner shown below the meta line when the textline was renamed by
    the tool. Lists the original name and links to the duplicate
    sibling siblings so the user can quickly compare definitions. The
