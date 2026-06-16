@@ -126,3 +126,13 @@
     color: #90a4ae;
     border: 1px solid #2a3a40;
 }
+
+.save-progress-pill.clickable {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.save-progress-pill.clickable:hover {
+    background: #263a44;
+    border-color: #3a5060;
+}

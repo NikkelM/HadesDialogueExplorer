@@ -26,7 +26,7 @@ import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
 import { searchSpeakerMatches } from './search-speaker.js';
 import { parseQuery, isQueryEmpty } from './query-parser.js';
-import { navigateTo, navigateToSpeaker } from './navigation.js';
+import { navigateTo, navigateToSpeaker, navigateToEligibility } from './navigation.js';
 
 // Pure arithmetic helper for arrow-key navigation. Returns the next
 // active index given the current one (-1 if nothing is active yet),
@@ -259,6 +259,8 @@ export function initSearch() {
         if (!target) return;
         if (target.dataset.speaker) {
             navigateToSpeaker(target.dataset.speaker);
+        } else if (location.hash.includes('view=eligibility')) {
+            navigateToEligibility(target.dataset.name);
         } else {
             navigateTo(target.dataset.name);
         }

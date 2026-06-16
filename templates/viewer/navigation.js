@@ -14,6 +14,7 @@ import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseSort } from './speaker-view.js';
 import { renderDuplicates, canonicaliseDuplicatesFilter } from './duplicates-view.js';
+import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
 import { setActiveGame, getActiveGame, resolveGame, speakers } from './data.js';
 import { buildLinesIndex } from './search-text.js';
@@ -99,6 +100,11 @@ export function navigateToDuplicates(opts) {
     if (opts && opts.filter) state.filter = opts.filter;
     if (opts && opts.q) state.q = opts.q;
     navigateToState(state);
+}
+
+// Navigate to the eligibility tracer view for a given dialogue.
+export function navigateToEligibility(dialogueName) {
+    navigateToState({ view: 'eligibility', dialogue: dialogueName });
 }
 
 // Filter-chip click target for the duplicates view. Preserves the
@@ -220,6 +226,14 @@ function applyState(state) {
         if (searchInput) searchInput.value = '';
         return;
     }
+    if (view === 'eligibility') {
+        applyLayoutMode('eligibility');
+        const name = state.dialogue || null;
+        renderEligibility(name);
+        const searchInput = document.getElementById('search');
+        if (searchInput) searchInput.value = name || '';
+        return;
+    }
     applyLayoutMode('dialogue');
     const name = state.dialogue || null;
     if (name) {
@@ -239,12 +253,14 @@ function applyLayoutMode(mode) {
     if (!body) return;
     const wantSpeaker = mode === 'speaker';
     const wantDuplicates = mode === 'duplicates';
-    const wantSinglePanel = wantSpeaker || wantDuplicates;
+    const wantEligibility = mode === 'eligibility';
+    const wantSinglePanel = wantSpeaker || wantDuplicates || wantEligibility;
     body.classList.toggle('layout-speaker', wantSinglePanel);
     body.classList.toggle('layout-dialogue', !wantSinglePanel);
     const header = document.querySelector('#panel-info > h2');
     if (header) {
-        if (wantDuplicates) header.textContent = 'Cross-game Duplicates';
+        if (wantEligibility) header.textContent = 'Eligibility Tracer';
+        else if (wantDuplicates) header.textContent = 'Cross-game Duplicates';
         else if (wantSpeaker) header.textContent = 'Speaker Overview';
         else header.textContent = 'Textline Details';
     }

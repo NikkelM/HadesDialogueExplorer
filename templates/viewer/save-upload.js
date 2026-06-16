@@ -43,6 +43,7 @@ export function initSaveUpload() {
                     `${label}: ${result.count} dialogues, ${result.completedRuns} runs`);
             }
             clearBtn.hidden = false;
+            setEligibilityNavVisible(true);
             // Trigger re-render of current view to show badges
             window.dispatchEvent(new CustomEvent('save-loaded'));
         } catch (err) {
@@ -56,6 +57,7 @@ export function initSaveUpload() {
         clearSaveProgress();
         status.hidden = true;
         clearBtn.hidden = true;
+        setEligibilityNavVisible(false);
         window.dispatchEvent(new CustomEvent('save-cleared'));
     });
 }
@@ -82,4 +84,9 @@ export function refreshSaveStatus() {
     } else {
         showStatus('loaded', `${label}: ${count} dialogues, ${runs} runs`);
     }
+}
+
+function setEligibilityNavVisible(visible) {
+    const el = document.getElementById('nav-eligibility');
+    if (el) el.hidden = !visible;
 }

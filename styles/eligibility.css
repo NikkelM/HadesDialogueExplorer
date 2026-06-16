@@ -1,0 +1,254 @@
+/* Eligibility tracer view styles */
+
+.eligibility-view {
+    padding: 0.5rem 0;
+}
+
+.eligibility-target h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.1rem;
+}
+
+.eligibility-target-link {
+    color: var(--accent-color, #7c6fd4);
+    cursor: pointer;
+}
+
+.eligibility-target-link:hover {
+    text-decoration: underline;
+}
+
+.eligibility-target-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted, #aaa);
+    margin-bottom: 1rem;
+}
+
+/* Summary block */
+.eligibility-summary {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    background: var(--panel-bg, #1a1a2a);
+    border: 1px solid var(--border-color, #3a3a4a);
+    margin-bottom: 1rem;
+}
+
+.eligibility-status {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.eligibility-status.eligibility-played {
+    color: #6be06b;
+}
+
+.eligibility-status.eligibility-eligible {
+    color: #ffb74d;
+}
+
+.eligibility-status.eligibility-blocked {
+    color: #90a4ae;
+}
+
+.eligibility-detail {
+    font-size: 0.85rem;
+    color: var(--text-muted, #bbb);
+    margin-bottom: 0.5rem;
+}
+
+.eligibility-progress-bar {
+    height: 6px;
+    background: #2a2a3a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0.4rem 0 0.2rem;
+}
+
+.eligibility-progress-fill {
+    height: 100%;
+    background: #4caf50;
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+.eligibility-progress-label {
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+}
+
+/* Unplayed list */
+.eligibility-tree {
+    margin-top: 1rem;
+}
+
+.eligibility-tree-header {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.95rem;
+    color: var(--text-color, #eee);
+}
+
+.eligibility-tree-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+    margin-bottom: 0.6rem;
+}
+
+.eligibility-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.eligibility-item {
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: #1e1e2e;
+    border: 1px solid #2a2a3a;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+}
+
+.eligibility-item:hover {
+    background: #2a2a3e;
+    border-color: var(--accent-color, #7c6fd4);
+}
+
+.eligibility-item-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.eligibility-depth {
+    font-size: 0.7rem;
+    color: #78909c;
+    font-weight: 600;
+    min-width: 2rem;
+    flex-shrink: 0;
+}
+
+.eligibility-item-name {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--text-color, #e0e0e0);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eligibility-item-meta {
+    margin-top: 0.2rem;
+    padding-left: 2.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.eligibility-needed-by {
+    color: #78909c;
+}
+
+.eligibility-ref {
+    color: var(--accent-color, #7c6fd4);
+    cursor: pointer;
+}
+
+.eligibility-ref:hover {
+    text-decoration: underline;
+}
+
+/* Tree view */
+.eligibility-tree-section {
+    margin-top: 1.2rem;
+    border-top: 1px solid #2a3a40;
+    padding-top: 0.8rem;
+}
+
+.eligibility-tree-container {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.tree-node {
+    margin-left: 1rem;
+    border-left: 1px solid #3a4a50;
+    padding-left: 0.6rem;
+    margin-top: 0.15rem;
+}
+
+.tree-node-row {
+    cursor: pointer;
+    padding: 0.2rem 0.3rem;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.tree-node-row:hover {
+    background: #1e2a30;
+}
+
+.tree-chevron {
+    flex-shrink: 0;
+    width: 0.8em;
+    font-size: 0.65em;
+    transition: transform 0.15s;
+    display: inline-block;
+}
+
+.tree-node.collapsed > .tree-node-row .tree-chevron {
+    transform: rotate(0deg);
+}
+
+.tree-node:not(.collapsed) > .tree-node-row .tree-chevron {
+    transform: rotate(90deg);
+}
+
+.eligibility-tree-container .tree-children {
+    display: block;
+    margin-top: 0.1rem;
+}
+
+.tree-node.collapsed > .tree-children {
+    display: none;
+}
+
+.tree-link {
+    cursor: pointer;
+    opacity: 0.4;
+    font-size: 0.8em;
+    text-decoration: none;
+}
+
+.tree-link:hover {
+    opacity: 1;
+}
+
+.tree-icon {
+    flex-shrink: 0;
+    width: 1em;
+    text-align: center;
+}
+
+.eligibility-tree-container .npc-tag {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.tree-played .tree-name {
+    color: #6a8a6a;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.tree-unplayed .tree-name {
+    color: #e0e0e0;
+}
