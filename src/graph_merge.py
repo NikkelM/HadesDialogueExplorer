@@ -8,6 +8,7 @@ from src.graph import (
     split_name_collisions,
     count_distinct_speakers,
     build_dependents,
+    build_alternates,
 )
 
 
@@ -90,6 +91,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     # tagging so the merge path stays in lockstep with the per-source
     # pass in ``build_graph_data``.
     merged_dependents = build_dependents(merged_textlines)
+    merged_alternates = build_alternates(merged_textlines)
 
     all_referenced = set()
     for tl_data in merged_textlines.values():
@@ -137,6 +139,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     return {
         "textlines": merged_textlines,
         "dependents": merged_dependents,
+        "alternates": merged_alternates,
         "speakers": merged_speakers,
         "stats": stats,
     }

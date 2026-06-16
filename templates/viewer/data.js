@@ -43,7 +43,7 @@ export let currentGame;
 // whichever game's blob ``setActiveGame`` last wired in. Initialised
 // empty so unit tests that exercise pure helpers without a
 // ``loadFixtureData`` call still get sane defaults.
-export let textlines, dependents, speakers, stats;
+export let textlines, dependents, alternates, speakers, stats;
 export let knownUnresolved, unresolvedCategoryLabels, unresolvedCategoryDescriptions;
 export let unresolvedRefBlocks;
 export let reqTypeLabels, reqTypeEdgeLabels, reqTypeTooltips, reqTypeOrder;
@@ -115,6 +115,7 @@ export function setActiveGame(gameId) {
     currentGame = gameId;
     textlines = gd.textlines || {};
     dependents = gd.dependents || {};
+    alternates = gd.alternates || {};
     speakers = gd.speakers || {};
     stats = gd.stats || {};
     knownUnresolved = gd.knownUnresolvedRefs || {};

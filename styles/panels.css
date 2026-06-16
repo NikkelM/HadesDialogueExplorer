@@ -95,3 +95,55 @@
     border-radius: 2px;
     color: #e7d3a1;
 }
+
+/* Alternates / Mutually exclusive section */
+.alternates-section {
+    margin-top: 1.2rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #2a3a40;
+}
+
+.alternates-header {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.95rem;
+    color: #c4a56e;
+}
+
+.alternates-hint {
+    font-size: 0.78rem;
+    color: #7a8a8a;
+    margin-bottom: 0.5rem;
+}
+
+.alternates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.alternates-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #1a2228;
+    border: 1px solid #2a3a40;
+}
+
+.alternates-item:hover {
+    background: #243038;
+    border-color: #3a5060;
+}
+
+.alternates-name {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+}
+
+.alternates-owner {
+    font-size: 0.78rem;
+    opacity: 0.6;
+}

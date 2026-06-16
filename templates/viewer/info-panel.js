@@ -3,6 +3,7 @@
 
 import {
     textlines,
+    alternates,
     knownUnresolved,
     unresolvedCategoryLabels,
     unresolvedCategoryDescriptions,
@@ -520,6 +521,28 @@ function renderSaveProgressPillHtml(name, tl) {
     return ` <span class="save-progress-pill ${status}">${label}</span>`;
 }
 
+function renderAlternatesHtml(name) {
+    const siblings = alternates[name];
+    if (!siblings || siblings.length === 0) return '';
+
+    let html = `<div class="alternates-section">`;
+    html += `<h4 class="alternates-header">Alternates / Mutually exclusive</h4>`;
+    html += `<div class="alternates-hint">Only one of these variants can trigger; the others are permanently blocked once one plays.</div>`;
+    html += `<div class="alternates-list">`;
+
+    for (const sibling of siblings) {
+        const tl = textlines[sibling];
+        const ownerLabel = tl ? renderSpeakerHtml(tl.owner) : '';
+        html += `<a class="alternates-item" onclick="navigateTo(${jsAttr(sibling)})">`;
+        html += `<span class="alternates-name">${escapeHtml(sibling)}</span>`;
+        if (ownerLabel) html += ` <span class="alternates-owner">${ownerLabel}</span>`;
+        html += `</a>`;
+    }
+
+    html += `</div></div>`;
+    return html;
+}
+
 export function renderInfo(name) {
     const tl = textlines[name];
     const container = document.getElementById('info-content');
@@ -632,6 +655,8 @@ export function renderInfo(name) {
     // ``split_name_collisions`` (see src/graph.py) has already promoted
     // each collision variant to its own suffixed textline.
     html += renderDialogueAndRequirementsHtml(tl, name);
+
+    html += renderAlternatesHtml(name);
 
     html += `</div>`;
     container.innerHTML = html;

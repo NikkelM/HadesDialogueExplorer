@@ -442,3 +442,62 @@
     font-variant-numeric: tabular-nums;
 }
 .or-alt-badge[data-tooltip] { cursor: help; }
+
+/* Alternates group in tree */
+.alternates-group {
+    margin: 2px 0;
+    border: 1px solid #3a4a50;
+    border-radius: 4px;
+    background: #1a2228;
+}
+
+.alternates-group.alternates-self {
+    border-color: #5a7a5a;
+    background: #1a261a;
+}
+
+.alternates-group.alternates-other {
+    border-color: #4a4a5a;
+    background: #1e1e28;
+}
+
+.alternates-group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: #c4a56e;
+}
+
+.alternates-group-header:hover {
+    background: #243038;
+}
+
+.alternates-group-chevron {
+    font-size: 0.6em;
+    transition: transform 0.15s;
+    display: inline-block;
+}
+
+.alternates-group.expanded > .alternates-group-header .alternates-group-chevron {
+    transform: rotate(90deg);
+}
+
+.alternates-group:not(.expanded) > .alternates-group-children {
+    display: none;
+}
+
+.alternates-group-children {
+    padding-left: 0.5rem;
+}
+
+.alternates-group-count {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.alternates-group-label {
+    font-weight: 500;
+}

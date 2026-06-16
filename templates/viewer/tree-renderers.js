@@ -2,7 +2,7 @@
 // requirement-type and GameData-source grouping wrappers that wrap
 // chunks of children in collapsible boxes.
 
-import { textlines } from './data.js';
+import { textlines, alternates } from './data.js';
 import {
     reqTypeOrderIndex,
     getEdgeClass,
@@ -423,8 +423,47 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
 // N/M" badge renders on downstream OR-routed rows.
 export function appendGroupedChildren(container, kids, direction, ancestorPath) {
     let i = 0;
+    const grouped = new Set(); // track kids already placed in an alternates group
     while (i < kids.length) {
         const child = kids[i];
+
+        // Check for alternates grouping: if this child has alternates
+        // and some of those siblings are also in this kid list, group them
+        if (!grouped.has(child.name) && alternates[child.name]) {
+            const siblingSet = new Set(alternates[child.name]);
+            // Collect all kids in this chunk that are alternates of each other
+            const altGroup = [child];
+            for (let k = 0; k < kids.length; k++) {
+                if (k === i) continue;
+                if (siblingSet.has(kids[k].name) && !grouped.has(kids[k].name)) {
+                    altGroup.push(kids[k]);
+                }
+            }
+            if (altGroup.length >= 2) {
+                // Check if this group relates to the viewed dialogue
+                const includesSelf = altGroup.some(a =>
+                    ancestorPath.has(a.name) ||
+                    (alternates[a.name] && alternates[a.name].some(s => ancestorPath.has(s)))
+                );
+                const box = createAlternatesGroup(altGroup.length, includesSelf);
+                const groupChildren = box.querySelector('.alternates-group-children');
+                for (const alt of altGroup) {
+                    grouped.add(alt.name);
+                    groupChildren.appendChild(
+                        createNodeEl(alt.name, alt.edgeType, direction, ancestorPath, _edgeOptsFor(alt))
+                    );
+                }
+                container.appendChild(box);
+                i++;
+                continue;
+            }
+        }
+
+        if (grouped.has(child.name)) {
+            i++;
+            continue;
+        }
+
         if (child.group) {
             let j = i;
             while (
@@ -450,6 +489,19 @@ export function appendGroupedChildren(container, kids, direction, ancestorPath) 
             i++;
         }
     }
+}
+
+function createAlternatesGroup(count, includesSelf) {
+    const box = document.createElement('div');
+    box.className = `alternates-group expanded${includesSelf ? ' alternates-self' : ' alternates-other'}`;
+    const label = includesSelf ? 'Alternates (this dialogue)' : 'Alternates';
+    box.innerHTML = `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" title="Mutually exclusive variants - only one can trigger; the others are permanently blocked once one plays.">` +
+        `<span class="alternates-group-chevron">\u25B6</span>` +
+        `<span class="alternates-group-label">${label}</span>` +
+        `<span class="alternates-group-count">${count}</span>` +
+        `</div>` +
+        `<div class="alternates-group-children"></div>`;
+    return box;
 }
 
 // Extract the ``createNodeEl`` ``edgeOpts`` argument from an annotated

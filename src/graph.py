@@ -195,6 +195,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                     textlines[tl_name] = new_entry
 
     dependents = build_dependents(textlines)
+    alternates = build_alternates(textlines)
 
     all_referenced = set()
     for tl_data in textlines.values():
@@ -220,6 +221,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
     return {
         "textlines": textlines,
         "dependents": dependents,
+        "alternates": alternates,
         "speakers": _filter_speakers(speakers),
         "stats": stats,
     }
@@ -636,3 +638,70 @@ def build_dependents(textlines: dict) -> dict:
                         "orBranchTotal": total_branches,
                     })
     return dependents
+
+
+# Regex for detecting alternate-suffix names: a stem + optional underscore + single uppercase letter.
+# Also matches bare letter suffixes (e.g. PatroclusAboutBracer01A, 01B).
+_ALTERNATE_SUFFIX_RE = re.compile(r"^(.+?)_?([A-Z])$")
+
+
+def build_alternates(textlines: dict) -> dict:
+    """Detect mutually exclusive alternate dialogues using two-step confirmation.
+
+    Step 1: Group textlines by name stem (regex strips trailing _?[A-Z]).
+    Step 2: Confirm alternates co-occur in RequiredFalseTextLines or
+    RequiredAnyTextLines on at least one member of the candidate group.
+
+    Returns a dict mapping textline name -> list of sibling alternate names
+    (excluding self). Only textlines with confirmed alternates are included.
+    """
+    # Step 1: Group candidates by stem
+    stem_groups = {}
+    for name in textlines:
+        m = _ALTERNATE_SUFFIX_RE.match(name)
+        if m:
+            stem = m.group(1)
+            stem_groups.setdefault(stem, set()).add(name)
+
+    # The base (no-suffix) form is also a candidate if it exists
+    for stem, members in list(stem_groups.items()):
+        if stem in textlines:
+            members.add(stem)
+
+    # Only consider groups with 2+ members
+    stem_groups = {s: m for s, m in stem_groups.items() if len(m) >= 2}
+
+    # Step 2: Confirm via requirement co-occurrence
+    # Build a lookup: for each textline, which other textlines appear with it
+    # in RequiredFalseTextLines or RequiredAnyTextLines?
+    _CONFIRMING_TYPES = {
+        "RequiredFalseTextLines",
+        "RequiredFalseTextLinesLastRun",
+        "RequiredFalseTextLinesThisRun",
+        "RequiredFalseQueuedTextLines",
+        "RequiredAnyTextLines",
+        "RequiredAnyTextLinesLastRun",
+        "RequiredAnyQueuedTextLines",
+        "RequiredAnyOtherTextLines",
+    }
+
+    alternates = {}
+    for stem, candidates in stem_groups.items():
+        confirmed = set()
+        for name in candidates:
+            tl = textlines[name]
+            for req_type, refs in tl.get("requirements", {}).items():
+                if req_type not in _CONFIRMING_TYPES:
+                    continue
+                # Check if any other candidate appears in this req list
+                co_occurring = candidates.intersection(refs)
+                if co_occurring:
+                    confirmed.add(name)
+                    confirmed.update(co_occurring)
+
+        if len(confirmed) >= 2:
+            for name in confirmed:
+                siblings = sorted(confirmed - {name})
+                alternates[name] = siblings
+
+    return alternates
