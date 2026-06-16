@@ -26,6 +26,7 @@ import {
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
 import { navigateTo, navigateToSpeaker } from './navigation.js';
+import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
 export function getChildren(name, direction) {
     const children = [];
@@ -192,6 +193,19 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             edge.dataset.tooltip = titleText;
         }
         label.appendChild(edge);
+    }
+
+    // Save progress badge (coloured dot before the name)
+    if (tl && getSaveProgress() && saveMatchesActiveGame()) {
+        const status = getDialogueStatus(name, tl);
+        if (status) {
+            const badge = document.createElement('span');
+            badge.className = `save-badge ${status}`;
+            badge.dataset.tooltip = status === 'played' ? 'Played in loaded save'
+                : status === 'eligible' ? 'Eligible to play (all requirements met)'
+                : 'Blocked (missing requirements)';
+            label.appendChild(badge);
+        }
     }
 
     const nameSpan = document.createElement('span');

@@ -26,6 +26,7 @@ import {
     reqTypeOrderIndex,
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
+import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
 // Render an ``otherRequirements`` key. H2 synthesises compound keys
 // like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
@@ -507,6 +508,15 @@ function renderCrossGameBadgeHtml(name) {
         + `\u21C4 ${escapeHtml(otherLabel)}</a>`;
 }
 
+function renderSaveProgressPillHtml(name, tl) {
+    if (!getSaveProgress() || !saveMatchesActiveGame()) return '';
+    const status = getDialogueStatus(name, tl);
+    if (!status) return '';
+    const labels = { played: '\u2714 Played', eligible: '\u25CB Eligible', blocked: '\u2022 Blocked' };
+    const label = labels[status] || status;
+    return ` <span class="save-progress-pill ${status}">${label}</span>`;
+}
+
 export function renderInfo(name) {
     const tl = textlines[name];
     const container = document.getElementById('info-content');
@@ -545,7 +555,7 @@ export function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderCrossGameBadgeHtml(name)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</h3>
+        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderCrossGameBadgeHtml(name)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}${renderSaveProgressPillHtml(name, tl)}</h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}

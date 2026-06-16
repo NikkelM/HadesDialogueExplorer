@@ -22,6 +22,7 @@ import { buildSpeakerIndex } from './search-speaker.js';
 import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
 import { initStats } from './stats.js';
 import { renderGameToggle } from './game-toggle.js';
+import { refreshSaveStatus } from './save-upload.js';
 
 // Tracks the canonical serialization of the state currently
 // reflected in ``window.location.hash`` so the ``hashchange``
@@ -131,6 +132,7 @@ export function switchToGame(gameId) {
     buildSpeakerIndex();
     initStats();
     renderGameToggle();
+    refreshSaveStatus();
 }
 
 // Write ``state`` into the URL hash and refresh the panels to
@@ -261,4 +263,12 @@ export function clearSelection() {
     document.getElementById('downstream-content').innerHTML =
         '<div class="empty-state">Select a textline to see what depends on it</div>';
     document.getElementById('search').value = '';
+}
+
+// Force a full re-render of the current view (bypasses the dedup key).
+// Used when the rendering context changes without a URL change (e.g. a
+// save file is loaded/cleared).
+export function forceRefresh() {
+    urlSelection = '';
+    applyHashFromUrl();
 }

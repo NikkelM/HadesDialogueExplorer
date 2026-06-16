@@ -27,6 +27,15 @@
         </div>
     </div>
     <div class="stats" id="stats"></div>
+    <div class="save-upload" id="save-upload">
+        <label class="save-upload-btn" for="save-file-input" title="Upload a ProfileX.sav file to visualise dialogue progress">
+            <span class="save-upload-icon">&#x1F4BE;</span>
+            <span class="save-upload-label">Load save</span>
+        </label>
+        <input type="file" id="save-file-input" accept=".sav" hidden>
+        <span id="save-status" class="save-status" hidden></span>
+        <button id="save-clear" class="save-clear-btn" hidden title="Remove loaded save">&times;</button>
+    </div>
 </header>
 <!-- Stable mount for viewer.js to render a load error into without
      clobbering the page chrome. Initially hidden; showLoadError()
