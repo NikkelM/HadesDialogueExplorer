@@ -180,7 +180,7 @@ def extract_encounter_room_data(
         return result
 
     for root in roots:
-        for owner_name, owner_table, default_speaker, ancestor_reqs, is_inspect_point in _walk_owners(root):
+        for owner_name, owner_table, default_speaker, ancestor_reqs, is_inspect in _walk_owners(root):
             sections = extract_textline_sections(
                 owner_name, owner_table, source_file,
                 section_keys=HADES1_TEXTLINE_SECTION_KEYS,
@@ -190,7 +190,7 @@ def extract_encounter_room_data(
                 cue_speaker_resolver=_cue_speaker_resolver,
                 offer_text_map=offer_text_map,
                 preset_choices=preset_choices,
-                force_play_once=is_inspect_point,
+                force_play_once=is_inspect,
             )
 
             # Drop dev-test / unwanted textlines before the empty-sections

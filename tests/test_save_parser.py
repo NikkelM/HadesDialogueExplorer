@@ -1,14 +1,10 @@
 """Tests for src.save_parser module."""
 import struct
-from io import BytesIO
-from unittest.mock import patch
 
 import pytest
 
 from src.save_parser import (
     GAME_VERSION_HADES1,
-    GAME_VERSION_HADES2,
-    GAME_VERSION_HADES2_PATCH11,
     extract_text_lines_record,
     parse_save,
 )

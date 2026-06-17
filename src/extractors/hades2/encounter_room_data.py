@@ -55,7 +55,6 @@ from .textline_set import (
 from ..textline_set import is_inspect_point
 from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 from .owner_overrides import (
-    HUB_NARRATOR_SPEAKER,
     TEXTLINE_OWNER_OVERRIDES,
     IDMAP_PARENT_OWNER_OVERRIDES,
 )
@@ -114,13 +113,13 @@ def extract_encounter_room_data(
 
     result: dict = {}
     for root in roots:
-        for owner_name, owner_table, default_speaker, ancestor, is_inspect_point in _walk_owners(root):
+        for owner_name, owner_table, default_speaker, ancestor, is_inspect in _walk_owners(root):
             sections = extract_textline_sections(
                 owner_name, owner_table, source_file,
                 section_keys=HADES2_TEXTLINE_SECTION_KEYS,
                 default_speaker=default_speaker,
                 named_requirements=named_requirements,
-                force_play_once=is_inspect_point,
+                force_play_once=is_inspect,
             )
 
             # Re-route per-textline overrides onto their target owner

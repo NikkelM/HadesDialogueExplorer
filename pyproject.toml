@@ -3,3 +3,14 @@ pythonpath = ["."]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-ra --strict-markers"
+
+[tool.ruff]
+target-version = "py310"
+extend-exclude = ["dist", "outputs"]
+
+[tool.ruff.lint.per-file-ignores]
+# Deliberate "read value; advance pointer" one-liners in the binary
+# save-file parser - one struct field per line reads clearer than
+# splitting each read and its pointer bump onto separate lines.
+"src/save_parser.py" = ["E702"]
+

@@ -24,11 +24,11 @@ override contracts of
 """
 
 from src.lua_parser import LuaParser
-from src.extractors.hades2.encounter_room_data import (
+from src.extractors.hades2.encounter_room_data import extract_encounter_room_data
+from src.extractors.hades2.owner_overrides import (
     HUB_NARRATOR_SPEAKER,
     IDMAP_PARENT_OWNER_OVERRIDES,
     TEXTLINE_OWNER_OVERRIDES,
-    extract_encounter_room_data,
 )
 
 

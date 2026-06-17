@@ -1,6 +1,5 @@
 """Tests for the Lua parser (table/value parsing and top-level assignments)."""
 
-import pytest
 
 from src.lua_parser import (
     LuaParser, LuaTable, LuaIdentifier, LuaExpression,

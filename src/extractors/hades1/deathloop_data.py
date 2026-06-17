@@ -139,7 +139,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
     if not isinstance(root, LuaTable):
         return result
 
-    for synthetic_owner, owner_table, path_default_speaker, ancestor_reqs, is_inspect_point in _walk_owners(root):
+    for synthetic_owner, owner_table, path_default_speaker, ancestor_reqs, is_inspect in _walk_owners(root):
         # Per-id manual attribution. When the walker yields a
         # synthetic owner that the override map recognises, re-key the
         # entry under the real owner AND use the real owner as the
@@ -164,7 +164,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
             section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
-            force_play_once=is_inspect_point,
+            force_play_once=is_inspect,
         )
         if not any(sections.values()):
             continue

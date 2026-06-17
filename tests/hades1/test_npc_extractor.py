@@ -2,7 +2,6 @@
 
 from unittest.mock import patch
 
-import pytest
 
 from src.lua_parser import LuaParser
 from src.extractors.hades1 import npc_data as npc_data_mod

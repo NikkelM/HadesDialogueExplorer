@@ -33,6 +33,9 @@ jobs:
       - name: Python tests
         run: pytest -q
 
+      - name: Python lint
+        run: ruff check
+
       - name: JS tests
         run: npm test
 

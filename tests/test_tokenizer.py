@@ -1,6 +1,5 @@
 """Tests for the Lua tokenizer."""
 
-import pytest
 
 from src.lua_parser import (
     Tokenizer,

@@ -1,6 +1,5 @@
 """Tests for the dependency graph builder."""
 
-import pytest
 
 from src.graph import build_graph_data
 
