@@ -6,10 +6,27 @@
 <title>Hades Dialogue Dependency Explorer</title>
 <link rel="stylesheet" href="viewer.css">
 </head>
-<body class="layout-dialogue">
+<body>
+<script>
+// Inline pre-paint script: apply the correct layout class before the
+// browser paints so that reloading a non-dialogue URL doesn't flash
+// the 3-panel skeleton. Duplicates a tiny slice of the URL parser
+// (just the view= extraction) so the body class is set synchronously
+// before the first paint - the full viewer.js has not loaded yet.
+(function() {
+    var h = location.hash.replace(/^#/, '');
+    var m = h.match(/(?:^|&)view=([^&]*)/);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    var single = v === 'speaker' || v === 'duplicates' || v === 'eligibility';
+    document.body.className = single ? 'layout-speaker' : 'layout-dialogue';
+})();
+</script>
 <header>
     <h1>Hades Dialogue Dependency Explorer</h1>
-    <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game"></div>
+    <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game">
+        <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" aria-selected="false">Hades</button>
+        <button type="button" class="game-toggle-btn" role="tab" data-game="hades2" aria-selected="false">Hades II</button>
+    </div>
     <nav class="header-nav">
         <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()">Cross-game duplicates</a>
         <a id="nav-eligibility" class="header-nav-link" onclick="navigateToEligibility()" hidden>Eligibility tracer</a>
@@ -44,7 +61,7 @@
 <div id="app-error" class="app-error" hidden></div>
 <main>
     <div class="panel" id="panel-info">
-        <h2>Textline Details</h2>
+        <h2 id="panel-info-heading">Textline Details</h2>
         <div id="info-content" class="panel-body"><div class="empty-state">Select a textline to see its details</div></div>
     </div>
     <div class="panel" id="panel-upstream">
@@ -56,6 +73,26 @@
         <div id="downstream-content" class="panel-body"><div class="empty-state">Select a textline to see what depends on it</div></div>
     </div>
 </main>
+<script>
+// Second pre-paint fixup: now that the panel DOM exists, patch the
+// heading and empty-state text for single-panel views so "Textline
+// Details" never flashes for speaker/duplicates/eligibility URLs.
+(function() {
+    var cls = document.body.className;
+    if (cls !== 'layout-speaker') return;
+    var h = location.hash.replace(/^#/, '');
+    var m = h.match(/(?:^|&)view=([^&]*)/);
+    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    var hdr = document.getElementById('panel-info-heading');
+    if (hdr) {
+        if (v === 'speaker') hdr.textContent = 'Speaker Overview';
+        else if (v === 'duplicates') hdr.textContent = 'Cross-game Duplicates';
+        else if (v === 'eligibility') hdr.textContent = 'Eligibility Tracer';
+    }
+    var empty = document.querySelector('#info-content .empty-state');
+    if (empty) empty.textContent = '';
+})();
+</script>
 <!-- Script kept at end of body so the DOM is fully parsed before
      ``boot()`` runs. The bundler inserts a sibling
      ``<script type="application/json" id="viewer-data">`` immediately

@@ -20,6 +20,12 @@ let toggleMount = null;
 // Build the toggle buttons inside ``#game-toggle`` and wire a single
 // delegated click listener. Idempotent: a second call is a no-op so
 // hypothetical hot-reload paths don't double-bind listeners.
+//
+// The HTML template pre-renders placeholder buttons so the header
+// reserves the correct width from the first paint (avoids a layout
+// shift). This function upgrades them: syncs labels with the data
+// payload, hides the mount for single-game builds, and wires the
+// click handler.
 export function initGameToggle() {
     if (toggleMount) return;
     toggleMount = document.getElementById('game-toggle');
@@ -30,13 +36,27 @@ export function initGameToggle() {
         toggleMount.hidden = true;
         return;
     }
-    toggleMount.innerHTML = gameIds.map(gid => {
-        const label = gameLabels && gameLabels[gid] ? gameLabels[gid] : gid;
-        return (
-            '<button type="button" class="game-toggle-btn" role="tab" data-game="'
-            + escapeHtml(gid) + '">' + escapeHtml(label) + '</button>'
-        );
-    }).join('');
+    // Check if placeholder buttons already exist from the HTML template.
+    const existing = toggleMount.querySelectorAll('.game-toggle-btn');
+    if (existing.length === gameIds.length) {
+        // Upgrade in place: sync labels from data (in case they differ
+        // from the hardcoded placeholder text).
+        for (let i = 0; i < gameIds.length; i++) {
+            const gid = gameIds[i];
+            const label = gameLabels && gameLabels[gid] ? gameLabels[gid] : gid;
+            existing[i].dataset.game = gid;
+            existing[i].textContent = label;
+        }
+    } else {
+        // No valid placeholders - build from scratch.
+        toggleMount.innerHTML = gameIds.map(gid => {
+            const label = gameLabels && gameLabels[gid] ? gameLabels[gid] : gid;
+            return (
+                '<button type="button" class="game-toggle-btn" role="tab" data-game="'
+                + escapeHtml(gid) + '">' + escapeHtml(label) + '</button>'
+            );
+        }).join('');
+    }
     toggleMount.addEventListener('click', (e) => {
         const btn = e.target.closest('.game-toggle-btn');
         if (!btn || !toggleMount.contains(btn)) return;

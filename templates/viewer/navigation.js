@@ -271,7 +271,7 @@ function applyLayoutMode(mode) {
     const wantSinglePanel = wantSpeaker || wantDuplicates || wantEligibility;
     body.classList.toggle('layout-speaker', wantSinglePanel);
     body.classList.toggle('layout-dialogue', !wantSinglePanel);
-    const header = document.querySelector('#panel-info > h2');
+    const header = document.getElementById('panel-info-heading');
     if (header) {
         if (wantEligibility) header.textContent = 'Eligibility Tracer';
         else if (wantDuplicates) header.textContent = 'Cross-game Duplicates';
