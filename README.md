@@ -41,6 +41,7 @@ The eligibility tracer (accessible via the "Blocked" badge or the nav link when 
 It displays a summary, a flat list of unplayed prerequisites sorted by play order, and a collapsible prerequisite tree.
 
 The tracer respects the game's actual requirement semantics:
+
 - **AND requirements** (`RequiredTextLines`, etc.) - all must be played
 - **OR requirements** (`RequiredAnyTextLines`, etc.) - any one suffices
 - **Negative requirements** (`RequiredFalseTextLines`, etc.) - skipped (blocking conditions, not prerequisites)
@@ -69,6 +70,7 @@ python api.py serve [--port 8081]
 ```
 
 POST to `/eligibility` with either:
+
 - **multipart/form-data** - fields: `save` (file), `dialogue` (string), `game` (optional)
 - **application/json** - `{"savePath": "/path/to/Profile1.sav", "dialogue": "...", "game": "..."}`
 
@@ -76,42 +78,42 @@ POST to `/eligibility` with either:
 
 ```json
 {
-  "dialogue": "OrpheusSingsAgain02",
-  "game": "hades1",
-  "saveGame": "hades2",
-  "completedRuns": 86,
-  "status": "blocked",
-  "totalPrereqs": 23,
-  "playedPrereqs": 2,
-  "unplayedPrereqs": 21,
-  "unplayed": [
-    {
-      "name": "EurydiceFirstMeeting01_C",
-      "owner": "NPC_Eurydice_01",
-      "depth": 13,
-      "reqTypes": ["RequiredTextLines"],
-      "neededBy": ["EurydiceFirstMeeting01"]
-    }
-  ],
-  "tree": [
-    {
-      "name": "OrpheusTallTale05",
-      "reqType": "RequiredTextLines",
-      "played": false,
-      "depth": 1,
-      "children": []
-    }
-  ]
+	"dialogue": "OrpheusSingsAgain02",
+	"game": "hades1",
+	"saveGame": "hades2",
+	"completedRuns": 86,
+	"status": "blocked",
+	"totalPrereqs": 23,
+	"playedPrereqs": 2,
+	"unplayedPrereqs": 21,
+	"unplayed": [
+		{
+			"name": "EurydiceFirstMeeting01_C",
+			"owner": "NPC_Eurydice_01",
+			"depth": 13,
+			"reqTypes": ["RequiredTextLines"],
+			"neededBy": ["EurydiceFirstMeeting01"]
+		}
+	],
+	"tree": [
+		{
+			"name": "OrpheusTallTale05",
+			"reqType": "RequiredTextLines",
+			"played": false,
+			"depth": 1,
+			"children": []
+		}
+	]
 }
 ```
 
-| Field | Description |
-| --- | --- |
-| `status` | `played` (in save), `eligible` (all prereqs met), `blocked` (missing prereqs) |
-| `unplayed` | Flat list of unplayed prerequisites, sorted deepest-first (play order) |
-| `tree` | Nested hierarchy; played nodes have no children |
-| `game` | Which game's data was used (auto-detected from dialogue name if not specified) |
-| `saveGame` | Which game the save file belongs to |
+| Field      | Description                                                                    |
+| ---------- | ------------------------------------------------------------------------------ |
+| `status`   | `played` (in save), `eligible` (all prereqs met), `blocked` (missing prereqs)  |
+| `unplayed` | Flat list of unplayed prerequisites, sorted deepest-first (play order)         |
+| `tree`     | Nested hierarchy; played nodes have no children                                |
+| `game`     | Which game's data was used (auto-detected from dialogue name if not specified) |
+| `saveGame` | Which game the save file belongs to                                            |
 
 ## Development Setup
 
@@ -139,13 +141,13 @@ Useful build flags:
 
 Outputs in `dist/`:
 
-| File | Mode | Purpose |
-| --- | --- | --- |
-| `index.html`            | split  | HTML shell |
-| `viewer.js`             | split  | Viewer code (loads `data.json` via fetch) |
-| `viewer.css`            | split  | Concatenated styles |
-| `data.json`             | split  | Merged graph data |
-| `dialogue_explorer.html` | bundle | Self-contained file (no server needed) |
+| File                     | Mode   | Purpose                                   |
+| ------------------------ | ------ | ----------------------------------------- |
+| `index.html`             | split  | HTML shell                                |
+| `viewer.js`              | split  | Viewer code (loads `data.json` via fetch) |
+| `viewer.css`             | split  | Concatenated styles                       |
+| `data.json`              | split  | Merged graph data                         |
+| `dialogue_explorer.html` | bundle | Self-contained file (no server needed)    |
 
 ### Viewing the split build locally
 
@@ -211,3 +213,8 @@ npm run lint
 ```
 
 Node.js + npm are needed for the linter and the JS test runner; the viewer itself ships as plain JavaScript (concatenated by `build_viewer.py`) with no separate JS build step.
+
+## Disclaimer
+
+This tool was built with the assistance of generative AI.
+Game content (dialogue text, character names, game data) belongs to Supergiant Games.

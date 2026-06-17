@@ -169,3 +169,24 @@ main {
    against the dark panel background. Match the track colour so the
    corner blends into the scrollbar gutter. */
 ::-webkit-scrollbar-corner { background: #1a1a2e; }
+
+/* Site disclaimer - pinned to the bottom of the middle panel
+   (upstream/prerequisites) in 3-column dialogue view, and to the
+   bottom of the info panel in single-panel views. Uses margin-top:auto
+   so it sticks to the bottom even with short content. */
+#upstream-content,
+.layout-speaker #info-content {
+    display: flex;
+    flex-direction: column;
+}
+#upstream-content::after,
+.layout-speaker #info-content::after {
+    content: 'Built with the assistance of generative AI. Game content belongs to Supergiant Games.';
+    display: block;
+    padding: 12px 20px;
+    margin-top: auto;
+    font-size: 10px;
+    color: #444;
+    text-align: center;
+    border-top: 1px solid #0f346040;
+}

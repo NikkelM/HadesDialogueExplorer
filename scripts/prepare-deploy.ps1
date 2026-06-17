@@ -1,24 +1,18 @@
-# Sync the deploy branch with main and commit the current outputs/*.json
-# files so the GitHub Pages workflow can build and deploy the viewer.
+# Sync the deploy branch with main, run the extraction pipeline and
+# viewer build, commit the outputs, and push to trigger the GitHub
+# Pages deploy workflow.
 #
 # Usage:
-#   .\scripts\prepare-deploy.ps1          # creates/updates deploy branch and pushes
+#   .\scripts\prepare-deploy.ps1          # full deploy
 #   .\scripts\prepare-deploy.ps1 -Dry     # show what would happen without pushing
 #
 # Prerequisites:
 #   - Clean working tree on main (no uncommitted changes)
-#   - outputs/*.json populated by the extraction pipeline
+#   - Game script paths configured (config.toml / environment)
 
 param([switch]$Dry)
 
 $ErrorActionPreference = 'Stop'
-
-$jsons = Get-ChildItem -Path outputs\*.json -ErrorAction SilentlyContinue
-if (-not $jsons -or $jsons.Count -eq 0) {
-    Write-Error "No outputs/*.json files found. Run the extraction pipeline first."
-    exit 1
-}
-Write-Host "Found $($jsons.Count) output files"
 
 $branch = git rev-parse --abbrev-ref HEAD
 if ($branch -ne 'main') {
@@ -32,9 +26,20 @@ if ($dirty) {
     exit 1
 }
 
+# Run extraction pipeline
+Write-Host "Running extraction pipeline..."
+python generate_data.py
+if ($LASTEXITCODE -ne 0) { Write-Error "Extraction pipeline failed."; exit 1 }
+
+$jsons = Get-ChildItem -Path outputs\*.json -ErrorAction SilentlyContinue
+if (-not $jsons -or $jsons.Count -eq 0) {
+    Write-Error "No outputs/*.json files found after extraction."
+    exit 1
+}
+Write-Host "Found $($jsons.Count) output files"
+
 # Create or reset deploy branch to match main
-$deployExists = git show-ref --verify --quiet refs/heads/deploy 2>$null
-if ($LASTEXITCODE -eq 0) {
+if ((git show-ref --verify --quiet refs/heads/deploy 2>$null; $LASTEXITCODE) -eq 0) {
     git checkout deploy
     git reset --hard main
 } else {
