@@ -23,6 +23,21 @@ import re
 _VARIANT_SUFFIX_RE = re.compile(r"\s*\([^()]*\)\s*$")
 
 
+# The five narrative-priority fields (H1 intrinsic tier / set-level, H2
+# extrinsic ordinal / section-size / cluster-members) travel together
+# everywhere a textline's priority annotation is forwarded into the graph,
+# carried in a variant payload, or transferred off a dropped duplicate.
+# Defined once so the three usages below can't drift apart (adding a sixth
+# field to only one of them silently dropped the badge on the other paths).
+_NARRATIVE_PRIORITY_FIELDS = (
+    "narrativePrioritySectionTier",
+    "narrativePrioritySetLevel",
+    "narrativePriorityOrdinal",
+    "narrativePrioritySectionSize",
+    "narrativePriorityClusterMembers",
+)
+
+
 def count_distinct_speakers(owner_ids, speakers_map: dict | None = None) -> int:
     """Count the number of distinct *characters* represented by a set of
     owner ids.
@@ -142,13 +157,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
                 #     list (so the viewer can render "#1/47").
                 #   - cluster-members: sibling textline names tied at the
                 #     same ordinal (inline sub-array in the priority list).
-                for opt_key in (
-                    "narrativePrioritySectionTier",
-                    "narrativePrioritySetLevel",
-                    "narrativePriorityOrdinal",
-                    "narrativePrioritySectionSize",
-                    "narrativePriorityClusterMembers",
-                ):
+                for opt_key in _NARRATIVE_PRIORITY_FIELDS:
                     if opt_key in tl_data:
                         new_entry[opt_key] = tl_data[opt_key]
                 # PlayOnce flag (once per save). Surfaced in the details
@@ -330,12 +339,7 @@ _VARIANT_OPTIONAL_FIELDS = (
     "parentTextline",
     "choiceText",
     "isSynthetic",
-    "narrativePrioritySectionTier",
-    "narrativePrioritySetLevel",
-    "narrativePriorityOrdinal",
-    "narrativePrioritySectionSize",
-    "narrativePriorityClusterMembers",
-)
+) + _NARRATIVE_PRIORITY_FIELDS
 
 
 def make_variant_summary(data: dict, owner: str, section: str) -> dict:
@@ -478,13 +482,7 @@ def _variant_already_present(variants: list, candidate: dict) -> bool:
 # unless we transfer it across first. H1 is unaffected (its priority
 # data is intrinsic to the canonical entry's container shape, so the
 # transfer is a no-op there).
-_TRANSFERABLE_ORPHAN_FIELDS = (
-    "narrativePrioritySectionTier",
-    "narrativePrioritySetLevel",
-    "narrativePriorityOrdinal",
-    "narrativePrioritySectionSize",
-    "narrativePriorityClusterMembers",
-)
+_TRANSFERABLE_ORPHAN_FIELDS = _NARRATIVE_PRIORITY_FIELDS
 
 
 def transfer_orphan_annotations(kept: dict, dropped: dict) -> None:
