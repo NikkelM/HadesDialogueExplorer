@@ -1,18 +1,14 @@
 // Game toggle UI: two side-by-side buttons in the page header that
-// swap the viewer's active game (Hades / Hades II). Clicks flow
-// through ``navigateToState({ game })`` so the URL stays canonical
-// and the per-game data swap goes through the same code path as a
-// shared deep link (``navigation.switchToGame``).
-//
-// Switching games drops the current dialogue selection rather than
-// trying to carry it across: textline names aren't unique between
-// games (``HermesGift03`` exists in both, but they're entirely
-// separate dialogues), so any "preserve selection" behaviour would
-// produce the wrong renders. An empty-state on switch matches the
-// "strict per-game viewer" model the user asked for.
+// swap the viewer's active game (Hades / Hades II). Clicks read the
+// current URL state, replace only the ``game`` key, and forward
+// everything else (view, dialogue, speaker, filters, etc.) so the
+// selection carries across. If the target entity doesn't exist in the
+// other game the viewer's existing not-found / unresolved-ref
+// handling takes care of it.
 
 import { gameIds, gameLabels, getActiveGame } from './data.js';
 import { navigateToState } from './navigation.js';
+import { parseUrlState } from './url.js';
 import { escapeHtml } from './utilities.js';
 
 let toggleMount = null;
@@ -62,7 +58,9 @@ export function initGameToggle() {
         if (!btn || !toggleMount.contains(btn)) return;
         const gameId = btn.dataset.game;
         if (!gameId || gameId === getActiveGame()) return;
-        navigateToState({ game: gameId });
+        const current = parseUrlState(window.location.hash);
+        current.game = gameId;
+        navigateToState(current);
     });
     renderGameToggle();
 }
