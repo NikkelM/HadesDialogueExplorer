@@ -515,10 +515,9 @@ function renderSaveProgressPillHtml(name, tl) {
     if (!status) return '';
     const labels = { played: '\u2714 Played', eligible: '\u25CB Eligible', blocked: '\u2022 Blocked' };
     const label = labels[status] || status;
-    if (status === 'blocked') {
-        return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" title="Open eligibility tracer">${label}</a>`;
-    }
-    return ` <span class="save-progress-pill ${status}">${label}</span>`;
+    // Every status opens the eligibility tracer for this dialogue: blocked
+    // shows what's still missing, eligible/played show the satisfied chain.
+    return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" title="Open eligibility tracer">${label}</a>`;
 }
 
 function renderAlternatesHtml(name) {
