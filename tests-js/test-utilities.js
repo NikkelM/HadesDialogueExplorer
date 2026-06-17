@@ -249,7 +249,7 @@ test('renderReqTypeHtml downstream falls back to upstream wording for fields mis
 test('renderTierBadgeHtml emits the correct icon and class for each section tier', () => {
     const superHtml = renderTierBadgeHtml({ narrativePrioritySectionTier: 'super' });
     assert.ok(superHtml.includes('priority-super'));
-    assert.ok(superHtml.includes('super-priority'));
+    assert.ok(superHtml.includes('Super-priority'));
     assert.ok(superHtml.includes('\u2605\u2605'));
 
     const priorityHtml = renderTierBadgeHtml({ narrativePrioritySectionTier: 'priority' });
@@ -393,7 +393,7 @@ test('renderPrimaryPriorityBadgeHtml returns one badge per row, omitting the SP/
 test('renderPlayOnceBadgeHtml distinguishes locked vs repeatable variants', () => {
     const locked = renderPlayOnceBadgeHtml({ playOnce: true });
     assert.ok(locked.includes('play-once-locked'));
-    assert.ok(locked.includes('PlayOnce'));
+    assert.ok(locked.includes('Play-once'));
 
     const repeatable = renderPlayOnceBadgeHtml({ playOnce: false });
     assert.ok(repeatable.includes('play-once-repeatable'));

@@ -151,7 +151,18 @@
     gap: 6px;
     flex-shrink: 0;
 }
-.textline-info h3 .h3-indicators > * { margin-left: 0; flex-shrink: 0; }
+.textline-info h3 .h3-indicators > * {
+    margin-left: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 3px;
+}
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
 .cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }

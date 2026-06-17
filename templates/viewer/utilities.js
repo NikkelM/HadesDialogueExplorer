@@ -290,22 +290,22 @@ export function renderTierBadgeHtml(tl) {
     let tip;
     if (sec === 'super') {
         strongest = 'super';
-        label = 'super-priority';
+        label = 'Super-priority';
         icon = '\u2605\u2605';
         tip = 'Super-priority dialogues are played before all other dialogues from the same context. Within a set, a random dialogue from all eligible dialogues is picked.';
     } else if (sec === 'priority') {
         strongest = 'priority';
-        label = 'priority';
+        label = 'Priority';
         icon = '\u2605';
         tip = 'Priority dialogues are played before normal and low-priority dialogues from the same context, but after super-priority dialogues. Within a set, a random dialogue from all eligible dialogues is picked.';
     } else if (sec === 'low') {
         strongest = 'low';
-        label = 'low-priority';
+        label = 'Low-priority';
         icon = '\u2B07';
         tip = 'Low-priority dialogues are the final fallback - played only when no super-priority, priority, or normal dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
     } else {
         strongest = 'normal';
-        label = 'normal';
+        label = 'Normal';
         icon = '\u25CF';
         tip = 'Normal dialogues are played only when no super-priority or priority dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
     }
@@ -354,7 +354,7 @@ export function renderOrdinalBadgeHtml(tl) {
 // which is easy to miss if the only visual signal is the lock.
 export function renderPlayOnceBadgeHtml(tl) {
     if (tl && tl.playOnce) {
-        return `<span class="play-once-badge play-once-locked" data-tooltip="This dialogue can play at most one time across the entire save.">\u{1F512} PlayOnce</span>`;
+        return `<span class="play-once-badge play-once-locked" data-tooltip="This dialogue can play at most one time across the entire save.">\u{1F512} Play-once</span>`;
     }
     return `<span class="play-once-badge play-once-repeatable" data-tooltip="This dialogue can play repeatedly as long as its requirements are met.">\u{1F501} Repeatable</span>`;
 }
