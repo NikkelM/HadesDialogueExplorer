@@ -38,6 +38,7 @@ Requires: lz4, luabins-py (pip install lz4 luabins-py)
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -249,21 +250,21 @@ def check_eligibility(
         Structured dict with eligibility information.
     """
     save_bytes = Path(save_path).read_bytes()
+    save_data = parse_save(save_bytes)
     all_data = load_game_data(data_path)
-    return _assemble_result(save_bytes, dialogue_name, game, all_data)
+    return _assemble_result(save_data, dialogue_name, game, all_data)
 
 
 def _assemble_result(
-    save_bytes: bytes, dialogue_name: str, game: str, all_data: dict
+    save_data: dict, dialogue_name: str, game: str, all_data: dict
 ) -> dict:
-    """Parse ``save_bytes`` and build the eligibility result for
-    ``dialogue_name``.
+    """Build the eligibility result for ``dialogue_name`` from a parsed
+    ``save_data``.
 
     Shared by the CLI (:func:`check_eligibility`) and the HTTP server so the
     status logic and result shape live in exactly one place. Returns an
     ``{"error": ...}`` dict for unknown games / dialogues.
     """
-    save_data = parse_save(save_bytes)
     played_set = extract_text_lines_record(save_data)
     detected_game = save_data["gameId"]
 
@@ -325,24 +326,122 @@ def _assemble_result(
 
 
 def run_cli(args):
-    """Run as a CLI tool."""
-    result = check_eligibility(
-        save_path=args.save_file,
-        dialogue_name=args.dialogue,
-        game=args.game,
-    )
+    """Run as a CLI tool.
+
+    Prints the result as JSON and exits non-zero on any error (unknown
+    dialogue, unreadable or invalid save) so callers can branch on the exit
+    code instead of parsing stdout.
+    """
+    try:
+        result = check_eligibility(
+            save_path=args.save_file,
+            dialogue_name=args.dialogue,
+            game=args.game,
+        )
+    except FileNotFoundError:
+        result = {"error": f"Save file not found: {args.save_file}"}
+    except ValueError as e:
+        result = {"error": f"Could not parse save file: {e}"}
     print(json.dumps(result, indent=2))
+    if "error" in result:
+        sys.exit(1)
+
+
+_SAVE_FILENAME_RE = re.compile(r"^Profile[1-4](_Temp)?\.sav$", re.IGNORECASE)
+
+
+def _is_allowed_save_path(save_path: str) -> bool:
+    """Whether ``save_path`` is allowed for the JSON ``savePath`` branch.
+
+    Restricts reads to files whose basename looks like a Hades save
+    (``ProfileN.sav``) so the server can't be coaxed into reading arbitrary
+    local files.
+    """
+    return bool(save_path) and bool(_SAVE_FILENAME_RE.match(Path(save_path).name))
+
+
+def _parse_multipart_form(content_type: str, body: bytes) -> dict:
+    """Minimal ``multipart/form-data`` parser (stdlib only - ``cgi`` was
+    removed in Python 3.13).
+
+    Returns ``{field_name: value}`` where file fields are ``bytes`` and plain
+    fields are ``str``. Only the small fixed set of fields this API expects
+    (``save``, ``dialogue``, ``game``) needs to parse; this is not a
+    general-purpose implementation.
+    """
+    m = re.search(r'boundary=(?:"([^"]+)"|([^";,]+))', content_type)
+    if not m:
+        raise ValueError("multipart/form-data missing boundary")
+    delimiter = b"--" + (m.group(1) or m.group(2)).strip().encode()
+    fields = {}
+    for part in body.split(delimiter):
+        if not part or part.startswith(b"--"):
+            continue
+        # Each part is framed by exactly one leading and trailing CRLF; strip
+        # only those so binary payloads ending in \r\n survive intact.
+        if part.startswith(b"\r\n"):
+            part = part[2:]
+        if part.endswith(b"\r\n"):
+            part = part[:-2]
+        head, sep, payload = part.partition(b"\r\n\r\n")
+        if not sep:
+            continue
+        headers = head.decode("utf-8", "replace")
+        name_m = re.search(r'name="([^"]*)"', headers)
+        if not name_m:
+            continue
+        name = name_m.group(1)
+        if 'filename="' in headers:
+            fields[name] = payload
+        else:
+            fields[name] = payload.decode("utf-8", "replace")
+    return fields
+
+
+def _handle_eligibility_request(content_type: str, body: bytes, all_data: dict):
+    """Parse a POST body and return ``(http_status, result_dict)``.
+
+    Pure (no socket I/O) so the request handling - including the malformed-
+    input and invalid-save paths - is unit-testable. Error responses use
+    generic messages rather than echoing file bytes or parser internals.
+    """
+    try:
+        if "multipart/form-data" in content_type:
+            fields = _parse_multipart_form(content_type, body)
+            save_bytes = fields.get("save")
+            if not isinstance(save_bytes, bytes):
+                return 400, {"error": "Missing 'save' file field"}
+            dialogue = fields.get("dialogue", "")
+            game = fields.get("game") or None
+        elif "application/json" in content_type:
+            payload = json.loads(body or b"{}")
+            save_path = payload.get("savePath", "")
+            dialogue = payload.get("dialogue", "")
+            game = payload.get("game") or None
+            if not _is_allowed_save_path(save_path):
+                return 400, {"error": "savePath must be a ProfileN.sav save file"}
+            save_bytes = Path(save_path).read_bytes()
+        else:
+            return 415, {"error": "Use multipart/form-data or application/json"}
+    except (json.JSONDecodeError, ValueError, UnicodeDecodeError) as e:
+        return 400, {"error": f"Malformed request: {e}"}
+    except FileNotFoundError:
+        return 404, {"error": "Save file not found"}
+
+    try:
+        save_data = parse_save(save_bytes)
+    except Exception:
+        return 400, {"error": "Not a valid Hades save file"}
+
+    result = _assemble_result(save_data, dialogue, game, all_data)
+    if "error" in result:
+        return (404 if "not found" in result["error"] else 400), result
+    return 200, result
 
 
 def run_server(port: int):
-    """Run as an HTTP server."""
-    try:
-        from http.server import HTTPServer, BaseHTTPRequestHandler
-    except ImportError:
-        print("Failed to import http.server", file=sys.stderr)
-        sys.exit(1)
-
-    import cgi
+    """Run as an HTTP server, bound to localhost only."""
+    from http.server import HTTPServer, BaseHTTPRequestHandler
 
     all_data = load_game_data()
 
@@ -351,65 +450,34 @@ def run_server(port: int):
             if self.path != "/eligibility":
                 self.send_error(404)
                 return
-
             content_type = self.headers.get("Content-Type", "")
-
-            if "multipart/form-data" in content_type:
-                form = cgi.FieldStorage(
-                    fp=self.rfile,
-                    headers=self.headers,
-                    environ={
-                        "REQUEST_METHOD": "POST",
-                        "CONTENT_TYPE": content_type,
-                    },
-                )
-                save_field = form["save"]
-                save_bytes = save_field.file.read()
-                dialogue = form.getvalue("dialogue", "")
-                game = form.getvalue("game", None)
-            elif "application/json" in content_type:
-                length = int(self.headers.get("Content-Length", 0))
-                body = json.loads(self.rfile.read(length))
-                save_path = body.get("savePath", "")
-                dialogue = body.get("dialogue", "")
-                game = body.get("game", None)
-                save_bytes = Path(save_path).read_bytes()
-            else:
-                self.send_error(415, "Use multipart/form-data or application/json")
-                return
-
             try:
-                result = _assemble_result(save_bytes, dialogue, game, all_data)
-                if "error" in result:
-                    code = 404 if "not found" in result["error"] else 400
-                    self._json_response(result, code)
-                else:
-                    self._json_response(result)
-
+                length = int(self.headers.get("Content-Length", 0))
+            except ValueError:
+                length = 0
+            body = self.rfile.read(length) if length > 0 else b""
+            try:
+                status, result = _handle_eligibility_request(
+                    content_type, body, all_data
+                )
             except Exception as e:
-                self._json_response({"error": str(e)}, 500)
+                status, result = 500, {"error": f"Internal error: {type(e).__name__}"}
+            self._json_response(result, status)
 
         def _json_response(self, data, code=200):
             body = json.dumps(data, indent=2).encode()
             self.send_response(code)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))
-            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(body)
-
-        def do_OPTIONS(self):
-            self.send_response(204)
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
-            self.end_headers()
 
         def log_message(self, format, *args):
             pass
 
-    server = HTTPServer(("", port), Handler)
-    print(f"Eligibility API running on http://localhost:{port}/eligibility")
+    # Bind to loopback only: this is a local dev tool, not a network service.
+    server = HTTPServer(("127.0.0.1", port), Handler)
+    print(f"Eligibility API running on http://127.0.0.1:{port}/eligibility")
     print("POST with multipart (save file + dialogue) or JSON (savePath + dialogue)")
     server.serve_forever()
 
