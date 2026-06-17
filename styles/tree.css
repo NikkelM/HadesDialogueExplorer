@@ -135,11 +135,23 @@
 }
 .set-priority-super { background: #3b2a0a; color: #ffd166; border: 1px solid #6b4e1f; }
 .set-priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
-/* Details-panel header badges. The tier badge consumes the free space
-   with `margin-left: auto`, pushing itself and any sibling badges
-   (set-level + PlayOnce) to the right edge of the header row. */
-.textline-info h3 .priority-badge { margin-left: auto; flex-shrink: 0; }
-.textline-info h3 .set-priority-badge { margin-left: 4px; flex-shrink: 0; }
+/* Details-panel header: the priority, save and PlayOnce/Repeatable
+   badges sit in one right-aligned cluster. Pinning the whole cluster
+   (rather than putting `margin-left: auto` on the priority badge)
+   keeps the always-present repeatability badge at the right edge even
+   when the priority badge is absent - e.g. an H2 textline with no
+   narrative rank renders no ordinal badge, which used to leave the
+   repeatability badge with nothing to push it right, so it jumped to
+   the left. The Repeatable/PlayOnce badge is the cluster's last child
+   so it stays pinned to the edge regardless of which siblings render. */
+.textline-info h3 .h3-indicators {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.textline-info h3 .h3-indicators > * { margin-left: 0; flex-shrink: 0; }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
 .cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }

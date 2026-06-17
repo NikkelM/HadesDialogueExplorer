@@ -3,17 +3,18 @@
    warm/cool for repeatability, neutral for self-reference, category
    hues for unresolved children, and warning red for blocked nodes. */
 
-/* PlayOnce / Repeatable indicator. Always renders one of
-   the two badges in the details-panel header to the right of the
-   priority badges, so the repeatability state is explicit. Warm tone
-   for the hard cap, cool tone for the default repeatable state. */
+/* PlayOnce / Repeatable indicator. Always renders one of the two
+   badges, pinned to the right edge of the details-panel header as the
+   last child of the `.h3-indicators` cluster, so the repeatability
+   state is explicit and sits in the same place for every textline.
+   Warm tone for the hard cap, cool tone for the default repeatable
+   state. */
 .textline-info h3 .play-once-badge {
     display: inline-block;
     padding: 1px 6px;
     border-radius: 3px;
     font-size: 11px;
     font-weight: 500;
-    margin-left: 8px;
     flex-shrink: 0;
 }
 .textline-info h3 .play-once-badge.play-once-locked {
