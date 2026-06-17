@@ -51,6 +51,28 @@ class TestDiscovery:
         assert homer["source"] == "Hades 2"
         assert "InspectCrossroads01" in homer["InteractTextLineSets"]
 
+    def test_inspect_point_forced_play_once_without_source_field(self):
+        """H2 inspect-point narration is one-shot in-game; the extractor
+        force-marks it ``playOnce`` even when the source omits the flag."""
+        parsed = _parse("""
+            OverwriteTableKeys( HubRoomData, {
+                Hub_Main = {
+                    InspectPoints = {
+                        [421076] = {
+                            InteractTextLineSets = {
+                                InspectCrossroads01 = {
+                                    { Cue = "/VO/Homer_0001", Text = "The Crossroads." },
+                                },
+                            },
+                        },
+                    },
+                },
+            } )
+        """)
+        result = extract_deathloop_data(parsed, source_label="Hades 2", source_file="DeathLoopData.lua")
+        tl = result[HUB_NARRATOR_SPEAKER]["InteractTextLineSets"]["InspectCrossroads01"]
+        assert tl["playOnce"] is True
+
     def test_multiple_hubs_collapse_to_one_owner(self):
         # Hub_Main + Hub_PreRun + Flashback_Hub_Main all contribute
         # to the single Speaker_Homer entry.

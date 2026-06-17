@@ -142,6 +142,7 @@ def _collect_inspect_points(
             section_keys=HADES2_TEXTLINE_SECTION_KEYS,
             default_speaker=HUB_NARRATOR_SPEAKER,
             named_requirements=named_requirements,
+            force_play_once=True,
         )
         _lift_and_collapse(sections, inspect_point, collapsed, named_requirements)
 

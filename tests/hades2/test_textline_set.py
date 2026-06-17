@@ -326,6 +326,22 @@ class TestSectionExtraction:
         assert sections["InteractTextLineSets"]["Line01"]["playOnce"] is True
         assert sections["InteractTextLineSets"]["Line01"]["dialogueLines"][0]["text"] == "Hello."
 
+    def test_force_play_once_marks_all_textlines(self):
+        """``force_play_once=True`` marks every extracted textline
+        ``playOnce`` regardless of the source ``PlayOnce`` field (used for
+        inspect-point narration, which is one-shot in-game)."""
+        owner = _parse_owner("""{
+            InteractTextLineSets = {
+                Line01 = { { Cue = "/VO/X_0001", Text = "Hello." } },
+            },
+        }""")
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+            force_play_once=True,
+        )
+        assert sections["InteractTextLineSets"]["Line01"]["playOnce"] is True
+
     def test_default_speaker_overrides_owner_id(self):
         owner = _parse_owner("""{
             InteractTextLineSets = {

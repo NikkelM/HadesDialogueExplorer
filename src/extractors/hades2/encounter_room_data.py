@@ -113,12 +113,13 @@ def extract_encounter_room_data(
 
     result: dict = {}
     for root in roots:
-        for owner_name, owner_table, default_speaker, ancestor in _walk_owners(root):
+        for owner_name, owner_table, default_speaker, ancestor, is_inspect_point in _walk_owners(root):
             sections = extract_textline_sections(
                 owner_name, owner_table, source_file,
                 section_keys=HADES2_TEXTLINE_SECTION_KEYS,
                 default_speaker=default_speaker,
                 named_requirements=named_requirements,
+                force_play_once=is_inspect_point,
             )
 
             # Re-route per-textline overrides onto their target owner
@@ -232,7 +233,7 @@ def _walk_owners(node, path=(), ancestor=None):
         ancestor = node
 
     if _has_textline_section(node):
-        yield _owner_name_for(path), node, _default_speaker_for(path), ancestor
+        yield _owner_name_for(path), node, _default_speaker_for(path), ancestor, _is_inspect_point(path)
 
     parent_name = path[-1][1] if (path and path[-1][0] == "named") else None
 
@@ -286,3 +287,15 @@ def _default_speaker_for(path) -> str:
             _, _, parent_name = segment
             return IDMAP_PARENT_OWNER_OVERRIDES.get(parent_name)
     return None
+
+
+def _is_inspect_point(path) -> bool:
+    """True when the owner came from an ``InspectPoints`` idmap collapse
+    (mirrors :func:`_owner_name_for`). Inspect-point narration is
+    consumed once in-game, so these textlines are force-marked
+    ``playOnce`` even though the source tables omit the flag.
+    """
+    for segment in reversed(path):
+        if segment[0] == "idmap":
+            return segment[2] == "InspectPoints"
+    return False

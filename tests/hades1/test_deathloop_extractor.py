@@ -74,6 +74,25 @@ class TestBasicExtraction:
         line = result["Storyteller"]["InteractTextLineSets"]["Line01"]
         assert line["dialogueLines"][0]["speaker"] == "NPC_Hades_01"
 
+    def test_inspect_point_forced_play_once_without_source_field(self):
+        """Inspect-point narration is one-shot in-game even when the
+        source table omits ``PlayOnce``; the extractor force-marks the
+        textline ``playOnce`` so the viewer shows it as non-repeatable."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                InspectPoints = {
+                    [370001] = {
+                        InteractTextLineSets = {
+                            InspectStone01 = { { Text = "An old stone." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["Storyteller"]["InteractTextLineSets"]["InspectStone01"]
+        assert tl["playOnce"] is True
+
 
 class TestNonInspectPointOwners:
     """Numeric-id entries under non-InspectPoints parent maps (e.g.
@@ -103,6 +122,26 @@ class TestNonInspectPointOwners:
         assert "ObstacleData_310036" not in result
         line = result["Storyteller"]["OnUsedTextLineSets"]["Flashback_Mother_01"]
         assert line["dialogueLines"][0]["speaker"] == "Storyteller"
+
+    def test_storyteller_obstacle_data_not_forced_play_once(self):
+        """Force-play-once is scoped to the ``InspectPoints`` collapse: an
+        ``ObstacleData`` entry that also re-keys under Storyteller is not
+        an inspect point, so it keeps its repeatable (no ``playOnce``)
+        state."""
+        lua = '''DeathLoopData = {
+            DeathArea = {
+                ObstacleData = {
+                    [310036] = {
+                        OnUsedTextLineSets = {
+                            Flashback_Mother_01 = { { Text = "..." } }
+                        }
+                    }
+                }
+            }
+        }'''
+        result = extract(lua)
+        tl = result["Storyteller"]["OnUsedTextLineSets"]["Flashback_Mother_01"]
+        assert "playOnce" not in tl
 
     def test_mapped_obstacle_data_attributes_to_skelly(self):
         """``ObstacleData_487120`` (trophy plinth) is mapped to Skelly's

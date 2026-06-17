@@ -390,6 +390,26 @@ class TestInspectPointCollapseAndExcludedTextlines:
         line = result["Storyteller"]["InteractTextLineSets"]["A_Boss_01_Inspect01"]
         assert line["dialogueLines"][0]["speaker"] == "Storyteller"
 
+    def test_room_inspect_point_forced_play_once_without_source_field(self):
+        """Room inspect-point narration is one-shot in-game; the extractor
+        force-marks it ``playOnce`` even when the source table omits the
+        flag."""
+        result = extract('''RoomSetData.Tartarus = {
+            A_Boss01 = {
+                InspectPoints = {
+                    [510795] = {
+                        InteractTextLineSets = {
+                            A_Boss_01_Inspect01 = {
+                                { Cue = "/VO/Storyteller_0411", Text = "Sentinels." }
+                            }
+                        }
+                    }
+                }
+            }
+        }''', source_file="RoomDataTartarus.lua")
+        tl = result["Storyteller"]["InteractTextLineSets"]["A_Boss_01_Inspect01"]
+        assert tl["playOnce"] is True
+
     def test_room_inspect_point_implicit_speaker_falls_back_to_storyteller(self):
         """An InspectPoint cue without an explicit ``Speaker`` AND
         without a recognised cue-path prefix should use Storyteller as

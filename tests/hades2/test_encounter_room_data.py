@@ -91,6 +91,29 @@ class TestRootDiscovery:
         assert HUB_NARRATOR_SPEAKER in result
         assert "InspectFOpening" in result[HUB_NARRATOR_SPEAKER]["InteractTextLineSets"]
 
+    def test_inspect_point_forced_play_once_without_source_field(self):
+        """H2 room inspect-point narration is force-marked ``playOnce``
+        even when the source table omits the flag."""
+        parsed = _parse("""
+            RoomSetData.F =
+            {
+                F_Opening01 = {
+                    InspectPoints = {
+                        [1] = {
+                            InteractTextLineSets = {
+                                InspectFOpening = {
+                                    { Cue = "/VO/Homer_0010", Text = "A scene." },
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        """)
+        result = extract_encounter_room_data(parsed)
+        tl = result[HUB_NARRATOR_SPEAKER]["InteractTextLineSets"]["InspectFOpening"]
+        assert tl["playOnce"] is True
+
 
 class TestOwnerNaming:
     def test_inspect_points_collapse_to_homer(self):

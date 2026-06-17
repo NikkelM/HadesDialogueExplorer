@@ -64,6 +64,7 @@ the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 import re
 
 from ...lua_parser import LuaTable
+from ..textline_set import _apply_force_play_once
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
@@ -92,6 +93,7 @@ def extract_textline_sections(
     section_keys,
     default_speaker: str = None,
     named_requirements: dict = None,
+    force_play_once: bool = False,
 ) -> dict:
     """Extract every textline-set section from a single H2 owner table.
 
@@ -126,6 +128,11 @@ def extract_textline_sections(
     (e.g. ``ArtemisOpened`` -> the textlines it depends on transitively).
     Passing ``None`` (or ``{}``) leaves named-requirement refs
     unresolved - they surface as strings under ``otherRequirements``.
+
+    ``force_play_once``, when True, marks every extracted textline
+    ``playOnce`` regardless of the source field. The inspect-point
+    extractors set it: inspect-point narration is consumed once in-game
+    even though the tables omit the flag.
     """
     sections = {}
     fallback_speaker = default_speaker or owner_name
@@ -163,6 +170,7 @@ def extract_textline_sections(
             for syn_name, syn_data in variants.items():
                 _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
+    _apply_force_play_once(sections, force_play_once)
     return sections
 
 

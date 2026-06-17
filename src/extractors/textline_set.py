@@ -113,6 +113,19 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
 
 
+def _apply_force_play_once(sections: dict, force_play_once: bool) -> None:
+    """Mark every textline in ``sections`` ``playOnce`` when
+    ``force_play_once`` is set. Used for inspect-point narration, which
+    is consumed once in-game even though the source tables omit the
+    ``PlayOnce`` field. No-op when the flag is False.
+    """
+    if not force_play_once:
+        return
+    for section in sections.values():
+        for tl in section.values():
+            tl["playOnce"] = True
+
+
 def extract_textline_sections(
     owner_name: str,
     owner_table: LuaTable,
@@ -125,6 +138,7 @@ def extract_textline_sections(
     cue_speaker_resolver=None,
     offer_text_map: dict = None,
     preset_choices: dict = None,
+    force_play_once: bool = False,
 ) -> dict:
     """Extract every textline-set section from a single owner table.
 
@@ -184,6 +198,11 @@ def extract_textline_sections(
     ``Choices = PresetEventArgs.EurydiceBenefitChoices``. Our Lua
     parser can't follow the reference across the file, so without
     this map those cues would render without their A/B/C choice list.
+
+    `force_play_once`, when True, marks every extracted textline
+    ``playOnce`` regardless of the source ``PlayOnce`` field. The
+    inspect-point extractors set it: inspect-point narration is consumed
+    once in-game even though the tables omit the flag.
     """
     sections = {}
     fallback_speaker = default_speaker or owner_name
@@ -222,6 +241,7 @@ def extract_textline_sections(
                     syn_data["narrativePrioritySectionTier"] = section_tier
                 _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
+    _apply_force_play_once(sections, force_play_once)
     return sections
 
 
