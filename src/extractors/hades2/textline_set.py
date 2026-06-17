@@ -64,7 +64,7 @@ the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 import re
 
 from ...lua_parser import LuaTable
-from ..textline_set import _apply_force_play_once
+from ..textline_set import apply_force_play_once
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
@@ -170,7 +170,7 @@ def extract_textline_sections(
             for syn_name, syn_data in variants.items():
                 _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
-    _apply_force_play_once(sections, force_play_once)
+    apply_force_play_once(sections, force_play_once)
     return sections
 
 

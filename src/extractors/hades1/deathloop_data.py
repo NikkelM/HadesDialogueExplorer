@@ -38,6 +38,7 @@ from ..textline_set import (
     extract_textline_sections,
     collect_local_requirements,
     merge_ancestor_requirements,
+    is_inspect_point,
 )
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
@@ -232,7 +233,7 @@ def _walk_owners(node, path=(), ancestor_reqs=None):
         ancestor_reqs = own_reqs
 
     if _has_textline_section(node):
-        yield _owner_name_for(path), node, _default_speaker_for(path), ancestor_reqs, _is_inspect_point(path)
+        yield _owner_name_for(path), node, _default_speaker_for(path), ancestor_reqs, is_inspect_point(path)
 
     parent_name = path[-1][1] if (path and path[-1][0] == "named") else None
 
@@ -319,15 +320,3 @@ def _default_speaker_for(path) -> str:
             _, _, parent_name = segment
             return IDMAP_PARENT_OWNER_OVERRIDES.get(parent_name)
     return None
-
-
-def _is_inspect_point(path) -> bool:
-    """True when the owner came from an ``InspectPoints`` idmap collapse
-    (mirrors :func:`_owner_name_for`). Inspect-point narration is
-    consumed once in-game, so these textlines are force-marked
-    ``playOnce`` even though the source tables omit the flag.
-    """
-    for segment in reversed(path):
-        if segment[0] == "idmap":
-            return segment[2] == "InspectPoints"
-    return False

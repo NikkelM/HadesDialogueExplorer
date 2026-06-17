@@ -113,7 +113,7 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
 
 
-def _apply_force_play_once(sections: dict, force_play_once: bool) -> None:
+def apply_force_play_once(sections: dict, force_play_once: bool) -> None:
     """Mark every textline in ``sections`` ``playOnce`` when
     ``force_play_once`` is set. Used for inspect-point narration, which
     is consumed once in-game even though the source tables omit the
@@ -124,6 +124,22 @@ def _apply_force_play_once(sections: dict, force_play_once: bool) -> None:
     for section in sections.values():
         for tl in section.values():
             tl["playOnce"] = True
+
+
+def is_inspect_point(path) -> bool:
+    """True when a DeathLoop / EncounterRoom walker ``path`` resolves its
+    owner through the ``InspectPoints`` idmap collapse - i.e. the
+    innermost ``("idmap", id, parent_name)`` segment's parent map is
+    ``InspectPoints``. Inspect-point narration is consumed once in-game,
+    so the walkers pass ``force_play_once`` for these owners even though
+    the source tables omit the ``PlayOnce`` flag. Shared by the H1
+    deathloop / encounter and H2 encounter walkers, which use the same
+    path-segment convention.
+    """
+    for segment in reversed(path):
+        if segment[0] == "idmap":
+            return segment[2] == "InspectPoints"
+    return False
 
 
 def extract_textline_sections(
@@ -241,7 +257,7 @@ def extract_textline_sections(
                     syn_data["narrativePrioritySectionTier"] = section_tier
                 _merge_synthetic(section, syn_name, syn_data)
         sections[key] = section
-    _apply_force_play_once(sections, force_play_once)
+    apply_force_play_once(sections, force_play_once)
     return sections
 
 
