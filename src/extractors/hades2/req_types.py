@@ -48,10 +48,12 @@ Two vocabulary tiers coexist in the same label maps:
 2. **H1 synthetic textline-dependency fields** (the
    ``HADES2_TEXTLINE_DEPENDENCY_FIELDS`` set). H2's req extractor
    re-keys ``HasAll`` / ``HasAny`` / ``HasNone`` records against
-   ``GameState.TextLinesRecord`` (and friends) into these 12 H1 field
+   ``GameState.TextLinesRecord`` (and friends) into 12 of these H1 field
    names so the graph builder produces dialogue dependency edges
    uniformly across both games (see :data:`_TEXTLINE_PATH_PREFIXES`
-   in :mod:`.req_extractor`). The label entries for those 12 keys are
+   in :mod:`.req_extractor`); the remaining two (the run-count
+   thresholds) are synthesised from ``RequireRunsSinceTextLines`` calls.
+   The label entries for all of these keys are
    imported verbatim from :mod:`src.extractors.hades1.req_types` so
    the viewer reads identical headers / tooltips / chips for
    identical semantics in both games. Adding a new textline path

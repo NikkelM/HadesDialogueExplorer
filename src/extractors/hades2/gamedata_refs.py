@@ -10,12 +10,12 @@ row tooltip so a reader hovering on a ``CountOf: GameData.X`` row sees
 the actual contents of that table.
 
 This module reads the small set of source files that define those
-tables (``NarrativeData.lua``, ``QuestData.lua``, ``RunData.lua``) and
-returns ``{full.identifier.name: normalised-value}`` for every top-
-level assignment whose name matches one of the registry roots. The
-extracted values use the same ``<ref:...>`` / ``<expr:...>`` placeholder
-shape as ``otherRequirements`` so nested references resolve uniformly
-on the viewer side.
+tables (``NarrativeData.lua``, ``QuestData.lua``, ``RunData.lua``,
+``ShrineData.lua``) and returns ``{full.identifier.name: normalised-value}``
+for every top-level assignment whose name matches one of the registry
+roots. The extracted values use the same ``<ref:...>`` / ``<expr:...>``
+placeholder shape as ``otherRequirements`` so nested references resolve
+uniformly on the viewer side.
 """
 
 from pathlib import Path

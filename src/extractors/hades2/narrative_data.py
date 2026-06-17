@@ -197,13 +197,13 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
     narrative_data = parsed.get("NarrativeData") if isinstance(parsed, (dict, LuaTable)) else None
     if narrative_data is None:
         return result
-    owners = narrative_data.items() if isinstance(narrative_data, LuaTable) else narrative_data.items()
+    owners = narrative_data.items()
     for owner_id, owner_data in owners:
         if not isinstance(owner_id, str):
             continue
         if not isinstance(owner_data, (dict, LuaTable)):
             continue
-        sections_iter = owner_data.items() if isinstance(owner_data, LuaTable) else owner_data.items()
+        sections_iter = owner_data.items()
         owner_out: Dict[str, Dict[str, dict]] = {}
         for priority_key, priority_list in sections_iter:
             if not isinstance(priority_key, str):

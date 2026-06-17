@@ -74,7 +74,7 @@ class TestStrictPerGameSeparation:
         assert sample in _annotated("hades1")["sectionKeyLabels"]
 
     def test_hades1_section_keys_absent_from_hades2(self):
-        # H1 has unique section keys (e.g. ``GreetingTextLineSets``); a
+        # H1 has unique section keys (e.g. ``OnTrophyUnlockedTextLineSets``); a
         # disjoint sample exists - find one and confirm it's not in H2.
         h2_keys = set(HADES2_SECTION_KEY_LABELS)
         disjoint = [k for k in HADES1_SECTION_KEY_LABELS if k not in h2_keys]
@@ -107,7 +107,7 @@ class TestStrictPerGameSeparation:
 
     def test_hades1_req_labels_disjoint_from_hades2(self):
         # H1's H1-only fields (counts, room-scoped, ANY-other, etc.)
-        # must never appear in H2's reqTypeLabels. The 12 textline-
+        # must never appear in H2's reqTypeLabels. The 14 textline-
         # dependency fields in HADES2_TEXTLINE_DEPENDENCY_FIELDS are
         # the DELIBERATE shared subset (H2's extractor re-keys
         # textline records into those H1 field names so dialogue
@@ -120,7 +120,7 @@ class TestStrictPerGameSeparation:
 
     def test_hades2_req_labels_disjoint_from_hades1(self):
         # H2's operator vocabulary (HasAny / HasNone / Path* / ...)
-        # must never appear in H1's reqTypeLabels. The 12 borrowed
+        # must never appear in H1's reqTypeLabels. The 14 borrowed
         # textline-dependency fields are exempt (same rationale as
         # above - they're H1 field names borrowed by H2).
         annotated_h1 = _annotated("hades1")["reqTypeLabels"]
