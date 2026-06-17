@@ -115,13 +115,27 @@ export function filterDuplicates(filter) {
 }
 
 // Search input handler for the duplicates view. Preserves the current
-// filter chip selection.
+// filter chip selection. Performs an immediate table-only re-render
+// (so the input retains focus) and debounces the URL hash update so
+// the URL stays bookmarkable once typing stops.
+let _dupSearchTimer = null;
 export function searchDuplicates(query) {
     const state = parseUrlState(window.location.hash);
-    navigateToDuplicates({
-        filter: canonicaliseDuplicatesFilter(state.filter),
-        q: query,
-    });
+    const filter = canonicaliseDuplicatesFilter(state.filter);
+
+    // Immediate re-render: table-only path preserves the input element.
+    renderDuplicates({ filter, q: query, _tableOnly: true });
+
+    // Debounced URL sync (300ms after last keystroke). Only updates
+    // the hash without re-rendering - the view is already current.
+    if (_dupSearchTimer !== null) clearTimeout(_dupSearchTimer);
+    _dupSearchTimer = setTimeout(() => {
+        _dupSearchTimer = null;
+        const fullState = { game: getActiveGame(), view: 'duplicates', filter, q: query };
+        const serialized = serializeUrlState(fullState);
+        urlSelection = serialized;
+        window.location.hash = serialized;
+    }, 300);
 }
 
 // Switch the viewer to a different game: swap every per-game data

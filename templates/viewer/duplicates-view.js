@@ -25,6 +25,10 @@ export function canonicaliseDuplicatesFilter(value) {
 // Render the full duplicates view into the given container element.
 // ``opts.filter`` and ``opts.q`` are the URL-supplied filter + search
 // strings (already canonicalised by the navigation layer).
+//
+// When ``opts._tableOnly`` is true, only the table and count badge are
+// refreshed (the controls and search input stay intact in the DOM) so
+// the input retains focus during live typing.
 export function renderDuplicates(opts) {
     const container = document.getElementById('info-content');
     if (!container) return;
@@ -55,6 +59,24 @@ export function renderDuplicates(opts) {
     const totalCount = (duplicates || []).length;
     const h1Label = (gameLabels && gameLabels.hades1) || 'Hades';
     const h2Label = (gameLabels && gameLabels.hades2) || 'Hades II';
+
+    // Fast path: only replace the table + count when the input is active.
+    if (opts && opts._tableOnly) {
+        const tableWrap = container.querySelector('.duplicates-table-wrap')
+            || container.querySelector('.duplicates-empty');
+        const countEl = container.querySelector('.duplicates-count');
+        if (tableWrap) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = renderTable(items, h1Label, h2Label);
+            tableWrap.replaceWith(tmp.firstElementChild || tmp.firstChild);
+        }
+        if (countEl) {
+            countEl.textContent = items.length === totalCount
+                ? `${totalCount}`
+                : `${items.length} / ${totalCount}`;
+        }
+        return;
+    }
 
     const headerHtml = `<header class="duplicates-header">`
         + `<h3>Cross-game duplicate dialogue names</h3>`
