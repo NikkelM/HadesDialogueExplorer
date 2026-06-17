@@ -260,7 +260,6 @@ function renderTreeNode(name, childrenOf, chain, visited, depth) {
         if (!info) continue;
 
         const playedClass = info.played ? 'tree-played' : 'tree-unplayed';
-        const icon = info.played ? '\u2714' : '\u2022';
         const tl = textlines[child.name];
         const ownerEntry = tl ? speakers[tl.owner] : null;
         const ownerLabel = ownerEntry?.name || (tl ? tl.owner.replace('NPC_', '').replace('_01', '') : '');
