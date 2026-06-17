@@ -5,10 +5,10 @@ showing which prerequisite chains are still needed for that dialogue to
 become eligible.
 
 Usage (CLI):
-    python api.py <save_file> <dialogue_name> [--game hades1|hades2]
+    python api.py check <save_file> <dialogue_name> [--game hades1|hades2]
 
 Usage (HTTP server):
-    python api.py --serve [--port 8081]
+    python api.py serve [--port 8081]
 
     POST /eligibility
     Content-Type: multipart/form-data
@@ -42,19 +42,43 @@ import sys
 from pathlib import Path
 
 from src.save_parser import parse_save, extract_text_lines_record
+from src.extractors.textline_set import REQUIREMENT_BLOCKING_SEMANTICS
 
-# Requirement type classifications (mirrors eligibility-view.js)
-AND_REQ_TYPES = {
-    "RequiredTextLines",
-    "RequiredTextLinesThisRun",
-    "RequiredQueuedTextLines",
-}
-OR_REQ_TYPES = {
-    "RequiredAnyTextLines",
-    "RequiredAnyTextLinesLastRun",
-    "RequiredAnyQueuedTextLines",
-    "RequiredAnyOtherTextLines",
-}
+# Requirement-type classifications, derived from the generator's single
+# source of truth (``REQUIREMENT_BLOCKING_SEMANTICS``) so the API can never
+# silently drift from the data pipeline's semantics. The shared viewer copy
+# lives in ``templates/viewer/requirements.js`` and is parity-checked
+# against the same map by ``tests/test_requirement_semantics_parity.py``.
+AND_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "all"}
+OR_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "any"}
+NEGATIVE_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "none"}
+
+
+def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> bool:
+    """Return True if every *direct* requirement of ``textline`` is satisfied
+    by ``played_set``.
+
+    Shallow by design (immediate requirements only): this is the
+    eligible/blocked decision. AND fields need all refs played, OR fields
+    need at least one, negative (``RequiredFalse*``) fields need none.
+    Count/cooldown fields depend on run counts the save can't resolve and
+    are treated as satisfied (the tracer documents them as out of scope).
+    ``name`` is the dialogue's own name, used to ignore self-references.
+    """
+    for req_type, refs in (textline.get("requirements") or {}).items():
+        if not isinstance(refs, list):
+            continue
+        others = [r for r in refs if isinstance(r, str) and r != name]
+        if req_type in AND_REQ_TYPES:
+            if not all(r in played_set for r in others):
+                return False
+        elif req_type in OR_REQ_TYPES:
+            if others and not any(r in played_set for r in others):
+                return False
+        elif req_type in NEGATIVE_REQ_TYPES:
+            if any(r in played_set for r in others):
+                return False
+    return True
 
 
 def load_game_data(data_path: Path = None) -> dict:
@@ -192,11 +216,23 @@ def check_eligibility(
         Structured dict with eligibility information.
     """
     save_bytes = Path(save_path).read_bytes()
+    all_data = load_game_data(data_path)
+    return _assemble_result(save_bytes, dialogue_name, game, all_data)
+
+
+def _assemble_result(
+    save_bytes: bytes, dialogue_name: str, game: str, all_data: dict
+) -> dict:
+    """Parse ``save_bytes`` and build the eligibility result for
+    ``dialogue_name``.
+
+    Shared by the CLI (:func:`check_eligibility`) and the HTTP server so the
+    status logic and result shape live in exactly one place. Returns an
+    ``{"error": ...}`` dict for unknown games / dialogues.
+    """
     save_data = parse_save(save_bytes)
     played_set = extract_text_lines_record(save_data)
     detected_game = save_data["gameId"]
-
-    all_data = load_game_data(data_path)
 
     # For H2 saves, also check H1 dialogues (Biomes mod support)
     target_game = game or detected_game
@@ -215,26 +251,13 @@ def check_eligibility(
         else:
             return {"error": f"Dialogue '{dialogue_name}' not found in game data"}
 
-    # Determine status
+    # Determine status from the direct requirements (AND / OR / negative).
     if dialogue_name in played_set:
         status = "played"
+    elif is_directly_satisfied(textlines[dialogue_name], played_set, dialogue_name):
+        status = "eligible"
     else:
-        # Check if all direct AND reqs are met
-        tl = textlines[dialogue_name]
-        reqs = tl.get("requirements", {})
-        blocked = False
-        for req_type, refs in reqs.items():
-            if not isinstance(refs, list):
-                continue
-            if req_type in AND_REQ_TYPES:
-                if any(ref not in played_set for ref in refs if ref != dialogue_name):
-                    blocked = True
-                    break
-            elif req_type in OR_REQ_TYPES:
-                if not any(ref in played_set for ref in refs if ref != dialogue_name):
-                    blocked = True
-                    break
-        status = "blocked" if blocked else "eligible"
+        status = "blocked"
 
     chain = build_prereq_chain(dialogue_name, textlines, played_set)
 
@@ -323,75 +346,12 @@ def run_server(port: int):
                 return
 
             try:
-                save_data = parse_save(save_bytes)
-                played_set = extract_text_lines_record(save_data)
-                detected_game = save_data["gameId"]
-
-                target_game = game or detected_game
-                textlines = all_data["games"].get(target_game, {}).get("textlines", {})
-
-                if not textlines:
-                    self._json_response({"error": f"No data for '{target_game}'"}, 400)
-                    return
-
-                if dialogue not in textlines:
-                    other = "hades2" if target_game == "hades1" else "hades1"
-                    other_tls = all_data["games"].get(other, {}).get("textlines", {})
-                    if dialogue in other_tls:
-                        textlines = other_tls
-                        target_game = other
-                    else:
-                        self._json_response({"error": f"'{dialogue}' not found"}, 404)
-                        return
-
-                if dialogue in played_set:
-                    status = "played"
+                result = _assemble_result(save_bytes, dialogue, game, all_data)
+                if "error" in result:
+                    code = 404 if "not found" in result["error"] else 400
+                    self._json_response(result, code)
                 else:
-                    tl = textlines[dialogue]
-                    reqs = tl.get("requirements", {})
-                    blocked = False
-                    for rt, refs in reqs.items():
-                        if not isinstance(refs, list):
-                            continue
-                        if rt in AND_REQ_TYPES:
-                            if any(r not in played_set for r in refs if r != dialogue):
-                                blocked = True
-                                break
-                        elif rt in OR_REQ_TYPES:
-                            if not any(r in played_set for r in refs if r != dialogue):
-                                blocked = True
-                                break
-                    status = "blocked" if blocked else "eligible"
-
-                chain = build_prereq_chain(dialogue, textlines, played_set)
-                played_count = sum(1 for v in chain.values() if v["played"])
-                unplayed = [
-                    {
-                        "name": name,
-                        "owner": textlines.get(name, {}).get("owner", "unknown"),
-                        "depth": info["depth"],
-                        "reqTypes": list({p["reqType"] for p in info["parents"]}),
-                        "neededBy": [p["name"] for p in info["parents"]],
-                    }
-                    for name, info in chain.items()
-                    if not info["played"]
-                ]
-                unplayed.sort(key=lambda x: -x["depth"])
-                tree = build_tree(dialogue, chain)
-
-                result = {
-                    "dialogue": dialogue,
-                    "game": target_game,
-                    "saveGame": detected_game,
-                    "completedRuns": save_data["completedRuns"],
-                    "status": status,
-                    "totalPrereqs": len(chain),
-                    "playedPrereqs": played_count,
-                    "unplayedPrereqs": len(chain) - played_count,
-                    "unplayed": unplayed,
-                    "tree": tree,
-                }
-                self._json_response(result)
+                    self._json_response(result)
 
             except Exception as e:
                 self._json_response({"error": str(e)}, 500)

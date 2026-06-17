@@ -10,6 +10,7 @@
  */
 
 import { getActiveGame } from './data.js';
+import { isDirectlySatisfied } from './requirements.js';
 
 // Game version constants
 const GAME_VERSION_HADES1 = 0x10;
@@ -245,21 +246,9 @@ export function isDialoguePlayed(name) {
 export function getDialogueStatus(name, textlineData) {
   if (!_saveProgress) return null;
   if (_saveProgress.has(name)) return 'played';
-
-  // Check if all requirements are met (eligible) or some are missing (blocked)
-  const reqs = textlineData.requirements;
-  if (!reqs) return 'eligible';
-
-  for (const reqType of Object.keys(reqs)) {
-    const entries = reqs[reqType];
-    if (!Array.isArray(entries)) continue;
-    for (const ref of entries) {
-      if (typeof ref === 'string' && !_saveProgress.has(ref)) {
-        return 'blocked';
-      }
-    }
-  }
-  return 'eligible';
+  // Respect per-type requirement semantics (AND / OR / negative) rather
+  // than treating every referenced line as a hard prerequisite.
+  return isDirectlySatisfied(textlineData, _saveProgress, name) ? 'eligible' : 'blocked';
 }
 
 export function validateSaveFilename(filename) {

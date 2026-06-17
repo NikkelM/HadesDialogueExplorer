@@ -13,21 +13,13 @@
 import { textlines, speakers } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass } from './utilities.js';
 import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES } from './requirements.js';
 
-// Requirement types that represent hard AND prerequisites (all must be played).
-const AND_REQ_TYPES = new Set([
-    'RequiredTextLines',
-    'RequiredTextLinesThisRun',
-    'RequiredQueuedTextLines',
-]);
-
-// Requirement types that represent OR prerequisites (any one suffices).
-const OR_REQ_TYPES = new Set([
-    'RequiredAnyTextLines',
-    'RequiredAnyTextLinesLastRun',
-    'RequiredAnyQueuedTextLines',
-    'RequiredAnyOtherTextLines',
-]);
+// AND_REQ_TYPES / OR_REQ_TYPES come from ./requirements.js (the single
+// source of truth shared with the save-progress badge). Negative
+// (RequiredFalse*) and count/cooldown fields are intentionally not walked
+// here: the tracer surfaces positive prerequisite chains, not blocking
+// conditions.
 
 // Types we skip: negative requirements (must NOT have played), cooldowns,
 // and count-based gates (not dialogue prerequisites).
