@@ -511,8 +511,9 @@ class TestFindUnattachedPriorityGroups:
 class TestRealData:
     """Smoke-test against the real ``NarrativeData.lua``."""
 
+    @classmethod
     @pytest.fixture(scope="class")
-    def priorities(self):
+    def priorities(cls):
         # Import locally so the fixture file can be missing on dev
         # machines without breaking module-level import of the test
         # module (which other classes' tests still rely on).
