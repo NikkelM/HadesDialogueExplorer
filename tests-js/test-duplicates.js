@@ -4,7 +4,7 @@
 import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { renderDuplicates, canonicaliseDuplicatesFilter } from '../templates/viewer/duplicates-view.js';
+import { renderDuplicates } from '../templates/viewer/duplicates-view.js';
 import { renderInfo, resetDuplicateNameSet } from '../templates/viewer/info-panel.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -101,52 +101,27 @@ beforeEach(() => {
     lastHtml = '';
 });
 
-// --- canonicaliseDuplicatesFilter ---
-
-test('canonicaliseDuplicatesFilter maps known values through', () => {
-    assert.equal(canonicaliseDuplicatesFilter('all'), 'all');
-    assert.equal(canonicaliseDuplicatesFilter('same'), 'same');
-    assert.equal(canonicaliseDuplicatesFilter('diff'), 'diff');
-});
-
-test('canonicaliseDuplicatesFilter defaults unknowns to "all"', () => {
-    assert.equal(canonicaliseDuplicatesFilter(''), 'all');
-    assert.equal(canonicaliseDuplicatesFilter(null), 'all');
-    assert.equal(canonicaliseDuplicatesFilter(undefined), 'all');
-    assert.equal(canonicaliseDuplicatesFilter('garbage'), 'all');
-});
-
 // --- renderDuplicates ---
 
-test('renderDuplicates shows the duplicates table with the shared textline', () => {
-    renderDuplicates({ filter: 'all', q: '' });
+test('renderDuplicates shows master-detail view with the shared textline', () => {
+    renderDuplicates({ q: '' });
     assert.match(lastHtml, /SharedDialogue01/);
-    assert.match(lastHtml, /ZeusUpgrade/);
-    assert.match(lastHtml, /duplicates-table/);
-});
-
-test('renderDuplicates filter=same shows only same-owner rows', () => {
-    renderDuplicates({ filter: 'same', q: '' });
-    // SharedDialogue01 has same owner in both games.
-    assert.match(lastHtml, /SharedDialogue01/);
-});
-
-test('renderDuplicates filter=diff shows empty when all dupes have same owner', () => {
-    renderDuplicates({ filter: 'diff', q: '' });
-    assert.match(lastHtml, /duplicates-empty/);
+    assert.match(lastHtml, /Zeus/);
+    assert.match(lastHtml, /duplicates-md/);
+    assert.match(lastHtml, /duplicates-speaker-item/);
+    assert.match(lastHtml, /duplicates-detail/);
 });
 
 test('renderDuplicates text search filters by name', () => {
-    renderDuplicates({ filter: 'all', q: 'shared' });
+    renderDuplicates({ q: 'shared' });
     assert.match(lastHtml, /SharedDialogue01/);
-    renderDuplicates({ filter: 'all', q: 'nonexistent' });
+    renderDuplicates({ q: 'nonexistent' });
     assert.match(lastHtml, /duplicates-empty/);
 });
 
-test('renderDuplicates shows correct game labels in table header', () => {
-    renderDuplicates({ filter: 'all', q: '' });
-    assert.match(lastHtml, /Hades owner/);
-    assert.match(lastHtml, /Hades II owner/);
+test('renderDuplicates text search filters by speaker name', () => {
+    renderDuplicates({ q: 'zeus' });
+    assert.match(lastHtml, /SharedDialogue01/);
 });
 
 // --- cross-game badge on textline detail ---

@@ -1,4 +1,4 @@
-/* Cross-game duplicates view. */
+/* Cross-game duplicates view - speaker master / dialogue detail layout. */
 
 .duplicates-view {
     padding: 0.5rem 0;
@@ -23,45 +23,6 @@
     margin-bottom: 1rem;
 }
 
-.duplicates-filter-row {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.6rem;
-}
-
-.duplicates-filter-row .filter-chip {
-    padding: 0.25rem 0.6rem;
-    border: 1px solid var(--border-color, #444);
-    border-radius: 1rem;
-    background: transparent;
-    color: var(--text-color, #ccc);
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background 0.15s, border-color 0.15s;
-}
-
-.duplicates-filter-row .filter-chip:hover {
-    border-color: var(--accent-color, #58a6ff);
-}
-
-.duplicates-filter-row .filter-chip.is-active {
-    background: var(--accent-color, #58a6ff);
-    border-color: var(--accent-color, #58a6ff);
-    color: #fff;
-}
-
-.duplicates-count {
-    margin-left: 0.5rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-}
-
-.duplicates-search-row {
-    margin-top: 0.4rem;
-}
-
 .duplicates-search {
     width: 100%;
     max-width: 400px;
@@ -82,47 +43,111 @@
     margin-top: 1rem;
 }
 
-.duplicates-table-wrap {
-    overflow-x: auto;
+/* Master-detail: speaker list on the left, the selected speaker's
+   shared dialogues on the right. */
+.duplicates-md {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    align-items: start;
+    gap: 1.2rem;
 }
 
-.duplicates-table {
+/* Speaker master list */
+.duplicates-speakers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.duplicates-speaker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
     width: 100%;
-    border-collapse: collapse;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color, #e0e0e0);
     font-size: 0.85rem;
-}
-
-.duplicates-table th,
-.duplicates-table td {
     text-align: left;
-    padding: 0.35rem 0.6rem;
-    border-bottom: 1px solid var(--border-color, #333);
-    white-space: nowrap;
+    cursor: pointer;
 }
 
-.duplicates-table th {
-    position: sticky;
-    top: 0;
-    background: var(--panel-bg, #1e1e1e);
+.duplicates-speaker-item:hover {
+    background: #16213e;
+}
+
+.duplicates-speaker-item.is-active {
+    background: #0f3460;
+    border-color: var(--accent-color, #58a6ff);
+}
+
+.duplicates-speaker-name {
     font-weight: 600;
-    color: var(--text-color, #ccc);
 }
 
-.duplicates-table td code {
+.duplicates-speaker-count {
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.1rem 0.45rem;
+    border-radius: 8px;
+}
+
+.duplicates-speaker-item.is-active .duplicates-speaker-count {
+    color: var(--text-color, #e0e0e0);
+}
+
+/* Detail pane: the selected speaker's shared dialogues, tiled across
+   the available width. */
+.duplicates-detail-title {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+}
+
+.duplicates-detail-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    align-items: start;
+    gap: 0.3rem 0.8rem;
+}
+
+.duplicates-entry {
+    display: grid;
+    grid-template-columns: max-content auto auto;
+    align-items: center;
+    justify-content: start;
+    column-gap: 0.25rem;
+}
+
+.duplicates-name {
+    display: inline-block;
+    width: var(--dup-name-col, max-content);
     font-size: 0.8rem;
-    color: var(--code-color, #79c0ff);
+    font-family: monospace;
+    color: var(--text-color, #e0e0e0);
 }
 
-.duplicates-table .textline-link {
+.duplicates-game-link {
+    font-size: 0.7rem;
     color: var(--link-color, #58a6ff);
     cursor: pointer;
     text-decoration: none;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--border-color, #333);
+    border-radius: 3px;
+    background: transparent;
+    text-align: center;
 }
 
-.duplicates-table .textline-link:hover {
-    text-decoration: underline;
+.duplicates-game-link:hover {
+    background: #0f3460;
+    border-color: var(--accent-color, #58a6ff);
 }
 
-.duplicates-diff-owner {
-    background: rgba(255, 166, 87, 0.08);
+/* Keep the wider name-to-pill gap while the two game pills sit close together. */
+.duplicates-entry > .duplicates-game-link:first-of-type {
+    margin-left: 0.35rem;
 }

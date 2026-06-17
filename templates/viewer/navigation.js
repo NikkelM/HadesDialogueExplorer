@@ -13,7 +13,7 @@
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseSort } from './speaker-view.js';
-import { renderDuplicates, canonicaliseDuplicatesFilter } from './duplicates-view.js';
+import { renderDuplicates } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
 import { setActiveGame, getActiveGame, resolveGame, speakers } from './data.js';
@@ -94,10 +94,9 @@ export function sortSpeakerTextlines(speakerId, sort) {
 }
 
 // Navigate to the cross-game duplicates view. Preserves existing
-// filter/query state when called without arguments.
+// query state when called without arguments.
 export function navigateToDuplicates(opts) {
     const state = { view: 'duplicates' };
-    if (opts && opts.filter) state.filter = opts.filter;
     if (opts && opts.q) state.q = opts.q;
     navigateToState(state);
 }
@@ -107,31 +106,20 @@ export function navigateToEligibility(dialogueName) {
     navigateToState({ view: 'eligibility', dialogue: dialogueName });
 }
 
-// Filter-chip click target for the duplicates view. Preserves the
-// current search query.
-export function filterDuplicates(filter) {
-    const state = parseUrlState(window.location.hash);
-    navigateToDuplicates({ filter, q: state.q || '' });
-}
-
-// Search input handler for the duplicates view. Preserves the current
-// filter chip selection. Performs an immediate table-only re-render
-// (so the input retains focus) and debounces the URL hash update so
-// the URL stays bookmarkable once typing stops.
+// Search input handler for the duplicates view. Performs an immediate
+// table-only re-render (so the input retains focus) and debounces the
+// URL hash update so the URL stays bookmarkable once typing stops.
 let _dupSearchTimer = null;
 export function searchDuplicates(query) {
-    const state = parseUrlState(window.location.hash);
-    const filter = canonicaliseDuplicatesFilter(state.filter);
-
     // Immediate re-render: table-only path preserves the input element.
-    renderDuplicates({ filter, q: query, _tableOnly: true });
+    renderDuplicates({ q: query, _bodyOnly: true });
 
     // Debounced URL sync (300ms after last keystroke). Only updates
     // the hash without re-rendering - the view is already current.
     if (_dupSearchTimer !== null) clearTimeout(_dupSearchTimer);
     _dupSearchTimer = setTimeout(() => {
         _dupSearchTimer = null;
-        const fullState = { game: getActiveGame(), view: 'duplicates', filter, q: query };
+        const fullState = { game: getActiveGame(), view: 'duplicates', q: query };
         const serialized = serializeUrlState(fullState);
         urlSelection = serialized;
         window.location.hash = serialized;
@@ -233,7 +221,6 @@ function applyState(state) {
     if (view === 'duplicates') {
         applyLayoutMode('duplicates');
         renderDuplicates({
-            filter: canonicaliseDuplicatesFilter(state.filter),
             q: state.q || '',
         });
         const searchInput = document.getElementById('search');
