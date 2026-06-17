@@ -44,6 +44,7 @@ The tracer respects the game's actual requirement semantics:
 
 - **AND requirements** (`RequiredTextLines`, etc.) - all must be played
 - **OR requirements** (`RequiredAnyTextLines`, etc.) - any one suffices
+- **Count requirements** (`RequiredMinAnyTextLines`) - at least N of the listed lines must be played
 - **Negative requirements** (`RequiredFalseTextLines`, etc.) - skipped (blocking conditions, not prerequisites)
 
 ## Eligibility API

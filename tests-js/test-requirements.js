@@ -12,12 +12,14 @@ import { strict as assert } from 'node:assert';
 
 import {
     isDirectlySatisfied,
+    requiredCount,
     AND_REQ_TYPES,
     OR_REQ_TYPES,
     NEGATIVE_REQ_TYPES,
+    COUNT_MIN_REQ_TYPES,
 } from '../templates/viewer/requirements.js';
 
-const tl = (requirements) => ({ requirements });
+const tl = (requirements, otherRequirements) => ({ requirements, otherRequirements });
 const played = (...names) => new Set(names);
 
 test('a dialogue with no requirements is satisfied', () => {
@@ -51,10 +53,28 @@ test('a play-once self-referencing negative gate is eligible on an empty save', 
     assert.equal(isDirectlySatisfied(t, played(), 'Ending01'), true);
 });
 
-test('count and cooldown fields are treated as satisfied (out of scope)', () => {
-    assert.equal(isDirectlySatisfied(tl({ RequiredMinAnyTextLines: ['A', 'B'] }), played()), true);
+test('count-min: needs at least Count of the listed lines played', () => {
+    const t = tl(
+        { RequiredMinAnyTextLines: ['A', 'B', 'C'] },
+        { RequiredMinAnyTextLines: { Count: 2 } },
+    );
+    assert.equal(isDirectlySatisfied(t, played()), false);
+    assert.equal(isDirectlySatisfied(t, played('A')), false);
+    assert.equal(isDirectlySatisfied(t, played('A', 'B')), true);
+});
+
+test('count-min: defaults to a Count of 1 when otherRequirements is absent', () => {
+    const t = tl({ RequiredMinAnyTextLines: ['A', 'B'] });
+    assert.equal(requiredCount(t, 'RequiredMinAnyTextLines'), 1);
+    assert.equal(isDirectlySatisfied(t, played()), false);
+    assert.equal(isDirectlySatisfied(t, played('B')), true);
+});
+
+test('run-count and cooldown fields are treated as satisfied (out of scope)', () => {
+    assert.equal(COUNT_MIN_REQ_TYPES.has('MinRunsSinceAnyTextLines'), false);
     assert.equal(isDirectlySatisfied(tl({ MinRunsSinceAnyTextLines: ['A'] }), played()), true);
     assert.equal(isDirectlySatisfied(tl({ MaxRunsSinceAnyTextLines: ['A'] }), played()), true);
+    assert.equal(isDirectlySatisfied(tl({ RequiredMaxAnyTextLines: ['A', 'B'] }), played()), true);
 });
 
 test('mixed AND + negative requirements', () => {

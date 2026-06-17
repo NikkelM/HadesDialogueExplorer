@@ -43,6 +43,26 @@ export const NEGATIVE_REQ_TYPES = new Set([
     'RequiredFalseTextLinesThisRoom',
 ]);
 
+// "At least Count of these listed lines must have played" (Count lives in
+// otherRequirements[field].Count). The only count-based field that is
+// evaluable from a save's played set; the others (RequiredMaxAny*,
+// Min/MaxRunsSince*) depend on run counts the save doesn't carry.
+export const COUNT_MIN_REQ_TYPES = new Set([
+    'RequiredMinAnyTextLines',
+]);
+
+/**
+ * The ``Count`` parameter of a count-based requirement field (how many of
+ * the listed lines must have played), read from ``otherRequirements``.
+ * Defaults to 1 when absent.
+ */
+export function requiredCount(textlineData, reqType) {
+    const meta = textlineData
+        && textlineData.otherRequirements
+        && textlineData.otherRequirements[reqType];
+    return meta && typeof meta.Count === 'number' ? meta.Count : 1;
+}
+
 /**
  * Return true if every *direct* requirement of ``textlineData`` is
  * satisfied by ``playedSet`` (a Set of played textline names).
@@ -52,11 +72,11 @@ export const NEGATIVE_REQ_TYPES = new Set([
  * history is handled separately by the eligibility tracer.
  *
  * Per category: AND fields need all refs played, OR fields need at least
- * one, NEGATIVE fields need none. Count/cooldown fields
- * (``RequiredMin/MaxAny*``, ``Min/MaxRunsSince*``) depend on run counts
- * the save can't resolve and are treated as satisfied, matching the
- * tracer's documented scope. ``name`` is the dialogue's own name, used to
- * ignore the self-references a few play-once gates carry.
+ * one, NEGATIVE fields need none, and COUNT_MIN fields need at least their
+ * ``Count`` played. Run-count / cooldown fields (``RequiredMaxAny*``,
+ * ``Min/MaxRunsSince*``) depend on run counts the save can't resolve and are
+ * treated as satisfied. ``name`` is the dialogue's own name, used to ignore
+ * the self-references a few play-once gates carry.
  */
 export function isDirectlySatisfied(textlineData, playedSet, name) {
     const reqs = textlineData && textlineData.requirements;
@@ -72,9 +92,12 @@ export function isDirectlySatisfied(textlineData, playedSet, name) {
             if (others.length > 0 && !others.some(r => playedSet.has(r))) return false;
         } else if (NEGATIVE_REQ_TYPES.has(reqType)) {
             if (others.some(r => playedSet.has(r))) return false;
+        } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+            const playedCount = others.filter(r => playedSet.has(r)).length;
+            if (playedCount < requiredCount(textlineData, reqType)) return false;
         }
-        // Count-based / cooldown fields: not evaluable from the played set
-        // alone - treated as satisfied (see module docstring).
+        // Other count / cooldown fields (RequiredMaxAny*, Min/MaxRunsSince*)
+        // depend on run counts the save can't resolve - treated as satisfied.
     }
     return true;
 }

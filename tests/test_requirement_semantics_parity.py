@@ -39,14 +39,18 @@ def test_js_requirement_sets_match_canonical_map():
     assert _extract_js_set(text, "AND_REQ_TYPES") == _fields_with("all")
     assert _extract_js_set(text, "OR_REQ_TYPES") == _fields_with("any")
     assert _extract_js_set(text, "NEGATIVE_REQ_TYPES") == _fields_with("none")
+    assert _extract_js_set(text, "COUNT_MIN_REQ_TYPES") == _fields_with("count-min")
 
 
-def test_js_sets_exclude_count_based_fields():
+def test_js_evaluated_sets_exclude_run_count_fields():
+    # Run-count / cooldown fields (count-permissive) aren't evaluable from a
+    # save's played set, so they must appear in none of the four evaluated
+    # sets.
     text = _REQUIREMENTS_JS.read_text(encoding="utf-8")
     evaluated = (
         _extract_js_set(text, "AND_REQ_TYPES")
         | _extract_js_set(text, "OR_REQ_TYPES")
         | _extract_js_set(text, "NEGATIVE_REQ_TYPES")
+        | _extract_js_set(text, "COUNT_MIN_REQ_TYPES")
     )
-    count_fields = _fields_with("count-min") | _fields_with("count-permissive")
-    assert evaluated.isdisjoint(count_fields)
+    assert evaluated.isdisjoint(_fields_with("count-permissive"))

@@ -52,6 +52,19 @@ from src.extractors.textline_set import REQUIREMENT_BLOCKING_SEMANTICS
 AND_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "all"}
 OR_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "any"}
 NEGATIVE_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "none"}
+# "At least Count of these must have played" (Count lives in
+# otherRequirements); the only count-based field evaluable from the save's
+# played set.
+COUNT_MIN_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "count-min"}
+
+
+def _required_count(textline: dict, req_type: str) -> int:
+    """The ``Count`` parameter of a count-based field (read from
+    ``otherRequirements``), defaulting to 1 when absent."""
+    meta = (textline.get("otherRequirements") or {}).get(req_type)
+    if isinstance(meta, dict) and isinstance(meta.get("Count"), int):
+        return meta["Count"]
+    return 1
 
 
 def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> bool:
@@ -60,10 +73,12 @@ def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> 
 
     Shallow by design (immediate requirements only): this is the
     eligible/blocked decision. AND fields need all refs played, OR fields
-    need at least one, negative (``RequiredFalse*``) fields need none.
-    Count/cooldown fields depend on run counts the save can't resolve and
-    are treated as satisfied (the tracer documents them as out of scope).
-    ``name`` is the dialogue's own name, used to ignore self-references.
+    need at least one, negative (``RequiredFalse*``) fields need none, and
+    count-min (``RequiredMinAnyTextLines``) fields need at least their
+    ``Count`` played. Run-count / cooldown fields (``RequiredMaxAny*``,
+    ``Min/MaxRunsSince*``) depend on run counts the save can't resolve and
+    are treated as satisfied. ``name`` is the dialogue's own name, used to
+    ignore self-references.
     """
     for req_type, refs in (textline.get("requirements") or {}).items():
         if not isinstance(refs, list):
@@ -77,6 +92,10 @@ def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> 
                 return False
         elif req_type in NEGATIVE_REQ_TYPES:
             if any(r in played_set for r in others):
+                return False
+        elif req_type in COUNT_MIN_REQ_TYPES:
+            played_count = sum(1 for r in others if r in played_set)
+            if played_count < _required_count(textline, req_type):
                 return False
     return True
 
@@ -144,6 +163,20 @@ def build_prereq_chain(
                 if cheapest:
                     _add_to_chain(cheapest, name, req_type, depth)
                     walk(cheapest, depth + 1)
+
+            elif req_type in COUNT_MIN_REQ_TYPES:
+                # "At least Count of these must have played." Surface the
+                # unplayed options as needed prerequisites when the gate
+                # isn't met (leaf alternatives; not recursed, to keep the
+                # count group readable).
+                played_count = sum(
+                    1 for ref in refs if ref != name and ref in played_set
+                )
+                if played_count < _required_count(tl, req_type):
+                    for ref in refs:
+                        if ref == name or ref in played_set:
+                            continue
+                        _add_to_chain(ref, name, req_type, depth)
 
     def _add_to_chain(ref, parent_name, req_type, depth):
         if ref not in chain:

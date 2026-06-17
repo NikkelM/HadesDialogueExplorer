@@ -13,12 +13,13 @@
 import { textlines, speakers } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass } from './utilities.js';
 import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount } from './requirements.js';
 
-// AND_REQ_TYPES / OR_REQ_TYPES come from ./requirements.js (the single
-// source of truth shared with the save-progress badge). Negative
-// (RequiredFalse*) and count/cooldown fields are intentionally not walked
-// here: the tracer surfaces positive prerequisite chains, not blocking
+// AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
+// (the single source of truth shared with the save-progress badge), so the
+// tracer and the badge agree on what's satisfied. Negative (RequiredFalse*)
+// and run-count gates (Min/MaxRunsSince*, RequiredMaxAny*) are intentionally
+// not walked: the tracer surfaces positive prerequisite chains, not blocking
 // conditions.
 
 // Types we skip: negative requirements (must NOT have played), cooldowns,
@@ -73,8 +74,24 @@ function buildPrereqChain(rootName) {
                     addToChain(cheapest, name, reqType, depth);
                     walk(cheapest, depth + 1);
                 }
+            } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+                // "At least Count of these must have played." If the gate
+                // isn't met yet, surface the unplayed options as needed
+                // prerequisites (any of them counts toward the quota). Shown
+                // as leaf alternatives - we don't recurse into each option's
+                // own history, to keep the count group readable.
+                const playedCount = refs.filter(
+                    ref => ref !== name && isDialoguePlayed(ref) === true
+                ).length;
+                if (playedCount < requiredCount(tl, reqType)) {
+                    for (const ref of refs) {
+                        if (ref === name || isDialoguePlayed(ref) === true) continue;
+                        addToChain(ref, name, reqType, depth);
+                    }
+                }
             }
-            // Skip RequiredFalse*, MinRunsSince*, MaxRunsSince*, RequiredMin*, RequiredMax*
+            // Skip negative (RequiredFalse*) and run-count gates
+            // (Min/MaxRunsSince*, RequiredMaxAny*).
         }
     }
 
