@@ -79,9 +79,8 @@ export function renderDuplicates(opts) {
     }
 
     const headerHtml = `<header class="duplicates-header">`
-        + `<h3>Cross-game duplicate dialogue names</h3>`
-        + `<p class="duplicates-subtitle">${totalCount} textline names appear in both ${escapeHtml(h1Label)} and ${escapeHtml(h2Label)}. `
-        + `These shared names can cause collisions when porting mod content between games.</p>`
+        + `<h3>Duplicate dialogues</h3>`
+        + `<p class="duplicates-subtitle">${totalCount} textline names appear in both ${escapeHtml(h1Label)} and ${escapeHtml(h2Label)}.</p>`
         + `</header>`;
 
     const controlsHtml = renderControls(filter, query, items.length, totalCount);

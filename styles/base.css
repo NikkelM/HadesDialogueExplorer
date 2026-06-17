@@ -181,7 +181,7 @@ main {
 }
 #upstream-content::after,
 .layout-speaker #info-content::after {
-    content: 'Built with the assistance of generative AI. Game content belongs to Supergiant Games.';
+    content: 'Built with the assistance of generative AI. All game content belongs to Supergiant Games.';
     display: block;
     padding: 12px 20px;
     margin-top: auto;

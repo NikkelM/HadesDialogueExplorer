@@ -217,4 +217,4 @@ Node.js + npm are needed for the linter and the JS test runner; the viewer itsel
 ## Disclaimer
 
 This tool was built with the assistance of generative AI.
-Game content (dialogue text, character names, game data) belongs to Supergiant Games.
+All game content belongs to Supergiant Games.
