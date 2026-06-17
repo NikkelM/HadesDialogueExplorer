@@ -211,6 +211,11 @@ class Tokenizer:
                     elif esc == quote:
                         parts.append(quote)
                     else:
+                        # Numeric (``\065``), hex (``\xNN``), unicode
+                        # (``\u{...}``) and ``\z`` escapes are passed through
+                        # without their leading backslash rather than decoded:
+                        # none occur in either game's Lua, so decoding them
+                        # would be dead code.
                         parts.append(esc)
             elif ch == quote:
                 self.advance()
@@ -515,17 +520,10 @@ class LuaParser:
                 return LuaIdentifier(name)
             return LuaIdentifier(ident_tok.value)
 
-        # Unary minus for negative numbers
-        if tok.type == T_IDENT and tok.value == 'not':
-            self.advance()
-            val = self.parse_value()
-            return LuaExpression(f"not {val}")
-
-        # Handle negative numbers (minus sign)
-        # The tokenizer skips '-' as an operator, so negative numbers
-        # may appear as just a NUMBER token if preceded by the sign.
-        # If we get here with unexpected token, store as expression
-        if tok.type in (T_LPAREN,):
+        # Parenthesised expression - captured verbatim (we don't evaluate
+        # it; it just needs to round-trip through the parser without
+        # erroring).
+        if tok.type == T_LPAREN:
             raw = self._consume_balanced('(', ')')
             return LuaExpression(raw)
 
@@ -640,6 +638,13 @@ class LuaParser:
         Used to recover past constructs we don't care about (function
         definitions, control flow, standalone calls, etc.). A "boundary" is a
         non-keyword identifier followed by ``=`` or ``.`` at depth 0.
+
+        Limitation: only brace/paren/bracket nesting is tracked, not
+        ``function`` / ``if`` ... ``end`` blocks. An assignment *inside* a
+        top-level function or control body (e.g. ``local function F() G.x = 5
+        end``) would therefore be mistaken for a new top-level boundary.
+        Neither game's data defines top-level functions or control flow, so
+        this never triggers and the extra nesting tracking is omitted.
         """
         brace_depth = 0
         paren_depth = 0

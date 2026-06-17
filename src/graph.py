@@ -206,16 +206,7 @@ def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
     dependents = build_dependents(textlines)
     alternates = build_alternates(textlines)
 
-    all_referenced = set()
-    for tl_data in textlines.values():
-        for req_list in tl_data["requirements"].values():
-            all_referenced.update(req_list)
-        # H2 OR-branch textline edges also count as references for
-        # unresolved-ref reporting: an OR alternative pointing at a
-        # missing textline is just as broken as a base requirement.
-        for branch in tl_data.get("orBranches") or []:
-            for req_list in (branch.get("requirements") or {}).values():
-                all_referenced.update(req_list)
+    all_referenced = collect_referenced_textlines(textlines)
 
     stats = {
         "totalSpeakers": count_distinct_speakers(
@@ -563,6 +554,16 @@ def split_name_collisions(textlines: dict) -> dict:
         to_remove.append(name)
     for name in to_remove:
         del textlines[name]
+    # The synthetic sibling names (``Foo_1``, ``Foo_2`` ...) must not collide
+    # with a textline that already exists, or ``update`` would silently
+    # overwrite real data. No clash occurs in either game's data; fail loud
+    # if a future split ever produces one rather than dropping a textline.
+    clash = set(to_add) & set(textlines)
+    if clash:
+        raise ValueError(
+            f"split_name_collisions: synthetic sibling name(s) "
+            f"{sorted(clash)} already exist as textlines; refusing to overwrite."
+        )
     textlines.update(to_add)
     return textlines
 
@@ -596,6 +597,26 @@ def _entry_from_variant(canonical: dict, variant: dict, original_name: str,
     new_entry["collisionTotal"] = total
     new_entry["collisionSiblings"] = list(siblings)
     return new_entry
+
+
+def collect_referenced_textlines(textlines: dict) -> set:
+    """Collect every textline name referenced by any textline's requirements,
+    including those reached through H2 ``orBranches``.
+
+    Shared by :func:`build_graph_data` and
+    ``src.graph_merge.merge_graph_data`` so the per-source and merged
+    unresolved-ref accounting stay in lockstep: an OR alternative pointing
+    at a missing textline is just as broken as a base requirement, and both
+    passes must report it identically.
+    """
+    referenced = set()
+    for tl_data in textlines.values():
+        for req_list in (tl_data.get("requirements") or {}).values():
+            referenced.update(req_list)
+        for branch in tl_data.get("orBranches") or []:
+            for req_list in (branch.get("requirements") or {}).values():
+                referenced.update(req_list)
+    return referenced
 
 
 def build_dependents(textlines: dict) -> dict:

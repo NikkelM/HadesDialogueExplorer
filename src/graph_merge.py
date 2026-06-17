@@ -9,6 +9,7 @@ from src.graph import (
     count_distinct_speakers,
     build_dependents,
     build_alternates,
+    collect_referenced_textlines,
 )
 
 
@@ -93,16 +94,7 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     merged_dependents = build_dependents(merged_textlines)
     merged_alternates = build_alternates(merged_textlines)
 
-    all_referenced = set()
-    for tl_data in merged_textlines.values():
-        for req_list in tl_data.get("requirements", {}).values():
-            all_referenced.update(req_list)
-        # Include OR-branch textline edges in the unresolved-ref
-        # accounting so an OR alternative pointing at a missing
-        # textline is reported alongside base requirements.
-        for branch in tl_data.get("orBranches") or []:
-            for req_list in (branch.get("requirements") or {}).values():
-                all_referenced.update(req_list)
+    all_referenced = collect_referenced_textlines(merged_textlines)
 
     cross_file = [d for d in duplicates if d.get("scope") == "cross-file"]
     intra_file = [d for d in duplicates if d.get("scope") == "intra-file"]
