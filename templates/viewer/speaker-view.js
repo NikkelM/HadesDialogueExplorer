@@ -99,11 +99,6 @@ function priorityBucket(tl) {
     return 'plain';
 }
 
-// Tier rank used elsewhere in the view when ordering groups by
-// strength (super first, then priority, then plain). Kept here so the
-// canonical bucket order has one source of truth.
-const _TIER_RANK = { super: 0, priority: 1, plain: 2 };
-
 function filterPassesBucket(bucket, filter, game) {
     if (filter === 'all') return true;
     // H1-only: "priority" filter means "super OR priority" (i.e.

@@ -169,9 +169,6 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
 
     const label = document.createElement('div');
     label.className = 'tree-label';
-    label.dataset.name = name;
-    label.dataset.direction = direction;
-    label.dataset.ancestors = JSON.stringify([...ancestorPath]);
 
     const toggle = document.createElement('span');
     toggle.className = 'toggle';

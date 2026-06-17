@@ -504,7 +504,7 @@ function renderCrossGameBadgeHtml(name) {
     const active = getActiveGame();
     const otherGame = active === 'hades1' ? 'hades2' : 'hades1';
     const otherLabel = (gameLabels && gameLabels[otherGame]) || otherGame;
-    return ` <a class="cross-game-badge" title="Also exists in ${otherLabel} - click to navigate" `
+    return ` <a class="cross-game-badge" title="Also exists in ${escapeHtml(otherLabel)} - click to navigate" `
         + `onclick="event.stopPropagation(); navigateToState({game:${jsAttr(otherGame)}, view:'dialogue', dialogue:${jsAttr(name)}})">`
         + `\u21C4 ${escapeHtml(otherLabel)}</a>`;
 }
