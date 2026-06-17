@@ -87,6 +87,31 @@ class TestNumbers:
     def test_scientific_with_sign(self):
         assert types_values("1.5e-2") == [(T_NUMBER, 0.015)]
 
+    def test_negative_integer(self):
+        assert types_values("-5") == [(T_NUMBER, -5)]
+
+    def test_negative_float(self):
+        assert types_values("-2.5") == [(T_NUMBER, -2.5)]
+
+    def test_negative_leading_dot(self):
+        assert types_values("-.5") == [(T_NUMBER, -0.5)]
+
+    def test_negative_hex(self):
+        assert types_values("-0x10") == [(T_NUMBER, -16)]
+
+    def test_negative_scientific(self):
+        assert types_values("-1e3") == [(T_NUMBER, -1000.0)]
+
+    def test_binary_minus_with_spaces_is_not_a_number(self):
+        # ``a - b`` is subtraction, not a negative literal; the '-' is
+        # skipped as a bare operator so only the two identifiers remain.
+        assert types_values("a - b") == [(T_IDENT, "a"), (T_IDENT, "b")]
+
+    def test_double_dash_keeps_comment_precedence(self):
+        # The comment check must stay ahead of negative-number handling
+        # so ``--5`` is a comment line, not the number -5.
+        assert types_values("--5\n42") == [(T_NUMBER, 42)]
+
 
 class TestLiterals:
     def test_true(self):

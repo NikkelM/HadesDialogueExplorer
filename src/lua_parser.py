@@ -282,7 +282,25 @@ class Tokenizer:
                 self.advance()
                 return Token(T_LBRACKET, '[', line, col)
 
-            # Numbers (including negative handled at parse level)
+            # Negative number literals: a '-' immediately before a digit (or
+            # .digit) is a unary-minus literal - e.g. ``-5``, ``-2.5``, or a
+            # negative table key ``[-1]``. Keep the sign rather than dropping
+            # '-' as a bare operator below; otherwise ``Foo = -5`` parses to
+            # ``5`` and the key ``[-1]`` collapses onto ``[1]``. Binary
+            # subtraction in these data files is written with surrounding
+            # spaces (``a - b``), so it is not mis-read as a literal here.
+            if ch == '-' and self.pos + 1 < self.length and (
+                self.text[self.pos + 1].isdigit()
+                or (self.text[self.pos + 1] == '.'
+                    and self.pos + 2 < self.length
+                    and self.text[self.pos + 2].isdigit())
+            ):
+                self.advance()              # consume '-'
+                num_ch = self.advance()     # consume first digit / '.'
+                n = self._read_number(num_ch)
+                return Token(T_NUMBER, -n, line, col)
+
+            # Numbers
             if ch.isdigit() or (ch == '.' and self.pos + 1 < self.length and self.text[self.pos + 1].isdigit()):
                 self.advance()
                 n = self._read_number(ch)

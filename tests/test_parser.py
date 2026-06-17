@@ -43,6 +43,33 @@ class TestEmptyAndSimple:
         assert result == {"A.B.C": 1}
 
 
+class TestNegativeNumbers:
+    """Unary-minus literals must keep their sign and, as table keys, must
+    not collapse onto the positive key (the ``[-1]`` vs ``[1]`` collision)."""
+
+    def test_negative_int_assignment(self):
+        assert parse_file("X = -5") == {"X": -5}
+
+    def test_negative_float_assignment(self):
+        assert parse_file("X = -2.5") == {"X": -2.5}
+
+    def test_negative_value_in_table(self):
+        t = parse_value("{ Offset = -3, Angle = -1.5 }")
+        assert t.named["Offset"] == -3
+        assert t.named["Angle"] == -1.5
+
+    def test_negative_array_elements(self):
+        t = parse_value("{ -1, -2, 3 }")
+        assert t.array == [-1, -2, 3]
+
+    def test_negative_and_positive_keys_are_distinct(self):
+        # Before the tokenizer kept the sign, ``[-1]`` collapsed onto
+        # ``[1]`` (both stored as key "1"), silently overwriting one.
+        t = parse_value('{ [1] = "a", [-1] = "b" }')
+        assert t.named["1"] == "a"
+        assert t.named["-1"] == "b"
+
+
 class TestTables:
     def test_empty_table(self):
         t = parse_value("{}")
