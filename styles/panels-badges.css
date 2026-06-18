@@ -4,25 +4,27 @@
    hues for unresolved children, and warning red for blocked nodes. */
 
 /* PlayOnce / Repeatable indicator. Always renders one of the two
-   badges, pinned to the right edge of the details-panel header as the
-   last child of the `.h3-indicators` cluster, so the repeatability
-   state is explicit and sits in the same place for every textline.
+   badges so the repeatability state is explicit rather than implied.
+   Shared base pill used both in the details-panel header (pinned to the
+   right of the `.h3-indicators` cluster) and on speaker-overview rows.
    Warm tone for the hard cap, cool tone for the default repeatable
-   state. */
-.textline-info h3 .play-once-badge {
-    display: inline-block;
+   state. inline-flex + line-height keep the glyph and emoji centred. */
+.play-once-badge {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
     padding: 1px 6px;
     border-radius: 3px;
     font-size: 11px;
     font-weight: 500;
     flex-shrink: 0;
 }
-.textline-info h3 .play-once-badge.play-once-locked {
+.play-once-badge.play-once-locked {
     background: #2e2018;
     color: #f5b78c;
     border: 1px solid #5a3a2a;
 }
-.textline-info h3 .play-once-badge.play-once-repeatable {
+.play-once-badge.play-once-repeatable {
     background: #1c2a26;
     color: #a0d4be;
     border: 1px solid #2c4a3e;

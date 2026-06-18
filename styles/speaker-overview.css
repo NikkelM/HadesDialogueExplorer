@@ -459,8 +459,8 @@ body.layout-speaker #panel-info {
 .speaker-textline-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 3px 0;
+    gap: 10px;
+    padding: 5px 0;
     border-bottom: 1px solid #0f346040;
 }
 .speaker-textline-row:last-child { border-bottom: none; }
@@ -497,10 +497,30 @@ body.layout-speaker #panel-info {
     white-space: nowrap;
 }
 .textline-link:hover { color: #e94560; }
+/* The dialogue name is the row's primary element: brighter and heavier
+   than the badges that trail it. */
+.speaker-textline-row > .textline-link {
+    color: #c8c8c8;
+    font-weight: 500;
+    font-size: 14px;
+}
 .speaker-textline-badges {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 6px;
     flex-shrink: 0;
+}
+/* Normalise the priority (#N/M or tier) and Play-once/Repeatable pills
+   to one shared size with vertical centring, so they read as a matched
+   pair and stay subordinate to the dialogue name. */
+.speaker-textline-badges .priority-badge,
+.speaker-textline-badges .play-once-badge {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 4px;
 }
 
 .muted {
