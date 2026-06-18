@@ -195,8 +195,7 @@ body.layout-speaker #panel-info {
     flex-wrap: wrap;
     gap: 6px;
 }
-.priority-chip,
-.sort-chip {
+.priority-chip {
     background: #0f3460;
     color: #b8b8b8;
     border: 1px solid #1c4584;
@@ -206,19 +205,16 @@ body.layout-speaker #panel-info {
     cursor: pointer;
     font-family: inherit;
 }
-.priority-chip:hover,
-.sort-chip:hover {
+.priority-chip:hover {
     background: #1c4584;
     color: #e0e0e0;
 }
-.priority-chip.is-active,
-.sort-chip.is-active {
+.priority-chip.is-active {
     background: #e94560;
     color: #fff;
     border-color: #e94560;
 }
-.priority-chip .speaker-count,
-.sort-chip .speaker-count {
+.priority-chip .speaker-count {
     color: inherit;
 }
 .speaker-count {
@@ -300,17 +296,6 @@ body.layout-speaker #panel-info {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-/* Divider between the priority-filter group and the sort group in the
-   controls strip. */
-.speaker-control-group-sep {
-    margin-left: 8px;
-    padding-left: 12px;
-    border-left: 1px solid #0f3460;
-}
-.speaker-sort-chips {
-    display: flex;
-    gap: 6px;
-}
 .speaker-textlines-empty {
     color: #666;
     font-style: italic;
@@ -328,9 +313,6 @@ body.layout-speaker #panel-info {
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
-.speaker-tier-header.speaker-tier-super { color: #e94560; }
-.speaker-tier-header.speaker-tier-priority { color: #d09010; }
-.speaker-tier-header.speaker-tier-plain { color: #888; }
 .speaker-textline-list {
     list-style: none;
     padding: 0;

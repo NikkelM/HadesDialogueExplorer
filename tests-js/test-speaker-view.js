@@ -1,8 +1,8 @@
 // Tests for the speaker overview view renderer in
-// ``templates/viewer/speaker-view.js``. Covers the URL canonicalisers
-// for the two view-specific keys (``priority`` filter + ``sort`` axis)
-// plus the ``renderSpeaker`` output across the three sort axes and the
-// priority filter buckets.
+// ``templates/viewer/speaker-view.js``. Covers the ``priority``
+// (repeatability) filter canonicaliser plus the ``renderSpeaker``
+// output: section grouping, within-section play-order sort, and the
+// Play-once / Repeatable filter buckets across both games.
 //
 // ``renderSpeaker`` writes its HTML into
 // ``document.getElementById('info-content').innerHTML``, so a minimal
@@ -17,7 +17,6 @@ import { strict as assert } from 'node:assert';
 import {
     renderSpeaker,
     canonicalisePriority,
-    canonicaliseSort,
 } from '../templates/viewer/speaker-view.js';
 import { loadData } from '../templates/viewer/data.js';
 import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
@@ -101,40 +100,32 @@ beforeEach(() => {
 
 // --- canonicalisers -----------------------------------------------
 
-test('canonicalisePriority maps known values through and defaults unknowns to "all"', () => {
+test('canonicalisePriority maps known buckets through and defaults unknowns to "all"', () => {
     assert.equal(canonicalisePriority('all'), 'all');
-    assert.equal(canonicalisePriority('super'), 'super');
     assert.equal(canonicalisePriority('priority'), 'priority');
     assert.equal(canonicalisePriority('plain'), 'plain');
-    // Garbage input round-trips to the default so a malformed URL
-    // never strands the view.
+    // ``super`` is not part of the repeatability scheme, so a stale
+    // pre-rework URL collapses to the default rather than stranding the
+    // view.
+    assert.equal(canonicalisePriority('super'), 'all');
+    // Garbage input round-trips to the default too.
     assert.equal(canonicalisePriority(''), 'all');
     assert.equal(canonicalisePriority(null), 'all');
     assert.equal(canonicalisePriority(undefined), 'all');
     assert.equal(canonicalisePriority('nonsense'), 'all');
 });
 
-test('canonicaliseSort maps known values through and defaults unknowns to "section"', () => {
-    assert.equal(canonicaliseSort('section'), 'section');
-    assert.equal(canonicaliseSort('tier'), 'tier');
-    assert.equal(canonicaliseSort('name'), 'name');
-    assert.equal(canonicaliseSort(''), 'section');
-    assert.equal(canonicaliseSort(null), 'section');
-    assert.equal(canonicaliseSort(undefined), 'section');
-    assert.equal(canonicaliseSort('alphabetic'), 'section');
-});
-
 // --- renderSpeaker -------------------------------------------------
 
 test('renderSpeaker emits an unknown-speaker banner for an unregistered id', () => {
-    const html = render('NPC_NotARealSpeaker_99', { priority: 'all', sort: 'section' });
+    const html = render('NPC_NotARealSpeaker_99', { priority: 'all' });
     assert.match(html, /speaker-overview-missing/);
     assert.match(html, /Unknown speaker/);
     assert.match(html, /NPC_NotARealSpeaker_99/);
 });
 
 test('renderSpeaker renders header, summary counts, adjacency, and the textline list', () => {
-    const html = render('NPC_Zeus_01', { priority: 'all', sort: 'section' });
+    const html = render('NPC_Zeus_01', { priority: 'all' });
 
     // Friendly name + internal id appear in the header strip.
     assert.match(html, /Zeus/);
@@ -186,7 +177,7 @@ test('renderSpeaker multi-member group header lists every member id', () => {
     loadData(fixture);
     resetSpeakerGroups();
     // Drill into either member id - same canonical group.
-    const html = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'all' });
     // The friendly name appears once as the h3 title.
     assert.match(html, /<h3>Hermes<\/h3>/);
     // The multi-member id row lists both internal ids with the
@@ -230,16 +221,16 @@ test('renderSpeaker drilling into a non-canonical member id resolves to the same
     };
     loadData(fixture);
     resetSpeakerGroups();
-    const viaMember = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
-    const viaCanonical = render('HermesUpgrade', { priority: 'all', sort: 'section' });
+    const viaMember = render('NPC_Hermes_01', { priority: 'all' });
+    const viaCanonical = render('HermesUpgrade', { priority: 'all' });
     assert.equal(viaMember, viaCanonical);
 });
 
 test('renderSpeaker priority chips reflect the active filter via is-active', () => {
-    const html = render('NPC_Aphrodite_01', { priority: 'priority', sort: 'section' });
+    const html = render('NPC_Aphrodite_01', { priority: 'priority' });
     assert.match(
         html,
-        /<button[^>]*class="priority-chip is-active"[^>]*aria-pressed="true"[^>]*>Priority/,
+        /<button[^>]*class="priority-chip is-active"[^>]*aria-pressed="true"[^>]*>Play-once/,
     );
     // The other chips are inactive.
     assert.match(
@@ -248,10 +239,31 @@ test('renderSpeaker priority chips reflect the active filter via is-active', () 
     );
 });
 
-test('renderSpeaker priority filter drops textlines that fall outside the bucket', () => {
-    // Zeus's only owned textline is in the ``plain`` bucket so the
-    // ``super`` filter empties the list.
-    const html = render('NPC_Zeus_01', { priority: 'super', sort: 'section' });
+test('renderSpeaker on H1 renders three repeatability chips (All / Play-once / Repeatable)', () => {
+    const fixture = buildSpeakerFixture();
+    // One play-once (Orpheus) + one repeatable (Zeus) line.
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = [
+        'OrpheusSingsAgain02',  // playOnce: true
+        'ZeusWithAphrodite01',  // playOnce: false
+    ];
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+    assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All: <span class="speaker-count">2<\/span>/);
+    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Play-once: <span class="speaker-count">1<\/span>/);
+    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Repeatable: <span class="speaker-count">1<\/span>/);
+    // The legacy H1 tier vocabulary is gone.
+    assert.doesNotMatch(html, /Super-priority:/);
+    assert.doesNotMatch(html, />Priority:/);
+    assert.doesNotMatch(html, />Plain:/);
+    const chipMatches = html.match(/class="priority-chip[^"]*"/g) || [];
+    assert.equal(chipMatches.length, 3);
+});
+
+test('renderSpeaker repeatability filter drops textlines that fall outside the bucket', () => {
+    // Zeus's only owned textline is repeatable, so the Play-once
+    // (``priority``) filter empties the list.
+    const html = render('NPC_Zeus_01', { priority: 'priority' });
     assert.match(html, /speaker-textlines-empty/);
     assert.match(html, /No textlines match the current filter/);
     // The textline-row link must NOT appear because the row was
@@ -259,39 +271,32 @@ test('renderSpeaker priority filter drops textlines that fall outside the bucket
     assert.equal(html.includes('class="textline-link"'), false);
 });
 
-test('renderSpeaker priority="priority" keeps super textlines visible (OR semantics)', () => {
-    // Orpheus's single textline is ``super``; filtering on
-    // ``priority`` (= super OR priority) must keep it visible.
-    const html = render('NPC_Orpheus_01', { priority: 'priority', sort: 'section' });
+test('renderSpeaker Play-once filter keeps a play-once textline visible', () => {
+    // Orpheus's single textline is play-once; the Play-once filter keeps it.
+    const html = render('NPC_Orpheus_01', { priority: 'priority' });
     assert.match(html, /navigateTo\(&quot;OrpheusSingsAgain02&quot;\)/);
     assert.doesNotMatch(html, /speaker-textlines-empty/);
 });
 
-test('renderSpeaker sort="tier" groups by Super/Priority/Plain headers', () => {
-    // Pull all three speakers into a single owned list by reseating
-    // ownership on one speaker - exercises the tier-grouping branch
-    // with one row per bucket.
+test('renderSpeaker on H1 orders within a section by narrative-priority tier', () => {
+    // Both lines live in the same section (Gift); the priority-tier line
+    // (AphroditeWithZeus01) must sort before the normal-tier one
+    // (ZeusWithAphrodite01).
     const fixture = buildSpeakerFixture();
     fixture.speakers.NPC_Zeus_01.ownedTextlines = [
-        'OrpheusSingsAgain02',     // super
-        'AphroditeWithZeus01',     // priority
-        'ZeusWithAphrodite01',     // plain
+        'ZeusWithAphrodite01',   // tier: normal
+        'AphroditeWithZeus01',   // tier: priority
     ];
-    fixture.speakers.NPC_Zeus_01.priorityCounts = { super: 1, priority: 1, plain: 1 };
     loadData(fixture);
     resetSpeakerGroups();
-    const html = render('NPC_Zeus_01', { priority: 'all', sort: 'tier' });
-
-    // All three tier headers appear, in canonical super -> priority
-    // -> plain order.
-    const superIdx = html.indexOf('speaker-tier-super');
-    const priorityIdx = html.indexOf('speaker-tier-priority');
-    const plainIdx = html.indexOf('speaker-tier-plain');
-    assert.ok(superIdx >= 0 && priorityIdx > superIdx && plainIdx > priorityIdx,
-        'Tier headers must render in super -> priority -> plain order');
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+    const iPriority = html.indexOf('AphroditeWithZeus01');
+    const iNormal = html.indexOf('ZeusWithAphrodite01');
+    assert.ok(iPriority >= 0 && iNormal >= 0, 'both rows render');
+    assert.ok(iPriority < iNormal, 'priority-tier line sorts before the normal-tier line');
 });
 
-test('renderSpeaker sort="name" renders a flat alphabetical list (no section/tier headers)', () => {
+test('renderSpeaker exposes only a Filter control - no Group/Sort control', () => {
     const fixture = buildSpeakerFixture();
     fixture.speakers.NPC_Zeus_01.ownedTextlines = [
         'OrpheusSingsAgain02',
@@ -300,22 +305,15 @@ test('renderSpeaker sort="name" renders a flat alphabetical list (no section/tie
     ];
     loadData(fixture);
     resetSpeakerGroups();
-    const html = render('NPC_Zeus_01', { priority: 'all', sort: 'name' });
+    const html = render('NPC_Zeus_01', { priority: 'all' });
 
-    // No grouping wrappers (sort=name renders a single flat ul).
-    assert.doesNotMatch(html, /speaker-textline-group/);
-    // Alphabetical order: Aphrodite -> Orpheus -> Zeus.
-    const aIdx = html.indexOf('AphroditeWithZeus01');
-    const oIdx = html.indexOf('OrpheusSingsAgain02');
-    const zIdx = html.indexOf('ZeusWithAphrodite01');
-    assert.ok(aIdx >= 0 && oIdx > aIdx && zIdx > oIdx,
-        'sort=name should produce alphabetical order');
-});
-
-test('renderSpeaker active sort chip carries is-active + aria-pressed', () => {
-    const html = render('NPC_Zeus_01', { priority: 'all', sort: 'tier' });
-    assert.match(html, /<button[^>]*class="sort-chip is-active"[^>]*aria-pressed="true"[^>]*>Tier/);
-    assert.match(html, /<button[^>]*class="sort-chip"[^>]*aria-pressed="false"[^>]*>Section/);
+    // The controls strip is just the repeatability filter now.
+    assert.match(html, /Filter:/);
+    assert.doesNotMatch(html, /Group by:/);
+    assert.doesNotMatch(html, /Sort by:/);
+    assert.doesNotMatch(html, /class="sort-chip/);
+    // Dialogues are always section-grouped.
+    assert.match(html, /speaker-textline-group/);
 });
 
 // --- per-game priority scheme -------------------------------------
@@ -389,18 +387,19 @@ function loadH2Fixture() {
     resetSpeakerGroups();
 }
 
-test('canonicalisePriority("super", "hades2") collapses to "all" since H2 has no super bucket', () => {
-    assert.equal(canonicalisePriority('super', 'hades2'), 'all');
-    assert.equal(canonicalisePriority('priority', 'hades2'), 'priority');
-    assert.equal(canonicalisePriority('plain', 'hades2'), 'plain');
-    assert.equal(canonicalisePriority('all', 'hades2'), 'all');
-    // H1 scheme still accepts super when the game arg is explicit.
-    assert.equal(canonicalisePriority('super', 'hades1'), 'super');
+test('canonicalisePriority collapses the legacy "super" bucket to "all"', () => {
+    // The repeatability scheme is uniform across games and has no
+    // ``super`` bucket, so a stale ``super`` from a pre-rework URL
+    // collapses to ``all`` on both games.
+    assert.equal(canonicalisePriority('super'), 'all');
+    assert.equal(canonicalisePriority('priority'), 'priority');
+    assert.equal(canonicalisePriority('plain'), 'plain');
+    assert.equal(canonicalisePriority('all'), 'all');
 });
 
 test('renderSpeaker on H2 renders three chips (All / Play-once / Repeatable), no Super chip', () => {
     loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'all' });
     // Three chips render; the labels are the H2 repeatability vocabulary,
     // with play-once/repeatable counts derived client-side.
     assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All: <span class="speaker-count">3<\/span>/);
@@ -415,20 +414,9 @@ test('renderSpeaker on H2 renders three chips (All / Play-once / Repeatable), no
     assert.equal(chipMatches.length, 3);
 });
 
-test('renderSpeaker on H2 tier-sort headers use Play-once / Repeatable', () => {
-    loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'all', sort: 'tier' });
-    // Tier-sort groups by the same repeatability dimension as the filter.
-    assert.match(html, /speaker-tier-header speaker-tier-priority[^>]*>Play-once/);
-    assert.match(html, /speaker-tier-header speaker-tier-plain[^>]*>Repeatable/);
-    // Should not surface the old ranked/unranked or H1 wording.
-    assert.doesNotMatch(html, />Ranked </);
-    assert.doesNotMatch(html, />Unranked </);
-});
-
 test('renderSpeaker on H2 Play-once filter shows only play-once dialogues', () => {
     loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'priority', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'priority' });
     assert.match(html, /HermesAbout01/);
     assert.match(html, /HermesAbout02/);
     assert.doesNotMatch(html, /HermesRepeatable01/);
@@ -436,14 +424,14 @@ test('renderSpeaker on H2 Play-once filter shows only play-once dialogues', () =
 
 test('renderSpeaker on H2 Repeatable filter shows only repeatable dialogues', () => {
     loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'plain', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'plain' });
     assert.match(html, /HermesRepeatable01/);
     assert.doesNotMatch(html, /HermesAbout0/);
 });
 
-test('renderSpeaker on H2 section-sort orders by narrative rank, repeatables last', () => {
+test('renderSpeaker on H2 orders within a section by narrative rank, repeatables last', () => {
     loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'all' });
     const iRank1 = html.indexOf('HermesAbout01');
     const iRank2 = html.indexOf('HermesAbout02');
     const iRepeat = html.indexOf('HermesRepeatable01');
@@ -458,7 +446,7 @@ test('renderSpeaker on H2 priority=super filter collapses to all (URL-safety)', 
     // empty state. This is the URL-safety contract: a stale ``super``
     // bucket from a copy-pasted H1 URL must not strand a H2 viewer.
     loadH2Fixture();
-    const html = render('NPC_Hermes_01', { priority: 'super', sort: 'section' });
+    const html = render('NPC_Hermes_01', { priority: 'super' });
     assert.match(html, /HermesAbout01/);
     assert.match(html, /HermesRepeatable01/);
     // The All chip is the active one (since super collapses to all).

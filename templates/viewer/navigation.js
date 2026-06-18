@@ -12,7 +12,7 @@
 
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
-import { renderSpeaker, canonicalisePriority, canonicaliseSort } from './speaker-view.js';
+import { renderSpeaker, canonicalisePriority } from './speaker-view.js';
 import { renderDuplicates } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
@@ -58,9 +58,9 @@ export function navigateTo(name) {
 }
 
 // Convenience entry point for navigating to a speaker overview.
-// Optional ``opts`` carry the filter / sort state so the same helper
-// is used for both initial drill-in (no opts) and intra-view pivots
-// (filter / sort chip clicks).
+// Optional ``opts`` carry the filter state so the same helper is used
+// for both initial drill-in (no opts) and intra-view pivots (filter
+// chip clicks).
 //
 // Member ids are canonicalised to their group's canonical id before
 // writing the URL so two different routes into the same group land on
@@ -70,27 +70,12 @@ export function navigateToSpeaker(speakerId, opts) {
     const canonical = canonicalSpeakerId(speakerId);
     const state = { view: 'speaker', speaker: canonical };
     if (opts && opts.priority) state.priority = opts.priority;
-    if (opts && opts.sort) state.sort = opts.sort;
     navigateToState(state);
 }
 
-// Filter-chip click target. Preserves the active sort axis by reading
-// it back off the current URL hash; pivots the priority filter.
+// Filter-chip click target: pivots the repeatability filter.
 export function filterSpeakerPriority(speakerId, priority) {
-    const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, {
-        priority,
-        sort: canonicaliseSort(state.sort),
-    });
-}
-
-// Sort-chip click target. Mirror of ``filterSpeakerPriority``.
-export function sortSpeakerTextlines(speakerId, sort) {
-    const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, {
-        priority: canonicalisePriority(state.priority),
-        sort,
-    });
+    navigateToSpeaker(speakerId, { priority });
 }
 
 // Navigate to the cross-game duplicates view. Preserves existing
@@ -208,7 +193,6 @@ function applyState(state) {
         const speakerId = state.speaker || null;
         renderSpeaker(speakerId, {
             priority: canonicalisePriority(state.priority),
-            sort: canonicaliseSort(state.sort),
         });
         const searchInput = document.getElementById('search');
         if (searchInput) {
