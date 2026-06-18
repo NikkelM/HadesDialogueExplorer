@@ -23,7 +23,7 @@
 // The bucket keys stay ``priority`` / ``plain`` for URL and CSS
 // stability; see ``priorityScheme`` below.
 
-import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame, alternates } from './data.js';
+import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame, alternates, dependents } from './data.js';
 import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers } from './speaker-groups.js';
 import {
     escapeHtml,
@@ -374,33 +374,166 @@ function renderEligibilitySummaryCell(entry) {
     return `<div class="speaker-summary-cell speaker-summary-eligibility"><h4>Save progress</h4><ul class="speaker-section-list">${body}</ul></div>`;
 }
 
-// Render the upstream + downstream adjacency tables. Each row is a
-// clickable speaker link so the user can drill across the social
-// graph one hop at a time. Self-loops are kept (a speaker frequently
-// gates on their own textlines via cooldown / sequence chains; that
-// IS useful information).
-function renderAdjacency(entry) {
+// Render the cross-speaker dependency tables: which speakers this one
+// depends on (its dialogues require their lines) and which speakers
+// depend on it. Each row is expandable to list the actual dialogue
+// links - derived client-side from the requirements / dependents data
+// and rendered lazily on first expand (see ``toggleAdjacencyRow``) so a
+// busy speaker's many links don't bloat the initial markup. Self-loops
+// are kept and tagged (a speaker frequently gates on its own textlines
+// via cooldown / sequence chains; that IS useful information).
+//
+// ``_adjDetail`` holds the per-direction link maps for the speaker last
+// rendered, so the lazy expand handler can build a row's detail:
+//   Map(otherCanonicalId -> Map(dependentTextline -> Set(requiredTextline)))
+let _adjDetail = { up: new Map(), down: new Map() };
+
+function renderAdjacency(entry, canonicalSelf) {
+    const selfName = entry.name || canonicalSelf || '';
     const up = entry.adjacencyUpstream || {};
     const down = entry.adjacencyDownstream || {};
+    _adjDetail = buildAdjacencyDetail(entry.ownedTextlines || []);
+
     const upRows = Object.entries(up).sort((a, b) => b[1] - a[1]);
     const downRows = Object.entries(down).sort((a, b) => b[1] - a[1]);
 
-    const upHtml = upRows.length
-        ? `<ul class="speaker-adjacency-list">`
-            + upRows.map(([sid, count]) => `<li><a class="speaker-link" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(sid)})">${escapeHtml(displayNameFor(sid))}</a> <span class="speaker-id-inline">(${escapeHtml(sid)})</span><span class="speaker-count">${count}</span></li>`).join('')
-            + `</ul>`
-        : `<p class="muted">No dialogue requirements from this speaker reference any other speaker's dialogues.</p>`;
-
-    const downHtml = downRows.length
-        ? `<ul class="speaker-adjacency-list">`
-            + downRows.map(([sid, count]) => `<li><a class="speaker-link" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(sid)})">${escapeHtml(displayNameFor(sid))}</a> <span class="speaker-id-inline">(${escapeHtml(sid)})</span><span class="speaker-count">${count}</span></li>`).join('')
-            + `</ul>`
-        : `<p class="muted">No other speaker's dialogue requirements reference any dialogue from this speaker.</p>`;
+    const upBody = upRows.length
+        ? `<ul class="speaker-adjacency-list" style="--adj-name-col: ${_adjNameColCh(upRows)}ch">${upRows.map(([sid, count]) => renderAdjacencyRow(sid, count, 'up', canonicalSelf, selfName)).join('')}</ul>`
+        : `<p class="muted">${escapeHtml(selfName)}'s dialogues don't reference any other speaker's dialogues.</p>`;
+    const downBody = downRows.length
+        ? `<ul class="speaker-adjacency-list" style="--adj-name-col: ${_adjNameColCh(downRows)}ch">${downRows.map(([sid, count]) => renderAdjacencyRow(sid, count, 'down', canonicalSelf, selfName)).join('')}</ul>`
+        : `<p class="muted">No other speaker's dialogues reference ${escapeHtml(selfName)}'s dialogues.</p>`;
 
     return `<section class="speaker-adjacency">`
-        + `<div class="speaker-adjacency-col"><h4>Dialogue requirements reference dialogues from these speakers</h4>${upHtml}</div>`
-        + `<div class="speaker-adjacency-col"><h4>These speakers' dialogue requirements reference dialogues from this speaker</h4>${downHtml}</div>`
+        + renderAdjacencyCol('Depends on', `${selfName}'s dialogues require lines from these speakers`, '\u2192', upBody)
+        + renderAdjacencyCol('Required by', `these speakers' dialogues require ${selfName}'s lines`, '\u2190', downBody)
         + `</section>`;
+}
+
+function renderAdjacencyCol(title, sub, arrow, body) {
+    return `<div class="speaker-adjacency-col">`
+        + `<div class="speaker-adjacency-head">`
+        + `<h4><span class="speaker-adjacency-dir">${arrow}</span> ${escapeHtml(title)}</h4>`
+        + `<p class="speaker-adjacency-sub">${escapeHtml(sub)}</p>`
+        + `</div>`
+        + body
+        + `</div>`;
+}
+
+// One adjacency row: ``FriendlyName (InternalId)`` in a fixed-width cell
+// (so the count chips line up in a column, like the duplicates view's
+// game buttons), then the count chip and an optional ``self`` tag, then
+// an empty detail list populated on first expand. ``dir`` is 'up' (this
+// speaker depends on the other) or 'down' (the other depends on this).
+function renderAdjacencyRow(sid, count, dir, canonicalSelf, selfName) {
+    const otherName = displayNameFor(sid);
+    const isSelf = sid === canonicalSelf;
+    const selfTag = isSelf
+        ? `<span class="speaker-adjacency-self" data-tooltip="This speaker references its own dialogues (e.g. cooldowns or sequence chains).">self</span>`
+        : '';
+    const tip = dir === 'up'
+        ? `${count} of ${selfName}'s dialogues require at least one of ${otherName}'s. Click to list them.`
+        : `${count} of ${otherName}'s dialogues require at least one of ${selfName}'s. Click to list them.`;
+    return `<li class="speaker-adjacency-item" data-adj-dir="${escapeHtml(dir)}" data-adj-sid="${escapeHtml(sid)}">`
+        + `<div class="speaker-adjacency-row" onclick="toggleAdjacencyRow(this.parentElement)">`
+        + `<span class="speaker-adjacency-chevron">\u25B6</span>`
+        + `<span class="speaker-adjacency-nameid">`
+        + `<a class="speaker-link" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(sid)})">${escapeHtml(otherName)}</a>`
+        + ` <span class="speaker-id-inline">(${escapeHtml(sid)})</span>`
+        + `</span>`
+        + `<span class="speaker-adjacency-count" data-tooltip="${escapeHtml(tip)}">${count}</span>`
+        + selfTag
+        + `</div>`
+        + `<ul class="speaker-adjacency-detail"></ul>`
+        + `</li>`;
+}
+
+// Width (in ``ch``) for the name+id cell: the longest
+// ``FriendlyName (InternalId)`` string in the list. Drives the
+// ``--adj-name-col`` custom property so every count chip starts at the
+// same x. Proportional text is narrower than ``ch``, so this slightly
+// over-reserves, which keeps the longest row from ever truncating.
+function _adjNameColCh(rows) {
+    let max = 0;
+    for (const [sid] of rows) {
+        const len = displayNameFor(sid).length + sid.length + 3; // " (" + ")"
+        if (len > max) max = len;
+    }
+    return max;
+}
+
+// Expand/collapse handler for an adjacency row. On first expand it
+// renders the dialogue-link detail (lazy) from ``_adjDetail``. Exposed
+// globally for the inline ``onclick``.
+export function toggleAdjacencyRow(itemEl) {
+    if (!itemEl) return;
+    const expanding = !itemEl.classList.contains('expanded');
+    itemEl.classList.toggle('expanded');
+    if (!expanding) return;
+    const detailUl = itemEl.querySelector('.speaker-adjacency-detail');
+    if (!detailUl || detailUl.dataset.loaded === '1') return;
+    const linkMap = (_adjDetail[itemEl.dataset.adjDir] || new Map()).get(itemEl.dataset.adjSid);
+    detailUl.innerHTML = renderAdjacencyDetailRows(linkMap);
+    detailUl.dataset.loaded = '1';
+}
+
+// Build the dialogue-link detail for every adjacency edge of a speaker,
+// in one pass over its owned textlines. ``up`` records this speaker's
+// dialogues that require another's (dependent -> required); ``down``
+// records other speakers' dialogues that require this one's. The
+// dependent-count per edge equals the ``adjacency*`` row count, so the
+// detail and the chip always agree.
+export function buildAdjacencyDetail(ownedTextlines) {
+    const up = new Map();
+    const down = new Map();
+    for (const aName of ownedTextlines) {
+        const tl = textlines[aName];
+        if (!tl) continue;
+        for (const refList of Object.values(tl.requirements || {})) {
+            if (!Array.isArray(refList)) continue;
+            for (const ref of refList) {
+                const refTl = textlines[ref];
+                if (!refTl || !refTl.owner) continue;
+                _recordAdjacencyLink(up, canonicalSpeakerId(refTl.owner), aName, ref);
+            }
+        }
+        const deps = dependents[aName];
+        if (!Array.isArray(deps)) continue;
+        for (const dep of deps) {
+            const depName = typeof dep === 'string' ? dep : (dep && dep.name);
+            if (!depName) continue;
+            const depTl = textlines[depName];
+            if (!depTl || !depTl.owner) continue;
+            _recordAdjacencyLink(down, canonicalSpeakerId(depTl.owner), depName, aName);
+        }
+    }
+    return { up, down };
+}
+
+function _recordAdjacencyLink(map, sid, dependentName, requiredName) {
+    if (!map.has(sid)) map.set(sid, new Map());
+    const edge = map.get(sid);
+    if (!edge.has(dependentName)) edge.set(dependentName, new Set());
+    edge.get(dependentName).add(requiredName);
+}
+
+// Render the detail rows for one expanded edge: each dependent dialogue
+// and the line(s) it requires (``dependent -> required``), all clickable.
+export function renderAdjacencyDetailRows(linkMap) {
+    if (!linkMap || linkMap.size === 0) {
+        return `<li class="muted speaker-adjacency-detail-empty">No individual links.</li>`;
+    }
+    return [...linkMap.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([dependent, requiredSet]) => {
+            const required = [...requiredSet].sort()
+                .map(r => `<a class="textline-link" onclick="event.stopPropagation(); navigateTo(${jsAttr(r)})">${escapeHtml(r)}</a>`)
+                .join('<span class="speaker-adjacency-sep">, </span>');
+            return `<li class="speaker-adjacency-detail-row">`
+                + `<a class="textline-link speaker-adjacency-dep" onclick="event.stopPropagation(); navigateTo(${jsAttr(dependent)})">${escapeHtml(dependent)}</a>`
+                + `<div class="speaker-adjacency-reqs"><span class="speaker-adjacency-req-label">requires</span> ${required}</div>`
+                + `</li>`;
+        }).join('');
 }
 
 function displayNameFor(speakerId) {
@@ -621,7 +754,7 @@ export function renderSpeaker(speakerId, opts) {
     container.innerHTML = `<div class="speaker-overview">`
         + headerHtml
         + renderSummary(entry)
-        + renderAdjacency(entry)
+        + renderAdjacency(entry, canonical)
         + renderTextlineList(entry, canonical, filter, eligFilter, game)
         + `</div>`;
 }

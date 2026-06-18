@@ -273,21 +273,115 @@ body.layout-speaker #panel-info {
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.speaker-adjacency-dir { color: #e94560; font-size: 13px; line-height: 1; }
+.speaker-adjacency-head { margin-bottom: 6px; }
+.speaker-adjacency-sub {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0 0;
 }
 .speaker-adjacency-list {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 12px;
-    max-height: 320px;
+    font-size: 13px;
+    max-height: 360px;
     overflow-y: auto;
 }
-.speaker-adjacency-list li {
-    padding: 2px 0;
+.speaker-adjacency-row {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 7px;
+    padding: 4px 4px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.speaker-adjacency-row:hover { background: #1c2c4d; }
+/* Fixed-width name+id cell so every count chip lines up in a column
+   (mirrors the duplicates view's --dup-name-col trick). */
+.speaker-adjacency-nameid {
+    width: var(--adj-name-col, auto);
+    flex-shrink: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.speaker-adjacency-chevron {
+    font-size: 0.65em;
+    color: #666;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+.speaker-adjacency-item.expanded > .speaker-adjacency-row .speaker-adjacency-chevron {
+    transform: rotate(90deg);
+}
+/* Count chip sits right after the speaker name (no eye-travel to a far
+   right edge) and reads as the dependency tally. */
+.speaker-adjacency-count {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #dfe2f0;
+    background: #0f3460;
+    border: 1px solid #1c4584;
+    border-radius: 10px;
+    padding: 0 8px;
+    min-width: 22px;
+    text-align: center;
+}
+.speaker-adjacency-item:not(.expanded) > .speaker-adjacency-detail { display: none; }
+.speaker-adjacency-detail {
+    list-style: none;
+    margin: 1px 0 6px 18px;
+    padding: 4px 0 4px 10px;
+    border-left: 1px solid #1c4584;
+    font-size: 12px;
+}
+/* Each link is shown stacked: the depending dialogue (emphasised) above
+   the line(s) it ``requires`` (indented + muted), so "what depends on
+   what" reads clearly even with long names. */
+.speaker-adjacency-detail-row {
+    padding: 4px 0;
+    border-bottom: 1px solid #0f346066;
+}
+.speaker-adjacency-detail-row:last-child { border-bottom: none; }
+.speaker-adjacency-dep {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 12px;
+    color: #cdcde0;
+}
+.speaker-adjacency-dep:hover { color: #e94560; }
+.speaker-adjacency-reqs {
+    margin-left: 16px;
+    margin-top: 1px;
+    color: #9a9ab0;
+    line-height: 1.45;
+}
+.speaker-adjacency-reqs .textline-link { font-size: 12px; color: #aab0c8; }
+.speaker-adjacency-reqs .textline-link:hover { color: #e94560; }
+.speaker-adjacency-req-label {
+    color: #6a6a82;
+    font-style: italic;
+    margin-right: 4px;
+}
+.speaker-adjacency-sep { color: #555; }
+.speaker-adjacency-detail-empty { color: #666; font-style: italic; padding: 2px 0; }
+.speaker-adjacency-self {
+    font-size: 9px;
+    color: #c4a56e;
+    border: 1px solid #4a4636;
+    border-radius: 3px;
+    padding: 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
 }
 .speaker-link {
     color: #b8b8b8;
@@ -297,12 +391,7 @@ body.layout-speaker #panel-info {
 .speaker-link:hover { color: #e94560; }
 .speaker-id-inline {
     color: #666;
-    font-size: 10px;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 11px;
 }
 
 /* Textline list (the main body): controls strip + grouped sections. */

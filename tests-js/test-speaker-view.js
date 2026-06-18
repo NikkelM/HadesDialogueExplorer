@@ -19,6 +19,8 @@ import {
     canonicalisePriority,
     canonicaliseEligibility,
     toggleSpeakerSection,
+    buildAdjacencyDetail,
+    renderAdjacencyDetailRows,
 } from '../templates/viewer/speaker-view.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
@@ -859,4 +861,78 @@ test('renderSpeaker hides eligibility chips, badges, and summary when no save is
     assert.doesNotMatch(html, /Save progress/);
     // The summary row stays three columns without the save cell.
     assert.doesNotMatch(html, /speaker-summary-row-4/);
+});
+
+// --- cross-speaker dependency (adjacency) sections ----------------
+
+test('renderAdjacency uses Depends on / Required by framing with the speaker name', () => {
+    const html = render('NPC_Aphrodite_01', {});
+    assert.match(html, /<h4>[\s\S]*?Depends on<\/h4>/);
+    assert.match(html, /<h4>[\s\S]*?Required by<\/h4>/);
+    // Sublabels name the speaker and explain the direction.
+    assert.match(html, /Aphrodite's dialogues require lines from these speakers/);
+    assert.match(html, /these speakers' dialogues require Aphrodite's lines/);
+});
+
+test('renderAdjacency rows are expandable with a count chip and an empty (lazy) detail list', () => {
+    // Aphrodite depends on Zeus in the shared fixture.
+    const html = render('NPC_Aphrodite_01', {});
+    assert.match(html, /class="speaker-adjacency-item"[^>]*data-adj-dir="up"[^>]*data-adj-sid="NPC_Zeus_01"/);
+    assert.match(html, /speaker-adjacency-row" onclick="toggleAdjacencyRow\(this\.parentElement\)"/);
+    assert.match(html, /<span class="speaker-adjacency-chevron">/);
+    // Order: name + id (in a fixed-width cell), then the count chip.
+    assert.match(html, /speaker-adjacency-nameid">[\s\S]*?Zeus[\s\S]*?NPC_Zeus_01[\s\S]*?<\/span><span class="speaker-adjacency-count"/);
+    // Count chip carries an explanatory tooltip; detail starts empty.
+    assert.match(html, /class="speaker-adjacency-count" data-tooltip="1 of Aphrodite's dialogues require at least one of [^"]*Zeus[^"]*"/);
+    assert.match(html, /<ul class="speaker-adjacency-detail"><\/ul>/);
+    // The list reserves a fixed name column so count chips align.
+    assert.match(html, /<ul class="speaker-adjacency-list" style="--adj-name-col: \d+ch">/);
+});
+
+test('renderAdjacency tags a self-reference row', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.speakers.NPC_Zeus_01.adjacencyUpstream = { NPC_Zeus_01: 3, NPC_Aphrodite_01: 1 };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', {});
+    // The self row carries the "self" tag; the other row does not.
+    assert.match(html, /data-adj-sid="NPC_Zeus_01"[\s\S]*?speaker-adjacency-self/);
+});
+
+test('buildAdjacencyDetail maps each edge to its dependent -> required links', () => {
+    loadData({
+        textlines: {
+            A1: { owner: 'NPC_A_01', section: 'X', requirements: { RequiredTextLines: ['B1'] } },
+            A2: { owner: 'NPC_A_01', section: 'X', requirements: { RequiredTextLines: ['B1', 'B2'] } },
+            B1: { owner: 'NPC_B_01', section: 'X', requirements: {} },
+            B2: { owner: 'NPC_B_01', section: 'X', requirements: {} },
+            C1: { owner: 'NPC_C_01', section: 'X', requirements: { RequiredTextLines: ['A1'] } },
+        },
+        speakers: { NPC_A_01: { name: 'A' }, NPC_B_01: { name: 'B' }, NPC_C_01: { name: 'C' } },
+        dependents: { B1: ['A1', 'A2'], B2: ['A2'], A1: ['C1'] },
+    });
+    resetSpeakerGroups();
+    const { up, down } = buildAdjacencyDetail(['A1', 'A2']);
+    // Upstream: A's dialogues that require B's lines (dependent -> required).
+    const toB = up.get('NPC_B_01');
+    assert.equal(toB.size, 2); // matches the adjacency count (distinct dependents)
+    assert.deepEqual([...toB.get('A1')], ['B1']);
+    assert.deepEqual([...toB.get('A2')].sort(), ['B1', 'B2']);
+    // Downstream: C's dialogue requires A's line.
+    assert.deepEqual([...down.get('NPC_C_01').get('C1')], ['A1']);
+});
+
+test('renderAdjacencyDetailRows renders clickable dependent -> required rows', () => {
+    const linkMap = new Map([['A1', new Set(['B2', 'B1'])]]);
+    const html = renderAdjacencyDetailRows(linkMap);
+    assert.match(html, /speaker-adjacency-dep[^>]*onclick="[^"]*navigateTo\(&quot;A1&quot;\)/);
+    assert.match(html, /navigateTo\(&quot;B1&quot;\)/);
+    assert.match(html, /navigateTo\(&quot;B2&quot;\)/);
+    // The depending dialogue is shown above an indented "requires" line.
+    assert.match(html, /speaker-adjacency-req-label">requires</);
+});
+
+test('renderAdjacencyDetailRows handles an edge with no individual links', () => {
+    assert.match(renderAdjacencyDetailRows(new Map()), /speaker-adjacency-detail-empty/);
+    assert.match(renderAdjacencyDetailRows(undefined), /speaker-adjacency-detail-empty/);
 });
