@@ -21,7 +21,7 @@ import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
 import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
-import { renderGameToggle } from './game-toggle.js';
+import { renderGameToggle, updateFavicon } from './game-toggle.js';
 import { refreshSaveStatus } from './save-upload.js';
 
 // Tracks the canonical serialization of the state currently
@@ -137,6 +137,7 @@ export function switchToGame(gameId) {
     buildNameIndex();
     buildSpeakerIndex();
     renderGameToggle();
+    updateFavicon(gameId);
     refreshSaveStatus();
 }
 

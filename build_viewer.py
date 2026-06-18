@@ -50,9 +50,11 @@ real ES module imports.
 """
 
 import argparse
+import base64
 import hashlib
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -69,6 +71,7 @@ TEMPLATES_DIR = PROJECT_DIR / "templates"
 INDEX_TEMPLATE = TEMPLATES_DIR / "index.html"
 VIEWER_JS_DIR = TEMPLATES_DIR / "viewer"
 STYLES_DIR = PROJECT_DIR / "styles"
+STATIC_DIR = PROJECT_DIR / "static"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
 DIST_DIR = PROJECT_DIR / "dist"
 
@@ -77,6 +80,11 @@ DIST_DIR = PROJECT_DIR / "dist"
 # dropped in ``dist/`` (e.g. screenshots, release notes).
 _SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
+
+# Static assets copied verbatim into ``dist/`` for the split build and
+# inlined as data URIs for the single-file bundle. The per-game favicons
+# the viewer swaps between (see ``updateFavicon`` in game-toggle.js).
+_STATIC_ASSET_NAMES = ("hades.ico", "hades2.ico")
 
 # Map each per-source JSON filename prefix to the canonical game id
 # used as a key in the final ``games`` map and in the URL hash. The
@@ -235,7 +243,7 @@ def _ensure_clean_dist() -> None:
     ``index.html``. Unrelated files (e.g. user-dropped screenshots,
     release notes) are preserved."""
     DIST_DIR.mkdir(parents=True, exist_ok=True)
-    for name in (*_SPLIT_OUTPUT_NAMES, _BUNDLE_OUTPUT_NAME):
+    for name in (*_SPLIT_OUTPUT_NAMES, _BUNDLE_OUTPUT_NAME, *_STATIC_ASSET_NAMES):
         target = DIST_DIR / name
         if target.exists():
             target.unlink()
@@ -280,6 +288,11 @@ def build_split(payload: dict) -> dict:
     (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
     (DIST_DIR / "viewer.css").write_text(css_data, encoding="utf-8")
     (DIST_DIR / "data.json").write_text(json_data, encoding="utf-8")
+
+    # Copy the per-game favicons verbatim (referenced by relative path in
+    # the split build's index.html).
+    for name in _STATIC_ASSET_NAMES:
+        shutil.copyfile(STATIC_DIR / name, DIST_DIR / name)
 
     sizes = {name: (DIST_DIR / name).stat().st_size for name in _SPLIT_OUTPUT_NAMES}
     print(
@@ -345,6 +358,20 @@ def build_bundle() -> None:
 
     bundled = index_html.replace(css_link, inline_css)
     bundled = bundled.replace(script_tag, inline_data + "\n" + inline_js)
+
+    # Inline the per-game favicons as data URIs so the single-file bundle
+    # stays self-contained (no sidecar .ico files needed to open it from
+    # ``file://``). The viewer's ``updateFavicon`` reads the ``data-<game>``
+    # attributes, so swapping these to data URIs keeps game-switching
+    # working in the bundle exactly as in the split build.
+    favicon_uris = {
+        name: "data:image/x-icon;base64,"
+        + base64.b64encode((STATIC_DIR / name).read_bytes()).decode("ascii")
+        for name in _STATIC_ASSET_NAMES
+    }
+    bundled = bundled.replace('href="hades2.ico"', f'href="{favicon_uris["hades2.ico"]}"')
+    bundled = bundled.replace('data-hades1="hades.ico"', f'data-hades1="{favicon_uris["hades.ico"]}"')
+    bundled = bundled.replace('data-hades2="hades2.ico"', f'data-hades2="{favicon_uris["hades2.ico"]}"')
 
     out = DIST_DIR / _BUNDLE_OUTPUT_NAME
     out.write_text(bundled, encoding="utf-8")

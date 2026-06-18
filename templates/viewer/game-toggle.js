@@ -79,3 +79,17 @@ export function renderGameToggle() {
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     }
 }
+
+// Swap the page favicon to the active game's icon. The ``<link
+// rel="icon" id="favicon">`` carries one ``data-<gameId>`` attribute per
+// game (a file path in the split build, an inlined data URI in the
+// single-file bundle), so this stays build-agnostic. No-op when the
+// element or the game's attribute is missing.
+export function updateFavicon(gameId) {
+    const link = document.getElementById('favicon');
+    if (!link) return;
+    const href = link.getAttribute('data-' + gameId);
+    if (href && link.getAttribute('href') !== href) {
+        link.setAttribute('href', href);
+    }
+}
