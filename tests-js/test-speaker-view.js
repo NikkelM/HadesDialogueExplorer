@@ -320,37 +320,48 @@ test('renderSpeaker active sort chip carries is-active + aria-pressed', () => {
 
 // --- per-game priority scheme -------------------------------------
 
-// Build a minimal H2 dataset wrapped under the ``games.hades2`` key so
-// ``setActiveGame('hades2')`` swaps the per-game bindings to the H2
-// scheme. The H2 priority system is ordinal-only - textlines either
-// carry a ``narrativePriorityOrdinal`` (ranked) or don't (unranked).
+// Build a minimal H2 dataset. H2's filter dimension is repeatability:
+// dialogues are play-once or repeatable (the ``playOnce`` flag). Within a
+// section they play in narrative-rank order (``narrativePriorityOrdinal``),
+// rank 1 first, with rank-less repeatables sorting last.
 function loadH2Fixture() {
     const speakers = {
         NPC_Hermes_01: {
             name: 'Hermes',
             description: 'Courier of the Gods',
-            ownedTextlines: ['HermesRanked01', 'HermesUnranked01'],
+            // Listed out of rank order so the section sort has work to do.
+            ownedTextlines: ['HermesAbout02', 'HermesAbout01', 'HermesRepeatable01'],
             asSpeakerTextlines: [],
             sourceFiles: ['NPCData_Hermes.lua'],
-            sectionCounts: { InteractTextLineSets: 2 },
-            // H2 only ever populates priority + plain (super never
-            // surfaces because the ordinal/no-ordinal split is
-            // strictly binary).
-            priorityCounts: { super: 0, priority: 1, plain: 1 },
+            sectionCounts: { InteractTextLineSets: 3 },
+            // Ordinal-based priorityCounts are ignored on H2 now (the
+            // chips count play-once vs repeatable client-side), but the
+            // field is kept to mirror the real data shape.
+            priorityCounts: { super: 0, priority: 2, plain: 1 },
             adjacencyUpstream: {},
             adjacencyDownstream: {},
         },
     };
     const textlines = {
-        HermesRanked01: {
+        HermesAbout02: {
             owner: 'NPC_Hermes_01',
             section: 'InteractTextLineSets',
             dialogueLines: [],
             requirements: {},
+            playOnce: true,
+            narrativePriorityOrdinal: 2,
+            narrativePrioritySectionSize: 2,
+        },
+        HermesAbout01: {
+            owner: 'NPC_Hermes_01',
+            section: 'InteractTextLineSets',
+            dialogueLines: [],
+            requirements: {},
+            playOnce: true,
             narrativePriorityOrdinal: 1,
             narrativePrioritySectionSize: 2,
         },
-        HermesUnranked01: {
+        HermesRepeatable01: {
             owner: 'NPC_Hermes_01',
             section: 'InteractTextLineSets',
             dialogueLines: [],
@@ -387,42 +398,69 @@ test('canonicalisePriority("super", "hades2") collapses to "all" since H2 has no
     assert.equal(canonicalisePriority('super', 'hades1'), 'super');
 });
 
-test('renderSpeaker on H2 renders three chips (All / Ranked / Unranked), no Super chip', () => {
+test('renderSpeaker on H2 renders three chips (All / Play-once / Repeatable), no Super chip', () => {
     loadH2Fixture();
     const html = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
-    // Three chips render; the labels are the H2 vocabulary.
-    assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All:/);
-    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Ranked:/);
-    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Unranked:/);
-    // No "Super-priority" chip / label on H2.
+    // Three chips render; the labels are the H2 repeatability vocabulary,
+    // with play-once/repeatable counts derived client-side.
+    assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All: <span class="speaker-count">3<\/span>/);
+    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Play-once: <span class="speaker-count">2<\/span>/);
+    assert.match(html, /<button[^>]*class="priority-chip"[^>]*>Repeatable: <span class="speaker-count">1<\/span>/);
+    // No "Super-priority" chip / label on H2, and the old vocabulary is gone.
     assert.doesNotMatch(html, /Super-priority/);
+    assert.doesNotMatch(html, />Ranked:/);
+    assert.doesNotMatch(html, />Unranked:/);
     // Exactly three priority chips total.
     const chipMatches = html.match(/class="priority-chip[^"]*"/g) || [];
     assert.equal(chipMatches.length, 3);
 });
 
-test('renderSpeaker on H2 tier-sort header uses Ranked / Unranked, not Priority / Plain', () => {
+test('renderSpeaker on H2 tier-sort headers use Play-once / Repeatable', () => {
     loadH2Fixture();
     const html = render('NPC_Hermes_01', { priority: 'all', sort: 'tier' });
-    // Tier-sort group headers reflect the H2 scheme.
-    assert.match(html, /speaker-tier-header speaker-tier-priority[^>]*>Ranked/);
-    assert.match(html, /speaker-tier-header speaker-tier-plain[^>]*>Unranked/);
-    // Should not surface the H1 wording.
-    assert.doesNotMatch(html, />Priority </);
-    assert.doesNotMatch(html, />Plain </);
+    // Tier-sort groups by the same repeatability dimension as the filter.
+    assert.match(html, /speaker-tier-header speaker-tier-priority[^>]*>Play-once/);
+    assert.match(html, /speaker-tier-header speaker-tier-plain[^>]*>Repeatable/);
+    // Should not surface the old ranked/unranked or H1 wording.
+    assert.doesNotMatch(html, />Ranked </);
+    assert.doesNotMatch(html, />Unranked </);
 });
 
-test('renderSpeaker on H2 priority=super filter renders empty (super collapses to all -> nothing dropped, but bucket has no rows)', () => {
+test('renderSpeaker on H2 Play-once filter shows only play-once dialogues', () => {
+    loadH2Fixture();
+    const html = render('NPC_Hermes_01', { priority: 'priority', sort: 'section' });
+    assert.match(html, /HermesAbout01/);
+    assert.match(html, /HermesAbout02/);
+    assert.doesNotMatch(html, /HermesRepeatable01/);
+});
+
+test('renderSpeaker on H2 Repeatable filter shows only repeatable dialogues', () => {
+    loadH2Fixture();
+    const html = render('NPC_Hermes_01', { priority: 'plain', sort: 'section' });
+    assert.match(html, /HermesRepeatable01/);
+    assert.doesNotMatch(html, /HermesAbout0/);
+});
+
+test('renderSpeaker on H2 section-sort orders by narrative rank, repeatables last', () => {
+    loadH2Fixture();
+    const html = render('NPC_Hermes_01', { priority: 'all', sort: 'section' });
+    const iRank1 = html.indexOf('HermesAbout01');
+    const iRank2 = html.indexOf('HermesAbout02');
+    const iRepeat = html.indexOf('HermesRepeatable01');
+    assert.ok(iRank1 >= 0 && iRank2 >= 0 && iRepeat >= 0, 'all rows render');
+    assert.ok(iRank1 < iRank2, 'rank 1 sorts before rank 2');
+    assert.ok(iRank2 < iRepeat, 'ranked dialogues sort before the rank-less repeatable');
+});
+
+test('renderSpeaker on H2 priority=super filter collapses to all (URL-safety)', () => {
     // When ``super`` is passed against the H2 scheme it canonicalises
     // to ``all``, so the textline list shows every row rather than an
     // empty state. This is the URL-safety contract: a stale ``super``
     // bucket from a copy-pasted H1 URL must not strand a H2 viewer.
     loadH2Fixture();
     const html = render('NPC_Hermes_01', { priority: 'super', sort: 'section' });
-    // The H1-only ``super`` filter collapses to ``all`` on H2, so both
-    // rows surface in the rendered list.
-    assert.match(html, /HermesRanked01/);
-    assert.match(html, /HermesUnranked01/);
+    assert.match(html, /HermesAbout01/);
+    assert.match(html, /HermesRepeatable01/);
     // The All chip is the active one (since super collapses to all).
     assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All:/);
 });

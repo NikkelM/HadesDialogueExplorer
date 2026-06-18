@@ -57,8 +57,11 @@ const _PRIORITY_SCHEMES = {
     },
     hades2: {
         // No "super" chip - H2 has no super-priority bucket at all.
+        // The H2 filter dimension is repeatability: the 'priority' bucket
+        // holds play-once dialogues and 'plain' holds repeatable ones,
+        // matching the per-row Play-once / Repeatable badge.
         buckets: ['priority', 'plain'],
-        labels: { priority: 'Ranked', plain: 'Unranked' },
+        labels: { priority: 'Play-once', plain: 'Repeatable' },
     },
 };
 
@@ -85,12 +88,19 @@ export function canonicaliseSort(value) {
     return SORT_VALUES.indexOf(value) >= 0 ? value : 'section';
 }
 
-// Returns the bucket (``super`` / ``priority`` / ``plain``) for a
-// textline using the same rules as the Python aggregator. Kept JS-side
-// rather than reading off a Python-emitted ``priorityBucket`` field
-// because the per-textline bucket is cheap to compute and avoids
-// shipping a 30 KB string field across the data payload.
-function priorityBucket(tl) {
+// Returns the filter/tier bucket for a textline. The dimension differs by
+// game: H1 uses the narrative-priority section/set tier
+// (super/priority/plain); H2's filter dimension is repeatability, so the
+// 'priority' bucket holds play-once dialogues and 'plain' holds repeatable
+// ones - this keeps the filter chips, tier-sort headers, and per-row
+// Play-once / Repeatable badge consistent. Computed JS-side rather than
+// read off a Python-emitted field to avoid shipping a per-textline bucket
+// string across the data payload.
+function priorityBucket(tl, game) {
+    const activeGame = game || getActiveGame();
+    if (activeGame === 'hades2') {
+        return (tl && tl.playOnce) ? 'priority' : 'plain';
+    }
     const set = tl && tl.narrativePrioritySetLevel;
     const sec = tl && tl.narrativePrioritySectionTier;
     if (set === 'super' || sec === 'super') return 'super';
@@ -132,10 +142,27 @@ function renderMissingSpeaker(speakerId) {
 // pivoting the textline list. The active chip carries an ``is-active``
 // class + ``aria-pressed`` flag. Chip list and labels are per-game; see
 // ``priorityScheme``. Returns the chip buttons' HTML (no wrapper).
+//
+// H2's filter dimension (play-once vs repeatable) isn't precomputed in
+// the Python ``priorityCounts`` (which are ordinal-based), so its bucket
+// counts are derived client-side via ``priorityBucket``; H1 reuses the
+// Python counts.
 function renderPriorityChips(entry, speakerId, currentFilter, game) {
-    const owned = (entry.ownedTextlines || []).length;
-    const priorityCounts = entry.priorityCounts || { super: 0, priority: 0, plain: 0 };
+    const ownedNames = entry.ownedTextlines || [];
+    const owned = ownedNames.length;
     const scheme = priorityScheme(game);
+    let bucketCounts;
+    if (game === 'hades2') {
+        bucketCounts = {};
+        for (const name of ownedNames) {
+            const tl = textlines[name];
+            if (!tl) continue;
+            const b = priorityBucket(tl, game);
+            bucketCounts[b] = (bucketCounts[b] || 0) + 1;
+        }
+    } else {
+        bucketCounts = entry.priorityCounts || { super: 0, priority: 0, plain: 0 };
+    }
     const chipBuckets = ['all', ...scheme.buckets];
     return chipBuckets.map(bucket => {
         const isActive = currentFilter === bucket;
@@ -147,11 +174,24 @@ function renderPriorityChips(entry, speakerId, currentFilter, game) {
             count = owned;
         } else {
             label = scheme.labels[bucket];
-            count = priorityCounts[bucket] || 0;
+            count = bucketCounts[bucket] || 0;
         }
         const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
         return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); filterSpeakerPriority(${jsAttr(speakerId)}, ${jsAttr(bucket)})">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
     }).join('');
+}
+
+// Within-section ordering of textlines. On H2 dialogues play in narrative
+// rank order (rank 1 first); dialogues without a rank (repeatables) sort
+// last. Other games - and ties / rank-less rows - fall back to
+// alphabetical by name.
+function compareWithinSection(a, b, game) {
+    if ((game || getActiveGame()) === 'hades2') {
+        const ra = Number.isInteger(a.tl.narrativePriorityOrdinal) ? a.tl.narrativePriorityOrdinal : Infinity;
+        const rb = Number.isInteger(b.tl.narrativePriorityOrdinal) ? b.tl.narrativePriorityOrdinal : Infinity;
+        if (ra !== rb) return ra - rb;
+    }
+    return a.name.localeCompare(b.name);
 }
 
 // Render the summary cards: owned/guest totals and the per-section
@@ -222,7 +262,7 @@ function renderTextlineList(entry, speakerId, filter, sort, game) {
     const owned = (entry.ownedTextlines || [])
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
-    const filtered = owned.filter(o => filterPassesBucket(priorityBucket(o.tl), filter, game));
+    const filtered = owned.filter(o => filterPassesBucket(priorityBucket(o.tl, game), filter, game));
 
     const controls = renderTextlineControls(entry, speakerId, filter, sort, game);
 
@@ -237,7 +277,7 @@ function renderTextlineList(entry, speakerId, filter, sort, game) {
     } else if (sort === 'tier') {
         const groups = new Map();
         for (const o of filtered) {
-            const bucket = priorityBucket(o.tl);
+            const bucket = priorityBucket(o.tl, game);
             if (!groups.has(bucket)) groups.set(bucket, []);
             groups.get(bucket).push(o);
         }
@@ -270,7 +310,7 @@ function renderTextlineList(entry, speakerId, filter, sort, game) {
             return sectionDisplay(a).localeCompare(sectionDisplay(b));
         });
         body = orderedSections.map(sec => {
-            const rows = groups.get(sec).slice().sort((a, b) => a.name.localeCompare(b.name));
+            const rows = groups.get(sec).slice().sort((a, b) => compareWithinSection(a, b, game));
             const header = sec
                 ? renderSectionHtml(sec)
                 : `<span class="section-name">(unknown section)</span>`;
