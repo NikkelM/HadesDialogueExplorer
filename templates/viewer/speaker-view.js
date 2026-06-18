@@ -217,62 +217,84 @@ function renderMissingSpeaker(speakerId) {
         + `</div>`;
 }
 
+// Shared renderer for a single filter chip (repeatability or
+// eligibility). A chip whose selection would produce an empty list is
+// disabled - greyed out and unclickable - so the user can't pivot the
+// list into a dead end. The currently-active chip is never disabled (it
+// stays clickable so an empty combination reached via a shared URL can
+// always be toggled back out). ``extraCls`` carries the eligibility
+// colour-dot class; ``count`` is the size of the list the chip yields.
+function renderFilterChip({ cls, extraCls = '', label, count, isActive, onclick }) {
+    const isDisabled = count === 0 && !isActive;
+    const classes = cls + extraCls
+        + (isActive ? ' is-active' : '')
+        + (isDisabled ? ' is-disabled' : '');
+    const aria = ` aria-pressed="${isActive ? 'true' : 'false'}"`;
+    const disabled = isDisabled ? ' disabled' : '';
+    return `<button type="button" class="${classes}"${aria}${disabled} onclick="event.stopPropagation(); ${onclick}">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
+}
+
 // Render the repeatability filter chips (with counts). Clickable: each
 // navigates to the same speaker with the matching ``priority`` URL key,
 // pivoting the textline list. The active chip carries an ``is-active``
 // class + ``aria-pressed`` flag. Chip list and labels come from
 // ``priorityScheme``. Returns the chip buttons' HTML (no wrapper).
 //
-// The bucket counts (play-once vs repeatable) are derived client-side
-// via ``priorityBucket`` rather than read off a Python-emitted field.
-function renderPriorityChips(entry, speakerId, currentFilter) {
+// Counts are tallied within the current eligibility filter so each chip's
+// number - and its disabled state - reflects what selecting it would
+// actually yield once both filter axes combine. With no save (or the
+// eligibility axis on 'all') this collapses to the plain owned counts.
+function renderPriorityChips(entry, speakerId, currentFilter, eligFilter) {
     const ownedNames = entry.ownedTextlines || [];
-    const owned = ownedNames.length;
     const scheme = priorityScheme();
     const bucketCounts = {};
+    let total = 0;
     for (const name of ownedNames) {
         const tl = textlines[name];
         if (!tl) continue;
+        if (!eligibilityPasses({ name, tl }, eligFilter)) continue;
+        total += 1;
         const b = priorityBucket(tl);
         bucketCounts[b] = (bucketCounts[b] || 0) + 1;
     }
     const chipBuckets = ['all', ...scheme.buckets];
-    return chipBuckets.map(bucket => {
-        const isActive = currentFilter === bucket;
-        const cls = `priority-chip${isActive ? ' is-active' : ''}`;
-        let label;
-        let count;
-        if (bucket === 'all') {
-            label = 'All';
-            count = owned;
-        } else {
-            label = scheme.labels[bucket];
-            count = bucketCounts[bucket] || 0;
-        }
-        const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
-        return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); filterSpeakerPriority(${jsAttr(speakerId)}, ${jsAttr(bucket)})">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
-    }).join('');
+    return chipBuckets.map(bucket => renderFilterChip({
+        cls: 'priority-chip',
+        label: bucket === 'all' ? 'All' : scheme.labels[bucket],
+        count: bucket === 'all' ? total : (bucketCounts[bucket] || 0),
+        isActive: currentFilter === bucket,
+        onclick: `filterSpeakerPriority(${jsAttr(speakerId)}, ${jsAttr(bucket)})`,
+    })).join('');
 }
 
 // Render the eligibility (save-status) filter chips with live counts.
 // Only meaningful when a save applies to the active game; the caller
-// (``renderTextlineControls``) omits the whole row otherwise. Counts come
-// from the loaded save via ``eligibilityCounts``. The status-specific
+// (``renderTextlineControls``) omits the whole row otherwise. Counts are
+// tallied within the current repeatability filter (mirroring
+// ``renderPriorityChips``) so each chip reflects the combined result and
+// a chip that would empty the list renders disabled. The status-specific
 // class drives the leading colour dot that echoes the per-row badge.
-function renderEligibilityChips(entry, speakerId, currentFilter) {
-    const counts = eligibilityCounts(entry);
+function renderEligibilityChips(entry, speakerId, currentFilter, priorityFilter) {
+    const counts = {};
     let total = 0;
-    for (const b of _ELIGIBILITY_BUCKETS) total += counts[b] || 0;
+    for (const name of entry.ownedTextlines || []) {
+        const tl = textlines[name];
+        if (!tl) continue;
+        if (!filterPassesBucket(priorityBucket(tl), priorityFilter)) continue;
+        const status = getDialogueStatus(name, tl);
+        if (!status) continue;
+        counts[status] = (counts[status] || 0) + 1;
+        total += 1;
+    }
     const chipBuckets = ['all', ..._ELIGIBILITY_BUCKETS];
-    return chipBuckets.map(bucket => {
-        const isActive = currentFilter === bucket;
-        const dotClass = bucket === 'all' ? '' : ` eligibility-chip-${bucket}`;
-        const cls = `priority-chip eligibility-chip${dotClass}${isActive ? ' is-active' : ''}`;
-        const label = bucket === 'all' ? 'All' : _ELIGIBILITY_LABELS[bucket];
-        const count = bucket === 'all' ? total : (counts[bucket] || 0);
-        const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
-        return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); filterSpeakerEligibility(${jsAttr(speakerId)}, ${jsAttr(bucket)})">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
-    }).join('');
+    return chipBuckets.map(bucket => renderFilterChip({
+        cls: 'priority-chip eligibility-chip',
+        extraCls: bucket === 'all' ? '' : ` eligibility-chip-${bucket}`,
+        label: bucket === 'all' ? 'All' : _ELIGIBILITY_LABELS[bucket],
+        count: bucket === 'all' ? total : (counts[bucket] || 0),
+        isActive: currentFilter === bucket,
+        onclick: `filterSpeakerEligibility(${jsAttr(speakerId)}, ${jsAttr(bucket)})`,
+    })).join('');
 }
 
 // Within-section ordering of textlines, matching each game's natural
@@ -656,13 +678,13 @@ function renderAlternatesClusterHtml(cluster) {
 // filter chips, plus the eligibility (save-status) filter chips on a
 // second row when a save applies to the active game.
 function renderTextlineControls(entry, speakerId, filter, eligFilter) {
-    const priorityChips = renderPriorityChips(entry, speakerId, filter);
+    const priorityChips = renderPriorityChips(entry, speakerId, filter, eligFilter);
     let html = `<div class="speaker-textline-controls">`
         + `<span class="speaker-control-label">Filter:</span>`
         + `<div class="speaker-priority-chips" role="group" aria-label="Repeatability filter">${priorityChips}</div>`
         + `</div>`;
     if (saveActive()) {
-        const eligChips = renderEligibilityChips(entry, speakerId, eligFilter);
+        const eligChips = renderEligibilityChips(entry, speakerId, eligFilter, filter);
         html += `<div class="speaker-textline-controls">`
             + `<span class="speaker-control-label">Eligibility:</span>`
             + `<div class="speaker-priority-chips" role="group" aria-label="Eligibility filter">${eligChips}</div>`
@@ -736,7 +758,7 @@ export function renderSpeaker(speakerId, opts) {
     const similar = similarSpeakers(canonical);
     const similarHtml = similar.length
         ? `<div class="speaker-similar"><span class="speaker-similar-label">Other versions of this speaker:</span>`
-            + similar.map(s => `<a class="speaker-similar-pill" role="button" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(s.id)})">${escapeHtml(s.name)}</a>`).join('')
+            + similar.map(s => `<a class="speaker-similar-pill" role="button" data-tooltip="${escapeHtml(s.id)}" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(s.id)})">${escapeHtml(s.name)}</a>`).join('')
             + `</div>`
         : '';
 

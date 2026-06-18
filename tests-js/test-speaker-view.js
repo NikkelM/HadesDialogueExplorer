@@ -852,6 +852,41 @@ test('renderSpeaker eligibility filter narrows the list to one status', () => {
     assert.doesNotMatch(playedOnly, /TestBlocked01/);
 });
 
+test('renderSpeaker disables filter/eligibility chips whose selection would be empty', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});
+    // All three dialogues are play-once, so the Repeatable chip is empty -
+    // greyed out and carrying the disabled attribute.
+    assert.match(
+        html,
+        /<button[^>]*class="priority-chip is-disabled"[^>]*disabled[^>]*>Repeatable: <span class="speaker-count">0<\/span>/,
+    );
+    // No dialogue is unobtainable, so that eligibility chip is empty too.
+    assert.match(
+        html,
+        /<button[^>]*class="priority-chip eligibility-chip eligibility-chip-unobtainable is-disabled"[^>]*disabled[^>]*>Unobtainable: <span class="speaker-count">0<\/span>/,
+    );
+    // Non-empty chips stay enabled (no ``disabled`` attribute, no class).
+    assert.match(
+        html,
+        /<button type="button" class="priority-chip" aria-pressed="false" onclick="[^"]*">Play-once: <span class="speaker-count">3<\/span>/,
+    );
+});
+
+test('renderSpeaker chip counts and disabled state reflect the active eligibility filter', () => {
+    loadEligibilityFixtureWithSave();
+    // Pivoting the eligibility axis to 'blocked' (one play-once dialogue)
+    // recounts the repeatability chips within that subset: Play-once -> 1,
+    // Repeatable -> 0 (disabled).
+    const html = render('NPC_Test_01', { eligibility: 'blocked' });
+    assert.match(html, /class="priority-chip is-active"[^>]*>All: <span class="speaker-count">1<\/span>/);
+    assert.match(html, /class="priority-chip"[^>]*>Play-once: <span class="speaker-count">1<\/span>/);
+    assert.match(
+        html,
+        /class="priority-chip is-disabled"[^>]*disabled[^>]*>Repeatable: <span class="speaker-count">0<\/span>/,
+    );
+});
+
 test('renderSpeaker hides eligibility chips, badges, and summary when no save is loaded', () => {
     // ``beforeEach`` cleared any save, so the speaker view renders without
     // save-derived chrome.
