@@ -113,6 +113,54 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
 
 
+# --- Section-key audit (see generate_data.py) ------------------------
+# Owner-level keys whose name follows the textline-set convention
+# (``*TextLines`` / ``*TextLineSet(s)``) but which are NOT in the
+# per-game allowlist. Both walkers record any such key that still
+# carries real textline data, so the generator can surface a
+# silently-dropped section rather than dropping it on the floor - the
+# "audits over silent skips" doctrine the README documents. The
+# collector is module-level because the walker is called from deep
+# inside every per-source extractor; threading an accumulator through
+# all of them would be far more invasive than reset-then-read around
+# each game's pass (generate_data.py drives this).
+_SECTION_KEY_NAME_RE = re.compile(r"(?:TextLineSets?|TextLines)$")
+_unlisted_section_keys: dict = {}
+
+
+def reset_section_key_audit() -> None:
+    """Clear the accumulated unlisted-section-key records. Call once
+    before each game's extraction pass (and in tests for isolation)."""
+    _unlisted_section_keys.clear()
+
+
+def _note_unlisted_section_key(owner_name, key, value, source_file) -> None:
+    """Record ``key`` when it looks like a textline-set section by name
+    and carries at least one textline-shaped entry. Called by the
+    walkers only for keys already known to be outside the allowlist.
+
+    An empty section-shaped key (e.g. H1 ``EnemyData``'s
+    ``BossPresentationNextStageRepeatableTextLineSets``) drops no data,
+    so it is ignored - the audit flags genuine loss, not frozen stubs.
+    """
+    if not isinstance(key, str) or not _SECTION_KEY_NAME_RE.search(key):
+        return
+    if not isinstance(value, LuaTable):
+        return
+    if not any(isinstance(v, LuaTable) for v in value.values()):
+        return
+    _unlisted_section_keys.setdefault((owner_name, key), source_file)
+
+
+def get_unlisted_section_keys() -> list:
+    """Return the recorded unlisted-but-populated section keys as a
+    sorted ``[(owner, key, source_file), ...]`` list."""
+    return sorted(
+        (owner, key, src)
+        for (owner, key), src in _unlisted_section_keys.items()
+    )
+
+
 def apply_force_play_once(sections: dict, force_play_once: bool) -> None:
     """Mark every textline in ``sections`` ``playOnce`` when
     ``force_play_once`` is set. Used for inspect-point narration, which
@@ -225,6 +273,7 @@ def extract_textline_sections(
     priority_tiers = section_priority_tiers or {}
     for key, value in owner_table.items():
         if key not in section_keys:
+            _note_unlisted_section_key(owner_name, key, value, source_file)
             continue
         if not isinstance(value, LuaTable):
             continue

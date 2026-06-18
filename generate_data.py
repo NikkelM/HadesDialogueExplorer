@@ -42,6 +42,10 @@ from src.extractors.hades2 import (
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.extractors.hades2.req_extractor import extract_requirements
+from src.extractors.textline_set import (
+    reset_section_key_audit,
+    get_unlisted_section_keys,
+)
 from src.graph import build_graph_data
 
 # Each entry: (output filename, source label, lua filename, extractor function)
@@ -248,6 +252,33 @@ def generate_hades2_source(
     return output_name, graph_data
 
 
+def report_unlisted_section_keys(game_label: str) -> None:
+    """Surface owner-level keys that look like textline-set sections and
+    carry data but were dropped because they are not in the per-game
+    allowlist. Populated by the walkers during the game's pass (see
+    :func:`src.extractors.textline_set._note_unlisted_section_key`);
+    silent when every section-shaped owner-level key is allowlisted.
+
+    This is the data->allowlist half of the section-key audit; the
+    allowlist->data half (allowlisted keys that matched zero containers)
+    lives in :func:`src.section_key_audit.audit_section_keys`, which runs
+    against the merged per-game graph in the build pipeline.
+    """
+    unlisted = get_unlisted_section_keys()
+    if not unlisted:
+        return
+    print(
+        f"\nWARNING ({game_label}): {len(unlisted)} owner-level textline-set "
+        f"section key(s) carry data but are not in the allowlist - they were "
+        f"dropped. Add them to the game's section-key allowlist, or confirm "
+        f"the exclusion is intended."
+    )
+    for owner, key, source_file in unlisted[:10]:
+        print(f"  {owner}.{key}  ({source_file})")
+    if len(unlisted) > 10:
+        print(f"  ... and {len(unlisted) - 10} more")
+
+
 def main():
     try:
         cfg = load_config()
@@ -274,6 +305,7 @@ def main():
     print("=" * 60)
     game_data_lists = load_game_data_lists(hades1_scripts)
 
+    reset_section_key_audit()
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
@@ -286,6 +318,7 @@ def main():
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {out_path}")
+    report_unlisted_section_keys("hades1")
 
     # --- Hades 2 ---
     print()
@@ -338,6 +371,7 @@ def main():
             f.write("\n")
         print(f"  Written to: {metadata_path}")
 
+    reset_section_key_audit()
     for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
         matched_files = sorted(hades2_scripts.glob(pattern))
         if not matched_files:
@@ -369,6 +403,7 @@ def main():
             print(f"  Written to: {out_path}")
         if skipped_empty:
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
+    report_unlisted_section_keys("hades2")
 
     # Cross-source orphan-priority audit: every (owner, section,
     # textline) tuple present in ``narrative_priorities`` should have

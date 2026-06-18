@@ -64,7 +64,7 @@ the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 import re
 
 from ...lua_parser import LuaTable
-from ..textline_set import apply_force_play_once
+from ..textline_set import apply_force_play_once, _note_unlisted_section_key
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
@@ -138,6 +138,7 @@ def extract_textline_sections(
     fallback_speaker = default_speaker or owner_name
     for key, value in owner_table.items():
         if key not in section_keys:
+            _note_unlisted_section_key(owner_name, key, value, source_file)
             continue
         if not isinstance(value, LuaTable):
             continue
