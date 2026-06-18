@@ -93,19 +93,23 @@ const _COUNT_OP_PHRASING = {
 // suffix - the path tail is already in the head).
 const _PATH_OP_FRIENDLY_KEYS = new Set(['PathTrue', 'PathFalse', 'PathEmpty', 'PathNotEmpty']);
 
-// Allowed keys on a ``Path:<head>`` value record we know how to render
-// in a human-friendly form. Records carrying any additional modifier
-// (CountOf, SumOf, SumPrevRuns, UseLength, ...) fall back to the raw
-// JSON display so no information is silently dropped.
-const _PATH_RECORD_CLEAN_EXTRA_KEYS = new Set(['Path']);
+// Aggregation modifiers that count how many of the listed items occur in
+// the path's table, read most naturally as ``<head> <phrase> N of:
+// items`` (paired with Comparison + Value).
+const _PATH_COUNT_ITEMS_KEYS = ['CountOf', 'TableValuesToCount', 'ValuesToCount'];
 
-function _isCleanPathRecord(rec, opKey) {
-    for (const k of Object.keys(rec)) {
-        if (k === opKey) continue;
-        if (opKey === 'Comparison' && k === 'Value') continue;
-        if (!_PATH_RECORD_CLEAN_EXTRA_KEYS.has(k)) return false;
+// A Path record renders friendly only when every one of its keys is
+// recognised and consumed; any leftover key sends the caller back to the
+// raw JSON dump so a modifier is never silently dropped.
+function _allConsumed(keys, consumed) {
+    for (const k of keys) {
+        if (!consumed.has(k)) return false;
     }
     return true;
+}
+
+function _pathToString(p) {
+    return Array.isArray(p) ? p.join('.') : _formatScalar(p);
 }
 
 function _formatScalar(v) {
@@ -189,38 +193,121 @@ function _renderOperandList(items) {
     return items.map(_renderListItemHtml).join(', ');
 }
 
-// Render the CountOf item list inline. A top-level ``<ref:GameData.X>``
-// placeholder collapses to the bare identifier; arrays render as
-// comma-separated chips with ref-stripping applied per element.
-function _renderCountItemsHtml(items) {
-    return _renderOperandList(items);
+// Run/room aggregation + misc decorators that can wrap any Path record.
+// Marks recognised keys in ``consumed`` and returns a trailing modifier
+// clause (empty when none apply). ``HintId`` is metadata surfaced only
+// in the raw tooltip, so it is consumed without adding visible text.
+function _pathDecoratorSuffix(rec, consumed) {
+    const mods = [];
+    if ('SumPrevRuns' in rec) {
+        consumed.add('SumPrevRuns');
+        mods.push(`over the last ${escapeHtml(_formatScalar(rec.SumPrevRuns))} runs`);
+    }
+    if ('SumPrevRooms' in rec) {
+        consumed.add('SumPrevRooms');
+        mods.push(`over the last ${escapeHtml(_formatScalar(rec.SumPrevRooms))} rooms`);
+    }
+    if ('IgnoreCurrentRun' in rec) {
+        consumed.add('IgnoreCurrentRun');
+        if (rec.IgnoreCurrentRun) mods.push('excluding the current run');
+    }
+    if ('PathFromSource' in rec) {
+        consumed.add('PathFromSource');
+        if (rec.PathFromSource) mods.push('from source');
+    }
+    if ('HintId' in rec) {
+        consumed.add('HintId');
+    }
+    return mods.length ? ` <span class="other-req-mod">(${mods.join(', ')})</span>` : '';
 }
 
-function _renderCountOfRecord(head, rec) {
-    if (!('CountOf' in rec) || !('Comparison' in rec) || !('Value' in rec)) return null;
-    for (const k of Object.keys(rec)) {
-        if (k === 'CountOf' || k === 'Comparison' || k === 'Value' || k === 'Path') continue;
-        return null;
+// Right-hand value of a Comparison record: a literal ``Value``, or a
+// ``ValuePath`` (value read from another path) with an optional signed
+// ``ValuePathAddition``. Marks the keys it uses in ``consumed``; returns
+// null when no value source is present.
+function _renderComparisonValue(rec, consumed) {
+    if ('Value' in rec) {
+        consumed.add('Value');
+        return `<code>${escapeHtml(_formatScalar(rec.Value))}</code>`;
     }
-    const phrase = _COUNT_OP_PHRASING[rec.Comparison];
-    if (!phrase) return null;
-    const headHtml = `<code class="other-req-path">${escapeHtml(head)}</code>`;
-    const itemsHtml = _renderCountItemsHtml(rec.CountOf);
-    return `${headHtml} ${phrase} <code>${escapeHtml(_formatScalar(rec.Value))}</code> of: ${itemsHtml}`;
+    if ('ValuePath' in rec) {
+        consumed.add('ValuePath');
+        let html = `<code class="other-req-path">${escapeHtml(_pathToString(rec.ValuePath))}</code>`;
+        if ('ValuePathAddition' in rec) {
+            consumed.add('ValuePathAddition');
+            const add = rec.ValuePathAddition;
+            if (typeof add === 'number' && add < 0) {
+                html += ` - <code>${escapeHtml(_formatScalar(-add))}</code>`;
+            } else {
+                html += ` + <code>${escapeHtml(_formatScalar(add))}</code>`;
+            }
+        }
+        return html;
+    }
+    return null;
+}
+
+// Friendly rendering of a Comparison record: an optional aggregation of
+// the path value (CountOf / TableValuesToCount / ValuesToCount counted
+// against a threshold; SumOf / UseLength / CountPathTrue reshaped into a
+// numeric subject) compared against a value, plus run/room decorators.
+// Returns null (caller falls back to raw JSON) if any key is unhandled.
+function _renderComparisonRecord(head, headHtml, rec, keys) {
+    const consumed = new Set(['Comparison', 'Path']);
+    const valueHtml = _renderComparisonValue(rec, consumed);
+    if (valueHtml === null) return null;
+    const suffix = _pathDecoratorSuffix(rec, consumed);
+
+    // "Count how many of these items occur" aggregations read most
+    // naturally as ``<head> has at least N of: items``.
+    for (const ck of _PATH_COUNT_ITEMS_KEYS) {
+        if (ck in rec) {
+            consumed.add(ck);
+            // CountPathTrue co-occurs with a table-values count to mean
+            // "count the truthy entries among these items"; the count
+            // phrasing already conveys that, so consume it here.
+            if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
+            const phrase = _COUNT_OP_PHRASING[rec.Comparison];
+            if (!phrase || !_allConsumed(keys, consumed)) return null;
+            return `${headHtml} ${phrase} ${valueHtml} of: ${_renderOperandList(rec[ck])}${suffix}`;
+        }
+    }
+
+    // Aggregations that reshape the path value into a numeric subject.
+    let subjectHtml = headHtml;
+    if ('UseLength' in rec) {
+        consumed.add('UseLength');
+        subjectHtml = `number of entries in ${headHtml}`;
+    } else if ('CountPathTrue' in rec) {
+        consumed.add('CountPathTrue');
+        subjectHtml = `number of true entries in ${headHtml}`;
+    } else if ('SumOf' in rec) {
+        consumed.add('SumOf');
+        subjectHtml = `sum of ${_renderOperandList(rec.SumOf)} in ${headHtml}`;
+    }
+
+    if (!_allConsumed(keys, consumed)) return null;
+    return `${subjectHtml} ${escapeHtml(String(rec.Comparison))} ${valueHtml}${suffix}`;
 }
 
 function _renderPathRecord(head, rec) {
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
+    const keys = new Set(Object.keys(rec));
     const headHtml = `<code class="other-req-path">${escapeHtml(head)}</code>`;
-    const countOf = _renderCountOfRecord(head, rec);
-    if (countOf !== null) return countOf;
-    if ('Comparison' in rec && 'Value' in rec && _isCleanPathRecord(rec, 'Comparison')) {
-        return `${headHtml} ${escapeHtml(String(rec.Comparison))} <code>${escapeHtml(_formatScalar(rec.Value))}</code>`;
-    }
+
+    // Set-/value-membership predicates carry only the operand list plus
+    // optional decorators.
     for (const [op, verb] of Object.entries(_PATH_RECORD_MEMBERSHIP_VERBS)) {
-        if (op in rec && _isCleanPathRecord(rec, op)) {
-            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}`;
+        if (op in rec) {
+            const consumed = new Set([op, 'Path']);
+            const suffix = _pathDecoratorSuffix(rec, consumed);
+            if (!_allConsumed(keys, consumed)) return null;
+            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}${suffix}`;
         }
+    }
+
+    if ('Comparison' in rec) {
+        return _renderComparisonRecord(head, headHtml, rec, keys);
     }
     return null;
 }
@@ -249,21 +336,25 @@ function _renderFunctionRecord(fnName, rec) {
 }
 
 // Render one of the four "just the path" operator prefixes
-// (PathTrue / PathFalse / PathEmpty / PathNotEmpty). The value is a
-// list of records each carrying ONLY the operator key with the same
-// path as the synthetic head; multiple records (duplicates from the
-// extractor) repeat the friendly key joined by ``AND``. Returns
-// ``null`` for any unexpected shape so the caller falls back to raw
-// JSON.
+// (PathTrue / PathFalse / PathEmpty / PathNotEmpty). Each record carries
+// the operator key (the path lives in the synthetic head) plus optional
+// decorators (HintId / PathFromSource / SumPrevRuns / ...); multiple
+// records (duplicates from the extractor) repeat the friendly key joined
+// by ``AND``. Returns ``null`` for any unexpected shape so the caller
+// falls back to raw JSON.
 function _renderPathOpEntry(opKey, key, val) {
     if (!Array.isArray(val) || val.length === 0) return null;
+    const friendlyKey = renderOtherReqKeyHtml(key);
+    const parts = [];
     for (const rec of val) {
         if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
-        const keys = Object.keys(rec);
-        if (keys.length !== 1 || keys[0] !== opKey) return null;
+        if (!(opKey in rec)) return null;
+        const consumed = new Set([opKey]);
+        const suffix = _pathDecoratorSuffix(rec, consumed);
+        if (!_allConsumed(new Set(Object.keys(rec)), consumed)) return null;
+        parts.push(`${friendlyKey}${suffix}`);
     }
-    const friendlyKey = renderOtherReqKeyHtml(key);
-    return val.map(() => friendlyKey).join(' <span class="other-req-and">AND</span> ');
+    return parts.join(' <span class="other-req-and">AND</span> ');
 }
 
 // Compact friendly summary of a bare-key value. Works for any bare
@@ -513,7 +604,7 @@ function renderSaveProgressPillHtml(name, tl) {
     if (!getSaveProgress() || !saveMatchesActiveGame()) return '';
     const status = getDialogueStatus(name, tl);
     if (!status) return '';
-    const labels = { played: '\u2714 Played', eligible: '\u25CB Eligible', blocked: '\u2022 Blocked' };
+    const labels = { played: '\u2714 Played', eligible: '\u25CB Eligible', blocked: '\u2022 Blocked', unobtainable: '\u2298 Unobtainable' };
     const label = labels[status] || status;
     // Every status opens the eligibility tracer for this dialogue: blocked
     // shows what's still missing, eligible/played show the satisfied chain.

@@ -164,6 +164,12 @@
     margin: 0 4px;
     letter-spacing: 0.5px;
 }
+/* Aggregation modifier clause appended to a Path record (e.g.
+   ``(over the last 2 runs)``). Muted so the core predicate reads first. */
+.other-req-item .other-req-mod {
+    color: #8b949e;
+    font-style: italic;
+}
 /* Function name inside a rendered FunctionName:<name> entry (e.g.
    ``RequiredAlive(Ids=[42]) = true``). Subtle tint to separate the
    identifier from the surrounding argument list. */

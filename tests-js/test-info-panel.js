@@ -439,16 +439,25 @@ function fixtureWithPathRecords() {
                     Value: 5,
                 },
             ],
-            // Decorated record carrying a SumPrevRuns modifier - we
-            // don't know how to render those today, so the renderer
-            // must fall back to the raw JSON dump rather than silently
-            // drop the modifier.
-            'Path:GameState.NonClean': [
+            // Decorated record carrying a SumPrevRuns modifier - rendered
+            // as a friendly comparison with an "(over the last N runs)"
+            // clause appended.
+            'Path:GameState.RunsCache': [
                 {
                     Comparison: '>=',
-                    Path: ['GameState', 'NonClean'],
+                    Path: ['GameState', 'RunsCache'],
                     SumPrevRuns: 3,
                     Value: 1,
+                },
+            ],
+            // A record carrying a key the renderer does not recognise must
+            // fall back to the raw JSON dump rather than silently drop it.
+            'Path:GameState.TrulyUnknown': [
+                {
+                    Comparison: '>=',
+                    Path: ['GameState', 'TrulyUnknown'],
+                    Value: 1,
+                    SomeUnknownModifier: true,
                 },
             ],
         },
@@ -496,14 +505,181 @@ test('otherRequirements: multiple Path:<head> records under one key are AND-join
 });
 
 
-test('otherRequirements: Path:<head> records with unknown modifiers fall back to raw JSON', () => {
+test('otherRequirements: Path:<head> + SumPrevRuns renders a friendly "(over the last N runs)" clause', () => {
     loadData(fixtureWithPathRecords());
     renderInfo('PathRecordDemo');
-    // ``SumPrevRuns`` is a known modifier we don't render specially
-    // yet - the renderer must NOT pretend it's a clean comparison.
-    // The raw JSON dump preserves all fields verbatim.
-    assert.match(lastHtml, /Path:GameState\.NonClean = /);
-    assert.match(lastHtml, /SumPrevRuns/);
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.RunsCache<\/code> &gt;= <code>1<\/code> <span class="other-req-mod">\(over the last 3 runs\)<\/span>/
+    );
+});
+
+
+test('otherRequirements: Path:<head> records with unrecognised keys fall back to raw JSON', () => {
+    loadData(fixtureWithPathRecords());
+    renderInfo('PathRecordDemo');
+    // An unknown modifier key must NOT be silently dropped - the raw
+    // JSON dump preserves all fields verbatim.
+    assert.match(lastHtml, /Path:GameState\.TrulyUnknown = /);
+    assert.match(lastHtml, /SomeUnknownModifier/);
+});
+
+
+// Path:<head> records decorated with aggregation modifiers
+// (TableValuesToCount / UseLength / CountPathTrue / SumOf / ValuePath /
+// SumPrevRooms / ...). Each must render a friendly clause rather than
+// falling back to raw JSON.
+function fixtureWithModifierRecords() {
+    const data = buildFixtureData();
+    data.textlines.ModifierRecordDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'demo line' }],
+        requirements: {},
+        otherRequirements: {
+            // TableValuesToCount counted against a threshold, summed over
+            // previous runs (the user's reported example shape).
+            'Path:EncountersOccurredCache': [
+                {
+                    Comparison: '>=',
+                    Path: ['EncountersOccurredCache'],
+                    SumPrevRuns: 2,
+                    TableValuesToCount: ['DevotionTestF', 'DevotionTestG'],
+                    Value: 1,
+                },
+            ],
+            // UseLength -> "number of entries in <head>".
+            'Path:GameState.WeaponsUnlocked': [
+                { Comparison: '>=', Path: ['GameState', 'WeaponsUnlocked'], UseLength: true, Value: 3 },
+            ],
+            // CountPathTrue -> "number of true entries in <head>", summed.
+            'Path:SpeechRecord': [
+                { Comparison: '<=', Path: ['SpeechRecord'], CountPathTrue: true, SumPrevRuns: 4, Value: 0 },
+            ],
+            // SumOf -> "sum of <items> in <head>".
+            'Path:GameState.RoomsEntered': [
+                { Comparison: '>=', Path: ['GameState', 'RoomsEntered'], SumOf: ['N_Boss01', 'N_Boss02'], Value: 3 },
+            ],
+            // ValuePath compared with a negative ValuePathAddition.
+            'Path:GameState.LastObjectiveFailedRun.NemesisBet': [
+                {
+                    Comparison: '<',
+                    Path: ['GameState', 'LastObjectiveFailedRun', 'NemesisBet'],
+                    ValuePath: ['GameState', 'CompletedRunsCache'],
+                    ValuePathAddition: -5,
+                },
+            ],
+            // Membership carrying a HintId (metadata) still renders friendly.
+            'Path:GameState.TextLinesRecord': [
+                { IsNone: ['SomeLine'], Path: ['GameState', 'TextLinesRecord'], HintId: 7 },
+            ],
+            // SumPrevRooms + IgnoreCurrentRun decorators combine.
+            'Path:Encounter.NemesisShopping': [
+                {
+                    Comparison: '<=',
+                    Path: ['Encounter', 'NemesisShopping'],
+                    SumPrevRooms: 12,
+                    IgnoreCurrentRun: true,
+                    Value: 0,
+                },
+            ],
+            // CountPathTrue + TableValuesToCount co-occur: count the truthy
+            // entries among the listed items (still the count phrasing).
+            'Path:EncountersOccurredCache2': [
+                {
+                    Comparison: '>=',
+                    CountPathTrue: true,
+                    Path: ['EncountersOccurredCache2'],
+                    SumPrevRuns: 2,
+                    TableValuesToCount: ['ArtemisCombatN', 'ArtemisCombatN2'],
+                    Value: 1,
+                },
+            ],
+        },
+    };
+    return data;
+}
+
+
+test('Path TableValuesToCount renders a count-of-items threshold with a run clause', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">EncountersOccurredCache<\/code> has at least <code>1<\/code> of: <code>DevotionTestF<\/code>, <code>DevotionTestG<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+    );
+});
+
+
+test('Path UseLength renders "number of entries in <head>"', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /number of entries in <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> &gt;= <code>3<\/code>/
+    );
+});
+
+
+test('Path CountPathTrue renders "number of true entries in <head>" with a run clause', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /number of true entries in <code class="other-req-path">SpeechRecord<\/code> &lt;= <code>0<\/code> <span class="other-req-mod">\(over the last 4 runs\)<\/span>/
+    );
+});
+
+
+test('Path SumOf renders "sum of <items> in <head>"', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /sum of <code>N_Boss01<\/code>, <code>N_Boss02<\/code> in <code class="other-req-path">GameState\.RoomsEntered<\/code> &gt;= <code>3<\/code>/
+    );
+});
+
+
+test('Path ValuePath renders the referenced path with a signed addition', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.LastObjectiveFailedRun\.NemesisBet<\/code> &lt; <code class="other-req-path">GameState\.CompletedRunsCache<\/code> - <code>5<\/code>/
+    );
+});
+
+
+test('Path membership record carrying a HintId still renders friendly', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">GameState\.TextLinesRecord<\/code> is none of: <code>SomeLine<\/code>/
+    );
+});
+
+
+test('Path SumPrevRooms + IgnoreCurrentRun decorators combine in one clause', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /<span class="other-req-mod">\(over the last 12 rooms, excluding the current run\)<\/span>/
+    );
+});
+
+
+test('Path CountPathTrue + TableValuesToCount renders as a count-of-items threshold', () => {
+    loadData(fixtureWithModifierRecords());
+    renderInfo('ModifierRecordDemo');
+    assert.match(
+        lastHtml,
+        /<code class="other-req-path">EncountersOccurredCache2<\/code> has at least <code>1<\/code> of: <code>ArtemisCombatN<\/code>, <code>ArtemisCombatN2<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+    );
 });
 
 
@@ -871,6 +1047,16 @@ function fixtureWithSimplifiedOtherReqs() {
                 { PathTrue: ['GameState', 'Dup'] },
                 { PathTrue: ['GameState', 'Dup'] },
             ],
+            // PathFalse carrying a HintId (metadata) still renders
+            // friendly - the HintId surfaces only in the raw tooltip.
+            'PathFalse:CurrentRun.Hero.IsDead': [
+                { PathFalse: ['CurrentRun', 'Hero', 'IsDead'], HintId: 'Codex_AthenaUnlockHint01' },
+            ],
+            // PathTrue carrying PathFromSource appends a "(from source)"
+            // decorator clause.
+            'PathTrue:WasRandomLoot': [
+                { PathTrue: ['WasRandomLoot'], PathFromSource: true },
+            ],
             // CountOf inline list -> "head has at least N of items"
             'Path:CurrentRun.UseRecord': [
                 {
@@ -952,6 +1138,29 @@ test('multiple PathTrue records under one key render as friendly key joined by A
     assert.match(
         lastHtml,
         /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
+    );
+});
+
+
+test('PathFalse record carrying a HintId renders friendly (no raw fallback)', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // HintId is metadata - it must not force a raw JSON dump, and adds
+    // no visible suffix (it remains in the row's hover tooltip only).
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Hero\.IsDead<\/code><\/div>/
+    );
+    assert.doesNotMatch(lastHtml, /PathFalse:CurrentRun\.Hero\.IsDead = /);
+});
+
+
+test('PathTrue record carrying PathFromSource appends a "(from source)" clause', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">WasRandomLoot<\/code> <span class="other-req-mod">\(from source\)<\/span>/
     );
 });
 
