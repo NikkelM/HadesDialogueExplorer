@@ -73,13 +73,6 @@ body.layout-speaker #panel-info {
     font-style: italic;
     margin-bottom: 4px;
 }
-/* Game indicator: pinned to the far right of the aside. */
-.speaker-overview-header .speaker-game {
-    color: #666;
-    font-size: 11px;
-    align-self: flex-end;
-    white-space: nowrap;
-}
 /* Similar-speaker pills: sit at the aside's left edge, which aligns with
    the summary's right column below. Rendered as clickable pill buttons so
    the navigation affordance is obvious. */
@@ -112,9 +105,6 @@ body.layout-speaker #panel-info {
     background: #1c4584;
     color: #fff;
     border-color: #2a5aa8;
-}
-.speaker-overview-header .speaker-game code {
-    color: #888;
 }
 .speaker-overview-header .speaker-ids {
     color: #888;

@@ -23,7 +23,7 @@
 // The bucket keys stay ``priority`` / ``plain`` for URL and CSS
 // stability; see ``priorityScheme`` below.
 
-import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame, alternates, dependents } from './data.js';
+import { textlines, speakers, sectionKeyLabels, getActiveGame, alternates, dependents } from './data.js';
 import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers } from './speaker-groups.js';
 import {
     escapeHtml,
@@ -735,7 +735,6 @@ export function renderSpeaker(speakerId, opts) {
     const eligFilter = canonicaliseEligibility(opts && opts.eligibility);
     const friendly = entry.name && entry.name !== canonical ? entry.name : null;
     const description = entry.description || '';
-    const gameLabel = (gameLabels && gameLabels[game]) || game;
     const members = (entry._members && entry._members.length > 0) ? entry._members : [canonical];
 
     // When the group has multiple members, list every member id on a
@@ -768,7 +767,6 @@ export function renderSpeaker(speakerId, opts) {
         + (description ? `<p class="speaker-description">${escapeHtml(description)}</p>` : '')
         + `</div>`
         + `<div class="speaker-overview-header-aside">`
-        + (gameLabel ? `<p class="speaker-game">Game: ${escapeHtml(gameLabel)}</p>` : '')
         + similarHtml
         + `</div>`
         + `</header>`;
