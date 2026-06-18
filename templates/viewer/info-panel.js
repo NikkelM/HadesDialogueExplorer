@@ -852,32 +852,34 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
 
     const requirements = src.requirements || {};
     const otherRequirements = src.otherRequirements || {};
+    const reqOptions = {
+        textlineName,
+        sourcesByType: src.requirementSources || {},
+        // The base requirements block uses sectioned ``<h4>`` headers
+        // per requirement type with a final "Other Requirements"
+        // section header. OR-branch and NamedRequirements payloads
+        // reuse the shared helper with ``otherHeaderLabel: null`` to
+        // suppress that header (the surrounding header already
+        // provides scope context).
+        otherHeaderLabel: 'Other Requirements',
+    };
 
-    html += renderRequirementsAndOtherHtml(
-        requirements,
-        otherRequirements,
-        {
-            textlineName,
-            sourcesByType: src.requirementSources || {},
-            // The base requirements block uses sectioned ``<h4>``
-            // headers per requirement type with a final "Other
-            // Requirements" section header. OR-branch payloads reuse
-            // this helper with ``compact: true`` to suppress the
-            // "Other Requirements" header (the surrounding branch
-            // header already provides scope context).
-            otherHeaderLabel: 'Other Requirements',
-        }
-    );
+    // Base AND requirements - the gates that MUST always hold.
+    html += renderBaseRequirementsHtml(requirements, otherRequirements, reqOptions);
 
     // H2 alternative requirement groups (set-level ``OrRequirements``
     // on the source RequirementSet). Each branch is itself a set of
     // requirements + otherRequirements that, taken together, satisfies
     // the group; the group as a whole satisfies the parent textline if
-    // ANY one branch passes. Rendered as a sibling section to the
-    // base AND requirements above so the reader sees both at a glance
-    // - the base block is what MUST always hold, the OR block lists
-    // the options where any one is sufficient.
+    // ANY one branch passes. Rendered between the base AND block and
+    // the Other Requirements section below so the reader sees the
+    // must-always-hold gates first, then the any-one-suffices options.
     html += renderOrBranchesSectionHtml(src.orBranches, textlineName);
+
+    // The "Other Requirements" catch-all always renders last so it
+    // stays pinned to the bottom of the detail view, beneath any OR
+    // branches.
+    html += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
 
     return html;
 }
@@ -1003,16 +1005,26 @@ function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
 
 
 // Render the requirements + otherRequirements blocks for one set of
-// requirement data - the textline's base AND set, or a single OR
-// branch. Extracted from ``renderDialogueAndRequirementsHtml`` so OR
-// branches can reuse the exact same per-section markup, sort order,
-// inline GameData grouping, and Count-on-header merging as the base
-// block. The only difference between the two call sites is the
-// "Other Requirements" outer header: the base wraps its non-textline
-// gates in a labelled ``<h4>`` section, OR branches inline them
-// directly under the branch header (which already provides scope).
+// requirement data - the textline's base AND set, a single OR branch,
+// or a resolved NamedRequirements chain - by concatenating the base
+// AND sections with the "Other Requirements" section. The top-level
+// detail view calls the two halves separately (with the OR-branches
+// section rendered between them, so Other Requirements always stays
+// pinned to the bottom); the OR-branch and NamedRequirements call
+// sites want the two halves adjacent and use this combined wrapper.
 function renderRequirementsAndOtherHtml(requirements, otherRequirements, options) {
-    const { textlineName, sourcesByType, otherHeaderLabel } = options;
+    return renderBaseRequirementsHtml(requirements, otherRequirements, options)
+         + renderOtherRequirementsSectionHtml(requirements, otherRequirements, options);
+}
+
+
+// Render only the base AND requirement sections, sorted by the
+// canonical per-game display order. ``otherRequirements`` is still
+// consulted so a Count-based field's threshold can be surfaced inline
+// with the matching requirement-section header. Reused verbatim by the
+// OR-branch and NamedRequirements call sites for identical markup.
+function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
+    const { textlineName, sourcesByType } = options;
     let html = '';
 
     // Sort requirement sections by the canonical per-game display
@@ -1065,68 +1077,79 @@ function renderRequirementsAndOtherHtml(requirements, otherRequirements, options
         html += `</div></div>`;
     }
 
-    if (Object.keys(otherRequirements).length > 0) {
-        let otherHtml = '';
-        // Sort otherRequirements by the canonical per-game display
-        // order too. Compound keys (``Path:<head>``, ``FunctionName:
-        // <name>``) are looked up by their prefix; bare operator keys
-        // and unknown prefixes fall through to the 999 sentinel.
-        const sortedOtherEntries = Object.entries(otherRequirements).sort(
-            ([a], [b]) => reqTypeOrderIndex(_otherReqOrderKey(a))
-                        - reqTypeOrderIndex(_otherReqOrderKey(b))
-        );
-        for (const [key, val] of sortedOtherEntries) {
-            if (key in requirements) {
-                // Already surfaced inline with the requirement-section
-                // header above. Defensively render any non-Count meta
-                // keys to guard against silent data loss if the game
-                // data ever ships additional metadata fields beyond
-                // ``Count`` (none today across all 4 H1 sources).
-                if (val && typeof val === 'object' && !Array.isArray(val)) {
-                    const extras = {};
-                    for (const [k, v] of Object.entries(val)) {
-                        if (k !== 'Count') extras[k] = v;
-                    }
-                    if (Object.keys(extras).length > 0) {
-                        const extrasTooltip = renderOtherReqTooltip(key, extras);
-                        const tipAttr = extrasTooltip ? ` data-tooltip="${escapeHtml(extrasTooltip)}"` : '';
-                        otherHtml += `<div class="other-req-item"${tipAttr}>${renderOtherReqKeyHtml(key)} = ${escapeHtml(JSON.stringify(extras))}</div>`;
-                    }
+    return html;
+}
+
+
+// Render only the "Other Requirements" section - the catch-all gates
+// that aren't textline requirements (operators, Path/FunctionName
+// keys, NamedRequirements* expansions). Returns an empty string when
+// there are none, or when every entry was a Count-meta key already
+// surfaced inline with its requirement-section header. ``otherHeaderLabel``
+// set wraps the items in a labelled ``<h4>`` section (the base/host
+// call site); null inlines them bare (OR-branch and NamedRequirements
+// expansion call sites, where the surrounding header already provides
+// scope).
+function renderOtherRequirementsSectionHtml(requirements, otherRequirements, options) {
+    const { textlineName, otherHeaderLabel } = options;
+    if (Object.keys(otherRequirements).length === 0) return '';
+
+    let otherHtml = '';
+    // Sort otherRequirements by the canonical per-game display
+    // order too. Compound keys (``Path:<head>``, ``FunctionName:
+    // <name>``) are looked up by their prefix; bare operator keys
+    // and unknown prefixes fall through to the 999 sentinel.
+    const sortedOtherEntries = Object.entries(otherRequirements).sort(
+        ([a], [b]) => reqTypeOrderIndex(_otherReqOrderKey(a))
+                    - reqTypeOrderIndex(_otherReqOrderKey(b))
+    );
+    for (const [key, val] of sortedOtherEntries) {
+        if (key in requirements) {
+            // Already surfaced inline with the requirement-section
+            // header above. Defensively render any non-Count meta
+            // keys to guard against silent data loss if the game
+            // data ever ships additional metadata fields beyond
+            // ``Count`` (none today across all 4 H1 sources).
+            if (val && typeof val === 'object' && !Array.isArray(val)) {
+                const extras = {};
+                for (const [k, v] of Object.entries(val)) {
+                    if (k !== 'Count') extras[k] = v;
                 }
+                if (Object.keys(extras).length > 0) {
+                    const extrasTooltip = renderOtherReqTooltip(key, extras);
+                    const tipAttr = extrasTooltip ? ` data-tooltip="${escapeHtml(extrasTooltip)}"` : '';
+                    otherHtml += `<div class="other-req-item"${tipAttr}>${renderOtherReqKeyHtml(key)} = ${escapeHtml(JSON.stringify(extras))}</div>`;
+                }
+            }
+            continue;
+        }
+        // NamedRequirements* set-level keys: render each name as
+        // a collapsible expander whose body shows the resolved
+        // inner requirement chain. Falls back to the flat-list
+        // rendering below if the helper returns null (empty /
+        // non-array value).
+        if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
+            const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
+            if (expandedHtml !== null) {
+                otherHtml += expandedHtml;
                 continue;
             }
-            // NamedRequirements* set-level keys: render each name as
-            // a collapsible expander whose body shows the resolved
-            // inner requirement chain. Falls back to the flat-list
-            // rendering below if the helper returns null (empty /
-            // non-array value).
-            if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
-                const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
-                if (expandedHtml !== null) {
-                    otherHtml += expandedHtml;
-                    continue;
-                }
-            }
-            const tooltip = renderOtherReqTooltip(key, val);
-            const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-            otherHtml += `<div class="other-req-item"${tipAttr}>${renderOtherReqEntryHtml(key, val)}</div>`;
         }
-        if (otherHtml) {
-            if (otherHeaderLabel) {
-                html += `<div class="req-section req-type-other">`
-                      + `<h4><span class="toggle">\u25BC</span>${escapeHtml(otherHeaderLabel)}</h4>`
-                      + `<div class="req-section-children expanded">${otherHtml}</div>`
-                      + `</div>`;
-            } else {
-                // Compact (OR-branch) mode: inline the items directly
-                // under the surrounding branch header without an extra
-                // section wrapper.
-                html += otherHtml;
-            }
-        }
+        const tooltip = renderOtherReqTooltip(key, val);
+        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+        otherHtml += `<div class="other-req-item"${tipAttr}>${renderOtherReqEntryHtml(key, val)}</div>`;
     }
 
-    return html;
+    if (!otherHtml) return '';
+    if (otherHeaderLabel) {
+        return `<div class="req-section req-type-other">`
+              + `<h4><span class="toggle">\u25BC</span>${escapeHtml(otherHeaderLabel)}</h4>`
+              + `<div class="req-section-children expanded">${otherHtml}</div>`
+              + `</div>`;
+    }
+    // Compact (OR-branch) mode: inline the items directly under the
+    // surrounding branch header without an extra section wrapper.
+    return otherHtml;
 }
 
 // Shared tooltip text for the collision-rename UI (badge in the header
