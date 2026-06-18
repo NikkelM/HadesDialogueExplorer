@@ -11,7 +11,7 @@
  * The field -> category split mirrors ``REQUIREMENT_BLOCKING_SEMANTICS`` in
  * ``src/extractors/textline_set.py`` (the generator-side source of truth);
  * ``tests/test_requirement_semantics_parity.py`` asserts the two stay in
- * lockstep, and ``api.py`` derives its own sets from that same map.
+ * lockstep.
  */
 
 // Every listed line must have played.
