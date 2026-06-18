@@ -12,7 +12,7 @@
 
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
-import { renderSpeaker, canonicalisePriority } from './speaker-view.js';
+import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
@@ -70,12 +70,21 @@ export function navigateToSpeaker(speakerId, opts) {
     const canonical = canonicalSpeakerId(speakerId);
     const state = { view: 'speaker', speaker: canonical };
     if (opts && opts.priority) state.priority = opts.priority;
+    if (opts && opts.eligibility) state.eligibility = opts.eligibility;
     navigateToState(state);
 }
 
-// Filter-chip click target: pivots the repeatability filter.
+// Filter-chip click targets. Each pivots one filter axis while preserving
+// the other (read back off the current URL hash) so the repeatability and
+// eligibility filters compose instead of clobbering each other.
 export function filterSpeakerPriority(speakerId, priority) {
-    navigateToSpeaker(speakerId, { priority });
+    const state = parseUrlState(window.location.hash);
+    navigateToSpeaker(speakerId, { priority, eligibility: state.eligibility });
+}
+
+export function filterSpeakerEligibility(speakerId, eligibility) {
+    const state = parseUrlState(window.location.hash);
+    navigateToSpeaker(speakerId, { priority: state.priority, eligibility });
 }
 
 // Navigate to the cross-game duplicates view. Preserves existing
@@ -193,6 +202,7 @@ function applyState(state) {
         const speakerId = state.speaker || null;
         renderSpeaker(speakerId, {
             priority: canonicalisePriority(state.priority),
+            eligibility: canonicaliseEligibility(state.eligibility),
         });
         const searchInput = document.getElementById('search');
         if (searchInput) {

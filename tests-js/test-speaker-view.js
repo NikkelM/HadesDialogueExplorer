@@ -17,9 +17,11 @@ import { strict as assert } from 'node:assert';
 import {
     renderSpeaker,
     canonicalisePriority,
+    canonicaliseEligibility,
 } from '../templates/viewer/speaker-view.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
+import { restoreSaveProgress, clearSaveProgress } from '../templates/viewer/save-parser.js';
 import { buildFixtureData, loadFixtureData } from './fixtures.js';
 
 let lastHtml = '';
@@ -34,6 +36,16 @@ globalThis.document = {
         }
         return null;
     },
+};
+
+// Minimal localStorage stub so the save-restore path
+// (``restoreSaveProgress``) works under Node. The eligibility tests seed
+// a save through it; every other test clears it in ``beforeEach``.
+const _localStore = new Map();
+globalThis.localStorage = {
+    getItem: k => (_localStore.has(k) ? _localStore.get(k) : null),
+    setItem: (k, v) => { _localStore.set(k, String(v)); },
+    removeItem: k => { _localStore.delete(k); },
 };
 
 // Build a small dataset with three speakers wired up with the
@@ -95,6 +107,8 @@ before(loadFixtureData);
 beforeEach(() => {
     loadData(buildSpeakerFixture());
     resetSpeakerGroups();
+    clearSaveProgress();
+    _localStore.clear();
     lastHtml = '';
 });
 
@@ -113,6 +127,18 @@ test('canonicalisePriority maps known buckets through and defaults unknowns to "
     assert.equal(canonicalisePriority(null), 'all');
     assert.equal(canonicalisePriority(undefined), 'all');
     assert.equal(canonicalisePriority('nonsense'), 'all');
+});
+
+test('canonicaliseEligibility passes the four save statuses through and defaults the rest to "all"', () => {
+    assert.equal(canonicaliseEligibility('played'), 'played');
+    assert.equal(canonicaliseEligibility('eligible'), 'eligible');
+    assert.equal(canonicaliseEligibility('blocked'), 'blocked');
+    assert.equal(canonicaliseEligibility('unobtainable'), 'unobtainable');
+    assert.equal(canonicaliseEligibility('all'), 'all');
+    assert.equal(canonicaliseEligibility(''), 'all');
+    assert.equal(canonicaliseEligibility(null), 'all');
+    assert.equal(canonicaliseEligibility(undefined), 'all');
+    assert.equal(canonicaliseEligibility('nonsense'), 'all');
 });
 
 // --- renderSpeaker -------------------------------------------------
@@ -671,4 +697,90 @@ test('renderSpeaker on H2 priority=super filter collapses to all (URL-safety)', 
     assert.match(html, /HermesRepeatable01/);
     // The All chip is the active one (since super collapses to all).
     assert.match(html, /<button[^>]*class="priority-chip is-active"[^>]*>All:/);
+});
+
+// --- eligibility (save-status) filter -----------------------------
+
+// Build a fixture where one speaker owns three dialogues with
+// deterministic save statuses and seed a matching save through the
+// localStorage restore path:
+//   - ``TestPlayed01``   is in the played set        -> 'played'
+//   - ``TestEligible01`` has no requirements, unplayed -> 'eligible'
+//   - ``TestBlocked01``  needs an unplayed line that
+//                        is not itself unobtainable  -> 'blocked'
+// The save is tagged with the fixture's own active game so
+// ``saveMatchesActiveGame`` holds.
+function loadEligibilityFixtureWithSave() {
+    const base = buildFixtureData();
+    const fixture = {
+        ...base,
+        textlines: {
+            ...base.textlines,
+            TestPlayed01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true },
+            TestEligible01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true },
+            TestBlocked01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: { RequiredTextLines: ['NeverPlayedLine'] }, playOnce: true },
+        },
+        speakers: {
+            ...base.speakers,
+            NPC_Test_01: {
+                name: 'Tester',
+                ownedTextlines: ['TestPlayed01', 'TestEligible01', 'TestBlocked01'],
+                asSpeakerTextlines: [],
+                sourceFiles: ['NPCData.lua'],
+                sectionCounts: { InteractTextLineSets: 3 },
+                priorityCounts: { super: 0, priority: 3, plain: 0 },
+                adjacencyUpstream: {},
+                adjacencyDownstream: {},
+            },
+        },
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    // Schema v1 mirrors ``SAVE_STORAGE_SCHEMA`` in save-parser.js (the
+    // games are frozen, so this shape is stable). Seed the backing store
+    // directly; ``restoreSaveProgress`` reads it through the stub above.
+    _localStore.set('hde.save', JSON.stringify({
+        v: 1, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
+    }));
+    restoreSaveProgress();
+}
+
+test('renderSpeaker shows per-row save badges when a matching save is loaded', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});
+    assert.match(html, /save-badge played/);
+    assert.match(html, /save-badge eligible/);
+    assert.match(html, /save-badge blocked/);
+});
+
+test('renderSpeaker shows the eligibility chips and save-progress summary with a save', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});
+    assert.match(html, /Eligibility:/);
+    assert.match(html, /eligibility-chip-played/);
+    // Live per-status counts: 1 played, 1 eligible, 1 blocked.
+    assert.match(html, />Played: <span class="speaker-count">1<\/span>/);
+    assert.match(html, />Blocked: <span class="speaker-count">1<\/span>/);
+    assert.match(html, /Save progress/);
+});
+
+test('renderSpeaker eligibility filter narrows the list to one status', () => {
+    loadEligibilityFixtureWithSave();
+    const blockedOnly = render('NPC_Test_01', { eligibility: 'blocked' });
+    assert.match(blockedOnly, /TestBlocked01/);
+    assert.doesNotMatch(blockedOnly, /TestPlayed01/);
+    assert.doesNotMatch(blockedOnly, /TestEligible01/);
+
+    const playedOnly = render('NPC_Test_01', { eligibility: 'played' });
+    assert.match(playedOnly, /TestPlayed01/);
+    assert.doesNotMatch(playedOnly, /TestBlocked01/);
+});
+
+test('renderSpeaker hides eligibility chips, badges, and summary when no save is loaded', () => {
+    // ``beforeEach`` cleared any save, so the speaker view renders without
+    // save-derived chrome.
+    const html = render('NPC_Zeus_01', {});
+    assert.doesNotMatch(html, /Eligibility:/);
+    assert.doesNotMatch(html, /save-badge/);
+    assert.doesNotMatch(html, /Save progress/);
 });

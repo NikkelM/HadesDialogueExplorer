@@ -11,8 +11,8 @@
  */
 
 import { textlines, speakers } from './data.js';
-import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass } from './utilities.js';
-import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed, getDialogueStatus } from './save-parser.js';
+import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml } from './utilities.js';
+import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, isDirectlySatisfied } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 
@@ -487,17 +487,6 @@ function renderChildrenOf(name, childrenOf, chain, groups, visited, depth) {
 }
 
 // Markup for one tree row given a (possibly empty) pre-rendered subtree.
-function renderNodeSaveBadgeHtml(name, tl) {
-    if (!tl || !getSaveProgress() || !saveMatchesActiveGame()) return '';
-    const status = getDialogueStatus(name, tl);
-    if (!status) return '';
-    const tip = status === 'played' ? 'Played in loaded save'
-        : status === 'eligible' ? 'Eligible to play (all requirements met)'
-            : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
-                : 'Blocked (missing requirements)';
-    return `<span class="save-badge ${status}" title="${escapeHtml(tip)}"></span>`;
-}
-
 function renderTreeRow(name, reqType, showEdge, subtree, played) {
     const tl = textlines[name];
     const ownerEntry = tl ? speakers[tl.owner] : null;
@@ -508,7 +497,7 @@ function renderTreeRow(name, reqType, showEdge, subtree, played) {
     // dependency tree, so an eligible-but-unplayed prerequisite (one the
     // player can satisfy right now - common for OR-branch alternatives)
     // reads differently from a blocked one.
-    const saveBadge = renderNodeSaveBadgeHtml(name, tl);
+    const saveBadge = renderSaveBadgeHtml(name, tl);
 
     let html = `<div class="tree-node ${played ? 'tree-played' : 'tree-unplayed'}${hasChildren ? ' collapsible collapsed' : ''}">`;
     html += `<div class="tree-node-row"${hasChildren ? ' onclick="this.parentElement.classList.toggle(\'collapsed\')"' : ''} ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`;

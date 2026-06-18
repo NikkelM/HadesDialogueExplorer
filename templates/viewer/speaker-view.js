@@ -31,7 +31,9 @@ import {
     renderPrimaryPriorityBadgeHtml,
     renderPlayOnceBadgeHtml,
     renderSectionHtml,
+    renderSaveBadgeHtml,
 } from './utilities.js';
+import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
 // Priority filter scheme. Both games slice a speaker's owned dialogues
 // on the same axis - repeatability (the ``playOnce`` flag) - matching
@@ -71,6 +73,58 @@ function priorityBucket(tl) {
 function filterPassesBucket(bucket, filter) {
     if (filter === 'all') return true;
     return bucket === filter;
+}
+
+// --- Eligibility (save-status) filter ---
+//
+// A second, independent filter axis that only exists once a save is
+// loaded that matches the active game. It slices owned dialogues by their
+// save status - the same four-way played / eligible / blocked /
+// unobtainable classification the eligibility tracer and the per-row save
+// dot use (``getDialogueStatus``). With no matching save the axis
+// collapses to 'all': the chips don't render and the filter is a no-op,
+// so a shared ``eligibility=`` URL never lands the viewer on an empty
+// list before a save is loaded.
+const _ELIGIBILITY_BUCKETS = ['eligible', 'blocked', 'played', 'unobtainable'];
+const _ELIGIBILITY_LABELS = {
+    played: 'Played',
+    eligible: 'Eligible',
+    blocked: 'Blocked',
+    unobtainable: 'Unobtainable',
+};
+
+// Public canonicaliser - mirrors ``canonicalisePriority`` so
+// ``navigation.js`` can normalise the URL value before rendering.
+export function canonicaliseEligibility(value) {
+    if (value === 'all' || !value) return 'all';
+    return _ELIGIBILITY_BUCKETS.indexOf(value) >= 0 ? value : 'all';
+}
+
+// True when a loaded save applies to the active game, so save-derived UI
+// (the per-row dot, the eligibility chips, the summary counts) is
+// meaningful. Mirrors the guard the other save-aware surfaces use.
+function saveActive() {
+    return !!getSaveProgress() && saveMatchesActiveGame();
+}
+
+// Tally owned dialogues by save status. Returns ``{}`` when no save
+// applies. Shared by the eligibility chips and the summary counts cell so
+// both read the same numbers.
+function eligibilityCounts(entry) {
+    const counts = {};
+    if (!saveActive()) return counts;
+    for (const name of entry.ownedTextlines || []) {
+        const tl = textlines[name];
+        if (!tl) continue;
+        const status = getDialogueStatus(name, tl);
+        if (status) counts[status] = (counts[status] || 0) + 1;
+    }
+    return counts;
+}
+
+function eligibilityPasses(o, filter) {
+    if (filter === 'all' || !saveActive()) return true;
+    return getDialogueStatus(o.name, o.tl) === filter;
 }
 
 function sectionDisplay(sectionKey) {
@@ -200,6 +254,27 @@ function renderPriorityChips(entry, speakerId, currentFilter) {
     }).join('');
 }
 
+// Render the eligibility (save-status) filter chips with live counts.
+// Only meaningful when a save applies to the active game; the caller
+// (``renderTextlineControls``) omits the whole row otherwise. Counts come
+// from the loaded save via ``eligibilityCounts``. The status-specific
+// class drives the leading colour dot that echoes the per-row badge.
+function renderEligibilityChips(entry, speakerId, currentFilter) {
+    const counts = eligibilityCounts(entry);
+    let total = 0;
+    for (const b of _ELIGIBILITY_BUCKETS) total += counts[b] || 0;
+    const chipBuckets = ['all', ..._ELIGIBILITY_BUCKETS];
+    return chipBuckets.map(bucket => {
+        const isActive = currentFilter === bucket;
+        const dotClass = bucket === 'all' ? '' : ` eligibility-chip-${bucket}`;
+        const cls = `priority-chip eligibility-chip${dotClass}${isActive ? ' is-active' : ''}`;
+        const label = bucket === 'all' ? 'All' : _ELIGIBILITY_LABELS[bucket];
+        const count = bucket === 'all' ? total : (counts[bucket] || 0);
+        const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
+        return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); filterSpeakerEligibility(${jsAttr(speakerId)}, ${jsAttr(bucket)})">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
+    }).join('');
+}
+
 // Within-section ordering of textlines, matching each game's natural
 // in-game play order. On H2 dialogues play in narrative-rank order
 // (rank 1 first); rank-less dialogues (repeatables) sort last. On H1
@@ -270,8 +345,25 @@ function renderSummary(entry) {
         + `<div class="speaker-summary-cell"><h4>Owned dialogues</h4><div class="speaker-summary-value">${owned}</div></div>`
         + `<div class="speaker-summary-cell"><h4>As guest speaker</h4><div class="speaker-summary-value">${asSpeaker}</div><div class="speaker-summary-note">speaks in textlines owned by other speakers</div></div>`
         + `<div class="speaker-summary-cell speaker-summary-sections"><h4>Sections</h4><ul class="speaker-section-list">${sectionsHtml}</ul></div>`
+        + renderEligibilitySummaryCell(entry)
         + `</div>`
         + `</section>`;
+}
+
+// Save-progress breakdown cell (played / eligible / blocked /
+// unobtainable counts), shown only when a save applies to the active
+// game. Each row carries the same coloured dot as the per-textline badge
+// so the summary and the list read consistently. Returns '' otherwise so
+// the summary keeps its three-cell shape with no save loaded.
+function renderEligibilitySummaryCell(entry) {
+    if (!saveActive()) return '';
+    const counts = eligibilityCounts(entry);
+    const items = _ELIGIBILITY_BUCKETS
+        .filter(b => counts[b])
+        .map(b => `<li><span class="save-badge ${b}"></span>${escapeHtml(_ELIGIBILITY_LABELS[b])}: <span class="speaker-count">${counts[b]}</span></li>`)
+        .join('');
+    const body = items || '<li class="muted">none</li>';
+    return `<div class="speaker-summary-cell speaker-summary-eligibility"><h4>Save progress</h4><ul class="speaker-section-list">${body}</ul></div>`;
 }
 
 // Render the upstream + downstream adjacency tables. Each row is a
@@ -315,13 +407,14 @@ function displayNameFor(speakerId) {
 // section, rows order by the game's natural play order via
 // ``compareWithinSection``. The controls strip (the repeatability
 // filter) renders above the list.
-function renderTextlineList(entry, speakerId, filter, game) {
+function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     const owned = (entry.ownedTextlines || [])
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
-    const filtered = owned.filter(o => filterPassesBucket(priorityBucket(o.tl), filter));
+    const filtered = owned.filter(o =>
+        filterPassesBucket(priorityBucket(o.tl), filter) && eligibilityPasses(o, eligFilter));
 
-    const controls = renderTextlineControls(entry, speakerId, filter);
+    const controls = renderTextlineControls(entry, speakerId, filter, eligFilter);
 
     if (filtered.length === 0) {
         return `<section class="speaker-textlines">${controls}<p class="muted speaker-textlines-empty">No textlines match the current filter.</p></section>`;
@@ -355,19 +448,30 @@ function renderTextlineList(entry, speakerId, filter, game) {
 }
 
 // Render the controls strip above the textline list: the repeatability
-// filter chips (co-located with the list they pivot).
-function renderTextlineControls(entry, speakerId, filter) {
+// filter chips, plus the eligibility (save-status) filter chips on a
+// second row when a save applies to the active game.
+function renderTextlineControls(entry, speakerId, filter, eligFilter) {
     const priorityChips = renderPriorityChips(entry, speakerId, filter);
-    return `<div class="speaker-textline-controls">`
+    let html = `<div class="speaker-textline-controls">`
         + `<span class="speaker-control-label">Filter:</span>`
         + `<div class="speaker-priority-chips" role="group" aria-label="Repeatability filter">${priorityChips}</div>`
         + `</div>`;
+    if (saveActive()) {
+        const eligChips = renderEligibilityChips(entry, speakerId, eligFilter);
+        html += `<div class="speaker-textline-controls">`
+            + `<span class="speaker-control-label">Eligibility:</span>`
+            + `<div class="speaker-priority-chips" role="group" aria-label="Eligibility filter">${eligChips}</div>`
+            + `</div>`;
+    }
+    return html;
 }
 
 function renderTextlineRow(name, tl) {
+    const saveBadge = renderSaveBadgeHtml(name, tl);
     const priority = renderPrimaryPriorityBadgeHtml(tl);
     const playOnce = renderPlayOnceBadgeHtml(tl);
     return `<li class="speaker-textline-row">`
+        + saveBadge
         + `<a class="textline-link" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`
         + `<span class="speaker-textline-badges">${priority}${playOnce}</span>`
         + `</li>`;
@@ -401,6 +505,7 @@ export function renderSpeaker(speakerId, opts) {
     }
     const game = getActiveGame() || '';
     const filter = canonicalisePriority(opts && opts.priority);
+    const eligFilter = canonicaliseEligibility(opts && opts.eligibility);
     const friendly = entry.name && entry.name !== canonical ? entry.name : null;
     const description = entry.description || '';
     const gameLabel = (gameLabels && gameLabels[game]) || game;
@@ -445,6 +550,6 @@ export function renderSpeaker(speakerId, opts) {
         + headerHtml
         + renderSummary(entry)
         + renderAdjacency(entry)
-        + renderTextlineList(entry, canonical, filter, game)
+        + renderTextlineList(entry, canonical, filter, eligFilter, game)
         + `</div>`;
 }

@@ -217,6 +217,32 @@ body.layout-speaker #panel-info {
 .priority-chip .speaker-count {
     color: inherit;
 }
+
+/* Eligibility filter chips reuse the priority-chip shape; a leading
+   status dot echoes the per-row save badge so the four save states are
+   scannable at a glance. The dot colours mirror ``.save-badge`` in
+   save-progress.css. */
+.eligibility-chip-played::before,
+.eligibility-chip-eligible::before,
+.eligibility-chip-blocked::before,
+.eligibility-chip-unobtainable::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.eligibility-chip-played::before { background: #4caf50; }
+.eligibility-chip-eligible::before { background: #ffb74d; }
+.eligibility-chip-blocked::before { background: #78909c; }
+.eligibility-chip-unobtainable::before { background: #e57373; }
+
+/* Save-progress summary cell: the per-status counts list reuses the
+   section-list rhythm; each row leads with the same coloured dot. */
+.speaker-summary-eligibility .save-badge {
+    margin-right: 5px;
+}
 .speaker-count {
     color: #888;
     font-size: 11px;

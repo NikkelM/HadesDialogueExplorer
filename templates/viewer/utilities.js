@@ -20,6 +20,23 @@ import {
     choiceNames,
     getActiveGame,
 } from './data.js';
+import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+
+// Coloured save-status dot for one dialogue, read from the loaded save.
+// Returns '' when no save is loaded or it doesn't match the active game,
+// so callers can interpolate it unconditionally. Shared by the
+// eligibility tracer tree and the speaker overview list so both surfaces
+// render an identical badge.
+export function renderSaveBadgeHtml(name, tl) {
+    if (!tl || !getSaveProgress() || !saveMatchesActiveGame()) return '';
+    const status = getDialogueStatus(name, tl);
+    if (!status) return '';
+    const tip = status === 'played' ? 'Played in loaded save'
+        : status === 'eligible' ? 'Eligible to play (all requirements met)'
+            : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
+                : 'Blocked (missing requirements)';
+    return `<span class="save-badge ${status}" title="${escapeHtml(tip)}"></span>`;
+}
 
 // Escape a string for safe embedding into HTML, covering both text
 // content and double-quoted attribute values (the only attribute-quote
