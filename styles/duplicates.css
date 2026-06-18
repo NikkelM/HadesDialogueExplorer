@@ -125,17 +125,17 @@
 .duplicates-name {
     display: inline-block;
     width: var(--dup-name-col, max-content);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-family: monospace;
     color: var(--text-color, #e0e0e0);
 }
 
 .duplicates-game-link {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: var(--link-color, #e94560);
     cursor: pointer;
     text-decoration: none;
-    padding: 0.1rem 0.4rem;
+    padding: 0.25rem 0.55rem;
     border: 1px solid var(--border-color, #333);
     border-radius: 3px;
     background: transparent;
