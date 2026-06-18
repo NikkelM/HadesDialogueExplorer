@@ -27,10 +27,6 @@
         <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" aria-selected="false">Hades</button>
         <button type="button" class="game-toggle-btn" role="tab" data-game="hades2" aria-selected="false">Hades II</button>
     </div>
-    <nav class="header-nav">
-        <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()">Cross-game duplicates</a>
-        <a id="nav-eligibility" class="header-nav-link" onclick="navigateToEligibility()" hidden>Eligibility tracer</a>
-    </nav>
     <div class="search-container">
         <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off"
                role="combobox" aria-autocomplete="list" aria-expanded="false"
@@ -44,15 +40,19 @@
             <div id="search-text-list" role="presentation"></div>
         </div>
     </div>
+    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()">Cross-game duplicates</a>
     <div class="stats" id="stats"></div>
-    <div class="save-upload" id="save-upload">
-        <label class="save-upload-btn" for="save-file-input" title="Upload a ProfileX.sav file to visualise dialogue progress">
-            <span class="save-upload-icon">&#x1F4BE;</span>
-            <span class="save-upload-label">Load save</span>
-        </label>
-        <input type="file" id="save-file-input" accept=".sav" hidden>
-        <span id="save-status" class="save-status" hidden></span>
-        <button id="save-clear" class="save-clear-btn" hidden title="Remove loaded save">&times;</button>
+    <div class="header-right">
+        <a id="nav-eligibility" class="header-nav-link" onclick="navigateToEligibility()" hidden>Eligibility tracer</a>
+        <div class="save-upload" id="save-upload">
+            <label class="save-upload-btn" for="save-file-input" title="Upload a ProfileX.sav file to visualise dialogue progress">
+                <span class="save-upload-icon">&#x1F4BE;</span>
+                <span class="save-upload-label">Load save</span>
+            </label>
+            <input type="file" id="save-file-input" accept=".sav" hidden>
+            <span id="save-status" class="save-status" hidden></span>
+            <button id="save-clear" class="save-clear-btn" hidden title="Remove loaded save">&times;</button>
+        </div>
     </div>
 </header>
 <!-- Stable mount for viewer.js to render a load error into without

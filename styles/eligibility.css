@@ -323,10 +323,8 @@
     opacity: 1;
 }
 
-.tree-icon {
+.eligibility-tree-container .save-badge {
     flex-shrink: 0;
-    width: 1em;
-    text-align: center;
 }
 
 .eligibility-tree-container .npc-tag {

@@ -4,7 +4,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-left: auto;
     flex-shrink: 0;
 }
 
@@ -12,31 +11,31 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.3rem 0.7rem;
+    padding: 6px 14px;
     border-radius: 4px;
-    background: var(--panel-bg, #1e1e2e);
-    border: 1px solid var(--border-color, #3a3a4a);
-    color: var(--text-muted, #aaa);
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    color: #e0e0e0;
     cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.15s, border-color 0.15s;
+    font-size: 13px;
+    line-height: 18px;
+    transition: background-color 0.12s ease, color 0.12s ease;
     white-space: nowrap;
 }
 
 .save-upload-btn:hover {
-    background: var(--hover-bg, #2a2a3e);
-    border-color: var(--accent-color, #7c6fd4);
-    color: var(--text-color, #eee);
+    background: #0f3460;
 }
 
 .save-upload-icon {
-    font-size: 1rem;
+    font-size: 14px;
 }
 
 .save-status {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 3px;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 6px 10px;
+    border-radius: 4px;
     white-space: nowrap;
 }
 
