@@ -127,30 +127,17 @@ function renderMissingSpeaker(speakerId) {
         + `</div>`;
 }
 
-// Render the summary cards (totals, per-section counts, per-priority
-// counts with clickable filter chips). The chip list and labels are
-// per-game; see ``priorityScheme`` for the per-game contract.
-function renderSummary(entry, speakerId, currentFilter, game) {
+// Render the per-priority filter chips (with counts). Clickable: each
+// navigates to the same speaker with the matching ``priority`` URL key,
+// pivoting the textline list. The active chip carries an ``is-active``
+// class + ``aria-pressed`` flag. Chip list and labels are per-game; see
+// ``priorityScheme``. Returns the chip buttons' HTML (no wrapper).
+function renderPriorityChips(entry, speakerId, currentFilter, game) {
     const owned = (entry.ownedTextlines || []).length;
-    const asSpeaker = (entry.asSpeakerTextlines || []).length;
-    const sectionCounts = entry.sectionCounts || {};
     const priorityCounts = entry.priorityCounts || { super: 0, priority: 0, plain: 0 };
     const scheme = priorityScheme(game);
-
-    const sectionEntries = Object.entries(sectionCounts).sort((a, b) => b[1] - a[1]);
-    const sectionsHtml = sectionEntries.length
-        ? sectionEntries.map(([key, count]) =>
-            `<li>${renderSectionHtml(key)}: <span class="speaker-count">${count}</span></li>`
-        ).join('')
-        : '<li class="muted">none</li>';
-
-    // Priority chips are clickable: each navigates to the same
-    // speaker with the matching ``priority`` URL key, so the user can
-    // pivot the textline list with one click. The active chip carries
-    // an ``is-active`` class and an ``aria-pressed`` flag so screen
-    // readers know which filter is in effect.
     const chipBuckets = ['all', ...scheme.buckets];
-    const chips = chipBuckets.map(bucket => {
+    return chipBuckets.map(bucket => {
         const isActive = currentFilter === bucket;
         const cls = `priority-chip${isActive ? ' is-active' : ''}`;
         let label;
@@ -165,15 +152,28 @@ function renderSummary(entry, speakerId, currentFilter, game) {
         const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
         return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); filterSpeakerPriority(${jsAttr(speakerId)}, ${jsAttr(bucket)})">${escapeHtml(label)}: <span class="speaker-count">${count}</span></button>`;
     }).join('');
+}
+
+// Render the summary cards: owned/guest totals and the per-section
+// breakdown. The priority filter chips live with the textline list they
+// pivot (see ``renderTextlineControls``), not here.
+function renderSummary(entry) {
+    const owned = (entry.ownedTextlines || []).length;
+    const asSpeaker = (entry.asSpeakerTextlines || []).length;
+    const sectionCounts = entry.sectionCounts || {};
+
+    const sectionEntries = Object.entries(sectionCounts).sort((a, b) => b[1] - a[1]);
+    const sectionsHtml = sectionEntries.length
+        ? sectionEntries.map(([key, count]) =>
+            `<li>${renderSectionHtml(key)}: <span class="speaker-count">${count}</span></li>`
+        ).join('')
+        : '<li class="muted">none</li>';
 
     return `<section class="speaker-summary">`
         + `<div class="speaker-summary-row">`
-        + `<div class="speaker-summary-cell"><h4>Owned</h4><div class="speaker-summary-value">${owned}</div></div>`
+        + `<div class="speaker-summary-cell"><h4>Owned dialogues</h4><div class="speaker-summary-value">${owned}</div></div>`
         + `<div class="speaker-summary-cell"><h4>As guest speaker</h4><div class="speaker-summary-value">${asSpeaker}</div><div class="speaker-summary-note">speaks in textlines owned by other speakers</div></div>`
-        + `</div>`
-        + `<div class="speaker-summary-row">`
         + `<div class="speaker-summary-cell speaker-summary-sections"><h4>Sections</h4><ul class="speaker-section-list">${sectionsHtml}</ul></div>`
-        + `<div class="speaker-summary-cell speaker-summary-priorities"><h4>Priority</h4><div class="speaker-priority-chips" role="group" aria-label="Priority filter">${chips}</div></div>`
         + `</div>`
         + `</section>`;
 }
@@ -224,7 +224,7 @@ function renderTextlineList(entry, speakerId, filter, sort, game) {
         .filter(o => o.tl);
     const filtered = owned.filter(o => filterPassesBucket(priorityBucket(o.tl), filter, game));
 
-    const controls = renderSortControls(speakerId, filter, sort);
+    const controls = renderTextlineControls(entry, speakerId, filter, sort, game);
 
     if (filtered.length === 0) {
         return `<section class="speaker-textlines">${controls}<p class="muted speaker-textlines-empty">No textlines match the current filter.</p></section>`;
@@ -284,19 +284,27 @@ function renderTextlineList(entry, speakerId, filter, sort, game) {
     return `<section class="speaker-textlines">${controls}${body}</section>`;
 }
 
-function renderSortControls(speakerId, filter, sort) {
+// Render the controls strip above the textline list: the priority filter
+// chips (co-located with the list they pivot) and the sort-axis chips.
+function renderTextlineControls(entry, speakerId, filter, sort, game) {
+    const priorityChips = renderPriorityChips(entry, speakerId, filter, game);
     const sortOptions = [
         ['section', 'Section'],
         ['tier', 'Tier'],
         ['name', 'Name'],
     ];
-    const buttons = sortOptions.map(([val, label]) => {
+    const sortButtons = sortOptions.map(([val, label]) => {
         const isActive = sort === val;
         const cls = `sort-chip${isActive ? ' is-active' : ''}`;
         const aria = isActive ? ' aria-pressed="true"' : ' aria-pressed="false"';
         return `<button type="button" class="${cls}"${aria} onclick="event.stopPropagation(); sortSpeakerTextlines(${jsAttr(speakerId)}, ${jsAttr(val)})">${escapeHtml(label)}</button>`;
     }).join('');
-    return `<div class="speaker-textline-controls"><span class="speaker-control-label">Sort by:</span><div class="speaker-sort-chips" role="group" aria-label="Sort">${buttons}</div></div>`;
+    return `<div class="speaker-textline-controls">`
+        + `<span class="speaker-control-label">Filter:</span>`
+        + `<div class="speaker-priority-chips" role="group" aria-label="Priority filter">${priorityChips}</div>`
+        + `<span class="speaker-control-label speaker-control-group-sep">Sort by:</span>`
+        + `<div class="speaker-sort-chips" role="group" aria-label="Sort">${sortButtons}</div>`
+        + `</div>`;
 }
 
 function renderTextlineRow(name, tl) {
@@ -379,7 +387,7 @@ export function renderSpeaker(speakerId, opts) {
 
     container.innerHTML = `<div class="speaker-overview">`
         + headerHtml
-        + renderSummary(entry, canonical, filter, game)
+        + renderSummary(entry)
         + renderAdjacency(entry)
         + renderTextlineList(entry, canonical, filter, sort, game)
         + `</div>`;

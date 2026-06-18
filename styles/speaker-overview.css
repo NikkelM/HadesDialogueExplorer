@@ -33,22 +33,24 @@ body.layout-speaker #panel-info {
     padding: 4px 0 16px;
 }
 /* This view's title bar is a <header>, so it inherits the global page
-   ``header`` rule (display:flex; align-items:center). That vertically
-   mis-centres the differently-sized title / description / game lines, so
-   pin the children to the top. The header mirrors the two-column flex of
-   the summary row below (left main + right aside, gap 16, padding 12) so
-   the aside lines up with the summary's right column. */
+   ``header`` rule (display:flex; align-items:center) which vertically
+   mis-centres the differently-sized lines. Override to a 3-column grid
+   matching the summary row below: the title block spans the first two
+   columns and the right-hand aside occupies the third, so the aside lines
+   up exactly with the summary's rightmost (Sections) column. */
 .speaker-overview-header {
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
     gap: 16px;
     padding: 12px;
 }
 .speaker-overview-header-main {
-    flex: 1;
+    grid-column: 1 / 3;
     min-width: 0;
 }
 .speaker-overview-header-aside {
-    flex: 1;
+    grid-column: 3;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -140,8 +142,8 @@ body.layout-speaker #panel-info {
     border-radius: 3px;
 }
 
-/* Summary section: top-row scalar cells (owned / as-speaker / source
- * files) plus a second row with sections list + priority chips. */
+/* Summary section: a single 3-column row (owned / as-speaker / sections)
+ * on the same grid as the header so columns line up. */
 .speaker-summary {
     background: #16213e;
     border: 1px solid #0f3460;
@@ -150,9 +152,9 @@ body.layout-speaker #panel-info {
     margin-bottom: 12px;
 }
 .speaker-summary-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
-    flex-wrap: wrap;
 }
 .speaker-summary-row + .speaker-summary-row {
     margin-top: 12px;
@@ -160,8 +162,7 @@ body.layout-speaker #panel-info {
     border-top: 1px solid #0f3460;
 }
 .speaker-summary-cell {
-    flex: 1;
-    min-width: 160px;
+    min-width: 0;
 }
 .speaker-summary-cell h4 {
     font-size: 10px;
@@ -298,6 +299,13 @@ body.layout-speaker #panel-info {
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+/* Divider between the priority-filter group and the sort group in the
+   controls strip. */
+.speaker-control-group-sep {
+    margin-left: 8px;
+    padding-left: 12px;
+    border-left: 1px solid #0f3460;
 }
 .speaker-sort-chips {
     display: flex;
