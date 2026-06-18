@@ -279,10 +279,12 @@ test('renderSpeaker Play-once filter keeps a play-once textline visible', () => 
 });
 
 test('renderSpeaker on H1 orders within a section by narrative-priority tier', () => {
-    // Both lines live in the same section (Gift); the priority-tier line
-    // (AphroditeWithZeus01) must sort before the normal-tier one
-    // (ZeusWithAphrodite01).
+    // Both lines live in the same section (Gift) and are play-once; the
+    // priority-tier line (AphroditeWithZeus01) must sort before the
+    // normal-tier one (ZeusWithAphrodite01).
     const fixture = buildSpeakerFixture();
+    fixture.textlines.AphroditeWithZeus01.playOnce = true;
+    fixture.textlines.ZeusWithAphrodite01.playOnce = true;
     fixture.speakers.NPC_Zeus_01.ownedTextlines = [
         'ZeusWithAphrodite01',   // tier: normal
         'AphroditeWithZeus01',   // tier: priority
@@ -294,6 +296,35 @@ test('renderSpeaker on H1 orders within a section by narrative-priority tier', (
     const iNormal = html.indexOf('ZeusWithAphrodite01');
     assert.ok(iPriority >= 0 && iNormal >= 0, 'both rows render');
     assert.ok(iPriority < iNormal, 'priority-tier line sorts before the normal-tier line');
+});
+
+test('renderSpeaker on H1 unites play-once and repeatable into one NPC interaction section, repeatables last', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.sectionKeyLabels = {
+        ...fixture.sectionKeyLabels,
+        InteractTextLineSets: 'NPC interaction',
+        RepeatableTextLineSets: 'NPC interaction (repeatable)',
+    };
+    fixture.textlines.ZeusChat01 = { owner: 'NPC_Zeus_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'normal' };
+    fixture.textlines.ZeusChatRepeat01 = { owner: 'NPC_Zeus_01', section: 'RepeatableTextLineSets', dialogueLines: [], requirements: {} };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = ['ZeusChatRepeat01', 'ZeusChat01'];
+    fixture.speakers.NPC_Zeus_01.sectionCounts = { InteractTextLineSets: 3, RepeatableTextLineSets: 4 };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // The repeatable interaction section folds into "NPC interaction"; no
+    // separate "(repeatable)" group renders.
+    const groupHeaders = html.match(/speaker-textline-group-header/g) || [];
+    assert.equal(groupHeaders.length, 1);
+    assert.match(html, />NPC interaction</);
+    assert.doesNotMatch(html, /\(repeatable\)/);
+    // Play-once line first, repeatable fallback after (mirrors H2).
+    assert.ok(html.indexOf('ZeusChat01') < html.indexOf('ZeusChatRepeat01'),
+        'play-once line precedes the repeatable line within the merged section');
+    // Summary collapses to one "NPC interaction" row (3 + 4 = 7).
+    const summary = html.slice(html.indexOf('speaker-section-list'));
+    assert.match(summary, /NPC interaction<\/span>: <span class="speaker-count">7<\/span>/);
 });
 
 test('renderSpeaker exposes only a Filter control - no Group/Sort control', () => {
@@ -314,6 +345,185 @@ test('renderSpeaker exposes only a Filter control - no Group/Sort control', () =
     assert.doesNotMatch(html, /class="sort-chip/);
     // Dialogues are always section-grouped.
     assert.match(html, /speaker-textline-group/);
+});
+
+test('renderSpeaker on H1 merges the three god-boon-pickup sections into one group, ordered by priority', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.sectionKeyLabels = {
+        ...fixture.sectionKeyLabels,
+        PickupTextLineSets: 'God boon pickup',
+        PriorityPickupTextLineSets: 'God boon pickup',
+        SuperPriorityPickupTextLineSets: 'God boon pickup',
+    };
+    fixture.textlines.ZeusPickupNormal01 = {
+        owner: 'NPC_Zeus_01', section: 'PickupTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'normal',
+    };
+    fixture.textlines.ZeusPickupPriority01 = {
+        owner: 'NPC_Zeus_01', section: 'PriorityPickupTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'priority',
+    };
+    fixture.textlines.ZeusPickupSuper01 = {
+        owner: 'NPC_Zeus_01', section: 'SuperPriorityPickupTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'super',
+    };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = [
+        'ZeusPickupNormal01', 'ZeusPickupPriority01', 'ZeusPickupSuper01',
+    ];
+    fixture.speakers.NPC_Zeus_01.sectionCounts = {
+        PickupTextLineSets: 1, PriorityPickupTextLineSets: 1, SuperPriorityPickupTextLineSets: 1,
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // The three priority variants collapse to a single grouped section.
+    const groupHeaders = html.match(/speaker-textline-group-header/g) || [];
+    assert.equal(groupHeaders.length, 1);
+    assert.match(html, /God boon pickup/);
+    // Within the merged group, super-priority plays first, then priority,
+    // then the plain pickup line.
+    const iSuper = html.indexOf('ZeusPickupSuper01');
+    const iPriority = html.indexOf('ZeusPickupPriority01');
+    const iNormal = html.indexOf('ZeusPickupNormal01');
+    assert.ok(iSuper >= 0 && iPriority > iSuper && iNormal > iPriority,
+        'merged pickup group orders super-priority -> priority -> normal');
+});
+
+test('renderSpeaker on H1 sections summary collapses the god-boon-pickup variants into one row', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.sectionKeyLabels = {
+        ...fixture.sectionKeyLabels,
+        PickupTextLineSets: 'God boon pickup',
+        PriorityPickupTextLineSets: 'God boon pickup',
+        SuperPriorityPickupTextLineSets: 'God boon pickup',
+    };
+    fixture.speakers.NPC_Zeus_01.sectionCounts = {
+        PickupTextLineSets: 10, PriorityPickupTextLineSets: 5, SuperPriorityPickupTextLineSets: 2,
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // One "God boon pickup" row in the Sections summary, summing all
+    // three variants (10 + 5 + 2 = 17).
+    const sections = html.slice(html.indexOf('speaker-section-list'));
+    const pickupRows = sections.match(/God boon pickup/g) || [];
+    assert.equal(pickupRows.length, 1);
+    assert.match(sections, /God boon pickup<\/span>: <span class="speaker-count">17<\/span>/);
+});
+
+test('renderSpeaker on H1 merges the four boss-introduction sections into one group, ordered by priority', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.sectionKeyLabels = {
+        ...fixture.sectionKeyLabels,
+        BossPresentationIntroTextLineSets: 'Boss introduction',
+        BossPresentationPriorityIntroTextLineSets: 'Boss introduction',
+        BossPresentationSuperPriorityIntroTextLineSets: 'Boss introduction',
+        BossPresentationTextLineSets: 'Boss introduction',
+    };
+    fixture.textlines.BossLow01 = {
+        owner: 'NPC_Zeus_01', section: 'BossPresentationTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'low',
+    };
+    fixture.textlines.BossNormal01 = {
+        owner: 'NPC_Zeus_01', section: 'BossPresentationIntroTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'normal',
+    };
+    fixture.textlines.BossPriority01 = {
+        owner: 'NPC_Zeus_01', section: 'BossPresentationPriorityIntroTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'priority',
+    };
+    fixture.textlines.BossSuper01 = {
+        owner: 'NPC_Zeus_01', section: 'BossPresentationSuperPriorityIntroTextLineSets',
+        dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'super',
+    };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = [
+        'BossLow01', 'BossNormal01', 'BossPriority01', 'BossSuper01',
+    ];
+    fixture.speakers.NPC_Zeus_01.sectionCounts = {
+        BossPresentationIntroTextLineSets: 1,
+        BossPresentationPriorityIntroTextLineSets: 1,
+        BossPresentationSuperPriorityIntroTextLineSets: 1,
+        BossPresentationTextLineSets: 1,
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // The four priority variants collapse to a single grouped section.
+    const groupHeaders = html.match(/speaker-textline-group-header/g) || [];
+    assert.equal(groupHeaders.length, 1);
+    assert.match(html, /Boss introduction/);
+    // Ordered super-priority -> priority -> normal -> low within the group.
+    const iSuper = html.indexOf('BossSuper01');
+    const iPriority = html.indexOf('BossPriority01');
+    const iNormal = html.indexOf('BossNormal01');
+    const iLow = html.indexOf('BossLow01');
+    assert.ok(iSuper >= 0 && iPriority > iSuper && iNormal > iPriority && iLow > iNormal,
+        'merged boss-intro group orders super -> priority -> normal -> low');
+    // The Sections summary also collapses to one row (1 + 1 + 1 + 1 = 4).
+    const sections = html.slice(html.indexOf('speaker-section-list'));
+    assert.match(sections, /Boss introduction<\/span>: <span class="speaker-count">4<\/span>/);
+});
+
+test('renderSpeaker on H1 folds repeatable boss sections in and orders groups by encounter flow', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.sectionKeyLabels = {
+        ...fixture.sectionKeyLabels,
+        BossPresentationIntroTextLineSets: 'Boss introduction',
+        BossPresentationRepeatableTextLineSets: 'Boss introduction (repeatable)',
+        BossPresentationNextStageTextLineSets: 'Boss phase transition',
+        BossPresentationOutroTextLineSets: 'Boss outro',
+        BossPresentationOutroRepeatableTextLineSets: 'Boss outro (repeatable)',
+    };
+    // Play-once intro/outro lines plus their repeatable fallback lines.
+    fixture.textlines.BIntro01 = { owner: 'NPC_Zeus_01', section: 'BossPresentationIntroTextLineSets', dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'normal' };
+    fixture.textlines.BIntroRep01 = { owner: 'NPC_Zeus_01', section: 'BossPresentationRepeatableTextLineSets', dialogueLines: [], requirements: {} };
+    fixture.textlines.BPhase01 = { owner: 'NPC_Zeus_01', section: 'BossPresentationNextStageTextLineSets', dialogueLines: [], requirements: {}, playOnce: true };
+    fixture.textlines.BOutro01 = { owner: 'NPC_Zeus_01', section: 'BossPresentationOutroTextLineSets', dialogueLines: [], requirements: {}, playOnce: true, narrativePrioritySectionTier: 'normal' };
+    fixture.textlines.BOutroRep01 = { owner: 'NPC_Zeus_01', section: 'BossPresentationOutroRepeatableTextLineSets', dialogueLines: [], requirements: {} };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = ['BIntro01', 'BIntroRep01', 'BPhase01', 'BOutro01', 'BOutroRep01'];
+    // Counts deliberately out of flow order to prove flow rank wins over
+    // count-descending. After folding: intro = 2 + 5 = 7, phase = 1,
+    // outro = 3 + 4 = 7.
+    fixture.speakers.NPC_Zeus_01.sectionCounts = {
+        BossPresentationRepeatableTextLineSets: 5,
+        BossPresentationOutroRepeatableTextLineSets: 4,
+        BossPresentationOutroTextLineSets: 3,
+        BossPresentationIntroTextLineSets: 2,
+        BossPresentationNextStageTextLineSets: 1,
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // The two repeatable boss sections fold into introduction / outro, so
+    // only three boss groups render and no "(repeatable)" label appears.
+    const groupHeaders = html.match(/speaker-textline-group-header/g) || [];
+    assert.equal(groupHeaders.length, 3);
+    assert.doesNotMatch(html, /\(repeatable\)/);
+
+    const flow = ['>Boss introduction</span>', '>Boss phase transition</span>', '>Boss outro</span>'];
+    const assertOrdered = (slice, label) => {
+        const idx = flow.map(s => slice.indexOf(s));
+        for (let i = 0; i < idx.length; i++) {
+            assert.ok(idx[i] >= 0, `${label}: "${flow[i]}" must render`);
+            if (i > 0) assert.ok(idx[i] > idx[i - 1], `${label}: flow order violated at step ${i}`);
+        }
+    };
+    // Sections summary card: flow order, with folded counts (7 / 1 / 7).
+    const summaryStart = html.indexOf('speaker-section-list');
+    const summary = html.slice(summaryStart, html.indexOf('</ul>', summaryStart));
+    assertOrdered(summary, 'summary');
+    assert.match(summary, /Boss introduction<\/span>: <span class="speaker-count">7<\/span>/);
+    assert.match(summary, /Boss outro<\/span>: <span class="speaker-count">7<\/span>/);
+    // Grouped textline list: same flow order, and within each merged
+    // group the play-once line precedes the repeatable fallback.
+    const list = html.slice(html.indexOf('speaker-textlines'));
+    assertOrdered(list, 'list');
+    assert.ok(list.indexOf('BIntro01') < list.indexOf('BIntroRep01'), 'play-once intro before repeatable intro');
+    assert.ok(list.indexOf('BOutro01') < list.indexOf('BOutroRep01'), 'play-once outro before repeatable outro');
 });
 
 // --- per-game priority scheme -------------------------------------

@@ -78,6 +78,80 @@ function sectionDisplay(sectionKey) {
     return sectionKeyLabels[sectionKey] || sectionKey;
 }
 
+// H1 fragments dialogue contexts across many section keys where H2 uses
+// one. The speaker view collapses each context into a single displayed
+// group (matching H2), keyed by a representative section key. Three
+// kinds of fragmentation are collapsed:
+//   - Priority variants that share a label, e.g. "God boon pickup"
+//     (SuperPriorityPickup / PriorityPickup / Pickup) and the four
+//     "Boss introduction" intro tiers.
+//   - Play-once vs repeatable splits: H1 puts repeatable fallback lines
+//     in a separate ``*Repeatable*`` table labelled "X (repeatable)";
+//     these fold into their play-once base "X" so a context's play-once
+//     and repeatable lines share one section (the per-row badge + the
+//     repeatability filter still distinguish them, exactly as on H2).
+//   - Same-label event tables, e.g. OnDeath / OnTrophy* also labelled
+//     "NPC interaction", and OnUsed labelled "Misc. interaction".
+// Priority order within a merged group is preserved via
+// ``narrativePrioritySectionTier`` (see ``compareWithinSection``). These
+// keys are H1-only (absent in H2), so the map is a no-op there.
+const _MERGED_SECTION_KEYS = {
+    // "God boon pickup"
+    PickupTextLineSets: 'PickupTextLineSets',
+    PriorityPickupTextLineSets: 'PickupTextLineSets',
+    SuperPriorityPickupTextLineSets: 'PickupTextLineSets',
+    // "NPC interaction" (interact + repeatable fallback + on-death / trophy)
+    InteractTextLineSets: 'InteractTextLineSets',
+    RepeatableTextLineSets: 'InteractTextLineSets',
+    OnDeathTextLineSets: 'InteractTextLineSets',
+    OnTrophyRevealedTextLineSets: 'InteractTextLineSets',
+    OnTrophyUnlockedTextLineSets: 'InteractTextLineSets',
+    // "Misc. interaction"
+    TextLineSet: 'TextLineSet',
+    OnUsedTextLineSets: 'TextLineSet',
+    // "Boss introduction" (four intro tiers + repeatable fallback)
+    BossPresentationIntroTextLineSets: 'BossPresentationIntroTextLineSets',
+    BossPresentationPriorityIntroTextLineSets: 'BossPresentationIntroTextLineSets',
+    BossPresentationSuperPriorityIntroTextLineSets: 'BossPresentationIntroTextLineSets',
+    BossPresentationTextLineSets: 'BossPresentationIntroTextLineSets',
+    BossPresentationRepeatableTextLineSets: 'BossPresentationIntroTextLineSets',
+    // "Boss outro" (+ repeatable fallback)
+    BossPresentationOutroTextLineSets: 'BossPresentationOutroTextLineSets',
+    BossPresentationOutroRepeatableTextLineSets: 'BossPresentationOutroTextLineSets',
+};
+
+function mergedSectionKey(sectionKey) {
+    return _MERGED_SECTION_KEYS[sectionKey] || sectionKey;
+}
+
+// Display order for the H1 boss-encounter section groups, following the
+// in-game flow rather than raw dialogue counts: introduction -> phase
+// transition -> outro. (Repeatable intro/outro fold into introduction /
+// outro via ``_MERGED_SECTION_KEYS``, so they are not listed here.)
+// Keyed on the merged section key. Sections not listed keep the default
+// rank and order by count, leaving other speakers untouched.
+const _SECTION_ORDER = {
+    BossPresentationIntroTextLineSets: 1,
+    BossPresentationNextStageTextLineSets: 2,
+    BossPresentationOutroTextLineSets: 3,
+};
+const _SECTION_ORDER_DEFAULT = 100;
+
+function sectionOrderRank(key) {
+    // Every explicit rank is >= 1, so ``||`` safely supplies the default.
+    return _SECTION_ORDER[key] || _SECTION_ORDER_DEFAULT;
+}
+
+// Order two (merged) section keys for display: explicit flow rank first
+// (the boss families), then dialogue count descending, then label.
+function compareSections(keyA, countA, keyB, countB) {
+    const ra = sectionOrderRank(keyA);
+    const rb = sectionOrderRank(keyB);
+    if (ra !== rb) return ra - rb;
+    if (countA !== countB) return countB - countA;
+    return sectionDisplay(keyA).localeCompare(sectionDisplay(keyB));
+}
+
 // Render the empty-state banner when the URL names a speaker that
 // isn't registered in the active game's speakers map. The same panel
 // chrome stays - just the body explains the mismatch and gives the
@@ -129,20 +203,30 @@ function renderPriorityChips(entry, speakerId, currentFilter) {
 // Within-section ordering of textlines, matching each game's natural
 // in-game play order. On H2 dialogues play in narrative-rank order
 // (rank 1 first); rank-less dialogues (repeatables) sort last. On H1
-// there is no rank, so dialogues order by their narrative-priority tier
-// (super-priority first, then priority, normal, low). Ties and
-// untiered rows fall back to alphabetical by name.
+// there is no rank, so play-once dialogues order by their
+// narrative-priority tier (super-priority, priority, normal, low) and
+// repeatable dialogues - the fallback that only plays when no play-once
+// line is eligible - sort after all of them (mirroring H2's
+// repeatables-last). Ties fall back to alphabetical by name.
 function compareWithinSection(a, b, game) {
     if ((game || getActiveGame()) === 'hades2') {
         const ra = Number.isInteger(a.tl.narrativePriorityOrdinal) ? a.tl.narrativePriorityOrdinal : Infinity;
         const rb = Number.isInteger(b.tl.narrativePriorityOrdinal) ? b.tl.narrativePriorityOrdinal : Infinity;
         if (ra !== rb) return ra - rb;
     } else {
-        const ta = h1TierRank(a.tl);
-        const tb = h1TierRank(b.tl);
-        if (ta !== tb) return ta - tb;
+        const ra = h1SortRank(a.tl);
+        const rb = h1SortRank(b.tl);
+        if (ra !== rb) return ra - rb;
     }
     return a.name.localeCompare(b.name);
+}
+
+// H1 play-order rank for a textline within its section. Play-once lines
+// rank by narrative-priority tier (0..3); repeatable lines are the
+// lowest-priority fallback and rank after every play-once tier.
+function h1SortRank(tl) {
+    if (!(tl && tl.playOnce)) return 4;
+    return h1TierRank(tl);
 }
 
 // H1 narrative-priority tier as a sortable rank (lower plays first):
@@ -165,7 +249,16 @@ function renderSummary(entry) {
     const asSpeaker = (entry.asSpeakerTextlines || []).length;
     const sectionCounts = entry.sectionCounts || {};
 
-    const sectionEntries = Object.entries(sectionCounts).sort((a, b) => b[1] - a[1]);
+    // Collapse same-label section variants (e.g. the three god-boon
+    // pickup priority tiers) into one row so the breakdown matches the
+    // grouped textline list below.
+    const mergedCounts = {};
+    for (const [key, count] of Object.entries(sectionCounts)) {
+        const mk = mergedSectionKey(key);
+        mergedCounts[mk] = (mergedCounts[mk] || 0) + count;
+    }
+    const sectionEntries = Object.entries(mergedCounts)
+        .sort((a, b) => compareSections(a[0], a[1], b[0], b[1]));
     const sectionsHtml = sectionEntries.length
         ? sectionEntries.map(([key, count]) =>
             `<li>${renderSectionHtml(key)}: <span class="speaker-count">${count}</span></li>`
@@ -236,17 +329,12 @@ function renderTextlineList(entry, speakerId, filter, game) {
 
     const groups = new Map();
     for (const o of filtered) {
-        const sec = o.tl.section || '';
+        const sec = mergedSectionKey(o.tl.section || '');
         if (!groups.has(sec)) groups.set(sec, []);
         groups.get(sec).push(o);
     }
-    const orderedSections = Array.from(groups.keys()).sort((a, b) => {
-        // Sort sections by count desc, then by label for ties.
-        const ca = groups.get(a).length;
-        const cb = groups.get(b).length;
-        if (ca !== cb) return cb - ca;
-        return sectionDisplay(a).localeCompare(sectionDisplay(b));
-    });
+    const orderedSections = Array.from(groups.keys()).sort((a, b) =>
+        compareSections(a, groups.get(a).length, b, groups.get(b).length));
     const body = orderedSections.map(sec => {
         const rows = groups.get(sec).slice().sort((a, b) => compareWithinSection(a, b, game));
         const header = sec
