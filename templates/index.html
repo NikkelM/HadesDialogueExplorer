@@ -25,8 +25,8 @@
 <header>
     <h1>Hades Dialogue Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game">
-        <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" aria-selected="false">Hades</button>
-        <button type="button" class="game-toggle-btn" role="tab" data-game="hades2" aria-selected="false">Hades II</button>
+        <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" aria-selected="false" data-tooltip="Show dialogue from Hades">Hades</button>
+        <button type="button" class="game-toggle-btn" role="tab" data-game="hades2" aria-selected="false" data-tooltip="Show dialogue from Hades II">Hades II</button>
     </div>
     <div class="search-container">
         <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off"
@@ -41,17 +41,17 @@
             <div id="search-text-list" role="presentation"></div>
         </div>
     </div>
-    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()">Cross-game duplicates</a>
+    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()" data-tooltip="Browse dialogue names that appear in both Hades and Hades II">Cross-game duplicates</a>
     <div class="header-right">
-        <a id="nav-eligibility" class="header-nav-link" onclick="navigateToEligibility()" hidden>Eligibility tracer</a>
+        <a id="nav-eligibility" class="header-nav-link" onclick="navigateToEligibility()" hidden data-tooltip="Trace what the selected dialogue still needs to become eligible, based on your loaded save">Eligibility tracer</a>
         <div class="save-upload" id="save-upload">
-            <label class="save-upload-btn" for="save-file-input" title="Upload a ProfileX.sav file to visualise dialogue progress">
+            <label class="save-upload-btn" for="save-file-input" data-tooltip="Upload a ProfileX.sav file to visualise dialogue progress">
                 <span class="save-upload-icon">&#x1F4BE;</span>
                 <span class="save-upload-label">Load save</span>
             </label>
             <input type="file" id="save-file-input" accept=".sav" hidden>
             <span id="save-status" class="save-status" hidden></span>
-            <button id="save-clear" class="save-clear-btn" hidden title="Remove loaded save">&times;</button>
+            <button id="save-clear" class="save-clear-btn" hidden data-tooltip="Remove loaded save">&times;</button>
         </div>
     </div>
 </header>
