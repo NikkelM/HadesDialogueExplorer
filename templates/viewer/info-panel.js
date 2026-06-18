@@ -611,6 +611,19 @@ function renderSaveProgressPillHtml(name, tl) {
     return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" title="Open eligibility tracer">${label}</a>`;
 }
 
+// Prominent, labelled entry point to the eligibility tracer for this
+// dialogue. The header save-progress pill is also a shortcut, but a
+// dedicated button is more discoverable for users who don't realise the
+// status badge is clickable. Save-gated like the pill - the tracer only
+// has meaning once a matching save is loaded.
+function renderTraceEligibilityButtonHtml(name, tl) {
+    if (!getSaveProgress() || !saveMatchesActiveGame()) return '';
+    if (!getDialogueStatus(name, tl)) return '';
+    return `<div class="trace-eligibility-row">`
+        + `<a class="trace-eligibility-btn" data-tooltip="Open the eligibility tracer to see what this dialogue still needs to play, based on your loaded save" onclick="navigateToEligibility(${jsAttr(name)})">`
+        + `Trace eligibility</a></div>`;
+}
+
 function renderAlternatesHtml(name) {
     const siblings = alternates[name];
     if (!siblings || siblings.length === 0) return '';
@@ -677,6 +690,10 @@ export function renderInfo(name) {
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}
             <span>Type: ${renderSectionHtml(tl.section)}</span>
         </div>`;
+
+    // Prominent eligibility-tracer entry button (save-gated). Placed high
+    // in the panel so it's the obvious way to ask "why is this blocked?".
+    html += renderTraceEligibilityButtonHtml(name, tl);
 
     // Collision-rename banner: this textline name was duplicated in
     // the game's source data; the tool renamed it with a numeric

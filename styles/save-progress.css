@@ -145,3 +145,25 @@
     background: #263a44;
     border-color: #3a5060;
 }
+
+/* Eligibility-tracer entry button in the dialogue detail view (the
+   discoverable counterpart to the clickable status pill above). Matches
+   the header nav buttons' background so it reads as a peer control,
+   without a loud call-to-action colour. */
+.trace-eligibility-row {
+    margin: 8px 0 2px;
+}
+.trace-eligibility-btn {
+    display: inline-block;
+    padding: 5px 12px;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.trace-eligibility-btn:hover {
+    background: #0f3460;
+}

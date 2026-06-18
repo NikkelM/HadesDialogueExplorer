@@ -9,11 +9,21 @@ import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { renderInfo } from '../templates/viewer/info-panel.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, getActiveGame } from '../templates/viewer/data.js';
+import { restoreSaveProgress, clearSaveProgress } from '../templates/viewer/save-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 // Captured innerHTML from the most recent renderInfo call.
 let lastHtml = '';
+
+// Minimal localStorage stub so the save-restore path works under Node;
+// the trace-eligibility-button test seeds a save through it.
+const _saveStore = new Map();
+globalThis.localStorage = {
+    getItem: k => (_saveStore.has(k) ? _saveStore.get(k) : null),
+    setItem: (k, v) => { _saveStore.set(k, String(v)); },
+    removeItem: k => { _saveStore.delete(k); },
+};
 
 // Minimal DOM stub: only the parts ``renderInfo`` touches.
 // ``getElementById`` returns an object whose ``innerHTML`` setter
@@ -36,6 +46,26 @@ before(() => {
 
 beforeEach(() => {
     lastHtml = '';
+    clearSaveProgress();
+    _saveStore.clear();
+});
+
+test('renderInfo shows a prominent Trace eligibility button only when a matching save is loaded', () => {
+    // No save loaded: the button is absent (the tracer needs a save).
+    renderInfo('ZeusWithAphrodite01');
+    assert.doesNotMatch(lastHtml, /trace-eligibility-btn/);
+
+    // Load a save matching the active game (schema v1; games are frozen).
+    _saveStore.set('hde.save', JSON.stringify({
+        v: 1, gameId: getActiveGame(), runs: 1, played: [],
+    }));
+    restoreSaveProgress();
+    renderInfo('ZeusWithAphrodite01');
+    assert.match(lastHtml, /trace-eligibility-btn/);
+    assert.match(lastHtml, /Trace eligibility/);
+    // It opens the tracer for this dialogue.
+    assert.match(lastHtml, /navigateToEligibility\(&quot;ZeusWithAphrodite01&quot;\)/);
+    clearSaveProgress();
 });
 
 
