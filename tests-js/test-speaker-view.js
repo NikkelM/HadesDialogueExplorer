@@ -762,6 +762,9 @@ test('renderSpeaker shows the eligibility chips and save-progress summary with a
     assert.match(html, />Played: <span class="speaker-count">1<\/span>/);
     assert.match(html, />Blocked: <span class="speaker-count">1<\/span>/);
     assert.match(html, /Save progress/);
+    // The summary row widens to four columns so the save cell aligns with
+    // the other three rather than wrapping.
+    assert.match(html, /speaker-summary-row-4/);
 });
 
 test('renderSpeaker eligibility filter narrows the list to one status', () => {
@@ -783,4 +786,6 @@ test('renderSpeaker hides eligibility chips, badges, and summary when no save is
     assert.doesNotMatch(html, /Eligibility:/);
     assert.doesNotMatch(html, /save-badge/);
     assert.doesNotMatch(html, /Save progress/);
+    // The summary row stays three columns without the save cell.
+    assert.doesNotMatch(html, /speaker-summary-row-4/);
 });

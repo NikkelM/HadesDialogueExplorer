@@ -156,6 +156,11 @@ body.layout-speaker #panel-info {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
 }
+/* Four columns when the save-progress cell is present, so it sits on the
+   same aligned row as owned / as-speaker / sections instead of wrapping. */
+.speaker-summary-row-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .speaker-summary-row + .speaker-summary-row {
     margin-top: 12px;
     padding-top: 12px;

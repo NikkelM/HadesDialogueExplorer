@@ -59,6 +59,7 @@ from pathlib import Path
 from src.graph_merge import merge_graph_data
 from src.known_unresolved import annotate_known_unresolved
 from src.blocked_textlines import annotate_blocked_textlines
+from src.manual_overrides import apply_manual_overrides
 from src.label_maps import annotate_label_maps
 from src.section_key_audit import audit_section_keys
 from src.speaker_overview import annotate_speaker_aggregates
@@ -418,6 +419,10 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
     for meta in metadata:
         for key, value in meta.items():
             graph_data[key] = value
+
+    # Curated edge-case corrections, applied before every annotation step
+    # so aggregates / audits see the corrected values.
+    apply_manual_overrides(graph_data, game)
 
     annotate_known_unresolved(graph_data, game)
     annotate_blocked_textlines(graph_data)

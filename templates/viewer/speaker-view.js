@@ -340,12 +340,20 @@ function renderSummary(entry) {
         ).join('')
         : '<li class="muted">none</li>';
 
+    // The save-progress cell only renders with a matching save loaded.
+    // When present it makes a fourth column, so widen the grid to keep
+    // all cells on one aligned row (the CSS default is three columns).
+    const eligibilityCell = renderEligibilitySummaryCell(entry);
+    const rowClass = eligibilityCell
+        ? 'speaker-summary-row speaker-summary-row-4'
+        : 'speaker-summary-row';
+
     return `<section class="speaker-summary">`
-        + `<div class="speaker-summary-row">`
+        + `<div class="${rowClass}">`
         + `<div class="speaker-summary-cell"><h4>Owned dialogues</h4><div class="speaker-summary-value">${owned}</div></div>`
         + `<div class="speaker-summary-cell"><h4>As guest speaker</h4><div class="speaker-summary-value">${asSpeaker}</div><div class="speaker-summary-note">speaks in textlines owned by other speakers</div></div>`
         + `<div class="speaker-summary-cell speaker-summary-sections"><h4>Sections</h4><ul class="speaker-section-list">${sectionsHtml}</ul></div>`
-        + renderEligibilitySummaryCell(entry)
+        + eligibilityCell
         + `</div>`
         + `</section>`;
 }
