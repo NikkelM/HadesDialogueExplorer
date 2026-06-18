@@ -111,6 +111,16 @@ _GAME_LABELS = {
 # build entry point.
 _DEFAULT_GAME = "hades2"
 
+# Build-time "featured" dialogue per game: the viewer lands on it when no
+# ``dialogue=`` URL hash key is present (the home / empty state) instead
+# of a blank panel, and the onboarding tour anchors its walkthrough on
+# the same textline. Pick something early-game and light but with a few
+# interesting properties (badges, a requirement or two, up/downstream
+# links) so it reads as a good first example without overwhelming.
+_DEFAULT_DIALOGUE = {
+    "hades2": "HecateBossGrantsWeaponUpgradeSystem01",
+}
+
 
 def build_css() -> str:
     """Read and concatenate all CSS files in order."""
@@ -531,6 +541,15 @@ def main(argv=None):
             f"build_viewer.py."
         )
 
+    # Validate the configured featured dialogues exist so a typo surfaces
+    # at build time rather than as a silently-blank home state.
+    for _gid, _name in _DEFAULT_DIALOGUE.items():
+        if _gid in games_payload and _name not in games_payload[_gid]["textlines"]:
+            raise RuntimeError(
+                f"_DEFAULT_DIALOGUE[{_gid!r}] = {_name!r} is not a textline "
+                f"in that game's data. Fix the name in build_viewer.py."
+            )
+
     # Cross-game duplicate detection: textline names that appear in
     # both games. These are surfaced in a dedicated viewer page so
     # modders can identify naming collisions when porting content.
@@ -547,6 +566,9 @@ def main(argv=None):
     payload = {
         "games": games_payload,
         "defaultGame": _DEFAULT_GAME,
+        "defaultDialogue": {
+            g: n for g, n in _DEFAULT_DIALOGUE.items() if g in games_payload
+        },
         "gameLabels": {gid: _GAME_LABELS[gid] for gid in games_payload},
         "duplicates": duplicates,
     }

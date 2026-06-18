@@ -16,6 +16,7 @@ const {
     setActiveGame,
     getActiveGame,
     resolveGame,
+    getDefaultDialogue,
 } = dataMod;
 
 // Build a tiny per-game payload so tests can verify the binding
@@ -54,6 +55,22 @@ test('loadData with multi-game payload activates the default game', () => {
     assert.equal(getActiveGame(), 'hades2');
     assert.ok(dataMod.textlines.H2_Only, 'H2_Only should be present under hades2');
     assert.equal(dataMod.textlines.H1_Only, undefined, 'H1_Only must not leak into the active hades2 view');
+});
+
+test('getDefaultDialogue returns the active game\'s featured dialogue, validated against its data', () => {
+    const payload = makeMultiGamePayload();
+    payload.defaultDialogue = { hades2: 'H2_Only', hades1: 'NotARealName' };
+    loadData(payload);
+    // Active game is hades2; H2_Only exists -> returned.
+    assert.equal(getDefaultDialogue(), 'H2_Only');
+    // hades1's configured name isn't in its data -> null (no blank-home typo).
+    setActiveGame('hades1');
+    assert.equal(getDefaultDialogue(), null);
+});
+
+test('getDefaultDialogue returns null when no featured dialogue is configured', () => {
+    loadData(makeMultiGamePayload());
+    assert.equal(getDefaultDialogue(), null);
 });
 
 test('setActiveGame swaps every per-game binding wholesale', () => {

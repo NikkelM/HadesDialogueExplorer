@@ -16,7 +16,7 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
@@ -182,6 +182,55 @@ export function applyHashFromUrl() {
         switchToGame(resolvedGame);
     }
     applyState(state);
+}
+
+// --- First-visit landing -------------------------------------------
+//
+// On a user's very first arrival at the home state (no ``hde.visited``
+// flag AND an empty URL hash), land on the build-time featured dialogue
+// (see ``getDefaultDialogue``) instead of a blank panel, routing through
+// ``navigateToState`` so the URL hash reflects where we are. The flag is
+// then recorded so every later empty-hash visit shows the genuine "no
+// dialogue" home state - the user can always navigate back to a blank
+// view. A first visit that deep-links straight to an entity does NOT
+// consume the flag, so the landing still fires the first time they reach
+// the bare home page. The onboarding tour is intended to hook into this
+// same first-visit branch (gated by the same flag).
+const _VISITED_KEY = 'hde.visited';
+
+function _hasVisited() {
+    try {
+        return typeof localStorage !== 'undefined'
+            && localStorage.getItem(_VISITED_KEY) === '1';
+    } catch {
+        return false;
+    }
+}
+
+function _markVisited() {
+    try {
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(_VISITED_KEY, '1');
+        }
+    } catch {
+        // Storage unavailable (private mode, disabled): treat every visit
+        // as a return visit so we never get stuck re-landing.
+    }
+}
+
+// Returns true when it performed the first-visit redirect (so the caller
+// can let the resulting hash drive the render and skip the normal apply).
+// No-op (false) on return visits, when the URL already names an entity,
+// or when no featured dialogue is configured for the active game.
+export function applyFirstVisitLanding() {
+    if (_hasVisited()) return false;
+    const state = parseUrlState(window.location.hash);
+    if (state.dialogue || state.speaker || state.view || state.q) return false;
+    _markVisited();
+    const featured = getDefaultDialogue();
+    if (!featured) return false;
+    navigateToState({ view: 'dialogue', dialogue: featured });
+    return true;
 }
 
 // Dispatch the parsed state to the appropriate view. Three views are

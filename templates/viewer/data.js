@@ -25,7 +25,7 @@
 // build's preferred toggle order); ``gameLabels`` the display-label
 // dict; ``defaultGame`` the build-time fallback when no ``game=`` URL
 // hash key is present.
-export let games, gameIds, gameLabels, defaultGame;
+export let games, gameIds, gameLabels, defaultGame, defaultDialogue;
 
 // Cross-game duplicate textline names. Populated once by ``loadData``
 // from the top-level ``duplicates`` array in the JSON payload. Each
@@ -72,6 +72,7 @@ function _normalizePayload(DATA) {
             gameIds: Object.keys(DATA.games),
             gameLabels: DATA.gameLabels || {},
             defaultGame: DATA.defaultGame || Object.keys(DATA.games)[0],
+            defaultDialogue: DATA.defaultDialogue || {},
         };
     }
     return {
@@ -79,6 +80,7 @@ function _normalizePayload(DATA) {
         gameIds: ['hades1'],
         gameLabels: { hades1: 'Hades' },
         defaultGame: 'hades1',
+        defaultDialogue: {},
     };
 }
 
@@ -95,6 +97,7 @@ export function loadData(DATA) {
     gameIds = norm.gameIds;
     gameLabels = norm.gameLabels;
     defaultGame = norm.defaultGame;
+    defaultDialogue = norm.defaultDialogue;
     duplicates = (DATA && DATA.duplicates) || [];
     currentGame = null;
     // Single-game fixtures that don't call setActiveGame themselves
@@ -143,6 +146,15 @@ export function setActiveGame(gameId) {
 // ``setActiveGame`` is first called).
 export function getActiveGame() {
     return currentGame;
+}
+
+// The build-time "featured" dialogue for the active game - shown on the
+// home / empty state (no ``dialogue=`` in the URL) and used as the
+// anchor for the onboarding tour. Returns null when none is configured
+// or the configured name isn't present in the active game's data.
+export function getDefaultDialogue() {
+    const name = (currentGame && defaultDialogue) ? defaultDialogue[currentGame] : null;
+    return (name && textlines && textlines[name]) ? name : null;
 }
 
 // Resolve a requested game id from a URL hash to a valid id. Unknown

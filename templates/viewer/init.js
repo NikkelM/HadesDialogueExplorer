@@ -4,7 +4,7 @@
 // ``let`` declaration in the other modules has been initialised.
 
 import { loadData, resolveGame } from './data.js';
-import { switchToGame, applyHashFromUrl, forceRefresh } from './navigation.js';
+import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
@@ -29,7 +29,12 @@ function init(data) {
     // Re-hydrate a cached save before the first render so its badges show
     // immediately (indistinguishable from a freshly loaded save).
     restoreSavedSave();
-    applyHashFromUrl();
+    // First-ever visit to the bare home page lands on the featured
+    // dialogue (and writes it into the URL); return visits fall through
+    // to the normal hash apply, which shows the genuine empty state.
+    if (!applyFirstVisitLanding()) {
+        applyHashFromUrl();
+    }
     window.addEventListener('hashchange', applyHashFromUrl);
     // Re-render current view when a save file is loaded or cleared
     window.addEventListener('save-loaded', forceRefresh);
