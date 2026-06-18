@@ -74,9 +74,14 @@ ALLOWED_NAME_COLLISIONS = {
     # Nyx behaves the same way; the ``_Story_01`` variant fires
     # during the same House-of-Hades framing as her base ``_01``.
     "Nyx": {"NPC_Nyx_01", "NPC_Nyx_Story_01"},
-    # Narcissus's chamber-encounter ``_Field_01`` and his original
-    # ``_01`` both speak as the same flower-blossom in-fiction.
-    "Narcissus": {"NPC_Narcissus_01", "NPC_Narcissus_Field_01"},
+    # Narcissus's chamber-encounter ``_Field_01``, his original ``_01``,
+    # and the ``Story_Narcissus_01`` story-event cue tag all speak as the
+    # same flower-blossom in-fiction.
+    "Narcissus": {"NPC_Narcissus_01", "NPC_Narcissus_Field_01", "Story_Narcissus_01"},
+    # Arachne's base ``_01`` and her ``Story_Arachne_01`` story-event cue
+    # tag are the same Silk Weaver (the ``_Home_01`` Crossroads variant
+    # takes a qualifier and does not collide).
+    "Arachne": {"NPC_Arachne_01", "Story_Arachne_01"},
     # Zagreus appears in two contexts: the present-day cameo
     # (``_01``) and the flashback ``_Past_01`` tag. Same character.
     "Zagreus": {"NPC_Zagreus_01", "NPC_Zagreus_Past_01"},

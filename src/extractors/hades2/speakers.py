@@ -58,12 +58,14 @@ Labelling conventions:
     is Chronos in a context distinct from his Erebus boss
     appearance.
   * **Environmental / combat-bark speakers are NOT included.** Bare
-    names like ``Medea``, ``Heracles``, ``InfestedCerberus`` (in
-    ``EnemyData_*.lua`` / ``AudioData.lua``) are non-interactive
-    voice tags for boss-fight callouts / environmental quips with no
-    portrait or textbox - they are not "dialogue speakers" and the
-    corresponding interactive forms already live in the dict as
-    ``NPC_<Char>_01``.
+    names like ``Medea``, ``Heracles`` (in ``EnemyData_*.lua`` /
+    ``AudioData.lua``) are non-interactive voice tags for boss-fight
+    callouts / environmental quips with no portrait or textbox - they
+    are not "dialogue speakers" and the corresponding interactive forms
+    already live in the dict as ``NPC_<Char>_01``. (``InfestedCerberus``
+    is the exception: it OWNS the Homer-narrated Cerberus boss-outro
+    dialogue, so it is registered below as ``"Cerberus (Boss)"`` - the
+    owner needs a display name even though its cues are Homer's.)
 
 Source notes:
   * Initial dump generated once from H2 1.x
@@ -117,6 +119,10 @@ HADES2_SPEAKERS = {
     # chamber-encounter form; the ``_Home_`` variant only speaks
     # once she's set up shop at the Crossroads.
     "NPC_Arachne_Home_01":  {"name": "Arachne (Crossroads)", "description": "Silk Weaver"},
+    # Story-event cue-speaker tag for Arachne (co-speaks with
+    # ``NPC_Arachne_01`` in ``HecateWithArachne01``); same character,
+    # bare name.
+    "Story_Arachne_01":     {"name": "Arachne",     "description": "Silk Weaver"},
     "NPC_Ares_01":          {"name": "Ares",        "description": "God of War"},
     # Artemis has both a hub-style ``_01`` form (with InteractTextLineSets)
     # and a chamber-encounter ``_Field_01`` form; both carry distinct
@@ -225,6 +231,10 @@ HADES2_SPEAKERS = {
     "NPC_Moros_01":         {"name": "Moros",       "description": "Doom Incarnate"},
     "NPC_Narcissus_01":      {"name": "Narcissus",  "description": "Beautiful Flower"},
     "NPC_Narcissus_Field_01": {"name": "Narcissus", "description": "Beautiful Flower"},
+    # Story-event cue-speaker tag for Narcissus (co-speaks with
+    # ``NPC_Narcissus_01`` in ``NemesisWithNarcissus01/02``); same
+    # character, bare name.
+    "Story_Narcissus_01":   {"name": "Narcissus",   "description": "Beautiful Flower"},
     "NPC_Nemesis_01":       {"name": "Nemesis",     "description": "Retribution Incarnate"},
     "NPC_Nyx_01":           {"name": "Nyx",         "description": "Night Incarnate"},
     "NPC_Nyx_Story_01":     {"name": "Nyx",         "description": "Night Incarnate"},
@@ -311,6 +321,16 @@ HADES2_SPEAKERS = {
     "Chronos":              {"name": "Chronos (Boss)", "description": "Titan of Time"},
     "Zagreus":              {"name": "Zagreus (Boss)", "description": "Prince of the Underworld"},
     "TyphonHead":           {"name": "Chronos (Summit)", "description": "Titan of Time"},
+    # The Infested Cerberus boss container (``UnitSetData.InfestedCerberus``)
+    # owns the ``CerberusBossMiscOutro*`` boss-outro dialogue. Cerberus
+    # himself never speaks - every cue is Homer's narration of Melinoë
+    # reuniting with the watchdog (the cue-speaker fallback is
+    # ``Speaker_Homer``; see ``ENEMY_DEFAULT_SPEAKERS``) - but the owner
+    # still needs a display name, so it takes the boss-form
+    # ``"Cerberus (Boss)"`` label (parallel to the boss container keys
+    # above), keeping it distinct from the ``NPC_Cerberus_*`` watchdog
+    # forms.
+    "InfestedCerberus":     {"name": "Cerberus (Boss)", "description": "Notorious Watchdog"},
 
     # Non-character narrative tags. ``Speaker_Anonymous`` is used
     # for unattributed system / environment lines; ``Speaker_Homer``
