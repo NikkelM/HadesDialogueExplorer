@@ -25,10 +25,22 @@ const _GAME_ID_MAP = {
 
 // --- LZ4 block decompressor (decompression only) ---
 
-function decompressLz4Block(input, uncompressedSize) {
-  const out = new Uint8Array(uncompressedSize);
+// ``initialSize`` is a starting capacity hint; the save format doesn't store
+// the uncompressed size, so the output buffer is grown on demand if a save
+// (e.g. a 100%-completion file) decompresses to more than the hint.
+export function decompressLz4Block(input, initialSize) {
+  let out = new Uint8Array(initialSize || 1 << 16);
   let ip = 0;
   let op = 0;
+
+  function ensureCapacity(extra) {
+    if (op + extra <= out.length) return;
+    let cap = out.length || 1;
+    while (cap < op + extra) cap *= 2;
+    const grown = new Uint8Array(cap);
+    grown.set(out);
+    out = grown;
+  }
 
   while (ip < input.length) {
     const token = input[ip++];
@@ -45,6 +57,7 @@ function decompressLz4Block(input, uncompressedSize) {
     }
 
     // Copy literals
+    ensureCapacity(literalLen);
     for (let i = 0; i < literalLen; i++) {
       out[op++] = input[ip++];
     }
@@ -68,6 +81,7 @@ function decompressLz4Block(input, uncompressedSize) {
     matchLen += 4; // minimum match length is 4
 
     // Copy match (may overlap - byte-by-byte copy required)
+    ensureCapacity(matchLen);
     let matchPos = op - offset;
     for (let i = 0; i < matchLen; i++) {
       out[op++] = out[matchPos++];
@@ -186,7 +200,7 @@ function parseSGB1(arrayBuffer) {
   const compressedLen = view.getUint32(pos, true); pos += 4;
   const compressed = data.slice(pos, pos + compressedLen);
 
-  // Decompress (6 MB buffer should cover any save)
+  // Decompress (6 MB initial buffer; grows if a save exceeds it)
   const decompressed = decompressLz4Block(compressed, 6 * 1024 * 1024);
 
   // Decode luabins

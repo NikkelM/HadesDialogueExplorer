@@ -15,6 +15,7 @@ import struct
 from io import BytesIO
 
 import lz4.block
+from lz4.block import LZ4BlockError
 from luabins import decode_luabins
 
 GAME_VERSION_HADES1 = 0x10
@@ -27,8 +28,24 @@ _GAME_ID_MAP = {
     GAME_VERSION_HADES2_PATCH11: "hades2",
 }
 
-# Maximum decompressed size (mirrors the C++ tool constant)
-_LZ4_BUFFER_SIZE = 3129344 * 2
+# Initial decompression buffer (~6 MB, mirrors the C++ tool constant). The
+# save format doesn't store the uncompressed size, so the buffer is grown on
+# demand up to a safety cap if a save (e.g. a 100%-completion file) exceeds it.
+_LZ4_INITIAL_BUFFER_SIZE = 3129344 * 2
+_LZ4_MAX_BUFFER_SIZE = 128 * 1024 * 1024
+
+
+def _lz4_decompress(compressed: bytes) -> bytes:
+    """Decompress an LZ4 block whose uncompressed size isn't stored, growing
+    the output buffer until it fits (or the safety cap is hit)."""
+    size = _LZ4_INITIAL_BUFFER_SIZE
+    while True:
+        try:
+            return lz4.block.decompress(compressed, uncompressed_size=size)
+        except LZ4BlockError:
+            size *= 2
+            if size > _LZ4_MAX_BUFFER_SIZE:
+                raise ValueError("LZ4 payload exceeds the maximum supported size")
 
 
 def parse_save(data: bytes) -> dict:
@@ -44,6 +61,14 @@ def parse_save(data: bytes) -> dict:
     pos = 4
     _checksum = struct.unpack_from("<I", data, pos)[0]; pos += 4
     game_version = struct.unpack_from("<H", data, pos)[0]; pos += 2
+
+    # Validate the version before reading the rest: the H2-only fields below
+    # are applied based on it, so an unknown version would otherwise fail with
+    # a cryptic offset/decompression error instead of this clear message.
+    game_id = _GAME_ID_MAP.get(game_version)
+    if game_id is None:
+        raise ValueError(f"Unknown game version: 0x{game_version:02X}")
+
     _save_flags = struct.unpack_from("<H", data, pos)[0]; pos += 2
     _timestamp = struct.unpack_from("<Q", data, pos)[0]; pos += 8
 
@@ -77,15 +102,11 @@ def parse_save(data: bytes) -> dict:
     compressed_len = struct.unpack_from("<I", data, pos)[0]; pos += 4
     compressed = data[pos:pos + compressed_len]
 
-    decompressed = lz4.block.decompress(compressed, uncompressed_size=_LZ4_BUFFER_SIZE)
+    decompressed = _lz4_decompress(compressed)
     stream = BytesIO(decompressed)
     lua_values = decode_luabins(stream, respect_max_items=False)
 
     lua_state = lua_values[0] if lua_values else {}
-
-    game_id = _GAME_ID_MAP.get(game_version)
-    if game_id is None:
-        raise ValueError(f"Unknown game version: 0x{game_version:02X}")
 
     return {
         "gameId": game_id,
