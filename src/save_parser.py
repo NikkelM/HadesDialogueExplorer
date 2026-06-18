@@ -125,6 +125,14 @@ def extract_text_lines_record(save_data: dict) -> set:
     H1 stores TextLinesRecord at the top level of the Lua state.
     H2 stores it under GameState.TextLinesRecord.
     Both are flat dicts {dialogueName: true}.
+
+    For H2, the option the player picked in a choice dialogue is recorded
+    separately under ``GameState.TextLinesChoiceRecord.<parent> =
+    "<ChoiceText>"`` rather than as a ``<parent><ChoiceText>`` entry in
+    TextLinesRecord (which is how H1 records it). Those synthetic
+    choice-variant names are re-derived and folded into the played set so
+    choice-gated dialogues evaluate against the same names the dependency
+    graph uses (see ``build_synthetic_variants``).
     """
     lua_state = save_data.get("luaState", {})
     if not isinstance(lua_state, dict):
@@ -134,9 +142,28 @@ def extract_text_lines_record(save_data: dict) -> set:
 
     if game_id == "hades2":
         game_state = lua_state.get("GameState", {})
-        tlr = game_state.get("TextLinesRecord", {}) if isinstance(game_state, dict) else {}
-    else:
-        # H1: top-level TextLinesRecord
-        tlr = lua_state.get("TextLinesRecord", {})
+        game_state = game_state if isinstance(game_state, dict) else {}
+        tlr = game_state.get("TextLinesRecord", {})
+        played = set(tlr.keys()) if isinstance(tlr, dict) else set()
+        played |= _choice_record_variants(game_state.get("TextLinesChoiceRecord"))
+        return played
 
+    # H1: top-level TextLinesRecord (choices already recorded inline)
+    tlr = lua_state.get("TextLinesRecord", {})
     return set(tlr.keys()) if isinstance(tlr, dict) else set()
+
+
+def _choice_record_variants(choice_record) -> set:
+    """Map H2's ``TextLinesChoiceRecord`` ({parent: ChoiceText}) to the set
+    of ``<parent><ChoiceText>`` synthetic choice-variant names."""
+    if not isinstance(choice_record, dict):
+        return set()
+    variants = set()
+    for parent, choice in choice_record.items():
+        if not isinstance(parent, str):
+            continue
+        choices = choice if isinstance(choice, list) else [choice]
+        for c in choices:
+            if isinstance(c, str) and c:
+                variants.add(parent + c)
+    return variants

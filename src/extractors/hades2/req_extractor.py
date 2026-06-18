@@ -154,6 +154,19 @@ _TEXTLINE_PATH_PREFIXES = {
         "HasAny":  "RequiredAnyQueuedTextLines",
         "HasNone": "RequiredFalseQueuedTextLines",
     },
+    # Choice-record container form: the values are the *parent* dialogue
+    # names whose choice the player recorded (made any choice in). The
+    # parent is itself a textline, so "has a choice record for <parent>"
+    # is a dependency on having played <parent>. (The direct form -
+    # ``Path = { ..., TextLinesChoiceRecord, <parent> }, IsAny = {
+    # <ChoiceText> }`` - which gates on a *specific* choice is handled by
+    # :func:`_try_classify_choice_record`, mapping to the
+    # ``<parent><ChoiceText>`` synthetic variant.)
+    ("GameState", "TextLinesChoiceRecord"): {
+        "HasAll":  "RequiredTextLines",
+        "HasAny":  "RequiredAnyTextLines",
+        "HasNone": "RequiredFalseTextLines",
+    },
 }
 
 
@@ -163,6 +176,26 @@ _TEXTLINE_PATH_PREFIXES = {
 _DIRECT_PATH_OP_TO_CONTAINER_OP = {
     "PathTrue":  "HasAll",
     "PathFalse": "HasNone",
+}
+
+
+# Choice-record form: ``Path = { GameState, TextLinesChoiceRecord,
+# <parent> }`` with ``IsAny`` / ``IsNone`` listing ChoiceText ids. H2
+# records the option the player picked in ``<parent>`` under
+# ``GameState.TextLinesChoiceRecord.<parent>`` (a single ChoiceText
+# string), rather than H1's approach of writing a ``<parent><ChoiceText>``
+# entry straight into ``TextLinesRecord``. The synthetic textline our
+# walker emits for that inline cue choice IS ``<parent><ChoiceText>``
+# (see :func:`src.extractors.textline_set.build_synthetic_variants`), so a
+# "chose Choice_X in <parent>" gate is exactly a dependency on that
+# synthetic variant. Routing it to a dialogue edge (``IsAny`` ->
+# ``RequiredAnyTextLines``, ``IsNone`` -> ``RequiredFalseTextLines``)
+# surfaces the choice relationship in the dependency graph instead of
+# burying it in ``otherRequirements`` as an opaque GameState path.
+_CHOICE_RECORD_KEY = "TextLinesChoiceRecord"
+_CHOICE_RECORD_OP_TO_FIELD = {
+    "IsAny":  "RequiredAnyTextLines",
+    "IsNone": "RequiredFalseTextLines",
 }
 
 
@@ -324,6 +357,12 @@ def _classify_record(record, result):
             _extend_requirements(result, syn_key, [leaf])
             return
 
+    # Choice-record form: Path = { GameState, TextLinesChoiceRecord, <parent> },
+    # IsAny / IsNone = { "Choice_X", ... } -> dependency on the synthetic
+    # <parent><Choice_X> textline (see _CHOICE_RECORD_OP_TO_FIELD).
+    if _try_classify_choice_record(record, result):
+        return
+
     # FunctionName-based predicates with textline semantics route to
     # dialogue edges (see ``_TEXTLINE_FUNCTION_HANDLERS``).
     if _try_classify_textline_function(record, result):
@@ -331,6 +370,29 @@ def _classify_record(record, result):
 
     # Everything else goes to otherRequirements as a structured blob.
     _add_record_as_other(record, result)
+
+
+def _try_classify_choice_record(record, result):
+    """Route a ``GameState.TextLinesChoiceRecord.<parent>`` choice gate to
+    a dialogue edge on the matching ``<parent><ChoiceText>`` synthetic
+    variant. Returns True if the record was consumed.
+
+    ``IsAny`` (the player picked one of the listed options) becomes a
+    ``RequiredAnyTextLines`` edge; ``IsNone`` (did not pick any) becomes
+    ``RequiredFalseTextLines``. A record carrying neither is left for the
+    ``otherRequirements`` fallback.
+    """
+    path = _string_path(record.named.get("Path"))
+    if path is None or len(path) != 3 or path[1] != _CHOICE_RECORD_KEY:
+        return False
+    parent = path[2]
+    consumed = False
+    for op_name, syn_key in _CHOICE_RECORD_OP_TO_FIELD.items():
+        choices = _string_list(record.named.get(op_name))
+        if choices:
+            _extend_requirements(result, syn_key, [parent + c for c in choices])
+            consumed = True
+    return consumed
 
 
 # ---------------------------------------------------------------------------

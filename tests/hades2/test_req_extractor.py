@@ -136,6 +136,48 @@ class TestDirectPathFormDialogueEdges:
         assert result["requirements"] == {"RequiredFalseTextLinesThisRun": ["X"]}
 
 
+class TestChoiceRecordDialogueEdges:
+    """H2 records the option picked in a choice dialogue under
+    ``GameState.TextLinesChoiceRecord.<parent> = "<ChoiceText>"``. A gate
+    on that choice maps to a dependency on the ``<parent><ChoiceText>``
+    synthetic variant the walker emits for the inline cue choice."""
+
+    def test_direct_choice_isany_maps_to_synthetic_variant(self):
+        lua = ('{ { Path = { "GameState", "TextLinesChoiceRecord", "ErisBecomingCloser01" }, '
+               'IsAny = { "Choice_ErisAccept" } } }')
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredAnyTextLines": ["ErisBecomingCloser01Choice_ErisAccept"]
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_direct_choice_isnone_maps_to_negative_dependency(self):
+        lua = ('{ { Path = { "GameState", "TextLinesChoiceRecord", "ErisBecomingCloser01" }, '
+               'IsNone = { "Choice_ErisDecline" } } }')
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredFalseTextLines": ["ErisBecomingCloser01Choice_ErisDecline"]
+        }
+
+    def test_direct_choice_isany_multiple_choices(self):
+        lua = ('{ { Path = { "GameState", "TextLinesChoiceRecord", "P01" }, '
+               'IsAny = { "Choice_A", "Choice_B" } } }')
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredAnyTextLines": ["P01Choice_A", "P01Choice_B"]
+        }
+
+    def test_container_choice_record_hasany_maps_to_parent_dependency(self):
+        # Container form (no parent in the path): "made any choice in
+        # <parent>" -> a dependency on the parent dialogue itself.
+        lua = ('{ { Path = { "GameState", "TextLinesChoiceRecord" }, '
+               'HasAny = { "NemesisPostCombatBecomingCloser01" } } }')
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredAnyTextLines": ["NemesisPostCombatBecomingCloser01"]
+        }
+
+
 class TestMultipleRecordsMerge:
     def test_multiple_pathtrue_records_merge_into_same_key(self):
         """Per-record entries are AND'd by the engine, so two PathTrue

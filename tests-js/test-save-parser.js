@@ -274,8 +274,32 @@ test('getDialogueStatus reflects the parsed save: played / eligible / blocked', 
     );
 });
 
-test('clearSaveProgress resets the parsed state', () => {
-    parseSaveFile(buildSGB1({
+test('folds H2 TextLinesChoiceRecord into the played set as synthetic variants', () => {
+    clearSaveProgress();
+    const buf = buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: {
+            GameState: {
+                TextLinesRecord: { ErisBecomingCloser01: true },
+                TextLinesChoiceRecord: { ErisBecomingCloser01: 'Choice_ErisAccept' },
+            },
+        },
+    });
+    const result = parseSaveFile(buf);
+    // The parent line plus its <parent><ChoiceText> synthetic variant.
+    assert.equal(result.count, 2);
+    assert.equal(isDialoguePlayed('ErisBecomingCloser01'), true);
+    assert.equal(isDialoguePlayed('ErisBecomingCloser01Choice_ErisAccept'), true);
+    // A choice-gated dialogue then evaluates as eligible.
+    assert.equal(
+        getDialogueStatus('ErisBossAboutBecomingCloser01', {
+            requirements: { RequiredAnyTextLines: ['ErisBecomingCloser01Choice_ErisAccept'] },
+        }),
+        'eligible',
+    );
+});
+
+test('clearSaveProgress resets the parsed state', () => {    parseSaveFile(buildSGB1({
         gameVersion: GAME_VERSION_HADES1,
         luaState: { TextLinesRecord: { X01: true } },
     }));

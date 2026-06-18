@@ -88,6 +88,54 @@ class TestExtractTextLinesRecord:
         save_data = {"gameId": "hades2", "luaState": {"GameState": {}}}
         assert extract_text_lines_record(save_data) == set()
 
+    def test_hades2_folds_in_choice_record_variants(self):
+        # H2 records the picked option under
+        # GameState.TextLinesChoiceRecord.<parent> = "<ChoiceText>"; the
+        # played set must include the <parent><ChoiceText> synthetic
+        # variant so choice-gated dialogues evaluate.
+        save_data = {
+            "gameId": "hades2",
+            "luaState": {
+                "GameState": {
+                    "TextLinesRecord": {"ErisBecomingCloser01": True},
+                    "TextLinesChoiceRecord": {
+                        "ErisBecomingCloser01": "Choice_ErisAccept",
+                        "NemesisPostCombatBecomingCloser01": "Choice_NemesisAccept",
+                    },
+                }
+            },
+        }
+        result = extract_text_lines_record(save_data)
+        assert result == {
+            "ErisBecomingCloser01",
+            "ErisBecomingCloser01Choice_ErisAccept",
+            "NemesisPostCombatBecomingCloser01Choice_NemesisAccept",
+        }
+
+    def test_hades1_ignores_choice_record(self):
+        # H1 already writes <parent><ChoiceText> into TextLinesRecord, so a
+        # stray TextLinesChoiceRecord (not used by H1) is not folded in.
+        save_data = {
+            "gameId": "hades1",
+            "luaState": {
+                "TextLinesRecord": {"Hello01": True},
+                "TextLinesChoiceRecord": {"Hello01": "Choice_X"},
+            },
+        }
+        assert extract_text_lines_record(save_data) == {"Hello01"}
+
+    def test_hades2_handles_non_dict_choice_record(self):
+        save_data = {
+            "gameId": "hades2",
+            "luaState": {
+                "GameState": {
+                    "TextLinesRecord": {"A": True},
+                    "TextLinesChoiceRecord": "not a dict",
+                }
+            },
+        }
+        assert extract_text_lines_record(save_data) == {"A"}
+
     def test_empty_when_no_lua_state(self):
         save_data = {"gameId": "hades1", "luaState": {}}
         assert extract_text_lines_record(save_data) == set()

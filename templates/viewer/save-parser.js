@@ -215,16 +215,36 @@ function parseSGB1(arrayBuffer) {
   return { gameId, completedRuns, luaState };
 }
 
-// --- TextLinesRecord extraction ---
+// --- Played-set extraction ---
 
-function extractTextLinesRecord(parsed) {
+// H2 records the option picked in a choice dialogue under
+// ``GameState.TextLinesChoiceRecord.<parent> = "<ChoiceText>"`` rather
+// than writing a ``<parent><ChoiceText>`` entry into TextLinesRecord the
+// way H1 does. Re-derive those synthetic choice-variant names (the same
+// ones ``build_synthetic_variants`` emits) so choice-gated dialogues
+// evaluate against the names the dependency graph uses.
+function choiceRecordVariants(choiceRecord) {
+  const variants = new Set();
+  if (!choiceRecord || typeof choiceRecord !== 'object') return variants;
+  for (const [parent, choice] of Object.entries(choiceRecord)) {
+    const choices = Array.isArray(choice) ? choice : [choice];
+    for (const c of choices) {
+      if (typeof c === 'string' && c) variants.add(parent + c);
+    }
+  }
+  return variants;
+}
+
+function extractPlayedSet(parsed) {
   const { gameId, luaState } = parsed;
   if (gameId === 'hades2') {
     const gs = luaState.GameState || {};
-    return gs.TextLinesRecord || {};
+    const played = new Set(Object.keys(gs.TextLinesRecord || {}));
+    for (const v of choiceRecordVariants(gs.TextLinesChoiceRecord)) played.add(v);
+    return played;
   }
-  // H1: top-level TextLinesRecord
-  return luaState.TextLinesRecord || {};
+  // H1: top-level TextLinesRecord (choices already recorded inline)
+  return new Set(Object.keys(luaState.TextLinesRecord || {}));
 }
 
 // --- Public API ---
@@ -245,8 +265,7 @@ export function clearSaveProgress() {
 
 export function parseSaveFile(arrayBuffer) {
   const parsed = parseSGB1(arrayBuffer);
-  const tlr = extractTextLinesRecord(parsed);
-  _saveProgress = new Set(Object.keys(tlr));
+  _saveProgress = extractPlayedSet(parsed);
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   return { gameId: parsed.gameId, completedRuns: parsed.completedRuns, count: _saveProgress.size };
