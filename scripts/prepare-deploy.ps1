@@ -14,6 +14,19 @@ param([switch]$Dry)
 
 $ErrorActionPreference = 'Stop'
 
+# Run a git command and abort if it fails. $ErrorActionPreference='Stop'
+# does not catch native-command exit codes on Windows PowerShell 5.1, so
+# the destructive git steps below (reset --hard, push --force) are routed
+# through this guard to avoid continuing past a failure.
+function Invoke-Git {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
+    & git @GitArgs
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "git $($GitArgs -join ' ') failed (exit $LASTEXITCODE)."
+        exit 1
+    }
+}
+
 $branch = git rev-parse --abbrev-ref HEAD
 if ($branch -ne 'main') {
     Write-Error "Must be on main branch (currently on $branch)"
@@ -39,23 +52,25 @@ if (-not $jsons -or $jsons.Count -eq 0) {
 Write-Host "Found $($jsons.Count) output files"
 
 # Create or reset deploy branch to match main
-if ((git show-ref --verify --quiet refs/heads/deploy 2>$null; $LASTEXITCODE) -eq 0) {
-    git checkout deploy
-    git reset --hard main
+git show-ref --verify --quiet refs/heads/deploy 2>$null
+$deployExists = ($LASTEXITCODE -eq 0)
+if ($deployExists) {
+    Invoke-Git checkout deploy
+    Invoke-Git reset --hard main
 } else {
-    git checkout -b deploy
+    Invoke-Git checkout -b deploy
 }
 
 # Stage outputs (force-add despite gitignore)
-git add --force outputs/*.json
-git commit -m "Add extraction outputs for deployment"
+Invoke-Git add --force outputs/*.json
+Invoke-Git commit -m "Add extraction outputs for deployment"
 
 if ($Dry) {
     Write-Host "[dry run] Would push deploy branch. Returning to main."
-    git checkout main
+    Invoke-Git checkout main
     exit 0
 }
 
-git push --force origin deploy
-git checkout main
+Invoke-Git push --force origin deploy
+Invoke-Git checkout main
 Write-Host "Deploy branch pushed. The GitHub Pages workflow will build and deploy automatically."

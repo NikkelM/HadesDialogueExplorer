@@ -1,0 +1,44 @@
+name: CI checks
+description: Install dependencies and run the Python + JavaScript test suites and linters.
+
+# Shared by the Tests workflow and the Deploy workflow's build job so the
+# setup + test + lint sequence lives in exactly one place. The caller is
+# responsible for checking out the repository first (this action reads
+# requirements/package files from the working tree).
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+        cache: pip
+        cache-dependency-path: |
+          requirements.txt
+          requirements-dev.txt
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+        cache: npm
+
+    - run: pip install -r requirements-dev.txt
+      shell: bash
+
+    - run: npm ci
+      shell: bash
+
+    - name: Python tests
+      run: pytest -q
+      shell: bash
+
+    - name: Python lint
+      run: ruff check
+      shell: bash
+
+    - name: JS tests
+      run: npm test
+      shell: bash
+
+    - name: JS lint
+      run: npm run lint
+      shell: bash

@@ -54,7 +54,7 @@ A lightweight API for programmatic eligibility checks, intended for coding agent
 ### CLI mode
 
 ```bash
-pip install lz4 luabins-py        # one-time, save parser dependencies
+pip install -r requirements.txt   # includes the save-parser deps (lz4, luabins-py)
 python api.py check <save_file> <dialogue_name> [--game hades1|hades2]
 ```
 
