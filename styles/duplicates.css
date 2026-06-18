@@ -36,7 +36,7 @@
 
 .duplicates-search:focus {
     outline: none;
-    border-color: var(--accent-color, #58a6ff);
+    border-color: var(--accent-color, #e94560);
 }
 
 .duplicates-empty {
@@ -81,7 +81,7 @@
 
 .duplicates-speaker-item.is-active {
     background: #0f3460;
-    border-color: var(--accent-color, #58a6ff);
+    border-color: var(--accent-color, #e94560);
 }
 
 .duplicates-speaker-name {
@@ -132,7 +132,7 @@
 
 .duplicates-game-link {
     font-size: 0.7rem;
-    color: var(--link-color, #58a6ff);
+    color: var(--link-color, #e94560);
     cursor: pointer;
     text-decoration: none;
     padding: 0.1rem 0.4rem;
@@ -144,7 +144,7 @@
 
 .duplicates-game-link:hover {
     background: #0f3460;
-    border-color: var(--accent-color, #58a6ff);
+    border-color: var(--accent-color, #e94560);
 }
 
 /* Keep the wider name-to-pill gap while the two game pills sit close together. */

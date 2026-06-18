@@ -10,8 +10,8 @@
  * Only functional when a save file is loaded.
  */
 
-import { textlines, speakers } from './data.js';
-import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml } from './utilities.js';
+import { textlines, speakers, alternates } from './data.js';
+import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml } from './utilities.js';
 import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, isDirectlySatisfied } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
@@ -425,7 +425,7 @@ function buildChildrenOf(chain) {
     return childrenOf;
 }
 
-function renderTreeHtml(chain, rootName, groups) {
+export function renderTreeHtml(chain, rootName, groups) {
     if (chain.size === 0) return '';
 
     const childrenOf = buildChildrenOf(chain);
@@ -470,20 +470,57 @@ function renderChildrenOf(name, childrenOf, chain, groups, visited, depth) {
     const children = childrenOf.get(name) || [];
     if (children.length === 0) return '';
 
-    let html = '';
     const seenGroups = new Set();
+    const rendered = [];
     for (const child of children) {
         if (child.groupId) {
             // Render each group once, at the position of its first option.
             if (seenGroups.has(child.groupId)) continue;
             seenGroups.add(child.groupId);
             const group = groups.get(child.groupId);
-            if (group) html += renderTreeGroupHtml(group, childrenOf, chain, groups, visited, depth);
+            if (group) rendered.push({ name: null, html: renderTreeGroupHtml(group, childrenOf, chain, groups, visited, depth) });
         } else {
-            html += renderTreeChildHtml(child, childrenOf, chain, groups, visited, depth);
+            rendered.push({ name: child.name, html: renderTreeChildHtml(child, childrenOf, chain, groups, visited, depth) });
         }
     }
+    return clusterAlternatesHtml(rendered);
+}
+
+// Wrap runs of mutually-exclusive alternate variants among a sibling list
+// in a single collapsible "Alternates" box, matching the dependency tree
+// (reuses the ``alternates-group`` markup + styling). ``rendered`` is a
+// list of ``{ name, html }`` (``name`` null for non-textline items such as
+// nested groups, which never cluster). Items keep their order; a cluster
+// renders at the position of its first member.
+export function clusterAlternatesHtml(rendered) {
+    const grouped = new Set();
+    let html = '';
+    for (const item of rendered) {
+        if (item.name && grouped.has(item.name)) continue;
+        const siblings = item.name ? alternates[item.name] : null;
+        if (siblings && siblings.length) {
+            const names = new Set([item.name, ...siblings]);
+            const cluster = rendered.filter(r => r.name && names.has(r.name) && !grouped.has(r.name));
+            if (cluster.length >= 2) {
+                for (const c of cluster) grouped.add(c.name);
+                html += renderAlternatesGroupHtml(cluster.map(c => c.html).join(''), cluster.length);
+                continue;
+            }
+        }
+        html += item.html;
+    }
     return html;
+}
+
+function renderAlternatesGroupHtml(rowsHtml, count) {
+    return `<div class="alternates-group expanded alternates-other">`
+        + `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" title="Mutually exclusive variants - only one of these can play; the others are blocked once one does.">`
+        + `<span class="alternates-group-chevron">\u25B6</span>`
+        + `<span class="alternates-group-label">Alternates</span>`
+        + `<span class="alternates-group-count">${count}</span>`
+        + `</div>`
+        + `<div class="alternates-group-children">${rowsHtml}</div>`
+        + `</div>`;
 }
 
 // Markup for one tree row given a (possibly empty) pre-rendered subtree.
@@ -503,6 +540,9 @@ function renderTreeRow(name, reqType, showEdge, subtree, played) {
     html += `<div class="tree-node-row"${hasChildren ? ' onclick="this.parentElement.classList.toggle(\'collapsed\')"' : ''} ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`;
     html += `${chevron}${saveBadge}`;
     html += `<span class="tree-name">${escapeHtml(name)}</span>`;
+    // Narrative-priority badge (H1 tier / H2 ordinal), matching the
+    // dependency tree so the two tree views read consistently.
+    if (tl) html += renderPrimaryPriorityBadgeHtml(tl);
     if (ownerLabel) html += `<span class="npc-tag">${escapeHtml(ownerLabel)}</span>`;
     if (showEdge && reqType) html += `<span class="edge-type ${getEdgeClass(reqType)}">${getEdgeLabel(reqType)}</span>`;
     html += `<a class="tree-link" onclick="event.stopPropagation();navigateTo(${jsAttr(name)})" title="Open detail view">\u2197</a>`;
@@ -542,15 +582,16 @@ function renderTreeGroupHtml(group, childrenOf, chain, groups, visited, depth) {
     // later option before the group renders it.
     const expandable = sorted.filter(opt => isDialoguePlayed(opt) !== true && chain.has(opt));
     for (const opt of expandable) visited.add(opt);
-    for (const opt of sorted) {
+    const rendered = sorted.map(opt => {
         if (isDialoguePlayed(opt) === true || !chain.has(opt)) {
-            html += renderTreePlayedOptionHtml(opt);
-        } else {
-            // The option is already claimed, so expand its children directly.
-            const subtree = renderChildrenOf(opt, childrenOf, chain, groups, visited, depth + 1);
-            html += renderTreeRow(opt, group.reqType, false, subtree, false);
+            return { name: opt, html: renderTreePlayedOptionHtml(opt) };
         }
-    }
+        // The option is already claimed, so expand its children directly.
+        const subtree = renderChildrenOf(opt, childrenOf, chain, groups, visited, depth + 1);
+        return { name: opt, html: renderTreeRow(opt, group.reqType, false, subtree, false) };
+    });
+    // Cluster mutually-exclusive variants among the options into one box.
+    html += clusterAlternatesHtml(rendered);
     html += `</div></div>`;
     return html;
 }

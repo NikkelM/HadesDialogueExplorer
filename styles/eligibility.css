@@ -10,7 +10,7 @@
 }
 
 .eligibility-target-link {
-    color: var(--accent-color, #7c6fd4);
+    color: var(--accent-color, #e94560);
     cursor: pointer;
 }
 
@@ -157,7 +157,7 @@
 
 .eligibility-item:hover {
     background: #2a2a3e;
-    border-color: var(--accent-color, #7c6fd4);
+    border-color: var(--accent-color, #e94560);
 }
 
 .eligibility-item-main {
@@ -202,7 +202,7 @@
 }
 
 .eligibility-ref {
-    color: var(--accent-color, #7c6fd4);
+    color: var(--accent-color, #e94560);
     cursor: pointer;
 }
 

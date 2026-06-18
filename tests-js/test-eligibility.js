@@ -10,7 +10,7 @@ import { test, before, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml } from '../templates/viewer/eligibility-view.js';
+import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml } from '../templates/viewer/eligibility-view.js';
 import { isUnobtainable, unobtainableReasons } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
@@ -335,6 +335,70 @@ describe('isUnobtainable', () => {
 
     test('reasons: empty for an obtainable dialogue', () => {
         assert.deepEqual(unobtainableReasons('JustBlocked', new Set()), []);
+    });
+});
+
+describe('tree rendering: priority badges + alternates grouping (parity with the dependency tree)', () => {
+    const neverPlayed = () => false;
+
+    test('clusterAlternatesHtml wraps mutual alternates in one alternates-group, leaving others inline', () => {
+        loadData({
+            textlines: { A01: tl({}), A01_B: tl({}), X01: tl({}) },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            alternates: { A01: ['A01_B'], A01_B: ['A01'] },
+        });
+        const rendered = [
+            { name: 'A01', html: '<i>A01</i>' },
+            { name: 'A01_B', html: '<i>A01_B</i>' },
+            { name: 'X01', html: '<i>X01</i>' },
+        ];
+        const html = clusterAlternatesHtml(rendered);
+        // One alternates box wrapping the two variants.
+        assert.equal((html.match(/class="alternates-group /g) || []).length, 1);
+        assert.match(html, /alternates-group-count">2</);
+        const box = html.slice(html.indexOf('alternates-group-children'), html.indexOf('</div></div>'));
+        assert.match(box, /A01</);
+        assert.match(box, /A01_B</);
+        // The unrelated row stays outside the box.
+        assert.doesNotMatch(box, /X01/);
+        assert.match(html, /<i>X01<\/i>/);
+    });
+
+    test('clusterAlternatesHtml leaves a lone alternate (sibling absent) inline', () => {
+        loadData({
+            textlines: { A01: tl({}) },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            alternates: { A01: ['A01_B'], A01_B: ['A01'] },
+        });
+        const html = clusterAlternatesHtml([{ name: 'A01', html: '<i>A01</i>' }]);
+        assert.doesNotMatch(html, /alternates-group/);
+        assert.equal(html, '<i>A01</i>');
+    });
+
+    test('renderTreeHtml shows the priority badge on rows and clusters alternate OR-options', () => {
+        loadData({
+            defaultGame: 'hades2',
+            games: {
+                hades2: {
+                    textlines: {
+                        Root: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements: { RequiredAnyTextLines: ['Alt01', 'Alt01_B'] } },
+                        Alt01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements: {}, narrativePriorityOrdinal: 1, narrativePrioritySectionSize: 2 },
+                        Alt01_B: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements: {}, narrativePriorityOrdinal: 2, narrativePrioritySectionSize: 2 },
+                    },
+                    speakers: { NPC_Test_01: { name: 'Tester' } },
+                    alternates: { Alt01: ['Alt01_B'], Alt01_B: ['Alt01'] },
+                },
+            },
+        });
+        const { chain, groups } = buildPrereqChain('Root', neverPlayed);
+        const html = renderTreeHtml(chain, 'Root', groups);
+        // The two alternate OR-options are wrapped in one alternates box.
+        assert.equal((html.match(/class="alternates-group /g) || []).length, 1);
+        assert.match(html, /Alt01</);
+        assert.match(html, /Alt01_B</);
+        // Each row carries the narrative-priority badge (parity with the
+        // dependency tree), here the H2 ordinal badge.
+        assert.match(html, /priority-badge/);
     });
 });
 
