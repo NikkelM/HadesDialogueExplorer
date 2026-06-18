@@ -18,6 +18,7 @@ import {
     renderSpeaker,
     canonicalisePriority,
     canonicaliseEligibility,
+    toggleSpeakerSection,
 } from '../templates/viewer/speaker-view.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
@@ -379,8 +380,35 @@ test('renderSpeaker section groups are collapsible and collapsed by default', ()
     assert.match(html, /<div class="speaker-textline-group">/);
     assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
     // Header toggles the group on click and carries a chevron affordance.
-    assert.match(html, /speaker-textline-group-header" onclick="this\.parentElement\.classList\.toggle\('expanded'\)"/);
+    assert.match(html, /speaker-textline-group-header" onclick="toggleSpeakerSection\(this, /);
     assert.match(html, /<span class="speaker-group-chevron">/);
+});
+
+test('renderSpeaker keeps an expanded section open across a re-render for the same speaker', () => {
+    // A minimal header-element stub: ``toggleSpeakerSection`` flips the
+    // ``expanded`` class on ``parentElement`` and records the section key.
+    const fakeHeader = () => {
+        const set = new Set();
+        return { parentElement: { classList: {
+            toggle(c) { if (set.has(c)) { set.delete(c); return false; } set.add(c); return true; },
+        } } };
+    };
+
+    // Fresh render of Zeus: the Gift section is collapsed.
+    let html = render('NPC_Zeus_01', { priority: 'all' });
+    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
+
+    // User expands the Gift section.
+    toggleSpeakerSection(fakeHeader(), 'GiftTextLineSets');
+
+    // Re-render the SAME speaker (e.g. after a filter change): the section
+    // stays expanded.
+    html = render('NPC_Zeus_01', { priority: 'all' });
+    assert.match(html, /class="speaker-textline-group expanded"/);
+
+    // Navigating to a DIFFERENT speaker resets the expansion state.
+    html = render('NPC_Aphrodite_01', { priority: 'all' });
+    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
 });
 
 test('renderSpeaker groups co-present mutually-exclusive alternates into one cluster', () => {

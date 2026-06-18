@@ -416,6 +416,12 @@ function displayNameFor(speakerId) {
 // ``compareWithinSection``. The controls strip (the repeatability
 // filter) renders above the list.
 function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
+    // Preserve which sections the user expanded across re-renders (filter /
+    // eligibility changes) for the SAME speaker; reset for a new speaker.
+    if (speakerId !== _expandedSpeaker) {
+        _expandedSpeaker = speakerId;
+        _expandedSections = new Set();
+    }
     const owned = (entry.ownedTextlines || [])
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
@@ -441,10 +447,12 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
         const header = sec
             ? renderSectionHtml(sec)
             : `<span class="section-name">(unknown section)</span>`;
-        // Collapsed by default (no ``expanded`` modifier); the header
-        // toggles it. Matches the ``alternates-group`` collapse pattern.
-        return `<div class="speaker-textline-group">`
-            + `<h5 class="speaker-textline-group-header" onclick="this.parentElement.classList.toggle('expanded')">`
+        // Collapsed by default; an expanded section is remembered (see
+        // ``_expandedSections``) so it survives a filter / eligibility
+        // re-render. The header toggle records the new state.
+        const expandedClass = _expandedSections.has(sec) ? ' expanded' : '';
+        return `<div class="speaker-textline-group${expandedClass}">`
+            + `<h5 class="speaker-textline-group-header" onclick="toggleSpeakerSection(this, ${jsAttr(sec)})">`
             + `<span class="speaker-group-chevron">\u25B6</span>`
             + `${header} <span class="speaker-count">${rows.length}</span>`
             + `</h5>`
@@ -453,6 +461,24 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     }).join('');
 
     return `<section class="speaker-textlines">${controls}${body}</section>`;
+}
+
+// Section expand/collapse state, preserved across re-renders for the SAME
+// speaker so a section the user opened stays open when they change the
+// repeatability / eligibility filters. Keyed by merged section key; reset
+// in ``renderTextlineList`` when a different speaker is rendered.
+let _expandedSpeaker = null;
+let _expandedSections = new Set();
+
+// Section-header click target: toggle the group open/closed and record the
+// choice so the next re-render keeps it. Exposed globally for the inline
+// ``onclick`` in the rendered header.
+export function toggleSpeakerSection(headerEl, sectionKey) {
+    const group = headerEl && headerEl.parentElement;
+    if (!group) return;
+    const nowExpanded = group.classList.toggle('expanded');
+    if (nowExpanded) _expandedSections.add(sectionKey);
+    else _expandedSections.delete(sectionKey);
 }
 
 // Render a section's rows, grouping mutually-exclusive alternate variants
