@@ -676,7 +676,6 @@ export function renderInfo(name) {
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}
             <span>Type: ${renderSectionHtml(tl.section)}</span>
-            <span>Source: ${escapeHtml(tl.source || 'Unknown')}${tl.sourceFile ? ' \u00B7 ' + escapeHtml(tl.sourceFile) + (tl.sourceLine ? ':' + tl.sourceLine : '') : ''}</span>
         </div>`;
 
     // Collision-rename banner: this textline name was duplicated in

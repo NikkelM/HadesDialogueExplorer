@@ -77,7 +77,10 @@ function fixtureWithCollisionPair() {
 test('non-collision textline renders standard meta and a single Dialogue block', () => {
     renderInfo('ZeusWithAphrodite01');
     assert.match(lastHtml, /Owner:/);
+    assert.match(lastHtml, /Type:/);
     assert.match(lastHtml, /<h4>Dialogue<\/h4>/);
+    // The source-file/line meta was removed from the detail view.
+    assert.doesNotMatch(lastHtml, /Source:/);
     // Standard render must not include the collision badge or banner.
     assert.doesNotMatch(lastHtml, /collision-badge/);
     assert.doesNotMatch(lastHtml, /collision-banner/);
