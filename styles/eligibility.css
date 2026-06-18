@@ -98,6 +98,31 @@
     border-bottom: 1px dotted #88888866;
 }
 
+/* Explains that the prerequisite total spans the whole chain (indirect
+   prerequisites included), addressing "why does this say N when there's
+   only one immediate requirement?". Shown only when the chain runs deeper
+   than the immediate level; hover reveals the fuller detail. */
+.eligibility-chain-note {
+    margin-top: 0.6rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.55rem;
+    border-left: 2px solid #5a6b8c;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--text-muted, #9aa4b2);
+    line-height: 1.4;
+}
+.eligibility-chain-note::before {
+    content: "\24D8"; /* circled information source */
+    margin-right: 0.35rem;
+    font-style: normal;
+    opacity: 0.85;
+}
+.eligibility-chain-note[data-tooltip] {
+    cursor: help;
+}
+
 /* Unplayed list */
 .eligibility-tree {
     margin-top: 1rem;

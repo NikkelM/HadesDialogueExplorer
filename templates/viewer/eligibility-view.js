@@ -171,6 +171,12 @@ function isActiveGroup(group, mandatory, rootName) {
 // the ``played`` count credits (capped per group at its quota, so
 // ``completed.length === played``); the summary uses it for a tooltip
 // spelling out which requirements are already done.
+//
+// ``directCount`` is the number of *immediate* requirements (depth-1
+// individuals + depth-1 groups), and ``hasIndirect`` is true when the
+// total also includes deeper prerequisites (a prerequisite's own
+// prerequisites). The summary uses these to explain why the total can
+// exceed the number of requirements listed directly on the dialogue.
 export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = (n) => isDialoguePlayed(n) === true) {
     const activeGroups = [...groups.values()].filter(g => isActiveGroup(g, mandatory, rootName));
     const memberNames = new Set();
@@ -179,10 +185,13 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
     }
     let total = 0;
     let played = 0;
+    let directCount = 0;
+    let hasIndirect = false;
     const completed = [];
     for (const [name, info] of chain) {
         if (!mandatory.has(name) || memberNames.has(name)) continue;
         total += 1;
+        if (info.depth <= 1) directCount += 1; else hasIndirect = true;
         if (info.played) {
             played += 1;
             completed.push(name);
@@ -190,11 +199,12 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
     }
     for (const g of activeGroups) {
         total += g.quota;
+        if (g.depth <= 1) directCount += 1; else hasIndirect = true;
         const playedOpts = g.options.filter(o => isPlayed(o));
         played += Math.min(playedOpts.length, g.quota);
         for (const o of playedOpts.slice(0, g.quota)) completed.push(o);
     }
-    return { total, played, stillNeeded: total - played, completed };
+    return { total, played, stillNeeded: total - played, completed, directCount, hasIndirect, hasGroups: activeGroups.length > 0 };
 }
 
 // Render the specific locks behind an "unobtainable" verdict - negative gates
@@ -218,7 +228,8 @@ function renderUnobtainableReasonsHtml(rootName, playedSet) {
 }
 
 function renderSummaryHtml(rootName, chain, groups, mandatory) {
-    const { total, played, stillNeeded, completed } = summarizePrereqs(chain, groups, mandatory, rootName);
+    const { total, played, stillNeeded, completed, hasIndirect, hasGroups } =
+        summarizePrereqs(chain, groups, mandatory, rootName);
     const rootPlayed = isDialoguePlayed(rootName) === true;
     const rootTl = textlines[rootName];
     const playedSet = getSaveProgress() || new Set();
@@ -228,6 +239,26 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     // shared check the save badge uses.
     const directlyEligible = !rootPlayed && isDirectlySatisfied(rootTl, playedSet, rootName);
 
+    // The total isn't a simple node count of the tree below: it spans the
+    // whole chain (so it can exceed the requirements listed directly on the
+    // dialogue), but a "play any of" group counts once and already-satisfied
+    // branches drop off (so it can also be smaller than the tree). Explain
+    // that whenever either of those applies, to pre-empt both "why so many?"
+    // and "why so few?" confusion.
+    let chainNote = '';
+    if (hasIndirect || hasGroups) {
+        const parts = ['Counts prerequisites across the whole chain'];
+        if (hasIndirect) parts.push('including indirect ones (a prerequisite\u2019s own prerequisites)');
+        if (hasGroups) parts.push('with each \u201Cplay any of\u201D group counted once');
+        const visible = parts.join(', ') + ' - so it may differ from the tree below.';
+        const tip = 'Indirect prerequisites (prerequisites of prerequisites) are included, so the total '
+            + 'can exceed the requirements listed directly on this dialogue. A \u201Cplay any N of these\u201D '
+            + 'group counts as the N you must play - not its number of options - and branches you have '
+            + 'already satisfied drop off, so the total can be smaller than the number of rows in the '
+            + 'prerequisite tree below.';
+        chainNote = `<div class="eligibility-chain-note" data-tooltip="${escapeHtml(tip)}">${escapeHtml(visible)}</div>`;
+    }
+
     let html = `<div class="eligibility-summary">`;
 
     if (rootPlayed) {
@@ -236,6 +267,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     } else if (directlyEligible) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
         html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+        html += chainNote;
     } else if (isUnobtainable(rootName, playedSet)) {
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
@@ -253,6 +285,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
             : '';
         const tipAttr = completeTip ? ` data-tooltip="${escapeHtml(completeTip)}"` : '';
         html += `<div class="eligibility-progress-label"${tipAttr}>${played}/${total} complete</div>`;
+        html += chainNote;
     }
 
     html += `</div>`;

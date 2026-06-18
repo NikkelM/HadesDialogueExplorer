@@ -143,6 +143,31 @@ test('summarizePrereqs reports no completed prerequisites for an empty save', ()
     assert.deepEqual(completed, []);
 });
 
+test('summarizePrereqs flags indirect prerequisites and counts immediate ones', () => {
+    // Root's only individual AND prerequisite (And1) has its own AND
+    // prerequisite (And2), so the total exceeds the immediate count - the
+    // exact "why N when there's one immediate requirement?" case.
+    const { chain, groups, mandatory } = buildPrereqChain('Root', playedSet());
+    const { directCount, hasIndirect, hasGroups } = summarizePrereqs(chain, groups, mandatory, 'Root', playedSet());
+    assert.equal(hasIndirect, true);
+    // Immediate requirements: And1 (individual) + the two depth-1 groups
+    // (RequiredAnyTextLines, RequiredMinAnyTextLines) = 3.
+    assert.equal(directCount, 3);
+    // Root carries two requirement groups, so the total counts each once.
+    assert.equal(hasGroups, true);
+});
+
+test('summarizePrereqs reports no indirect prerequisites for a flat one-level chain', () => {
+    // And1's only prerequisite (And2) has none of its own, so the chain is
+    // a single level: no indirect prerequisites, total == immediate count.
+    const { chain, groups, mandatory } = buildPrereqChain('And1', playedSet());
+    const { total, directCount, hasIndirect, hasGroups } = summarizePrereqs(chain, groups, mandatory, 'And1', playedSet());
+    assert.equal(hasIndirect, false);
+    assert.equal(hasGroups, false);
+    assert.equal(directCount, 1);
+    assert.equal(total, 1);
+});
+
 test('conditional groups nested under an option are not counted in the summary', () => {
     // C1dep gates C1's own OR group; that nested group must not inflate the
     // top-level summary (you only reach it if you pick C1).
