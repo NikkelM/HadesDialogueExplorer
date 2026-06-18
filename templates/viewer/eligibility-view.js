@@ -166,6 +166,11 @@ function isActiveGroup(group, mandatory, rootName) {
 // its quota (e.g. "play 3 of 5" contributes 3, not 5). Conditional branches
 // nested under a group's option are excluded so the summary reflects what
 // actually has to be played. ``isPlayed`` is injectable for testing.
+//
+// ``completed`` lists the names of the already-played prerequisites that
+// the ``played`` count credits (capped per group at its quota, so
+// ``completed.length === played``); the summary uses it for a tooltip
+// spelling out which requirements are already done.
 export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = (n) => isDialoguePlayed(n) === true) {
     const activeGroups = [...groups.values()].filter(g => isActiveGroup(g, mandatory, rootName));
     const memberNames = new Set();
@@ -174,17 +179,22 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
     }
     let total = 0;
     let played = 0;
+    const completed = [];
     for (const [name, info] of chain) {
         if (!mandatory.has(name) || memberNames.has(name)) continue;
         total += 1;
-        if (info.played) played += 1;
+        if (info.played) {
+            played += 1;
+            completed.push(name);
+        }
     }
     for (const g of activeGroups) {
         total += g.quota;
-        const got = g.options.filter(o => isPlayed(o)).length;
-        played += Math.min(got, g.quota);
+        const playedOpts = g.options.filter(o => isPlayed(o));
+        played += Math.min(playedOpts.length, g.quota);
+        for (const o of playedOpts.slice(0, g.quota)) completed.push(o);
     }
-    return { total, played, stillNeeded: total - played };
+    return { total, played, stillNeeded: total - played, completed };
 }
 
 // Render the specific locks behind an "unobtainable" verdict - negative gates
@@ -208,7 +218,7 @@ function renderUnobtainableReasonsHtml(rootName, playedSet) {
 }
 
 function renderSummaryHtml(rootName, chain, groups, mandatory) {
-    const { total, played, stillNeeded } = summarizePrereqs(chain, groups, mandatory, rootName);
+    const { total, played, stillNeeded, completed } = summarizePrereqs(chain, groups, mandatory, rootName);
     const rootPlayed = isDialoguePlayed(rootName) === true;
     const rootTl = textlines[rootName];
     const playedSet = getSaveProgress() || new Set();
@@ -238,7 +248,11 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
         html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.</div>`;
         html += `<div class="eligibility-progress-bar"><div class="eligibility-progress-fill" style="width:${total > 0 ? (played / total * 100) : 0}%"></div></div>`;
-        html += `<div class="eligibility-progress-label">${played}/${total} complete</div>`;
+        const completeTip = completed.length
+            ? 'Already complete:\n' + completed.join('\n')
+            : '';
+        const tipAttr = completeTip ? ` data-tooltip="${escapeHtml(completeTip)}"` : '';
+        html += `<div class="eligibility-progress-label"${tipAttr}>${played}/${total} complete</div>`;
     }
 
     html += `</div>`;

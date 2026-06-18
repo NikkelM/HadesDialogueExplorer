@@ -125,6 +125,24 @@ test('summarizePrereqs credits partially-satisfied groups', () => {
     assert.equal(stillNeeded, 3);
 });
 
+test('summarizePrereqs lists the completed prerequisite names', () => {
+    const isPlayed = playedSet('C1', 'C2', 'And2');
+    const { chain, groups, mandatory } = buildPrereqChain('Root', isPlayed);
+    const { completed, played } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
+    // completed.length tracks the played count and names the done items:
+    // the individual And2 plus two satisfied options of the count-min group.
+    assert.equal(completed.length, played);
+    assert.deepEqual([...completed].sort(), ['And2', 'C1', 'C2']);
+});
+
+test('summarizePrereqs reports no completed prerequisites for an empty save', () => {
+    const isPlayed = playedSet();
+    const { chain, groups, mandatory } = buildPrereqChain('Root', isPlayed);
+    const { completed, played } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
+    assert.equal(played, 0);
+    assert.deepEqual(completed, []);
+});
+
 test('conditional groups nested under an option are not counted in the summary', () => {
     // C1dep gates C1's own OR group; that nested group must not inflate the
     // top-level summary (you only reach it if you pick C1).

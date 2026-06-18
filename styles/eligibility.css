@@ -88,6 +88,15 @@
     font-size: 0.75rem;
     color: var(--text-muted, #888);
 }
+/* When a save is loaded and at least one prerequisite is already complete,
+   the label carries a tooltip listing them - hint that with the standard
+   dotted-underline + help cursor affordance. inline-block keeps the
+   underline hugging the text rather than the full-width row. */
+.eligibility-progress-label[data-tooltip] {
+    display: inline-block;
+    cursor: help;
+    border-bottom: 1px dotted #88888866;
+}
 
 /* Unplayed list */
 .eligibility-tree {
