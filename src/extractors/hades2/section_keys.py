@@ -4,8 +4,7 @@ H2 ships substantially the same dialogue-set keys as H1 (with the
 ``GiftTextLineSets`` / ``RejectionTextLines`` / ``MakeUpTextLines`` /
 ``BoughtTextLines`` / ``DuoPickupTextLines`` family unchanged) plus a small
 number of new ones (``CombatIntroTextLineSets``, ``DeathPresentationTextLineSets``,
-``OnHitTextLineSets``, ``PostPortraitTextLines``, ``BathHouseIntroTextLines``)
-that the H1 game didn't have.
+``OnHitTextLineSets``, ``PostPortraitTextLines``) that the H1 game didn't have.
 
 H2 drops H1's priority-tier system entirely - there are no
 ``SuperPriorityXxxTextLineSets`` / ``PriorityXxxTextLineSets`` variants.
@@ -16,6 +15,14 @@ H2 also adds a parallel ``VoiceLines`` family (``OnHitVoiceLines``,
 ``InteractVoiceLines``, ``EncounterStartVoiceLines``, ~20 keys) for in-combat
 barks like "Too slow!" / "Nope." Per project decision these are NOT
 extracted - this tool surfaces narrative dialogues, not combat barks.
+
+``BathHouseIntroTextLines`` is likewise intentionally excluded. It is not an
+owner-level dialogue-set container: the only definition lives in
+``HeroData.lua`` as a single shared ``HeroRepeatableTextLines`` cue-list
+(Melinoe's first-person "in the bath" narration), referenced into NPC bath
+scenes via ``[2] = HeroRepeatableTextLines.BathHouseIntroTextLines``. It is a
+reusable cue snippet rather than a ``name -> textline_table`` map, so it does
+not fit the textline-set model and is left out.
 
 The allowlist was derived from a grep across every dialogue-bearing
 ``Content/Scripts/*.lua`` file (`NPCData*`, `RoomData*`, `LootData_*`,
@@ -48,7 +55,6 @@ HADES2_TEXTLINE_SECTION_KEYS = frozenset({
 
     # Hub only.
     "PostPortraitTextLines",      # 1 - dialogue after a portrait reveal
-    "BathHouseIntroTextLines",    # 1 - bath house intro
 
     # Encounter / inspect-point inline single-textline container. Unlike
     # all of the above ``...TextLineSets`` / ``...TextLines`` plurals
@@ -83,6 +89,5 @@ HADES2_SECTION_KEY_LABELS = {
     "DeathPresentationTextLineSets": "Death presentation",
     "OnHitTextLineSets":             "NPC interaction (on hit)",
     "PostPortraitTextLines":         "Post-portrait dialogue",
-    "BathHouseIntroTextLines":       "Bath House introduction",
     "TextLineSet":                   "Event narrative dialogue",
 }
