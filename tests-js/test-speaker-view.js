@@ -383,6 +383,49 @@ test('renderSpeaker section groups are collapsible and collapsed by default', ()
     assert.match(html, /<span class="speaker-group-chevron">/);
 });
 
+test('renderSpeaker groups co-present mutually-exclusive alternates into one cluster', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.alternates = {
+        ZeusAlt01: ['ZeusAlt01_B'],
+        ZeusAlt01_B: ['ZeusAlt01'],
+    };
+    fixture.textlines.ZeusAlt01 = { owner: 'NPC_Zeus_01', section: 'GiftTextLineSets', dialogueLines: [], requirements: {}, playOnce: true };
+    fixture.textlines.ZeusAlt01_B = { owner: 'NPC_Zeus_01', section: 'GiftTextLineSets', dialogueLines: [], requirements: {}, playOnce: true };
+    fixture.textlines.ZeusSolo01 = { owner: 'NPC_Zeus_01', section: 'GiftTextLineSets', dialogueLines: [], requirements: {}, playOnce: true };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = ['ZeusAlt01', 'ZeusAlt01_B', 'ZeusSolo01'];
+    fixture.speakers.NPC_Zeus_01.sectionCounts = { GiftTextLineSets: 3 };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+
+    // Exactly one alternates cluster, labelled with the variant count (2).
+    assert.equal((html.match(/class="speaker-alt-group"/g) || []).length, 1);
+    assert.match(html, /speaker-alt-group-label">Alternates <span class="speaker-count">2<\/span>/);
+    // All three lines still render as rows (two inside the cluster, one solo).
+    assert.equal((html.match(/class="speaker-textline-row"/g) || []).length, 3);
+    // The two variants live inside the cluster's nested list.
+    const clusterStart = html.indexOf('speaker-alt-group-rows');
+    const clusterEnd = html.indexOf('</ul>', clusterStart);
+    const clusterHtml = html.slice(clusterStart, clusterEnd);
+    assert.match(clusterHtml, /ZeusAlt01</);
+    assert.match(clusterHtml, /ZeusAlt01_B</);
+    assert.doesNotMatch(clusterHtml, /ZeusSolo01/);
+});
+
+test('renderSpeaker does not cluster a lone alternate whose sibling is absent', () => {
+    const fixture = buildSpeakerFixture();
+    fixture.alternates = { ZeusAlt01: ['ZeusAlt01_B'], ZeusAlt01_B: ['ZeusAlt01'] };
+    fixture.textlines.ZeusAlt01 = { owner: 'NPC_Zeus_01', section: 'GiftTextLineSets', dialogueLines: [], requirements: {}, playOnce: true };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = ['ZeusAlt01'];
+    fixture.speakers.NPC_Zeus_01.sectionCounts = { GiftTextLineSets: 1 };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+    // Sibling not owned -> no cluster, just a normal row.
+    assert.doesNotMatch(html, /speaker-alt-group/);
+    assert.match(html, /ZeusAlt01</);
+});
+
 test('renderSpeaker on H1 merges the three god-boon-pickup sections into one group, ordered by priority', () => {
     const fixture = buildSpeakerFixture();
     fixture.sectionKeyLabels = {

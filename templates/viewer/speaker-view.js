@@ -23,7 +23,7 @@
 // The bucket keys stay ``priority`` / ``plain`` for URL and CSS
 // stability; see ``priorityScheme`` below.
 
-import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame } from './data.js';
+import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame, alternates } from './data.js';
 import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers } from './speaker-groups.js';
 import {
     escapeHtml,
@@ -448,11 +448,49 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
             + `<span class="speaker-group-chevron">\u25B6</span>`
             + `${header} <span class="speaker-count">${rows.length}</span>`
             + `</h5>`
-            + `<ul class="speaker-textline-list">${rows.map(o => renderTextlineRow(o.name, o.tl)).join('')}</ul>`
+            + `<ul class="speaker-textline-list">${renderSectionRowsHtml(rows)}</ul>`
             + `</div>`;
     }).join('');
 
     return `<section class="speaker-textlines">${controls}${body}</section>`;
+}
+
+// Render a section's rows, grouping mutually-exclusive alternate variants
+// (e.g. ``SomeLine01`` / ``SomeLine01_B``) into a single labelled cluster
+// so the list reads as one logical line with its variants, rather than N
+// near-identical rows. Only variants co-present in this section's rows are
+// clustered; a lone variant renders as a normal row. Order within the
+// cluster follows the already-sorted ``rows``.
+function renderSectionRowsHtml(rows) {
+    const grouped = new Set();
+    let html = '';
+    for (const o of rows) {
+        if (grouped.has(o.name)) continue;
+        const siblings = alternates[o.name];
+        if (siblings && siblings.length) {
+            const names = new Set([o.name, ...siblings]);
+            const cluster = rows.filter(r => names.has(r.name) && !grouped.has(r.name));
+            if (cluster.length >= 2) {
+                for (const c of cluster) grouped.add(c.name);
+                html += renderAlternatesClusterHtml(cluster);
+                continue;
+            }
+        }
+        grouped.add(o.name);
+        html += renderTextlineRow(o.name, o.tl);
+    }
+    return html;
+}
+
+// A cluster of mutually-exclusive alternate variants: a labelled box (the
+// gold ``Alternates`` accent shared with the dialogue detail view) wrapping
+// the variant rows.
+function renderAlternatesClusterHtml(cluster) {
+    const rowsHtml = cluster.map(o => renderTextlineRow(o.name, o.tl)).join('');
+    return `<li class="speaker-alt-group" data-tooltip="Mutually exclusive variants - only one of these can play; the others are blocked once one does.">`
+        + `<div class="speaker-alt-group-label">Alternates <span class="speaker-count">${cluster.length}</span></div>`
+        + `<ul class="speaker-alt-group-rows">${rowsHtml}</ul>`
+        + `</li>`;
 }
 
 // Render the controls strip above the textline list: the repeatability
