@@ -264,6 +264,104 @@ export function clearSaveProgress() {
   _saveRuns = null;
 }
 
+// --- Local persistence ---
+//
+// The loaded save is cached client-side so it survives a page reload. We
+// store the *derived* state (played-line names + gameId + runs), not the
+// raw save bytes: the games are frozen so dialogue names never change,
+// and all downstream eligibility is recomputed from the dialogue graph at
+// render time, so the cached set stays correct. ``SAVE_STORAGE_SCHEMA``
+// invalidates the cache if this derived shape ever changes.
+//
+// localStorage is used rather than a cookie: the played set (up to
+// ~150 KB) far exceeds the ~4 KB cookie limit, and a cookie would be sent
+// on every request once this is a hosted webapp. localStorage is
+// same-origin, survives reloads/restarts, and keeps the save fully
+// client-side (it never reaches a server).
+const SAVE_STORAGE_KEY = 'hde.save';
+const SAVE_STORAGE_SCHEMA = 1;
+
+// Safe accessor: localStorage is absent under Node (tests) and can throw
+// on access in sandboxed iframes or when storage is disabled.
+function _saveStore() {
+  try {
+    return (typeof localStorage !== 'undefined') ? localStorage : null;
+  } catch {
+    return null;
+  }
+}
+
+function _removePersistedSave(store) {
+  try { store.removeItem(SAVE_STORAGE_KEY); } catch { /* ignore */ }
+}
+
+// Persist the current in-memory save state. ``filename`` is retained for
+// future use (it is not displayed today). No-op and returns false when
+// there is nothing loaded, storage is unavailable, or the quota is hit -
+// the in-memory session keeps working regardless.
+export function persistSaveProgress(filename) {
+  const store = _saveStore();
+  if (!store || !_saveProgress) return false;
+  try {
+    store.setItem(SAVE_STORAGE_KEY, JSON.stringify({
+      v: SAVE_STORAGE_SCHEMA,
+      gameId: _saveGameId,
+      runs: _saveRuns,
+      filename: filename || null,
+      played: [..._saveProgress],
+    }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Re-hydrate the in-memory save state from a previously persisted cache.
+// Returns a summary ``{ gameId, completedRuns, count, filename }`` on
+// success, or null when there is no (valid) cache. Corrupt or
+// schema-mismatched payloads are dropped.
+export function restoreSaveProgress() {
+  const store = _saveStore();
+  if (!store) return null;
+  let raw;
+  try {
+    raw = store.getItem(SAVE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+  if (!raw) return null;
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    _removePersistedSave(store);
+    return null;
+  }
+
+  if (!data || data.v !== SAVE_STORAGE_SCHEMA || !Array.isArray(data.played)
+      || typeof data.gameId !== 'string') {
+    _removePersistedSave(store);
+    return null;
+  }
+
+  _saveProgress = new Set(data.played);
+  _saveGameId = data.gameId;
+  _saveRuns = (typeof data.runs === 'number') ? data.runs : 0;
+  return {
+    gameId: _saveGameId,
+    completedRuns: _saveRuns,
+    count: _saveProgress.size,
+    filename: data.filename || null,
+  };
+}
+
+// Remove the persisted cache (called when the user clears the save).
+export function clearPersistedSave() {
+  const store = _saveStore();
+  if (store) _removePersistedSave(store);
+}
+
 export function parseSaveFile(arrayBuffer) {
   const parsed = parseSGB1(arrayBuffer);
   _saveProgress = extractPlayedSet(parsed);

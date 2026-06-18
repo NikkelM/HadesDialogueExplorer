@@ -35,6 +35,9 @@ Once loaded, each dialogue gets a status badge:
 
 Hades II saves also validate against Hades 1 dialogues (for the [Zagreus' Journey](https://github.com/NikkelM/Hades-II-HadesBiomes) mod).
 
+A loaded save is cached in your browser's local storage, so it is restored automatically when you reload the page.
+The save is never uploaded anywhere; parsing happens entirely in-browser, and clearing the save (the × button) also removes the cache.
+
 ### Eligibility tracer
 
 The eligibility tracer (accessible via the "Blocked" badge or the nav link when a save is loaded) shows what's preventing a dialogue from becoming eligible.

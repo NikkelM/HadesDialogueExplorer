@@ -10,6 +10,9 @@ import {
     getSaveGameId,
     getSaveRuns,
     validateSaveFilename,
+    persistSaveProgress,
+    restoreSaveProgress,
+    clearPersistedSave,
 } from './save-parser.js';
 import { getActiveGame, gameLabels } from './data.js';
 
@@ -44,6 +47,8 @@ export function initSaveUpload() {
             }
             clearBtn.hidden = false;
             setEligibilityNavVisible(true);
+            // Cache the parsed save so it survives a page reload.
+            persistSaveProgress(file.name);
             // Trigger re-render of current view to show badges
             window.dispatchEvent(new CustomEvent('save-loaded'));
         } catch (err) {
@@ -55,11 +60,27 @@ export function initSaveUpload() {
 
     clearBtn.addEventListener('click', () => {
         clearSaveProgress();
+        clearPersistedSave();
         status.hidden = true;
         clearBtn.hidden = true;
         setEligibilityNavVisible(false);
         window.dispatchEvent(new CustomEvent('save-cleared'));
     });
+}
+
+// Re-hydrate a previously cached save on page load. Sets the in-memory
+// state and the header chrome (status, clear button, eligibility nav) so
+// a restored save is indistinguishable from a freshly loaded one. Called
+// during init before the first render, so badges appear immediately
+// without needing a ``save-loaded`` event. Returns true if a save was
+// restored.
+export function restoreSavedSave() {
+    if (!restoreSaveProgress()) return false;
+    const clearBtn = document.getElementById('save-clear');
+    if (clearBtn) clearBtn.hidden = false;
+    setEligibilityNavVisible(true);
+    refreshSaveStatus();
+    return true;
 }
 
 function showStatus(type, text) {

@@ -9,7 +9,7 @@ import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
-import { initSaveUpload } from './save-upload.js';
+import { initSaveUpload, restoreSavedSave } from './save-upload.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -26,6 +26,9 @@ function init(data) {
     initTooltip();
     initGameToggle();
     initSaveUpload();
+    // Re-hydrate a cached save before the first render so its badges show
+    // immediately (indistinguishable from a freshly loaded save).
+    restoreSavedSave();
     applyHashFromUrl();
     window.addEventListener('hashchange', applyHashFromUrl);
     // Re-render current view when a save file is loaded or cleared

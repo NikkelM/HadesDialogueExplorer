@@ -22,6 +22,9 @@ import {
     getSaveGameId,
     getSaveRuns,
     clearSaveProgress,
+    persistSaveProgress,
+    restoreSaveProgress,
+    clearPersistedSave,
 } from '../templates/viewer/save-parser.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -327,3 +330,121 @@ test('getDialogueStatus reports a permanently-locked dialogue as unobtainable', 
     assert.equal(getDialogueStatus('Locked', locked), 'unobtainable');
     clearSaveProgress();
 });
+
+
+// --- Local persistence (localStorage cache) ---
+//
+// save-parser.js caches the derived save state so it survives a reload.
+// Node has no localStorage, so these tests install a minimal in-memory
+// stand-in on ``globalThis`` and remove it afterwards. The parser reads
+// ``localStorage`` through a guarded accessor, so the absence of this
+// mock must degrade to a silent no-op rather than throwing.
+
+function installMockLocalStorage() {
+    const map = new Map();
+    const mock = {
+        getItem: (k) => (map.has(k) ? map.get(k) : null),
+        setItem: (k, v) => { map.set(k, String(v)); },
+        removeItem: (k) => { map.delete(k); },
+        clear: () => { map.clear(); },
+        _map: map,
+    };
+    globalThis.localStorage = mock;
+    return mock;
+}
+
+function uninstallMockLocalStorage() {
+    delete globalThis.localStorage;
+}
+
+test('persist then restore round-trips the derived save state', () => {
+    const store = installMockLocalStorage();
+    try {
+        clearSaveProgress();
+        parseSaveFile(buildSGB1({
+            gameVersion: GAME_VERSION_HADES2,
+            completedRuns: 9,
+            luaState: { GameState: { TextLinesRecord: { LineA01: true, LineB01: true } } },
+        }));
+        assert.equal(persistSaveProgress('Profile2.sav'), true);
+        assert.ok(store.getItem('hde.save'), 'cache entry should be written');
+
+        // Wipe the in-memory state, then restore from the cache.
+        clearSaveProgress();
+        assert.equal(getSaveProgress(), null);
+
+        const summary = restoreSaveProgress();
+        assert.equal(summary.gameId, 'hades2');
+        assert.equal(summary.completedRuns, 9);
+        assert.equal(summary.count, 2);
+        assert.equal(summary.filename, 'Profile2.sav');
+        assert.equal(getSaveGameId(), 'hades2');
+        assert.equal(getSaveRuns(), 9);
+        assert.equal(isDialoguePlayed('LineA01'), true);
+        assert.equal(isDialoguePlayed('LineB01'), true);
+        assert.equal(isDialoguePlayed('NeverPlayed01'), false);
+    } finally {
+        clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+test('clearPersistedSave removes the cached entry', () => {
+    const store = installMockLocalStorage();
+    try {
+        parseSaveFile(buildSGB1({
+            gameVersion: GAME_VERSION_HADES1,
+            luaState: { TextLinesRecord: { X01: true } },
+        }));
+        persistSaveProgress('Profile1.sav');
+        assert.ok(store.getItem('hde.save'));
+        clearPersistedSave();
+        assert.equal(store.getItem('hde.save'), null);
+        assert.equal(restoreSaveProgress(), null);
+    } finally {
+        clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+test('restoreSaveProgress drops a schema-mismatched cache and returns null', () => {
+    const store = installMockLocalStorage();
+    try {
+        store.setItem('hde.save', JSON.stringify({
+            v: 999, gameId: 'hades2', runs: 1, played: ['Old01'],
+        }));
+        assert.equal(restoreSaveProgress(), null);
+        // The stale entry is purged so it isn't retried on every load.
+        assert.equal(store.getItem('hde.save'), null);
+    } finally {
+        clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+test('restoreSaveProgress drops a corrupt (unparseable) cache and returns null', () => {
+    const store = installMockLocalStorage();
+    try {
+        store.setItem('hde.save', '{not valid json');
+        assert.equal(restoreSaveProgress(), null);
+        assert.equal(store.getItem('hde.save'), null);
+    } finally {
+        clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+test('persistence is a silent no-op when localStorage is unavailable', () => {
+    uninstallMockLocalStorage(); // ensure absent
+    clearSaveProgress();
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { X01: true } },
+    }));
+    // None of these may throw without a storage backend.
+    assert.equal(persistSaveProgress('Profile1.sav'), false);
+    assert.equal(restoreSaveProgress(), null);
+    assert.doesNotThrow(() => clearPersistedSave());
+    clearSaveProgress();
+});
+
