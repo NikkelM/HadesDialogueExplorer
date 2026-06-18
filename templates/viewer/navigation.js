@@ -21,7 +21,6 @@ import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
 import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
-import { initStats } from './stats.js';
 import { renderGameToggle } from './game-toggle.js';
 import { refreshSaveStatus } from './save-upload.js';
 
@@ -137,7 +136,6 @@ export function switchToGame(gameId) {
     buildLinesIndex();
     buildNameIndex();
     buildSpeakerIndex();
-    initStats();
     renderGameToggle();
     refreshSaveStatus();
 }

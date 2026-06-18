@@ -141,11 +141,6 @@ header h1 {
     margin-left: auto;
     flex-shrink: 0;
 }
-.stats {
-    font-size: 11px;
-    color: #888;
-    white-space: nowrap;
-}
 main {
     flex: 1;
     display: flex;
