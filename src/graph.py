@@ -18,6 +18,7 @@ Public API:
 """
 
 import re
+from collections import defaultdict
 
 
 _VARIANT_SUFFIX_RE = re.compile(r"\s*\([^()]*\)\s*$")
@@ -635,13 +636,13 @@ def build_dependents(textlines: dict) -> dict:
     (1-based) and ``orBranchTotal`` so the viewer can tag the
     dependent as "(OR alt N of M)" rather than a hard requirement.
     """
-    dependents = {}
+    dependents = defaultdict(list)
     for tl_name, tl_data in textlines.items():
         for req_type, req_list in tl_data["requirements"].items():
             for dep in req_list:
                 if dep == tl_name:
                     continue
-                dependents.setdefault(dep, []).append({"name": tl_name, "type": req_type})
+                dependents[dep].append({"name": tl_name, "type": req_type})
         or_branches = tl_data.get("orBranches") or []
         total_branches = len(or_branches)
         for branch_index, branch in enumerate(or_branches, start=1):
@@ -650,13 +651,13 @@ def build_dependents(textlines: dict) -> dict:
                 for dep in req_list:
                     if dep == tl_name:
                         continue
-                    dependents.setdefault(dep, []).append({
+                    dependents[dep].append({
                         "name": tl_name,
                         "type": req_type,
                         "orBranchIndex": branch_index,
                         "orBranchTotal": total_branches,
                     })
-    return dependents
+    return dict(dependents)
 
 
 # Regex for detecting alternate-suffix names: a stem + optional underscore + single uppercase letter.

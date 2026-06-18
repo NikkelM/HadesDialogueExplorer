@@ -306,13 +306,11 @@ def _inline_data_for_bundle(json_text: str) -> str:
     return json_text.replace("<", "\\u003C")
 
 
-def build_bundle(sizes: dict) -> None:
+def build_bundle() -> None:
     """Stitch the split outputs into a single ``dialogue_explorer.html``.
 
     Reads the four ``dist/`` artifacts produced by :func:`build_split`
     and inlines them so the result opens directly from ``file://``.
-    ``sizes`` is taken as input rather than re-computed so the report
-    line agrees with the split build's own report.
     """
     # Read the *template* (not dist/index.html, which build_split has
     # rewritten with cache-busting query strings) so the exact-match inlining
@@ -522,16 +520,14 @@ def main(argv=None):
     }
 
     if args.mode in ("split", "all"):
-        sizes = build_split(payload)
-    else:
-        sizes = {}
+        build_split(payload)
 
     if args.mode in ("bundle", "all"):
         if args.mode == "bundle":
             # Bundle-only run still needs the split outputs to stitch
             # from; refresh them so we don't bundle stale content.
-            sizes = build_split(payload)
-        build_bundle(sizes)
+            build_split(payload)
+        build_bundle()
 
 
 if __name__ == "__main__":

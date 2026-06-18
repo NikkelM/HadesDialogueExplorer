@@ -40,6 +40,7 @@ import argparse
 import json
 import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 from src.save_parser import parse_save, extract_text_lines_record
@@ -66,12 +67,6 @@ def _count_from(other_requirements, req_type: str) -> int:
     if isinstance(meta, dict) and isinstance(meta.get("Count"), int):
         return meta["Count"]
     return 1
-
-
-def _required_count(textline: dict, req_type: str) -> int:
-    """The ``Count`` parameter of a count-based field on a textline (read
-    from its ``otherRequirements``), defaulting to 1 when absent."""
-    return _count_from(textline.get("otherRequirements"), req_type)
 
 
 def _requirements_satisfied(requirements, other_requirements, played_set, name) -> bool:
@@ -203,7 +198,7 @@ def build_prereq_chain(
                 played_count = sum(
                     1 for ref in refs if ref != name and ref in played_set
                 )
-                if played_count < _required_count(tl, req_type):
+                if played_count < _count_from(tl.get("otherRequirements"), req_type):
                     for ref in refs:
                         if ref == name or ref in played_set:
                             continue
@@ -226,10 +221,10 @@ def build_prereq_chain(
 
 def build_tree(root_name: str, chain: dict) -> dict:
     """Build a nested tree structure from the flat chain."""
-    children_of = {}
+    children_of = defaultdict(list)
     for name, info in chain.items():
         for p in info["parents"]:
-            children_of.setdefault(p["name"], []).append(
+            children_of[p["name"]].append(
                 {"name": name, "reqType": p["reqType"]}
             )
 

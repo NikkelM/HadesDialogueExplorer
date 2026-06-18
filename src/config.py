@@ -127,23 +127,20 @@ def load_config(
             f"{path.name}: missing required '[paths]' section.\n{_example_hint()}"
         )
 
-    if "hades1_scripts" not in paths_section:
-        raise ConfigError(
-            f"{path.name}: missing required key 'paths.hades1_scripts'.\n{_example_hint()}"
-        )
-
-    hades1_raw = _require_string(paths_section["hades1_scripts"], "paths.hades1_scripts", path)
-    hades1 = _resolve_path(hades1_raw, path.parent)
-
-    if "hades2_scripts" not in paths_section:
-        raise ConfigError(
-            f"{path.name}: missing required key 'paths.hades2_scripts'.\n{_example_hint()}"
-        )
-    hades2_raw = _require_string(paths_section["hades2_scripts"], "paths.hades2_scripts", path)
-    hades2 = _resolve_path(hades2_raw, path.parent)
+    resolved = {}
+    for key in ("hades1_scripts", "hades2_scripts"):
+        if key not in paths_section:
+            raise ConfigError(
+                f"{path.name}: missing required key 'paths.{key}'.\n{_example_hint()}"
+            )
+        raw_value = _require_string(paths_section[key], f"paths.{key}", path)
+        resolved[key] = _resolve_path(raw_value, path.parent)
 
     if validate_paths:
-        _require_dir(hades1, "paths.hades1_scripts", path)
-        _require_dir(hades2, "paths.hades2_scripts", path)
+        for key, directory in resolved.items():
+            _require_dir(directory, f"paths.{key}", path)
 
-    return Config(hades1_scripts=hades1, hades2_scripts=hades2)
+    return Config(
+        hades1_scripts=resolved["hades1_scripts"],
+        hades2_scripts=resolved["hades2_scripts"],
+    )
