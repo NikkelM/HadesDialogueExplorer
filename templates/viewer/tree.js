@@ -172,7 +172,10 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
 
     const toggle = document.createElement('span');
     toggle.className = 'toggle';
-    toggle.textContent = expandable ? '\u25B6' : '\u00B7';
+    // Expandable rows show a chevron; leaf rows render nothing. The
+    // span's ``min-width`` (see styles/tree.css) still reserves the
+    // toggle column so leaf labels line up with expandable siblings.
+    toggle.textContent = expandable ? '\u25B6' : '';
     label.appendChild(toggle);
 
     if (edgeType) {
