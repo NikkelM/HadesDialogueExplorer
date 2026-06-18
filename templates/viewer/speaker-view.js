@@ -340,8 +340,13 @@ function renderTextlineList(entry, speakerId, filter, game) {
         const header = sec
             ? renderSectionHtml(sec)
             : `<span class="section-name">(unknown section)</span>`;
+        // Collapsed by default (no ``expanded`` modifier); the header
+        // toggles it. Matches the ``alternates-group`` collapse pattern.
         return `<div class="speaker-textline-group">`
-            + `<h5 class="speaker-textline-group-header">${header} <span class="speaker-count">${rows.length}</span></h5>`
+            + `<h5 class="speaker-textline-group-header" onclick="this.parentElement.classList.toggle('expanded')">`
+            + `<span class="speaker-group-chevron">\u25B6</span>`
+            + `${header} <span class="speaker-count">${rows.length}</span>`
+            + `</h5>`
             + `<ul class="speaker-textline-list">${rows.map(o => renderTextlineRow(o.name, o.tl)).join('')}</ul>`
             + `</div>`;
     }).join('');

@@ -347,6 +347,16 @@ test('renderSpeaker exposes only a Filter control - no Group/Sort control', () =
     assert.match(html, /speaker-textline-group/);
 });
 
+test('renderSpeaker section groups are collapsible and collapsed by default', () => {
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+    // Group renders without the ``expanded`` modifier -> collapsed.
+    assert.match(html, /<div class="speaker-textline-group">/);
+    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
+    // Header toggles the group on click and carries a chevron affordance.
+    assert.match(html, /speaker-textline-group-header" onclick="this\.parentElement\.classList\.toggle\('expanded'\)"/);
+    assert.match(html, /<span class="speaker-group-chevron">/);
+});
+
 test('renderSpeaker on H1 merges the three god-boon-pickup sections into one group, ordered by priority', () => {
     const fixture = buildSpeakerFixture();
     fixture.sectionKeyLabels = {

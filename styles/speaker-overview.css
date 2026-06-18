@@ -312,6 +312,24 @@ body.layout-speaker #panel-info {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+.speaker-textline-group-header:hover { color: #b8b8b8; }
+.speaker-group-chevron {
+    font-size: 0.7em;
+    color: #666;
+    transition: transform 0.15s;
+    display: inline-block;
+}
+.speaker-textline-group.expanded > .speaker-textline-group-header .speaker-group-chevron {
+    transform: rotate(90deg);
+}
+.speaker-textline-group:not(.expanded) > .speaker-textline-list {
+    display: none;
 }
 .speaker-textline-list {
     list-style: none;
