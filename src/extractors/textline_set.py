@@ -190,6 +190,99 @@ def is_inspect_point(path) -> bool:
     return False
 
 
+def walk_textline_sections(
+    owner_name: str,
+    owner_table: LuaTable,
+    source_file: str,
+    *,
+    section_keys,
+    extract_one,
+    extract_variants,
+    priority_tiers: dict = None,
+    force_play_once: bool = False,
+    defer_variants: bool = False,
+) -> dict:
+    """Game-agnostic section-iteration skeleton shared by both games'
+    ``extract_textline_sections`` walkers.
+
+    Iterates the owner table's allowlisted section keys, building each
+    section from its ``name -> textline_table`` map. The per-game deltas
+    are injected as callbacks so the loop structure (and its
+    audit/priority/synthetic-merge bookkeeping) lives in one place:
+
+    * ``extract_one(tl_name, tl_table) -> dict`` extracts a single
+      textline (each game binds its own ``extract_textline`` with the
+      right keyword args - flat req fields for H1, structured
+      RequirementSets for H2).
+    * ``extract_variants(tl_name, tl_table) -> {syn_name: child}``
+      materialises the per-choice synthetic children for a textline
+      (binds the per-game ``_extract_choice_variants``).
+
+    ``priority_tiers`` (H1 only) maps a section key to ``"super"`` /
+    ``"priority"``; when set, every textline and synthetic in that
+    section gets ``narrativePrioritySectionTier`` stamped. ``None`` (H2)
+    skips the stamp entirely.
+
+    ``defer_variants`` controls *when* the synthetic choice variants are
+    merged into the section, which only affects their relative position
+    in the section dict (and hence the downstream ``dependents`` edge
+    order - the data is otherwise identical):
+
+    * ``False`` (H1): merge each textline's variants inline, right after
+      the textline itself - giving ``real1, syn1, real2, syn2, ...``.
+    * ``True`` (H2): extract every real textline first, then merge all
+      variants in a second pass - giving ``real1, real2, ..., syn1,
+      syn2, ...``.
+
+    The split is preserved because each game's existing output (and the
+    deployed viewer's edge ordering) was generated with its own
+    structure; de-forking the loop must not reshuffle the shipped data.
+
+    Non-allowlisted owner-level keys are reported to the section-key
+    audit before being skipped (see :func:`_note_unlisted_section_key`).
+    """
+    sections = {}
+    tiers = priority_tiers or {}
+
+    def merge_variants(section, tl_name, tl_table, section_tier):
+        # In-game, picking a dialogue choice records a flag named
+        # `<ParentTextline><ChoiceText>`. Those names are then referenced
+        # by other textlines' requirements, so each choice is surfaced as
+        # a synthetic sibling textline so the graph resolves cleanly.
+        # `_merge_synthetic` keeps any real definition of the same name.
+        for syn_name, syn_data in extract_variants(tl_name, tl_table).items():
+            if section_tier is not None:
+                syn_data["narrativePrioritySectionTier"] = section_tier
+            _merge_synthetic(section, syn_name, syn_data)
+
+    for key, value in owner_table.items():
+        if key not in section_keys:
+            _note_unlisted_section_key(owner_name, key, value, source_file)
+            continue
+        if not isinstance(value, LuaTable):
+            continue
+        section = {}
+        section_tier = tiers.get(key)
+        textline_tables = [
+            (tl_name, tl_table)
+            for tl_name, tl_table in value.items()
+            if isinstance(tl_table, LuaTable)
+        ]
+        for tl_name, tl_table in textline_tables:
+            data = extract_one(tl_name, tl_table)
+            if section_tier is not None:
+                data["narrativePrioritySectionTier"] = section_tier
+            section[tl_name] = data
+            if not defer_variants:
+                merge_variants(section, tl_name, tl_table, section_tier)
+        if defer_variants:
+            for tl_name, tl_table in textline_tables:
+                merge_variants(section, tl_name, tl_table, section_tier)
+        sections[key] = section
+    apply_force_play_once(sections, force_play_once)
+    return sections
+
+
 def extract_textline_sections(
     owner_name: str,
     owner_table: LuaTable,
@@ -268,46 +361,34 @@ def extract_textline_sections(
     inspect-point extractors set it: inspect-point narration is consumed
     once in-game even though the tables omit the flag.
     """
-    sections = {}
     fallback_speaker = default_speaker or owner_name
-    priority_tiers = section_priority_tiers or {}
-    for key, value in owner_table.items():
-        if key not in section_keys:
-            _note_unlisted_section_key(owner_name, key, value, source_file)
-            continue
-        if not isinstance(value, LuaTable):
-            continue
-        section = {}
-        section_tier = priority_tiers.get(key)
-        for tl_name, tl_table in value.items():
-            if not isinstance(tl_table, LuaTable):
-                continue
-            section[tl_name] = extract_textline(
-                tl_name, tl_table, fallback_speaker, source_file,
-                game_data_lists=game_data_lists,
-                cue_speaker_resolver=cue_speaker_resolver,
-                offer_text_map=offer_text_map,
-                preset_choices=preset_choices,
-            )
-            if section_tier is not None:
-                section[tl_name]["narrativePrioritySectionTier"] = section_tier
-            # In-game, picking a dialogue choice records a flag named
-            # `<ParentTextline><ChoiceText>`. Those names are then referenced
-            # by other textlines' requirements. We surface each choice as a
-            # synthetic sibling textline so the graph resolves cleanly.
-            for syn_name, syn_data in _extract_choice_variants(
-                tl_name, tl_table, fallback_speaker, source_file,
-                game_data_lists=game_data_lists,
-                cue_speaker_resolver=cue_speaker_resolver,
-                offer_text_map=offer_text_map,
-                preset_choices=preset_choices,
-            ).items():
-                if section_tier is not None:
-                    syn_data["narrativePrioritySectionTier"] = section_tier
-                _merge_synthetic(section, syn_name, syn_data)
-        sections[key] = section
-    apply_force_play_once(sections, force_play_once)
-    return sections
+
+    def extract_one(tl_name, tl_table):
+        return extract_textline(
+            tl_name, tl_table, fallback_speaker, source_file,
+            game_data_lists=game_data_lists,
+            cue_speaker_resolver=cue_speaker_resolver,
+            offer_text_map=offer_text_map,
+            preset_choices=preset_choices,
+        )
+
+    def extract_variants(tl_name, tl_table):
+        return _extract_choice_variants(
+            tl_name, tl_table, fallback_speaker, source_file,
+            game_data_lists=game_data_lists,
+            cue_speaker_resolver=cue_speaker_resolver,
+            offer_text_map=offer_text_map,
+            preset_choices=preset_choices,
+        )
+
+    return walk_textline_sections(
+        owner_name, owner_table, source_file,
+        section_keys=section_keys,
+        extract_one=extract_one,
+        extract_variants=extract_variants,
+        priority_tiers=section_priority_tiers,
+        force_play_once=force_play_once,
+    )
 
 
 def extract_textline(
@@ -506,6 +587,61 @@ def _collect_cue_choices(cue: LuaTable, parent_name: str, preset_choices: dict =
     return None
 
 
+def build_synthetic_variants(parent_name: str, tl_table: LuaTable, build_child) -> dict:
+    """Game-agnostic cue-choice loop shared by both games'
+    ``_extract_choice_variants``.
+
+    Scans every inline ``Choices = {...}`` block nested in
+    ``tl_table``'s cues and materialises each option as a synthetic
+    child textline keyed ``<parent_name><ChoiceText>`` (no separator -
+    matches the engine flag recorded when the player picks the option).
+    ``build_child(synthetic_name, choice_item) -> dict`` extracts the
+    child (each game binds its own ``extract_textline`` with the right
+    keyword args); this helper then:
+
+      - prepends an implicit ``RequiredTextLines: [parent_name]`` so the
+        variant is reachable only via its parent (keeping
+        ``requirementSources`` aligned 1:1 when present - H1 only);
+      - stamps ``parentTextline`` / ``choiceText`` / ``isSynthetic`` so
+        the viewer can render it and :func:`_merge_synthetic` can defer
+        to a real definition of the same name.
+
+    Preset-referenced ``Choices = PresetEventArgs.X`` cues (H1 boon
+    vendors) carry no inline ``ChoiceText`` items and so produce no
+    variants - the engine branches into a function call, not another
+    textline.
+    """
+    variants = {}
+    for cue in tl_table.array:
+        if not isinstance(cue, LuaTable):
+            continue
+        choices = cue.get("Choices")
+        if not isinstance(choices, LuaTable):
+            continue
+        for choice_item in choices.array:
+            if not isinstance(choice_item, LuaTable):
+                continue
+            choice_text = choice_item.get("ChoiceText")
+            if not isinstance(choice_text, str) or not choice_text:
+                continue
+            synthetic_name = parent_name + choice_text
+            child = build_child(synthetic_name, choice_item)
+            # Implicit parent dependency so the choice variant is reachable
+            # in the graph only via the parent textline.
+            existing = child["requirements"].setdefault("RequiredTextLines", [])
+            if parent_name not in existing:
+                existing.insert(0, parent_name)
+                # Keep requirementSources aligned 1:1 if present for this key.
+                sources = child.get("requirementSources", {}).get("RequiredTextLines")
+                if sources is not None:
+                    sources.insert(0, None)
+            child["parentTextline"] = parent_name
+            child["choiceText"] = choice_text
+            child["isSynthetic"] = True
+            variants[synthetic_name] = child
+    return variants
+
+
 def _extract_choice_variants(
     parent_name: str,
     tl_table: LuaTable,
@@ -537,41 +673,16 @@ def _extract_choice_variants(
     there's no flag to materialise. ``preset_choices`` is accepted for
     signature symmetry with :func:`extract_textline` but unused here.
     """
-    variants = {}
-    for cue in tl_table.array:
-        if not isinstance(cue, LuaTable):
-            continue
-        choices = cue.get("Choices")
-        if not isinstance(choices, LuaTable):
-            continue
-        for choice_item in choices.array:
-            if not isinstance(choice_item, LuaTable):
-                continue
-            choice_text = choice_item.get("ChoiceText")
-            if not isinstance(choice_text, str) or not choice_text:
-                continue
-            synthetic_name = parent_name + choice_text
-            child = extract_textline(
-                synthetic_name, choice_item, fallback_speaker, source_file,
-                game_data_lists=game_data_lists,
-                cue_speaker_resolver=cue_speaker_resolver,
-                offer_text_map=offer_text_map,
-                preset_choices=preset_choices,
-            )
-            # Implicit parent dependency so the choice variant is reachable
-            # in the graph only via the parent textline.
-            existing = child["requirements"].setdefault("RequiredTextLines", [])
-            if parent_name not in existing:
-                existing.insert(0, parent_name)
-                # Keep requirementSources aligned 1:1 if present for this key.
-                sources = child.get("requirementSources", {}).get("RequiredTextLines")
-                if sources is not None:
-                    sources.insert(0, None)
-            child["parentTextline"] = parent_name
-            child["choiceText"] = choice_text
-            child["isSynthetic"] = True
-            variants[synthetic_name] = child
-    return variants
+    def build_child(synthetic_name, choice_item):
+        return extract_textline(
+            synthetic_name, choice_item, fallback_speaker, source_file,
+            game_data_lists=game_data_lists,
+            cue_speaker_resolver=cue_speaker_resolver,
+            offer_text_map=offer_text_map,
+            preset_choices=preset_choices,
+        )
+
+    return build_synthetic_variants(parent_name, tl_table, build_child)
 
 
 def _merge_synthetic(section: dict, name: str, data: dict) -> None:
