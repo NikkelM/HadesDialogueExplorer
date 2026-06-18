@@ -124,8 +124,9 @@
     font-size: 0.7rem;
     color: #78909c;
     font-weight: 600;
-    min-width: 2rem;
+    min-width: 2.75rem;
     flex-shrink: 0;
+    cursor: help;
 }
 
 .eligibility-item-name {
@@ -141,7 +142,7 @@
 
 .eligibility-item-meta {
     margin-top: 0.2rem;
-    padding-left: 2.5rem;
+    padding-left: 3.25rem;
     font-size: 0.75rem;
     color: var(--text-muted, #888);
     display: flex;
@@ -161,6 +162,77 @@
 
 .eligibility-ref:hover {
     text-decoration: underline;
+}
+
+/* Requirement group ("play any N of these") in the unplayed list */
+.eligibility-group {
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: #1e1e2e;
+    border: 1px solid #2a2a3a;
+}
+
+.eligibility-group-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.eligibility-group-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ffd08a;
+}
+
+.eligibility-group-options {
+    margin-top: 0.3rem;
+    padding-left: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.eligibility-group-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.eligibility-group-option:hover {
+    background: #2a2a3e;
+}
+
+.eligibility-group-option-icon {
+    flex-shrink: 0;
+    color: #78909c;
+}
+
+.eligibility-group-option.played {
+    opacity: 0.6;
+}
+
+.eligibility-group-option.played .eligibility-group-option-icon {
+    color: #6be06b;
+}
+
+/* Requirement group node in the prerequisite tree */
+.tree-group-row {
+    cursor: default;
+}
+
+.tree-group-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffd08a;
+}
+
+.tree-group-children {
+    display: block;
 }
 
 /* Tree view */

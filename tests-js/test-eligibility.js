@@ -1,0 +1,139 @@
+// Tests for the eligibility tracer's prerequisite grouping
+// (``buildPrereqChain`` / ``summarizePrereqs`` in eligibility-view.js).
+//
+// OR (RequiredAny*) and count-min (RequiredMinAnyTextLines) requirements are
+// collapsed into one "play any N of these" group rather than surfaced as N
+// separate mandatory prerequisites. ``buildPrereqChain`` takes an injectable
+// ``isPlayed`` predicate so the walk is testable without a loaded save.
+
+import { test, before } from 'node:test';
+import { strict as assert } from 'node:assert';
+
+import { loadData } from '../templates/viewer/data.js';
+import { buildPrereqChain, summarizePrereqs } from '../templates/viewer/eligibility-view.js';
+
+function tl(requirements, otherRequirements) {
+    return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
+}
+
+before(() => {
+    loadData({
+        textlines: {
+            Root: tl(
+                {
+                    RequiredTextLines: ['And1'],
+                    RequiredAnyTextLines: ['Or1', 'Or2'],
+                    RequiredMinAnyTextLines: ['C1', 'C2', 'C3', 'C4', 'C5'],
+                },
+                { RequiredMinAnyTextLines: { Count: 3 } },
+            ),
+            And1: tl({ RequiredTextLines: ['And2'] }),
+            And2: tl({}),
+            Or1: tl({}), Or2: tl({}),
+            // C1 has its own prerequisites (an AND dep and a nested OR group)
+            // so we can assert group options are walked and nested groups
+            // stay conditional.
+            C1: tl({ RequiredTextLines: ['C1dep'], RequiredAnyTextLines: ['Or3', 'Or4'] }),
+            C1dep: tl({}), Or3: tl({}), Or4: tl({}),
+            C2: tl({}), C3: tl({}), C4: tl({}), C5: tl({}),
+        },
+        speakers: { NPC_Test_01: { name: 'Tester' } },
+    });
+});
+
+const playedSet = (...names) => {
+    const s = new Set(names);
+    return (n) => s.has(n);
+};
+
+test('OR and count-min requirements become groups; AND stays individual', () => {
+    const { chain, groups, mandatory } = buildPrereqChain('Root', playedSet());
+
+    // Two top-level groups on Root (plus a nested one under C1).
+    const or = groups.get('Root::RequiredAnyTextLines');
+    assert.equal(or.kind, 'any');
+    assert.equal(or.quota, 1);
+    assert.deepEqual(or.options, ['Or1', 'Or2']);
+
+    const count = groups.get('Root::RequiredMinAnyTextLines');
+    assert.equal(count.kind, 'count-min');
+    assert.equal(count.quota, 3);
+    assert.equal(count.size, 5);
+
+    // AND prerequisites recurse and are individual chain entries.
+    assert.ok(chain.has('And1'));
+    assert.ok(chain.has('And2'));
+    // Group options carry their groupId on the parent edge.
+    assert.equal(chain.get('Or1').parents[0].groupId, 'Root::RequiredAnyTextLines');
+    assert.equal(chain.get('C1').parents[0].groupId, 'Root::RequiredMinAnyTextLines');
+
+    // Mandatory = reachable from root via non-group (AND) edges only;
+    // group options are not mandatory individually.
+    assert.ok(mandatory.has('And1') && mandatory.has('And2'));
+    assert.equal(mandatory.has('Or1'), false);
+    assert.equal(mandatory.has('C1'), false);
+});
+
+test('a satisfied OR (one option played) records no group', () => {
+    const { groups, chain } = buildPrereqChain('Root', playedSet('Or1'));
+    assert.equal(groups.has('Root::RequiredAnyTextLines'), false);
+    assert.equal(chain.has('Or2'), false);
+    // count-min is still unsatisfied, so its group remains.
+    assert.ok(groups.has('Root::RequiredMinAnyTextLines'));
+});
+
+test('a satisfied count-min (quota met) records no group', () => {
+    const { groups } = buildPrereqChain('Root', playedSet('C1', 'C2', 'C3'));
+    assert.equal(groups.has('Root::RequiredMinAnyTextLines'), false);
+});
+
+test('count-min adds only the unplayed options to the chain', () => {
+    const { chain } = buildPrereqChain('Root', playedSet('C1', 'C2'));
+    assert.equal(chain.has('C1'), false);
+    assert.equal(chain.has('C2'), false);
+    assert.ok(chain.has('C3') && chain.has('C4') && chain.has('C5'));
+});
+
+test("group options are walked so their own prerequisites are reachable", () => {
+    // C1's AND prerequisite is in the chain (so the tree can expand it) but
+    // is NOT mandatory (only reachable through the count-min group).
+    const { chain, mandatory } = buildPrereqChain('Root', playedSet());
+    assert.ok(chain.has('C1dep'));
+    assert.equal(mandatory.has('C1dep'), false);
+});
+
+test('summarizePrereqs counts a group as its quota, not its size', () => {
+    const isPlayed = playedSet();
+    const { chain, groups, mandatory } = buildPrereqChain('Root', isPlayed);
+    // 2 mandatory AND nodes (And1, And2) + OR quota 1 + count-min quota 3 = 6.
+    const { total, played, stillNeeded } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
+    assert.equal(total, 6);
+    assert.equal(played, 0);
+    assert.equal(stillNeeded, 6);
+});
+
+test('summarizePrereqs credits partially-satisfied groups', () => {
+    const isPlayed = playedSet('C1', 'C2', 'And2');
+    const { chain, groups, mandatory } = buildPrereqChain('Root', isPlayed);
+    // count-min still recorded (2 < 3); 2 of its quota-3 are played.
+    // Units: And1 (unplayed), And2 (played) + OR quota1 + count-min quota3 = 6.
+    // Played units: And2 (1) + min(2,3) = 3.
+    const { total, played, stillNeeded } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
+    assert.equal(total, 6);
+    assert.equal(played, 3);
+    assert.equal(stillNeeded, 3);
+});
+
+test('conditional groups nested under an option are not counted in the summary', () => {
+    // C1dep gates C1's own OR group; that nested group must not inflate the
+    // top-level summary (you only reach it if you pick C1).
+    const isPlayed = playedSet();
+    const { chain, groups, mandatory } = buildPrereqChain('Root', isPlayed);
+    const nested = groups.get('C1::RequiredAnyTextLines');
+    assert.ok(nested, 'nested group should still be recorded for the tree');
+    // Inactive: its parent (C1) is a group option, not a mandatory node.
+    assert.equal(nested.parentName === 'Root' || mandatory.has(nested.parentName), false);
+    // Summary total is unchanged by the nested group.
+    const { total } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
+    assert.equal(total, 6);
+});
