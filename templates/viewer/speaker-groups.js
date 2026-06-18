@@ -104,6 +104,42 @@ export function listCanonicalSpeakerIds() {
     return Object.keys(_canonicalToMembers).sort();
 }
 
+// The "character key" of a friendly name: the base name with a trailing
+// ``(disambiguator)`` suffix removed (``"Chronos (Boss)"`` ->
+// ``"Chronos"``). Speakers that share a character key are different
+// in-game versions of the same character. Returns ``null`` for names
+// whose base carries no letters - e.g. the ``"? ? ?"`` placeholder used
+// for not-yet-revealed speakers, where the real identity lives in the
+// parenthetical, so those must NOT cross-link to one another.
+function _baseCharacterKey(name) {
+    const base = (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+    if (!/[A-Za-z]/.test(base)) return null;
+    return base;
+}
+
+// Returns the other canonical speakers in the active game that are
+// different in-game versions of the same character (same character key),
+// excluding the speaker itself. Each result is ``{ id, name }`` with the
+// canonical id and its friendly name, sorted by name. Empty when the
+// speaker has no variants (or is a letterless placeholder).
+export function similarSpeakers(speakerId) {
+    if (!speakerId) return [];
+    _ensureGroups();
+    const canon = _idToCanonical[speakerId] || speakerId;
+    const key = _baseCharacterKey((speakers[canon] || {}).name);
+    if (!key) return [];
+    const out = [];
+    for (const otherCanon of Object.keys(_canonicalToMembers)) {
+        if (otherCanon === canon) continue;
+        const e = speakers[otherCanon] || {};
+        if (_baseCharacterKey(e.name) === key) {
+            out.push({ id: otherCanon, name: e.name || otherCanon });
+        }
+    }
+    out.sort((a, b) => a.name.localeCompare(b.name));
+    return out;
+}
+
 // Re-derive the upstream adjacency for a collapsed group: count of
 // owned textlines (across all members) that reference at least one
 // textline owned by any member of another group. Mapped back through

@@ -33,7 +33,7 @@
 //   - ``name``      (flat alphabetical)
 
 import { textlines, speakers, sectionKeyLabels, gameLabels, getActiveGame } from './data.js';
-import { canonicalSpeakerId, getSpeakerGroupEntry } from './speaker-groups.js';
+import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers } from './speaker-groups.js';
 import {
     escapeHtml,
     jsAttr,
@@ -356,10 +356,25 @@ export function renderSpeaker(speakerId, opts) {
             + (friendly ? ` <span class="speaker-id">(${escapeHtml(canonical)})</span>` : '')
             + `</h3>`;
 
+    // Other in-game versions of the same character (e.g. Chronos vs
+    // Chronos (Boss) / (Reformed)). Rendered in the header's right column,
+    // aligned with the summary's right column below.
+    const similar = similarSpeakers(canonical);
+    const similarHtml = similar.length
+        ? `<div class="speaker-similar"><span class="speaker-similar-label">Other versions of this speaker:</span>`
+            + similar.map(s => `<a class="speaker-similar-pill" role="button" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(s.id)})">${escapeHtml(s.name)}</a>`).join('')
+            + `</div>`
+        : '';
+
     const headerHtml = `<header class="speaker-overview-header">`
+        + `<div class="speaker-overview-header-main">`
         + headerTitle
         + (description ? `<p class="speaker-description">${escapeHtml(description)}</p>` : '')
+        + `</div>`
+        + `<div class="speaker-overview-header-aside">`
         + (gameLabel ? `<p class="speaker-game">Game: ${escapeHtml(gameLabel)}</p>` : '')
+        + similarHtml
+        + `</div>`
         + `</header>`;
 
     container.innerHTML = `<div class="speaker-overview">`
@@ -369,14 +384,3 @@ export function renderSpeaker(speakerId, opts) {
         + renderTextlineList(entry, canonical, filter, sort, game)
         + `</div>`;
 }
-
-// Helpers exported for unit tests. Avoid threading the live DOM into
-// test code by exposing the pure pieces directly.
-export const _internals = {
-    priorityBucket,
-    filterPassesBucket,
-    canonicalisePriority,
-    canonicaliseSort,
-    priorityScheme,
-    SORT_VALUES,
-};

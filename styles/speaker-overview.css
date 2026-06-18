@@ -32,6 +32,29 @@ body.layout-speaker #panel-info {
 .speaker-overview {
     padding: 4px 0 16px;
 }
+/* This view's title bar is a <header>, so it inherits the global page
+   ``header`` rule (display:flex; align-items:center). That vertically
+   mis-centres the differently-sized title / description / game lines, so
+   pin the children to the top. The header mirrors the two-column flex of
+   the summary row below (left main + right aside, gap 16, padding 12) so
+   the aside lines up with the summary's right column. */
+.speaker-overview-header {
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px;
+}
+.speaker-overview-header-main {
+    flex: 1;
+    min-width: 0;
+}
+.speaker-overview-header-aside {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
 .speaker-overview-header h3 {
     color: #e94560;
     font-size: 18px;
@@ -48,10 +71,45 @@ body.layout-speaker #panel-info {
     font-style: italic;
     margin-bottom: 4px;
 }
+/* Game indicator: pinned to the far right of the aside. */
 .speaker-overview-header .speaker-game {
     color: #666;
     font-size: 11px;
-    margin-bottom: 12px;
+    align-self: flex-end;
+    white-space: nowrap;
+}
+/* Similar-speaker pills: sit at the aside's left edge, which aligns with
+   the summary's right column below. Rendered as clickable pill buttons so
+   the navigation affordance is obvious. */
+.speaker-similar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.speaker-similar-label {
+    color: #888;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+.speaker-similar-pill {
+    display: inline-block;
+    background: #0f3460;
+    color: #d8dbe6;
+    border: 1px solid #1c4584;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.speaker-similar-pill:hover {
+    background: #1c4584;
+    color: #fff;
+    border-color: #2a5aa8;
 }
 .speaker-overview-header .speaker-game code {
     color: #888;

@@ -14,6 +14,7 @@ import {
     listCanonicalSpeakerIds,
     getSpeakerGroupEntry,
     resetSpeakerGroups,
+    similarSpeakers,
 } from '../templates/viewer/speaker-groups.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -286,4 +287,63 @@ test('resetSpeakerGroups invalidates cached groups after a data swap', () => {
 
 test('getSpeakerGroupEntry returns null for an unknown speaker id', () => {
     assert.equal(getSpeakerGroupEntry('NPC_NotARealSpeaker_99'), null);
+});
+
+test('similarSpeakers links different versions of the same character by base name', () => {
+    // "Hecate" and "Hecate (Boss)" share the base "Hecate", so each lists
+    // the other (by canonical id + friendly name).
+    assert.deepEqual(similarSpeakers('NPC_Hecate_01'), [
+        { id: 'NPC_HecateBoss_01', name: 'Hecate (Boss)' },
+    ]);
+    assert.deepEqual(similarSpeakers('NPC_HecateBoss_01'), [
+        { id: 'NPC_Hecate_01', name: 'Hecate' },
+    ]);
+});
+
+test('similarSpeakers resolves a non-canonical member id to its group', () => {
+    // HermesUpgrade is canonical, NPC_Hermes_01 is a member; Hermes has no
+    // other version, so either id yields an empty list (not itself).
+    assert.deepEqual(similarSpeakers('NPC_Hermes_01'), []);
+    assert.deepEqual(similarSpeakers('HermesUpgrade'), []);
+});
+
+test('similarSpeakers returns empty for a speaker with no variants', () => {
+    assert.deepEqual(similarSpeakers('NPC_Zeus_01'), []);
+});
+
+test('similarSpeakers returns empty for unknown / empty ids (no throw)', () => {
+    assert.deepEqual(similarSpeakers('NPC_NotReal_99'), []);
+    assert.deepEqual(similarSpeakers(''), []);
+    assert.deepEqual(similarSpeakers(null), []);
+});
+
+test('similarSpeakers does NOT cross-link letterless placeholder names', () => {
+    // "? ? ?" placeholders carry the real identity in the parenthetical,
+    // so they are different characters and must not link to one another.
+    loadData({
+        defaultGame: 'hades1',
+        gameLabels: { hades1: 'Hades' },
+        games: {
+            hades1: {
+                speakers: {
+                    NPC_Mystery_A: { name: '? ? ? (Alecto)' },
+                    NPC_Mystery_C: { name: '? ? ? (Chaos)' },
+                    NPC_Real_Eris: { name: 'Eris' },
+                    NPC_Real_ErisBoss: { name: 'Eris (Boss)' },
+                },
+                textlines: {}, dependents: {}, stats: {}, knownUnresolved: {},
+                reqTypeLabels: {}, reqTypeTooltips: {}, reqTypeLabelsDependents: {},
+                reqTypeTooltipsDependents: {}, reqTypeOrder: [], otherReqTypeLabels: {},
+                sectionKeyLabels: {}, gameDataRefs: {}, choiceNames: {}, metaUpgradeNames: {},
+            },
+        },
+    });
+    resetSpeakerGroups();
+    // Placeholders never cross-link, even though they share the "? ? ?" base.
+    assert.deepEqual(similarSpeakers('NPC_Mystery_A'), []);
+    assert.deepEqual(similarSpeakers('NPC_Mystery_C'), []);
+    // Real characters with a letter base still link normally.
+    assert.deepEqual(similarSpeakers('NPC_Real_Eris'), [
+        { id: 'NPC_Real_ErisBoss', name: 'Eris (Boss)' },
+    ]);
 });
