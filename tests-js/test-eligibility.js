@@ -6,11 +6,11 @@
 // separate mandatory prerequisites. ``buildPrereqChain`` takes an injectable
 // ``isPlayed`` predicate so the walk is testable without a loaded save.
 
-import { test, before } from 'node:test';
+import { test, before, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { buildPrereqChain, summarizePrereqs } from '../templates/viewer/eligibility-view.js';
+import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml } from '../templates/viewer/eligibility-view.js';
 
 function tl(requirements, otherRequirements) {
     return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
@@ -137,3 +137,69 @@ test('conditional groups nested under an option are not counted in the summary',
     const { total } = summarizePrereqs(chain, groups, mandatory, 'Root', isPlayed);
     assert.equal(total, 6);
 });
+
+
+// --- H2 set-level orBranches in the tracer ---
+// A dialogue gated entirely by orBranches has no flat-requirement chain, so
+// the tracer renders a dedicated "alternative branches" section instead.
+
+describe('renderOrBranchesHtml', () => {
+    before(() => {
+        const t = (requirements, otherRequirements, orBranches) => ({
+            owner: 'NPC_Test_01', section: 'InteractTextLineSets',
+            requirements, otherRequirements, orBranches,
+        });
+        loadData({
+            textlines: {
+                // Two alternative branches, each needing two lines together,
+                // plus a non-textline-only branch that is trivially satisfied.
+                BranchRoot: t({}, {}, [
+                    { requirements: { RequiredTextLines: ['A1', 'A2'] } },
+                    { requirements: { RequiredTextLines: ['B1', 'B2'] } },
+                    { requirements: {}, otherRequirements: { 'PathTrue:GameState.X': {} } },
+                ]),
+                // A1 has its own prerequisite so its branch node is expandable.
+                A1: t({ RequiredTextLines: ['A1dep'] }), A1dep: t({}),
+                A2: t({}), B1: t({}), B2: t({}),
+                NoBranches: t({ RequiredTextLines: ['A1'] }),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+    });
+
+    test('returns empty string for a dialogue without orBranches', () => {
+        assert.equal(renderOrBranchesHtml('NoBranches', new Set()), '');
+    });
+
+    test('lists every branch and its prerequisites as tree nodes', () => {
+        const html = renderOrBranchesHtml('BranchRoot', new Set());
+        assert.match(html, /Alternative requirement branches \(3\)/);
+        assert.match(html, /Option 1 of 3/);
+        assert.match(html, /Option 2 of 3/);
+        for (const ref of ['A1', 'A2', 'B1', 'B2']) {
+            assert.ok(html.includes(`>${ref}<`), `expected branch ref ${ref} as a tree node`);
+        }
+        // The non-textline-only branch (3) has no save-trackable lines but is
+        // trivially satisfied.
+        assert.match(html, /Option 3 of 3 \u00b7 satisfied/);
+        assert.match(html, /No save-trackable prerequisites/);
+    });
+
+    test('a branch line with its own prerequisites is expandable (chevron + nested)', () => {
+        const html = renderOrBranchesHtml('BranchRoot', new Set());
+        // A1 has prereq A1dep, so its branch node is collapsible (chevron)
+        // and nests A1dep underneath.
+        assert.ok(html.includes('collapsible collapsed'), 'expected an expandable branch node');
+        assert.ok(html.includes('\u25B6'), 'expected a chevron on the expandable node');
+        assert.ok(html.includes('>A1dep<'), 'expected nested prerequisite A1dep');
+    });
+
+    test('marks played branch lines and a fully-played branch satisfied', () => {
+        const html = renderOrBranchesHtml('BranchRoot', new Set(['A1', 'A2', 'A1dep']));
+        assert.match(html, /Option 1 of 3 \u00b7 satisfied/);
+        assert.ok(html.includes('tree-node tree-played'), 'played lines render with the played class');
+        // Branch 2 stays unmet (neither of its lines played).
+        assert.ok(!/Option 2 of 3 \u00b7 satisfied/.test(html), 'branch 2 must stay unmet');
+    });
+});
+

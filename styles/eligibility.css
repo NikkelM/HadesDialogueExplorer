@@ -220,6 +220,25 @@
     color: #6be06b;
 }
 
+/* H2 OR-branch cards: an alternative requirement set in the tracer. */
+.eligibility-branch-satisfied {
+    border-color: #2f6b2f;
+}
+
+.eligibility-branch-satisfied .eligibility-group-option-icon {
+    color: #6be06b;
+}
+
+.eligibility-branch-note {
+    padding: 0.2rem 0.4rem 0;
+    font-size: 0.72rem;
+    color: #9aa3b2;
+}
+
+.eligibility-branch-prereqs {
+    margin-top: 0.3rem;
+}
+
 /* Requirement group node in the prerequisite tree */
 .tree-group-row {
     cursor: default;

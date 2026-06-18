@@ -53,36 +53,37 @@ export const COUNT_MIN_REQ_TYPES = new Set([
 
 /**
  * The ``Count`` parameter of a count-based requirement field (how many of
- * the listed lines must have played), read from ``otherRequirements``.
- * Defaults to 1 when absent.
+ * the listed lines must have played), read from an ``otherRequirements``
+ * map. Defaults to 1 when absent.
  */
-export function requiredCount(textlineData, reqType) {
-    const meta = textlineData
-        && textlineData.otherRequirements
-        && textlineData.otherRequirements[reqType];
+function countFrom(otherRequirements, reqType) {
+    const meta = otherRequirements && otherRequirements[reqType];
     return meta && typeof meta.Count === 'number' ? meta.Count : 1;
 }
 
 /**
- * Return true if every *direct* requirement of ``textlineData`` is
- * satisfied by ``playedSet`` (a Set of played textline names).
- *
- * Shallow by design: this answers "can this dialogue play right now",
- * which depends only on its immediate requirements - the transitive
- * history is handled separately by the eligibility tracer.
+ * The ``Count`` parameter of a count-based requirement field on a textline
+ * (read from its ``otherRequirements``). Defaults to 1 when absent.
+ */
+export function requiredCount(textlineData, reqType) {
+    return countFrom(textlineData && textlineData.otherRequirements, reqType);
+}
+
+/**
+ * Return true if a single requirement set (a textline's base requirements,
+ * or one H2 ``orBranches`` alternative) is satisfied by ``playedSet``.
  *
  * Per category: AND fields need all refs played, OR fields need at least
  * one, NEGATIVE fields need none, and COUNT_MIN fields need at least their
- * ``Count`` played. Run-count / cooldown fields (``RequiredMaxAny*``,
- * ``Min/MaxRunsSince*``) depend on run counts the save can't resolve and are
- * treated as satisfied. ``name`` is the dialogue's own name, used to ignore
- * the self-references a few play-once gates carry.
+ * ``Count`` played (read from ``otherRequirements``). Run-count / cooldown
+ * fields depend on run counts the save can't resolve and are treated as
+ * satisfied (not listed in any of the four sets). ``name`` is the host
+ * dialogue's own name, used to ignore the self-references a few play-once
+ * gates carry.
  */
-export function isDirectlySatisfied(textlineData, playedSet, name) {
-    const reqs = textlineData && textlineData.requirements;
-    if (!reqs) return true;
-
-    for (const [reqType, refs] of Object.entries(reqs)) {
+function requirementsSatisfied(requirements, otherRequirements, playedSet, name) {
+    if (!requirements) return true;
+    for (const [reqType, refs] of Object.entries(requirements)) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== name);
 
@@ -94,10 +95,37 @@ export function isDirectlySatisfied(textlineData, playedSet, name) {
             if (others.some(r => playedSet.has(r))) return false;
         } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
             const playedCount = others.filter(r => playedSet.has(r)).length;
-            if (playedCount < requiredCount(textlineData, reqType)) return false;
+            if (playedCount < countFrom(otherRequirements, reqType)) return false;
         }
         // Other count / cooldown fields (RequiredMaxAny*, Min/MaxRunsSince*)
         // depend on run counts the save can't resolve - treated as satisfied.
+    }
+    return true;
+}
+
+/**
+ * Return true if ``textlineData`` is *directly* eligible given ``playedSet``
+ * (a Set of played textline names).
+ *
+ * Shallow by design: this answers "can this dialogue play right now", which
+ * depends only on its immediate requirements - the transitive history is
+ * handled separately by the eligibility tracer.
+ *
+ * A dialogue is directly eligible when its base requirements are satisfied
+ * AND, if it carries H2 set-level ``orBranches`` (alternative requirement
+ * sets), at least one branch is satisfied. ``name`` is the dialogue's own
+ * name, used to ignore self-references.
+ */
+export function isDirectlySatisfied(textlineData, playedSet, name) {
+    if (!textlineData) return true;
+    if (!requirementsSatisfied(
+        textlineData.requirements, textlineData.otherRequirements, playedSet, name)) {
+        return false;
+    }
+    const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
+    if (branches.length > 0 && !branches.some(
+        b => requirementsSatisfied(b.requirements, b.otherRequirements, playedSet, name))) {
+        return false;
     }
     return true;
 }

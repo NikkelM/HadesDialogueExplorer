@@ -59,29 +59,35 @@ NEGATIVE_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s 
 COUNT_MIN_REQ_TYPES = {f for f, s in REQUIREMENT_BLOCKING_SEMANTICS.items() if s == "count-min"}
 
 
-def _required_count(textline: dict, req_type: str) -> int:
-    """The ``Count`` parameter of a count-based field (read from
-    ``otherRequirements``), defaulting to 1 when absent."""
-    meta = (textline.get("otherRequirements") or {}).get(req_type)
+def _count_from(other_requirements, req_type: str) -> int:
+    """The ``Count`` parameter of a count-based field, read from an
+    ``otherRequirements`` map. Defaults to 1 when absent."""
+    meta = (other_requirements or {}).get(req_type)
     if isinstance(meta, dict) and isinstance(meta.get("Count"), int):
         return meta["Count"]
     return 1
 
 
-def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> bool:
-    """Return True if every *direct* requirement of ``textline`` is satisfied
-    by ``played_set``.
+def _required_count(textline: dict, req_type: str) -> int:
+    """The ``Count`` parameter of a count-based field on a textline (read
+    from its ``otherRequirements``), defaulting to 1 when absent."""
+    return _count_from(textline.get("otherRequirements"), req_type)
 
-    Shallow by design (immediate requirements only): this is the
-    eligible/blocked decision. AND fields need all refs played, OR fields
-    need at least one, negative (``RequiredFalse*``) fields need none, and
-    count-min (``RequiredMinAnyTextLines``) fields need at least their
-    ``Count`` played. Run-count / cooldown fields (``RequiredMaxAny*``,
-    ``Min/MaxRunsSince*``) depend on run counts the save can't resolve and
-    are treated as satisfied. ``name`` is the dialogue's own name, used to
-    ignore self-references.
+
+def _requirements_satisfied(requirements, other_requirements, played_set, name) -> bool:
+    """Return True if a single requirement set (a textline's base
+    requirements, or one H2 ``orBranches`` alternative) is satisfied by
+    ``played_set``.
+
+    AND fields need all refs played, OR fields need at least one, negative
+    (``RequiredFalse*``) fields need none, and count-min
+    (``RequiredMinAnyTextLines``) fields need at least their ``Count``
+    played (read from ``other_requirements``). Run-count / cooldown fields
+    depend on run counts the save can't resolve and are treated as
+    satisfied. ``name`` is the host dialogue's own name, used to ignore
+    self-references.
     """
-    for req_type, refs in (textline.get("requirements") or {}).items():
+    for req_type, refs in (requirements or {}).items():
         if not isinstance(refs, list):
             continue
         others = [r for r in refs if isinstance(r, str) and r != name]
@@ -96,8 +102,32 @@ def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> 
                 return False
         elif req_type in COUNT_MIN_REQ_TYPES:
             played_count = sum(1 for r in others if r in played_set)
-            if played_count < _required_count(textline, req_type):
+            if played_count < _count_from(other_requirements, req_type):
                 return False
+    return True
+
+
+def is_directly_satisfied(textline: dict, played_set: set, name: str = None) -> bool:
+    """Return True if ``textline`` is *directly* eligible given ``played_set``.
+
+    Shallow by design (immediate requirements only): this is the
+    eligible/blocked decision. A dialogue is directly eligible when its base
+    requirements are satisfied AND, if it carries H2 set-level ``orBranches``
+    (alternative requirement sets), at least one branch is satisfied.
+    ``name`` is the dialogue's own name, used to ignore self-references.
+    """
+    if not _requirements_satisfied(
+        textline.get("requirements"), textline.get("otherRequirements"), played_set, name
+    ):
+        return False
+    branches = textline.get("orBranches") or []
+    if branches and not any(
+        _requirements_satisfied(
+            b.get("requirements"), b.get("otherRequirements"), played_set, name
+        )
+        for b in branches
+    ):
+        return False
     return True
 
 

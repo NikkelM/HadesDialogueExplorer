@@ -12,8 +12,8 @@
 
 import { textlines, speakers } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass } from './utilities.js';
-import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount } from './requirements.js';
+import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed, getDialogueStatus } from './save-parser.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, isDirectlySatisfied } from './requirements.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -196,8 +196,20 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
         html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.</div>`;
     } else if (stillNeeded === 0) {
-        html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
-        html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+        // The tracer walks only textline prerequisites (the AND/OR/count
+        // chain). An H2 dialogue can also be gated by set-level ``orBranches``
+        // (alternative requirement sets) the chain doesn't enumerate, so
+        // confirm direct eligibility against the same shared check the save
+        // badge uses before claiming the dialogue is eligible.
+        const rootTl = textlines[rootName];
+        const playedSet = getSaveProgress() || new Set();
+        if (isDirectlySatisfied(rootTl, playedSet, rootName)) {
+            html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
+            html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+        } else {
+            html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
+            html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.</div>`;
+        }
     } else {
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
         html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.</div>`;
@@ -328,11 +340,10 @@ function renderGroupItemHtml(group, rootName, chain) {
     return html;
 }
 
-function renderTreeHtml(chain, rootName, groups) {
-    if (chain.size === 0) return '';
-
-    // Build a children map: for each node, which chain entries list it as a
-    // parent (carrying the group id so alternatives can be grouped)?
+// Build the children map a tree render walks: for each node, which chain
+// entries list it as a parent (carrying the group id so alternatives can be
+// grouped).
+function buildChildrenOf(chain) {
     const childrenOf = new Map();
     for (const [name, info] of chain) {
         for (const p of info.parents) {
@@ -340,6 +351,13 @@ function renderTreeHtml(chain, rootName, groups) {
             childrenOf.get(p.name).push({ name, reqType: p.reqType, groupId: p.groupId });
         }
     }
+    return childrenOf;
+}
+
+function renderTreeHtml(chain, rootName, groups) {
+    if (chain.size === 0) return '';
+
+    const childrenOf = buildChildrenOf(chain);
 
     // If root has no direct children in the chain, nothing to show
     if (!childrenOf.has(rootName) || childrenOf.get(rootName).length === 0) return '';
@@ -351,6 +369,20 @@ function renderTreeHtml(chain, rootName, groups) {
     html += renderTreeNode(rootName, childrenOf, chain, groups, new Set(), 0);
     html += `</div></div>`;
     return html;
+}
+
+// Render a single textline ``ref`` as an expandable prerequisite-tree node:
+// the same chevron / recursion / played-status rendering the main tree uses,
+// so a branch line behaves exactly like a node in the dependency tree. Its
+// own prerequisite chain is built on demand (rooted at ``ref``); played refs
+// are leaves (already satisfied). ``isPlayed`` threads the (injectable) save
+// lookup through so tests stay deterministic.
+function renderRefAsTreeNode(ref, reqType, isPlayed) {
+    const { chain, groups } = buildPrereqChain(ref, isPlayed);
+    const childrenOf = buildChildrenOf(chain);
+    const played = isPlayed(ref);
+    const subtree = played ? '' : renderChildrenOf(ref, childrenOf, chain, groups, new Set([ref]), 0);
+    return renderTreeRow(ref, reqType, true, subtree, played);
 }
 
 function renderTreeNode(name, childrenOf, chain, groups, visited, depth) {
@@ -384,17 +416,31 @@ function renderChildrenOf(name, childrenOf, chain, groups, visited, depth) {
 }
 
 // Markup for one tree row given a (possibly empty) pre-rendered subtree.
+function renderNodeSaveBadgeHtml(name, tl) {
+    if (!tl || !getSaveProgress() || !saveMatchesActiveGame()) return '';
+    const status = getDialogueStatus(name, tl);
+    if (!status) return '';
+    const tip = status === 'played' ? 'Played in loaded save'
+        : status === 'eligible' ? 'Eligible to play (all requirements met)'
+            : 'Blocked (missing requirements)';
+    return `<span class="save-badge ${status}" title="${escapeHtml(tip)}"></span>`;
+}
+
 function renderTreeRow(name, reqType, showEdge, subtree, played) {
     const tl = textlines[name];
     const ownerEntry = tl ? speakers[tl.owner] : null;
     const ownerLabel = ownerEntry?.name || (tl ? tl.owner.replace('NPC_', '').replace('_01', '') : '');
     const hasChildren = subtree.length > 0;
     const chevron = hasChildren ? '<span class="tree-chevron">\u25B6</span>' : '';
-    const statusIcon = played ? '<span class="tree-icon">\u2714</span>' : '';
+    // Coloured save-status dot (played / eligible / blocked), matching the
+    // dependency tree, so an eligible-but-unplayed prerequisite (one the
+    // player can satisfy right now - common for OR-branch alternatives)
+    // reads differently from a blocked one.
+    const saveBadge = renderNodeSaveBadgeHtml(name, tl);
 
     let html = `<div class="tree-node ${played ? 'tree-played' : 'tree-unplayed'}${hasChildren ? ' collapsible collapsed' : ''}">`;
     html += `<div class="tree-node-row"${hasChildren ? ' onclick="this.parentElement.classList.toggle(\'collapsed\')"' : ''} ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`;
-    html += `${chevron}${statusIcon}`;
+    html += `${chevron}${saveBadge}`;
     html += `<span class="tree-name">${escapeHtml(name)}</span>`;
     if (ownerLabel) html += `<span class="npc-tag">${escapeHtml(ownerLabel)}</span>`;
     if (showEdge && reqType) html += `<span class="edge-type ${getEdgeClass(reqType)}">${getEdgeLabel(reqType)}</span>`;
@@ -455,6 +501,74 @@ function renderTreePlayedOptionHtml(opt) {
     return renderTreeRow(opt, null, false, '', isPlayedOpt);
 }
 
+// H2 set-level OR branches (alternative requirement sets): the dialogue is
+// eligible when at least ONE branch is fully satisfied. The flat prerequisite
+// chain can't express "play all of one alternative", so branches get their
+// own section - one card per branch. Each branch lists its positive textline
+// prerequisites as expandable prerequisite-tree nodes (chevron, recursion,
+// played status), exactly like the main tree. Negative (RequiredFalse*) and
+// run-count / non-textline gates are omitted - consistent with the rest of
+// the tracer, which surfaces positive prerequisite chains, not blocking
+// conditions; they are still reflected in each branch's satisfied/unmet
+// status. A branch with only non-textline gates shows as already satisfiable.
+export function renderOrBranchesHtml(rootName, playedSet = getSaveProgress() || new Set()) {
+    const tl = textlines[rootName];
+    const branches = (tl && Array.isArray(tl.orBranches)) ? tl.orBranches : [];
+    if (branches.length === 0) return '';
+    const isPlayed = (n) => playedSet.has(n);
+
+    let html = `<div class="eligibility-tree">`;
+    html += `<h4 class="eligibility-tree-header">Alternative requirement branches (${branches.length})</h4>`;
+    html += `<div class="eligibility-tree-hint">Satisfy any one of these branches to unlock the dialogue</div>`;
+    html += `<div class="eligibility-list">`;
+    branches.forEach((branch, i) => {
+        html += renderBranchHtml(branch, i, branches.length, rootName, playedSet, isPlayed);
+    });
+    html += `</div></div>`;
+    return html;
+}
+
+function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
+    const satisfied = isDirectlySatisfied(branch, playedSet, rootName);
+    const icon = satisfied ? '\u2714' : '\u25CB';
+    let html = `<div class="eligibility-group${satisfied ? ' eligibility-branch-satisfied' : ''}">`;
+    html += `<div class="eligibility-group-head">`;
+    html += `<span class="eligibility-group-option-icon">${icon}</span>`;
+    html += `<span class="eligibility-group-title">Option ${index + 1} of ${total}${satisfied ? ' \u00B7 satisfied' : ''}</span>`;
+    html += `</div>`;
+    html += `<div class="eligibility-tree-container eligibility-branch-prereqs">`;
+    html += renderBranchRequirementsHtml(branch, rootName, isPlayed);
+    html += `</div></div>`;
+    return html;
+}
+
+// Render a branch's positive textline prerequisites as expandable tree
+// nodes, grouped by semantics (all / any / at-least-N).
+function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
+    const reqs = (branch && branch.requirements) || {};
+    let html = '';
+    for (const [reqType, refs] of Object.entries(reqs)) {
+        if (!Array.isArray(refs)) continue;
+        const others = refs.filter(r => typeof r === 'string' && r !== rootName);
+        if (others.length === 0) continue;
+
+        if (OR_REQ_TYPES.has(reqType)) {
+            html += `<div class="eligibility-branch-note">Any one of:</div>`;
+        } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+            html += `<div class="eligibility-branch-note">At least ${requiredCount(branch, reqType)} of:</div>`;
+        } else if (!AND_REQ_TYPES.has(reqType)) {
+            // Negative / run-count / non-textline gates aren't shown as
+            // prerequisites (they still drive the satisfied/unmet status).
+            continue;
+        }
+        for (const ref of others) html += renderRefAsTreeNode(ref, reqType, isPlayed);
+    }
+    if (!html) {
+        html += `<div class="eligibility-branch-note">No save-trackable prerequisites (gated by other conditions).</div>`;
+    }
+    return html;
+}
+
 export function renderEligibility(dialogueName) {
     const container = document.getElementById('info-content');
     if (!container) return;
@@ -484,6 +598,7 @@ export function renderEligibility(dialogueName) {
     html += `</div>`;
 
     html += renderSummaryHtml(dialogueName, chain, groups, mandatory);
+    html += renderOrBranchesHtml(dialogueName);
     html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
     html += renderTreeHtml(chain, dialogueName, groups);
 

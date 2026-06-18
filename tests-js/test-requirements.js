@@ -102,3 +102,72 @@ test('the category sets are disjoint and cover the expected fields', () => {
     assert.equal(intersect(AND_REQ_TYPES, NEGATIVE_REQ_TYPES), false);
     assert.equal(intersect(OR_REQ_TYPES, NEGATIVE_REQ_TYPES), false);
 });
+
+// --- H2 set-level orBranches (alternative requirement sets) ---
+// A textline is eligible when its base requirements hold AND at least one
+// orBranch is satisfied. Each branch is a full requirement set.
+
+const withBranches = (requirements, orBranches, otherRequirements) =>
+    ({ requirements, otherRequirements, orBranches });
+
+test('orBranches: empty base, no branch satisfied -> blocked', () => {
+    // Real shape (HadesAboutUltimateProgress02): eligible only via one of
+    // two alternative branches; neither holds on an empty save.
+    const t = withBranches({}, [
+        { requirements: { RequiredFalseTextLines: ['Zag_2'], RequiredTextLines: ['Zag'] } },
+        { requirements: { RequiredTextLines: ['Zag_3'] } },
+    ]);
+    assert.equal(isDirectlySatisfied(t, played()), false);
+    assert.equal(isDirectlySatisfied(t, played('Zag')), true);   // branch 0 holds
+    assert.equal(isDirectlySatisfied(t, played('Zag_3')), true); // branch 1 holds
+    // branch 0's negative gate is violated once Zag_2 plays, but branch 1
+    // still rescues eligibility.
+    assert.equal(isDirectlySatisfied(t, played('Zag', 'Zag_2')), false);
+    assert.equal(isDirectlySatisfied(t, played('Zag', 'Zag_2', 'Zag_3')), true);
+});
+
+test('orBranches: a branch with empty requirements is always satisfied', () => {
+    // Real shape (ArachneAboutGods02): one branch gates on a non-textline
+    // condition only, so its (textline) requirements are empty -> the OR is
+    // trivially satisfied and the dialogue stays eligible.
+    const t = withBranches({}, [
+        { requirements: { RequiredTextLines: ['ArachneAboutGods01'] } },
+        { requirements: {} },
+    ]);
+    assert.equal(isDirectlySatisfied(t, played()), true);
+});
+
+test('orBranches: a multi-line AND branch needs all of its own lines', () => {
+    // Real shape (NemesisAboutErisRelationship01): each branch requires two
+    // textlines together (count-permissive run-count field is ignored).
+    const t = withBranches({}, [
+        {
+            requirements: { MinRunsSinceAnyTextLines: ['Eris03', 'Nem01'], RequiredTextLines: ['Eris03', 'Nem01'] },
+            otherRequirements: { MinRunsSinceAnyTextLines: { Count: 1 } },
+        },
+        { requirements: { RequiredTextLines: ['Eris03_B', 'Nem01_B'] } },
+    ]);
+    assert.equal(isDirectlySatisfied(t, played('Eris03')), false);          // branch 0 half-met
+    assert.equal(isDirectlySatisfied(t, played('Eris03', 'Nem01')), true);  // branch 0 met
+    assert.equal(isDirectlySatisfied(t, played('Eris03_B', 'Nem01_B')), true); // branch 1 met
+});
+
+test('orBranches: base requirements must hold too (AND of base + any branch)', () => {
+    const t = withBranches({ RequiredTextLines: ['Base'] }, [
+        { requirements: { RequiredTextLines: ['Alt'] } },
+    ]);
+    assert.equal(isDirectlySatisfied(t, played('Alt')), false);          // base missing
+    assert.equal(isDirectlySatisfied(t, played('Base')), false);         // branch missing
+    assert.equal(isDirectlySatisfied(t, played('Base', 'Alt')), true);   // both
+});
+
+test('orBranches: count-min in a branch reads the branch otherRequirements', () => {
+    const t = withBranches({}, [
+        {
+            requirements: { RequiredMinAnyTextLines: ['A', 'B', 'C'] },
+            otherRequirements: { RequiredMinAnyTextLines: { Count: 2 } },
+        },
+    ]);
+    assert.equal(isDirectlySatisfied(t, played('A')), false);
+    assert.equal(isDirectlySatisfied(t, played('A', 'B')), true);
+});
