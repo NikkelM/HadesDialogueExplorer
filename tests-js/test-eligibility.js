@@ -95,6 +95,18 @@ test('count-min adds only the unplayed options to the chain', () => {
     assert.ok(chain.has('C3') && chain.has('C4') && chain.has('C5'));
 });
 
+test('a played AND prerequisite is a leaf: its own prerequisites are not walked (regression)', () => {
+    // ``And1`` (a direct AND prereq of Root) requires ``And2``. With ``And1``
+    // already played it is satisfied, so it is recorded (shown ticked in the
+    // tree) but its own prerequisite ``And2`` must NOT be pulled into the
+    // chain / counted as still needed.
+    const { chain, mandatory } = buildPrereqChain('Root', playedSet('And1'));
+    assert.ok(chain.has('And1'));
+    assert.equal(chain.get('And1').played, true);
+    assert.equal(chain.has('And2'), false);
+    assert.equal(mandatory.has('And2'), false);
+});
+
 test("group options are walked so their own prerequisites are reachable", () => {
     // C1's AND prerequisite is in the chain (so the tree can expand it) but
     // is NOT mandatory (only reachable through the count-min group).

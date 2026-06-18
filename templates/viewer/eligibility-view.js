@@ -60,9 +60,14 @@ export function buildPrereqChain(rootName, isPlayed = (n) => isDialoguePlayed(n)
 
             if (AND_REQ_TYPES.has(reqType)) {
                 // ALL refs are needed: each is an individual prerequisite.
+                // A ref that's already played is satisfied, so it is recorded
+                // (and shown ticked in the tree) but NOT walked - its own
+                // prerequisites are no longer needed, and walking them would
+                // pollute the "still needed" list and the summary count with
+                // deep prereqs of already-satisfied lines.
                 for (const ref of options) {
                     addToChain(ref, name, reqType, null, depth);
-                    walk(ref, depth + 1);
+                    if (!isPlayed(ref)) walk(ref, depth + 1);
                 }
             } else if (OR_REQ_TYPES.has(reqType)) {
                 // Any one suffices. If none has played yet, present all
