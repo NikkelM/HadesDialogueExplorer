@@ -338,8 +338,14 @@ export function renderOrdinalBadgeHtml(tl) {
     const haveSize = Number.isInteger(size) && size > 0;
     const label = haveSize ? `#${ord}/${size}` : `#${ord}`;
     const cluster = Array.isArray(tl.narrativePriorityClusterMembers) ? tl.narrativePriorityClusterMembers : [];
+    // The ordinal is scoped to this owner AND this dialogue type (H2's
+    // NarrativeData registry is ordered per owner-and-section), so name
+    // the type ("NPC interaction", "NPC gifting", ...) to stop the rank
+    // reading as if it ranked everything the owner ever says.
+    const typeLabel = tl.section ? (sectionKeyLabels[tl.section] || tl.section) : '';
+    const scope = typeLabel ? `among this owner's ${typeLabel} dialogues` : 'for this owner';
     const tipParts = [
-        `Narrative priority rank ${ord}${haveSize ? ` of ${size}` : ''} for this owner. Out of all eligible dialogues, the smallest numbered one will play first. If multiple dialogues have the same rank, one will be chosen at random.`,
+        `Narrative priority rank ${ord}${haveSize ? ` of ${size}` : ''} ${scope}. Out of all eligible dialogues in this group, the smallest numbered one will play first. If multiple dialogues have the same rank, one will be chosen at random.`,
     ];
     if (cluster.length) {
         tipParts.push(`Tied at the same rank with:\n${cluster.join('\n')}`);

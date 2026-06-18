@@ -278,10 +278,14 @@ test('renderOrdinalBadgeHtml renders #N/M for H2 textlines and is empty without 
     const full = renderOrdinalBadgeHtml({
         narrativePriorityOrdinal: 3,
         narrativePrioritySectionSize: 12,
+        section: 'InteractTextLineSets',
         narrativePriorityClusterMembers: ['SiblingA', 'SiblingB'],
     });
     assert.ok(full.includes('priority-ordinal'));
     assert.ok(full.includes('#3/12'));
+    // The tooltip names the dialogue type so the rank reads as scoped to
+    // this owner AND this section, not the owner's entire output.
+    assert.ok(full.includes("among this owner's Interact dialogues"));
     // Cluster members should surface inside the tooltip so the tree
     // row stays compact. User-controlled wording uses a newline-
     // separated list so each member reads on its own line.
