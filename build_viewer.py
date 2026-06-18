@@ -50,6 +50,7 @@ real ES module imports.
 """
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -253,8 +254,26 @@ def build_split(payload: dict) -> dict:
 
     css_data = build_css()
     js_data = build_js()
-    index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
     json_data = json.dumps(payload, separators=(",", ":"))
+
+    # Cache-busting: a short content hash appended to the asset URLs so a
+    # plain browser refresh always fetches a changed build instead of
+    # serving a stale cached viewer.js / viewer.css / data.json. The hash
+    # covers all three artifacts, so any change bumps the version. The same
+    # token is exposed via the ``viewer-version`` meta tag so the split-build
+    # data.json fetch (init.js) can bust its own cache too.
+    version = hashlib.sha256(
+        (js_data + css_data + json_data).encode("utf-8")
+    ).hexdigest()[:10]
+    index_html = (
+        INDEX_TEMPLATE.read_text(encoding="utf-8")
+        .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
+        .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
+        .replace(
+            '<meta name="viewer-version" content="">',
+            f'<meta name="viewer-version" content="{version}">',
+        )
+    )
 
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
     (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
@@ -295,7 +314,11 @@ def build_bundle(sizes: dict) -> None:
     ``sizes`` is taken as input rather than re-computed so the report
     line agrees with the split build's own report.
     """
-    index_html = (DIST_DIR / "index.html").read_text(encoding="utf-8")
+    # Read the *template* (not dist/index.html, which build_split has
+    # rewritten with cache-busting query strings) so the exact-match inlining
+    # below still finds the un-versioned ``viewer.css`` / ``viewer.js`` refs.
+    # A single-file bundle has nothing to cache-bust anyway.
+    index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
     viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
     viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
     json_text = (DIST_DIR / "data.json").read_text(encoding="utf-8")

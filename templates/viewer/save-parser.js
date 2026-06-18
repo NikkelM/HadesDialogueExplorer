@@ -11,6 +11,7 @@
 
 import { getActiveGame } from './data.js';
 import { isDirectlySatisfied } from './requirements.js';
+import { isUnobtainable } from './unobtainable.js';
 
 // Game version constants
 const GAME_VERSION_HADES1 = 0x10;
@@ -281,7 +282,11 @@ export function getDialogueStatus(name, textlineData) {
   if (_saveProgress.has(name)) return 'played';
   // Respect per-type requirement semantics (AND / OR / negative) rather
   // than treating every referenced line as a hard prerequisite.
-  return isDirectlySatisfied(textlineData, _saveProgress, name) ? 'eligible' : 'blocked';
+  if (isDirectlySatisfied(textlineData, _saveProgress, name)) return 'eligible';
+  // Blocked - but distinguish a *permanently* unobtainable dialogue (a
+  // required choice was taken differently, or a mutually-exclusive line has
+  // played) from one that can still be unlocked by playing more.
+  return isUnobtainable(name, _saveProgress) ? 'unobtainable' : 'blocked';
 }
 
 export function validateSaveFilename(filename) {

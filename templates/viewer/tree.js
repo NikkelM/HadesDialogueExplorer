@@ -200,6 +200,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             badge.className = `save-badge ${status}`;
             badge.dataset.tooltip = status === 'played' ? 'Played in loaded save'
                 : status === 'eligible' ? 'Eligible to play (all requirements met)'
+                : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
                 : 'Blocked (missing requirements)';
             label.appendChild(badge);
         }

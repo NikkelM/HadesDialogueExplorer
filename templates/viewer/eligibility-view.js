@@ -14,6 +14,7 @@ import { textlines, speakers } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass } from './utilities.js';
 import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed, getDialogueStatus } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, isDirectlySatisfied } from './requirements.js';
+import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -186,30 +187,53 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
     return { total, played, stillNeeded: total - played };
 }
 
+// Render the specific locks behind an "unobtainable" verdict - negative gates
+// whose line has played, and choices the player took differently - each
+// linking to the dialogue involved.
+function renderUnobtainableReasonsHtml(rootName, playedSet) {
+    const reasons = unobtainableReasons(rootName, playedSet);
+    if (reasons.length === 0) return '';
+    const ref = (name) => `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`;
+    let html = `<ul class="eligibility-unobtainable-reasons">`;
+    for (const r of reasons) {
+        if (r.kind === 'choice') {
+            html += `<li>Needs the "<strong>${escapeHtml(r.requiredChoice)}</strong>" choice in ${ref(r.parent)}`
+                + ` \u2014 you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`;
+        } else if (r.kind === 'negative') {
+            html += `<li>${ref(r.blocker)} has already played, but this requires it <strong>not</strong> to have.</li>`;
+        }
+    }
+    html += `</ul>`;
+    return html;
+}
+
 function renderSummaryHtml(rootName, chain, groups, mandatory) {
     const { total, played, stillNeeded } = summarizePrereqs(chain, groups, mandatory, rootName);
     const rootPlayed = isDialoguePlayed(rootName) === true;
+    const rootTl = textlines[rootName];
+    const playedSet = getSaveProgress() || new Set();
+    // The tracer walks only textline prerequisites (the AND/OR/count chain);
+    // an H2 dialogue can also be gated by set-level ``orBranches`` the chain
+    // doesn't enumerate, so confirm direct eligibility against the same
+    // shared check the save badge uses.
+    const directlyEligible = !rootPlayed && isDirectlySatisfied(rootTl, playedSet, rootName);
 
     let html = `<div class="eligibility-summary">`;
 
     if (rootPlayed) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
         html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.</div>`;
-    } else if (stillNeeded === 0) {
-        // The tracer walks only textline prerequisites (the AND/OR/count
-        // chain). An H2 dialogue can also be gated by set-level ``orBranches``
-        // (alternative requirement sets) the chain doesn't enumerate, so
-        // confirm direct eligibility against the same shared check the save
-        // badge uses before claiming the dialogue is eligible.
-        const rootTl = textlines[rootName];
-        const playedSet = getSaveProgress() || new Set();
-        if (isDirectlySatisfied(rootTl, playedSet, rootName)) {
-            html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
-            html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
-        } else {
-            html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
-            html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.</div>`;
-        }
+    } else if (directlyEligible) {
+        html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
+        html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+    } else if (isUnobtainable(rootName, playedSet)) {
+        html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
+        html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
+        html += renderUnobtainableReasonsHtml(rootName, playedSet);
+    } else if (total === 0) {
+        // Blocked, but gated entirely by alternative branches (no flat chain).
+        html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
+        html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.</div>`;
     } else {
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
         html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.</div>`;
@@ -422,7 +446,8 @@ function renderNodeSaveBadgeHtml(name, tl) {
     if (!status) return '';
     const tip = status === 'played' ? 'Played in loaded save'
         : status === 'eligible' ? 'Eligible to play (all requirements met)'
-            : 'Blocked (missing requirements)';
+            : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
+                : 'Blocked (missing requirements)';
     return `<span class="save-badge ${status}" title="${escapeHtml(tip)}"></span>`;
 }
 

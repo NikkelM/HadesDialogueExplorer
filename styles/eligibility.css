@@ -51,6 +51,18 @@
     color: #90a4ae;
 }
 
+.eligibility-status.eligibility-unobtainable {
+    color: #e57373;
+}
+
+.eligibility-unobtainable-reasons {
+    margin: 0.2rem 0 0;
+    padding-left: 1.2rem;
+    font-size: 0.82rem;
+    color: #c8d0d8;
+    line-height: 1.5;
+}
+
 .eligibility-detail {
     font-size: 0.85rem;
     color: var(--text-muted, #bbb);

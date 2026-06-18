@@ -67,7 +67,12 @@ async function boot() {
         if (inline) {
             data = JSON.parse(inline.textContent);
         } else {
-            const r = await fetch('data.json');
+            // Match the cache-busting version on the asset URLs (set by
+            // build_viewer.py via the viewer-version meta tag) so a stale
+            // data.json is never served after a rebuild.
+            const meta = document.querySelector('meta[name="viewer-version"]');
+            const v = meta && meta.content ? '?v=' + encodeURIComponent(meta.content) : '';
+            const r = await fetch('data.json' + v);
             if (!r.ok) {
                 throw new Error('HTTP ' + r.status + ' fetching data.json');
             }

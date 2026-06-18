@@ -94,6 +94,10 @@
     background: #78909c;
 }
 
+.save-badge.unobtainable {
+    background: #e57373;
+}
+
 /* Detail panel save progress indicator */
 
 .save-progress-pill {
@@ -124,6 +128,12 @@
     background: #1e2a30;
     color: #90a4ae;
     border: 1px solid #2a3a40;
+}
+
+.save-progress-pill.unobtainable {
+    background: #2e1a1a;
+    color: #e57373;
+    border: 1px solid #4a2a2a;
 }
 
 .save-progress-pill.clickable {

@@ -11,6 +11,7 @@ import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
 import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml } from '../templates/viewer/eligibility-view.js';
+import { isUnobtainable, unobtainableReasons } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
     return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
@@ -200,6 +201,97 @@ describe('renderOrBranchesHtml', () => {
         assert.ok(html.includes('tree-node tree-played'), 'played lines render with the played class');
         // Branch 2 stays unmet (neither of its lines played).
         assert.ok(!/Option 2 of 3 \u00b7 satisfied/.test(html), 'branch 2 must stay unmet');
+    });
+});
+
+
+// --- Permanently-unobtainable detection ---
+// Once the played set locks the player out (a choice taken differently, or a
+// mutually-exclusive line played) a dialogue can never become eligible.
+
+describe('isUnobtainable', () => {
+    const tl = (requirements, extra = {}) => ({
+        owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, ...extra,
+    });
+    const choiceVariant = (parent, choiceText) => tl(
+        { RequiredTextLines: [parent] },
+        { isSynthetic: true, parentTextline: parent, choiceText },
+    );
+
+    before(() => {
+        loadData({
+            textlines: {
+                // Choice dialogue P with two mutually-exclusive variants.
+                P: tl({}),
+                PChoice_A: choiceVariant('P', 'Choice_A'),
+                PChoice_B: choiceVariant('P', 'Choice_B'),
+                // Gated on the player having chosen A.
+                NeedsChoiceA: tl({ RequiredAnyTextLines: ['PChoice_A'] }),
+                // Transitively gated on NeedsChoiceA.
+                NeedsChoiceAIndirect: tl({ RequiredTextLines: ['NeedsChoiceA'] }),
+                // Mutually-exclusive _A / _B pair (explicit negative gates).
+                VariantA: tl({ RequiredFalseTextLines: ['VariantB'] }),
+                VariantB: tl({ RequiredFalseTextLines: ['VariantA'] }),
+                // Plain blocked-but-obtainable dialogue.
+                JustBlocked: tl({ RequiredTextLines: ['NeverPlayed'] }),
+                NeverPlayed: tl({}),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+    });
+
+    test('a required choice is unobtainable once a different choice was taken', () => {
+        assert.equal(isUnobtainable('NeedsChoiceA', new Set(['P', 'PChoice_B'])), true);
+        // The locked choice variant itself is unobtainable.
+        assert.equal(isUnobtainable('PChoice_A', new Set(['P', 'PChoice_B'])), true);
+    });
+
+    test('the chosen path is obtainable (not locked)', () => {
+        // Player chose A: NeedsChoiceA is satisfiable, not unobtainable.
+        assert.equal(isUnobtainable('NeedsChoiceA', new Set(['P', 'PChoice_A'])), false);
+        // No choice recorded yet: still obtainable.
+        assert.equal(isUnobtainable('NeedsChoiceA', new Set(['P'])), false);
+    });
+
+    test('choice lock propagates transitively', () => {
+        assert.equal(isUnobtainable('NeedsChoiceAIndirect', new Set(['P', 'PChoice_B'])), true);
+    });
+
+    test('a negative gate on an already-played line is permanently violated', () => {
+        assert.equal(isUnobtainable('VariantA', new Set(['VariantB'])), true);
+        // While the forbidden line is unplayed, the dialogue is still obtainable.
+        assert.equal(isUnobtainable('VariantA', new Set()), false);
+    });
+
+    test('a normally-blocked dialogue is not unobtainable', () => {
+        assert.equal(isUnobtainable('JustBlocked', new Set()), false);
+    });
+
+    test('a played dialogue is never unobtainable', () => {
+        assert.equal(isUnobtainable('NeedsChoiceA', new Set(['NeedsChoiceA', 'PChoice_B'])), false);
+    });
+
+    test('reasons: a different choice taken is reported with the parent + choices', () => {
+        const reasons = unobtainableReasons('NeedsChoiceA', new Set(['P', 'PChoice_B']));
+        assert.deepEqual(reasons, [
+            { kind: 'choice', parent: 'P', requiredChoice: 'Choice_A', taken: ['Choice_B'] },
+        ]);
+    });
+
+    test('reasons: choice lock is reported transitively', () => {
+        const reasons = unobtainableReasons('NeedsChoiceAIndirect', new Set(['P', 'PChoice_B']));
+        assert.deepEqual(reasons, [
+            { kind: 'choice', parent: 'P', requiredChoice: 'Choice_A', taken: ['Choice_B'] },
+        ]);
+    });
+
+    test('reasons: a violated negative gate names the blocking line', () => {
+        const reasons = unobtainableReasons('VariantA', new Set(['VariantB']));
+        assert.deepEqual(reasons, [{ kind: 'negative', blocker: 'VariantB' }]);
+    });
+
+    test('reasons: empty for an obtainable dialogue', () => {
+        assert.deepEqual(unobtainableReasons('JustBlocked', new Set()), []);
     });
 });
 

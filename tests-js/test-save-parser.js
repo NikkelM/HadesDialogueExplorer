@@ -23,6 +23,7 @@ import {
     getSaveRuns,
     clearSaveProgress,
 } from '../templates/viewer/save-parser.js';
+import { loadData } from '../templates/viewer/data.js';
 
 // Build an LZ4 block of `n` literal bytes (0,1,2,... mod 256), no matches.
 function literalBlock(n) {
@@ -299,7 +300,8 @@ test('folds H2 TextLinesChoiceRecord into the played set as synthetic variants',
     );
 });
 
-test('clearSaveProgress resets the parsed state', () => {    parseSaveFile(buildSGB1({
+test('clearSaveProgress resets the parsed state', () => {
+    parseSaveFile(buildSGB1({
         gameVersion: GAME_VERSION_HADES1,
         luaState: { TextLinesRecord: { X01: true } },
     }));
@@ -310,4 +312,18 @@ test('clearSaveProgress resets the parsed state', () => {    parseSaveFile(build
     // With no save loaded, status queries return null (unknown).
     assert.equal(isDialoguePlayed('X01'), null);
     assert.equal(getDialogueStatus('X01', { requirements: {} }), null);
+});
+
+test('getDialogueStatus reports a permanently-locked dialogue as unobtainable', () => {
+    clearSaveProgress();
+    // ``Locked`` must NOT have played ``Foe``; once ``Foe`` is played it can
+    // never become eligible again (the mutually-exclusive pattern).
+    const locked = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLines: ['Foe'] } };
+    loadData({ textlines: { Locked: locked, Foe: { owner: 'NPC_Test_01', requirements: {} } } });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true } },
+    }));
+    assert.equal(getDialogueStatus('Locked', locked), 'unobtainable');
+    clearSaveProgress();
 });
