@@ -12,6 +12,24 @@ import {
 } from './utilities.js';
 import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.js';
 
+
+// Wire the collapse/expand toggle shared by every static sub-tree header
+// (OR groups, count-min groups, GameData groups, alternates): clicking the
+// header flips the `.expanded` class on its children box and swaps the
+// chevron glyph (down = open, right = closed). Centralised so the
+// behaviour can't drift between the otherwise-identical group renderers.
+// The main lazy-loading dependency tree (tree.js) keeps its own handler
+// because it also triggers on-demand child rendering and stops event
+// propagation to the row.
+function attachCollapseToggle(header, toggle, childrenBox) {
+    header.addEventListener('click', () => {
+        const isExpanded = childrenBox.classList.contains('expanded');
+        childrenBox.classList.toggle('expanded');
+        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
+        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
+    });
+}
+
 export function renderUpstream(name) {
     const container = document.getElementById('upstream-content');
     container.innerHTML = '';
@@ -240,12 +258,7 @@ export function createDownstreamOrSection(count) {
     const childrenBox = document.createElement('div');
     childrenBox.className = 'or-downstream-children expanded';
 
-    header.addEventListener('click', () => {
-        const isExpanded = childrenBox.classList.contains('expanded');
-        childrenBox.classList.toggle('expanded');
-        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
-    });
+    attachCollapseToggle(header, toggle, childrenBox);
 
     box.appendChild(header);
     box.appendChild(childrenBox);
@@ -302,12 +315,7 @@ export function createOrGroupBox(total) {
     const childrenBox = document.createElement('div');
     childrenBox.className = 'or-group-children expanded';
 
-    header.addEventListener('click', () => {
-        const isExpanded = childrenBox.classList.contains('expanded');
-        childrenBox.classList.toggle('expanded');
-        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
-    });
+    attachCollapseToggle(header, toggle, childrenBox);
 
     box.appendChild(header);
     box.appendChild(childrenBox);
@@ -342,12 +350,7 @@ export function createOrBranchBox(index, total, count) {
     const childrenBox = document.createElement('div');
     childrenBox.className = 'or-branch-box-children expanded';
 
-    header.addEventListener('click', () => {
-        const isExpanded = childrenBox.classList.contains('expanded');
-        childrenBox.classList.toggle('expanded');
-        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
-    });
+    attachCollapseToggle(header, toggle, childrenBox);
 
     box.appendChild(header);
     box.appendChild(childrenBox);
@@ -402,12 +405,7 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
     const childrenBox = document.createElement('div');
     childrenBox.className = 'req-type-group-children expanded';
 
-    header.addEventListener('click', () => {
-        const isExpanded = childrenBox.classList.contains('expanded');
-        childrenBox.classList.toggle('expanded');
-        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
-    });
+    attachCollapseToggle(header, toggle, childrenBox);
 
     box.appendChild(header);
     box.appendChild(childrenBox);
@@ -547,12 +545,7 @@ export function createGameDataGroup(groupName, edgeType, count) {
     const childrenBox = document.createElement('div');
     childrenBox.className = 'gamedata-group-children expanded';
 
-    header.addEventListener('click', () => {
-        const isExpanded = childrenBox.classList.contains('expanded');
-        childrenBox.classList.toggle('expanded');
-        toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
-    });
+    attachCollapseToggle(header, toggle, childrenBox);
 
     box.appendChild(header);
     box.appendChild(childrenBox);
