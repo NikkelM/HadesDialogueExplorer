@@ -100,6 +100,22 @@ ALLOWED_NAME_COLLISIONS = {
     # ``NPC_Hermes_01`` as ``Hermes (Field)``. No collision under
     # this map; left here as a reminder that the two are intentionally
     # split. (Removed from the collision set; kept as documentation.)
+    # Boon-offer ``<God>Upgrade`` owners share the bare god name with
+    # their ``NPC_<God>_01`` form so the speaker overview groups the
+    # boon dialogue under the god (mirrors H1). ``TrialUpgrade`` /
+    # ``SpellDrop`` are the two non-"<God>Upgrade" boon owners, grouped
+    # with their granting deity (Chaos / Selene).
+    "Aphrodite": {"NPC_Aphrodite_01", "AphroditeUpgrade"},
+    "Apollo": {"NPC_Apollo_01", "ApolloUpgrade"},
+    "Ares": {"NPC_Ares_01", "AresUpgrade"},
+    "Demeter": {"NPC_Demeter_01", "DemeterUpgrade"},
+    "Hephaestus": {"NPC_Hephaestus_01", "HephaestusUpgrade"},
+    "Hera": {"NPC_Hera_01", "HeraUpgrade"},
+    "Hestia": {"NPC_Hestia_01", "HestiaUpgrade"},
+    "Poseidon": {"NPC_Poseidon_01", "PoseidonUpgrade"},
+    "Zeus": {"NPC_Zeus_01", "ZeusUpgrade"},
+    "Chaos": {"NPC_Chaos_01", "TrialUpgrade"},
+    "Selene": {"NPC_Selene_01", "SpellDrop"},
 }
 
 

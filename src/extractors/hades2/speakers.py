@@ -261,6 +261,33 @@ HADES2_SPEAKERS = {
     "NPC_Zeus_01":          {"name": "Zeus",        "description": "King of the Olympians"},
     "NPC_Zeus_Story_01":    {"name": "Zeus (Olympus)", "description": "King of the Olympians"},
 
+    # Boon-offer owners (LootData ``<God>Upgrade`` containers). Each owns
+    # the god's boon-pickup / interaction dialogue (the bulk of an
+    # Olympian's lines - several gods have no hub-NPC presence in H2, so
+    # ALL their dialogue lives here). The owner key is not itself a
+    # canonical speaker - cue lines default to the god's ``NPC_<God>_01``
+    # id via :data:`src.extractors.hades2.loot_data.LOOT_DEFAULT_SPEAKERS`
+    # - but it still needs the god's bare display name so the speaker
+    # overview shows "Aphrodite" (not "AphroditeUpgrade") and groups the
+    # owner with ``NPC_<God>_01``. Mirrors H1, which registers the same
+    # ``<God>Upgrade`` owners under the bare god name (see
+    # :mod:`src.extractors.hades1.speakers`), and the ``HermesUpgrade``
+    # entry above. Descriptions match the corresponding ``NPC_<God>_01``
+    # entry so the merged group reads consistently. ``TrialUpgrade``
+    # (Chaos's Trial boon) and ``SpellDrop`` (Selene's Hex spells) are the
+    # two non-"<God>Upgrade" owners, named after their granting deity.
+    "AphroditeUpgrade":     {"name": "Aphrodite",   "description": "Goddess of Love"},
+    "ApolloUpgrade":        {"name": "Apollo",      "description": "God of Light"},
+    "AresUpgrade":          {"name": "Ares",        "description": "God of War"},
+    "DemeterUpgrade":       {"name": "Demeter",     "description": "Goddess of Seasons"},
+    "HephaestusUpgrade":    {"name": "Hephaestus",  "description": "God of the Forge"},
+    "HeraUpgrade":          {"name": "Hera",        "description": "Queen of the Olympians"},
+    "HestiaUpgrade":        {"name": "Hestia",      "description": "Goddess of the Hearth"},
+    "PoseidonUpgrade":      {"name": "Poseidon",    "description": "God of the Sea"},
+    "ZeusUpgrade":          {"name": "Zeus",        "description": "King of the Olympians"},
+    "TrialUpgrade":         {"name": "Chaos",       "description": "Primordial Originator"},
+    "SpellDrop":            {"name": "Selene",      "description": "Moon Incarnate"},
+
     # Boss-fight speaker entries. The H2 ``EnemyData_*.lua`` files use
     # bare character names as the boss container key
     # (``UnitSetData.Hecate.Hecate`` etc.), and the EnemyData extractor
