@@ -3,9 +3,10 @@
  *
  * A loaded save's played set only ever grows, so some dialogues can never
  * become eligible again once the player has locked themselves out:
- *   * a negative gate (RequiredFalse*) on a line that is already played - it
- *     can never be un-played (the mutually-exclusive _A / _B variant
- *     pattern); and
+ *   * a global negative gate (RequiredFalseTextLines) on a line that is
+ *     already played - it can never be un-played (the mutually-exclusive
+ *     _A / _B variant pattern). The run-scoped / queued negative variants
+ *     are transient (a fresh run clears them), so they are not locks; and
  *   * a required choice variant <parent><ChoiceA> once the player recorded a
  *     different choice in <parent> (a choice dialogue records exactly one
  *     option, so the alternatives can never be obtained).
@@ -21,7 +22,7 @@
  */
 
 import { textlines } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, SAVE_EVALUABLE_REQ_TYPES, requiredCount } from './requirements.js';
 
 let _unobtainablePlayedSet = null;
 let _unobtainableTextlines = null;
@@ -94,8 +95,12 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
     for (const [reqType, refs] of Object.entries(requirements)) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== hostName);
-        if (NEGATIVE_REQ_TYPES.has(reqType)) {
-            // Must NOT have played these - but one already has, permanently.
+        if (NEGATIVE_REQ_TYPES.has(reqType) && SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
+            // Must NOT have played these (ever) - but one already has, and a
+            // played line can never be un-played, so this is permanent. Only
+            // the *global* negative (RequiredFalseTextLines) is a permanent
+            // lock: the run-scoped / queued variants are transient (a future
+            // run starts fresh), so a cumulative save can't call them locked.
             if (others.some(r => playedSet.has(r))) return true;
         } else if (AND_REQ_TYPES.has(reqType)) {
             if (others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack))) return true;
@@ -171,7 +176,7 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
     for (const [reqType, refs] of Object.entries(requirements)) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== hostName);
-        if (NEGATIVE_REQ_TYPES.has(reqType)) {
+        if (NEGATIVE_REQ_TYPES.has(reqType) && SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
             for (const r of others) {
                 if (playedSet.has(r)) reasons.push({ kind: 'negative', blocker: r });
             }

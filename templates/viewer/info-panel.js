@@ -25,6 +25,7 @@ import {
     renderReqItem,
     renderChoiceNameHtml,
     reqTypeOrderIndex,
+    saveStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
@@ -604,11 +605,18 @@ function renderSaveProgressPillHtml(name, tl) {
     if (!getSaveProgress() || !saveMatchesActiveGame()) return '';
     const status = getDialogueStatus(name, tl);
     if (!status) return '';
-    const labels = { played: '\u2714 Played', eligible: '\u25CB Eligible', blocked: '\u2022 Blocked', unobtainable: '\u2298 Unobtainable' };
+    const labels = {
+        played: '\u2714 Played',
+        eligible: '\u25CB Eligible',
+        blocked: '\u2022 Blocked',
+        indeterminate: '? Indeterminate',
+        unobtainable: '\u2298 Unobtainable',
+    };
     const label = labels[status] || status;
     // Every status opens the eligibility tracer for this dialogue: blocked
     // shows what's still missing, eligible/played show the satisfied chain.
-    return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" title="Open eligibility tracer">${label}</a>`;
+    const tip = `${saveStatusTooltip(status)} \u00B7 click to open the eligibility tracer`;
+    return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" title="${escapeHtml(tip)}">${label}</a>`;
 }
 
 // Prominent, labelled entry point to the eligibility tracer for this

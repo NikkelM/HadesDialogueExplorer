@@ -22,6 +22,7 @@ import {
     reqTypeTitleText,
     unresolvedCategoryFor,
     renderPrimaryPriorityBadgeHtml,
+    saveStatusTooltip,
 } from './utilities.js';
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
@@ -201,10 +202,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         if (status) {
             const badge = document.createElement('span');
             badge.className = `save-badge ${status}`;
-            badge.dataset.tooltip = status === 'played' ? 'Played in loaded save'
-                : status === 'eligible' ? 'Eligible to play (all requirements met)'
-                : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
-                : 'Blocked (missing requirements)';
+            badge.dataset.tooltip = saveStatusTooltip(status);
             label.appendChild(badge);
         }
     }

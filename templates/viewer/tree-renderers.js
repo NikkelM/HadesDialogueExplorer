@@ -10,7 +10,37 @@ import {
     formatReqType,
     reqTypeTitleText,
 } from './utilities.js';
+import { reqGroupStatus, requirementSetStatus } from './requirements.js';
+import { getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.js';
+
+
+// The loaded save's played set, but only when it applies to the active
+// game; otherwise null. Group-satisfaction verdicts render only when this
+// is non-null (upstream tree only - a group's "satisfied?" question is
+// meaningless for downstream dependents).
+function activePlayedSet() {
+    return (getSaveProgress() && saveMatchesActiveGame()) ? getSaveProgress() : null;
+}
+
+// Build the satisfaction verdict dot for a group header. ``status`` is
+// 'met' | 'unmet' | 'unknown' (anything else - e.g. null when no save is
+// loaded - renders no dot). The dot mirrors the per-row save badge's
+// visual language: green when the group's condition is met, grey when it
+// is not, and the indeterminate periwinkle when the field can't be
+// resolved from a save (per-run / per-room / queued / run-count scoping).
+// Placed right after the chevron so the verdicts line up down the left
+// edge of the tree.
+function makeGroupStatusBadge(status) {
+    if (status !== 'met' && status !== 'unmet' && status !== 'unknown') return null;
+    const badge = document.createElement('span');
+    badge.className = `group-status group-status-${status}`;
+    badge.dataset.tooltip =
+        status === 'met' ? 'Satisfied by the loaded save: every line this group needs has played (or, for a "must not have played" gate, none have).'
+            : status === 'unmet' ? 'Not satisfied by the loaded save: this group\u2019s condition is not met yet.'
+                : 'Can\u2019t be determined from a save: this requirement gates on per-run / per-room / queued state or run counts the save doesn\u2019t track.';
+    return badge;
+}
 
 
 // Wire the collapse/expand toggle shared by every static sub-tree header
@@ -174,7 +204,19 @@ function appendByReqTypeGroups(container, kids, direction, ancestorPath, parentN
         let j = i;
         while (j < sorted.length && sorted[j].edgeType === edgeType && sorted[j]._count === groupCount) j++;
         const chunk = sorted.slice(i, j);
-        const box = createReqTypeGroup(edgeType, chunk.length, groupCount, direction);
+        // Verdict for this requirement group against the loaded save
+        // (upstream only - downstream groups list dependents, not
+        // prerequisites, so "satisfied?" has no meaning there).
+        let status = null;
+        if (direction === 'upstream') {
+            const played = activePlayedSet();
+            if (played) {
+                status = reqGroupStatus(
+                    edgeType, chunk.map(c => c.name), played,
+                    groupCount == null ? 1 : groupCount, parentName);
+            }
+        }
+        const box = createReqTypeGroup(edgeType, chunk.length, groupCount, direction, status);
         const groupChildren = box.querySelector('.req-type-group-children');
         appendGroupedChildren(groupChildren, chunk, direction, ancestorPath);
         container.appendChild(box);
@@ -201,12 +243,35 @@ function appendOrAlternatives(container, orKids, direction, ancestorPath, parent
     }
     const total = parentOrBranches.length || (orKids[0] && orKids[0].orBranchTotal) || 0;
     if (total === 0) return;
-    const groupBox = createOrGroupBox(total);
+    // Verdicts for the OR group + each branch against the loaded save. A
+    // branch reuses ``requirementSetStatus`` (met / unmet / unknown - the
+    // last when it carries a save-unverifiable field). The OR group is met
+    // when any branch is met, unmet only when every branch is unmet, and
+    // unknown otherwise (a branch we can't confirm, none met).
+    const played = activePlayedSet();
+    const branchStatusOf = (bi) => {
+        const b = parentOrBranches[bi - 1];
+        return (played && b)
+            ? requirementSetStatus(b.requirements, b.otherRequirements, played, parentName)
+            : null;
+    };
+    let groupStatus = null;
+    if (played && parentOrBranches.length > 0) {
+        let anyMet = false;
+        let anyUnknown = false;
+        for (let bi = 1; bi <= total; bi++) {
+            const st = branchStatusOf(bi);
+            if (st === 'met') { anyMet = true; break; }
+            if (st !== 'unmet') anyUnknown = true;
+        }
+        groupStatus = anyMet ? 'met' : (anyUnknown ? 'unknown' : 'unmet');
+    }
+    const groupBox = createOrGroupBox(total, groupStatus);
     const groupChildren = groupBox.querySelector('.or-group-children');
     for (let bi = 1; bi <= total; bi++) {
         const branchKids = byBranch.get(bi);
         if (branchKids && branchKids.length > 0) {
-            const branchBox = createOrBranchBox(bi, total, branchKids.length);
+            const branchBox = createOrBranchBox(bi, total, branchKids.length, branchStatusOf(bi));
             const branchChildren = branchBox.querySelector('.or-branch-box-children');
             appendByReqTypeGroups(branchChildren, branchKids, direction, ancestorPath, parentName);
             groupChildren.appendChild(branchBox);
@@ -294,7 +359,7 @@ export function createOrBranchPlaceholder(index, total) {
 // block. Mirrors ``createReqTypeGroup`` structure (header + children
 // container with shared expand / collapse handler) so the same
 // tooltip / scroll-into-view affordances apply.
-export function createOrGroupBox(total) {
+export function createOrGroupBox(total, status = null) {
     const box = document.createElement('div');
     box.className = 'or-group-box';
 
@@ -305,6 +370,9 @@ export function createOrGroupBox(total) {
     toggle.className = 'toggle';
     toggle.textContent = '\u25BC';
     header.appendChild(toggle);
+
+    const statusBadge = makeGroupStatusBadge(status);
+    if (statusBadge) header.appendChild(statusBadge);
 
     const label = document.createElement('span');
     label.className = 'or-group-label';
@@ -325,7 +393,7 @@ export function createOrGroupBox(total) {
 // One alternative inside an OR group. ``count`` is the number of
 // textline children inside this branch (the per-req-type grouping
 // below shows them broken down by type).
-export function createOrBranchBox(index, total, count) {
+export function createOrBranchBox(index, total, count, status = null) {
     const box = document.createElement('div');
     box.className = 'or-branch-box';
 
@@ -336,6 +404,9 @@ export function createOrBranchBox(index, total, count) {
     toggle.className = 'toggle';
     toggle.textContent = '\u25BC';
     header.appendChild(toggle);
+
+    const statusBadge = makeGroupStatusBadge(status);
+    if (statusBadge) header.appendChild(statusBadge);
 
     const label = document.createElement('span');
     label.className = 'or-branch-box-label';
@@ -357,7 +428,7 @@ export function createOrBranchBox(index, total, count) {
     return box;
 }
 
-export function createReqTypeGroup(edgeType, count, requirementCount, direction = 'upstream') {
+export function createReqTypeGroup(edgeType, count, requirementCount, direction = 'upstream', status = null) {
     const box = document.createElement('div');
     box.className = `req-type-group req-type-${edgeType}`;
 
@@ -368,6 +439,9 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
     toggle.className = 'toggle';
     toggle.textContent = '\u25BC';
     header.appendChild(toggle);
+
+    const statusBadge = makeGroupStatusBadge(status);
+    if (statusBadge) header.appendChild(statusBadge);
 
     const edgeChip = document.createElement('span');
     edgeChip.className = `edge-type ${getEdgeClass(edgeType)}`;

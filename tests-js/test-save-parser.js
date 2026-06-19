@@ -331,9 +331,33 @@ test('getDialogueStatus reports a permanently-locked dialogue as unobtainable', 
     clearSaveProgress();
 });
 
+test('getDialogueStatus reports indeterminate (not blocked/unobtainable) for save-unverifiable gates', () => {
+    clearSaveProgress();
+    const scopedNeg = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLinesThisRun: ['Foe'] } };
+    const scopedMix = { owner: 'NPC_Test_01', requirements: { RequiredTextLines: ['Foe'], RequiredFalseTextLinesThisRun: ['Foe'] } };
+    const runGated = { owner: 'NPC_Test_01', requirements: { MinRunsSinceAnyTextLines: ['Foe'] } };
+    loadData({
+        textlines: {
+            ScopedNeg: scopedNeg, ScopedMix: scopedMix, RunGated: runGated,
+            Foe: { owner: 'NPC_Test_01', requirements: {} },
+        },
+    });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true } },
+    }));
+    // Foe is in the cumulative save, but "this run" scoping is transient, so
+    // a run-scoped negative is indeterminate - NOT a permanent lock (that
+    // distinction is reserved for the global RequiredFalseTextLines).
+    assert.equal(getDialogueStatus('ScopedNeg', scopedNeg), 'indeterminate');
+    // Global requirement satisfied + a run-scoped gate remaining -> can't tell.
+    assert.equal(getDialogueStatus('ScopedMix', scopedMix), 'indeterminate');
+    // A run-count gate alone -> indeterminate.
+    assert.equal(getDialogueStatus('RunGated', runGated), 'indeterminate');
+    clearSaveProgress();
+});
 
-// --- Local persistence (localStorage cache) ---
-//
+
 // save-parser.js caches the derived save state so it survives a reload.
 // Node has no localStorage, so these tests install a minimal in-memory
 // stand-in on ``globalThis`` and remove it afterwards. The parser reads

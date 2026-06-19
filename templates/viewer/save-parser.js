@@ -10,7 +10,7 @@
  */
 
 import { getActiveGame } from './data.js';
-import { isDirectlySatisfied } from './requirements.js';
+import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
 // Game version constants
@@ -380,11 +380,16 @@ export function getDialogueStatus(name, textlineData) {
   if (_saveProgress.has(name)) return 'played';
   // Respect per-type requirement semantics (AND / OR / negative) rather
   // than treating every referenced line as a hard prerequisite.
-  if (isDirectlySatisfied(textlineData, _saveProgress, name)) return 'eligible';
-  // Blocked - but distinguish a *permanently* unobtainable dialogue (a
-  // required choice was taken differently, or a mutually-exclusive line has
-  // played) from one that can still be unlocked by playing more.
-  return isUnobtainable(name, _saveProgress) ? 'unobtainable' : 'blocked';
+  const sat = directSatisfaction(textlineData, _saveProgress, name);
+  if (sat === 'met') return 'eligible';
+  // A permanent structural lock (a required choice was taken differently,
+  // or a mutually-exclusive line has played) is definitive, so it wins
+  // over an unverifiable verdict.
+  if (isUnobtainable(name, _saveProgress)) return 'unobtainable';
+  // 'unknown' -> the dialogue gates on something a save can't resolve
+  // (per-run / per-room / queued state, or run counts), so we can't say
+  // whether it's eligible or blocked: surface it as indeterminate.
+  return sat === 'unknown' ? 'indeterminate' : 'blocked';
 }
 
 export function validateSaveFilename(filename) {

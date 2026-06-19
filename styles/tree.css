@@ -236,6 +236,22 @@
     cursor: pointer;
     border-radius: 3px;
 }
+/* Group-satisfaction verdict dot (upstream tree, shown only when a save
+   is loaded). Green = the group's requirement condition is met by the
+   played set; grey = not met; periwinkle = can't be determined from a
+   save (per-run / queued / run-count scoping). Mirrors the per-row
+   ``.save-badge`` dot so the verdicts read as a column down the left edge
+   of the tree. */
+.group-status {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.group-status-met { background: #4caf50; }
+.group-status-unmet { background: #78909c; }
+.group-status-unknown { background: #8b95d6; }
 .req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
 .req-type-group-header .toggle {
     width: 12px;

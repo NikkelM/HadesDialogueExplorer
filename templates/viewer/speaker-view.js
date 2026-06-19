@@ -85,11 +85,12 @@ function filterPassesBucket(bucket, filter) {
 // collapses to 'all': the chips don't render and the filter is a no-op,
 // so a shared ``eligibility=`` URL never lands the viewer on an empty
 // list before a save is loaded.
-const _ELIGIBILITY_BUCKETS = ['eligible', 'blocked', 'played', 'unobtainable'];
+const _ELIGIBILITY_BUCKETS = ['eligible', 'blocked', 'indeterminate', 'played', 'unobtainable'];
 const _ELIGIBILITY_LABELS = {
     played: 'Played',
     eligible: 'Eligible',
     blocked: 'Blocked',
+    indeterminate: 'Indeterminate',
     unobtainable: 'Unobtainable',
 };
 

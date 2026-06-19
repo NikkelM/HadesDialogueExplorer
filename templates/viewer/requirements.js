@@ -51,6 +51,21 @@ export const COUNT_MIN_REQ_TYPES = new Set([
     'RequiredMinAnyTextLines',
 ]);
 
+// The requirement fields whose verdict can be determined from a save's
+// played set. The save's TextLinesRecord is a *cumulative* "ever played"
+// record: it carries no per-run / per-room scoping and no run counts. So
+// only the global, history-wide fields are evaluable - the run-scoped
+// (``*ThisRun`` / ``*LastRun`` / ``*ThisRoom``), queued (``*Queued*``)
+// and run-count (``Min/MaxRunsSince*``, ``RequiredMaxAny*``) variants
+// cannot be checked and get no satisfaction verdict in the tree.
+export const SAVE_EVALUABLE_REQ_TYPES = new Set([
+    'RequiredTextLines',
+    'RequiredAnyTextLines',
+    'RequiredAnyOtherTextLines',
+    'RequiredFalseTextLines',
+    'RequiredMinAnyTextLines',
+]);
+
 /**
  * The ``Count`` parameter of a count-based requirement field (how many of
  * the listed lines must have played), read from an ``otherRequirements``
@@ -70,62 +85,118 @@ export function requiredCount(textlineData, reqType) {
 }
 
 /**
- * Return true if a single requirement set (a textline's base requirements,
- * or one H2 ``orBranches`` alternative) is satisfied by ``playedSet``.
- *
- * Per category: AND fields need all refs played, OR fields need at least
- * one, NEGATIVE fields need none, and COUNT_MIN fields need at least their
- * ``Count`` played (read from ``otherRequirements``). Run-count / cooldown
- * fields depend on run counts the save can't resolve and are treated as
- * satisfied (not listed in any of the four sets). ``name`` is the host
- * dialogue's own name, used to ignore the self-references a few play-once
- * gates carry.
+ * Verdict for a single requirement *group* in the dependency tree (one
+ * requirement field plus the refs listed under it) against ``playedSet``.
+ * Applies the per-category rules (AND / OR / negative / count-min) to a
+ * single group in isolation so the tree can mark each group header.
+ * Returns:
+ *   'met'     - the group's condition is currently satisfied
+ *   'unmet'   - the condition is not satisfied
+ *   'unknown' - the field can't be resolved from a save (run-scoped,
+ *               queued, or run-count - see ``SAVE_EVALUABLE_REQ_TYPES``),
+ *               so no verdict is shown
+ * ``count`` is the COUNT_MIN threshold (defaults to 1); ``selfName`` lets
+ * the play-once self-references a few gates carry be ignored.
  */
-function requirementsSatisfied(requirements, otherRequirements, playedSet, name) {
-    if (!requirements) return true;
-    for (const [reqType, refs] of Object.entries(requirements)) {
-        if (!Array.isArray(refs)) continue;
-        const others = refs.filter(r => typeof r === 'string' && r !== name);
-
-        if (AND_REQ_TYPES.has(reqType)) {
-            if (!others.every(r => playedSet.has(r))) return false;
-        } else if (OR_REQ_TYPES.has(reqType)) {
-            if (others.length > 0 && !others.some(r => playedSet.has(r))) return false;
-        } else if (NEGATIVE_REQ_TYPES.has(reqType)) {
-            if (others.some(r => playedSet.has(r))) return false;
-        } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
-            const playedCount = others.filter(r => playedSet.has(r)).length;
-            if (playedCount < countFrom(otherRequirements, reqType)) return false;
-        }
-        // Other count / cooldown fields (RequiredMaxAny*, Min/MaxRunsSince*)
-        // depend on run counts the save can't resolve - treated as satisfied.
+export function reqGroupStatus(reqType, refs, playedSet, count = 1, selfName = null) {
+    if (!playedSet) return 'unknown';
+    // Only global, history-wide fields are determinable from a cumulative
+    // played set; everything else (this-run / last-run / this-room /
+    // queued / run-count) gets no verdict.
+    if (!SAVE_EVALUABLE_REQ_TYPES.has(reqType)) return 'unknown';
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    if (AND_REQ_TYPES.has(reqType)) {
+        return others.every(r => playedSet.has(r)) ? 'met' : 'unmet';
     }
-    return true;
+    if (OR_REQ_TYPES.has(reqType)) {
+        if (others.length === 0) return 'met';
+        return others.some(r => playedSet.has(r)) ? 'met' : 'unmet';
+    }
+    if (NEGATIVE_REQ_TYPES.has(reqType)) {
+        return others.some(r => playedSet.has(r)) ? 'unmet' : 'met';
+    }
+    if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+        const playedCount = others.filter(r => playedSet.has(r)).length;
+        return playedCount >= (count || 1) ? 'met' : 'unmet';
+    }
+    return 'unknown';
 }
 
 /**
- * Return true if ``textlineData`` is *directly* eligible given ``playedSet``
- * (a Set of played textline names).
+ * Three-state verdict for a requirement *set* (a textline's base
+ * requirements or one ``orBranches`` alternative) against ``playedSet``,
+ * used for the OR branch / group headers. Honest about save-unverifiable
+ * fields: returns
+ *   'unmet'   - a save-evaluable field in the set is not satisfied
+ *   'unknown' - no evaluable field failed but the set carries a field the
+ *               save can't resolve (run-scoped / queued / run-count), so
+ *               the overall verdict can't be confirmed
+ *   'met'     - the set is empty/no-op, or every contributing field is
+ *               save-evaluable and satisfied
+ * ``name`` is the host dialogue's own name (self-references ignored).
+ */
+export function requirementSetStatus(requirements, otherRequirements, playedSet, name) {
+    if (!playedSet) return 'unknown';
+    let sawUnverifiable = false;
+    for (const [reqType, refs] of Object.entries(requirements || {})) {
+        if (!Array.isArray(refs)) continue;
+        const others = refs.filter(r => typeof r === 'string' && r !== name);
+        if (others.length === 0) continue;
+        if (SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
+            if (reqGroupStatus(reqType, refs, playedSet, countFrom(otherRequirements, reqType), name) === 'unmet') {
+                return 'unmet';
+            }
+        } else {
+            sawUnverifiable = true;
+        }
+    }
+    return sawUnverifiable ? 'unknown' : 'met';
+}
+
+/**
+ * Three-state direct eligibility for ``textlineData`` given ``playedSet``:
+ *   'met'     - directly eligible now (all requirements confirmed satisfied)
+ *   'unmet'   - a save-evaluable requirement is not satisfied
+ *   'unknown' - every save-evaluable requirement is satisfied, but the
+ *               dialogue also gates on something a save can't resolve
+ *               (per-run / per-room / queued state, or run counts), so
+ *               eligibility can't be confirmed either way
  *
- * Shallow by design: this answers "can this dialogue play right now", which
- * depends only on its immediate requirements - the transitive history is
- * handled separately by the eligibility tracer.
- *
- * A dialogue is directly eligible when its base requirements are satisfied
- * AND, if it carries H2 set-level ``orBranches`` (alternative requirement
- * sets), at least one branch is satisfied. ``name`` is the dialogue's own
- * name, used to ignore self-references.
+ * Shallow by design: this answers "can this dialogue play right now",
+ * which depends only on its immediate requirements - transitive history is
+ * handled by the eligibility tracer. The dialogue's base requirement set
+ * AND, if it carries H2 ``orBranches`` alternatives, the OR group (met
+ * when any branch is met, unmet only when all are unmet, unknown
+ * otherwise) must both hold. ``name`` is the dialogue's own name, used to
+ * ignore self-references.
+ */
+export function directSatisfaction(textlineData, playedSet, name) {
+    if (!textlineData) return 'met';
+    if (!playedSet) return 'unknown';
+    const base = requirementSetStatus(
+        textlineData.requirements, textlineData.otherRequirements, playedSet, name);
+    if (base === 'unmet') return 'unmet';
+    let orStatus = 'met';
+    const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
+    if (branches.length > 0) {
+        let anyMet = false;
+        let anyUnknown = false;
+        for (const b of branches) {
+            const st = requirementSetStatus(b.requirements, b.otherRequirements, playedSet, name);
+            if (st === 'met') { anyMet = true; break; }
+            if (st !== 'unmet') anyUnknown = true;
+        }
+        orStatus = anyMet ? 'met' : (anyUnknown ? 'unknown' : 'unmet');
+    }
+    if (orStatus === 'unmet') return 'unmet';
+    return (base === 'unknown' || orStatus === 'unknown') ? 'unknown' : 'met';
+}
+
+/**
+ * Boolean convenience wrapper: true only when ``directSatisfaction`` is a
+ * confirmed 'met'. An 'unknown' verdict is not a confirmed yes.
  */
 export function isDirectlySatisfied(textlineData, playedSet, name) {
-    if (!textlineData) return true;
-    if (!requirementsSatisfied(
-        textlineData.requirements, textlineData.otherRequirements, playedSet, name)) {
-        return false;
-    }
-    const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
-    if (branches.length > 0 && !branches.some(
-        b => requirementsSatisfied(b.requirements, b.otherRequirements, playedSet, name))) {
-        return false;
-    }
-    return true;
+    return directSatisfaction(textlineData, playedSet, name) === 'met';
 }

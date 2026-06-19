@@ -55,6 +55,10 @@
     color: #e57373;
 }
 
+.eligibility-status.eligibility-indeterminate {
+    color: #aab2e6;
+}
+
 .eligibility-unobtainable-reasons {
     margin: 0.2rem 0 0;
     padding-left: 1.2rem;
@@ -273,6 +277,14 @@
 
 .eligibility-branch-satisfied .eligibility-group-option-icon {
     color: #6be06b;
+}
+
+.eligibility-branch-indeterminate {
+    border-color: #3a3f6a;
+}
+
+.eligibility-branch-indeterminate .eligibility-group-option-icon {
+    color: #aab2e6;
 }
 
 .eligibility-branch-note {

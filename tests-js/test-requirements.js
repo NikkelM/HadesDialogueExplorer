@@ -12,11 +12,15 @@ import { strict as assert } from 'node:assert';
 
 import {
     isDirectlySatisfied,
+    directSatisfaction,
     requiredCount,
+    reqGroupStatus,
+    requirementSetStatus,
     AND_REQ_TYPES,
     OR_REQ_TYPES,
     NEGATIVE_REQ_TYPES,
     COUNT_MIN_REQ_TYPES,
+    SAVE_EVALUABLE_REQ_TYPES,
 } from '../templates/viewer/requirements.js';
 
 const tl = (requirements, otherRequirements) => ({ requirements, otherRequirements });
@@ -70,11 +74,29 @@ test('count-min: defaults to a Count of 1 when otherRequirements is absent', () 
     assert.equal(isDirectlySatisfied(t, played('B')), true);
 });
 
-test('run-count and cooldown fields are treated as satisfied (out of scope)', () => {
+test('run-count and cooldown fields make a dialogue indeterminate (can\u2019t determine)', () => {
+    // The save can't resolve run counts, so a dialogue gated only on a
+    // run-count field is neither confirmed eligible nor blocked - it's
+    // 'unknown' (surfaced as the "indeterminate" save status).
     assert.equal(COUNT_MIN_REQ_TYPES.has('MinRunsSinceAnyTextLines'), false);
-    assert.equal(isDirectlySatisfied(tl({ MinRunsSinceAnyTextLines: ['A'] }), played()), true);
-    assert.equal(isDirectlySatisfied(tl({ MaxRunsSinceAnyTextLines: ['A'] }), played()), true);
-    assert.equal(isDirectlySatisfied(tl({ RequiredMaxAnyTextLines: ['A', 'B'] }), played()), true);
+    assert.equal(directSatisfaction(tl({ MinRunsSinceAnyTextLines: ['A'] }), played()), 'unknown');
+    assert.equal(directSatisfaction(tl({ MaxRunsSinceAnyTextLines: ['A'] }), played()), 'unknown');
+    assert.equal(directSatisfaction(tl({ RequiredMaxAnyTextLines: ['A', 'B'] }), played()), 'unknown');
+    // The boolean wrapper reports these as not-a-confirmed-yes.
+    assert.equal(isDirectlySatisfied(tl({ MinRunsSinceAnyTextLines: ['A'] }), played()), false);
+});
+
+test('run-scoped fields also make a dialogue indeterminate', () => {
+    // "must have played this run" / "must NOT have played this run" can't be
+    // resolved from a cumulative save, even when the referenced line is (or
+    // isn't) in the played set.
+    assert.equal(directSatisfaction(tl({ RequiredTextLinesThisRun: ['A'] }), played('A')), 'unknown');
+    assert.equal(directSatisfaction(tl({ RequiredFalseTextLinesThisRun: ['X'] }), played('X')), 'unknown');
+    // A confirmed-failing global field still dominates an unverifiable one.
+    assert.equal(
+        directSatisfaction(tl({ RequiredTextLines: ['A'], RequiredFalseTextLinesThisRun: ['X'] }), played()),
+        'unmet',
+    );
 });
 
 test('mixed AND + negative requirements', () => {
@@ -84,13 +106,16 @@ test('mixed AND + negative requirements', () => {
     assert.equal(isDirectlySatisfied(t, played('A', 'B')), false);  // B played -> negative violated
 });
 
-test('RequiredAnyTextLinesThisRun is recognised as an OR gate', () => {
-    // Regression: this field was missing from the old OR set, so the gate
-    // was silently dropped.
+test('RequiredAnyTextLinesThisRun is an OR gate but unverifiable from a save', () => {
+    // It's still classified as an OR field (regression: it was once missing
+    // from the OR set)...
     assert.equal(OR_REQ_TYPES.has('RequiredAnyTextLinesThisRun'), true);
+    // ...but it's run-scoped, so a save can't confirm it: the dialogue is
+    // indeterminate no matter what the cumulative played set contains.
+    assert.equal(SAVE_EVALUABLE_REQ_TYPES.has('RequiredAnyTextLinesThisRun'), false);
     const t = tl({ RequiredAnyTextLinesThisRun: ['A', 'B'] });
-    assert.equal(isDirectlySatisfied(t, played()), false);
-    assert.equal(isDirectlySatisfied(t, played('A')), true);
+    assert.equal(directSatisfaction(t, played()), 'unknown');
+    assert.equal(directSatisfaction(t, played('A')), 'unknown');
 });
 
 test('the category sets are disjoint and cover the expected fields', () => {
@@ -137,9 +162,9 @@ test('orBranches: a branch with empty requirements is always satisfied', () => {
     assert.equal(isDirectlySatisfied(t, played()), true);
 });
 
-test('orBranches: a multi-line AND branch needs all of its own lines', () => {
-    // Real shape (NemesisAboutErisRelationship01): each branch requires two
-    // textlines together (count-permissive run-count field is ignored).
+test('orBranches: a run-count-gated branch is indeterminate; a global branch still confirms', () => {
+    // Real shape (NemesisAboutErisRelationship01): branch 0 pairs a run-count
+    // field (unverifiable from a save) with two textlines; branch 1 is global.
     const t = withBranches({}, [
         {
             requirements: { MinRunsSinceAnyTextLines: ['Eris03', 'Nem01'], RequiredTextLines: ['Eris03', 'Nem01'] },
@@ -147,9 +172,14 @@ test('orBranches: a multi-line AND branch needs all of its own lines', () => {
         },
         { requirements: { RequiredTextLines: ['Eris03_B', 'Nem01_B'] } },
     ]);
-    assert.equal(isDirectlySatisfied(t, played('Eris03')), false);          // branch 0 half-met
-    assert.equal(isDirectlySatisfied(t, played('Eris03', 'Nem01')), true);  // branch 0 met
-    assert.equal(isDirectlySatisfied(t, played('Eris03_B', 'Nem01_B')), true); // branch 1 met
+    // Branch 0 half-met (Nem01 unplayed) and branch 1 unmet -> all unmet.
+    assert.equal(directSatisfaction(t, played('Eris03')), 'unmet');
+    // Branch 0's textlines are played but its run-count gate can't be
+    // resolved, and branch 1 is unmet -> can't determine.
+    assert.equal(directSatisfaction(t, played('Eris03', 'Nem01')), 'unknown');
+    // Branch 1 (purely global) is fully satisfied -> confirmed eligible.
+    assert.equal(directSatisfaction(t, played('Eris03_B', 'Nem01_B')), 'met');
+    assert.equal(isDirectlySatisfied(t, played('Eris03_B', 'Nem01_B')), true);
 });
 
 test('orBranches: base requirements must hold too (AND of base + any branch)', () => {
@@ -170,4 +200,90 @@ test('orBranches: count-min in a branch reads the branch otherRequirements', () 
     ]);
     assert.equal(isDirectlySatisfied(t, played('A')), false);
     assert.equal(isDirectlySatisfied(t, played('A', 'B')), true);
+});
+
+// --- reqGroupStatus: per-group verdicts for the dependency-tree headers ---
+
+test('reqGroupStatus AND: met only when every ref has played', () => {
+    assert.equal(reqGroupStatus('RequiredTextLines', ['A', 'B'], played('A')), 'unmet');
+    assert.equal(reqGroupStatus('RequiredTextLines', ['A', 'B'], played('A', 'B')), 'met');
+});
+
+test('reqGroupStatus OR: met when any ref has played; empty group is met', () => {
+    assert.equal(reqGroupStatus('RequiredAnyTextLines', ['A', 'B'], played()), 'unmet');
+    assert.equal(reqGroupStatus('RequiredAnyTextLines', ['A', 'B'], played('B')), 'met');
+    assert.equal(reqGroupStatus('RequiredAnyTextLines', [], played()), 'met');
+});
+
+test('reqGroupStatus negative: met while forbidden lines stay unplayed', () => {
+    assert.equal(reqGroupStatus('RequiredFalseTextLines', ['X'], played()), 'met');
+    assert.equal(reqGroupStatus('RequiredFalseTextLines', ['X'], played('X')), 'unmet');
+});
+
+test('reqGroupStatus count-min: needs at least Count refs played', () => {
+    assert.equal(reqGroupStatus('RequiredMinAnyTextLines', ['A', 'B', 'C'], played('A'), 2), 'unmet');
+    assert.equal(reqGroupStatus('RequiredMinAnyTextLines', ['A', 'B', 'C'], played('A', 'B'), 2), 'met');
+});
+
+test('reqGroupStatus: run-count / cooldown fields are unknown (no verdict)', () => {
+    assert.equal(reqGroupStatus('MinRunsSinceAnyTextLines', ['A'], played()), 'unknown');
+    assert.equal(reqGroupStatus('RequiredMaxAnyTextLines', ['A', 'B'], played('A')), 'unknown');
+});
+
+test('reqGroupStatus: run-scoped and queued fields are unknown (a cumulative save can\u2019t resolve them)', () => {
+    // The save's played set is a global "ever played" record, so per-run /
+    // per-room / queued scoping can't be checked - no verdict, regardless
+    // of whether the referenced line is in the played set.
+    assert.equal(reqGroupStatus('RequiredTextLinesThisRun', ['A'], played('A')), 'unknown');
+    assert.equal(reqGroupStatus('RequiredTextLinesLastRun', ['A'], played('A')), 'unknown');
+    assert.equal(reqGroupStatus('RequiredFalseTextLinesThisRun', ['X'], played('X')), 'unknown');
+    assert.equal(reqGroupStatus('RequiredFalseTextLinesThisRun', ['X'], played()), 'unknown');
+    assert.equal(reqGroupStatus('RequiredAnyTextLinesLastRun', ['A', 'B'], played('A')), 'unknown');
+    assert.equal(reqGroupStatus('RequiredQueuedTextLines', ['A'], played('A')), 'unknown');
+    assert.equal(reqGroupStatus('RequiredFalseQueuedTextLines', ['X'], played('X')), 'unknown');
+});
+
+test('SAVE_EVALUABLE_REQ_TYPES covers exactly the global fields', () => {
+    for (const t of ['RequiredTextLines', 'RequiredAnyTextLines', 'RequiredAnyOtherTextLines',
+        'RequiredFalseTextLines', 'RequiredMinAnyTextLines']) {
+        assert.equal(SAVE_EVALUABLE_REQ_TYPES.has(t), true, t);
+    }
+    for (const t of ['RequiredTextLinesThisRun', 'RequiredFalseTextLinesThisRun',
+        'RequiredAnyTextLinesLastRun', 'RequiredQueuedTextLines', 'MinRunsSinceAnyTextLines',
+        'RequiredMaxAnyTextLines']) {
+        assert.equal(SAVE_EVALUABLE_REQ_TYPES.has(t), false, t);
+    }
+});
+
+test('reqGroupStatus: a null played set is unknown, and self-refs are ignored', () => {
+    assert.equal(reqGroupStatus('RequiredTextLines', ['A'], null), 'unknown');
+    // A play-once self-referencing negative gate is met on an empty save
+    // once its own name is filtered out.
+    assert.equal(reqGroupStatus('RequiredFalseTextLines', ['Ending01'], played(), 1, 'Ending01'), 'met');
+});
+
+// --- requirementSetStatus: 3-state verdict for OR branches / sets ---
+
+test('requirementSetStatus: empty set is met; all-evaluable-and-satisfied is met', () => {
+    assert.equal(requirementSetStatus({}, {}, played()), 'met');
+    assert.equal(requirementSetStatus({ RequiredTextLines: ['A'] }, {}, played('A')), 'met');
+});
+
+test('requirementSetStatus: a failing evaluable field makes the set unmet', () => {
+    assert.equal(requirementSetStatus({ RequiredTextLines: ['A', 'B'] }, {}, played('A')), 'unmet');
+});
+
+test('requirementSetStatus: an unverifiable field yields unknown when nothing evaluable fails', () => {
+    // RequiredTextLines satisfied, but the branch also carries a run-count
+    // field the save can't resolve -> we can't confirm the whole set.
+    const reqs = { RequiredTextLines: ['A'], MinRunsSinceAnyTextLines: ['B'] };
+    assert.equal(requirementSetStatus(reqs, { MinRunsSinceAnyTextLines: { Count: 1 } }, played('A')), 'unknown');
+    // A failing evaluable field still dominates (unmet beats unknown).
+    assert.equal(requirementSetStatus(reqs, {}, played()), 'unmet');
+    // A run-scoped field alone -> unknown.
+    assert.equal(requirementSetStatus({ RequiredFalseTextLinesThisRun: ['X'] }, {}, played('X')), 'unknown');
+});
+
+test('requirementSetStatus: a null played set is unknown', () => {
+    assert.equal(requirementSetStatus({ RequiredTextLines: ['A'] }, {}, null), 'unknown');
 });

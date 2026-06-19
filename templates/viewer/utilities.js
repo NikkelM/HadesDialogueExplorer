@@ -22,6 +22,22 @@ import {
 } from './data.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
+// Human-readable tooltips for each save-derived dialogue status, shared by
+// every surface that renders a status dot/pill so the wording stays in
+// lockstep. ``indeterminate`` covers dialogues that gate on per-run /
+// per-room / queued / run-count state a save can't resolve.
+export const SAVE_STATUS_TOOLTIPS = {
+    played: 'Played in loaded save',
+    eligible: 'Eligible to play (all requirements met)',
+    blocked: 'Blocked (missing requirements)',
+    unobtainable: 'Unobtainable - a required choice or mutually-exclusive line is locked',
+    indeterminate: 'Indeterminate - gates on per-run, per-room, queued, or run-count state a save can\u2019t resolve, so eligibility can\u2019t be determined',
+};
+
+export function saveStatusTooltip(status) {
+    return SAVE_STATUS_TOOLTIPS[status] || '';
+}
+
 // Coloured save-status dot for one dialogue, read from the loaded save.
 // Returns '' when no save is loaded or it doesn't match the active game,
 // so callers can interpolate it unconditionally. Shared by the
@@ -31,11 +47,7 @@ export function renderSaveBadgeHtml(name, tl) {
     if (!tl || !getSaveProgress() || !saveMatchesActiveGame()) return '';
     const status = getDialogueStatus(name, tl);
     if (!status) return '';
-    const tip = status === 'played' ? 'Played in loaded save'
-        : status === 'eligible' ? 'Eligible to play (all requirements met)'
-            : status === 'unobtainable' ? 'Unobtainable - a required choice or mutually-exclusive line is locked'
-                : 'Blocked (missing requirements)';
-    return `<span class="save-badge ${status}" title="${escapeHtml(tip)}"></span>`;
+    return `<span class="save-badge ${status}" title="${escapeHtml(saveStatusTooltip(status))}"></span>`;
 }
 
 // Escape a string for safe embedding into HTML, covering both text

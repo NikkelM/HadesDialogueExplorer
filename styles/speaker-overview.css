@@ -235,6 +235,7 @@ body.layout-speaker #panel-info {
 .eligibility-chip-played::before,
 .eligibility-chip-eligible::before,
 .eligibility-chip-blocked::before,
+.eligibility-chip-indeterminate::before,
 .eligibility-chip-unobtainable::before {
     content: "";
     display: inline-block;
@@ -246,6 +247,7 @@ body.layout-speaker #panel-info {
 .eligibility-chip-played::before { background: #4caf50; }
 .eligibility-chip-eligible::before { background: #ffb74d; }
 .eligibility-chip-blocked::before { background: #78909c; }
+.eligibility-chip-indeterminate::before { background: #8b95d6; }
 .eligibility-chip-unobtainable::before { background: #e57373; }
 
 /* Save-progress summary cell: the per-status counts list reuses the

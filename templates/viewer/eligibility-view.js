@@ -13,7 +13,7 @@
 import { textlines, speakers, alternates } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml } from './utilities.js';
 import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, isDirectlySatisfied } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, directSatisfaction } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -241,8 +241,12 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     // The tracer walks only textline prerequisites (the AND/OR/count chain);
     // an H2 dialogue can also be gated by set-level ``orBranches`` the chain
     // doesn't enumerate, so confirm direct eligibility against the same
-    // shared check the save badge uses.
-    const directlyEligible = !rootPlayed && isDirectlySatisfied(rootTl, playedSet, rootName);
+    // shared check the save badge uses. 'unknown' means the save-checkable
+    // prerequisites all hold but the dialogue also gates on per-run /
+    // queued / run-count state a save can't resolve.
+    const rootSat = rootPlayed ? null : directSatisfaction(rootTl, playedSet, rootName);
+    const directlyEligible = rootSat === 'met';
+    const indeterminate = rootSat === 'unknown';
 
     // The total isn't a simple node count of the tree below: it spans the
     // whole chain (so it can exceed the requirements listed directly on the
@@ -277,6 +281,10 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
         html += renderUnobtainableReasonsHtml(rootName, playedSet);
+    } else if (indeterminate) {
+        html += `<div class="eligibility-status eligibility-indeterminate">? Indeterminate</div>`;
+        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from a save: this dialogue gates on per-run, per-room, queued, or run-count state the save doesn\u2019t track. Its save-checkable prerequisites are satisfied.</div>`;
+        html += chainNote;
     } else if (total === 0) {
         // Blocked, but gated entirely by alternative branches (no flat chain).
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
@@ -636,12 +644,18 @@ export function renderOrBranchesHtml(rootName, playedSet = getSaveProgress() || 
 }
 
 function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
-    const satisfied = isDirectlySatisfied(branch, playedSet, rootName);
-    const icon = satisfied ? '\u2714' : '\u25CB';
-    let html = `<div class="eligibility-group${satisfied ? ' eligibility-branch-satisfied' : ''}">`;
+    const sat = directSatisfaction(branch, playedSet, rootName);
+    const satisfied = sat === 'met';
+    const indeterminate = sat === 'unknown';
+    const icon = satisfied ? '\u2714' : indeterminate ? '?' : '\u25CB';
+    const stateCls = satisfied ? ' eligibility-branch-satisfied'
+        : indeterminate ? ' eligibility-branch-indeterminate' : '';
+    const stateNote = satisfied ? ' \u00B7 satisfied'
+        : indeterminate ? ' \u00B7 can\u2019t determine' : '';
+    let html = `<div class="eligibility-group${stateCls}">`;
     html += `<div class="eligibility-group-head">`;
     html += `<span class="eligibility-group-option-icon">${icon}</span>`;
-    html += `<span class="eligibility-group-title">Option ${index + 1} of ${total}${satisfied ? ' \u00B7 satisfied' : ''}</span>`;
+    html += `<span class="eligibility-group-title">Option ${index + 1} of ${total}${stateNote}</span>`;
     html += `</div>`;
     html += `<div class="eligibility-tree-container eligibility-branch-prereqs">`;
     html += renderBranchRequirementsHtml(branch, rootName, isPlayed);
