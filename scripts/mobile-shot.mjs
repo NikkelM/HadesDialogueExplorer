@@ -6,6 +6,9 @@
 //
 // Prereq: an Edge/Chrome already listening on --remote-debugging-port.
 //   & msedge --headless=new --remote-debugging-port=9222 about:blank
+// NOTE: relaunch the browser after rebuilding the site - a reused page
+// target can keep a stale parsed stylesheet even with the network cache
+// disabled, so screenshots/measurements lag the latest build.
 //
 // Usage:
 //   node mobile-shot.mjs <url> <outPng> [width] [height] [dpr] [waitMs] [full]
@@ -46,6 +49,8 @@ const send = (method, params = {}) => new Promise((resolve, reject) => {
 });
 
 await send('Page.enable');
+await send('Network.enable');
+await send('Network.setCacheDisabled', { cacheDisabled: true });
 await send('Emulation.setDeviceMetricsOverride', {
     width: Number(w), height: Number(h), deviceScaleFactor: Number(dpr), mobile: true,
 });

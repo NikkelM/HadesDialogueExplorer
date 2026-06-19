@@ -61,3 +61,89 @@
         overflow: visible;
     }
 }
+
+/* === #106 Header & global controls =====================================
+ * The desktop header is a single nowrap flex row (title, game toggle, a
+ * 500px search, nav links, save upload) that overflows narrow screens.
+ * Let it wrap instead of overflowing, size the controls for touch, and on
+ * phones give the search its own full-width row. No JS menu needed - the
+ * header isn't sticky on mobile, so a wrapped header just scrolls away.
+ * Desktop (> tablet) keeps the original single row.
+ * ====================================================================== */
+@media (max-width: 1024px) {
+    header {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+    /* Search drops to its own full-width row so it stays prominent and
+       easily tappable rather than being squeezed thin between the other
+       controls. (DOM order puts it after the title + toggle, so it lands
+       on the second row.) */
+    .search-container {
+        flex-basis: 100%;
+        max-width: none;
+    }
+    /* When the row wraps, let the save controls flow inline instead of
+       being shoved to the far edge by their desktop margin-left:auto. */
+    .header-right {
+        margin-left: 0;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+    /* Touch-sized header controls (also covers part of the #112 audit). */
+    #search,
+    .header-nav-link,
+    .save-upload-btn,
+    .game-toggle-btn {
+        min-height: var(--tap-min);
+    }
+    /* Match the status pill's height to the Load-save button so the save
+       row reads as one consistent strip; centre its text too. */
+    .save-status {
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+    }
+    /* min-height alone top-aligns the label inside the link/button content
+       box; flex-centre it so the text sits in the middle of the 44px row. */
+    .header-nav-link,
+    .game-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    /* The save-clear "x" is a small icon button - give it a full square
+       touch target with the glyph at the left edge (so the 44px tap area
+       extends rightward into empty space rather than pushing the x away
+       from the status text). */
+    .save-clear-btn {
+        min-width: var(--tap-min);
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 0;
+    }
+}
+@media (max-width: 599px) {
+    /* Phone: the wrapped header is tidier with the two nav links sharing
+       one row and the save controls a row of their own. Flattening
+       header-right's box (display:contents) promotes its children - the
+       eligibility link and the save-upload group - to direct header flex
+       items, so they wrap independently: ``Cross-game duplicates`` +
+       ``Eligibility tracer`` land together, then the save group below. */
+    .header-right {
+        display: contents;
+    }
+    /* Compact loaded indicator: the verbose "<game>: N dialogues, M runs"
+       wastes a row on a phone (the per-dialogue badges already convey the
+       detail), so show a short "Save loaded" instead. The mismatch / error
+       variants keep their wording - they're actionable warnings. */
+    .save-status.save-loaded {
+        font-size: 0;
+    }
+    .save-status.save-loaded::before {
+        content: "Save loaded";
+        font-size: var(--fs-base);
+    }
+}

@@ -6,6 +6,9 @@
 // Exit code 1 if any check fails, so it can gate a mobile change.
 //
 // Prereq: headless Edge/Chrome on --remote-debugging-port (default 9222).
+// NOTE: relaunch the browser after rebuilding the site - a reused page
+// target can keep a stale parsed stylesheet even with the network cache
+// disabled, so the audit can lag the latest build.
 // Usage: node mobile-check.mjs <url> [width=360] [height=740] [dpr=3] [waitMs=3500]
 
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -34,6 +37,8 @@ const send = (method, params = {}) => new Promise((resolve, reject) => {
 });
 
 await send('Page.enable');
+await send('Network.enable');
+await send('Network.setCacheDisabled', { cacheDisabled: true });
 await send('Emulation.setDeviceMetricsOverride', { width: +w, height: +h, deviceScaleFactor: +dpr, mobile: true });
 await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
 await send('Emulation.setEmulatedMedia', { features: [{ name: 'pointer', value: 'coarse' }, { name: 'hover', value: 'none' }] });
