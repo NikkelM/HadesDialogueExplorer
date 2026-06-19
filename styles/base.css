@@ -19,7 +19,7 @@ header {
     flex-shrink: 0;
 }
 header h1 {
-    font-size: 16px;
+    font-size: 1rem;
     color: #e94560;
     white-space: nowrap;
 }
@@ -35,7 +35,7 @@ header h1 {
     border-radius: 4px;
     background: #1a1a2e;
     color: #e0e0e0;
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 18px;
     outline: none;
 }
@@ -57,7 +57,7 @@ header h1 {
 #search-results.visible { display: block; }
 .search-section-header {
     padding: 4px 12px;
-    font-size: 10px;
+    font-size: 0.625rem;
     font-weight: bold;
     color: #aaa;
     text-transform: uppercase;
@@ -71,7 +71,7 @@ header h1 {
 .search-item {
     padding: 6px 12px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 0.8125rem;
     border-bottom: 1px solid #0f346040;
 }
 .search-item:hover,
@@ -86,10 +86,10 @@ header h1 {
    matches the latest input modality. */
 #search-results.kbd-mode .search-item:hover { background: transparent; }
 #search-results.kbd-mode .search-item.is-active { background: #0f3460; }
-.search-item .npc { color: #888; font-size: 11px; margin-left: 8px; }
-.search-item-text .search-item-head { font-size: 13px; }
+.search-item .npc { color: #888; font-size: 0.6875rem; margin-left: 8px; }
+.search-item-text .search-item-head { font-size: 0.8125rem; }
 .search-item-text .search-snippet {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #b8b8b8;
     margin-top: 2px;
     line-height: 1.4;
@@ -118,7 +118,7 @@ header h1 {
     background: #1a1a2e;
     color: #e0e0e0;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 18px;
     padding: 6px 14px;
     border: 1px solid #0f3460;
@@ -163,7 +163,7 @@ main {
     border-radius: 4px;
     padding: 12px 16px;
     margin: 12px 20px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     flex-shrink: 0;
 }
 
@@ -194,7 +194,7 @@ main {
     display: block;
     padding: 12px 20px;
     margin-top: auto;
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #444;
     text-align: center;
     border-top: 1px solid #0f346040;

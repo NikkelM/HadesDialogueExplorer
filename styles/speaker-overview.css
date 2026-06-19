@@ -59,17 +59,17 @@ body.layout-speaker #panel-info {
 }
 .speaker-overview-header h3 {
     color: #e94560;
-    font-size: 18px;
+    font-size: 1.125rem;
     margin-bottom: 4px;
 }
 .speaker-overview-header .speaker-id {
     color: #888;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: normal;
 }
 .speaker-overview-header .speaker-description {
     color: #b8b8b8;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-style: italic;
     margin-bottom: 4px;
 }
@@ -85,7 +85,7 @@ body.layout-speaker #panel-info {
 .speaker-similar-label {
     color: #888;
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: 0.625rem;
     letter-spacing: 0.5px;
 }
 .speaker-similar-pill {
@@ -95,7 +95,7 @@ body.layout-speaker #panel-info {
     border: 1px solid #1c4584;
     border-radius: 12px;
     padding: 3px 10px;
-    font-size: 12px;
+    font-size: 0.75rem;
     cursor: pointer;
     text-decoration: none;
     white-space: nowrap;
@@ -108,7 +108,7 @@ body.layout-speaker #panel-info {
 }
 .speaker-overview-header .speaker-ids {
     color: #888;
-    font-size: 12px;
+    font-size: 0.75rem;
     margin-bottom: 4px;
     line-height: 1.6;
 }
@@ -117,7 +117,7 @@ body.layout-speaker #panel-info {
     color: #b8b8b8;
     padding: 1px 5px;
     border-radius: 3px;
-    font-size: 11px;
+    font-size: 0.6875rem;
 }
 .speaker-overview-missing {
     padding: 16px;
@@ -160,18 +160,18 @@ body.layout-speaker #panel-info {
     min-width: 0;
 }
 .speaker-summary-cell h4 {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
 .speaker-summary-value {
-    font-size: 22px;
+    font-size: 1.375rem;
     color: #e0e0e0;
 }
 .speaker-summary-note {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #666;
     font-style: italic;
 }
@@ -179,7 +179,7 @@ body.layout-speaker #panel-info {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 .speaker-section-list li {
     padding: 2px 0;
@@ -196,7 +196,7 @@ body.layout-speaker #panel-info {
     border: 1px solid #1c4584;
     border-radius: 12px;
     padding: 4px 10px;
-    font-size: 12px;
+    font-size: 0.75rem;
     cursor: pointer;
     font-family: inherit;
 }
@@ -257,7 +257,7 @@ body.layout-speaker #panel-info {
 }
 .speaker-count {
     color: #888;
-    font-size: 11px;
+    font-size: 0.6875rem;
     margin-left: 4px;
 }
 
@@ -276,7 +276,7 @@ body.layout-speaker #panel-info {
     min-width: 0;
 }
 .speaker-adjacency-col h4 {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -285,10 +285,10 @@ body.layout-speaker #panel-info {
     align-items: center;
     gap: 5px;
 }
-.speaker-adjacency-dir { color: #e94560; font-size: 13px; line-height: 1; }
+.speaker-adjacency-dir { color: #e94560; font-size: 0.8125rem; line-height: 1; }
 .speaker-adjacency-head { margin-bottom: 6px; }
 .speaker-adjacency-sub {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #666;
     margin: 2px 0 0;
 }
@@ -296,7 +296,7 @@ body.layout-speaker #panel-info {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 13px;
+    font-size: 0.8125rem;
     max-height: 360px;
     overflow-y: auto;
 }
@@ -332,7 +332,7 @@ body.layout-speaker #panel-info {
    right edge) and reads as the dependency tally. */
 .speaker-adjacency-count {
     flex-shrink: 0;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #dfe2f0;
     background: #0f3460;
@@ -348,7 +348,7 @@ body.layout-speaker #panel-info {
     margin: 1px 0 6px 18px;
     padding: 4px 0 4px 10px;
     border-left: 1px solid #1c4584;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 /* Each link is shown stacked: the depending dialogue (emphasised) above
    the line(s) it ``requires`` (indented + muted), so "what depends on
@@ -361,7 +361,7 @@ body.layout-speaker #panel-info {
 .speaker-adjacency-dep {
     display: inline-block;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: #cdcde0;
 }
 .speaker-adjacency-dep:hover { color: #e94560; }
@@ -371,7 +371,7 @@ body.layout-speaker #panel-info {
     color: #9a9ab0;
     line-height: 1.45;
 }
-.speaker-adjacency-reqs .textline-link { font-size: 12px; color: #aab0c8; }
+.speaker-adjacency-reqs .textline-link { font-size: 0.75rem; color: #aab0c8; }
 .speaker-adjacency-reqs .textline-link:hover { color: #e94560; }
 .speaker-adjacency-req-label {
     color: #6a6a82;
@@ -381,7 +381,7 @@ body.layout-speaker #panel-info {
 .speaker-adjacency-sep { color: #555; }
 .speaker-adjacency-detail-empty { color: #666; font-style: italic; padding: 2px 0; }
 .speaker-adjacency-self {
-    font-size: 9px;
+    font-size: 0.5625rem;
     color: #c4a56e;
     border: 1px solid #4a4636;
     border-radius: 3px;
@@ -398,7 +398,7 @@ body.layout-speaker #panel-info {
 .speaker-link:hover { color: #e94560; }
 .speaker-id-inline {
     color: #666;
-    font-size: 11px;
+    font-size: 0.6875rem;
 }
 
 /* Textline list (the main body): controls strip + grouped sections. */
@@ -418,7 +418,7 @@ body.layout-speaker #panel-info {
     flex-wrap: wrap;
 }
 .speaker-control-label {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -434,7 +434,7 @@ body.layout-speaker #panel-info {
     border-top: 1px solid #0f3460;
 }
 .speaker-textline-group-header {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -482,7 +482,7 @@ body.layout-speaker #panel-info {
     background: #1e1e28;
 }
 .speaker-alt-group-label {
-    font-size: 10px;
+    font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: #c4a56e;
@@ -496,7 +496,7 @@ body.layout-speaker #panel-info {
 .textline-link {
     color: #b8b8b8;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 0.8125rem;
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -509,7 +509,7 @@ body.layout-speaker #panel-info {
 .speaker-textline-row > .textline-link {
     color: #c8c8c8;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 .speaker-textline-badges {
     display: flex;
@@ -525,7 +525,7 @@ body.layout-speaker #panel-info {
     display: inline-flex;
     align-items: center;
     line-height: 1;
-    font-size: 12px;
+    font-size: 0.75rem;
     padding: 3px 7px;
     border-radius: 4px;
 }

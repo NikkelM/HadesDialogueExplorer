@@ -37,7 +37,7 @@
 .tree-label {
     padding: 4px 8px;
     margin: 2px 0;
-    font-size: 13px;
+    font-size: 0.8125rem;
     cursor: pointer;
     border-radius: 3px;
     display: flex;
@@ -67,11 +67,11 @@
     padding: 2px 4px;
     text-align: center;
     color: #888;
-    font-size: 11px;
+    font-size: 0.6875rem;
     flex-shrink: 0;
 }
 .tree-label .edge-type {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 1px 4px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -83,7 +83,7 @@
    long textline names to wrap mid-word. That was dropped: rows stay on a
    single line (`.tree-label` is `white-space: nowrap`) and the
    `.panel-body` scrolls horizontally so deep chains push content right. */
-.tree-label .npc-tag { font-size: 10px; color: #666; margin-left: auto; flex-shrink: 0; }
+.tree-label .npc-tag { font-size: 0.625rem; color: #666; margin-left: auto; flex-shrink: 0; }
 
 /* Narrative-priority badge. Same compact pill style as the
    other inline tree badges (`.edge-type`, `.tree-blocked-badge`); three
@@ -95,7 +95,7 @@
    below then zeros out the npc-tag's own auto margin (which only kicks
    in when no badge is present). */
 .priority-badge {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 1px 5px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -116,7 +116,7 @@
     background: #1d242c;
     color: #c7d2dc;
     border: 1px solid #303a47;
-    font-family: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    font-family: 'Consolas', monospace;
     font-variant-numeric: tabular-nums;
 }
 
@@ -126,7 +126,7 @@
    set-level boolean only biases random selection within a section)
    so they get their own marker rather than collapsing together. */
 .set-priority-badge {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 1px 5px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -159,13 +159,13 @@
     align-items: center;
     height: 20px;
     padding: 0 7px;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1;
     border-radius: 3px;
 }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
-.cycle-marker { color: #e94560; font-size: 11px; font-style: italic; }
+.cycle-marker { color: #e94560; font-size: 0.6875rem; font-style: italic; }
 
 /* GameData group boxes wrap contiguous tree children that all came from
    the same `GameData.X` list expansion. Collapsible via header click. */
@@ -181,7 +181,7 @@
     align-items: center;
     gap: 6px;
     padding: 4px 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     cursor: pointer;
     color: #c8b6ff;
     border-radius: 3px;
@@ -191,7 +191,7 @@
     width: 12px;
     text-align: center;
     color: #888;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-shrink: 0;
 }
 .gamedata-group-label {
@@ -200,7 +200,7 @@
     color: #b8a5ff;
 }
 .gamedata-group-count {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #888;
     margin-left: auto;
 }
@@ -232,7 +232,7 @@
     align-items: center;
     gap: 6px;
     padding: 3px 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     cursor: pointer;
     border-radius: 3px;
 }
@@ -257,11 +257,11 @@
     width: 12px;
     text-align: center;
     color: #888;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-shrink: 0;
 }
 .req-type-group-header .edge-type {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 1px 4px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -280,10 +280,10 @@
     color: #c0c0c0;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-size: 10px;
+    font-size: 0.625rem;
 }
 .req-type-group-count {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #888;
     margin-left: auto;
 }
@@ -321,7 +321,7 @@
     align-items: center;
     gap: 6px;
     padding: 3px 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     cursor: pointer;
     border-radius: 3px;
 }
@@ -330,7 +330,7 @@
     width: 12px;
     text-align: center;
     color: #888;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-shrink: 0;
 }
 .or-group-label {
@@ -339,7 +339,7 @@
     color: #f4a261;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-size: 10px;
+    font-size: 0.625rem;
     cursor: help;
 }
 .or-group-children { display: none; padding-top: 2px; }
@@ -360,7 +360,7 @@
     align-items: center;
     gap: 6px;
     padding: 3px 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     cursor: pointer;
     border-radius: 3px;
 }
@@ -369,7 +369,7 @@
     width: 12px;
     text-align: center;
     color: #888;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-shrink: 0;
 }
 .or-branch-box-label {
@@ -378,10 +378,10 @@
     color: #e9c46a;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-size: 10px;
+    font-size: 0.625rem;
 }
 .or-branch-box-count {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #888;
     margin-left: auto;
 }
@@ -410,7 +410,7 @@
 }
 .or-branch-placeholder-note {
     margin-left: auto;
-    font-size: 10px;
+    font-size: 0.625rem;
     font-style: italic;
     color: #999;
 }
@@ -432,7 +432,7 @@
     align-items: center;
     gap: 6px;
     padding: 3px 6px;
-    font-size: 11px;
+    font-size: 0.6875rem;
     cursor: pointer;
     border-radius: 3px;
 }
@@ -441,7 +441,7 @@
     width: 12px;
     text-align: center;
     color: #888;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-shrink: 0;
 }
 .or-downstream-label {
@@ -450,11 +450,11 @@
     color: #f4a261;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    font-size: 10px;
+    font-size: 0.625rem;
     cursor: help;
 }
 .or-downstream-count {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #888;
     margin-left: auto;
 }
@@ -470,7 +470,7 @@
    option of the dependent's OR group routes via the rooted textline.
    Compact monospace amber chip, matching the section accent. */
 .or-alt-badge {
-    font-size: 10px;
+    font-size: 0.625rem;
     padding: 1px 5px;
     border-radius: 2px;
     flex-shrink: 0;

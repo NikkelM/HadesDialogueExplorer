@@ -17,7 +17,7 @@
     border: 1px solid #0f3460;
     color: #e0e0e0;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 18px;
     transition: background-color 0.12s ease, color 0.12s ease;
     white-space: nowrap;
@@ -28,11 +28,11 @@
 }
 
 .save-upload-icon {
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .save-status {
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 18px;
     padding: 6px 10px;
     border-radius: 4px;
@@ -170,7 +170,7 @@
     color: #e0e0e0;
     border: 1px solid #0f3460;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     cursor: pointer;
     text-decoration: none;
 }
