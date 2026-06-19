@@ -372,6 +372,18 @@
     .speaker-adjacency-count {
         order: 2;
     }
+    /* Textline list rows: drop the trailing badges (#N/M, Play-once) onto a
+       second line under the dialogue name - the same treatment as the
+       adjacency id - so the name gets the full row width instead of being
+       squeezed and truncated by the badges. The name keeps its single-line
+       ellipsis (these are unbreakable identifier strings, so wrapping them
+       would overflow). */
+    .speaker-textline-row {
+        flex-wrap: wrap;
+    }
+    .speaker-textline-badges {
+        flex-basis: 100%;
+    }
 }
 @media (max-width: 1024px) {
     /* Touch-size the interactive speaker controls: the filter / eligibility
