@@ -291,3 +291,17 @@
         border-top: 1px solid #0f346040;
     }
 }
+
+/* === Eligibility tracer ==============================================
+ * The tracer is a single panel of wrapping flex rows, so it reflows through
+ * the shared foundation, and its tree is handled in the tree section above.
+ * The one touch gap is the "Trace eligibility" entry button in the dialogue
+ * detail panel, which is shorter than a comfortable tap target.
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    .trace-eligibility-btn {
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+    }
+}
