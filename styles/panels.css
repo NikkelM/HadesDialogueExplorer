@@ -22,7 +22,7 @@
    stays visible regardless of how far the body has been scrolled in
    either axis. */
 .panel h2 {
-    font-size: 0.8125rem;
+    font-size: var(--fs-base);
     color: #888;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -52,7 +52,7 @@
 }
 .textline-info h3 {
     color: #e94560;
-    font-size: 0.9375rem;
+    font-size: var(--fs-lg);
     margin-bottom: 6px;
     display: flex;
     align-items: center;
@@ -64,7 +64,7 @@
     flex-shrink: 1;
 }
 .textline-info .meta {
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: #888;
     margin-bottom: 8px;
 }
@@ -81,7 +81,7 @@
     margin-top: 4px;
     margin-bottom: 8px;
     color: #c8b6ff !important;
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
 }
 .synthetic-banner .choice-link {
     color: #b8a5ff;
@@ -105,12 +105,12 @@
 
 .alternates-header {
     margin: 0 0 0.2rem 0;
-    font-size: 0.95rem;
+    font-size: var(--fs-lg);
     color: #c4a56e;
 }
 
 .alternates-hint {
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     color: #7a8a8a;
     margin-bottom: 0.5rem;
 }
@@ -139,11 +139,11 @@
 
 .alternates-name {
     font-family: 'Consolas', monospace;
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     color: #e0e0e0;
 }
 
 .alternates-owner {
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     opacity: 0.6;
 }

@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.6875rem;
+    font-size: var(--fs-xs);
     margin-bottom: 2px;
     /* Whole header acts as the collapse toggle - matches the
        tree-view group header. Wired via delegation in info-panel.js. */
@@ -26,7 +26,7 @@
     min-width: 12px;
     text-align: center;
     color: #888;
-    font-size: 0.625rem;
+    font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
 .gamedata-group-header-inline .gamedata-group-label {
@@ -35,7 +35,7 @@
     color: #b8a5ff;
 }
 .gamedata-group-header-inline .gamedata-group-count {
-    font-size: 0.625rem;
+    font-size: var(--fs-2xs);
     color: #888;
     margin-left: auto;
 }

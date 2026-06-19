@@ -9,7 +9,7 @@
     background: rgba(255, 255, 255, 0.025);
 }
 .req-section h4 {
-    font-size: 0.6875rem;
+    font-size: var(--fs-xs);
     margin: 0 0 6px;
     padding: 1px 6px;
     border-radius: 3px;
@@ -26,7 +26,7 @@
        so margin-right stays consistent regardless of the surrounding
        text run. */
     display: inline-block;
-    font-size: 0.625rem;
+    font-size: var(--fs-2xs);
     opacity: 0.7;
     margin-right: 4px;
 }
@@ -74,7 +74,7 @@
 .req-item {
     padding: 3px 8px;
     margin: 2px 0;
-    font-size: 0.8125rem;
+    font-size: var(--fs-base);
     cursor: pointer;
     border-radius: 3px;
     transition: background 0.15s;
@@ -88,7 +88,7 @@
 .req-item:hover { background: #0f3460; }
 .req-item.resolved { color: #a8dadc; }
 .req-item.unresolved { color: #888; font-style: italic; }
-.req-item.unresolved::after { content: " \26A0  external"; font-size: 0.625rem; color: #666; }
+.req-item.unresolved::after { content: " \26A0  external"; font-size: var(--fs-2xs); color: #666; }
 
 /* Category-specific colors for unresolved refs - overrides the generic
    .unresolved color so the user can visually distinguish intentional
@@ -128,7 +128,7 @@
 .other-req-item {
     padding: 3px 8px;
     margin: 2px 0;
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: #8d99ae;
     font-family: 'Consolas', monospace;
 }
@@ -202,7 +202,7 @@
 }
 .or-branch:first-child { margin-top: 2px; }
 .or-branch-header {
-    font-size: 0.6875rem;
+    font-size: var(--fs-xs);
     margin: 0 0 4px;
     padding: 1px 6px;
     border-radius: 3px;
@@ -215,7 +215,7 @@
 }
 .or-branch-header .toggle {
     display: inline-block;
-    font-size: 0.625rem;
+    font-size: var(--fs-2xs);
     opacity: 0.7;
     margin-right: 4px;
 }
@@ -258,11 +258,11 @@
 }
 .named-req-suffix {
     color: #6b7280;
-    font-size: 0.6875rem;
+    font-size: var(--fs-xs);
     margin-left: 4px;
 }
 .named-req-header {
-    font-size: 0.6875rem;
+    font-size: var(--fs-xs);
     margin: 0 0 2px;
     padding: 1px 4px;
     border-radius: 3px;
@@ -278,7 +278,7 @@
 }
 .named-req-header .toggle {
     display: inline-block;
-    font-size: 0.625rem;
+    font-size: var(--fs-2xs);
     opacity: 0.7;
     margin-right: 4px;
 }

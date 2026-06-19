@@ -16,7 +16,7 @@
 .duplicates-subtitle {
     margin: 0;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: var(--fs-lg);
 }
 
 .duplicates-controls {
@@ -31,7 +31,7 @@
     border-radius: 4px;
     background: var(--input-bg, #1e1e1e);
     color: var(--text-color, #ccc);
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
 }
 
 .duplicates-search:focus {
@@ -70,7 +70,7 @@
     border-radius: 4px;
     background: transparent;
     color: var(--text-color, #e0e0e0);
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     text-align: left;
     cursor: pointer;
 }
@@ -89,7 +89,7 @@
 }
 
 .duplicates-speaker-count {
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
     background: rgba(255, 255, 255, 0.06);
     padding: 0.1rem 0.45rem;
@@ -104,7 +104,7 @@
    the available width. */
 .duplicates-detail-title {
     margin: 0 0 0.6rem;
-    font-size: 1rem;
+    font-size: var(--fs-xl);
 }
 
 .duplicates-detail-list {
@@ -125,13 +125,13 @@
 .duplicates-name {
     display: inline-block;
     width: var(--dup-name-col, max-content);
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     font-family: 'Consolas', monospace;
     color: var(--text-color, #e0e0e0);
 }
 
 .duplicates-game-link {
-    font-size: 0.8rem;
+    font-size: var(--fs-base);
     color: var(--link-color, #e94560);
     cursor: pointer;
     text-decoration: none;

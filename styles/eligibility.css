@@ -6,7 +6,7 @@
 
 .eligibility-target h3 {
     margin: 0 0 0.3rem 0;
-    font-size: 1.1rem;
+    font-size: var(--fs-2xl);
 }
 
 .eligibility-target-link {
@@ -19,7 +19,7 @@
 }
 
 .eligibility-target-meta {
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     color: var(--text-muted, #aaa);
     margin-bottom: 1rem;
 }
@@ -34,7 +34,7 @@
 }
 
 .eligibility-status {
-    font-size: 1rem;
+    font-size: var(--fs-xl);
     font-weight: 600;
     margin-bottom: 0.3rem;
 }
@@ -62,13 +62,13 @@
 .eligibility-unobtainable-reasons {
     margin: 0.2rem 0 0;
     padding-left: 1.2rem;
-    font-size: 0.82rem;
+    font-size: var(--fs-base);
     color: #c8d0d8;
     line-height: 1.5;
 }
 
 .eligibility-detail {
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     color: var(--text-muted, #bbb);
     margin-bottom: 0.5rem;
 }
@@ -89,7 +89,7 @@
 }
 
 .eligibility-progress-label {
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
 }
 /* When a save is loaded and at least one prerequisite is already complete,
@@ -112,7 +112,7 @@
     border-left: 2px solid #5a6b8c;
     background: rgba(255, 255, 255, 0.03);
     border-radius: 0 4px 4px 0;
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     font-style: italic;
     color: var(--text-muted, #9aa4b2);
     line-height: 1.4;
@@ -134,12 +134,12 @@
 
 .eligibility-tree-header {
     margin: 0 0 0.2rem 0;
-    font-size: 0.95rem;
+    font-size: var(--fs-lg);
     color: var(--text-color, #eee);
 }
 
 .eligibility-tree-hint {
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
     margin-bottom: 0.6rem;
 }
@@ -171,7 +171,7 @@
 }
 
 .eligibility-depth {
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     color: #78909c;
     font-weight: 600;
     min-width: 2.75rem;
@@ -181,7 +181,7 @@
 
 .eligibility-item-name {
     font-family: 'Consolas', monospace;
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     color: var(--text-color, #e0e0e0);
     flex: 1;
     min-width: 0;
@@ -193,7 +193,7 @@
 .eligibility-item-meta {
     margin-top: 0.2rem;
     padding-left: 3.25rem;
-    font-size: 0.75rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
     display: flex;
     align-items: center;
@@ -231,7 +231,7 @@
 .eligibility-group-title {
     flex: 1;
     min-width: 0;
-    font-size: 0.82rem;
+    font-size: var(--fs-base);
     font-weight: 600;
     color: #ffd08a;
 }
@@ -289,7 +289,7 @@
 
 .eligibility-branch-note {
     padding: 0.2rem 0.4rem 0;
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     color: #9aa3b2;
 }
 
@@ -303,7 +303,7 @@
 }
 
 .tree-group-label {
-    font-size: 0.8rem;
+    font-size: var(--fs-base);
     font-weight: 600;
     color: #ffd08a;
 }
@@ -320,7 +320,7 @@
 }
 
 .eligibility-tree-container {
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
     margin-top: 0.5rem;
 }
 
