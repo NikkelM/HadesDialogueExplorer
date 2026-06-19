@@ -36,14 +36,17 @@ export function initSaveUpload() {
             const buffer = await file.arrayBuffer();
             const result = parseSaveFile(buffer);
             const label = gameLabels[result.gameId] || result.gameId;
+            const short = `${label} save loaded`;
 
             // H2 saves are valid for both games (mod ports H1 dialogues into H2)
             if (result.gameId !== getActiveGame() && result.gameId !== 'hades2') {
                 showStatus('mismatch',
-                    `${label} save (${result.count} dialogues) - switch game to see progress`);
+                    `${label} save (${result.count} dialogues) - switch game to see progress`,
+                    short);
             } else {
                 showStatus('loaded',
-                    `${label}: ${result.count} dialogues, ${result.completedRuns} runs`);
+                    `${label}: ${result.count} dialogues, ${result.completedRuns} runs`,
+                    short);
             }
             clearBtn.hidden = false;
             setEligibilityNavVisible(true);
@@ -83,12 +86,18 @@ export function restoreSavedSave() {
     return true;
 }
 
-function showStatus(type, text) {
+function showStatus(type, text, shortText) {
     const status = document.getElementById('save-status');
     if (!status) return;
     status.hidden = false;
     status.textContent = text;
     status.className = 'save-status save-' + type;
+    // A compact "<game> save loaded" label for the phone header, where the
+    // full text overflows. CSS swaps it in via attr(data-short) under the
+    // mobile breakpoint; desktop ignores it and shows textContent. Cleared
+    // for statuses without a short form (e.g. errors) so they stay full.
+    if (shortText) status.dataset.short = shortText;
+    else delete status.dataset.short;
 }
 
 // Called by navigation when game switches to update mismatch state
@@ -98,12 +107,14 @@ export function refreshSaveStatus() {
     const label = gameLabels[gameId] || gameId;
     const count = getSaveProgress().size;
     const runs = getSaveRuns();
+    const short = `${label} save loaded`;
     // H2 saves are valid for both games (mod ports H1 dialogues into H2)
     if (gameId !== getActiveGame() && gameId !== 'hades2') {
         showStatus('mismatch',
-            `${label} save (${count} dialogues) - switch game to see progress`);
+            `${label} save (${count} dialogues) - switch game to see progress`,
+            short);
     } else {
-        showStatus('loaded', `${label}: ${count} dialogues, ${runs} runs`);
+        showStatus('loaded', `${label}: ${count} dialogues, ${runs} runs`, short);
     }
 }
 

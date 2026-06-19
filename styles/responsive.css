@@ -162,15 +162,19 @@
         flex-basis: 100%;
         height: 0;
     }
-    /* Compact loaded indicator: the verbose "<game>: N dialogues, M runs"
-       wastes a row on a phone (the per-dialogue badges already convey the
-       detail), so show a short "Save loaded" instead. The mismatch / error
-       variants keep their wording - they're actionable warnings. */
-    .save-status.save-loaded {
+    /* Compact the persistent save status on a phone: the verbose
+       "<game>: N dialogues, M runs" (loaded) and "...switch game to see
+       progress" (wrong game) strings overflow, and the per-dialogue badges
+       already convey the detail. Show a short "<game> save loaded" instead -
+       JS supplies it via data-short because CSS can't compose the game name.
+       The green / amber colour still comes from the save-loaded /
+       save-mismatch class. Errors carry no data-short, so they keep their
+       full, actionable wording. */
+    .save-status[data-short] {
         font-size: 0;
     }
-    .save-status.save-loaded::before {
-        content: "Save loaded";
+    .save-status[data-short]::before {
+        content: attr(data-short);
         font-size: var(--fs-base);
     }
 }
