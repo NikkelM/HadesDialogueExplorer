@@ -22,7 +22,7 @@ globalThis.localStorage = {
 };
 globalThis.window = { location: { hash: '' }, addEventListener() {} };
 
-const { applyFirstVisitLanding } = await import('../templates/viewer/navigation.js');
+const { applyFirstVisitLanding, eligibilityRedirectTarget } = await import('../templates/viewer/navigation.js');
 
 beforeEach(() => {
     _store.clear();
@@ -46,4 +46,17 @@ test('applyFirstVisitLanding does not fire when the URL names a speaker view', (
     globalThis.window.location.hash = '#game=hades2&view=speaker&speaker=NPC_Hecate_01';
     assert.equal(applyFirstVisitLanding(), false);
     assert.equal(_store.get('hde.visited'), undefined);
+});
+
+test('eligibilityRedirectTarget stays on the tracer when the save is usable', () => {
+    assert.equal(eligibilityRedirectTarget(true, 'Foo'), null);
+    assert.equal(eligibilityRedirectTarget(true, null), null);
+});
+
+test('eligibilityRedirectTarget redirects to the active dialogue when the save is unusable', () => {
+    assert.deepEqual(eligibilityRedirectTarget(false, 'Foo'), { view: 'dialogue', dialogue: 'Foo' });
+});
+
+test('eligibilityRedirectTarget falls back to the home state when no dialogue is active', () => {
+    assert.deepEqual(eligibilityRedirectTarget(false, null), {});
 });

@@ -23,6 +23,7 @@ import { buildSpeakerIndex } from './search-speaker.js';
 import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
 import { renderGameToggle, updateFavicon } from './game-toggle.js';
 import { refreshSaveStatus } from './save-upload.js';
+import { getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
 // Tracks the canonical serialization of the state currently
 // reflected in ``window.location.hash`` so the ``hashchange``
@@ -233,6 +234,17 @@ export function applyFirstVisitLanding() {
     return true;
 }
 
+// Decide where to send a visitor who lands on the eligibility view with no
+// usable save for the active game - a reload after localStorage was cleared,
+// a hand-typed URL, or an external link. Returns the named dialogue's detail
+// view if one is active, otherwise the home state; null when the save is
+// usable and the tracer should render. Pure (no save/DOM reads) so the
+// decision is unit-testable; the caller owns the navigateToState redirect.
+export function eligibilityRedirectTarget(hasUsableSave, dialogue) {
+    if (hasUsableSave) return null;
+    return dialogue ? { view: 'dialogue', dialogue } : {};
+}
+
 // Dispatch the parsed state to the appropriate view. Three views are
 // implemented:
 //
@@ -275,6 +287,12 @@ function applyState(state) {
         return;
     }
     if (view === 'eligibility') {
+        const redirect = eligibilityRedirectTarget(
+            !!getSaveProgress() && saveMatchesActiveGame(), state.dialogue || null);
+        if (redirect) {
+            navigateToState(redirect);
+            return;
+        }
         applyLayoutMode('eligibility');
         const name = state.dialogue || null;
         renderEligibility(name);
