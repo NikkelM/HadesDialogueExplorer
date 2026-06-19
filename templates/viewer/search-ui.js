@@ -25,8 +25,9 @@ import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
 import { searchSpeakerMatches } from './search-speaker.js';
+import { searchCrossGameNames, searchCrossGameText, searchCrossGameSpeakers } from './search-cross-game.js';
 import { parseQuery, isQueryEmpty } from './query-parser.js';
-import { navigateTo, navigateToSpeaker, navigateToEligibility } from './navigation.js';
+import { navigateTo, navigateToSpeaker, navigateToEligibility, navigateToState } from './navigation.js';
 
 // Pure arithmetic helper for arrow-key navigation. Returns the next
 // active index given the current one (-1 if nothing is active yet),
@@ -53,6 +54,10 @@ function optionId(section, name) {
     return `search-opt-${section}-${name}`;
 }
 
+// Per-section cap for cross-game (other-game) matches. Kept small - it's
+// a secondary surface below the active-game results, not the primary one.
+const CROSS_LIMIT = 6;
+
 export function initSearch() {
     const searchInput = document.getElementById('search');
     const searchResults = document.getElementById('search-results');
@@ -62,6 +67,12 @@ export function initSearch() {
     const namesList = document.getElementById('search-names-list');
     const textHeader = document.getElementById('search-text-header');
     const textList = document.getElementById('search-text-list');
+    const crossNamesHeader = document.getElementById('search-cross-names-header');
+    const crossNamesList = document.getElementById('search-cross-names-list');
+    const crossTextHeader = document.getElementById('search-cross-text-header');
+    const crossTextList = document.getElementById('search-cross-text-list');
+    const crossSpeakersHeader = document.getElementById('search-cross-speakers-header');
+    const crossSpeakersList = document.getElementById('search-cross-speakers-list');
 
     // Sequence counter used to discard stale debounced text-search
     // results when the user has already moved on to a newer query.
@@ -123,14 +134,24 @@ export function initSearch() {
     }
 
     function hide() {
+        // Cancel any pending debounced text search so it can't re-render
+        // and re-open the dropdown after a result has been committed (the
+        // timer is set in onInput and otherwise survives navigation).
+        clearTimeout(textSearchTimer);
         searchResults.classList.remove('visible');
         searchResults.classList.remove('kbd-mode');
         speakersList.innerHTML = '';
         namesList.innerHTML = '';
         textList.innerHTML = '';
+        crossNamesList.innerHTML = '';
+        crossTextList.innerHTML = '';
+        crossSpeakersList.innerHTML = '';
         speakersHeader.hidden = true;
         namesHeader.hidden = true;
         textHeader.hidden = true;
+        crossNamesHeader.hidden = true;
+        crossTextHeader.hidden = true;
+        crossSpeakersHeader.hidden = true;
         clearActive();
         searchInput.setAttribute('aria-expanded', 'false');
     }
@@ -143,11 +164,22 @@ export function initSearch() {
         const hasSpeakers = speakersList.children.length > 0;
         const hasNames = namesList.children.length > 0;
         const hasText = textList.children.length > 0;
-        const populatedSections = (hasSpeakers ? 1 : 0) + (hasNames ? 1 : 0) + (hasText ? 1 : 0);
+        const hasCrossNames = crossNamesList.children.length > 0;
+        const hasCrossText = crossTextList.children.length > 0;
+        const hasCrossSpeakers = crossSpeakersList.children.length > 0;
+        const populatedSections = (hasSpeakers ? 1 : 0) + (hasNames ? 1 : 0) + (hasText ? 1 : 0)
+            + (hasCrossSpeakers ? 1 : 0) + (hasCrossNames ? 1 : 0) + (hasCrossText ? 1 : 0);
         const showHeaders = populatedSections > 1;
         speakersHeader.hidden = !(showHeaders && hasSpeakers);
         namesHeader.hidden = !(showHeaders && hasNames);
         textHeader.hidden = !(showHeaders && hasText);
+        // Cross-game headers are shown whenever their section has content,
+        // independent of the single-section rule: an other-game result is
+        // meaningless without its "<section> - <Game>" label (the user is
+        // in a different game), so it must never render unlabelled.
+        crossSpeakersHeader.hidden = !hasCrossSpeakers;
+        crossNamesHeader.hidden = !hasCrossNames;
+        crossTextHeader.hidden = !hasCrossText;
         const visible = populatedSections > 0;
         searchResults.classList.toggle('visible', visible);
         searchInput.setAttribute('aria-expanded', visible ? 'true' : 'false');
@@ -196,6 +228,57 @@ export function initSearch() {
         textList.innerHTML = '';
     }
 
+    // Cross-game name rows: same shape as the active name row plus a
+    // ``data-game`` (the other game id, so ``commitOption`` switches game
+    // on click) and a ``cross-game-badge`` reusing the duplicates view's
+    // other-game labelling. Owner / section labels are pre-resolved
+    // against the other game's data by the search module.
+    function renderCrossNameSection(result) {
+        if (!result) { crossNamesList.innerHTML = ''; return; }
+        crossNamesHeader.textContent = `Name matches \u00B7 ${result.gameLabel}`;
+        const parts = [];
+        for (const m of result.matches) {
+            const id = optionId('crossname', m.name);
+            parts.push(`<div class="search-item search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span><span class="cross-game-badge">${escapeHtml(result.gameLabel)}</span></div>`);
+        }
+        crossNamesList.innerHTML = parts.join('');
+    }
+
+    function renderCrossTextSection(result) {
+        if (!result) { crossTextList.innerHTML = ''; return; }
+        crossTextHeader.textContent = `Text matches \u00B7 ${result.gameLabel}`;
+        const parts = [];
+        for (const m of result.matches) {
+            const id = optionId('crosstext', m.name);
+            parts.push(`<div class="search-item search-item-text search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}"><div class="search-item-head">${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span><span class="cross-game-badge">${escapeHtml(result.gameLabel)}</span></div><div class="search-snippet">${m.snippetHtml}</div></div>`);
+        }
+        crossTextList.innerHTML = parts.join('');
+    }
+
+    function clearCrossTextSection() {
+        crossTextList.innerHTML = '';
+    }
+
+    // Cross-game speaker rows: same shape as the active speaker row plus
+    // a ``data-game`` (so ``commitOption`` switches game on click) and a
+    // cross-game badge. ``data-speaker`` carries the other game's
+    // canonical group id; the speaker view re-canonicalises after the
+    // game swap.
+    function renderCrossSpeakerSection(result) {
+        if (!result) { crossSpeakersList.innerHTML = ''; return; }
+        crossSpeakersHeader.textContent = `Speaker matches \u00B7 ${result.gameLabel}`;
+        const parts = [];
+        for (const m of result.matches) {
+            const id = optionId('crossspeaker', m.id);
+            const friendly = m.friendly && m.friendly !== m.id ? m.friendly : m.id;
+            const idSuffix = (m.friendly && m.friendly !== m.id)
+                ? `<span class="npc">(${escapeHtml(m.id)})</span>`
+                : '';
+            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(friendly)}${idSuffix}<span class="cross-game-badge">${escapeHtml(result.gameLabel)}</span></div>`);
+        }
+        crossSpeakersList.innerHTML = parts.join('');
+    }
+
     function onInput() {
         const seq = ++searchSeq;
         clearTimeout(textSearchTimer);
@@ -218,6 +301,22 @@ export function initSearch() {
         const nameMatches = searchNameMatches(query, 30);
         renderNameSection(nameMatches);
 
+        // Cross-game NAME matches run synchronously alongside the active
+        // name section (the other-game scan is light - no index build),
+        // so typing an other-game name surfaces it instantly. The helper
+        // returns null (section cleared) when there's no other game, the
+        // query carries filters, or there's no positive signal.
+        const crossNames = searchCrossGameNames(query, CROSS_LIMIT);
+        renderCrossNameSection(crossNames);
+        const crossNameNames = new Set(crossNames ? crossNames.matches.map((m) => m.name) : []);
+
+        // Cross-game SPEAKER matches: also synchronous - the other game's
+        // speaker set is tiny - and likewise persists through the early
+        // returns below since it keys off the positive tokens, not the
+        // text signal.
+        const crossSpeakers = searchCrossGameSpeakers(query, CROSS_LIMIT);
+        renderCrossSpeakerSection(crossSpeakers);
+
         // Text content search is debounced because it scans every
         // dialogue line. A short delay coalesces fast keystrokes
         // without making the UI feel sluggish. Very short positive
@@ -229,6 +328,7 @@ export function initSearch() {
         // no text signal for the engine to rank or highlight.
         if (query.positive.length === 0 && query.phrases.length === 0) {
             clearTextSection();
+            clearCrossTextSection();
             refreshHeadersAndVisibility();
             return;
         }
@@ -237,6 +337,7 @@ export function initSearch() {
         for (const p of query.phrases) signalLen += p.replace(/\s+/g, '').length;
         if (signalLen < 3) {
             clearTextSection();
+            clearCrossTextSection();
             refreshHeadersAndVisibility();
             return;
         }
@@ -251,14 +352,27 @@ export function initSearch() {
             if (seq !== searchSeq) return;
             const textMatches = searchTextLines(query, nameMatchNames, 30);
             renderTextSection(query, textMatches);
+            // Cross-game TEXT scan walks the other game's dialogue lines,
+            // so it rides the same debounce as the active text search.
+            // Exclude names already shown in the cross-game NAME section.
+            const crossText = searchCrossGameText(query, crossNameNames, CROSS_LIMIT);
+            renderCrossTextSection(crossText);
             refreshHeadersAndVisibility();
         }, 120);
     }
 
     function commitOption(target) {
         if (!target) return;
-        if (target.dataset.speaker) {
+        if (target.dataset.speaker && target.dataset.game) {
+            // Cross-game speaker: switch to the other game, then open its
+            // speaker overview (re-canonicalised there).
+            navigateToState({ game: target.dataset.game, view: 'speaker', speaker: target.dataset.speaker });
+        } else if (target.dataset.speaker) {
             navigateToSpeaker(target.dataset.speaker);
+        } else if (target.dataset.game) {
+            // Cross-game result: switch to the other game, then open the
+            // dialogue there. ``navigateToState`` performs the game swap.
+            navigateToState({ game: target.dataset.game, view: 'dialogue', dialogue: target.dataset.name });
         } else if (location.hash.includes('view=eligibility')) {
             navigateToEligibility(target.dataset.name);
         } else {

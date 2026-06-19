@@ -98,6 +98,14 @@ header h1 {
 #search-results.kbd-mode .search-item:hover { background: transparent; }
 #search-results.kbd-mode .search-item.is-active { background: #0f3460; }
 .search-item .npc { color: #888; font-size: var(--fs-xs); margin-left: 8px; }
+.search-item-cross .cross-game-badge { margin-left: 8px; vertical-align: middle; }
+/* In a search row the whole row is the link; the badge is a static
+   label, so freeze its hover to the base look (the global
+   .cross-game-badge:hover is for the standalone link in the info panel). */
+.search-item-cross .cross-game-badge:hover {
+    background: rgba(88, 166, 255, 0.12);
+    border-color: rgba(88, 166, 255, 0.4);
+}
 .search-item-text .search-item-head { font-size: var(--fs-base); }
 .search-item-text .search-snippet {
     font-size: var(--fs-xs);

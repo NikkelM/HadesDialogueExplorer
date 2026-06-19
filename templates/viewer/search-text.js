@@ -171,7 +171,7 @@ export function findContiguousPhrasePosition(textLower, phraseTokens, firstToken
 // phrase has to match as adjacent whole words (the same semantics
 // the ranking layer uses for contiguous-run boosts). Returns true
 // when the phrase exists in the line text.
-function phraseExistsInLine(textLower, phrase) {
+export function phraseExistsInLine(textLower, phrase) {
     const tokens = phrase.split(/\s+/).filter((t) => t.length > 0);
     if (tokens.length === 0) return false;
     const firstPositions = findWordPositions(textLower, tokens[0]);
@@ -187,7 +187,7 @@ function phraseExistsInLine(textLower, phrase) {
 // whole textline - matches user intent when they type ``-joking``
 // (they want the textline gone, not just the joking line). Cached
 // per call by the caller so each textline is scanned at most once.
-function textlineHasNegativeContent(tl, negative, negativePhrases) {
+export function textlineHasNegativeContent(tl, negative, negativePhrases) {
     if (!tl || !Array.isArray(tl.dialogueLines)) return false;
     if (negative.length === 0 && negativePhrases.length === 0) return false;
     for (const line of tl.dialogueLines) {
