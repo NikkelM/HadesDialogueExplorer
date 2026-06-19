@@ -102,6 +102,13 @@
     background: #8b95d6;
 }
 
+/* A line played in the save that still doesn't satisfy the specific
+   run-scoped / run-count requirement it sits under (e.g. played, but not in
+   the last run). Matches the eligibility tracer's near-miss highlight. */
+.save-badge.near-miss {
+    background: #4db6ac;
+}
+
 /* Detail panel save progress indicator */
 
 .save-progress-pill {

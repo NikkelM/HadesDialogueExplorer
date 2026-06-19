@@ -28,7 +28,7 @@ import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
 import { navigateTo, navigateToSpeaker } from './navigation.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { RUNS_SINCE_REQ_TYPES, runsSinceRefTooltip } from './requirements.js';
+import { RUNS_SINCE_REQ_TYPES, runsSinceRefTooltip, runsSinceExplain, scopedGateExplain } from './requirements.js';
 
 export function getChildren(name, direction) {
     const children = [];
@@ -199,19 +199,33 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
 
     // Save progress badge (coloured dot before the name)
     if (tl && getSaveProgress() && saveMatchesActiveGame()) {
-        const status = getDialogueStatus(name, tl);
+        let status = getDialogueStatus(name, tl);
         if (status) {
-            const badge = document.createElement('span');
-            badge.className = `save-badge ${status}`;
             let tip = saveStatusTooltip(status);
-            // When this row is a line listed under a run-count group on its
-            // parent (upstream only), append how many runs back it played and
-            // whether that satisfies or blocks that gate.
+            // Make the dot edge-aware (upstream only): a line can be played in
+            // the save yet still NOT satisfy the specific run-count or
+            // run-scoped requirement it sits under, in which case a plain green
+            // "played" dot is misleading. Flag those as a near-miss and explain.
             if (direction === 'upstream' && RUNS_SINCE_REQ_TYPES.has(edgeType)) {
                 const cnt = (edgeOpts && edgeOpts.count != null) ? edgeOpts.count : 1;
-                const extra = runsSinceRefTooltip(edgeType, name, getSaveContext(), cnt);
+                const ctx = getSaveContext();
+                const extra = runsSinceRefTooltip(edgeType, name, ctx, cnt);
                 if (extra) tip = `${tip}\n${extra}`;
+                const ex = runsSinceExplain(edgeType, [name], ctx, cnt);
+                if (status === 'played' && ex && ex.refs[0] && !ex.refs[0].ok) status = 'near-miss';
+            } else if (direction === 'upstream') {
+                // Run-scoped positive gate (this-run / this-room / last-run /
+                // queued): a ref played in the save but not in the gate's scope
+                // is a near-miss - it has played, just not where this gate needs.
+                const ex = scopedGateExplain(edgeType, [name], getSaveContext());
+                const blocker = ex && ex.blockers[0];
+                if (blocker && blocker.playedInSave) {
+                    status = 'near-miss';
+                    tip = blocker.tooltip;
+                }
             }
+            const badge = document.createElement('span');
+            badge.className = `save-badge ${status}`;
             badge.dataset.tooltip = tip;
             label.appendChild(badge);
         }

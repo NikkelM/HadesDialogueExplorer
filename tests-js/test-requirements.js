@@ -16,6 +16,7 @@ import {
     requiredCount,
     reqGroupStatus,
     reqGroupLocked,
+    scopedGateExplain,
     requirementSetStatus,
     runsSinceExplain,
     runsSinceGroupTooltip,
@@ -426,6 +427,74 @@ test('reqGroupLocked: count-max overflow and a played global-negative are perman
     assert.equal(reqGroupLocked('RequiredAnyTextLines', ['A', 'B'], played()), false);
     // No record to resolve against -> not claimed locked.
     assert.equal(reqGroupLocked('RequiredFalseTextLines', ['X'], null), false);
+});
+
+test('scopedGateExplain flags a positive-gate ref played in the save but not the scope', () => {
+    // OR last-run: A has played in the save (global) but not last run; B never.
+    const ex = scopedGateExplain('RequiredAnyTextLinesLastRun', ['A', 'B'],
+        { played: played('A'), lastRun: played() });
+    assert.equal(ex.status, 'unmet');
+    assert.equal(ex.scopeLabel, 'the last run');
+    const by = Object.fromEntries(ex.blockers.map(b => [b.name, b]));
+    assert.equal(by.A.playedInSave, true);
+    assert.equal(by.A.reason, 'played in the save, but not last run');
+    assert.match(by.A.tooltip, /Played in your save, but not in the last run/);
+    // B never played -> plain "not played" blocker, no playedInSave flag.
+    assert.equal(by.B.playedInSave, undefined);
+    assert.equal(by.B.reason, 'not played last run');
+    // A negative gate does not get the near-miss flag (the blocker is the
+    // in-scope play itself).
+    const neg = scopedGateExplain('RequiredFalseTextLinesThisRun', ['X'],
+        { played: played('X'), thisRun: played('X') });
+    assert.equal(neg.blockers[0].playedInSave, undefined);
+});
+
+test('scopedGateExplain: run-scoped gates report their blocking refs against the scope record', () => {
+    const ctx = (over) => ({ played: played(), thisRun: played(), thisRoom: played(), lastRun: played(), queued: played(), ...over });
+    // Positive AND this-run: refs absent from the this-run record block it.
+    let ex = scopedGateExplain('RequiredTextLinesThisRun', ['A', 'B'], ctx({ thisRun: played('A') }));
+    assert.equal(ex.status, 'unmet');
+    assert.deepEqual(ex.blockers, [{ name: 'B', reason: 'not played this run' }]);
+    // ...met once all are present.
+    assert.equal(scopedGateExplain('RequiredTextLinesThisRun', ['A'], ctx({ thisRun: played('A') })).status, 'met');
+    // Negative this-run: a ref present in the record blocks it.
+    ex = scopedGateExplain('RequiredFalseTextLinesThisRun', ['X'], ctx({ thisRun: played('X') }));
+    assert.deepEqual(ex.blockers, [{ name: 'X', reason: 'played this run' }]);
+    // OR last-run: blocked only when none of the refs played last run.
+    assert.equal(scopedGateExplain('RequiredAnyTextLinesLastRun', ['A', 'B'], ctx({ lastRun: played() })).status, 'unmet');
+    assert.equal(scopedGateExplain('RequiredAnyTextLinesLastRun', ['A', 'B'], ctx({ lastRun: played('A') })).status, 'met');
+    // Queued + this-room use their own phrasings.
+    assert.deepEqual(
+        scopedGateExplain('RequiredFalseQueuedTextLines', ['Q'], ctx({ queued: played('Q') })).blockers,
+        [{ name: 'Q', reason: 'queued' }]);
+    assert.deepEqual(
+        scopedGateExplain('RequiredTextLinesThisRoom', ['R'], ctx({ thisRoom: played() })).blockers,
+        [{ name: 'R', reason: 'not played this room' }]);
+});
+
+test('scopedGateExplain: null for global-scope fields and unresolvable records', () => {
+    // Global-scope fields are prerequisites / permanent locks, not situational.
+    assert.equal(scopedGateExplain('RequiredTextLines', ['A'], { played: played() }), null);
+    assert.equal(scopedGateExplain('RequiredFalseTextLines', ['A'], { played: played('A') }), null);
+    assert.equal(scopedGateExplain('MinRunsSinceAnyTextLines', ['A'], { played: played() }), null);
+    // A run-scoped field with no record (save doesn't carry it) -> null
+    // (indeterminate), not a reported block.
+    assert.equal(scopedGateExplain('RequiredFalseTextLinesThisRun', ['X'], { played: played(), thisRun: null }), null);
+    // A bare Set is the global played set only -> run-scoped record absent.
+    assert.equal(scopedGateExplain('RequiredTextLinesThisRun', ['A'], played('A')), null);
+});
+
+test('scopedGateExplain agrees with reqGroupStatus on met/unmet', () => {
+    const cases = [
+        ['RequiredTextLinesThisRun', ['A', 'B'], { played: played(), thisRun: played('A') }],
+        ['RequiredTextLinesThisRun', ['A'], { played: played(), thisRun: played('A') }],
+        ['RequiredFalseTextLinesThisRoom', ['X'], { played: played(), thisRoom: played('X') }],
+        ['RequiredAnyTextLinesLastRun', ['A', 'B'], { played: played(), lastRun: played() }],
+        ['RequiredFalseQueuedTextLines', ['Q'], { played: played(), queued: played() }],
+    ];
+    for (const [type, refs, ctx] of cases) {
+        assert.equal(scopedGateExplain(type, refs, ctx).status, reqGroupStatus(type, refs, ctx), type);
+    }
 });
 
 // --- requirementSetStatus: 3-state verdict for OR branches / sets ---

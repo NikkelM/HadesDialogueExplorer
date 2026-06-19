@@ -11,9 +11,9 @@
  */
 
 import { textlines, speakers, alternates } from './data.js';
-import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml } from './utilities.js';
+import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -358,6 +358,65 @@ function renderUnplayedListHtml(chain, mandatory, rootName, groups) {
         html += row.kind === 'group'
             ? renderGroupItemHtml(row.group, rootName, chain)
             : renderUnplayedItemHtml(row.name, row.info, chain, rootName);
+    }
+    html += `</div></div>`;
+    return html;
+}
+
+// Surface the root dialogue's currently-blocking *situational* gates - the
+// conditions the prerequisite chain deliberately omits because they depend on
+// run / room / queue / timing state rather than on playing a prerequisite
+// line ever. Covers:
+//   - run-count gates (Min/MaxRunsSinceAnyTextLines): "how long since X last
+//     played"; and
+//   - run-scoped gates (*ThisRun / *ThisRoom / *LastRun / *Queued): "X (not)
+//     played this run / room / last run / queue".
+// Lists only gates that are currently unmet *and recoverable*: a permanent
+// play-once run-count lock is reported as an unobtainable reason instead, and
+// the caller skips this section entirely for played / unobtainable dialogues.
+// A gate whose record the save doesn't carry stays indeterminate and is not
+// listed. ``ctx`` is the save context (defaults to the live one). Returns ''
+// when nothing applies.
+export function renderBlockingGatesHtml(rootName, ctx = getSaveContext()) {
+    const tl = textlines[rootName];
+    if (!tl || !tl.requirements) return '';
+    const gates = [];
+    for (const [reqType, refs] of Object.entries(tl.requirements)) {
+        if (!Array.isArray(refs)) continue;
+        if (RUNS_SINCE_REQ_TYPES.has(reqType)) {
+            const ex = runsSinceExplain(reqType, refs, ctx, requiredCount(tl, reqType), rootName);
+            if (!ex || ex.status !== 'unmet' || ex.permanent) continue;
+            gates.push({ reqType, count: ex.count, scopeLabel: null, blockers: ex.refs.filter(r => !r.ok).map(r => ({ name: r.name, reason: r.reason })) });
+        } else {
+            const ex = scopedGateExplain(reqType, refs, ctx, rootName);
+            if (!ex || ex.status !== 'unmet') continue;
+            gates.push({ reqType, count: null, scopeLabel: ex.scopeLabel, blockers: ex.blockers });
+        }
+    }
+    if (gates.length === 0) return '';
+
+    let html = `<div class="eligibility-tree">`;
+    html += `<h4 class="eligibility-tree-header">Situational gates (${gates.length})</h4>`;
+    html += `<div class="eligibility-tree-hint">These block on current-run, recent-run, or timing state rather than a missing prerequisite - they change as you play.</div>`;
+    html += `<div class="eligibility-list">`;
+    for (const { reqType, count, scopeLabel, blockers } of gates) {
+        const label = count != null ? `${formatReqType(reqType, 'upstream')}: ${count}` : formatReqType(reqType, 'upstream');
+        // When some options have played in the save but not in this scope,
+        // call it out at the gate level so the highlighting is self-explaining.
+        const hasNearMiss = blockers.some(b => b.playedInSave);
+        const headTipAttr = (hasNearMiss && scopeLabel)
+            ? ` data-tooltip="${escapeHtml(`Highlighted options have played in your save but not in ${scopeLabel}, so they don\u2019t count - this gate needs one played in ${scopeLabel}.`)}"`
+            : '';
+        html += `<div class="eligibility-gate">`;
+        html += `<div class="eligibility-gate-head"${headTipAttr}><span class="group-status group-status-unmet"></span>${escapeHtml(label)}</div>`;
+        html += `<ul class="eligibility-gate-refs">`;
+        for (const b of blockers) {
+            const link = `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(b.name)})">${escapeHtml(b.name)}</a>`;
+            html += b.playedInSave
+                ? `<li>${link} <span class="gate-ref-elsewhere" data-tooltip="${escapeHtml(b.tooltip)}">- ${escapeHtml(b.reason)}</span></li>`
+                : `<li>${link} - ${escapeHtml(b.reason)}</li>`;
+        }
+        html += `</ul></div>`;
     }
     html += `</div></div>`;
     return html;
@@ -738,6 +797,13 @@ export function renderEligibility(dialogueName) {
 
     html += renderSummaryHtml(dialogueName, chain, groups, mandatory);
     html += renderOrBranchesHtml(dialogueName);
+    // Timing (run-count) gates block independently of the prerequisite chain,
+    // but are moot once the dialogue has played or is permanently locked.
+    const playedSet = getSaveProgress() || new Set();
+    if (isDialoguePlayed(dialogueName) !== true
+        && !isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo)) {
+        html += renderBlockingGatesHtml(dialogueName, getSaveContext());
+    }
     html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
     html += renderTreeHtml(chain, dialogueName, groups);
 

@@ -228,6 +228,38 @@
     gap: 0.5rem;
 }
 
+/* Timing (run-count) gate card in the "Timing gates" section */
+.eligibility-gate {
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: #1e1e2e;
+    border: 1px solid #2a2a3a;
+}
+
+.eligibility-gate-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Consolas', monospace;
+    font-size: var(--fs-base);
+    color: var(--text-color, #e0e0e0);
+}
+
+.eligibility-gate-refs {
+    margin: 0.3rem 0 0;
+    padding-left: 1.4rem;
+    font-size: var(--fs-sm);
+    color: var(--text-muted, #bbb);
+    line-height: 1.5;
+}
+
+/* A gate option that has played in the save but not in the gate's scope -
+   a near-miss: it has played, just not where this gate needs it, so it
+   doesn't satisfy the gate (which stays blocked). */
+.gate-ref-elsewhere {
+    color: #4db6ac;
+}
+
 .eligibility-group-title {
     flex: 1;
     min-width: 0;

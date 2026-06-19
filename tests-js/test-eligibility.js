@@ -10,7 +10,7 @@ import { test, before, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml } from '../templates/viewer/eligibility-view.js';
+import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml } from '../templates/viewer/eligibility-view.js';
 import { isUnobtainable, unobtainableReasons } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
@@ -475,6 +475,114 @@ describe('tree rendering: priority badges + alternates grouping (parity with the
         // Each row carries the narrative-priority badge (parity with the
         // dependency tree), here the H2 ordinal badge.
         assert.match(html, /priority-badge/);
+    });
+});
+
+describe('renderBlockingGatesHtml: situational gates the prereq chain omits', () => {
+    const gate = (reqs, other) => ({ owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements: reqs, otherRequirements: other });
+
+    test('surfaces a Min run-count gate blocked by a too-recent ref', () => {
+        loadData({
+            textlines: {
+                Root: gate({ MinRunsSinceAnyTextLines: ['Foe'] }, { MinRunsSinceAnyTextLines: { Count: 8 } }),
+                Foe: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // Foe played 2 runs ago -> too recent for an 8-run gate.
+        const html = renderBlockingGatesHtml('Root', { played: new Set(['Foe']), runsAgo: { Foe: 2 } });
+        assert.match(html, /Situational gates \(1\)/);
+        assert.match(html, /Foe<\/a> - last played 2 runs ago, too recent \(needs at least 8 runs since\)/);
+    });
+
+    test('surfaces a run-scoped negative blocked by a line played this run', () => {
+        loadData({
+            textlines: {
+                Root: gate({ RequiredFalseTextLinesThisRun: ['Foe'] }, {}),
+                Foe: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // Foe played this run -> violates the "must not have played this run" gate.
+        const html = renderBlockingGatesHtml('Root', { played: new Set(), thisRun: new Set(['Foe']) });
+        assert.match(html, /Situational gates \(1\)/);
+        assert.match(html, /Foe<\/a> - played this run/);
+    });
+
+    test('surfaces a run-scoped positive AND missing a line this run', () => {
+        loadData({
+            textlines: {
+                Root: gate({ RequiredTextLinesThisRun: ['Foe'] }, {}),
+                Foe: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        const html = renderBlockingGatesHtml('Root', { played: new Set(), thisRun: new Set() });
+        assert.match(html, /Foe<\/a> - not played this run/);
+    });
+
+    test('highlights an option played in the save but not in the gate scope', () => {
+        loadData({
+            textlines: {
+                Root: gate({ RequiredAnyTextLinesLastRun: ['Seen', 'Unseen'] }, {}),
+                Seen: { owner: 'NPC_Test_01', requirements: {} },
+                Unseen: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // Seen played in the save (global) but not last run; Unseen never.
+        const html = renderBlockingGatesHtml('Root', { played: new Set(['Seen']), lastRun: new Set() });
+        // The near-miss option gets the distinct class + its own tooltip.
+        assert.match(html, /<span class="gate-ref-elsewhere" data-tooltip="[^"]*Played in your save[^"]*">- played in the save, but not last run<\/span>/);
+        // The never-played option stays a plain reason.
+        assert.match(html, /Unseen<\/a> - not played last run/);
+        // The gate head gains the near-miss explainer tooltip.
+        assert.match(html, /eligibility-gate-head" data-tooltip="[^"]*Highlighted options have played in your save but not in the last run/);
+    });
+
+    test('is silent for a run-scoped gate the save cannot resolve (no record)', () => {
+        loadData({
+            textlines: {
+                Root: gate({ RequiredFalseTextLinesThisRun: ['Foe'] }, {}),
+                Foe: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // No this-run record -> indeterminate, not a reported block.
+        assert.equal(renderBlockingGatesHtml('Root', { played: new Set(), thisRun: null }), '');
+    });
+
+    test('is empty when the run-count gate is satisfied', () => {
+        loadData({
+            textlines: {
+                Root: gate({ MinRunsSinceAnyTextLines: ['Foe'] }, { MinRunsSinceAnyTextLines: { Count: 3 } }),
+                Foe: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // Foe played 5 runs ago -> satisfies a 3-run gate.
+        assert.equal(renderBlockingGatesHtml('Root', { played: new Set(['Foe']), runsAgo: { Foe: 5 } }), '');
+    });
+
+    test('omits a permanent (play-once) lock - that is an unobtainable reason instead', () => {
+        loadData({
+            textlines: {
+                Root: gate({ MaxRunsSinceAnyTextLines: ['POnce'] }, { MaxRunsSinceAnyTextLines: { Count: 3 } }),
+                POnce: { owner: 'NPC_Test_01', requirements: {}, playOnce: true },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        // Play-once line 5 runs ago, window 3 -> permanently out, so it is not
+        // listed here (the unobtainable reasons cover it).
+        assert.equal(renderBlockingGatesHtml('Root', { played: new Set(['POnce']), runsAgo: { POnce: 5 } }), '');
+    });
+
+    test('is empty for a dialogue with no situational gates', () => {
+        loadData({
+            textlines: { Root: gate({ RequiredTextLines: ['Foe'] }, {}), Foe: { owner: 'NPC_Test_01', requirements: {} } },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+        assert.equal(renderBlockingGatesHtml('Root', { played: new Set(), runsAgo: {} }), '');
     });
 });
 

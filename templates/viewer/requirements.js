@@ -394,6 +394,70 @@ export function reqGroupLocked(reqType, refs, context, count = 1, selfName = nul
     return false;
 }
 
+// Human phrasing for each run-scoped record: how a referenced line reads
+// when it is present in / absent from that scope's record, plus the
+// "elsewhere" case (played somewhere in the save, just not in this scope) and
+// a noun for tooltips.
+const SCOPE_PHRASES = {
+    thisRun: { present: 'played this run', absent: 'not played this run', elsewhere: 'played in the save, but not this run', noun: 'this run' },
+    thisRoom: { present: 'played this room', absent: 'not played this room', elsewhere: 'played in the save, but not this room', noun: 'this room' },
+    lastRun: { present: 'played last run', absent: 'not played last run', elsewhere: 'played in the save, but not last run', noun: 'the last run' },
+    queued: { present: 'queued', absent: 'not queued', elsewhere: 'played in the save, but not queued', noun: 'the textline queue' },
+};
+
+/**
+ * Per-ref breakdown of a *run-scoped* requirement gate - the ``*ThisRun`` /
+ * ``*ThisRoom`` / ``*LastRun`` / ``*Queued`` positive (AND), any (OR) and
+ * negative fields - against a save ``context``. These are situational gates
+ * the global prerequisite chain doesn't walk: they resolve against the
+ * run / room / last-run / queue records, not the cumulative played set.
+ *
+ * Returns ``null`` for a global-scope field (those are prerequisites or
+ * permanent locks, handled elsewhere) or when the save carries no record for
+ * the scope (so the gate stays indeterminate rather than reported as a
+ * block). Otherwise ``{ status, scopeLabel, blockers }`` where ``blockers``
+ * are the refs currently failing the gate, each ``{ name, reason }`` plus,
+ * for a *positive* gate ref that has played somewhere in the save but not in
+ * this scope, ``playedInSave: true`` and a ``tooltip`` - a near-miss the
+ * tracer flags distinctly (it has played, just not where this gate needs).
+ * ``status`` matches ``reqGroupStatus`` for the same field.
+ */
+export function scopedGateExplain(reqType, refs, context, selfName = null) {
+    const scope = REQ_TYPE_SCOPE[reqType];
+    const phrases = scope && SCOPE_PHRASES[scope];
+    if (!phrases) return null; // global-scope or no run-scoped record for this field
+    const ctx = _asContext(context);
+    const record = ctx[scope];
+    if (!(record instanceof Set)) return null; // unresolvable -> indeterminate, not a block
+    const playedSet = ctx.played instanceof Set ? ctx.played : null;
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    // A positive-gate ref missing from the scope record: distinguish "played
+    // in the save but not this scope" (a near-miss) from "never played".
+    const positiveBlocker = (r) => {
+        if (playedSet && playedSet.has(r)) {
+            return {
+                name: r,
+                reason: phrases.elsewhere,
+                playedInSave: true,
+                tooltip: `Played in your save, but not in ${phrases.noun}. This gate only counts a line played in ${phrases.noun}, so a save-wide play doesn\u2019t satisfy it.`,
+            };
+        }
+        return { name: r, reason: phrases.absent };
+    };
+    let blockers;
+    if (AND_REQ_TYPES.has(reqType)) {
+        blockers = others.filter(r => !record.has(r)).map(positiveBlocker);
+    } else if (OR_REQ_TYPES.has(reqType)) {
+        blockers = others.some(r => record.has(r)) ? [] : others.map(positiveBlocker);
+    } else if (NEGATIVE_REQ_TYPES.has(reqType)) {
+        blockers = others.filter(r => record.has(r)).map(r => ({ name: r, reason: phrases.present }));
+    } else {
+        return null;
+    }
+    return { status: blockers.length === 0 ? 'met' : 'unmet', scopeLabel: phrases.noun, blockers };
+}
+
 /**
  * Three-state verdict for a requirement *set* (a textline's base
  * requirements or one ``orBranches`` alternative) against a save
