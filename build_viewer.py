@@ -66,6 +66,8 @@ from src.label_maps import annotate_label_maps
 from src.section_key_audit import audit_section_keys
 from src.speaker_overview import annotate_speaker_aggregates
 from src.play_once import annotate_play_once
+from src.choice_prompt_text import annotate_choice_prompt_text
+from src.extractors.hades2 import HADES2_OFFER_TEXT_MAP
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
@@ -474,6 +476,13 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
     # Fold the self-negative play-once idiom into the ``playOnce`` flag
     # before the aggregates / eligibility consumers read it.
     annotate_play_once(graph_data)
+
+    # Resolve H2 choice-prompt cue text ids (e.g. ``Choice_NemesisBecomingCloser01``)
+    # to their display text. A no-op for H1 (its prompts are resolved at
+    # extraction and its ids aren't in the H2 map).
+    annotate_choice_prompt_text(
+        graph_data, HADES2_OFFER_TEXT_MAP if game == "hades2" else {}
+    )
 
     annotate_known_unresolved(graph_data, game)
     annotate_blocked_textlines(graph_data)

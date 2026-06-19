@@ -56,7 +56,11 @@ H1 features intentionally NOT mirrored:
   expanded dialogue edges; a dedicated resolver would lift them like
   H1 does. See ``h2-function-textline-gamedata`` follow-up.
 * ``HADES1_OFFER_TEXT_MAP`` - H2 has no ``MiscText.en.sjson`` offer-
-  text indirection on boon vendor lines.
+  text indirection on boon vendor lines, but the romance "Becoming
+  Closer" choice prompts do route their question text through a
+  ``ScreenText.en.sjson`` id. See :mod:`.offer_text`
+  (``HADES2_OFFER_TEXT_MAP``), applied post-merge by
+  ``annotate_choice_prompt_text``.
 * ``HADES1_PRESET_CHOICES`` - H2 inline ``Choices = {...}`` blocks
   carry their options directly with no ``PresetEventArgs.<Name>``
   indirection. See :mod:`.choice_names` for the H2 label map.
@@ -89,6 +93,7 @@ from .req_types import (
     HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 from .choice_names import HADES2_CHOICE_NAMES
+from .offer_text import HADES2_OFFER_TEXT_MAP
 from .owner_overrides import (
     HUB_NARRATOR_SPEAKER,
     TEXTLINE_OWNER_OVERRIDES,
@@ -152,6 +157,7 @@ __all__ = [
     "HADES2_REQ_TYPE_LABELS_DEPENDENTS",
     "HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS",
     "HADES2_CHOICE_NAMES",
+    "HADES2_OFFER_TEXT_MAP",
     "HUB_NARRATOR_SPEAKER",
     "TEXTLINE_OWNER_OVERRIDES",
     "IDMAP_PARENT_OWNER_OVERRIDES",
