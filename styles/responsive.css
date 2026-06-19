@@ -309,3 +309,83 @@
         align-items: center;
     }
 }
+
+/* === Speaker overview ===============================================
+ * The speaker view (single full-width panel) packs a 3-/4-column summary
+ * grid, a two-column upstream/downstream adjacency block and chip rows, all
+ * sized for desktop width. On a phone the columns get unreadably narrow and
+ * the adjacency speaker names truncate mid-word. Collapse the grids and stack
+ * the adjacency on phones; size the chips and clickable rows for touch on any
+ * small screen. Desktop (> tablet) keeps the multi-column layout.
+ * ==================================================================== */
+@media (max-width: 599px) {
+    /* Header: stack the title / description above the "other versions" aside
+       rather than squeezing the aside into a third of the width. Flex column
+       supersedes the children's desktop grid-column placement. */
+    .speaker-overview-header {
+        display: flex;
+        flex-direction: column;
+    }
+    /* Summary cards: drop the 3 / 4 desktop columns to two so the big stat
+       values stay legible. The two single-number cells (owned / as-guest)
+       sit side by side; the two multi-line list cells (sections, save
+       progress) each take a full-width row of their own so they're readable
+       and the save-progress list is clearly separate from the sections. */
+    .speaker-summary-row,
+    .speaker-summary-row-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .speaker-summary-sections,
+    .speaker-summary-eligibility {
+        grid-column: 1 / -1;
+    }
+    /* Adjacency: stack the two columns so each gets full width and the
+       speaker names stop truncating. Drop the desktop fixed name-column
+       width (a JS-set ch value that aligns count chips across rows) and let
+       the name cell flex to fill instead. Stack the internal id under the
+       friendly name (two lines) to save horizontal space, and bump both a
+       step for readability. */
+    .speaker-adjacency {
+        flex-direction: column;
+    }
+    .speaker-adjacency-row {
+        align-items: center;
+    }
+    .speaker-adjacency-nameid {
+        width: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        white-space: normal;
+    }
+    .speaker-adjacency-nameid .speaker-link {
+        font-size: var(--fs-lg);
+    }
+    .speaker-adjacency-nameid .speaker-id-inline {
+        font-size: var(--fs-sm);
+    }
+    /* Put the "self" badge to the left of the count chip (DOM order is
+       count then self). Explicit orders after the order-0 chevron + name. */
+    .speaker-adjacency-self {
+        order: 1;
+    }
+    .speaker-adjacency-count {
+        order: 2;
+    }
+}
+@media (max-width: 1024px) {
+    /* Touch-size the interactive speaker controls: the filter / eligibility
+       chips, the "other versions" pills, and the clickable group / adjacency
+       / textline rows. */
+    .priority-chip,
+    .speaker-similar-pill {
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+    }
+    .speaker-textline-row,
+    .speaker-textline-group-header,
+    .speaker-adjacency-row {
+        min-height: var(--tap-min);
+    }
+}
