@@ -44,6 +44,8 @@ body.layout-speaker #panel-info {
     align-items: start;
     gap: 16px;
     padding: 12px;
+    border: 1px solid #0f3460;
+    border-radius: 6px 6px 0 0;
 }
 .speaker-overview-header-main {
     grid-column: 1 / 3;
@@ -137,7 +139,8 @@ body.layout-speaker #panel-info {
 .speaker-summary {
     background: #16213e;
     border: 1px solid #0f3460;
-    border-radius: 6px;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
     padding: 12px;
     margin-bottom: 12px;
 }
