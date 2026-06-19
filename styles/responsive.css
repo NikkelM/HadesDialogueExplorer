@@ -1,0 +1,63 @@
+/* Responsive overrides.
+ *
+ * PINNED LAST by build_css() so these @media rules win the cascade over the
+ * desktop base in every other file (media queries add no specificity, so
+ * load order breaks equal-specificity ties).
+ *
+ * The desktop layout is locked: every rule here is an ADDITIVE mobile/tablet
+ * override inside a max-width query. Desktop (> tablet breakpoint) is never
+ * touched. Per-view internals are refined in their own files' future work;
+ * this file owns the shared foundation only.
+ *
+ * Breakpoints (single source of truth; CSS @media widths can't read custom
+ * properties, so the values are documented here and used literally below):
+ *   phone   : max-width  599px
+ *   tablet  : max-width 1024px   (covers phone + tablet portrait)
+ *   desktop : min-width 1025px   (untouched - locked)
+ */
+
+:root {
+    /* Minimum comfortable touch target (WCAG 2.5.5 / platform guidance).
+       Used by mobile overrides to size chevrons, chips, rows, etc. */
+    --tap-min: 44px;
+}
+
+/* === Foundation: tablet and below ======================================
+ * The desktop shell is a fixed-height (100dvh), overflow-hidden flex column
+ * whose panels scroll internally. On small screens that clips content and
+ * fights the mobile browser chrome. Here the shell becomes an ordinary
+ * vertically-scrolling document: the panels stack and the page scrolls.
+ * Wide content (deep trees) still overflows horizontally until the tree
+ * work (#108) wraps it in its own scroller - tracked there, not here.
+ * ====================================================================== */
+@media (max-width: 1024px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100svh;
+        overflow: visible;
+        /* Notch / rounded-corner / home-indicator clearance. Resolves to 0
+           on devices without insets, so tablets and desktop are unaffected.
+           Not observable under headless emulation - verify on a real device. */
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    main {
+        flex-direction: column;
+        overflow: visible;
+    }
+    /* Panels stack vertically and flow to their natural height (the page
+       scrolls, not each panel). The right divider becomes a bottom one. */
+    .panel {
+        flex: initial;
+        overflow: visible;
+        border-right: none;
+        border-bottom: 1px solid #0f3460;
+    }
+    .panel:last-child { border-bottom: none; }
+    .panel-body {
+        flex: initial;
+        overflow: visible;
+    }
+}

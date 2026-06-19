@@ -124,11 +124,20 @@ _DEFAULT_DIALOGUE = {
 
 
 def build_css() -> str:
-    """Read and concatenate all CSS files in order."""
+    """Read and concatenate all CSS files in order.
+
+    ``responsive.css`` is pinned LAST (after the alphabetical sort) so its
+    ``@media`` mobile overrides reliably win the cascade over the desktop
+    base rules in every other file - media queries don't add specificity,
+    so load order decides equal-specificity ties. Mirrors how ``build_js``
+    pins ``init.js`` last.
+    """
     css_files = sorted(STYLES_DIR.glob("*.css"))
     if not css_files:
         print("WARNING: No CSS files found in styles/")
         return ""
+    responsive = [f for f in css_files if f.name == "responsive.css"]
+    css_files = [f for f in css_files if f.name != "responsive.css"] + responsive
     parts = []
     for css_file in css_files:
         parts.append(f"/* --- {css_file.name} --- */")
