@@ -63,6 +63,16 @@ function attachCollapseToggle(header, toggle, childrenBox) {
     });
 }
 
+// Append a short italic note under a leaf root so an empty prerequisite /
+// dependent tree reads as "intentionally nothing here" rather than a render
+// that failed to load. The root's toggle stays blank (it is a true leaf).
+function appendEmptyTreeNote(rootNode, text) {
+    const note = document.createElement('div');
+    note.className = 'tree-empty-note';
+    note.textContent = text;
+    rootNode.appendChild(note);
+}
+
 export function renderUpstream(name) {
     const container = document.getElementById('upstream-content');
     container.innerHTML = '';
@@ -79,6 +89,8 @@ export function renderUpstream(name) {
         appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
+    } else {
+        appendEmptyTreeNote(rootNode, 'This textline has no dialogue prerequisites.');
     }
     container.appendChild(rootNode);
 }
@@ -99,6 +111,8 @@ export function renderDownstream(name) {
         appendChildrenWithTypeGrouping(childContainer, kids, 'downstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
+    } else {
+        appendEmptyTreeNote(rootNode, 'No other textlines depend on this one.');
     }
     container.appendChild(rootNode);
 }

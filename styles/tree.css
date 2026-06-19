@@ -416,6 +416,15 @@
     color: #999;
 }
 
+/* Leaf-root note shown when a textline has no prerequisites / dependents,
+   so an empty tree reads as intentional rather than a failed render. */
+.tree-empty-note {
+    margin: 6px 0 2px 1.6rem;
+    font-size: var(--fs-sm);
+    font-style: italic;
+    color: #888;
+}
+
 /* Downstream OR-routed dependents section. Mirrors the upstream
    ``.or-group-box`` amber accent for visual consistency, but its
    inner structure is simpler: a single header + a flat list of
