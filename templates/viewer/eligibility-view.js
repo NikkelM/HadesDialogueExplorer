@@ -356,7 +356,7 @@ function renderUnplayedItemHtml(name, info, chain, rootName) {
         .map(p => p.name)
         .slice(0, 3);
     const neededByStr = neededBy.length > 0
-        ? neededBy.map(n => `<a class="eligibility-ref" onclick="event.stopPropagation();navigateTo(${jsAttr(n)})">${escapeHtml(n.length > 25 ? n.slice(0, 23) + '\u2026' : n)}</a>`).join(', ')
+        ? neededBy.map(n => `<a class="eligibility-ref" onclick="event.stopPropagation();navigateTo(${jsAttr(n)})">${escapeHtml(n)}</a>`).join(', ')
         : '';
 
     const edgeLabels = [...new Set(info.parents.map(p => p.reqType))];
