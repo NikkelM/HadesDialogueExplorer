@@ -12,8 +12,8 @@
 
 import { textlines, speakers, alternates } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml } from './utilities.js';
-import { getSaveProgress, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, requiredCount, directSatisfaction } from './requirements.js';
+import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -56,6 +56,13 @@ export function buildPrereqChain(rootName, isPlayed = (n) => isDialoguePlayed(n)
 
         for (const [reqType, refs] of Object.entries(tl.requirements)) {
             if (!Array.isArray(refs)) continue;
+            // The flat chain is the global textline-dependency graph. Run-
+            // scoped fields (this-run / this-room / queued) are situational,
+            // resolved against their own records for the root/branch verdict,
+            // and would only pollute the "still needed" progression here, so
+            // walk only the global-scope fields (negatives + run-count were
+            // already skipped because they aren't AND/OR/count prerequisites).
+            if (REQ_TYPE_SCOPE[reqType] !== 'played') continue;
             const options = refs.filter(ref => ref !== name);
 
             if (AND_REQ_TYPES.has(reqType)) {
@@ -213,12 +220,14 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
 }
 
 // Render the specific locks behind an "unobtainable" verdict - negative gates
-// whose line has played, and choices the player took differently - each
-// linking to the dialogue involved.
-function renderUnobtainableReasonsHtml(rootName, playedSet) {
-    const reasons = unobtainableReasons(rootName, playedSet);
+// whose line has played, count-max gates that have overflowed, play-once
+// run-count gates now out of range, and choices the player took differently -
+// each linking to the dialogue involved.
+function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo) {
+    const reasons = unobtainableReasons(rootName, playedSet, runsAgo);
     if (reasons.length === 0) return '';
     const ref = (name) => `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`;
+    const runs = (n) => `${n} run${n === 1 ? '' : 's'}`;
     let html = `<ul class="eligibility-unobtainable-reasons">`;
     for (const r of reasons) {
         if (r.kind === 'choice') {
@@ -226,6 +235,13 @@ function renderUnobtainableReasonsHtml(rootName, playedSet) {
                 + ` \u2014 you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`;
         } else if (r.kind === 'negative') {
             html += `<li>${ref(r.blocker)} has already played, but this requires it <strong>not</strong> to have.</li>`;
+        } else if (r.kind === 'maxany') {
+            html += `<li>Too many of a limited group have already played (at most <strong>${r.count}</strong> allowed): `
+                + `${r.blockers.map(ref).join(', ')}.</li>`;
+        } else if (r.kind === 'runcount') {
+            const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
+            html += `<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
+                + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`;
         }
     }
     html += `</ul>`;
@@ -238,13 +254,15 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     const rootPlayed = isDialoguePlayed(rootName) === true;
     const rootTl = textlines[rootName];
     const playedSet = getSaveProgress() || new Set();
-    // The tracer walks only textline prerequisites (the AND/OR/count chain);
-    // an H2 dialogue can also be gated by set-level ``orBranches`` the chain
-    // doesn't enumerate, so confirm direct eligibility against the same
-    // shared check the save badge uses. 'unknown' means the save-checkable
-    // prerequisites all hold but the dialogue also gates on per-run /
-    // queued / run-count state a save can't resolve.
-    const rootSat = rootPlayed ? null : directSatisfaction(rootTl, playedSet, rootName);
+    // Evaluation context: the global played set plus the run-scoped records.
+    const saveCtx = { ...getSaveContext(), played: playedSet };
+    // The tracer walks only the global textline prerequisites (the AND/OR/
+    // count chain); an H2 dialogue can also be gated by set-level
+    // ``orBranches`` the chain doesn't enumerate, plus run-scoped fields, so
+    // confirm direct eligibility against the same shared check the save badge
+    // uses. 'unknown' means every resolvable requirement holds but the
+    // dialogue also gates on last-run or run-count state a save can't resolve.
+    const rootSat = rootPlayed ? null : directSatisfaction(rootTl, saveCtx, rootName);
     const directlyEligible = rootSat === 'met';
     const indeterminate = rootSat === 'unknown';
 
@@ -277,13 +295,13 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
         html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
         html += chainNote;
-    } else if (isUnobtainable(rootName, playedSet)) {
+    } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo)) {
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
-        html += renderUnobtainableReasonsHtml(rootName, playedSet);
+        html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
     } else if (indeterminate) {
         html += `<div class="eligibility-status eligibility-indeterminate">? Indeterminate</div>`;
-        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from a save: this dialogue gates on per-run, per-room, queued, or run-count state the save doesn\u2019t track. Its save-checkable prerequisites are satisfied.</div>`;
+        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from this save: this dialogue gates on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active). Its resolvable prerequisites are satisfied.</div>`;
         html += chainNote;
     } else if (total === 0) {
         // Blocked, but gated entirely by alternative branches (no flat chain).
@@ -644,7 +662,7 @@ export function renderOrBranchesHtml(rootName, playedSet = getSaveProgress() || 
 }
 
 function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
-    const sat = directSatisfaction(branch, playedSet, rootName);
+    const sat = directSatisfaction(branch, { ...getSaveContext(), played: playedSet }, rootName);
     const satisfied = sat === 'met';
     const indeterminate = sat === 'unknown';
     const icon = satisfied ? '\u2714' : indeterminate ? '?' : '\u25CB';

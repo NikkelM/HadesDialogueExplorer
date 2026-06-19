@@ -27,7 +27,8 @@ import {
 import { renderInfo } from './info-panel.js';
 import { appendChildrenWithTypeGrouping } from './tree-renderers.js';
 import { navigateTo, navigateToSpeaker } from './navigation.js';
-import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
+import { RUNS_SINCE_REQ_TYPES, runsSinceRefTooltip } from './requirements.js';
 
 export function getChildren(name, direction) {
     const children = [];
@@ -202,7 +203,16 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         if (status) {
             const badge = document.createElement('span');
             badge.className = `save-badge ${status}`;
-            badge.dataset.tooltip = saveStatusTooltip(status);
+            let tip = saveStatusTooltip(status);
+            // When this row is a line listed under a run-count group on its
+            // parent (upstream only), append how many runs back it played and
+            // whether that satisfies or blocks that gate.
+            if (direction === 'upstream' && RUNS_SINCE_REQ_TYPES.has(edgeType)) {
+                const cnt = (edgeOpts && edgeOpts.count != null) ? edgeOpts.count : 1;
+                const extra = runsSinceRefTooltip(edgeType, name, getSaveContext(), cnt);
+                if (extra) tip = `${tip}\n${extra}`;
+            }
+            badge.dataset.tooltip = tip;
             label.appendChild(badge);
         }
     }

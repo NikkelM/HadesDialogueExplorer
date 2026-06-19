@@ -248,20 +248,133 @@ function extractPlayedSet(parsed) {
   return new Set(Object.keys(luaState.TextLinesRecord || {}));
 }
 
+// Per-run / per-room / queued / last-run textline records, used to resolve
+// the run-scoped requirement fields (``*ThisRun`` / ``*ThisRoom`` /
+// ``*Queued`` / ``*LastRun``) the global cumulative record can't. Both games
+// store the run/room records at the same ``CurrentRun.*`` paths and the
+// last-run record at ``GameState.RunHistory[#RunHistory].TextLinesRecord``
+// (the highest index - the current in-progress run lives in ``CurrentRun``
+// and is not yet in ``RunHistory``); they differ only in where the global
+// record lives (see ``extractPlayedSet``) and the queue - H1 keeps a
+// top-level ``QueuedTextLines``, while H2 only persists a voice-line queue
+// (``CurrentRun.Hero.QueuedVoiceLines``), a different namespace that never
+// matches textline names, so H2's textline queue is treated as unavailable.
+// ``thisRun`` / ``thisRoom`` / ``queued`` are ``null`` when the save doesn't
+// carry them (e.g. no active run) so the evaluator falls back to
+// "indeterminate"; ``lastRun`` is always a Set (empty = no completed run,
+// which the game treats the same as an empty record) and ``runsAgo`` is
+// always an object, so the *LastRun and run-count fields are always
+// resolvable.
+//
+// ``runsAgo`` maps a textline name to how many runs ago it most recently
+// played (0 = current run, 1 = last completed run, ...), built from the
+// current run + RunHistory newest-first up to ``RUNS_AGO_DEPTH``. That depth
+// covers the deepest run-count requirement (Hades 1 MaxRunsSince Count = 80;
+// Hades II caps at 9 and only retains ~10 runs of TextLinesRecord anyway -
+// SaveLogic.lua strips it beyond runsBack 10). Hades II strips older runs, so
+// matching its post-load behaviour, a stripped run contributes nothing.
+const RUNS_AGO_DEPTH = 100;
+
+function extractSaveContext(parsed) {
+  const { gameId, luaState } = parsed;
+  const gs = luaState.GameState || {};
+  const played = extractPlayedSet(parsed);
+
+  let thisRun = null;
+  let thisRoom = null;
+  const cr = luaState.CurrentRun;
+  if (cr && typeof cr === 'object') {
+    thisRun = new Set(Object.keys(cr.TextLinesRecord || {}));
+    for (const k of Object.keys(cr.HubTextLinesRecord || {})) thisRun.add(k);
+    for (const v of choiceRecordVariants(cr.TextLinesChoiceRecord)) thisRun.add(v);
+    const room = cr.CurrentRoom;
+    if (room && typeof room === 'object') {
+      thisRoom = new Set(Object.keys(room.TextLinesRecord || {}));
+      for (const v of choiceRecordVariants(room.TextLinesChoiceRecord)) thisRoom.add(v);
+    }
+  }
+
+  let queued = null;
+  if (gameId === 'hades1') {
+    queued = new Set(Object.keys(luaState.QueuedTextLines || {}));
+  }
+
+  // Recent runs newest-first: index 0 = current run (the game's run-count uses
+  // the raw CurrentRun.TextLinesRecord, no hub), index 1 = last completed run
+  // (RunHistory[#RunHistory]), and so on. Stops at the first stripped entry or
+  // at RUNS_AGO_DEPTH.
+  const recentRecords = [];
+  const recordSet = (textLinesRecord, choiceRecord) => {
+    const s = new Set(Object.keys(textLinesRecord || {}));
+    for (const v of choiceRecordVariants(choiceRecord)) s.add(v);
+    return s;
+  };
+  recentRecords.push(recordSet(cr && cr.TextLinesRecord, cr && cr.TextLinesChoiceRecord));
+  const runHistory = gs.RunHistory;
+  if (runHistory && typeof runHistory === 'object') {
+    const keys = Object.keys(runHistory).map(Number)
+      .filter(n => Number.isInteger(n) && n > 0).sort((a, b) => b - a);
+    for (const k of keys) {
+      if (recentRecords.length > RUNS_AGO_DEPTH) break;
+      const e = runHistory[k];
+      if (!e || typeof e !== 'object' || !e.TextLinesRecord) break; // stripped boundary
+      recentRecords.push(recordSet(e.TextLinesRecord, e.TextLinesChoiceRecord));
+    }
+  }
+
+  // *LastRun record = the run one back (empty when there is no prior run).
+  const lastRun = recentRecords[1] || new Set();
+  // runsAgo: textline -> smallest runs-ago index it appears in.
+  const runsAgo = Object.create(null);
+  for (let i = 0; i < recentRecords.length; i++) {
+    for (const t of recentRecords[i]) {
+      if (runsAgo[t] === undefined) runsAgo[t] = i;
+    }
+  }
+
+  return { played, thisRun, thisRoom, queued, lastRun, runsAgo };
+}
+
 // --- Public API ---
 
 let _saveProgress = null;
 let _saveGameId = null;
 let _saveRuns = null;
+// Run-scoped records (each a Set, or null when the save doesn't carry it).
+let _saveThisRun = null;
+let _saveThisRoom = null;
+let _saveQueued = null;
+let _saveLastRun = null;
+// textline -> runs-ago index (0 = current run); object, or null with no save.
+let _saveRunsAgo = null;
 
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
 export function getSaveRuns() { return _saveRuns; }
 
+// The full save context for requirement evaluation: the global played set
+// plus the run-scoped records (each ``null`` when the save doesn't carry
+// it). ``requirements.js`` picks the right record per requirement field.
+export function getSaveContext() {
+  return {
+    played: _saveProgress,
+    thisRun: _saveThisRun,
+    thisRoom: _saveThisRoom,
+    queued: _saveQueued,
+    lastRun: _saveLastRun,
+    runsAgo: _saveRunsAgo,
+  };
+}
+
 export function clearSaveProgress() {
   _saveProgress = null;
   _saveGameId = null;
   _saveRuns = null;
+  _saveThisRun = null;
+  _saveThisRoom = null;
+  _saveQueued = null;
+  _saveLastRun = null;
+  _saveRunsAgo = null;
 }
 
 // --- Local persistence ---
@@ -279,7 +392,10 @@ export function clearSaveProgress() {
 // same-origin, survives reloads/restarts, and keeps the save fully
 // client-side (it never reaches a server).
 const SAVE_STORAGE_KEY = 'hde.save';
-const SAVE_STORAGE_SCHEMA = 1;
+// v2 added the run-scoped records (thisRun / thisRoom / queued); a v1 cache
+// lacks them, so the bump forces a re-parse rather than silently leaving the
+// scoped scopes unavailable.
+const SAVE_STORAGE_SCHEMA = 2;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -302,6 +418,7 @@ function _removePersistedSave(store) {
 export function persistSaveProgress(filename) {
   const store = _saveStore();
   if (!store || !_saveProgress) return false;
+  const arr = (s) => (s instanceof Set ? [...s] : null);
   try {
     store.setItem(SAVE_STORAGE_KEY, JSON.stringify({
       v: SAVE_STORAGE_SCHEMA,
@@ -309,6 +426,11 @@ export function persistSaveProgress(filename) {
       runs: _saveRuns,
       filename: filename || null,
       played: [..._saveProgress],
+      thisRun: arr(_saveThisRun),
+      thisRoom: arr(_saveThisRoom),
+      queued: arr(_saveQueued),
+      lastRun: arr(_saveLastRun),
+      runsAgo: _saveRunsAgo || null,
     }));
     return true;
   } catch {
@@ -348,6 +470,12 @@ export function restoreSaveProgress() {
   _saveProgress = new Set(data.played);
   _saveGameId = data.gameId;
   _saveRuns = (typeof data.runs === 'number') ? data.runs : 0;
+  const set = (a) => (Array.isArray(a) ? new Set(a) : null);
+  _saveThisRun = set(data.thisRun);
+  _saveThisRoom = set(data.thisRoom);
+  _saveQueued = set(data.queued);
+  _saveLastRun = set(data.lastRun);
+  _saveRunsAgo = (data.runsAgo && typeof data.runsAgo === 'object') ? data.runsAgo : null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -364,7 +492,13 @@ export function clearPersistedSave() {
 
 export function parseSaveFile(arrayBuffer) {
   const parsed = parseSGB1(arrayBuffer);
-  _saveProgress = extractPlayedSet(parsed);
+  const ctx = extractSaveContext(parsed);
+  _saveProgress = ctx.played;
+  _saveThisRun = ctx.thisRun;
+  _saveThisRoom = ctx.thisRoom;
+  _saveQueued = ctx.queued;
+  _saveLastRun = ctx.lastRun;
+  _saveRunsAgo = ctx.runsAgo;
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   return { gameId: parsed.gameId, completedRuns: parsed.completedRuns, count: _saveProgress.size };
@@ -378,17 +512,18 @@ export function isDialoguePlayed(name) {
 export function getDialogueStatus(name, textlineData) {
   if (!_saveProgress) return null;
   if (_saveProgress.has(name)) return 'played';
-  // Respect per-type requirement semantics (AND / OR / negative) rather
-  // than treating every referenced line as a hard prerequisite.
-  const sat = directSatisfaction(textlineData, _saveProgress, name);
+  // Respect per-type requirement semantics (AND / OR / negative) and the
+  // record each field is scoped to (global / this-run / this-room / queued).
+  const sat = directSatisfaction(textlineData, getSaveContext(), name);
   if (sat === 'met') return 'eligible';
   // A permanent structural lock (a required choice was taken differently,
   // or a mutually-exclusive line has played) is definitive, so it wins
   // over an unverifiable verdict.
-  if (isUnobtainable(name, _saveProgress)) return 'unobtainable';
-  // 'unknown' -> the dialogue gates on something a save can't resolve
-  // (per-run / per-room / queued state, or run counts), so we can't say
-  // whether it's eligible or blocked: surface it as indeterminate.
+  if (isUnobtainable(name, _saveProgress, _saveRunsAgo)) return 'unobtainable';
+  // 'unknown' -> the dialogue gates on a run-scoped record this save doesn't
+  // carry (the H2 textline queue, or a current-run record when no run is
+  // active), so we can't say whether it's eligible or blocked: surface it as
+  // indeterminate.
   return sat === 'unknown' ? 'indeterminate' : 'blocked';
 }
 

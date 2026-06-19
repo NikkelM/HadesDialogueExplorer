@@ -335,25 +335,111 @@ test('getDialogueStatus reports indeterminate (not blocked/unobtainable) for sav
     clearSaveProgress();
     const scopedNeg = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLinesThisRun: ['Foe'] } };
     const scopedMix = { owner: 'NPC_Test_01', requirements: { RequiredTextLines: ['Foe'], RequiredFalseTextLinesThisRun: ['Foe'] } };
-    const runGated = { owner: 'NPC_Test_01', requirements: { MinRunsSinceAnyTextLines: ['Foe'] } };
     loadData({
         textlines: {
-            ScopedNeg: scopedNeg, ScopedMix: scopedMix, RunGated: runGated,
+            ScopedNeg: scopedNeg, ScopedMix: scopedMix,
             Foe: { owner: 'NPC_Test_01', requirements: {} },
         },
     });
+    // No CurrentRun in this save -> the this-run record is unavailable, so a
+    // run-scoped gate can't be resolved.
     parseSaveFile(buildSGB1({
         gameVersion: GAME_VERSION_HADES1,
         luaState: { TextLinesRecord: { Foe: true } },
     }));
-    // Foe is in the cumulative save, but "this run" scoping is transient, so
+    // Foe is in the cumulative save, but "this run" scoping is unavailable, so
     // a run-scoped negative is indeterminate - NOT a permanent lock (that
     // distinction is reserved for the global RequiredFalseTextLines).
     assert.equal(getDialogueStatus('ScopedNeg', scopedNeg), 'indeterminate');
     // Global requirement satisfied + a run-scoped gate remaining -> can't tell.
     assert.equal(getDialogueStatus('ScopedMix', scopedMix), 'indeterminate');
-    // A run-count gate alone -> indeterminate.
-    assert.equal(getDialogueStatus('RunGated', runGated), 'indeterminate');
+    clearSaveProgress();
+});
+
+test('getDialogueStatus resolves *ThisRun / *ThisRoom gates against the CurrentRun records', () => {
+    clearSaveProgress();
+    const runNeg = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLinesThisRun: ['Foe'] } };
+    const runPos = { owner: 'NPC_Test_01', requirements: { RequiredTextLinesThisRun: ['Foe'] } };
+    const roomNeg = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLinesThisRoom: ['Foe'] } };
+    loadData({
+        textlines: {
+            RunNeg: runNeg, RunPos: runPos, RoomNeg: roomNeg,
+            Foe: { owner: 'NPC_Test_01', requirements: {} },
+        },
+    });
+    // Foe is in the global record but NOT this run/room -> the scoped gates
+    // resolve against the (empty) CurrentRun records.
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true }, CurrentRun: { TextLinesRecord: {}, CurrentRoom: { TextLinesRecord: {} } } },
+    }));
+    assert.equal(getDialogueStatus('RunNeg', runNeg), 'eligible');  // not played this run -> "must not" met
+    assert.equal(getDialogueStatus('RunPos', runPos), 'blocked');   // not played this run -> "must" unmet
+    assert.equal(getDialogueStatus('RoomNeg', roomNeg), 'eligible'); // not played this room -> "must not" met
+    // Now Foe IS played this run and this room -> the verdicts flip.
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true }, CurrentRun: { TextLinesRecord: { Foe: true }, CurrentRoom: { TextLinesRecord: { Foe: true } } } },
+    }));
+    assert.equal(getDialogueStatus('RunNeg', runNeg), 'blocked');   // played this run -> "must not" unmet
+    assert.equal(getDialogueStatus('RunPos', runPos), 'eligible');  // played this run -> "must" met
+    assert.equal(getDialogueStatus('RoomNeg', roomNeg), 'blocked'); // played this room -> "must not" unmet
+    clearSaveProgress();
+});
+
+test('getDialogueStatus resolves *LastRun gates against GameState.RunHistory[#]', () => {
+    clearSaveProgress();
+    const lastNeg = { owner: 'NPC_Test_01', requirements: { RequiredFalseTextLinesLastRun: ['Foe'] } };
+    const lastAny = { owner: 'NPC_Test_01', requirements: { RequiredAnyTextLinesLastRun: ['Foe'] } };
+    loadData({ textlines: { LastNeg: lastNeg, LastAny: lastAny, Foe: { owner: 'NPC_Test_01', requirements: {} } } });
+    // Last run = the highest RunHistory index. Here run 2 (the latest) played
+    // Foe; run 1 did not.
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: {}, GameState: { RunHistory: { 1: { TextLinesRecord: {} }, 2: { TextLinesRecord: { Foe: true } } } } },
+    }));
+    assert.equal(getDialogueStatus('LastNeg', lastNeg), 'blocked');  // Foe played last run -> "must not" unmet
+    assert.equal(getDialogueStatus('LastAny', lastAny), 'eligible'); // Foe played last run -> "any" met
+    // Foe only in an OLDER run (run 1), not the last (run 2) -> verdicts flip.
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: {}, GameState: { RunHistory: { 1: { TextLinesRecord: { Foe: true } }, 2: { TextLinesRecord: {} } } } },
+    }));
+    assert.equal(getDialogueStatus('LastNeg', lastNeg), 'eligible'); // not in last run -> "must not" met
+    assert.equal(getDialogueStatus('LastAny', lastAny), 'blocked');  // not in last run -> "any" unmet
+    // No completed runs at all -> empty last-run record (the game treats a
+    // missing prior run the same way: the negative passes, the OR fails).
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: {}, GameState: { RunHistory: {} } },
+    }));
+    assert.equal(getDialogueStatus('LastNeg', lastNeg), 'eligible');
+    assert.equal(getDialogueStatus('LastAny', lastAny), 'blocked');
+    clearSaveProgress();
+});
+
+test('getDialogueStatus resolves run-count gates via the RunHistory recent-run sequence', () => {
+    clearSaveProgress();
+    const minGate = { owner: 'NPC_Test_01', requirements: { MinRunsSinceAnyTextLines: ['Foe'] }, otherRequirements: { MinRunsSinceAnyTextLines: { Count: 3 } } };
+    const maxGate = { owner: 'NPC_Test_01', requirements: { MaxRunsSinceAnyTextLines: ['Foe'] }, otherRequirements: { MaxRunsSinceAnyTextLines: { Count: 3 } } };
+    loadData({ textlines: { MinGate: minGate, MaxGate: maxGate, Foe: { owner: 'NPC_Test_01', requirements: {} } } });
+    // Foe last played 1 run ago (RunHistory[2] = last completed run; no active run).
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true }, GameState: { RunHistory: { 1: { TextLinesRecord: {} }, 2: { TextLinesRecord: { Foe: true } } } } },
+    }));
+    assert.equal(getDialogueStatus('MinGate', minGate), 'blocked');  // 1 run ago < 3 -> too recent
+    assert.equal(getDialogueStatus('MaxGate', maxGate), 'eligible'); // 1 run ago <= 3 -> within
+    // Foe last played 6 runs ago (only the oldest of 6 completed runs had it).
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES1,
+        luaState: { TextLinesRecord: { Foe: true }, GameState: { RunHistory: {
+            1: { TextLinesRecord: { Foe: true } }, 2: { TextLinesRecord: {} }, 3: { TextLinesRecord: {} },
+            4: { TextLinesRecord: {} }, 5: { TextLinesRecord: {} }, 6: { TextLinesRecord: {} },
+        } } },
+    }));
+    assert.equal(getDialogueStatus('MinGate', minGate), 'eligible'); // 6 runs ago >= 3 -> met
+    assert.equal(getDialogueStatus('MaxGate', maxGate), 'blocked');  // 6 runs ago > 3 -> too long ago
     clearSaveProgress();
 });
 

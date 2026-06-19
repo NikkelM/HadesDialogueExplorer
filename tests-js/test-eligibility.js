@@ -290,6 +290,26 @@ describe('isUnobtainable', () => {
                 // Plain blocked-but-obtainable dialogue.
                 JustBlocked: tl({ RequiredTextLines: ['NeverPlayed'] }),
                 NeverPlayed: tl({}),
+                // Run-count locks: a play-once line gated on having played
+                // within 3 runs. Once it slips past the window it can never
+                // replay, so the gate is permanently lost - unlike a
+                // repeatable line, which can replay to recover.
+                PlayOnceFoe: tl({}, { playOnce: true }),
+                RepFoe: tl({}),
+                MaxGatePOnce: tl(
+                    { MaxRunsSinceAnyTextLines: ['PlayOnceFoe'] },
+                    { otherRequirements: { MaxRunsSinceAnyTextLines: { Count: 3 } } },
+                ),
+                MaxGateRep: tl(
+                    { MaxRunsSinceAnyTextLines: ['RepFoe'] },
+                    { otherRequirements: { MaxRunsSinceAnyTextLines: { Count: 3 } } },
+                ),
+                // Count-max gate: at most 1 of these may have played, ever.
+                MaxAnyGate: tl(
+                    { RequiredMaxAnyTextLines: ['M1', 'M2', 'M3'] },
+                    { otherRequirements: { RequiredMaxAnyTextLines: { Count: 1 } } },
+                ),
+                M1: tl({}), M2: tl({}), M3: tl({}),
             },
             speakers: { NPC_Test_01: { name: 'Tester' } },
         });
@@ -347,6 +367,50 @@ describe('isUnobtainable', () => {
 
     test('reasons: empty for an obtainable dialogue', () => {
         assert.deepEqual(unobtainableReasons('JustBlocked', new Set()), []);
+    });
+
+    test('a MaxRunsSince gate on a play-once line now past the window is unobtainable', () => {
+        // Played 5 runs ago, gate wants within 3 -> out, and play-once can't replay.
+        assert.equal(isUnobtainable('MaxGatePOnce', new Set(['PlayOnceFoe']), { PlayOnceFoe: 5 }), true);
+        // Still within the window -> obtainable.
+        assert.equal(isUnobtainable('MaxGatePOnce', new Set(['PlayOnceFoe']), { PlayOnceFoe: 1 }), false);
+        // Played, but beyond the tracked run history (absent from runsAgo) -> permanent.
+        assert.equal(isUnobtainable('MaxGatePOnce', new Set(['PlayOnceFoe']), {}), true);
+        // Never played -> a Max gate passes (never-played is "in range") -> obtainable.
+        assert.equal(isUnobtainable('MaxGatePOnce', new Set(), {}), false);
+    });
+
+    test('a MaxRunsSince gate on a repeatable line is recoverable, not unobtainable', () => {
+        assert.equal(isUnobtainable('MaxGateRep', new Set(['RepFoe']), { RepFoe: 5 }), false);
+    });
+
+    test('without runs-ago data a play-once Max gate is not claimed unobtainable', () => {
+        assert.equal(isUnobtainable('MaxGatePOnce', new Set(['PlayOnceFoe'])), false);
+    });
+
+    test('a count-max gate that has overflowed its quota is unobtainable', () => {
+        assert.equal(isUnobtainable('MaxAnyGate', new Set(['M1', 'M2'])), true);  // 2 > 1
+        assert.equal(isUnobtainable('MaxAnyGate', new Set(['M1'])), false);        // 1 <= 1
+        assert.equal(isUnobtainable('MaxAnyGate', new Set()), false);
+    });
+
+    test('reasons: a play-once run-count lock names the line, runs-ago and window', () => {
+        assert.deepEqual(
+            unobtainableReasons('MaxGatePOnce', new Set(['PlayOnceFoe']), { PlayOnceFoe: 5 }),
+            [{ kind: 'runcount', blocker: 'PlayOnceFoe', count: 3, ago: 5 }],
+        );
+        // Beyond the tracked depth -> ago reported as null.
+        assert.deepEqual(
+            unobtainableReasons('MaxGatePOnce', new Set(['PlayOnceFoe']), {}),
+            [{ kind: 'runcount', blocker: 'PlayOnceFoe', count: 3, ago: null }],
+        );
+    });
+
+    test('reasons: a count-max overflow lists the played blockers and the cap', () => {
+        assert.deepEqual(
+            unobtainableReasons('MaxAnyGate', new Set(['M1', 'M2'])),
+            [{ kind: 'maxany', blockers: ['M1', 'M2'], count: 1 }],
+        );
     });
 });
 

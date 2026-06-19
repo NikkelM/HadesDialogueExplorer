@@ -252,6 +252,7 @@
 .group-status-met { background: #4caf50; }
 .group-status-unmet { background: #78909c; }
 .group-status-unknown { background: #8b95d6; }
+.group-status-unobtainable { background: #e57373; }
 .req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
 .req-type-group-header .toggle {
     width: 12px;

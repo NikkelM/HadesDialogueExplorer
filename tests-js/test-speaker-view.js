@@ -813,7 +813,7 @@ function loadEligibilityFixtureWithSave() {
     // games are frozen, so this shape is stable). Seed the backing store
     // directly; ``restoreSaveProgress`` reads it through the stub above.
     _localStore.set('hde.save', JSON.stringify({
-        v: 1, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
+        v: 2, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
     }));
     restoreSaveProgress();
 }

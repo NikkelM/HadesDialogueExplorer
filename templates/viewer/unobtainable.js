@@ -6,7 +6,13 @@
  *   * a global negative gate (RequiredFalseTextLines) on a line that is
  *     already played - it can never be un-played (the mutually-exclusive
  *     _A / _B variant pattern). The run-scoped / queued negative variants
- *     are transient (a fresh run clears them), so they are not locks; and
+ *     are transient (a fresh run clears them), so they are not locks;
+ *   * a global count-max gate (RequiredMaxAnyTextLines) once more than its
+ *     quota of the listed lines have played - the played set only grows, so
+ *     the count can never drop back under the cap;
+ *   * a MaxRunsSince gate on a play-once line that has slipped further back
+ *     than the window - the line can never replay to reset the distance, so
+ *     the "within N runs" condition is lost for good; and
  *   * a required choice variant <parent><ChoiceA> once the player recorded a
  *     different choice in <parent> (a choice dialogue records exactly one
  *     option, so the alternatives can never be obtained).
@@ -22,20 +28,23 @@
  */
 
 import { textlines } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, SAVE_EVALUABLE_REQ_TYPES, requiredCount } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount } from './requirements.js';
 
 let _unobtainablePlayedSet = null;
 let _unobtainableTextlines = null;
+let _unobtainableRunsAgo = null;
 let _unobtainableCache = null;
 let _playedChoiceByParent = null;
 
 // Rebuild the per-save memo + "which choice variant did the player record
 // for each parent" lookup whenever the played set (or the loaded data, e.g.
-// after a game switch) changes.
-function refreshUnobtainableCaches(playedSet) {
-    if (_unobtainablePlayedSet === playedSet && _unobtainableTextlines === textlines) return;
+// after a game switch, or the run-count distances) changes.
+function refreshUnobtainableCaches(playedSet, runsAgo) {
+    if (_unobtainablePlayedSet === playedSet && _unobtainableTextlines === textlines
+        && _unobtainableRunsAgo === runsAgo) return;
     _unobtainablePlayedSet = playedSet;
     _unobtainableTextlines = textlines;
+    _unobtainableRunsAgo = runsAgo;
     _unobtainableCache = new Map();
     _playedChoiceByParent = new Map();
     for (const name of playedSet) {
@@ -48,9 +57,21 @@ function refreshUnobtainableCaches(playedSet) {
     }
 }
 
-export function isUnobtainable(name, playedSet) {
+// True when a MaxRunsSince ref can never re-enter its "within N runs" window:
+// it is play-once (so it can't replay to reset the distance) and its single
+// play is already further back than N runs (or beyond the tracked run
+// history). A repeatable line, or one that hasn't played, is recoverable.
+function maxRunsPermanentlyOut(ref, n, playedSet) {
+    const tl = textlines[ref];
+    if (!tl || !tl.playOnce || !_unobtainableRunsAgo) return false;
+    const ago = _unobtainableRunsAgo[ref];
+    if (typeof ago === 'number') return ago > n;
+    return playedSet.has(ref); // beyond the tracked depth, but played -> out forever
+}
+
+export function isUnobtainable(name, playedSet, runsAgo = null) {
     if (!playedSet || !textlines) return false;
-    refreshUnobtainableCaches(playedSet);
+    refreshUnobtainableCaches(playedSet, runsAgo);
     return unobtainableRec(name, playedSet, new Set());
 }
 
@@ -95,13 +116,24 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
     for (const [reqType, refs] of Object.entries(requirements)) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== hostName);
-        if (NEGATIVE_REQ_TYPES.has(reqType) && SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
+        if (NEGATIVE_REQ_TYPES.has(reqType) && REQ_TYPE_SCOPE[reqType] === 'played') {
             // Must NOT have played these (ever) - but one already has, and a
             // played line can never be un-played, so this is permanent. Only
             // the *global* negative (RequiredFalseTextLines) is a permanent
             // lock: the run-scoped / queued variants are transient (a future
             // run starts fresh), so a cumulative save can't call them locked.
             if (others.some(r => playedSet.has(r))) return true;
+        } else if (COUNT_MAX_REQ_TYPES.has(reqType)) {
+            // At most Count of these may have played. The cumulative played
+            // set only grows, so once more than Count have played the cap can
+            // never be satisfied again.
+            if (others.filter(r => playedSet.has(r)).length > requiredCount(reqHost, reqType)) return true;
+        } else if (reqType === 'MaxRunsSinceAnyTextLines') {
+            // AND across refs (each must have last played within Count runs).
+            // A play-once ref now past the window can never come back, so the
+            // whole gate is permanently unsatisfiable.
+            const n = requiredCount(reqHost, reqType);
+            if (others.some(r => maxRunsPermanentlyOut(r, n, playedSet))) return true;
         } else if (AND_REQ_TYPES.has(reqType)) {
             if (others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack))) return true;
         } else if (OR_REQ_TYPES.has(reqType)) {
@@ -123,14 +155,18 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
 // tracer to explain why. Returns a de-duplicated list of:
 //   { kind: 'negative', blocker }                      - a must-not-have-played
 //                                                        gate whose line has played
+//   { kind: 'maxany', blockers, count }                - a count-max gate with
+//                                                        more than ``count`` lines played
+//   { kind: 'runcount', blocker, count, ago }          - a MaxRunsSince gate on a
+//                                                        play-once line now out of range
 //   { kind: 'choice', parent, requiredChoice, taken }  - a required choice the
 //                                                        player took differently
 // Recurses through AND / OR / count / orBranch gates to the leaf cause, so a
 // dialogue blocked via an unobtainable prerequisite reports the prerequisite's
 // own lock rather than just "a prerequisite is locked".
-export function unobtainableReasons(rootName, playedSet) {
+export function unobtainableReasons(rootName, playedSet, runsAgo = null) {
     if (!playedSet || !textlines) return [];
-    refreshUnobtainableCaches(playedSet);
+    refreshUnobtainableCaches(playedSet, runsAgo);
     const reasons = [];
     gatherReasons(rootName, playedSet, reasons, new Set());
     const seen = new Set();
@@ -176,20 +212,32 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
     for (const [reqType, refs] of Object.entries(requirements)) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== hostName);
-        if (NEGATIVE_REQ_TYPES.has(reqType) && SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
+        if (NEGATIVE_REQ_TYPES.has(reqType) && REQ_TYPE_SCOPE[reqType] === 'played') {
             for (const r of others) {
                 if (playedSet.has(r)) reasons.push({ kind: 'negative', blocker: r });
             }
+        } else if (COUNT_MAX_REQ_TYPES.has(reqType)) {
+            const max = requiredCount(reqHost, reqType);
+            const playedRefs = others.filter(r => playedSet.has(r));
+            if (playedRefs.length > max) reasons.push({ kind: 'maxany', blockers: playedRefs, count: max });
+        } else if (reqType === 'MaxRunsSinceAnyTextLines') {
+            const n = requiredCount(reqHost, reqType);
+            for (const r of others) {
+                if (maxRunsPermanentlyOut(r, n, playedSet)) {
+                    const ago = _unobtainableRunsAgo ? _unobtainableRunsAgo[r] : undefined;
+                    reasons.push({ kind: 'runcount', blocker: r, count: n, ago: typeof ago === 'number' ? ago : null });
+                }
+            }
         } else if (AND_REQ_TYPES.has(reqType)) {
             for (const r of others) {
-                if (!playedSet.has(r) && isUnobtainable(r, playedSet)) {
+                if (!playedSet.has(r) && unobtainableRec(r, playedSet, new Set())) {
                     gatherReasons(r, playedSet, reasons, visited);
                 }
             }
         } else if (OR_REQ_TYPES.has(reqType) || COUNT_MIN_REQ_TYPES.has(reqType)) {
             // An OR / count group locks the host only when too few options can
             // still be obtained; report the locked options' own causes.
-            const locked = others.filter(r => !playedSet.has(r) && isUnobtainable(r, playedSet));
+            const locked = others.filter(r => !playedSet.has(r) && unobtainableRec(r, playedSet, new Set()));
             const quota = COUNT_MIN_REQ_TYPES.has(reqType) ? requiredCount(reqHost, reqType) : 1;
             if (others.length - locked.length < quota) {
                 for (const r of locked) gatherReasons(r, playedSet, reasons, visited);

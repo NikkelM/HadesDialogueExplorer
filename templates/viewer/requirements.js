@@ -14,6 +14,8 @@
  * lockstep.
  */
 
+import { textlines } from './data.js';
+
 // Every listed line must have played.
 export const AND_REQ_TYPES = new Set([
     'RequiredTextLines',
@@ -44,27 +46,76 @@ export const NEGATIVE_REQ_TYPES = new Set([
 ]);
 
 // "At least Count of these listed lines must have played" (Count lives in
-// otherRequirements[field].Count). The only count-based field that is
-// evaluable from a save's played set; the others (RequiredMaxAny*,
-// Min/MaxRunsSince*) depend on run counts the save doesn't carry.
+// otherRequirements[field].Count), counted against the global played set.
 export const COUNT_MIN_REQ_TYPES = new Set([
     'RequiredMinAnyTextLines',
 ]);
 
-// The requirement fields whose verdict can be determined from a save's
-// played set. The save's TextLinesRecord is a *cumulative* "ever played"
-// record: it carries no per-run / per-room scoping and no run counts. So
-// only the global, history-wide fields are evaluable - the run-scoped
-// (``*ThisRun`` / ``*LastRun`` / ``*ThisRoom``), queued (``*Queued*``)
-// and run-count (``Min/MaxRunsSince*``, ``RequiredMaxAny*``) variants
-// cannot be checked and get no satisfaction verdict in the tree.
-export const SAVE_EVALUABLE_REQ_TYPES = new Set([
-    'RequiredTextLines',
-    'RequiredAnyTextLines',
-    'RequiredAnyOtherTextLines',
-    'RequiredFalseTextLines',
-    'RequiredMinAnyTextLines',
+// "At most Count of these listed lines must have played" - the symmetric
+// global count-max gate (Hades 1 RunManager.lua: fails when the played count
+// exceeds Count). Counted against the global played set, like COUNT_MIN.
+export const COUNT_MAX_REQ_TYPES = new Set([
+    'RequiredMaxAnyTextLines',
 ]);
+
+// Run-count fields: "at least / at most Count runs since any of these last
+// played". Evaluated against the recent-run sequence (``context.runsAgo``),
+// not a single record, so they are handled specially in ``reqGroupStatus``.
+export const RUNS_SINCE_REQ_TYPES = new Set([
+    'MinRunsSinceAnyTextLines',
+    'MaxRunsSinceAnyTextLines',
+]);
+
+// Which save record each requirement field is evaluated against:
+//   'played'   - the global cumulative ``TextLinesRecord`` ("ever played")
+//   'thisRun'  - ``CurrentRun.TextLinesRecord`` (+ hub) for the current run
+//   'thisRoom' - ``CurrentRun.CurrentRoom.TextLinesRecord``
+//   'queued'   - the queued-textline record (H1 only; see save-parser.js)
+//   'lastRun'  - ``GameState.RunHistory[#RunHistory].TextLinesRecord``
+// The run-count fields (``Min/MaxRunsSinceAnyTextLines``) aren't listed: they
+// evaluate against the recent-run sequence (``context.runsAgo``) and are
+// special-cased in ``reqGroupStatus``. The only field with no resolvable
+// record at all is the unused ``RequiredTextLinesLastRun`` positive, which
+// stays 'unknown'. A mapped field still needs its record present in the save
+// context, otherwise it is 'unknown' (e.g. a save with no active run can't
+// resolve ``*ThisRun``; ``lastRun`` is always present, empty when there is no
+// prior run).
+export const REQ_TYPE_SCOPE = {
+    RequiredTextLines: 'played',
+    RequiredAnyTextLines: 'played',
+    RequiredAnyOtherTextLines: 'played',
+    RequiredFalseTextLines: 'played',
+    RequiredMinAnyTextLines: 'played',
+    RequiredMaxAnyTextLines: 'played',
+    RequiredTextLinesThisRun: 'thisRun',
+    RequiredAnyTextLinesThisRun: 'thisRun',
+    RequiredFalseTextLinesThisRun: 'thisRun',
+    RequiredTextLinesThisRoom: 'thisRoom',
+    RequiredFalseTextLinesThisRoom: 'thisRoom',
+    RequiredQueuedTextLines: 'queued',
+    RequiredAnyQueuedTextLines: 'queued',
+    RequiredFalseQueuedTextLines: 'queued',
+    RequiredAnyTextLinesLastRun: 'lastRun',
+    RequiredFalseTextLinesLastRun: 'lastRun',
+};
+
+// Normalise an evaluation context: a bare Set is treated as the global
+// played set (so the scoped records are unavailable -> their fields stay
+// indeterminate), otherwise a ``{ played, thisRun, thisRoom, queued,
+// lastRun }`` object is used as-is.
+function _asContext(context) {
+    return (context instanceof Set) ? { played: context } : (context || {});
+}
+
+// The save record a requirement field evaluates against, or undefined when
+// the field isn't scope-mapped (e.g. run-count fields, handled separately)
+// or the scoped record is missing from the context.
+function _recordFor(context, reqType) {
+    const scope = REQ_TYPE_SCOPE[reqType];
+    if (!scope) return undefined;
+    const set = context[scope];
+    return (set instanceof Set) ? set : undefined;
+}
 
 /**
  * The ``Count`` parameter of a count-based requirement field (how many of
@@ -85,83 +136,301 @@ export function requiredCount(textlineData, reqType) {
 }
 
 /**
+ * Verdict for a run-count requirement (``Min/MaxRunsSinceAnyTextLines``)
+ * against the recent-run sequence ``context.runsAgo`` (textline -> how many
+ * runs ago it most recently played; 0 = current run). Mirrors the game's
+ * per-ref loop (despite the "Any" in the name, every ref must pass):
+ *   - MinRunsSince Count N: each ref must have last played at least N runs
+ *     ago (or never) - unmet if any ref played fewer than N runs ago.
+ *   - MaxRunsSince Count N: each ref's most recent play must be within N runs
+ *     (never-played passes) - unmet if any ref last played more than N runs
+ *     ago. A ref beyond the tracked depth that is still in the cumulative
+ *     played set is treated as "too long ago" (the game keeps enough run
+ *     history to resolve this; see ``RUNS_AGO_DEPTH``).
+ * Returns 'unknown' only when no recent-run data is available at all.
+ */
+function runsSinceStatus(reqType, refs, ctx, count, selfName) {
+    const runsAgo = ctx.runsAgo;
+    if (!runsAgo || typeof runsAgo !== 'object') return 'unknown';
+    const n = count || 1;
+    const played = ctx.played instanceof Set ? ctx.played : null;
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    for (const r of others) {
+        const ago = runsAgo[r];
+        if (reqType === 'MinRunsSinceAnyTextLines') {
+            if (typeof ago === 'number' && ago < n) return 'unmet';
+        } else { // MaxRunsSinceAnyTextLines
+            if (typeof ago === 'number') {
+                if (ago > n) return 'unmet';
+            } else if (played && played.has(r)) {
+                // Played, but not within the tracked recent runs -> longer ago
+                // than any run-count threshold -> too long ago.
+                return 'unmet';
+            }
+        }
+    }
+    return 'met';
+}
+
+// Phrase for a runs-ago distance: 0 = the current run, 1 = "1 run ago",
+// otherwise "N runs ago".
+function runsAgoPhrase(ago) {
+    if (ago === 0) return 'this run';
+    return ago === 1 ? '1 run ago' : `${ago} runs ago`;
+}
+
+// "N run(s)", correctly pluralised.
+function runsLabel(n) {
+    return `${n} ${n === 1 ? 'run' : 'runs'}`;
+}
+
+// Whether a referenced textline is a play-once line (can play at most once
+// across the whole save). Tolerates an unloaded ``textlines`` binding (unit
+// tests that exercise the verdict logic without a dataset) by treating
+// unknown lines as repeatable.
+function isPlayOnceRef(name) {
+    return !!(textlines && textlines[name] && textlines[name].playOnce);
+}
+
+/**
+ * Per-ref breakdown of a run-count requirement (``Min/MaxRunsSinceAnyTextLines``)
+ * against a save context, for the tree tooltips. Returns ``null`` when the
+ * field isn't a run-count type or the save carries no recent-run sequence.
+ * Otherwise:
+ *   {
+ *     status: 'met' | 'unmet',  // identical to runsSinceStatus, so the group
+ *                               // verdict dot and its tooltip can't disagree
+ *     count: <threshold N>,
+ *     isMin: <boolean>,
+ *     permanent: <boolean>,     // a play-once ref is now permanently out of a
+ *                               // MaxRunsSince window -> the gate (and the
+ *                               // dialogue) can never become eligible again
+ *     refs: [{ name, ago, played, playOnce, ok, permanent, reason }],
+ *   }
+ * ``ago`` is the runs-ago distance (number) or ``null`` (not within the
+ * tracked runs); ``played`` is whether the line is in the cumulative played
+ * set; ``ok`` is whether this ref passes the gate; ``reason`` is a short
+ * human phrase explaining why. A play-once line is described as having
+ * "played" (not "last played"): it only ever plays once.
+ */
+export function runsSinceExplain(reqType, refs, context, count = 1, selfName = null) {
+    if (!RUNS_SINCE_REQ_TYPES.has(reqType)) return null;
+    const ctx = _asContext(context);
+    const runsAgo = ctx.runsAgo;
+    if (!runsAgo || typeof runsAgo !== 'object') return null;
+    const n = count || 1;
+    const played = ctx.played instanceof Set ? ctx.played : null;
+    const isMin = reqType === 'MinRunsSinceAnyTextLines';
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    const refsOut = others.map(r => {
+        const raw = runsAgo[r];
+        const ago = typeof raw === 'number' ? raw : null;
+        const everPlayed = ago !== null || !!(played && played.has(r));
+        const playOnce = isPlayOnceRef(r);
+        // A play-once line only plays a single time, so "last played" would
+        // mislead - it just "played".
+        const verb = playOnce ? 'played' : 'last played';
+        const when = ago !== null ? runsAgoPhrase(ago) : 'longer ago than the tracked run history';
+        let ok, reason, permanent = false;
+        if (isMin) {
+            if (!everPlayed) {
+                ok = true;
+                reason = 'never played, which counts as long enough ago';
+            } else if (ago !== null && ago < n) {
+                ok = false;
+                reason = `${verb} ${when}, too recent (needs at least ${runsLabel(n)} since)`;
+            } else {
+                ok = true;
+                reason = ago === null
+                    ? `${verb} ${when}, which is long enough`
+                    : `${verb} ${when}, at least ${runsLabel(n)} since`;
+            }
+        } else { // MaxRunsSinceAnyTextLines
+            if (!everPlayed) {
+                ok = true;
+                reason = 'never played, which is within range';
+            } else if (ago !== null && ago <= n) {
+                ok = true;
+                reason = `${verb} ${when}, within ${runsLabel(n)}`;
+            } else {
+                ok = false;
+                reason = `${verb} ${when}, too long ago (needs at most ${runsLabel(n)} since)`;
+                // A repeatable line can replay to re-enter the window; a
+                // play-once line never can, so the gate is permanently lost.
+                if (playOnce) {
+                    permanent = true;
+                    reason += ` - can only play once, so this gate can never be met again`;
+                }
+            }
+        }
+        return { name: r, ago, played: everPlayed, playOnce, ok, permanent, reason };
+    });
+    const status = refsOut.every(x => x.ok) ? 'met' : 'unmet';
+    return { status, count: n, isMin, permanent: refsOut.some(x => x.permanent), refs: refsOut };
+}
+
+/**
+ * Multi-line tooltip for a run-count requirement *group* header dot: a
+ * summary line plus a per-ref breakdown (blocking refs first), capped so a
+ * many-ref gate stays readable. Returns ``null`` for non-run-count fields or
+ * when the save carries no recent-run data.
+ */
+export function runsSinceGroupTooltip(reqType, refs, context, count = 1, selfName = null) {
+    const ex = runsSinceExplain(reqType, refs, context, count, selfName);
+    if (!ex) return null;
+    let head = ex.isMin
+        ? (ex.status === 'met'
+            ? `Satisfied by the save: every line was last played at least ${runsLabel(ex.count)} ago (or never).`
+            : `Not satisfied: a line was played too recently (each needs at least ${runsLabel(ex.count)} since it last played).`)
+        : (ex.status === 'met'
+            ? `Satisfied by the save: every line last played within the last ${runsLabel(ex.count)} (or never).`
+            : `Not satisfied: a line last played too long ago (each must have played within the last ${runsLabel(ex.count)}).`);
+    if (ex.permanent) head += ' A play-once line is permanently out of range, so this can never become eligible again.';
+    if (ex.refs.length === 0) return head;
+    const sorted = ex.refs.slice().sort((a, b) => Number(a.ok) - Number(b.ok));
+    const CAP = 8;
+    const lines = sorted.slice(0, CAP)
+        .map(r => `${r.ok ? '\u2713' : '\u2717'} ${r.name}: ${r.reason}`);
+    if (sorted.length > CAP) lines.push(`+ ${sorted.length - CAP} more`);
+    return [head, ...lines].join('\n');
+}
+
+/**
+ * Tooltip clause for a single ref row under a run-count group: how many runs
+ * back this line played and whether that satisfies or blocks the gate.
+ * Returns ``null`` for non-run-count fields or with no recent-run data.
+ */
+export function runsSinceRefTooltip(reqType, refName, context, count = 1, selfName = null) {
+    const ex = runsSinceExplain(reqType, [refName], context, count, selfName);
+    if (!ex || ex.refs.length === 0) return null;
+    const r = ex.refs[0];
+    const reason = r.reason.charAt(0).toUpperCase() + r.reason.slice(1);
+    // A permanent (play-once) lock already spells out the consequence in the
+    // reason, so it needs no "blocks this gate" suffix.
+    const suffix = r.ok ? ' - satisfies this run-count gate.'
+        : r.permanent ? '.'
+            : ' - blocks this run-count gate.';
+    return `${reason}${suffix}`;
+}
+
+/**
  * Verdict for a single requirement *group* in the dependency tree (one
- * requirement field plus the refs listed under it) against ``playedSet``.
- * Applies the per-category rules (AND / OR / negative / count-min) to a
- * single group in isolation so the tree can mark each group header.
- * Returns:
+ * requirement field plus the refs listed under it) against ``context``.
+ * Applies the per-category rules (AND / OR / negative / count-min /
+ * count-max / runs-since) to a single group in isolation so the tree can
+ * mark each group header. The group is evaluated against the save record its
+ * field is scoped to (see ``REQ_TYPE_SCOPE``), or the recent-run sequence for
+ * run-count fields. Returns:
  *   'met'     - the group's condition is currently satisfied
  *   'unmet'   - the condition is not satisfied
- *   'unknown' - the field can't be resolved from a save (run-scoped,
- *               queued, or run-count - see ``SAVE_EVALUABLE_REQ_TYPES``),
- *               so no verdict is shown
- * ``count`` is the COUNT_MIN threshold (defaults to 1); ``selfName`` lets
+ *   'unknown' - the record is missing from the context, so no verdict
+ * ``context`` is a save context (or a bare Set treated as the global played
+ * set); ``count`` is the count threshold (defaults to 1); ``selfName`` lets
  * the play-once self-references a few gates carry be ignored.
  */
-export function reqGroupStatus(reqType, refs, playedSet, count = 1, selfName = null) {
-    if (!playedSet) return 'unknown';
-    // Only global, history-wide fields are determinable from a cumulative
-    // played set; everything else (this-run / last-run / this-room /
-    // queued / run-count) gets no verdict.
-    if (!SAVE_EVALUABLE_REQ_TYPES.has(reqType)) return 'unknown';
+export function reqGroupStatus(reqType, refs, context, count = 1, selfName = null) {
+    const ctx = _asContext(context);
+    if (RUNS_SINCE_REQ_TYPES.has(reqType)) {
+        return runsSinceStatus(reqType, refs, ctx, count, selfName);
+    }
+    const record = _recordFor(ctx, reqType);
+    if (!record) return 'unknown';
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     if (AND_REQ_TYPES.has(reqType)) {
-        return others.every(r => playedSet.has(r)) ? 'met' : 'unmet';
+        return others.every(r => record.has(r)) ? 'met' : 'unmet';
     }
     if (OR_REQ_TYPES.has(reqType)) {
         if (others.length === 0) return 'met';
-        return others.some(r => playedSet.has(r)) ? 'met' : 'unmet';
+        return others.some(r => record.has(r)) ? 'met' : 'unmet';
     }
     if (NEGATIVE_REQ_TYPES.has(reqType)) {
-        return others.some(r => playedSet.has(r)) ? 'unmet' : 'met';
+        return others.some(r => record.has(r)) ? 'unmet' : 'met';
     }
     if (COUNT_MIN_REQ_TYPES.has(reqType)) {
-        const playedCount = others.filter(r => playedSet.has(r)).length;
+        const playedCount = others.filter(r => record.has(r)).length;
         return playedCount >= (count || 1) ? 'met' : 'unmet';
+    }
+    if (COUNT_MAX_REQ_TYPES.has(reqType)) {
+        const playedCount = others.filter(r => record.has(r)).length;
+        return playedCount <= (count || 1) ? 'met' : 'unmet';
     }
     return 'unknown';
 }
 
 /**
+ * Whether a single requirement *group* is a *permanent* lock against
+ * ``context``: not merely unmet now, but impossible to ever satisfy as the
+ * save's cumulative state grows. Mirrors the per-group permanent-lock cases
+ * in ``unobtainable.js`` so a group dot and the dialogue's "unobtainable"
+ * badge can never disagree:
+ *   - ``MaxRunsSinceAnyTextLines`` with a play-once ref now past the window
+ *     (it can never replay to re-enter range);
+ *   - ``RequiredMaxAnyTextLines`` whose played count already exceeds the cap
+ *     (the cumulative played set only grows); and
+ *   - a global negative (``RequiredFalseTextLines``) on a line that has
+ *     played (it can never be un-played).
+ * The run-scoped negatives reset each run/room, so they are never permanent.
+ * Returns ``false`` when the save can't resolve the group (no record/runsAgo).
+ */
+export function reqGroupLocked(reqType, refs, context, count = 1, selfName = null) {
+    const ctx = _asContext(context);
+    if (reqType === 'MaxRunsSinceAnyTextLines') {
+        const ex = runsSinceExplain(reqType, refs, ctx, count, selfName);
+        return !!(ex && ex.permanent);
+    }
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    if (COUNT_MAX_REQ_TYPES.has(reqType)) {
+        const record = _recordFor(ctx, reqType);
+        return !!record && others.filter(r => record.has(r)).length > (count || 1);
+    }
+    if (NEGATIVE_REQ_TYPES.has(reqType) && REQ_TYPE_SCOPE[reqType] === 'played') {
+        const record = _recordFor(ctx, reqType);
+        return !!record && others.some(r => record.has(r));
+    }
+    return false;
+}
+
+/**
  * Three-state verdict for a requirement *set* (a textline's base
- * requirements or one ``orBranches`` alternative) against ``playedSet``,
- * used for the OR branch / group headers. Honest about save-unverifiable
- * fields: returns
- *   'unmet'   - a save-evaluable field in the set is not satisfied
- *   'unknown' - no evaluable field failed but the set carries a field the
- *               save can't resolve (run-scoped / queued / run-count), so
- *               the overall verdict can't be confirmed
+ * requirements or one ``orBranches`` alternative) against a save
+ * ``context``, used for the OR branch / group headers. Honest about
+ * unverifiable fields: returns
+ *   'unmet'   - a resolvable field in the set is not satisfied
+ *   'unknown' - no resolvable field failed but the set carries a field whose
+ *               scoped record the context doesn't carry (the H2 textline
+ *               queue, or a current-run record when no run is active), so
+ *               the verdict can't be confirmed
  *   'met'     - the set is empty/no-op, or every contributing field is
- *               save-evaluable and satisfied
+ *               resolvable and satisfied
  * ``name`` is the host dialogue's own name (self-references ignored).
  */
-export function requirementSetStatus(requirements, otherRequirements, playedSet, name) {
-    if (!playedSet) return 'unknown';
+export function requirementSetStatus(requirements, otherRequirements, context, name) {
+    const ctx = _asContext(context);
     let sawUnverifiable = false;
     for (const [reqType, refs] of Object.entries(requirements || {})) {
         if (!Array.isArray(refs)) continue;
         const others = refs.filter(r => typeof r === 'string' && r !== name);
         if (others.length === 0) continue;
-        if (SAVE_EVALUABLE_REQ_TYPES.has(reqType)) {
-            if (reqGroupStatus(reqType, refs, playedSet, countFrom(otherRequirements, reqType), name) === 'unmet') {
-                return 'unmet';
-            }
-        } else {
-            sawUnverifiable = true;
-        }
+        const st = reqGroupStatus(reqType, refs, ctx, countFrom(otherRequirements, reqType), name);
+        if (st === 'unmet') return 'unmet';
+        if (st === 'unknown') sawUnverifiable = true;
     }
     return sawUnverifiable ? 'unknown' : 'met';
 }
 
 /**
- * Three-state direct eligibility for ``textlineData`` given ``playedSet``:
+ * Three-state direct eligibility for ``textlineData`` given a save
+ * ``context``:
  *   'met'     - directly eligible now (all requirements confirmed satisfied)
- *   'unmet'   - a save-evaluable requirement is not satisfied
- *   'unknown' - every save-evaluable requirement is satisfied, but the
- *               dialogue also gates on something a save can't resolve
- *               (per-run / per-room / queued state, or run counts), so
- *               eligibility can't be confirmed either way
+ *   'unmet'   - a resolvable requirement is not satisfied
+ *   'unknown' - every resolvable requirement is satisfied, but the dialogue
+ *               also gates on a run-scoped record the save doesn't carry
+ *               (the H2 textline queue, or a current-run record when no run
+ *               is active), so eligibility can't be confirmed
  *
  * Shallow by design: this answers "can this dialogue play right now",
  * which depends only on its immediate requirements - transitive history is
@@ -171,11 +440,12 @@ export function requirementSetStatus(requirements, otherRequirements, playedSet,
  * otherwise) must both hold. ``name`` is the dialogue's own name, used to
  * ignore self-references.
  */
-export function directSatisfaction(textlineData, playedSet, name) {
+export function directSatisfaction(textlineData, context, name) {
     if (!textlineData) return 'met';
-    if (!playedSet) return 'unknown';
+    if (!context) return 'unknown';
+    const ctx = _asContext(context);
     const base = requirementSetStatus(
-        textlineData.requirements, textlineData.otherRequirements, playedSet, name);
+        textlineData.requirements, textlineData.otherRequirements, ctx, name);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -183,7 +453,7 @@ export function directSatisfaction(textlineData, playedSet, name) {
         let anyMet = false;
         let anyUnknown = false;
         for (const b of branches) {
-            const st = requirementSetStatus(b.requirements, b.otherRequirements, playedSet, name);
+            const st = requirementSetStatus(b.requirements, b.otherRequirements, ctx, name);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

@@ -24,14 +24,15 @@ import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './sav
 
 // Human-readable tooltips for each save-derived dialogue status, shared by
 // every surface that renders a status dot/pill so the wording stays in
-// lockstep. ``indeterminate`` covers dialogues that gate on per-run /
-// per-room / queued / run-count state a save can't resolve.
+// lockstep. ``indeterminate`` covers dialogues that gate on a run-scoped
+// record this save doesn't carry (the Hades II textline queue, or the
+// current-run / current-room records when no run is active).
 export const SAVE_STATUS_TOOLTIPS = {
     played: 'Played in loaded save',
     eligible: 'Eligible to play (all requirements met)',
     blocked: 'Blocked (missing requirements)',
-    unobtainable: 'Unobtainable - a required choice or mutually-exclusive line is locked',
-    indeterminate: 'Indeterminate - gates on per-run, per-room, queued, or run-count state a save can\u2019t resolve, so eligibility can\u2019t be determined',
+    unobtainable: 'Unobtainable - a required choice, mutually-exclusive line, count-max gate, or play-once run-count gate is permanently locked',
+    indeterminate: 'Indeterminate - gates on a run-scoped record this save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active), so eligibility can\u2019t be determined',
 };
 
 export function saveStatusTooltip(status) {

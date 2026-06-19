@@ -10,35 +10,38 @@ import {
     formatReqType,
     reqTypeTitleText,
 } from './utilities.js';
-import { reqGroupStatus, requirementSetStatus } from './requirements.js';
-import { getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+import { reqGroupStatus, reqGroupLocked, requirementSetStatus, runsSinceGroupTooltip } from './requirements.js';
+import { getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.js';
 
 
-// The loaded save's played set, but only when it applies to the active
-// game; otherwise null. Group-satisfaction verdicts render only when this
-// is non-null (upstream tree only - a group's "satisfied?" question is
+// The loaded save's evaluation context, but only when it applies to the
+// active game; otherwise null. Group-satisfaction verdicts render only when
+// this is non-null (upstream tree only - a group's "satisfied?" question is
 // meaningless for downstream dependents).
-function activePlayedSet() {
-    return (getSaveProgress() && saveMatchesActiveGame()) ? getSaveProgress() : null;
+function activeSaveContext() {
+    return (getSaveProgress() && saveMatchesActiveGame()) ? getSaveContext() : null;
 }
 
 // Build the satisfaction verdict dot for a group header. ``status`` is
-// 'met' | 'unmet' | 'unknown' (anything else - e.g. null when no save is
-// loaded - renders no dot). The dot mirrors the per-row save badge's
-// visual language: green when the group's condition is met, grey when it
-// is not, and the indeterminate periwinkle when the field can't be
-// resolved from a save (per-run / per-room / queued / run-count scoping).
-// Placed right after the chevron so the verdicts line up down the left
-// edge of the tree.
-function makeGroupStatusBadge(status) {
-    if (status !== 'met' && status !== 'unmet' && status !== 'unknown') return null;
+// 'met' | 'unmet' | 'unknown' | 'unobtainable' (anything else - e.g. null
+// when no save is loaded - renders no dot). ``detail`` is an optional richer
+// tooltip (used for run-count groups to spell out each line's runs-ago
+// distance and why it makes the group met/unmet/permanently locked); when
+// absent the generic per-status wording is used. The dot mirrors the per-row
+// save badge's visual language: green when met, grey when unmet, the
+// indeterminate periwinkle when the field can't be resolved from a save, and
+// the unobtainable red when the group can never be satisfied again. Placed
+// right after the chevron so the verdicts line up down the left edge.
+function makeGroupStatusBadge(status, detail = null) {
+    if (!['met', 'unmet', 'unknown', 'unobtainable'].includes(status)) return null;
     const badge = document.createElement('span');
     badge.className = `group-status group-status-${status}`;
-    badge.dataset.tooltip =
-        status === 'met' ? 'Satisfied by the loaded save: every line this group needs has played (or, for a "must not have played" gate, none have).'
+    badge.dataset.tooltip = detail
+        || (status === 'met' ? 'Satisfied by the loaded save: every line this group needs has played (or, for a "must not have played" gate, none have).'
             : status === 'unmet' ? 'Not satisfied by the loaded save: this group\u2019s condition is not met yet.'
-                : 'Can\u2019t be determined from a save: this requirement gates on per-run / per-room / queued state or run counts the save doesn\u2019t track.';
+                : status === 'unobtainable' ? 'Permanently locked: this group can never be satisfied again in this save (a play-once line is past its run-count window, a one-time line has already played, or a count cap is exceeded).'
+                    : 'Can\u2019t be determined from this save: this requirement depends on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active).');
     return badge;
 }
 
@@ -208,15 +211,25 @@ function appendByReqTypeGroups(container, kids, direction, ancestorPath, parentN
         // (upstream only - downstream groups list dependents, not
         // prerequisites, so "satisfied?" has no meaning there).
         let status = null;
+        let statusDetail = null;
         if (direction === 'upstream') {
-            const played = activePlayedSet();
-            if (played) {
-                status = reqGroupStatus(
-                    edgeType, chunk.map(c => c.name), played,
-                    groupCount == null ? 1 : groupCount, parentName);
+            const ctx = activeSaveContext();
+            if (ctx) {
+                const names = chunk.map(c => c.name);
+                const cnt = groupCount == null ? 1 : groupCount;
+                status = reqGroupStatus(edgeType, names, ctx, cnt, parentName);
+                // A permanently-locked group (a play-once run-count ref past
+                // its window, a one-time negative line that has played, or an
+                // overflowed count cap) can never be satisfied again, so show
+                // the unobtainable verdict instead of a plain grey "unmet".
+                if (reqGroupLocked(edgeType, names, ctx, cnt, parentName)) status = 'unobtainable';
+                // Run-count groups get a richer tooltip spelling out each
+                // line's runs-ago distance and why the group is met/unmet
+                // (null for every other field type).
+                statusDetail = runsSinceGroupTooltip(edgeType, names, ctx, cnt, parentName);
             }
         }
-        const box = createReqTypeGroup(edgeType, chunk.length, groupCount, direction, status);
+        const box = createReqTypeGroup(edgeType, chunk.length, groupCount, direction, status, statusDetail);
         const groupChildren = box.querySelector('.req-type-group-children');
         appendGroupedChildren(groupChildren, chunk, direction, ancestorPath);
         container.appendChild(box);
@@ -248,15 +261,15 @@ function appendOrAlternatives(container, orKids, direction, ancestorPath, parent
     // last when it carries a save-unverifiable field). The OR group is met
     // when any branch is met, unmet only when every branch is unmet, and
     // unknown otherwise (a branch we can't confirm, none met).
-    const played = activePlayedSet();
+    const ctx = activeSaveContext();
     const branchStatusOf = (bi) => {
         const b = parentOrBranches[bi - 1];
-        return (played && b)
-            ? requirementSetStatus(b.requirements, b.otherRequirements, played, parentName)
+        return (ctx && b)
+            ? requirementSetStatus(b.requirements, b.otherRequirements, ctx, parentName)
             : null;
     };
     let groupStatus = null;
-    if (played && parentOrBranches.length > 0) {
+    if (ctx && parentOrBranches.length > 0) {
         let anyMet = false;
         let anyUnknown = false;
         for (let bi = 1; bi <= total; bi++) {
@@ -428,7 +441,7 @@ export function createOrBranchBox(index, total, count, status = null) {
     return box;
 }
 
-export function createReqTypeGroup(edgeType, count, requirementCount, direction = 'upstream', status = null) {
+export function createReqTypeGroup(edgeType, count, requirementCount, direction = 'upstream', status = null, statusDetail = null) {
     const box = document.createElement('div');
     box.className = `req-type-group req-type-${edgeType}`;
 
@@ -440,7 +453,7 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
     toggle.textContent = '\u25BC';
     header.appendChild(toggle);
 
-    const statusBadge = makeGroupStatusBadge(status);
+    const statusBadge = makeGroupStatusBadge(status, statusDetail);
     if (statusBadge) header.appendChild(statusBadge);
 
     const edgeChip = document.createElement('span');
@@ -582,11 +595,15 @@ function createAlternatesGroup(count, includesSelf) {
 // hints) can be threaded through the same channel without churning
 // the call sites.
 function _edgeOptsFor(kid) {
-    if (!kid.orBranchIndex) return null;
-    return {
-        orBranchIndex: kid.orBranchIndex,
-        orBranchTotal: kid.orBranchTotal,
-    };
+    const opts = {};
+    if (kid.orBranchIndex) {
+        opts.orBranchIndex = kid.orBranchIndex;
+        opts.orBranchTotal = kid.orBranchTotal;
+    }
+    // The group's Count threshold lets a per-row run-count tooltip explain
+    // the gate ("played 2 runs ago, needs at least 8 since").
+    if (kid._count != null) opts.count = kid._count;
+    return Object.keys(opts).length > 0 ? opts : null;
 }
 
 export function createGameDataGroup(groupName, edgeType, count) {
