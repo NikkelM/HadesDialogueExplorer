@@ -15,6 +15,7 @@ import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, rend
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
+import { renderOtherRequirementsSectionHtml } from './info-panel.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -422,6 +423,33 @@ export function renderBlockingGatesHtml(rootName, ctx = getSaveContext()) {
     return html;
 }
 
+// Surface the target's non-textline requirements - the static game-state /
+// run-modifier / unlock conditions stored in ``otherRequirements`` that
+// aren't references to other dialogues (e.g. "all weapons unlocked",
+// "cleared the last run"). They never appear in the prerequisite chain or
+// tree, so the tracer would otherwise hide them. Reuses the info panel's
+// renderer (compact mode) wrapped in the tracer's section frame. Keys that
+// are also textline-requirement types are skipped: those are already
+// represented by the chain and the situational gates above. Informational
+// only - most gate on live GameState a save doesn't carry, so the tracer
+// shows the dialogue's declared conditions rather than evaluating them.
+export function renderOtherConditionsHtml(rootName) {
+    const tl = textlines[rootName];
+    if (!tl) return '';
+    const reqs = tl.requirements || {};
+    const other = tl.otherRequirements || {};
+    const count = Object.keys(other).filter((k) => !(k in reqs)).length;
+    if (count === 0) return '';
+    const inner = renderOtherRequirementsSectionHtml(reqs, other, { textlineName: rootName });
+    if (!inner) return '';
+    let html = `<div class="eligibility-tree">`;
+    html += `<h4 class="eligibility-tree-header">Other requirements (${count})</h4>`;
+    html += `<div class="eligibility-tree-hint">Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. They're read from its definition - the tracer can't check them against your save.</div>`;
+    html += `<div class="eligibility-list eligibility-other-reqs">${inner}</div>`;
+    html += `</div>`;
+    return html;
+}
+
 function renderUnplayedItemHtml(name, info, chain, rootName) {
     const tl = textlines[name];
     const ownerEntry = tl ? speakers[tl.owner] : null;
@@ -806,6 +834,9 @@ export function renderEligibility(dialogueName) {
     }
     html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
     html += renderTreeHtml(chain, dialogueName, groups);
+    // Non-textline conditions (weapons unlocked, last-run cleared, ...) that
+    // gate the dialogue but never show up in the prerequisite chain.
+    html += renderOtherConditionsHtml(dialogueName);
 
     html += `</div>`;
     container.innerHTML = html;

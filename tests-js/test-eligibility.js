@@ -10,7 +10,7 @@ import { test, before, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml } from '../templates/viewer/eligibility-view.js';
+import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml, renderOtherConditionsHtml } from '../templates/viewer/eligibility-view.js';
 import { isUnobtainable, unobtainableReasons } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
@@ -583,6 +583,51 @@ describe('renderBlockingGatesHtml: situational gates the prereq chain omits', ()
             speakers: { NPC_Test_01: { name: 'Tester' } },
         });
         assert.equal(renderBlockingGatesHtml('Root', { played: new Set(), runsAgo: {} }), '');
+    });
+});
+
+describe('renderOtherConditionsHtml (non-textline requirements section)', () => {
+    const withReqs = (requirements, otherRequirements) => ({
+        owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements,
+    });
+
+    before(() => {
+        loadData({
+            textlines: {
+                // A non-textline condition that is NOT a requirement key -> surfaces.
+                HasOther: withReqs({ RequiredTextLines: ['Dep'] }, { MustHaveAllWeapons: true }),
+                // otherRequirements key IS a requirement key (Count metadata) -> skipped.
+                OnlyReqMeta: withReqs(
+                    { RequiredMinAnyTextLines: ['Dep'] },
+                    { RequiredMinAnyTextLines: { Count: 2 } },
+                ),
+                NoOther: withReqs({ RequiredTextLines: ['Dep'] }, {}),
+                Dep: withReqs({}, {}),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            reqTypeOrder: ['RequiredTextLines', 'RequiredMinAnyTextLines'],
+        });
+    });
+
+    test('renders a labelled section for non-textline conditions', () => {
+        const html = renderOtherConditionsHtml('HasOther');
+        assert.match(html, /Other requirements \(1\)/);
+        assert.match(html, /eligibility-tree-hint/);
+        assert.match(html, /other-req-item/);
+    });
+
+    test('is empty when there are no otherRequirements', () => {
+        assert.equal(renderOtherConditionsHtml('NoOther'), '');
+    });
+
+    test('is empty when every otherRequirements key is also a requirement key', () => {
+        // RequiredMinAnyTextLines Count metadata is surfaced inline with the
+        // requirement group, not as a standalone "other" condition.
+        assert.equal(renderOtherConditionsHtml('OnlyReqMeta'), '');
+    });
+
+    test('is empty for an unknown dialogue name', () => {
+        assert.equal(renderOtherConditionsHtml('DoesNotExist'), '');
     });
 });
 

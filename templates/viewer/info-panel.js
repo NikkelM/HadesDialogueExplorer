@@ -1114,7 +1114,7 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
 // call site); null inlines them bare (OR-branch and NamedRequirements
 // expansion call sites, where the surrounding header already provides
 // scope).
-function renderOtherRequirementsSectionHtml(requirements, otherRequirements, options) {
+export function renderOtherRequirementsSectionHtml(requirements, otherRequirements, options) {
     const { textlineName, otherHeaderLabel } = options;
     if (Object.keys(otherRequirements).length === 0) return '';
 
