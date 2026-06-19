@@ -366,7 +366,7 @@ test('teardown: restore shared fixture', () => {
     buildLinesIndex();
 });
 
-// ---- Choice-option indexing (issue #77) ----
+// ---- Choice-option indexing ----
 //
 // ``buildLinesIndex`` pushes one synthetic entry per choice option for
 // every ``kind === 'choicePrompt'`` dialogue line, so a search for the

@@ -27,8 +27,8 @@
  * whose panels scroll internally. On small screens that clips content and
  * fights the mobile browser chrome. Here the shell becomes an ordinary
  * vertically-scrolling document: the panels stack and the page scrolls.
- * Wide content (deep trees) still overflows horizontally until the tree
- * work (#108) wraps it in its own scroller - tracked there, not here.
+ * Wide content (deep trees) still overflows horizontally until future tree
+ * work wraps it in its own scroller - tracked separately, not here.
  * ====================================================================== */
 @media (max-width: 1024px) {
     body {
@@ -62,7 +62,7 @@
     }
 }
 
-/* === #106 Header & global controls =====================================
+/* === Header & global controls =====================================
  * The desktop header is a single nowrap flex row (title, game toggle, a
  * 500px search, nav links, save upload) that overflows narrow screens.
  * Let it wrap instead of overflowing, size the controls for touch, and on
@@ -90,7 +90,7 @@
         flex-wrap: wrap;
         row-gap: 8px;
     }
-    /* Touch-sized header controls (also covers part of the #112 audit). */
+    /* Touch-sized header controls. */
     #search,
     .header-nav-link,
     .save-upload-btn,
@@ -124,16 +124,43 @@
         justify-content: flex-start;
         padding-left: 0;
     }
+    /* The display overrides above (needed for sizing / glyph alignment)
+       beat the UA ``[hidden] { display: none }`` rule, which would leave a
+       cleared save status / clear button visible on mobile. Re-assert it. */
+    .save-status[hidden],
+    .save-clear-btn[hidden] {
+        display: none;
+    }
 }
 @media (max-width: 599px) {
-    /* Phone: the wrapped header is tidier with the two nav links sharing
-       one row and the save controls a row of their own. Flattening
-       header-right's box (display:contents) promotes its children - the
-       eligibility link and the save-upload group - to direct header flex
-       items, so they wrap independently: ``Cross-game duplicates`` +
-       ``Eligibility tracer`` land together, then the save group below. */
-    .header-right {
+    /* Phone: regroup the header controls into two predictable rows rather
+       than letting them wrap purely by width. The desktop single-row DOM
+       order is locked, so this is pure CSS ``order`` (no DOM change):
+         row A: Cross-game duplicates + Load save
+         row B: Eligibility tracer + save status + clear   (only present
+                once a save is loaded)
+       Both wrapper boxes are flattened with display:contents so their
+       children become direct header flex items and can be ordered apart
+       from their desktop grouping (header-right held the eligibility link
+       and the save group; save-upload held the Load-save button, the status
+       pill and the clear button). */
+    .header-right,
+    .save-upload {
         display: contents;
+    }
+    #nav-duplicates { order: 1; }
+    .save-upload-btn { order: 2; }
+    #nav-eligibility { order: 4; }
+    #save-status { order: 5; }
+    #save-clear { order: 6; }
+    /* Forced full-width break between the two rows, gated on a loaded save
+       (eligibility visible) via :has so the no-save header carries no
+       trailing empty line. */
+    header:has(#nav-eligibility:not([hidden]))::after {
+        content: "";
+        order: 3;
+        flex-basis: 100%;
+        height: 0;
     }
     /* Compact loaded indicator: the verbose "<game>: N dialogues, M runs"
        wastes a row on a phone (the per-dialogue badges already convey the
@@ -145,5 +172,122 @@
     .save-status.save-loaded::before {
         content: "Save loaded";
         font-size: var(--fs-base);
+    }
+}
+
+/* === Dialogue detail =============================================
+ * The three detail panels already stack vertically (via the shared
+ * foundation rules above), and
+ * prose (dialogue lines, requirement boxes) wraps. The one thing that
+ * still overflows on a phone is a long, unbreakable monospace string - the
+ * GameState / CurrentRun paths in the "Other requirements" block - because
+ * the panel no longer scrolls horizontally on mobile. Let those break so
+ * they wrap instead of pushing the page wider. (overflow-wrap is inherited,
+ * so the ``.other-req-path`` code pills inside break too. Shared with the
+ * eligibility tracer's Other-requirements section.)
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    .other-req-item {
+        overflow-wrap: anywhere;
+    }
+}
+@media (max-width: 599px) {
+    /* The badge cluster (played / priority / play-once / #N/M) sits inline
+       at the right of the dialogue name on desktop via margin-left:auto.
+       On a phone the name wraps and the right-aligned cluster wraps
+       awkwardly, so drop it onto its own row, left-aligned under the name. */
+    .textline-info h3 .h3-indicators {
+        flex-basis: 100%;
+        margin-left: 0;
+        margin-top: 6px;
+    }
+}
+
+/* === Dependency / eligibility trees ==================================
+ * The shared upstream / downstream tree rows are single-line (white-space:
+ * nowrap) and indent per level, so deep chains and long names grow the tree
+ * wider than a phone. On desktop the panel-body absorbs that with a
+ * horizontal scrollbar; the mobile foundation made panel-body
+ * overflow:visible (so panels stack into the page scroll), which let the
+ * wide tree push the whole PAGE sideways instead. Give just the two tree
+ * panels their own horizontal scroller back, trim the per-level indent, and
+ * grow the row / chevron tap targets for touch. The eligibility tracer
+ * reuses these same tree rows, so it inherits the fix.
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    /* Contain the wide tree within its panel instead of widening the page.
+       overflow-x:auto promotes overflow-y to auto, but the panel-body height
+       is unconstrained on mobile (it grows to fit content), so nothing is
+       clipped vertically - only the x-axis scrolls. */
+    #upstream-content,
+    #downstream-content {
+        overflow-x: auto;
+    }
+    /* Trim the recursive, depth-compounding indent (was 16 + 12) so deep
+       chains run off the right more slowly. The one-off group-box offsets
+       are left as-is. */
+    .tree-node {
+        margin-left: 8px;
+        padding-left: 8px;
+    }
+    /* Touch targets: the whole label row selects / expands (see tree.js), so
+       a min-height row enlarges both the select and the chevron hit area;
+       stretching the chevron column makes it a full-height target too. The
+       collapsible group / branch headers are clickable rows as well, as is
+       the eligibility tracer's own ``.tree-node-row`` (its rows wrap rather
+       than scroll, but still need a touch-sized height). */
+    .tree-label,
+    .tree-node-row,
+    .req-type-group-header,
+    .or-group-header,
+    .or-branch-box-header,
+    .or-downstream-header,
+    .gamedata-group-header,
+    .alternates-group-header {
+        min-height: var(--tap-min);
+    }
+    .tree-label .toggle {
+        min-width: var(--tap-min);
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    /* The taller touch rows leave the desktop-dense type looking sparse, so
+       bump the tree's whole font scale up a step on small screens. Overriding
+       the size tokens on the tree containers cascades to every row, badge and
+       header (they all size from these vars, or from em relative to them), so
+       the hierarchy is preserved with one lever instead of per-element rules. */
+    #upstream-content,
+    #downstream-content,
+    .eligibility-tree-container {
+        --fs-2xs: 0.75rem;
+        --fs-xs: 0.8125rem;
+        --fs-sm: 0.875rem;
+        --fs-base: 0.9375rem;
+    }
+}
+
+/* === Site disclaimer placement ======================================
+ * Desktop pins the disclaimer to the foot of the middle (prerequisites)
+ * panel via ``#upstream-content::after``. Once the panels stack on mobile
+ * that lands it mid-page, between prerequisites and dependents. Move it to
+ * the foot of the last panel (dependents) so it reads as a page footer. The
+ * single-panel views keep their ``#info-content`` disclaimer, already last
+ * on mobile. (The string is repeated from base.css rather than touching the
+ * locked desktop rule; it is also the README's wording.)
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    #upstream-content::after {
+        display: none;
+    }
+    #downstream-content::after {
+        content: 'Built with the assistance of generative AI. All game content belongs to Supergiant Games.';
+        display: block;
+        padding: 12px 20px;
+        font-size: var(--fs-2xs);
+        color: #444;
+        text-align: center;
+        border-top: 1px solid #0f346040;
     }
 }
