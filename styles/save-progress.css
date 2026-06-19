@@ -40,9 +40,9 @@
 }
 
 .save-status.save-loaded {
-    background: #1a3a1a;
-    color: #6be06b;
-    border: 1px solid #2a5a2a;
+    background: #1a1a2e;
+    color: #8fbf8f;
+    border: 1px solid #0f3460;
 }
 
 .save-status.save-error {
@@ -52,9 +52,9 @@
 }
 
 .save-status.save-mismatch {
-    background: #3a3a1a;
-    color: #e0c06b;
-    border: 1px solid #5a5a2a;
+    background: #1a1a2e;
+    color: #c4b47e;
+    border: 1px solid #0f3460;
 }
 
 .save-clear-btn {
