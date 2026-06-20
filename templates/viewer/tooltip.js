@@ -36,6 +36,13 @@ const EDGE_MARGIN = 4;
 
 let tooltipEl = null;
 let currentTarget = null;
+// Auto-hide timer for the touch path, and a timestamp guard so the
+// synthetic mouse events a browser fires after a tap don't re-run the
+// hover handlers (which would re-position the popup at the tap point).
+let touchHideTimer = null;
+let lastTouchTime = 0;
+const TOUCH_GUARD_MS = 600;
+const TOUCH_SHOW_MS = 3500;
 
 // Walk up from ``node`` looking for an ancestor with ``[data-tooltip]``.
 // ``mouseover`` / ``mousemove`` fire on inner descendants, so the
@@ -46,6 +53,24 @@ function findTooltipTarget(node) {
     if (!node || node.nodeType !== 1) return null;
     if (typeof node.closest !== 'function') return null;
     return node.closest('[data-tooltip]');
+}
+
+// True if a tap on ``node`` (or any ancestor) activates a control - an
+// anchor / button / input, an inline ``onclick``, an ARIA widget role, or
+// anything styled clickable (``cursor: pointer``, which is how this codebase
+// marks its JS-wired rows). Used to suppress the touch tooltip on
+// interactive triggers so it can never flash before the tap's own action
+// (navigation / expand) runs.
+function isInteractiveTap(node) {
+    for (let el = node; el && el.nodeType === 1 && el !== document.body; el = el.parentElement) {
+        const tag = el.tagName;
+        if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return true;
+        if (el.hasAttribute('onclick')) return true;
+        const role = el.getAttribute('role');
+        if (role === 'button' || role === 'tab' || role === 'option') return true;
+        if (getComputedStyle(el).cursor === 'pointer') return true;
+    }
+    return false;
 }
 
 function showFor(target, clientX, clientY) {
@@ -60,7 +85,36 @@ function showFor(target, clientX, clientY) {
 function hide() {
     if (!currentTarget) return;
     currentTarget = null;
+    clearTimeout(touchHideTimer);
     tooltipEl.classList.remove('visible');
+}
+
+// Touch path: reveal the tooltip anchored above the tapped element (not at
+// the finger, which would occlude it) and auto-dismiss. Clickable triggers
+// still fire their own tap action - this only adds the missing info popup.
+function showForTouch(target) {
+    const text = target.getAttribute('data-tooltip');
+    if (!text) return;
+    currentTarget = target;
+    tooltipEl.textContent = text;
+    tooltipEl.classList.add('visible');
+    positionAboveRect(target.getBoundingClientRect());
+    clearTimeout(touchHideTimer);
+    touchHideTimer = setTimeout(hide, TOUCH_SHOW_MS);
+}
+
+// Centre the tooltip over the trigger and sit it just above; drop below if
+// there isn't room above. Clamped to the viewport horizontally.
+function positionAboveRect(rect) {
+    const tw = tooltipEl.offsetWidth;
+    const th = tooltipEl.offsetHeight;
+    const vw = window.innerWidth || 0;
+    let x = rect.left + rect.width / 2 - tw / 2;
+    if (vw) x = Math.max(EDGE_MARGIN, Math.min(x, vw - tw - EDGE_MARGIN));
+    let y = rect.top - th - 8;
+    if (y < EDGE_MARGIN) y = rect.bottom + 8;
+    tooltipEl.style.left = x + 'px';
+    tooltipEl.style.top = y + 'px';
 }
 
 // Position the tooltip at the cursor + offset, flipping to the other
@@ -102,6 +156,7 @@ export function initTooltip() {
     // cursor among children of the same tooltip-bearing element doesn't
     // flicker the popup.
     document.addEventListener('mouseover', (e) => {
+        if (Date.now() - lastTouchTime < TOUCH_GUARD_MS) return;
         const target = findTooltipTarget(e.target);
         if (!target) return;
         if (target !== currentTarget) {
@@ -114,6 +169,7 @@ export function initTooltip() {
     // when the cursor moves to an element that is NOT inside the
     // current tooltip target.
     document.addEventListener('mouseout', (e) => {
+        if (Date.now() - lastTouchTime < TOUCH_GUARD_MS) return;
         if (!currentTarget) return;
         const next = e.relatedTarget;
         if (next && typeof currentTarget.contains === 'function' && currentTarget.contains(next)) {
@@ -127,6 +183,7 @@ export function initTooltip() {
     // but possible during fast cursor movement entering from outside
     // the window) by promoting to a new target if one is found.
     document.addEventListener('mousemove', (e) => {
+        if (Date.now() - lastTouchTime < TOUCH_GUARD_MS) return;
         if (!currentTarget) return;
         const target = findTooltipTarget(e.target);
         if (target === currentTarget) {
@@ -137,6 +194,29 @@ export function initTooltip() {
             hide();
         }
     });
+
+    // Touch path: a tap on a non-interactive ``[data-tooltip]`` element
+    // reveals its tooltip (the only way touch users can read it); a tap
+    // elsewhere dismisses an open one. Interactive triggers are skipped so
+    // the tooltip never flashes before their own tap action runs. ``passive``
+    // so that action still fires.
+    document.addEventListener('touchstart', (e) => {
+        lastTouchTime = Date.now();
+        const target = findTooltipTarget(e.target);
+        if (!target || isInteractiveTap(e.target)) {
+            if (currentTarget) hide();
+            return;
+        }
+        showForTouch(target);
+    }, { passive: true });
+
+    // A scroll gesture (touchmove) drops a revealed tooltip - it's
+    // position:fixed, so leaving it up while the content scrolls would
+    // strand it away from its trigger.
+    document.addEventListener('touchmove', () => {
+        lastTouchTime = Date.now();
+        if (currentTarget) hide();
+    }, { passive: true });
 
     // Hide on scroll-wheel: the tooltip is ``position: fixed`` so it
     // stays put in viewport coordinates while the underlying element

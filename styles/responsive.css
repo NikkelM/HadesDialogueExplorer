@@ -194,6 +194,17 @@
     .other-req-item {
         overflow-wrap: anywhere;
     }
+    /* Touch targets in the info panel: each requirement row taps through to
+       that dialogue, and the coloured section-header pill toggles its group.
+       Both are dense desktop rows - size them up for touch. */
+    .req-item {
+        min-height: var(--tap-min);
+    }
+    .req-section h4 {
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+    }
 }
 @media (max-width: 599px) {
     /* The badge cluster (played / priority / play-once / #N/M) sits inline
@@ -299,14 +310,20 @@
 /* === Eligibility tracer ==============================================
  * The tracer is a single panel of wrapping flex rows, so it reflows through
  * the shared foundation, and its tree is handled in the tree section above.
- * The one touch gap is the "Trace eligibility" entry button in the dialogue
- * detail panel, which is shorter than a comfortable tap target.
+ * Touch gaps: the "Trace eligibility" entry button in the dialogue detail
+ * panel, and the clickable "play any of" option rows in the unplayed list.
+ * (The inline ``eligibility-ref`` links inside the "needed by" prose are
+ * left at text size - per the WCAG inline-link exception, enlarging them
+ * would break the sentences.)
  * ==================================================================== */
 @media (max-width: 1024px) {
     .trace-eligibility-btn {
         min-height: var(--tap-min);
         display: inline-flex;
         align-items: center;
+    }
+    .eligibility-group-option {
+        min-height: var(--tap-min);
     }
 }
 
