@@ -401,14 +401,11 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             // Skip clicks inside the toggle chevron (its own handler runs and
             // stops propagation; this guards against future child elements).
             if (e.target.closest('.toggle')) return;
-            // Clicking the dialogue name loads it into the detail panel;
-            // clicking the rest of the row body only expands / collapses, so
-            // browsing the tree by toggling doesn't keep swapping the panel.
-            if (e.target.closest('.name')) {
-                renderInfo(name);
-            } else {
-                toggleNode();
-            }
+            // The whole row body toggles expand / collapse; clicking the
+            // dialogue name additionally loads it into the detail panel, so
+            // browsing by toggling the empty space doesn't swap the panel.
+            if (e.target.closest('.name')) renderInfo(name);
+            toggleNode();
         });
     } else {
         label.addEventListener('click', () => {
