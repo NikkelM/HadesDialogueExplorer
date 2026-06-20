@@ -655,7 +655,13 @@ function renderTreeRow(name, reqType, showEdge, subtree, played) {
     const saveBadge = renderSaveBadgeHtml(name, tl);
 
     let html = `<div class="tree-node ${played ? 'tree-played' : 'tree-unplayed'}${hasChildren ? ' collapsible collapsed' : ''}">`;
-    html += `<div class="tree-node-row"${hasChildren ? ' onclick="this.parentElement.classList.toggle(\'collapsed\')"' : ''} ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`;
+    // Expandable rows toggle on a single click (and open on double-click);
+    // leaf rows (a met / satisfied requirement has nothing to expand) open on
+    // a single click too, matching how expandable rows respond to one click.
+    const rowAttrs = hasChildren
+        ? ` onclick="this.parentElement.classList.toggle('collapsed')" ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})"`
+        : ` onclick="navigateTo(${jsAttr(name)})"`;
+    html += `<div class="tree-node-row"${rowAttrs}>`;
     html += `${chevron}${saveBadge}`;
     html += `<span class="tree-name">${escapeHtml(name)}</span>`;
     // Narrative-priority badge (H1 tier / H2 ordinal), matching the
