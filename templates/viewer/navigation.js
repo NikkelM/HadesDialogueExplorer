@@ -11,6 +11,7 @@
 // changes (toggle clicks and shared deep links both go through here).
 
 import { renderInfo } from './info-panel.js';
+import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
@@ -307,6 +308,9 @@ function applyState(state) {
             const friendly = entry && entry.name && entry.name !== speakerId ? entry.name : (speakerId || '');
             searchInput.value = friendly;
         }
+        // Onboarding: first time a speaker overview actually renders, offer
+        // the speaker tour (no-op on later visits / when opted out).
+        if (speakerId) maybeStartSpeakerTour();
         return;
     }
     if (view === 'duplicates') {

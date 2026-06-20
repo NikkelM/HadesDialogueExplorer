@@ -47,6 +47,18 @@ function _isPhone() {
     }
 }
 
+// Nearest scrollable ancestor (the element that actually scrolls when this
+// target is brought into view), or null when the window scrolls.
+function _scrollParent(el) {
+    let n = el.parentElement;
+    while (n) {
+        const oy = getComputedStyle(n).overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight) return n;
+        n = n.parentElement;
+    }
+    return null;
+}
+
 // Resolve a step target to a visible element, or null (selector miss,
 // detached node, or zero-size element -> treat as a no-target step).
 function _resolveTarget(t) {
@@ -182,7 +194,33 @@ function _show(i) {
     _backBtn.disabled = _index === 0;
     _nextBtn.textContent = _index === _steps.length - 1 ? 'Done' : 'Next';
     const el = _resolveTarget(step.target);
-    if (el) el.scrollIntoView({ block: 'center', inline: 'nearest' });
+    if (el) {
+        const r = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        if (r.height > vh) {
+            // Target taller than the viewport (e.g. a long dialogue list):
+            // centring jumps to its middle. Scroll the *minimum* needed - if
+            // its top is already on-screen with room for the card above it,
+            // don't scroll at all. Only scroll up when the card wouldn't fit
+            // above, or down when the section is mostly below the fold.
+            const cardH = _card.getBoundingClientRect().height;
+            const bandTop = cardH + 2 * _CARD_GAP;
+            const minVisible = 140;
+            let delta = 0;
+            if (r.top < bandTop) delta = r.top - bandTop;
+            else if (r.top > vh - minVisible) delta = r.top - Math.round(vh * 0.6);
+            if (delta !== 0) {
+                const sc = _scrollParent(el);
+                if (sc) sc.scrollTop += delta;
+                else window.scrollBy(0, delta);
+            }
+        } else {
+            // Normal target: only scroll if it isn't already fully visible,
+            // and then minimally ('nearest'), so a step whose target is
+            // already on screen doesn't jump the page.
+            el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
+    }
     _position();
     _nextBtn.focus();
 }

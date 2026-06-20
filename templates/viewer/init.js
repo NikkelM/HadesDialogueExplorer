@@ -12,6 +12,7 @@ import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave } from './save-upload.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { maybeStartHomeTour, startHomeTourReplay } from './tour-home.js';
+import { startSpeakerTourReplay } from './tour-speaker.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -47,10 +48,15 @@ function init(data) {
     if (tourHelp) {
         tourHelp.addEventListener('click', replayTours);
     }
-    // Onboarding: the home walkthrough is the replay target, and runs once
-    // automatically when the first-visit landing placed us on the featured
-    // dialogue (so its detail panel is on screen for the tour to point at).
-    setReplayDispatcher(startHomeTourReplay);
+    // Onboarding: the replay control re-runs the tour matching the current
+    // view; the home walkthrough also runs once automatically when the
+    // first-visit landing placed us on the featured dialogue (so its detail
+    // panel is on screen for the tour to point at).
+    setReplayDispatcher(() => {
+        const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
+        if (view === 'speaker') startSpeakerTourReplay();
+        else startHomeTourReplay();
+    });
     if (landedFirstVisit) {
         maybeStartHomeTour();
     }

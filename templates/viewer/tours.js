@@ -99,9 +99,12 @@ function _wrapCallbacks(id, opts) {
 
 // Start a tour once. No-op (returns false) when tutorials are globally
 // disabled, this tour was already seen, or another tour is on screen.
+// ``opts.onBeforeStart`` runs only once those gates pass, just before the
+// tour opens - use it for one-off DOM prep (e.g. expanding a section).
 export function maybeStartTour(id, steps, opts = {}) {
     if (!id || !Array.isArray(steps) || steps.length === 0) return false;
     if (toursDisabled() || hasSeenTour(id) || isTourActive()) return false;
+    if (opts.onBeforeStart) opts.onBeforeStart();
     return startTour(steps, _wrapCallbacks(id, opts));
 }
 
@@ -109,6 +112,7 @@ export function maybeStartTour(id, steps, opts = {}) {
 // path). Still a no-op while another tour is running.
 export function forceStartTour(id, steps, opts = {}) {
     if (!id || !Array.isArray(steps) || steps.length === 0 || isTourActive()) return false;
+    if (opts.onBeforeStart) opts.onBeforeStart();
     return startTour(steps, _wrapCallbacks(id, opts));
 }
 

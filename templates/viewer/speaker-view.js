@@ -677,7 +677,8 @@ function renderAlternatesClusterHtml(cluster) {
 
 // Render the controls strip above the textline list: the repeatability
 // filter chips, plus the eligibility (save-status) filter chips on a
-// second row when a save applies to the active game.
+// second row when a save applies to the active game. Both rows are wrapped in
+// a single container so the onboarding tour can highlight them together.
 function renderTextlineControls(entry, speakerId, filter, eligFilter) {
     const priorityChips = renderPriorityChips(entry, speakerId, filter, eligFilter);
     let html = `<div class="speaker-textline-controls">`
@@ -691,7 +692,7 @@ function renderTextlineControls(entry, speakerId, filter, eligFilter) {
             + `<div class="speaker-priority-chips" role="group" aria-label="Eligibility filter">${eligChips}</div>`
             + `</div>`;
     }
-    return html;
+    return `<div class="speaker-textline-controls-group">${html}</div>`;
 }
 
 function renderTextlineRow(name, tl) {
