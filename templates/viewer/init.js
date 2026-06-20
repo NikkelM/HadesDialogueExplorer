@@ -10,6 +10,7 @@ import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave } from './save-upload.js';
+import { replayTours } from './tours.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -39,6 +40,11 @@ function init(data) {
     // Re-render current view when a save file is loaded or cleared
     window.addEventListener('save-loaded', forceRefresh);
     window.addEventListener('save-cleared', forceRefresh);
+    // The floating "?" control re-runs the onboarding tours on demand.
+    const tourHelp = document.getElementById('tour-help');
+    if (tourHelp) {
+        tourHelp.addEventListener('click', replayTours);
+    }
 }
 
 // Render a load error into the stable #app-error mount instead of

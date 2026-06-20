@@ -1,0 +1,183 @@
+/* Guided onboarding tour: spotlight + coachmark card.
+ *
+ * Driven by templates/viewer/tour.js (positions are set inline from JS).
+ * Three stacked layers above everything else:
+ *   .tour-overlay   - transparent full-screen click-blocker (keeps the page
+ *                     non-interactive so the user follows the tour)
+ *   .tour-spotlight - the dim: a transparent box over the highlighted target
+ *                     with a huge spreading box-shadow that darkens the rest
+ *                     of the screen, leaving the target visible through the
+ *                     cut-out. JS sets its position/size; a 0-size centred
+ *                     spotlight dims the whole screen for a no-target step.
+ *   .tour-card      - the coachmark (title, body, Back/Next/Skip + opt-out)
+ *
+ * Self-contained (base + its own mobile @media); no other file styles these.
+ */
+
+.tour-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: transparent;
+    /* Catch every click so the page behind can't be interacted with mid-tour
+       (a stray click could navigate away and strand the tour's targets). */
+    cursor: default;
+}
+
+.tour-spotlight {
+    position: fixed;
+    z-index: 100001;
+    border-radius: 6px;
+    /* The dim. The spread radius is larger than any viewport so the shadow
+       always reaches every edge regardless of where the cut-out sits. */
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    /* Visual highlight ring around the target. */
+    outline: 2px solid #e94560;
+    outline-offset: 2px;
+    pointer-events: none;
+    transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
+}
+
+.tour-card {
+    position: fixed;
+    z-index: 100002;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: min(340px, calc(100vw - 16px));
+    background: #16213e;
+    border: 1px solid #e94560;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #e0e0e0;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+    font-size: var(--fs-base);
+    line-height: 1.45;
+}
+
+.tour-card-title {
+    color: #e94560;
+    font-size: var(--fs-lg);
+    margin: 0 0 6px;
+}
+
+.tour-card-text {
+    margin: 0;
+    color: #d0d4dd;
+}
+
+.tour-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.tour-card-step {
+    font-size: var(--fs-xs);
+    color: #8a93a6;
+    /* Push the buttons to the right of the step counter. */
+    margin-right: auto;
+}
+
+.tour-btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid #0f3460;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.tour-btn:hover {
+    background: #0f3460;
+}
+
+.tour-btn-next {
+    background: #e94560;
+    border-color: #e94560;
+    color: #fff;
+}
+
+.tour-btn-next:hover {
+    background: #d13551;
+    border-color: #d13551;
+}
+
+.tour-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* The "Don't show tutorials again" opt-out: a quiet text link under the
+   action row so it never competes with Next/Skip. */
+.tour-disable {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 8px 0 0;
+    margin: 0;
+    color: #8a93a6;
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tour-disable:hover {
+    color: #c0c6d2;
+}
+
+/* Replay / help control: a small fixed "?" button (re-runs the onboarding
+   tours after they've been seen or disabled). Floating rather than in the
+   header so it doesn't disturb the header's packed, responsive layout. Sits
+   below the tour layers but above page content. */
+.tour-help-btn {
+    position: fixed;
+    bottom: 14px;
+    right: 14px;
+    z-index: 90;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #0f3460;
+    background: #16213e;
+    color: #c0c6d2;
+    font-family: inherit;
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.tour-help-btn:hover {
+    background: #0f3460;
+    color: #fff;
+}
+
+/* Phone: the card becomes a bottom sheet so it never fights the small
+   viewport or overlaps the highlighted target (JS leaves its top/left unset
+   on phones and scrolls the target into the upper area). */
+@media (max-width: 599px) {
+    .tour-card {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        top: auto !important;
+        width: auto;
+        max-width: none;
+    }
+    /* Touch-sized controls. */
+    .tour-btn {
+        min-height: var(--tap-min);
+    }
+    .tour-help-btn {
+        width: var(--tap-min);
+        height: var(--tap-min);
+    }
+}

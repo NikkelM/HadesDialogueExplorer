@@ -80,6 +80,10 @@
         <div id="downstream-content" class="panel-body"><div class="empty-state">Select a textline to see what depends on it</div></div>
     </div>
 </main>
+<!-- Replay / help control for the onboarding tours (wired in init.js).
+     Floating rather than in the header so it doesn't disturb the header's
+     packed, responsive layout. -->
+<button id="tour-help" class="tour-help-btn" type="button" aria-label="Replay tutorials" data-tooltip="Replay the onboarding tutorials">?</button>
 <script>
 // Second pre-paint fixup: now that the panel DOM exists, patch the
 // heading and empty-state text for single-panel views so "Textline
