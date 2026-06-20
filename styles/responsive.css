@@ -374,12 +374,25 @@
         display: flex;
         flex-direction: column;
         white-space: normal;
+        /* Extra gap from the chevron so the name/id sit clear of it (the row
+           gap alone left them cramped against the chevron). */
+        margin-left: 8px;
     }
     .speaker-adjacency-nameid .speaker-link {
         font-size: var(--fs-lg);
     }
     .speaker-adjacency-nameid .speaker-id-inline {
         font-size: var(--fs-sm);
+    }
+    /* The name link fills the row (flex:1) and navigates on tap, which
+       competes with the row's tap-to-expand: on touch a finger usually lands
+       on the name rather than the small chevron, so the row navigates to that
+       speaker instead of revealing its dialogue list. Take the name out of
+       the hit-test so the whole row is a single, reliable expand target. The
+       dialogue links inside the expanded detail are unaffected (different
+       elements, outside .speaker-adjacency-nameid). */
+    .speaker-adjacency-nameid .speaker-link {
+        pointer-events: none;
     }
     /* Put the "self" badge to the left of the count chip (DOM order is
        count then self). Explicit orders after the order-0 chevron + name. */
