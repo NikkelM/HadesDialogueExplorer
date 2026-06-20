@@ -8,6 +8,30 @@
     cursor: help;
     border-bottom: 1px dotted #88888866;
 }
+/* The dialogue detail panel's Owner/Partner names navigate to the speaker
+   overview. Promote the click affordance above the generic tooltip hint:
+   accent link colour, pointer cursor, and a trailing chevron so the name
+   reads as a navigation link, not just a hover-for-info label. Scoped to
+   ``.textline-info .meta`` so dialogue-line speakers, search rows, and the
+   speaker overview keep their lighter treatment. Higher specificity than the
+   ``[data-tooltip]`` rule above so it wins regardless of stylesheet order. */
+.textline-info .meta .speaker-name.clickable {
+    color: #e94560;
+    cursor: pointer;
+    border-bottom-color: #e9456066;
+}
+.textline-info .meta .speaker-name.clickable::after {
+    content: "\203a";
+    margin-left: 3px;
+    font-weight: 700;
+    opacity: 0.75;
+}
+.textline-info .meta .speaker-name.clickable:hover {
+    border-bottom-style: solid;
+}
+.textline-info .meta .speaker-name.clickable:hover::after {
+    opacity: 1;
+}
 /* Matches the speaker-name affordance: only the friendly form gets the
    dotted underline + help cursor, so when no friendly mapping exists
    (raw key shown as-is) the section text looks plain. */
