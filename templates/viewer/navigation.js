@@ -178,6 +178,13 @@ export function switchToGame(gameId) {
 // non-toggle-click navigation - search, tree click, inline link -
 // implicitly stays in the active game).
 export function navigateToState(state) {
+    // During a tour step flagged ``blockNavigation`` the engine sets this
+    // class so the user can expand/collapse rows and read tooltips without a
+    // click navigating to a different dialogue and stranding the tour.
+    if (typeof document !== 'undefined' && document.body
+        && document.body.classList.contains('tour-no-nav')) {
+        return;
+    }
     const fullState = Object.assign({ game: getActiveGame() }, state || {});
     const requestedGame = fullState.game;
     if (requestedGame && requestedGame !== getActiveGame()) {

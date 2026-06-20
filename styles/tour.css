@@ -20,8 +20,17 @@
     z-index: 100000;
     background: transparent;
     /* Catch every click so the page behind can't be interacted with mid-tour
-       (a stray click could navigate away and strand the tour's targets). */
+       (a stray click could navigate away and strand the tour's targets).
+       Interactive steps flip this to ``pointer-events: none`` from JS so the
+       user can reach the highlighted target (e.g. to hover a badge). */
     cursor: default;
+}
+
+/* While a tour is open, the hover tooltip must sit above the tour layers so
+   interactive steps (hover a badge / the dotted internal-id text) can show it;
+   its default z-index is far below the overlay. */
+body.tour-open #custom-tooltip {
+    z-index: 100003;
 }
 
 .tour-spotlight {

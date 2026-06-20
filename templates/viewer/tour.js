@@ -13,7 +13,11 @@
 // element is missing degrades to the centred presentation.
 
 const _PAD = 6;        // spotlight padding around the target, px
-const _GAP = 12;       // card gap from the target / viewport edge, px
+const _GAP = 12;       // card gap from the viewport edge, px
+// Card distance from the highlighted target. Larger than _GAP so the card
+// clears the spotlight ring (which already extends ~_PAD beyond the target)
+// and leaves a comfortable visible gap below / above the highlight.
+const _CARD_GAP = 24;
 
 let _active = false;
 let _steps = [];
@@ -150,9 +154,9 @@ function _placeCard(targetRect) {
         return;
     }
     // Prefer below the target; flip above if it would overflow the bottom.
-    let top = targetRect.bottom + _GAP;
+    let top = targetRect.bottom + _CARD_GAP;
     if (top + c.height + _GAP > vh) {
-        const above = targetRect.top - c.height - _GAP;
+        const above = targetRect.top - c.height - _CARD_GAP;
         top = above >= _GAP ? above : Math.max(_GAP, vh - c.height - _GAP);
     }
     let left = targetRect.left + targetRect.width / 2 - c.width / 2;
@@ -164,6 +168,13 @@ function _placeCard(targetRect) {
 function _show(i) {
     _index = Math.max(0, Math.min(i, _steps.length - 1));
     const step = _steps[_index];
+    // Interactive steps let the user reach the highlighted target (e.g. to
+    // hover a badge for its tooltip); the overlay otherwise blocks the page
+    // so a stray click can't navigate away mid-tour. ``blockNavigation`` keeps
+    // interaction (expand/collapse, tooltips) but suppresses navigation to a
+    // different dialogue, so an interactive step can't strand the tour.
+    _overlay.style.pointerEvents = step.interactive ? 'none' : 'auto';
+    document.body.classList.toggle('tour-no-nav', !!step.blockNavigation);
     _titleEl.textContent = step.title || '';
     _titleEl.style.display = step.title ? '' : 'none';
     _textEl.textContent = step.body || '';
@@ -227,6 +238,8 @@ function _onKeydown(e) {
 function _end() {
     if (!_active) return;
     _active = false;
+    document.body.classList.remove('tour-open');
+    document.body.classList.remove('tour-no-nav');
     window.removeEventListener('resize', _position);
     window.removeEventListener('scroll', _position, true);
     document.removeEventListener('keydown', _onKeydown, true);
@@ -254,6 +267,7 @@ export function startTour(steps, opts = {}) {
     _steps = steps;
     _cb = opts || {};
     _prevFocus = document.activeElement;
+    document.body.classList.add('tour-open');
     _buildDom();
     window.addEventListener('resize', _position);
     window.addEventListener('scroll', _position, true);

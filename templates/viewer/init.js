@@ -10,7 +10,8 @@ import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave } from './save-upload.js';
-import { replayTours } from './tours.js';
+import { replayTours, setReplayDispatcher } from './tours.js';
+import { maybeStartHomeTour, startHomeTourReplay } from './tour-home.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -33,7 +34,8 @@ function init(data) {
     // First-ever visit to the bare home page lands on the featured
     // dialogue (and writes it into the URL); return visits fall through
     // to the normal hash apply, which shows the genuine empty state.
-    if (!applyFirstVisitLanding()) {
+    const landedFirstVisit = applyFirstVisitLanding();
+    if (!landedFirstVisit) {
         applyHashFromUrl();
     }
     window.addEventListener('hashchange', applyHashFromUrl);
@@ -44,6 +46,13 @@ function init(data) {
     const tourHelp = document.getElementById('tour-help');
     if (tourHelp) {
         tourHelp.addEventListener('click', replayTours);
+    }
+    // Onboarding: the home walkthrough is the replay target, and runs once
+    // automatically when the first-visit landing placed us on the featured
+    // dialogue (so its detail panel is on screen for the tour to point at).
+    setReplayDispatcher(startHomeTourReplay);
+    if (landedFirstVisit) {
+        maybeStartHomeTour();
     }
 }
 

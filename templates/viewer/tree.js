@@ -404,11 +404,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             // The whole row body toggles expand / collapse; clicking the
             // dialogue name additionally loads it into the detail panel, so
             // browsing by toggling the empty space doesn't swap the panel.
-            if (e.target.closest('.name')) renderInfo(name);
+            // ``tour-no-nav`` (set during a tour step) suppresses only the
+            // panel swap, leaving expand / collapse working.
+            if (e.target.closest('.name') && !document.body.classList.contains('tour-no-nav')) renderInfo(name);
             toggleNode();
         });
     } else {
         label.addEventListener('click', () => {
+            if (document.body.classList.contains('tour-no-nav')) return;
             renderInfo(name);
         });
     }
