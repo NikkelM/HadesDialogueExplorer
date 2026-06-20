@@ -378,20 +378,23 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             return childContainer;
         };
 
-        toggle.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Expand if collapsed, collapse if expanded - shared by the chevron
+        // and the row body so both toggle the same way.
+        const toggleNode = () => {
             const childContainer = label.nextElementSibling;
             if (childContainer
                 && childContainer.classList.contains('tree-children')
                 && childContainer.classList.contains('expanded')) {
-                // Collapse only when the chevron is clicked. The row
-                // body click never reaches this branch (its handler
-                // calls expandNode which never collapses).
                 childContainer.classList.remove('expanded');
                 toggle.textContent = '\u25B6';
                 return;
             }
             expandNode();
+        };
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleNode();
         });
 
         label.addEventListener('click', (e) => {
@@ -401,7 +404,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             // future child elements inside `.toggle`.
             if (e.target.closest('.toggle')) return;
             renderInfo(name);
-            expandNode();
+            toggleNode();
         });
     } else {
         label.addEventListener('click', () => {
