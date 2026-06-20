@@ -124,6 +124,20 @@ test('renderDuplicates text search filters by speaker name', () => {
     assert.match(lastHtml, /SharedDialogue01/);
 });
 
+test('renderDuplicates shows an "All" entry first, active and default', () => {
+    renderDuplicates({ q: '' });
+    // The All pseudo-speaker is present, looks like any speaker item, and is
+    // selected by default. Its count is the full duplicate total (one in the
+    // fixture).
+    assert.match(lastHtml, /<span class="duplicates-speaker-name">All<\/span><span class="duplicates-speaker-count">1<\/span>/);
+    // Detail pane defaults to the "All speakers" view.
+    assert.match(lastHtml, /duplicates-detail-title">All speakers</);
+    // "All" is rendered before the real speaker (Zeus) in the master list.
+    const allIdx = lastHtml.indexOf('>All<');
+    assert.ok(allIdx >= 0 && allIdx < lastHtml.indexOf('>Zeus<'),
+        'All entry must come before the first speaker');
+});
+
 // --- cross-game badge on textline detail ---
 
 test('renderInfo shows cross-game badge for a duplicate textline', () => {

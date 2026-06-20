@@ -8,10 +8,16 @@
 import { duplicates, games, gameLabels } from './data.js';
 import { escapeHtml, jsAttr } from './utilities.js';
 
+// Sentinel master-list entry that shows every speaker's shared dialogues at
+// once. Keyed with a control char so it can never collide with a real
+// speaker name; rendered as "All". First in the list and the default.
+const ALL_SPEAKERS = '\u0000all';
+
 // Speaker currently shown in the detail pane. Persists across
 // re-renders (search typing, game switches) so the selection sticks
-// for as long as it survives the active filter.
-let selectedSpeaker = null;
+// for as long as it survives the active filter. Defaults to
+// ``ALL_SPEAKERS`` (every shared dialogue).
+let selectedSpeaker = ALL_SPEAKERS;
 
 // Resolve the friendly speaker name for a duplicate entry, using the
 // Hades 1 speaker name as the canonical display name.
@@ -93,10 +99,19 @@ function renderBody(items, h1Label, h2Label) {
     const speakers = [...groups.keys()].sort((a, b) => a.localeCompare(b));
 
     // Keep the current selection if it survived the filter, otherwise
-    // fall back to the first speaker in the list.
-    if (!groups.has(selectedSpeaker)) selectedSpeaker = speakers[0];
+    // fall back to the "All" pseudo-speaker (the default).
+    if (selectedSpeaker !== ALL_SPEAKERS && !groups.has(selectedSpeaker)) {
+        selectedSpeaker = ALL_SPEAKERS;
+    }
 
-    const speakerList = speakers.map(name => {
+    // "All" entry first, then each speaker. The All count is the full
+    // filtered total; per-speaker counts are their group size.
+    const allActive = selectedSpeaker === ALL_SPEAKERS ? ' is-active' : '';
+    const allItem = `<button type="button" class="duplicates-speaker-item${allActive}" onclick="selectDuplicateSpeaker(${jsAttr(ALL_SPEAKERS)})">`
+        + `<span class="duplicates-speaker-name">All</span>`
+        + `<span class="duplicates-speaker-count">${items.length}</span>`
+        + `</button>`;
+    const speakerList = allItem + speakers.map(name => {
         const active = name === selectedSpeaker ? ' is-active' : '';
         return `<button type="button" class="duplicates-speaker-item${active}" onclick="selectDuplicateSpeaker(${jsAttr(name)})">`
             + `<span class="duplicates-speaker-name">${escapeHtml(name)}</span>`
@@ -104,7 +119,9 @@ function renderBody(items, h1Label, h2Label) {
             + `</button>`;
     }).join('');
 
-    const dupes = groups.get(selectedSpeaker) || [];
+    const showingAll = selectedSpeaker === ALL_SPEAKERS;
+    const dupes = showingAll ? items : (groups.get(selectedSpeaker) || []);
+    const detailTitle = showingAll ? 'All speakers' : selectedSpeaker;
     const entries = dupes.map(d => renderEntry(d, h1Label, h2Label)).join('');
     // Size the name column to the longest name across all duplicates
     // (monospace, one ``ch`` per character) so the game pills start at
@@ -114,7 +131,7 @@ function renderBody(items, h1Label, h2Label) {
     return `<div class="duplicates-md">`
         + `<div class="duplicates-speakers">${speakerList}</div>`
         + `<div class="duplicates-detail">`
-        + `<h4 class="duplicates-detail-title">${escapeHtml(selectedSpeaker)}</h4>`
+        + `<h4 class="duplicates-detail-title">${escapeHtml(detailTitle)}</h4>`
         + `<div class="duplicates-detail-list" style="--dup-name-col: ${nameCols}ch">${entries}</div>`
         + `</div>`
         + `</div>`;
