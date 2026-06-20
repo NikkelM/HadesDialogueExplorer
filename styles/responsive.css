@@ -401,3 +401,67 @@
         min-height: var(--tap-min);
     }
 }
+
+/* === Cross-game duplicates =========================================
+ * Desktop master-detail: a fixed speaker sidebar (160-220px) beside a
+ * detail pane whose entries tile at min 340px. That fixed pairing overruns
+ * a phone (the grid measured ~520px). On phones, stack it: the speaker
+ * master list becomes a wrapping chip row above a full-width, single-column
+ * detail list, and each duplicate entry becomes a small card - the dialogue
+ * name on its own line above the two game buttons, which split the row as
+ * equal touch targets. The 2-column master-detail still fits a tablet, so
+ * the stack is phone-only; the touch sizing covers any small screen.
+ * ================================================================== */
+@media (max-width: 599px) {
+    .duplicates-md {
+        grid-template-columns: 1fr;
+    }
+    .duplicates-speakers {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .duplicates-speaker-item {
+        width: auto;
+    }
+    .duplicates-detail-list {
+        grid-template-columns: 1fr;
+        /* More separation between one entry card (name + buttons) and the
+           next than the dense desktop row gap. */
+        row-gap: 0.9rem;
+    }
+    /* Card entry. Drops the desktop fixed monospace name-column width, which
+       (plus the two buttons) was what tipped the row over the phone width. */
+    .duplicates-entry {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        column-gap: 0.5rem;
+        row-gap: 0.35rem;
+    }
+    .duplicates-name {
+        flex-basis: 100%;
+        width: auto;
+        font-size: var(--fs-lg);
+    }
+    .duplicates-entry > .duplicates-game-link {
+        flex: 1;
+    }
+    .duplicates-entry > .duplicates-game-link:first-of-type {
+        margin-left: 0;
+    }
+}
+@media (max-width: 1024px) {
+    /* Touch-size the filter input, the game-open buttons and the speaker
+       master items. */
+    .duplicates-search,
+    .duplicates-speaker-item {
+        min-height: var(--tap-min);
+    }
+    .duplicates-game-link {
+        min-height: var(--tap-min);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
