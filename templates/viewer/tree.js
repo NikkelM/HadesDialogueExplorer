@@ -398,13 +398,17 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         });
 
         label.addEventListener('click', (e) => {
-            // Defensive: skip when the click landed inside the toggle
-            // chevron. The toggle's own handler already calls
-            // stopPropagation, so this guard mainly protects against
-            // future child elements inside `.toggle`.
+            // Skip clicks inside the toggle chevron (its own handler runs and
+            // stops propagation; this guards against future child elements).
             if (e.target.closest('.toggle')) return;
-            renderInfo(name);
-            toggleNode();
+            // Clicking the dialogue name loads it into the detail panel;
+            // clicking the rest of the row body only expands / collapses, so
+            // browsing the tree by toggling doesn't keep swapping the panel.
+            if (e.target.closest('.name')) {
+                renderInfo(name);
+            } else {
+                toggleNode();
+            }
         });
     } else {
         label.addEventListener('click', () => {
