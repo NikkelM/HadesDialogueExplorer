@@ -12,6 +12,7 @@
 
 import { renderInfo } from './info-panel.js';
 import { maybeStartSpeakerTour } from './tour-speaker.js';
+import { maybeStartDuplicatesTour } from './tour-duplicates.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
@@ -321,6 +322,8 @@ function applyState(state) {
         });
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = '';
+        // Onboarding: first time the duplicates view renders, offer its tour.
+        maybeStartDuplicatesTour();
         return;
     }
     if (view === 'eligibility') {

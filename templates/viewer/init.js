@@ -13,6 +13,7 @@ import { initSaveUpload, restoreSavedSave } from './save-upload.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { maybeStartHomeTour, startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
+import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -55,6 +56,7 @@ function init(data) {
     setReplayDispatcher(() => {
         const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
         if (view === 'speaker') startSpeakerTourReplay();
+        else if (view === 'duplicates') startDuplicatesTourReplay();
         else startHomeTourReplay();
     });
     if (landedFirstVisit) {
