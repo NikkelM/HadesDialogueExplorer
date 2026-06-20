@@ -465,3 +465,21 @@
         justify-content: center;
     }
 }
+
+/* === Search results dropdown =======================================
+ * The dropdown already spans the full-width search row on a phone; it just
+ * needs touch-sized rows. Its open height is sized to the space above the
+ * on-screen keyboard by search-ui.js (the VisualViewport API), so the list
+ * stays clear of the keyboard instead of running behind it; the desktop CSS
+ * max-height stays as the fallback.
+ * ================================================================== */
+@media (max-width: 1024px) {
+    .search-item {
+        padding-top: 13px;
+        padding-bottom: 13px;
+    }
+    .search-section-header {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}

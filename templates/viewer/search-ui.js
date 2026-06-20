@@ -140,6 +140,9 @@ export function initSearch() {
         clearTimeout(textSearchTimer);
         searchResults.classList.remove('visible');
         searchResults.classList.remove('kbd-mode');
+        // Drop any keyboard-aware inline height so a later desktop open (or
+        // the next mobile open, which recomputes) starts from the CSS rule.
+        searchResults.style.maxHeight = '';
         speakersList.innerHTML = '';
         namesList.innerHTML = '';
         textList.innerHTML = '';
@@ -184,6 +187,25 @@ export function initSearch() {
         searchResults.classList.toggle('visible', visible);
         searchInput.setAttribute('aria-expanded', visible ? 'true' : 'false');
         reapplyActive();
+        sizeResultsToViewport();
+    }
+
+    // Keep the open dropdown clear of the phone's on-screen keyboard. The
+    // VisualViewport API reports the height actually visible above the
+    // keyboard, so the dropdown is capped to the gap between its top and the
+    // keyboard rather than the CSS max-height (which would run behind it).
+    // Phone-only: on wider screens (and where VisualViewport is missing) the
+    // inline cap is cleared so the desktop CSS max-height governs.
+    function sizeResultsToViewport() {
+        const vv = window.visualViewport;
+        if (!vv || !searchResults.classList.contains('visible')) return;
+        if (!window.matchMedia('(max-width: 1024px)').matches) {
+            searchResults.style.maxHeight = '';
+            return;
+        }
+        const top = searchResults.getBoundingClientRect().top;
+        const available = vv.offsetTop + vv.height - top - 8;
+        searchResults.style.maxHeight = Math.max(160, available) + 'px';
     }
 
     function renderSpeakersSection(speakerMatches) {
@@ -465,4 +487,11 @@ export function initSearch() {
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.search-container')) hide();
     });
+
+    // Re-fit the open dropdown when the keyboard shows/hides (resize) or the
+    // visual viewport pans (scroll), so it tracks the available space.
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', sizeResultsToViewport);
+        window.visualViewport.addEventListener('scroll', sizeResultsToViewport);
+    }
 }
