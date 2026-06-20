@@ -3,7 +3,7 @@
 // the right pane shows the selected speaker's shared dialogues, each
 // with a link into either game's view.
 //
-// URL: ``#view=duplicates&q=<search>``
+// URL: ``#view=duplicates&dup=<speaker>&q=<search>``
 
 import { duplicates, games, gameLabels } from './data.js';
 import { escapeHtml, jsAttr } from './utilities.js';
@@ -11,7 +11,8 @@ import { escapeHtml, jsAttr } from './utilities.js';
 // Sentinel master-list entry that shows every speaker's shared dialogues at
 // once. Keyed with a control char so it can never collide with a real
 // speaker name; rendered as "All". First in the list and the default.
-const ALL_SPEAKERS = '\u0000all';
+// Exported so the navigation layer can map it to "omit the ``dup`` URL key".
+export const ALL_SPEAKERS = '\u0000all';
 
 // Speaker currently shown in the detail pane. Persists across
 // re-renders (search typing, game switches) so the selection sticks
@@ -28,7 +29,9 @@ function speakerName(d) {
 }
 
 // Render the full duplicates view into the given container element.
-// ``opts.q`` is the URL-supplied search string.
+// ``opts.q`` is the URL-supplied search string. ``opts.dup`` is the
+// URL-supplied selected speaker (a display name; absent / empty means the
+// "All" pseudo-speaker).
 //
 // When ``opts._bodyOnly`` is true, only the master-detail body is
 // refreshed (the search input stays intact in the DOM) so the input
@@ -38,6 +41,18 @@ export function renderDuplicates(opts) {
     if (!container) return;
 
     const query = ((opts && opts.q) || '').trim().toLowerCase();
+
+    // Resolve the detail-pane selection from the incoming options. A full
+    // render treats the URL as authoritative: an explicit ``dup`` selects
+    // that speaker, its absence resets to "All". A body-only render (live
+    // search typing) only changes the selection when ``dup`` is passed
+    // explicitly (a speaker-chip click), otherwise the current selection
+    // is preserved so typing never clears the detail pane.
+    if (opts && opts._bodyOnly) {
+        if (opts.dup !== undefined) selectedSpeaker = opts.dup || ALL_SPEAKERS;
+    } else {
+        selectedSpeaker = (opts && opts.dup) ? opts.dup : ALL_SPEAKERS;
+    }
 
     let items = duplicates || [];
 
@@ -145,11 +160,11 @@ function renderEntry(d, h1Label, h2Label) {
         + `</div>`;
 }
 
-// Select a speaker in the master list and refresh the detail pane,
-// preserving the current search filter. Wired to the speaker buttons
-// via an inline ``onclick`` handler.
-export function selectDuplicateSpeaker(name) {
-    selectedSpeaker = name;
-    const input = document.querySelector('.duplicates-search');
-    renderDuplicates({ q: input ? input.value : '', _bodyOnly: true });
+// Current detail-pane speaker, or the ``ALL_SPEAKERS`` sentinel when the
+// "All" pseudo-speaker is active. Read by the navigation layer to keep the
+// ``dup`` URL key in sync with the live selection - e.g. so search typing
+// preserves (or, when the filter drops the selected speaker, correctly
+// clears) the selected speaker in the URL.
+export function getSelectedDuplicateSpeaker() {
+    return selectedSpeaker;
 }

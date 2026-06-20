@@ -13,7 +13,7 @@
 import { renderInfo } from './info-panel.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
-import { renderDuplicates } from './duplicates-view.js';
+import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
 import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue } from './data.js';
@@ -115,14 +115,39 @@ export function searchDuplicates(query) {
 
     // Debounced URL sync (300ms after last keystroke). Only updates
     // the hash without re-rendering - the view is already current.
+    // Carries the live speaker selection (read after the re-render, so a
+    // selection the new filter dropped is reflected) so typing never
+    // clobbers the ``dup`` key.
     if (_dupSearchTimer !== null) clearTimeout(_dupSearchTimer);
     _dupSearchTimer = setTimeout(() => {
         _dupSearchTimer = null;
-        const fullState = { game: getActiveGame(), view: 'duplicates', q: query };
+        const fullState = { game: getActiveGame(), view: 'duplicates' };
+        if (query) fullState.q = query;
+        const selected = getSelectedDuplicateSpeaker();
+        if (selected !== ALL_SPEAKERS) fullState.dup = selected;
         const serialized = serializeUrlState(fullState);
         urlSelection = serialized;
         window.location.hash = serialized;
     }, 300);
+}
+
+// Select a speaker in the duplicates master list. Persists the selection
+// in the ``dup`` URL key (omitted for the "All" pseudo-speaker so default
+// URLs stay clean) and refreshes the detail pane via a table-only render
+// so the master-list scroll position and the live search input are kept.
+// Wired to the speaker buttons via an inline ``onclick`` handler. Sets the
+// ``urlSelection`` guard so the resulting ``hashchange`` doesn't trigger a
+// redundant full re-render.
+export function selectDuplicateSpeaker(name) {
+    const input = document.querySelector('.duplicates-search');
+    const q = input ? input.value : '';
+    const state = { game: getActiveGame(), view: 'duplicates' };
+    if (q) state.q = q;
+    if (name !== ALL_SPEAKERS) state.dup = name;
+    const serialized = serializeUrlState(state);
+    urlSelection = serialized;
+    window.location.hash = serialized;
+    renderDuplicates({ q, dup: name, _bodyOnly: true });
 }
 
 // Switch the viewer to a different game: swap every per-game data
@@ -281,6 +306,7 @@ function applyState(state) {
         applyLayoutMode('duplicates');
         renderDuplicates({
             q: state.q || '',
+            dup: state.dup || '',
         });
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = '';

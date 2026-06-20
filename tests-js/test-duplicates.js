@@ -4,7 +4,7 @@
 import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { renderDuplicates } from '../templates/viewer/duplicates-view.js';
+import { renderDuplicates, getSelectedDuplicateSpeaker, ALL_SPEAKERS } from '../templates/viewer/duplicates-view.js';
 import { renderInfo, resetDuplicateNameSet } from '../templates/viewer/info-panel.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -136,6 +136,33 @@ test('renderDuplicates shows an "All" entry first, active and default', () => {
     const allIdx = lastHtml.indexOf('>All<');
     assert.ok(allIdx >= 0 && allIdx < lastHtml.indexOf('>Zeus<'),
         'All entry must come before the first speaker');
+});
+
+// --- dup URL key (selected-speaker persistence) ---
+
+test('renderDuplicates selects the speaker named by the dup option', () => {
+    renderDuplicates({ q: '', dup: 'Zeus' });
+    assert.equal(getSelectedDuplicateSpeaker(), 'Zeus');
+    // Detail pane shows Zeus, not the "All speakers" default.
+    assert.match(lastHtml, /duplicates-detail-title">Zeus</);
+    assert.doesNotMatch(lastHtml, /duplicates-detail-title">All speakers</);
+});
+
+test('renderDuplicates resets to All when dup is absent (URL is authoritative)', () => {
+    // Select Zeus first, then a full render with no dup must reset to All
+    // so a reload of a bare ``#view=duplicates`` URL lands on All.
+    renderDuplicates({ q: '', dup: 'Zeus' });
+    assert.equal(getSelectedDuplicateSpeaker(), 'Zeus');
+    renderDuplicates({ q: '' });
+    assert.equal(getSelectedDuplicateSpeaker(), ALL_SPEAKERS);
+    assert.match(lastHtml, /duplicates-detail-title">All speakers</);
+});
+
+test('renderDuplicates ignores an unknown dup, falling back to All', () => {
+    renderDuplicates({ q: '', dup: 'Nonexistent Speaker' });
+    // No such speaker owns a duplicate, so the detail pane falls back to All.
+    assert.equal(getSelectedDuplicateSpeaker(), ALL_SPEAKERS);
+    assert.match(lastHtml, /duplicates-detail-title">All speakers</);
 });
 
 // --- cross-game badge on textline detail ---
