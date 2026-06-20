@@ -6,8 +6,8 @@
  *
  * The desktop layout is locked: every rule here is an ADDITIVE mobile/tablet
  * override inside a max-width query. Desktop (> tablet breakpoint) is never
- * touched. Per-view internals are refined in their own files' future work;
- * this file owns the shared foundation only.
+ * touched. Sections below are organised by view: foundation shell, header,
+ * dialogue detail, trees, eligibility tracer, speaker, duplicates, search.
  *
  * Breakpoints (single source of truth; CSS @media widths can't read custom
  * properties, so the values are documented here and used literally below):
@@ -27,8 +27,8 @@
  * whose panels scroll internally. On small screens that clips content and
  * fights the mobile browser chrome. Here the shell becomes an ordinary
  * vertically-scrolling document: the panels stack and the page scrolls.
- * Wide content (deep trees) still overflows horizontally until future tree
- * work wraps it in its own scroller - tracked separately, not here.
+ * Wide content (deep trees) is kept from widening the page by the tree
+ * section below, which gives those panels their own horizontal scroller.
  * ====================================================================== */
 @media (max-width: 1024px) {
     body {

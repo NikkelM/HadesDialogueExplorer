@@ -90,8 +90,9 @@ function hide() {
 }
 
 // Touch path: reveal the tooltip anchored above the tapped element (not at
-// the finger, which would occlude it) and auto-dismiss. Clickable triggers
-// still fire their own tap action - this only adds the missing info popup.
+// the finger, which would occlude it) and auto-dismiss. Only called for
+// non-interactive triggers (the touchstart handler filters clickable ones
+// out), so it never competes with a tap's own navigation / expand action.
 function showForTouch(target) {
     const text = target.getAttribute('data-tooltip');
     if (!text) return;
