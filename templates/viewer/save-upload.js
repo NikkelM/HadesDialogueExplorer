@@ -5,7 +5,6 @@
 
 import {
     parseSaveFile,
-    clearSaveProgress,
     getSaveProgress,
     getSaveGameId,
     getSaveRuns,
@@ -14,15 +13,13 @@ import {
     validateSaveFilename,
     persistSaveProgress,
     restoreSaveProgress,
-    clearPersistedSave,
 } from './save-parser.js';
 import { getActiveGame, gameLabels } from './data.js';
 
 export function initSaveUpload() {
     const input = document.getElementById('save-file-input');
     const status = document.getElementById('save-status');
-    const clearBtn = document.getElementById('save-clear');
-    if (!input || !status || !clearBtn) return;
+    if (!input || !status) return;
 
     input.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -37,7 +34,6 @@ export function initSaveUpload() {
         try {
             const buffer = await file.arrayBuffer();
             parseSaveFile(buffer);
-            clearBtn.hidden = false;
             // Status text + colour are derived from the parsed state, the same
             // as on a game switch, so the message stays in one place.
             refreshSaveStatus();
@@ -51,25 +47,15 @@ export function initSaveUpload() {
         }
         input.value = '';
     });
-
-    clearBtn.addEventListener('click', () => {
-        clearSaveProgress();
-        clearPersistedSave();
-        status.hidden = true;
-        clearBtn.hidden = true;
-        window.dispatchEvent(new CustomEvent('save-cleared'));
-    });
 }
 
 // Re-hydrate a previously cached save on page load. Sets the in-memory
-// state and the header chrome (status, clear button) so a restored save is
-// indistinguishable from a freshly loaded one. Called during init before the
-// first render, so badges appear immediately without needing a ``save-loaded``
-// event. Returns true if a save was restored.
+// state and the header status so a restored save is indistinguishable from a
+// freshly loaded one. Called during init before the first render, so badges
+// appear immediately without needing a ``save-loaded`` event. Returns true if
+// a save was restored.
 export function restoreSavedSave() {
     if (!restoreSaveProgress()) return false;
-    const clearBtn = document.getElementById('save-clear');
-    if (clearBtn) clearBtn.hidden = false;
     refreshSaveStatus();
     return true;
 }

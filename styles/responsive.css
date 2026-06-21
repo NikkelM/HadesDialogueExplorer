@@ -112,23 +112,10 @@
         align-items: center;
         justify-content: center;
     }
-    /* The save-clear "x" is a small icon button - give it a full square
-       touch target with the glyph at the left edge (so the 44px tap area
-       extends rightward into empty space rather than pushing the x away
-       from the status text). */
-    .save-clear-btn {
-        min-width: var(--tap-min);
-        min-height: var(--tap-min);
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding-left: 0;
-    }
     /* The display overrides above (needed for sizing / glyph alignment)
        beat the UA ``[hidden] { display: none }`` rule, which would leave a
-       cleared save status / clear button visible on mobile. Re-assert it. */
-    .save-status[hidden],
-    .save-clear-btn[hidden] {
+       cleared save status visible on mobile. Re-assert it. */
+    .save-status[hidden] {
         display: none;
     }
 }
@@ -137,12 +124,11 @@
        than letting them wrap purely by width. The desktop single-row DOM
        order is locked, so this is pure CSS ``order`` (no DOM change):
          row A: Cross-game duplicates + Load save
-         row B: save status + clear   (only present once a save is loaded)
+         row B: save status   (only present once a save is loaded)
        Both wrapper boxes are flattened with display:contents so their
        children become direct header flex items and can be ordered apart
        from their desktop grouping (header-right held the save group;
-       save-upload held the Load-save button, the status pill and the clear
-       button). */
+       save-upload held the Load-save button and the status pill). */
     .header-right,
     .save-upload {
         display: contents;
@@ -150,7 +136,6 @@
     #nav-duplicates { order: 1; }
     .save-upload-btn { order: 2; }
     #save-status { order: 5; }
-    #save-clear { order: 6; }
     /* Forced full-width break between the two rows, gated on a loaded save
        (the status pill becomes visible) via :has so the no-save header carries
        no trailing empty line. */
@@ -160,17 +145,12 @@
         flex-basis: 100%;
         height: 0;
     }
-    /* Keep the clear (x) on the same line as the status pill. The pill can be
-       long (e.g. "Hades II with Zagreus' Journey: 1234 dialogues"); flex-wrap
-       would drop the x onto its own line, so cap the pill's width and let its
-       text wrap instead, leaving room for the x beside it, tucked close. */
+    /* The status pill can be long (e.g. "Hades II with Zagreus' Journey: 1234
+       dialogues"); let its text wrap rather than overflow its row. */
     #save-status {
         min-width: 0;
         white-space: normal;
-        max-width: calc(100% - 52px);
-    }
-    #save-clear {
-        margin-left: -10px;
+        max-width: 100%;
     }
 }
 

@@ -42,9 +42,8 @@ function init(data) {
         applyHashFromUrl();
     }
     window.addEventListener('hashchange', applyHashFromUrl);
-    // Re-render current view when a save file is loaded or cleared
+    // Re-render current view when a save file is loaded
     window.addEventListener('save-loaded', forceRefresh);
-    window.addEventListener('save-cleared', forceRefresh);
     // Onboarding: offer the save callout after the re-render above has drawn
     // the status badges (this listener is registered after forceRefresh, so it
     // runs second on the same event).
