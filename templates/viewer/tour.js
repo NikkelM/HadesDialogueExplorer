@@ -33,6 +33,9 @@ let _textEl = null;
 let _stepEl = null;
 let _backBtn = null;
 let _nextBtn = null;
+// Tracks the current target's size so the spotlight follows content changes
+// (e.g. expanding a tree row inside an interactive step).
+let _resizeObs = null;
 
 // True while a tour is on screen; used by the dispatcher to avoid stacking.
 export function isTourActive() {
@@ -221,8 +224,23 @@ function _show(i) {
             el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
     }
+    _observeTarget(el);
     _position();
     _nextBtn.focus();
+}
+
+// Watch the current target so the spotlight tracks size changes the user
+// causes mid-step (e.g. expanding a tree row in an interactive step), not
+// just window resize / scroll. Re-observes per step; cleared on _end.
+function _observeTarget(el) {
+    if (_resizeObs) {
+        _resizeObs.disconnect();
+        _resizeObs = null;
+    }
+    if (el && typeof ResizeObserver !== 'undefined') {
+        _resizeObs = new ResizeObserver(() => _position());
+        _resizeObs.observe(el);
+    }
 }
 
 function _next() {
@@ -281,6 +299,10 @@ function _end() {
     window.removeEventListener('resize', _position);
     window.removeEventListener('scroll', _position, true);
     document.removeEventListener('keydown', _onKeydown, true);
+    if (_resizeObs) {
+        _resizeObs.disconnect();
+        _resizeObs = null;
+    }
     for (const el of [_overlay, _spotlight, _card]) {
         if (el && el.parentNode) el.parentNode.removeChild(el);
     }
