@@ -100,14 +100,11 @@ export function navigateToDuplicates(opts) {
     navigateToState(state);
 }
 
-// Navigate to the eligibility tracer view for a given dialogue. When
-// invoked without an explicit name (the header "Eligibility tracer"
-// button), fall back to the dialogue currently shown in the URL so the
-// tracer opens on the dialogue the user is already looking at; on views
-// with no current dialogue (speaker / duplicates) it opens empty.
+// Navigate to the eligibility tracer view for a given dialogue (the in-panel
+// "Trace eligibility" button, the clickable status pill, and eligibility search
+// results all pass an explicit name).
 export function navigateToEligibility(dialogueName) {
-    const name = dialogueName || parseUrlState(window.location.hash).dialogue || null;
-    navigateToState({ view: 'eligibility', dialogue: name });
+    navigateToState({ view: 'eligibility', dialogue: dialogueName || null });
 }
 
 // Search input handler for the duplicates view. Performs an immediate

@@ -6,11 +6,11 @@
 
 import { maybeStartTour } from './tours.js';
 
-// First save load: per-dialogue status dots + the now-unlocked tracer. Fired
-// from the save-loaded event (after the view has re-rendered with badges).
+// First save load: per-dialogue status indicators + the now-unlocked tracer.
+// Fired from the save-loaded event (after the view has re-rendered with
+// badges). Each step is conditional on its target being on screen, so the
+// callout only runs (with whatever is relevant) when there's something to show.
 export function maybeStartSaveCallout() {
-    const nav = document.getElementById('nav-eligibility');
-    if (!nav || nav.hidden) return false; // save not active - nothing to show
     const steps = [];
     // The traced dialogue's own status badge in the detail panel.
     if (document.querySelector('#info-content .save-progress-pill')) {
@@ -36,18 +36,14 @@ export function maybeStartSaveCallout() {
             blockNavigation: true,
         });
     }
-    // The eligibility tracer entry points. Spotlight the in-panel "Trace
-    // eligibility" button (the primary, more discoverable one - and being the
-    // spotlight target it sits above the dim) and ring the header link as the
-    // secondary shortcut. Falls back to the header link when no dialogue button
-    // is on screen (e.g. the save was loaded on a non-dialogue view).
-    const hasTrace = !!document.querySelector('.trace-eligibility-btn');
-    steps.push({
-        target: hasTrace ? '.trace-eligibility-btn' : '#nav-eligibility',
-        emphasize: hasTrace ? '#nav-eligibility' : null,
-        title: 'Eligibility tracer',
-        body: 'Your save also unlocks the eligibility tracer - open it from the "Trace eligibility" button on a dialogue, or the header link, to see exactly what a line still needs before it can play.',
-    });
+    // The eligibility tracer entry point on a dialogue.
+    if (document.querySelector('.trace-eligibility-btn')) {
+        steps.push({
+            target: '.trace-eligibility-btn',
+            title: 'Eligibility tracer',
+            body: 'Your save also unlocks the eligibility tracer - open it from a dialogue to see exactly what a line still needs before it can play.',
+        });
+    }
     return maybeStartTour('callout-save', steps);
 }
 

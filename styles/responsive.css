@@ -137,45 +137,28 @@
        than letting them wrap purely by width. The desktop single-row DOM
        order is locked, so this is pure CSS ``order`` (no DOM change):
          row A: Cross-game duplicates + Load save
-         row B: Eligibility tracer + save status + clear   (only present
-                once a save is loaded)
+         row B: save status + clear   (only present once a save is loaded)
        Both wrapper boxes are flattened with display:contents so their
        children become direct header flex items and can be ordered apart
-       from their desktop grouping (header-right held the eligibility link
-       and the save group; save-upload held the Load-save button, the status
-       pill and the clear button). */
+       from their desktop grouping (header-right held the save group;
+       save-upload held the Load-save button, the status pill and the clear
+       button). */
     .header-right,
     .save-upload {
         display: contents;
     }
     #nav-duplicates { order: 1; }
     .save-upload-btn { order: 2; }
-    #nav-eligibility { order: 4; }
     #save-status { order: 5; }
     #save-clear { order: 6; }
     /* Forced full-width break between the two rows, gated on a loaded save
-       (eligibility visible) via :has so the no-save header carries no
-       trailing empty line. */
-    header:has(#nav-eligibility:not([hidden]))::after {
+       (the status pill becomes visible) via :has so the no-save header carries
+       no trailing empty line. */
+    header:has(#save-status:not([hidden]))::after {
         content: "";
         order: 3;
         flex-basis: 100%;
         height: 0;
-    }
-    /* Compact the persistent save status on a phone: the verbose
-       "<game>: N dialogues, M runs" (loaded) and "...switch game to see
-       progress" (wrong game) strings overflow, and the per-dialogue badges
-       already convey the detail. Show a short "<game> save loaded" instead -
-       JS supplies it via data-short because CSS can't compose the game name.
-       The green / amber colour still comes from the save-loaded /
-       save-mismatch class. Errors carry no data-short, so they keep their
-       full, actionable wording. */
-    .save-status[data-short] {
-        font-size: 0;
-    }
-    .save-status[data-short]::before {
-        content: attr(data-short);
-        font-size: var(--fs-base);
     }
 }
 
