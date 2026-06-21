@@ -889,7 +889,11 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     };
 
     // Base AND requirements - the gates that MUST always hold.
-    html += renderBaseRequirementsHtml(requirements, otherRequirements, reqOptions);
+    // All requirement blocks (base AND sections, OR branches, and the
+    // "Other Requirements" catch-all) are wrapped in a single container so
+    // the onboarding tour can highlight them together rather than just the
+    // first block.
+    let reqHtml = renderBaseRequirementsHtml(requirements, otherRequirements, reqOptions);
 
     // H2 alternative requirement groups (set-level ``OrRequirements``
     // on the source RequirementSet). Each branch is itself a set of
@@ -898,12 +902,14 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     // ANY one branch passes. Rendered between the base AND block and
     // the Other Requirements section below so the reader sees the
     // must-always-hold gates first, then the any-one-suffices options.
-    html += renderOrBranchesSectionHtml(src.orBranches, textlineName);
+    reqHtml += renderOrBranchesSectionHtml(src.orBranches, textlineName);
 
     // The "Other Requirements" catch-all always renders last so it
     // stays pinned to the bottom of the detail view, beneath any OR
     // branches.
-    html += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
+    reqHtml += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
+
+    if (reqHtml) html += `<div class="requirements-group">${reqHtml}</div>`;
 
     return html;
 }

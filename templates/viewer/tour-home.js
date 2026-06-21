@@ -46,7 +46,7 @@ const HOME_TOUR_STEPS = [
         body: 'The spoken lines, in order. Choice prompts and their options appear here too.',
     },
     {
-        target: '#info-content .req-section',
+        target: '#info-content .requirements-group',
         title: 'Requirements',
         body: 'What must - and must not - have happened for this line to play, grouped as all-of, any-of and must-not conditions. Click a group heading to collapse it, hover a row for detail, or click a requirement name to open that dialogue.',
         interactive: true,
