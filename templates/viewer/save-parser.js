@@ -213,7 +213,14 @@ function parseSGB1(arrayBuffer) {
     throw new Error(`Unknown game version: 0x${gameVersion.toString(16)}`);
   }
 
-  return { gameId, completedRuns, luaState };
+  // Detect the "Zagreus' Journey" mod (Hades Biomes), which ports Hades 1
+  // content into a Hades II save - the marker is its CompletedRunsCache under
+  // GameState. Only then does an H2 save carry meaningful Hades 1 progress.
+  const gs = luaState.GameState;
+  const hasBiomesMod = !!(gs && typeof gs === 'object'
+    && ('ModsNikkelMHadesBiomesCompletedRunsCache' in gs));
+
+  return { gameId, completedRuns, luaState, hasBiomesMod };
 }
 
 // --- Played-set extraction ---
@@ -340,6 +347,9 @@ function extractSaveContext(parsed) {
 let _saveProgress = null;
 let _saveGameId = null;
 let _saveRuns = null;
+// Whether the loaded H2 save has the Zagreus' Journey mod (Hades Biomes); it
+// ports Hades 1 content in, so such a save is also valid for Hades 1.
+let _saveHasBiomesMod = false;
 // Run-scoped records (each a Set, or null when the save doesn't carry it).
 let _saveThisRun = null;
 let _saveThisRoom = null;
@@ -351,6 +361,7 @@ let _saveRunsAgo = null;
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
 export function getSaveRuns() { return _saveRuns; }
+export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
 
 // The full save context for requirement evaluation: the global played set
 // plus the run-scoped records (each ``null`` when the save doesn't carry
@@ -370,6 +381,7 @@ export function clearSaveProgress() {
   _saveProgress = null;
   _saveGameId = null;
   _saveRuns = null;
+  _saveHasBiomesMod = false;
   _saveThisRun = null;
   _saveThisRoom = null;
   _saveQueued = null;
@@ -424,6 +436,7 @@ export function persistSaveProgress(filename) {
       v: SAVE_STORAGE_SCHEMA,
       gameId: _saveGameId,
       runs: _saveRuns,
+      biomesMod: _saveHasBiomesMod,
       filename: filename || null,
       played: [..._saveProgress],
       thisRun: arr(_saveThisRun),
@@ -470,6 +483,7 @@ export function restoreSaveProgress() {
   _saveProgress = new Set(data.played);
   _saveGameId = data.gameId;
   _saveRuns = (typeof data.runs === 'number') ? data.runs : 0;
+  _saveHasBiomesMod = !!data.biomesMod;
   const set = (a) => (Array.isArray(a) ? new Set(a) : null);
   _saveThisRun = set(data.thisRun);
   _saveThisRoom = set(data.thisRoom);
@@ -501,6 +515,7 @@ export function parseSaveFile(arrayBuffer) {
   _saveRunsAgo = ctx.runsAgo;
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
+  _saveHasBiomesMod = !!parsed.hasBiomesMod;
   return { gameId: parsed.gameId, completedRuns: parsed.completedRuns, count: _saveProgress.size };
 }
 
@@ -533,8 +548,9 @@ export function validateSaveFilename(filename) {
 
 export function saveMatchesActiveGame() {
   if (!_saveGameId) return false;
-  // A Hades II save can contain Hades 1 dialogue names (via mods that
-  // port H1 content into H2), so H2 saves are valid for both games.
-  if (_saveGameId === 'hades2') return true;
-  return _saveGameId === getActiveGame();
+  if (_saveGameId === getActiveGame()) return true;
+  // A Hades II save only covers Hades 1 when the Zagreus' Journey mod (Hades
+  // Biomes) ported Hades 1 content into it; a vanilla H2 save does not.
+  if (_saveGameId === 'hades2' && getActiveGame() === 'hades1') return _saveHasBiomesMod;
+  return false;
 }

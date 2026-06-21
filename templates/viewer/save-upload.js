@@ -9,6 +9,8 @@ import {
     getSaveProgress,
     getSaveGameId,
     getSaveRuns,
+    getSaveHasBiomesMod,
+    saveMatchesActiveGame,
     validateSaveFilename,
     persistSaveProgress,
     restoreSaveProgress,
@@ -34,18 +36,11 @@ export function initSaveUpload() {
 
         try {
             const buffer = await file.arrayBuffer();
-            const result = parseSaveFile(buffer);
-            const label = gameLabels[result.gameId] || result.gameId;
-
-            // H2 saves are valid for both games (mod ports H1 dialogues into H2)
-            if (result.gameId !== getActiveGame() && result.gameId !== 'hades2') {
-                showStatus('mismatch',
-                    `${label} save (${result.count} dialogues) - switch game to see progress`);
-            } else {
-                showStatus('loaded',
-                    `${label}: ${result.count} dialogues, ${result.completedRuns} runs`);
-            }
+            parseSaveFile(buffer);
             clearBtn.hidden = false;
+            // Status text + colour are derived from the parsed state, the same
+            // as on a game switch, so the message stays in one place.
+            refreshSaveStatus();
             // Cache the parsed save so it survives a page reload.
             persistSaveProgress(file.name);
             // Trigger re-render of current view to show badges
@@ -94,10 +89,14 @@ export function refreshSaveStatus() {
     const label = gameLabels[gameId] || gameId;
     const count = getSaveProgress().size;
     const runs = getSaveRuns();
-    // H2 saves are valid for both games (mod ports H1 dialogues into H2)
-    if (gameId !== getActiveGame() && gameId !== 'hades2') {
-        showStatus('mismatch',
-            `${label} save (${count} dialogues) - switch game to see progress`);
+    if (!saveMatchesActiveGame()) {
+        // The save is for the other game (a vanilla H2 save carries no Hades 1
+        // progress, so it doesn't apply under Hades 1).
+        showStatus('mismatch', `${label} save - switch game to see progress`);
+    } else if (gameId === 'hades2' && getActiveGame() === 'hades1' && getSaveHasBiomesMod()) {
+        // A Hades II save shown under Hades 1 via the Zagreus' Journey mod -
+        // flag the mod since that's what makes the cross-game progress apply.
+        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count} dialogues`);
     } else {
         showStatus('loaded', `${label}: ${count} dialogues, ${runs} runs`);
     }
