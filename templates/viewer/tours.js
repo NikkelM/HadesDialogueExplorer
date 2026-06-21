@@ -70,19 +70,6 @@ function _markSeen(id) {
     }
 }
 
-// Clear all onboarding state: every tour becomes unseen and the global
-// opt-out is lifted. Used by the replay control.
-export function resetTours() {
-    const s = _ls();
-    if (!s) return;
-    try {
-        s.removeItem(_SEEN_KEY);
-        s.removeItem(_DISABLED_KEY);
-    } catch {
-        // Nothing to clear.
-    }
-}
-
 // Wrap the caller's callbacks so finishing / skipping / opting out always
 // records the tour as seen (and opting out also disables the rest).
 function _wrapCallbacks(id, opts) {
@@ -117,18 +104,19 @@ export function forceStartTour(id, steps, opts = {}) {
 }
 
 // The wiring registers a dispatcher that knows which tour fits the current
-// view, so the replay control can re-run the relevant onboarding after a
-// reset. Null until a tour module registers one.
+// view, so the replay control can re-run the relevant onboarding. Null until
+// a tour module registers one.
 let _replayDispatch = null;
 
 export function setReplayDispatcher(fn) {
     _replayDispatch = (typeof fn === 'function') ? fn : null;
 }
 
-// Replay control: forget everything, then re-dispatch onboarding for the
-// current view (if a dispatcher has been registered).
+// Replay control: re-run onboarding for the current view (if a dispatcher has
+// been registered). The dispatcher force-starts that one tour regardless of
+// the seen / disabled flags, so replaying it leaves every other tour's
+// already-seen state untouched - visiting another view won't re-pop its tour.
 export function replayTours() {
     if (isTourActive()) return;
-    resetTours();
     if (_replayDispatch) _replayDispatch();
 }
