@@ -14,6 +14,7 @@ import { renderInfo } from './info-panel.js';
 import { maybeStartHomeTour } from './tour-home.js';
 import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { maybeStartDuplicatesTour } from './tour-duplicates.js';
+import { maybeStartEligibilityTour } from './tour-eligibility.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
@@ -339,6 +340,9 @@ function applyState(state) {
         renderEligibility(name);
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = name || '';
+        // Onboarding: first time the tracer renders for a dialogue (the save is
+        // guaranteed usable here, else the redirect above fired), offer its tour.
+        if (name) maybeStartEligibilityTour();
         return;
     }
     applyLayoutMode('dialogue');

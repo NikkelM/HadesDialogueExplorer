@@ -14,6 +14,7 @@ import { replayTours, setReplayDispatcher } from './tours.js';
 import { startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
+import { startEligibilityTourReplay } from './tour-eligibility.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -56,6 +57,7 @@ function init(data) {
         const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
         if (view === 'speaker') startSpeakerTourReplay();
         else if (view === 'duplicates') startDuplicatesTourReplay();
+        else if (view === 'eligibility') startEligibilityTourReplay();
         else startHomeTourReplay();
     });
 }
