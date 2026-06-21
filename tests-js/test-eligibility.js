@@ -360,9 +360,9 @@ describe('isUnobtainable', () => {
         ]);
     });
 
-    test('reasons: a violated negative gate names the blocking line', () => {
+    test('reasons: a violated negative gate names the blocking line and its host', () => {
         const reasons = unobtainableReasons('VariantA', new Set(['VariantB']));
-        assert.deepEqual(reasons, [{ kind: 'negative', blocker: 'VariantB' }]);
+        assert.deepEqual(reasons, [{ kind: 'negative', blocker: 'VariantB', host: 'VariantA' }]);
     });
 
     test('reasons: empty for an obtainable dialogue', () => {

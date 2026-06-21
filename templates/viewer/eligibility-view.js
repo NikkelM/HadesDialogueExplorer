@@ -246,31 +246,53 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
 }
 
 // Render the specific locks behind an "unobtainable" verdict - negative gates
-// whose line has played, count-max gates that have overflowed, play-once
-// run-count gates now out of range, and choices the player took differently -
-// each linking to the dialogue involved.
+// whose line has played (called out as a mutually-exclusive alternate when the
+// played line is the gate host's declared alternate), count-max gates that have
+// overflowed, play-once run-count gates now out of range, and choices the
+// player took differently - each linking to the dialogue involved.
 function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo) {
     const reasons = unobtainableReasons(rootName, playedSet, runsAgo);
     if (reasons.length === 0) return '';
     const ref = (name) => `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`;
     const runs = (n) => `${n} run${n === 1 ? '' : 's'}`;
-    let html = `<ul class="eligibility-unobtainable-reasons">`;
+    // Mutually-exclusive alternate locks are the headline reason - render them
+    // as their own boxed callouts in the unobtainable red scheme so they stand
+    // out from the plain list of remaining reasons below.
+    const altBoxes = [];
+    const items = [];
     for (const r of reasons) {
         if (r.kind === 'choice') {
-            html += `<li>Needs the "<strong>${escapeHtml(r.requiredChoice)}</strong>" choice in ${ref(r.parent)}`
-                + ` \u2014 you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`;
+            items.push(`<li>Needs the "<strong>${escapeHtml(r.requiredChoice)}</strong>" choice in ${ref(r.parent)}`
+                + ` \u2014 you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`);
         } else if (r.kind === 'negative') {
-            html += `<li>${ref(r.blocker)} has already played, but this requires it <strong>not</strong> to have.</li>`;
+            const sibs = (r.host && alternates[r.host]) || [];
+            const isAlt = sibs.includes(r.blocker);
+            if (isAlt) {
+                const body = r.host === rootName
+                    ? `Its alternate ${ref(r.blocker)} has already played.`
+                    : `${ref(r.host)} needs its alternate ${ref(r.blocker)} <strong>not</strong> to have played, but it has.`;
+                altBoxes.push(`<div class="eligibility-alt-lock">`
+                    + `<span class="eligibility-alt-lock-icon">\u2298</span>`
+                    + `<div class="eligibility-alt-lock-body">`
+                    + `<strong class="eligibility-alt-lock-title">Mutually exclusive alternate played</strong>`
+                    + `<div>${body} Only one of these variants can ever play.</div>`
+                    + `</div></div>`);
+            } else {
+                items.push(`<li>${ref(r.blocker)} has already played, but this requires it <strong>not</strong> to have.</li>`);
+            }
         } else if (r.kind === 'maxany') {
-            html += `<li>Too many of a limited group have already played (at most <strong>${r.count}</strong> allowed): `
-                + `${r.blockers.map(ref).join(', ')}.</li>`;
+            items.push(`<li>Too many of a limited group have already played (at most <strong>${r.count}</strong> allowed): `
+                + `${r.blockers.map(ref).join(', ')}.</li>`);
         } else if (r.kind === 'runcount') {
             const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
-            html += `<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
-                + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`;
+            items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
+                + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
         }
     }
-    html += `</ul>`;
+    let html = altBoxes.join('');
+    if (items.length > 0) {
+        html += `<ul class="eligibility-unobtainable-reasons">${items.join('')}</ul>`;
+    }
     return html;
 }
 

@@ -67,6 +67,38 @@
     line-height: 1.5;
 }
 
+/* Mutually-exclusive alternate lock: the headline reason a dialogue is
+   unobtainable. A boxed callout in the gold/tan scheme used by the alternates
+   box in the dialogue detail view (``.alternates-header`` #c4a56e) so it reads
+   as the same "mutually exclusive variants" concept and stands out from the
+   plain reason list. */
+.eligibility-alt-lock {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.4rem 0;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #c4a56e55;
+    border-left: 3px solid #c4a56e;
+    border-radius: 4px;
+    background: #262017;
+    font-size: var(--fs-base);
+    line-height: 1.45;
+    color: #d8cdb8;
+}
+
+.eligibility-alt-lock-icon {
+    color: #c4a56e;
+    font-size: 1.1em;
+    line-height: 1.3;
+}
+
+.eligibility-alt-lock-title {
+    display: block;
+    margin-bottom: 0.15rem;
+    color: #c4a56e;
+}
+
 .eligibility-detail {
     font-size: var(--fs-base);
     color: var(--text-muted, #bbb);

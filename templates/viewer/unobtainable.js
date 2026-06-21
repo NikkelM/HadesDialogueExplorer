@@ -153,8 +153,9 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
 
 // Collect the *specific* locks that make ``rootName`` unobtainable, for the
 // tracer to explain why. Returns a de-duplicated list of:
-//   { kind: 'negative', blocker }                      - a must-not-have-played
-//                                                        gate whose line has played
+//   { kind: 'negative', blocker, host }                - a must-not-have-played
+//                                                        gate (on ``host``) whose
+//                                                        line has played
 //   { kind: 'maxany', blockers, count }                - a count-max gate with
 //                                                        more than ``count`` lines played
 //   { kind: 'runcount', blocker, count, ago }          - a MaxRunsSince gate on a
@@ -214,7 +215,7 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
         const others = refs.filter(r => typeof r === 'string' && r !== hostName);
         if (NEGATIVE_REQ_TYPES.has(reqType) && REQ_TYPE_SCOPE[reqType] === 'played') {
             for (const r of others) {
-                if (playedSet.has(r)) reasons.push({ kind: 'negative', blocker: r });
+                if (playedSet.has(r)) reasons.push({ kind: 'negative', blocker: r, host: hostName });
             }
         } else if (COUNT_MAX_REQ_TYPES.has(reqType)) {
             const max = requiredCount(reqHost, reqType);
