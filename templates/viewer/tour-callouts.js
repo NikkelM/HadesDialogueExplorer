@@ -1,8 +1,8 @@
-// Contextual onboarding callouts: small, single-purpose mini-tours that fire
-// the first time a particular badge / interactable first appears, rather than
-// on a view change. Each is gated by its own hde.toursSeen id and, like the
-// view tours, never stacks on another tour (maybeStartTour no-ops while one is
-// already on screen) and respects the global opt-out.
+// Contextual onboarding callout: a small, single-purpose mini-tour that fires
+// the first time a particular feature first appears, rather than on a view
+// change. Gated by its own hde.toursSeen id and, like the view tours, never
+// stacks on another tour (maybeStartTour no-ops while one is already on screen)
+// and respects the global opt-out.
 
 import { maybeStartTour } from './tours.js';
 
@@ -45,32 +45,4 @@ export function maybeStartSaveCallout() {
         });
     }
     return maybeStartTour('callout-save', steps);
-}
-
-// First "play any N of" / OR-branch group. Looks in the dialogue detail
-// requirements first, then the dependency trees. No-op when none is on screen,
-// so the callout only fires (and is marked seen) once one actually appears.
-function firstOrGroup() {
-    return document.querySelector('#info-content .req-section.req-type-or-group')
-        || document.querySelector('#panel-upstream .or-group-box, #panel-downstream .or-downstream-section');
-}
-
-export function maybeStartOrCallout() {
-    if (!firstOrGroup()) return false;
-    return maybeStartTour('callout-or', [{
-        target: firstOrGroup,
-        title: 'Any one of these',
-        body: 'A "play any N of" group is satisfied as soon as enough of its options have played - you don\u2019t need all of them.',
-    }]);
-}
-
-// First time the search dropdown shows results. Fired from the search UI when
-// it becomes visible.
-export function maybeStartSearchCallout() {
-    if (!document.querySelector('#search-results.visible')) return false;
-    return maybeStartTour('callout-search', [{
-        target: '#search-results',
-        title: 'Search results',
-        body: 'Matches are grouped by speaker, dialogue name, and spoken text. Names that also exist in the other game appear in their own sections below.',
-    }]);
 }

@@ -28,7 +28,6 @@ import { searchSpeakerMatches } from './search-speaker.js';
 import { searchCrossGameNames, searchCrossGameText, searchCrossGameSpeakers } from './search-cross-game.js';
 import { parseQuery, isQueryEmpty } from './query-parser.js';
 import { navigateTo, navigateToSpeaker, navigateToEligibility, navigateToState } from './navigation.js';
-import { maybeStartSearchCallout } from './tour-callouts.js';
 
 // Pure arithmetic helper for arrow-key navigation. Returns the next
 // active index given the current one (-1 if nothing is active yet),
@@ -189,9 +188,6 @@ export function initSearch() {
         searchInput.setAttribute('aria-expanded', visible ? 'true' : 'false');
         reapplyActive();
         sizeResultsToViewport();
-        // Contextual callout: the first time results are shown, explain how the
-        // dropdown is organised (no-op once seen, or if a tour is on screen).
-        if (visible) maybeStartSearchCallout();
     }
 
     // Keep the open dropdown clear of the phone's on-screen keyboard. The

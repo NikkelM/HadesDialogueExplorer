@@ -15,7 +15,6 @@ import { maybeStartHomeTour } from './tour-home.js';
 import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { maybeStartDuplicatesTour } from './tour-duplicates.js';
 import { maybeStartEligibilityTour } from './tour-eligibility.js';
-import { maybeStartOrCallout } from './tour-callouts.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
 import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
@@ -352,9 +351,6 @@ function applyState(state) {
         // tour - covers both the first-visit landing and a deep link to a
         // specific dialogue. Runs on the open dialogue, not a forced default.
         maybeStartHomeTour();
-        // Contextual callout: first time an OR-branch ("play any N of") group
-        // is on screen (no-op if the home tour just started, or none present).
-        maybeStartOrCallout();
     } else {
         clearSelection();
     }
