@@ -23,20 +23,23 @@
     margin-bottom: 1rem;
 }
 
+/* Match the main ``#search`` bar (styles/base.css) so the two search
+   inputs read as one consistent control. */
 .duplicates-search {
     width: 100%;
-    max-width: 400px;
-    padding: 0.35rem 0.6rem;
-    border: 1px solid var(--border-color, #444);
+    max-width: 500px;
+    padding: 6px 12px;
+    border: 1px solid #0f3460;
     border-radius: 4px;
-    background: var(--input-bg, #1e1e1e);
-    color: var(--text-color, #ccc);
+    background: #1a1a2e;
+    color: #e0e0e0;
     font-size: var(--fs-base);
+    line-height: 18px;
+    outline: none;
 }
 
 .duplicates-search:focus {
-    outline: none;
-    border-color: var(--accent-color, #e94560);
+    border-color: #e94560;
 }
 
 .duplicates-empty {
