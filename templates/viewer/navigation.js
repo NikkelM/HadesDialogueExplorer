@@ -11,6 +11,7 @@
 // changes (toggle clicks and shared deep links both go through here).
 
 import { renderInfo } from './info-panel.js';
+import { maybeStartHomeTour } from './tour-home.js';
 import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { maybeStartDuplicatesTour } from './tour-duplicates.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
@@ -345,6 +346,10 @@ function applyState(state) {
     if (name) {
         selectTextline(name);
         document.getElementById('search').value = name;
+        // Onboarding: first time a dialogue detail renders, offer the home
+        // tour - covers both the first-visit landing and a deep link to a
+        // specific dialogue. Runs on the open dialogue, not a forced default.
+        maybeStartHomeTour();
     } else {
         clearSelection();
     }

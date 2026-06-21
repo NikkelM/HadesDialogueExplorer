@@ -11,7 +11,7 @@ import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave } from './save-upload.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
-import { maybeStartHomeTour, startHomeTourReplay } from './tour-home.js';
+import { startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { parseUrlState } from './url.js';
@@ -36,8 +36,7 @@ function init(data) {
     // First-ever visit to the bare home page lands on the featured
     // dialogue (and writes it into the URL); return visits fall through
     // to the normal hash apply, which shows the genuine empty state.
-    const landedFirstVisit = applyFirstVisitLanding();
-    if (!landedFirstVisit) {
+    if (!applyFirstVisitLanding()) {
         applyHashFromUrl();
     }
     window.addEventListener('hashchange', applyHashFromUrl);
@@ -50,18 +49,15 @@ function init(data) {
         tourHelp.addEventListener('click', replayTours);
     }
     // Onboarding: the replay control re-runs the tour matching the current
-    // view; the home walkthrough also runs once automatically when the
-    // first-visit landing placed us on the featured dialogue (so its detail
-    // panel is on screen for the tour to point at).
+    // view. The per-view tours auto-start (once) from their own render hooks
+    // in applyState, so first-time visitors are covered whether they land on
+    // the bare page or arrive via a deep link.
     setReplayDispatcher(() => {
         const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
         if (view === 'speaker') startSpeakerTourReplay();
         else if (view === 'duplicates') startDuplicatesTourReplay();
         else startHomeTourReplay();
     });
-    if (landedFirstVisit) {
-        maybeStartHomeTour();
-    }
 }
 
 // Render a load error into the stable #app-error mount instead of
