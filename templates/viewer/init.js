@@ -15,6 +15,7 @@ import { startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { startEligibilityTourReplay } from './tour-eligibility.js';
+import { maybeStartSaveCallout } from './tour-callouts.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -44,6 +45,10 @@ function init(data) {
     // Re-render current view when a save file is loaded or cleared
     window.addEventListener('save-loaded', forceRefresh);
     window.addEventListener('save-cleared', forceRefresh);
+    // Onboarding: offer the save callout after the re-render above has drawn
+    // the status badges (this listener is registered after forceRefresh, so it
+    // runs second on the same event).
+    window.addEventListener('save-loaded', maybeStartSaveCallout);
     // The floating "?" control re-runs the onboarding tours on demand.
     const tourHelp = document.getElementById('tour-help');
     if (tourHelp) {

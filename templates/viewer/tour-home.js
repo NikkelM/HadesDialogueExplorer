@@ -122,13 +122,10 @@ export function maybeStartHomeTour() {
 
 // Replay entry point: run the tour on whatever dialogue is currently open.
 // When nothing usable is open (the empty home state, or a dialogue not in this
-// game) land on the featured dialogue first; its render auto-starts the tour
-// (replay has just cleared the seen flag). Registered as the replay dispatcher
-// so the floating "?" control re-runs this walkthrough.
+// game) land on the featured dialogue first, then force-start regardless of the
+// seen / disabled flags. Registered as the replay dispatcher so the floating
+// "?" control re-runs this walkthrough.
 export function startHomeTourReplay() {
-    if (activeDialogueExists()) {
-        forceStartTour('home', HOME_TOUR_STEPS);
-    } else {
-        swapToFeaturedDialogue();
-    }
+    if (!activeDialogueExists()) swapToFeaturedDialogue();
+    forceStartTour('home', HOME_TOUR_STEPS);
 }

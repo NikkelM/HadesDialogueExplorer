@@ -36,6 +36,8 @@ let _nextBtn = null;
 // Tracks the current target's size so the spotlight follows content changes
 // (e.g. expanding a tree row inside an interactive step).
 let _resizeObs = null;
+// Elements given the secondary "emphasis" ring for the current step.
+let _emphasized = [];
 
 // True while a tour is on screen; used by the dispatcher to avoid stacking.
 export function isTourActive() {
@@ -225,8 +227,24 @@ function _show(i) {
         }
     }
     _observeTarget(el);
+    _applyEmphasis(step.emphasize);
     _position();
     _nextBtn.focus();
+}
+
+// Secondary highlight: ring every element matching ``step.emphasize`` (e.g. all
+// the status dots within a panel the spotlight already covers), so a step can
+// draw the eye to many small repeated elements at once. Re-applied per step.
+function _applyEmphasis(selector) {
+    _clearEmphasis();
+    if (!selector) return;
+    _emphasized = Array.from(document.querySelectorAll(selector));
+    for (const e of _emphasized) e.classList.add('tour-emphasis');
+}
+
+function _clearEmphasis() {
+    for (const e of _emphasized) e.classList.remove('tour-emphasis');
+    _emphasized = [];
 }
 
 // Watch the current target so the spotlight tracks size changes the user
@@ -303,6 +321,7 @@ function _end() {
         _resizeObs.disconnect();
         _resizeObs = null;
     }
+    _clearEmphasis();
     for (const el of [_overlay, _spotlight, _card]) {
         if (el && el.parentNode) el.parentNode.removeChild(el);
     }

@@ -169,6 +169,24 @@ body.tour-open #custom-tooltip {
     color: #fff;
 }
 
+/* Secondary emphasis: a ring around small repeated elements (e.g. every status
+   dot) within a step's spotlit area, to point at all of them at once. ``outline``
+   follows the element's border-radius (so round dots get a round ring) and
+   ``outline-offset`` leaves a small gap between the dot and the ring; a gentle
+   pulse on that gap, plus a soft glow, draws the eye. Applied/removed per step
+   by the engine. */
+.tour-emphasis {
+    outline: 2px solid #e94560;
+    outline-offset: 2px;
+    box-shadow: 0 0 7px 2px rgba(233, 69, 96, 0.55) !important;
+    animation: tour-emphasis-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tour-emphasis-pulse {
+    0%, 100% { outline-offset: 2px; }
+    50% { outline-offset: 4px; }
+}
+
 /* Phone: the card becomes a bottom sheet so it never fights the small
    viewport or overlaps the highlighted target (JS leaves its top/left unset
    on phones and scrolls the target into the upper area). */
