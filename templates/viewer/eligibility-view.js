@@ -136,6 +136,31 @@ export function buildPrereqChain(rootName, isPlayed = (n) => isDialoguePlayed(n)
     return { chain, groups, mandatory: computeMandatory(chain, rootName) };
 }
 
+// Pick a dialogue that is currently blocked with unplayed prerequisites for the
+// loaded save, so the tracer renders its full set of sections (used by the
+// onboarding tour when the dialogue the user opened happens to be already
+// eligible / played and would otherwise show none). Prefers a moderate chain so
+// the example reads clearly; returns null when nothing qualifies (e.g. a fully
+// completed save).
+export function findEligibilityExample() {
+    const runsAgo = getSaveContext().runsAgo;
+    let fallback = null;
+    for (const [name, tl] of Object.entries(textlines)) {
+        const req = tl && tl.requirements;
+        if (!req || !Array.isArray(req.RequiredTextLines) || req.RequiredTextLines.length === 0) continue;
+        if (isDialoguePlayed(name) === true) continue;
+        if (isUnobtainable(name, getSaveProgress(), runsAgo)) continue;
+        const { chain, mandatory } = buildPrereqChain(name);
+        let unplayed = 0;
+        for (const [n, info] of chain) {
+            if (n !== name && mandatory.has(n) && !info.played) unplayed++;
+        }
+        if (unplayed >= 3 && unplayed <= 12) return name; // a clear, moderate example
+        if (unplayed >= 1 && !fallback) fallback = name;
+    }
+    return fallback;
+}
+
 // Names reachable from the root following only non-group (AND) edges -
 // i.e. the genuinely-required individual prerequisites. A group's options
 // and everything reached only through them are excluded, so the flat list

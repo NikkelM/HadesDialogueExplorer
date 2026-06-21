@@ -5,10 +5,17 @@
 // Several tracer sections share the .eligibility-tree class and are rendered
 // conditionally (only the ones relevant to the traced dialogue appear), so the
 // unplayed-prerequisites and other-requirements steps use function targets that
-// locate the right section by its header text. A section that isn't present for
-// the current dialogue degrades to a centred card via the engine.
+// locate the right section by its header text.
+//
+// If the dialogue the user opened is already eligible / played it has no
+// prerequisite sections, which would leave two steps empty. In that case the
+// tour traces a genuinely-blocked example dialogue (found from the loaded save)
+// so every section renders, then reverts to the user's dialogue when it ends.
 
 import { maybeStartTour, forceStartTour } from './tours.js';
+import { findEligibilityExample } from './eligibility-view.js';
+import { navigateToState } from './navigation.js';
+import { parseUrlState } from './url.js';
 
 // Find the .eligibility-tree whose header contains the given text, or null.
 function treeByHeader(text) {
@@ -53,15 +60,61 @@ const ELIGIBILITY_TOUR_STEPS = [
     },
 ];
 
+// Whether the tracer currently shows the unplayed-prerequisites section (and
+// hence the prerequisite tree). Absent when the traced dialogue is already
+// eligible / played, which would leave those tour steps without a target.
+function hasPrereqSections() {
+    for (const h of document.querySelectorAll('.eligibility-view .eligibility-tree-header')) {
+        if (h.textContent.includes('Unplayed prerequisites')) return true;
+    }
+    return false;
+}
+
+// Set while we navigate the tracer to an example dialogue for the tour, so the
+// resulting applyState render doesn't recursively re-enter the auto-start.
+let _suppressAutoStart = false;
+
+// Shared start path. When the dialogue currently traced has no prerequisite
+// sections (it's already eligible / played), trace a genuinely-blocked example
+// so the walkthrough has every section, then revert to the original dialogue
+// when the tour ends. ``starter`` is maybeStartTour (auto) or forceStartTour
+// (replay); the example swap happens in onBeforeStart so it only fires when the
+// tour actually starts (not when the gates suppress it).
+function runEligibilityTour(starter) {
+    if (hasPrereqSections()) {
+        return starter('eligibility', ELIGIBILITY_TOUR_STEPS);
+    }
+    const example = findEligibilityExample();
+    const original = parseUrlState(window.location.hash).dialogue || null;
+    if (!example || example === original) {
+        // Nothing better to show (e.g. a fully completed save): run as-is.
+        return starter('eligibility', ELIGIBILITY_TOUR_STEPS);
+    }
+    const steps = ELIGIBILITY_TOUR_STEPS.map((s, i) => (i === 0
+        ? { ...s, body: `${s.body} We're using this dialogue to show you all of its features now; it returns to yours when the tour ends.` }
+        : s));
+    return starter('eligibility', steps, {
+        onBeforeStart() {
+            _suppressAutoStart = true;
+            navigateToState({ view: 'eligibility', dialogue: example });
+            _suppressAutoStart = false;
+        },
+        onDone: () => navigateToState({ view: 'eligibility', dialogue: original }),
+        onSkip: () => navigateToState({ view: 'eligibility', dialogue: original }),
+        onDisableAll: () => navigateToState({ view: 'eligibility', dialogue: original }),
+    });
+}
+
 // First-open auto-start. Gated by tours.js (once-only, respects the global
 // opt-out). Call only once the tracer has rendered for a dialogue, so the
 // targets exist.
 export function maybeStartEligibilityTour() {
-    return maybeStartTour('eligibility', ELIGIBILITY_TOUR_STEPS);
+    if (_suppressAutoStart) return false;
+    return runEligibilityTour(maybeStartTour);
 }
 
 // Replay entry point: the user is already on the tracer, so just re-run the
 // walkthrough regardless of the seen / disabled flags.
 export function startEligibilityTourReplay() {
-    forceStartTour('eligibility', ELIGIBILITY_TOUR_STEPS);
+    runEligibilityTour(forceStartTour);
 }
