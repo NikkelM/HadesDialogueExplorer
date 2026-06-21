@@ -139,13 +139,17 @@ function _position() {
     const el = _resolveTarget(_steps[_index].target);
     if (el) {
         const r = el.getBoundingClientRect();
+        _spotlight.classList.remove('tour-spotlight-untargeted');
         _spotlight.style.top = (r.top - _PAD) + 'px';
         _spotlight.style.left = (r.left - _PAD) + 'px';
         _spotlight.style.width = (r.width + _PAD * 2) + 'px';
         _spotlight.style.height = (r.height + _PAD * 2) + 'px';
         _placeCard(r);
     } else {
-        // No target: dim everything, centre the card.
+        // No target: dim everything, centre the card. Drop the highlight ring so
+        // the zero-size cut-out doesn't show as a stray square (visible on phones,
+        // where the card is a bottom sheet and doesn't cover the centre).
+        _spotlight.classList.add('tour-spotlight-untargeted');
         _spotlight.style.top = '50%';
         _spotlight.style.left = '50%';
         _spotlight.style.width = '0px';
@@ -182,6 +186,78 @@ function _placeCard(targetRect) {
     _card.style.left = left + 'px';
 }
 
+// Scroll ``el`` so it sits within the [top, bottom] viewport band (minimal
+// move). When it's taller than the band, align its top edge to the band top.
+function _scrollToBand(el, top, bottom) {
+    const r = el.getBoundingClientRect();
+    let delta = 0;
+    if (r.height > bottom - top) delta = r.top - top;
+    else if (r.bottom > bottom) delta = r.bottom - bottom;
+    else if (r.top < top) delta = r.top - top;
+    if (delta !== 0) {
+        const sc = _scrollParent(el);
+        if (sc) sc.scrollTop += delta;
+        else window.scrollBy(0, delta);
+    }
+}
+
+// Visible height of ``el`` within the [top, bottom] viewport band.
+function _visibleHeight(el, top, bottom) {
+    const r = el.getBoundingClientRect();
+    return Math.max(0, Math.min(r.bottom, bottom) - Math.max(r.top, top));
+}
+
+// Bring the step target into view before highlighting it. On phones the card is
+// a fixed sheet (bottom by default), so scroll the target into the band beside
+// it; a target stuck at the page bottom that the bottom sheet would hide is
+// better served by pinning the card to the top, so pick whichever placement
+// reveals more of the target. On desktop the card floats beside the target, so
+// only minimal scrolling is needed.
+function _scrollTargetIntoView(el) {
+    const r = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if (_isPhone()) {
+        // Option A: bottom-sheet card, target in the band above it.
+        _card.classList.remove('tour-card-pinned-top');
+        _scrollToBand(el, _GAP, _card.getBoundingClientRect().top - _CARD_GAP);
+        const visBottom = _visibleHeight(el, 0, _card.getBoundingClientRect().top);
+        // Option B: card pinned to the top, target in the band below it.
+        _card.classList.add('tour-card-pinned-top');
+        _scrollToBand(el, _card.getBoundingClientRect().bottom + _CARD_GAP, vh - _GAP);
+        const visTop = _visibleHeight(el, _card.getBoundingClientRect().bottom, vh);
+        // Keep the bottom sheet unless pinning to the top shows more (the
+        // ``>=`` ties to the familiar bottom placement).
+        if (visBottom >= visTop) {
+            _card.classList.remove('tour-card-pinned-top');
+            _scrollToBand(el, _GAP, _card.getBoundingClientRect().top - _CARD_GAP);
+        }
+        return;
+    }
+    if (r.height > vh) {
+        // Target taller than the viewport (e.g. a long dialogue list):
+        // centring jumps to its middle. Scroll the *minimum* needed - if
+        // its top is already on-screen with room for the card above it,
+        // don't scroll at all. Only scroll up when the card wouldn't fit
+        // above, or down when the section is mostly below the fold.
+        const cardH = _card.getBoundingClientRect().height;
+        const bandTop = cardH + 2 * _CARD_GAP;
+        const minVisible = 140;
+        let delta = 0;
+        if (r.top < bandTop) delta = r.top - bandTop;
+        else if (r.top > vh - minVisible) delta = r.top - Math.round(vh * 0.6);
+        if (delta !== 0) {
+            const sc = _scrollParent(el);
+            if (sc) sc.scrollTop += delta;
+            else window.scrollBy(0, delta);
+        }
+    } else {
+        // Normal target: only scroll if it isn't already fully visible, and
+        // then minimally ('nearest'), so a step whose target is already on
+        // screen doesn't jump the page.
+        el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+}
+
 function _show(i) {
     _index = Math.max(0, Math.min(i, _steps.length - 1));
     const step = _steps[_index];
@@ -199,33 +275,8 @@ function _show(i) {
     _backBtn.disabled = _index === 0;
     _nextBtn.textContent = _index === _steps.length - 1 ? 'Done' : 'Next';
     const el = _resolveTarget(step.target);
-    if (el) {
-        const r = el.getBoundingClientRect();
-        const vh = window.innerHeight;
-        if (r.height > vh) {
-            // Target taller than the viewport (e.g. a long dialogue list):
-            // centring jumps to its middle. Scroll the *minimum* needed - if
-            // its top is already on-screen with room for the card above it,
-            // don't scroll at all. Only scroll up when the card wouldn't fit
-            // above, or down when the section is mostly below the fold.
-            const cardH = _card.getBoundingClientRect().height;
-            const bandTop = cardH + 2 * _CARD_GAP;
-            const minVisible = 140;
-            let delta = 0;
-            if (r.top < bandTop) delta = r.top - bandTop;
-            else if (r.top > vh - minVisible) delta = r.top - Math.round(vh * 0.6);
-            if (delta !== 0) {
-                const sc = _scrollParent(el);
-                if (sc) sc.scrollTop += delta;
-                else window.scrollBy(0, delta);
-            }
-        } else {
-            // Normal target: only scroll if it isn't already fully visible,
-            // and then minimally ('nearest'), so a step whose target is
-            // already on screen doesn't jump the page.
-            el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
-    }
+    if (el) _scrollTargetIntoView(el);
+    else _card.classList.remove('tour-card-pinned-top');
     _observeTarget(el);
     _applyEmphasis(step.emphasize);
     _position();
@@ -314,6 +365,7 @@ function _end() {
     _active = false;
     document.body.classList.remove('tour-open');
     document.body.classList.remove('tour-no-nav');
+    _card.classList.remove('tour-card-pinned-top');
     window.removeEventListener('resize', _position);
     window.removeEventListener('scroll', _position, true);
     document.removeEventListener('keydown', _onKeydown, true);

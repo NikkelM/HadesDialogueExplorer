@@ -47,6 +47,13 @@ body.tour-open #custom-tooltip {
     transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
 }
 
+/* No-target steps centre a zero-size cut-out: the dim (box-shadow) still
+   covers the screen, but the highlight ring would show as a tiny square, so
+   drop it. */
+.tour-spotlight-untargeted {
+    outline: none;
+}
+
 .tour-card {
     position: fixed;
     z-index: 100002;
@@ -199,9 +206,18 @@ body.tour-open #custom-tooltip {
         width: auto;
         max-width: none;
     }
+    /* Pinned to the top instead: used when the highlighted target sits at the
+       page bottom and can't be scrolled clear of a bottom sheet, so the card
+       moves above it. */
+    .tour-card.tour-card-pinned-top {
+        top: 8px !important;
+        bottom: auto;
+    }
     /* Touch-sized controls. */
     .tour-btn {
-        min-height: var(--tap-min);
+        min-height: 38px;
+        padding-left: 26px;
+        padding-right: 26px;
     }
     .tour-help-btn {
         width: var(--tap-min);
