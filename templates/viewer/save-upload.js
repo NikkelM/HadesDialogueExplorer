@@ -89,15 +89,22 @@ export function refreshSaveStatus() {
     const label = gameLabels[gameId] || gameId;
     const count = getSaveProgress().size;
     const runs = getSaveRuns();
+    const moddedH2 = gameId === 'hades2' && getSaveHasBiomesMod();
     if (!saveMatchesActiveGame()) {
         // The save is for the other game (a vanilla H2 save carries no Hades 1
         // progress, so it doesn't apply under Hades 1).
         showStatus('mismatch', `${label} save - switch game to see progress`);
-    } else if (gameId === 'hades2' && getActiveGame() === 'hades1' && getSaveHasBiomesMod()) {
-        // A Hades II save shown under Hades 1 via the Zagreus' Journey mod -
-        // flag the mod since that's what makes the cross-game progress apply.
-        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count} dialogues`);
+    } else if (moddedH2 && getActiveGame() === 'hades1') {
+        // A Hades II save shown under Hades 1 via the Zagreus' Journey mod - flag
+        // the mod (it's what makes the cross-game progress apply) and omit runs,
+        // which are Hades II's and don't bear on Hades 1 eligibility.
+        // Non-breaking space keeps "N dialogues" together when the pill wraps.
+        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues`);
+    } else if (moddedH2) {
+        // The same modded save under its own game (Hades II): note the mod here
+        // too so the fact is visible in both views, with runs as usual.
+        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
     } else {
-        showStatus('loaded', `${label}: ${count} dialogues, ${runs} runs`);
+        showStatus('loaded', `${label}: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
     }
 }

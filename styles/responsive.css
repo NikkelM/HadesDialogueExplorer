@@ -160,6 +160,18 @@
         flex-basis: 100%;
         height: 0;
     }
+    /* Keep the clear (x) on the same line as the status pill. The pill can be
+       long (e.g. "Hades II with Zagreus' Journey: 1234 dialogues"); flex-wrap
+       would drop the x onto its own line, so cap the pill's width and let its
+       text wrap instead, leaving room for the x beside it, tucked close. */
+    #save-status {
+        min-width: 0;
+        white-space: normal;
+        max-width: calc(100% - 52px);
+    }
+    #save-clear {
+        margin-left: -10px;
+    }
 }
 
 /* === Dialogue detail =============================================
