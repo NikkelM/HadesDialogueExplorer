@@ -205,11 +205,12 @@
     /* The badge cluster (played / priority / play-once / #N/M) sits inline
        at the right of the dialogue name on desktop via margin-left:auto.
        On a phone the name wraps and the right-aligned cluster wraps
-       awkwardly, so drop it onto its own row, left-aligned under the name. */
+       awkwardly, so drop it onto its own row, left-aligned under the name.
+       The row spacing comes from the h3's row-gap (shared with the desktop
+       wrap case), so no margin-top is needed here. */
     .textline-info h3 .h3-indicators {
         flex-basis: 100%;
         margin-left: 0;
-        margin-top: 6px;
     }
 }
 

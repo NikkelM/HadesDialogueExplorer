@@ -57,11 +57,36 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    row-gap: 6px;
+    column-gap: 8px;
 }
 .textline-info h3 .name {
     word-break: break-all;
     min-width: 0;
     flex-shrink: 1;
+}
+/* Name + collision / cross-game badges, grouped so they stay together and
+   grow to fill the row. The growth pushes the indicator cluster to the right
+   when it fits on the same line; when the cluster wraps, this group fills the
+   first row and the cluster lands left-aligned on the next. */
+.textline-info h3 .h3-main {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+/* The cross-game (game-switch) and collision badges beside the name match the
+   indicator cluster's height and text size so the whole header row is uniform
+   (the base badges are smaller and have no fixed height). */
+.textline-info h3 .h3-main .cross-game-badge,
+.textline-info h3 .h3-main .collision-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    font-size: var(--fs-sm);
+    line-height: 1;
+    box-sizing: border-box;
 }
 .textline-info .meta {
     font-size: var(--fs-sm);

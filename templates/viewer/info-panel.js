@@ -692,7 +692,7 @@ export function renderInfo(name) {
         return;
     }
     let html = `<div class="textline-info">
-        <h3><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderCrossGameBadgeHtml(name)}<span class="h3-indicators">${renderSaveProgressPillHtml(name, tl)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</span></h3>
+        <h3><span class="h3-main"><span class="name">${escapeHtml(name)}</span>${renderCollisionBadgeHtml(tl)}${renderCrossGameBadgeHtml(name)}</span><span class="h3-indicators">${renderSaveProgressPillHtml(name, tl)}${renderPriorityBadgeHtml(tl)}${renderPlayOnceBadgeHtml(tl)}</span></h3>
         <div class="meta">
             <span>Owner: ${renderSpeakerHtml(tl.owner)}</span>
             ${tl.partner ? `<span>Partner: ${renderSpeakerHtml(tl.partner)}</span>` : ''}

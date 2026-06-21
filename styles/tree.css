@@ -145,7 +145,6 @@
    the left. The Repeatable/PlayOnce badge is the cluster's last child
    so it stays pinned to the edge regardless of which siblings render. */
 .textline-info h3 .h3-indicators {
-    margin-left: auto;
     display: inline-flex;
     align-items: center;
     gap: 6px;
