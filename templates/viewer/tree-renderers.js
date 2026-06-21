@@ -594,7 +594,7 @@ function createAlternatesGroup(count, includesSelf) {
     const box = document.createElement('div');
     box.className = `alternates-group expanded${includesSelf ? ' alternates-self' : ' alternates-other'}`;
     const label = includesSelf ? 'Alternates (this dialogue)' : 'Alternates';
-    box.innerHTML = `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" title="Mutually exclusive variants - only one can trigger; the others are permanently blocked once one plays.">` +
+    box.innerHTML = `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" data-tooltip="Mutually exclusive variants - only one can trigger; the others are permanently blocked once one plays.">` +
         `<span class="alternates-group-chevron">\u25B6</span>` +
         `<span class="alternates-group-label">${label}</span>` +
         `<span class="alternates-group-count">${count}</span>` +

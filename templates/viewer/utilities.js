@@ -48,7 +48,7 @@ export function renderSaveBadgeHtml(name, tl) {
     if (!tl || !getSaveProgress() || !saveMatchesActiveGame()) return '';
     const status = getDialogueStatus(name, tl);
     if (!status) return '';
-    return `<span class="save-badge ${status}" title="${escapeHtml(saveStatusTooltip(status))}"></span>`;
+    return `<span class="save-badge ${status}" role="img" aria-label="${escapeHtml(saveStatusTooltip(status))}" data-tooltip="${escapeHtml(saveStatusTooltip(status))}"></span>`;
 }
 
 // Escape a string for safe embedding into HTML, covering both text

@@ -496,7 +496,7 @@ function renderUnplayedItemHtml(name, info, chain, rootName) {
 
     let html = `<div class="eligibility-item" onclick="navigateTo(${jsAttr(name)})">`;
     html += `<div class="eligibility-item-main">`;
-    html += `<span class="eligibility-depth" title="Prerequisite level ${info.depth}: ${info.depth} step${info.depth === 1 ? '' : 's'} back from this dialogue. Play higher levels first.">Lvl ${info.depth}</span>`;
+    html += `<span class="eligibility-depth" data-tooltip="The prerequisite dialogue is ${info.depth} step${info.depth === 1 ? '' : 's'} back from this dialogue. Play higher levels first.">Lvl ${info.depth}</span>`;
     html += `<span class="eligibility-item-name">${escapeHtml(name)}</span>`;
     html += `<span class="npc-tag">${escapeHtml(ownerLabel)}</span>`;
     html += `</div>`;
@@ -527,7 +527,7 @@ function renderGroupItemHtml(group, rootName, chain) {
 
     let html = `<div class="eligibility-group">`;
     html += `<div class="eligibility-group-head">`;
-    html += `<span class="eligibility-depth" title="Prerequisite level ${group.depth}: ${group.depth} step${group.depth === 1 ? '' : 's'} back from this dialogue. Play higher levels first.">Lvl ${group.depth}</span>`;
+    html += `<span class="eligibility-depth" data-tooltip="The prerequisite dialogue is ${group.depth} step${group.depth === 1 ? '' : 's'} back from this dialogue. Play higher levels first.">Lvl ${group.depth}</span>`;
     html += `<span class="eligibility-group-title">${quotaText}${progress}</span>`;
     html += edgeBadge;
     html += `</div>`;
@@ -657,7 +657,7 @@ export function clusterAlternatesHtml(rendered) {
 
 function renderAlternatesGroupHtml(rowsHtml, count) {
     return `<div class="alternates-group expanded alternates-other">`
-        + `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" title="Mutually exclusive variants - only one of these can play; the others are blocked once one does.">`
+        + `<div class="alternates-group-header" onclick="this.parentElement.classList.toggle('expanded')" data-tooltip="Mutually exclusive variants - only one of these can play; the others are blocked once one does.">`
         + `<span class="alternates-group-chevron">\u25B6</span>`
         + `<span class="alternates-group-label">Alternates</span>`
         + `<span class="alternates-group-count">${count}</span>`
@@ -694,7 +694,7 @@ function renderTreeRow(name, reqType, showEdge, subtree, played) {
     if (tl) html += renderPrimaryPriorityBadgeHtml(tl);
     if (ownerLabel) html += `<span class="npc-tag">${escapeHtml(ownerLabel)}</span>`;
     if (showEdge && reqType) html += `<span class="edge-type ${getEdgeClass(reqType)}">${getEdgeLabel(reqType)}</span>`;
-    html += `<a class="tree-link" onclick="event.stopPropagation();navigateTo(${jsAttr(name)})" title="Open detail view">\u2197</a>`;
+    html += `<a class="tree-link" onclick="event.stopPropagation();navigateTo(${jsAttr(name)})" data-tooltip="Open detail view" aria-label="Open detail view">\u2197</a>`;
     html += `</div>`;
     if (hasChildren) html += `<div class="tree-children">${subtree}</div>`;
     html += `</div>`;

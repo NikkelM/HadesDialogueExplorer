@@ -155,8 +155,8 @@ function renderBody(items, h1Label, h2Label) {
 function renderEntry(d, h1Label, h2Label) {
     return `<div class="duplicates-entry">`
         + `<span class="duplicates-name">${escapeHtml(d.name)}</span>`
-        + `<a class="duplicates-game-link" onclick="navigateToState({game:'hades1', view:'dialogue', dialogue:${jsAttr(d.name)}})" title="Open in ${escapeHtml(h1Label)}">${escapeHtml(h1Label)}</a>`
-        + `<a class="duplicates-game-link" onclick="navigateToState({game:'hades2', view:'dialogue', dialogue:${jsAttr(d.name)}})" title="Open in ${escapeHtml(h2Label)}">${escapeHtml(h2Label)}</a>`
+        + `<a class="duplicates-game-link" onclick="navigateToState({game:'hades1', view:'dialogue', dialogue:${jsAttr(d.name)}})" data-tooltip="Open in ${escapeHtml(h1Label)}">${escapeHtml(h1Label)}</a>`
+        + `<a class="duplicates-game-link" onclick="navigateToState({game:'hades2', view:'dialogue', dialogue:${jsAttr(d.name)}})" data-tooltip="Open in ${escapeHtml(h2Label)}">${escapeHtml(h2Label)}</a>`
         + `</div>`;
 }
 
