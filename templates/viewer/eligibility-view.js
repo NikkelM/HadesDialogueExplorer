@@ -859,12 +859,19 @@ export function renderEligibility(dialogueName) {
     // Timing (run-count) gates block independently of the prerequisite chain,
     // but are moot once the dialogue has played or is permanently locked.
     const playedSet = getSaveProgress() || new Set();
-    if (isDialoguePlayed(dialogueName) !== true
-        && !isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo)) {
+    const played = isDialoguePlayed(dialogueName) === true;
+    const unobtainable = isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo);
+    if (!played && !unobtainable) {
         html += renderBlockingGatesHtml(dialogueName, getSaveContext());
     }
-    html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
-    html += renderTreeHtml(chain, dialogueName, groups);
+    // The "what to play" list and the prerequisite tree describe a path to
+    // eligibility. That path is meaningless once the dialogue is permanently
+    // unobtainable (the summary already explains why), so skip both - the
+    // permanent lock, not the unplayed prerequisites, is the actionable fact.
+    if (!unobtainable) {
+        html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
+        html += renderTreeHtml(chain, dialogueName, groups);
+    }
     // Non-textline conditions (weapons unlocked, last-run cleared, ...) that
     // gate the dialogue but never show up in the prerequisite chain.
     html += renderOtherConditionsHtml(dialogueName);
