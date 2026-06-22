@@ -393,12 +393,9 @@ body.layout-speaker #panel-info {
     letter-spacing: 0.3px;
     flex-shrink: 0;
 }
-.speaker-link {
+.speaker-adjacency-name {
     color: #b8b8b8;
-    cursor: pointer;
-    text-decoration: none;
 }
-.speaker-link:hover { color: var(--accent-color); }
 .speaker-id-inline {
     color: var(--text-dim);
     font-size: var(--fs-xs);

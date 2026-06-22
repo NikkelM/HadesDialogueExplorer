@@ -173,9 +173,11 @@ test('renderSpeaker renders header, summary counts, adjacency, and the textline 
     assert.match(html, /As guest speaker/);
     // The single owned textline appears as a clickable link.
     assert.match(html, /navigateTo\(&quot;ZeusWithAphrodite01&quot;\)/);
-    // Downstream adjacency row links to Aphrodite (the dependent
-    // speaker in the fixture) via the speaker-jump handler.
-    assert.match(html, /navigateToSpeaker\(&quot;NPC_Aphrodite_01&quot;\)/);
+    // Downstream adjacency row shows Aphrodite (the dependent speaker in
+    // the fixture) as a plain label - clicking only expands the row, it
+    // no longer navigates to the speaker.
+    assert.match(html, /speaker-adjacency-name">Aphrodite<\/span>/);
+    assert.doesNotMatch(html, /navigateToSpeaker/);
 });
 
 test('renderSpeaker multi-member group header lists every member id', () => {

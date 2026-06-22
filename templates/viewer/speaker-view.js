@@ -448,6 +448,9 @@ function renderAdjacencyCol(title, sub, arrow, body) {
 // game buttons), then the count chip and an optional ``self`` tag, then
 // an empty detail list populated on first expand. ``dir`` is 'up' (this
 // speaker depends on the other) or 'down' (the other depends on this).
+// The name is a plain label, not a link - clicking anywhere on the row
+// only expands it; the speaker's own dialogues are reachable from the
+// expanded detail links.
 function renderAdjacencyRow(sid, count, dir, canonicalSelf, selfName) {
     const otherName = displayNameFor(sid);
     const isSelf = sid === canonicalSelf;
@@ -461,7 +464,7 @@ function renderAdjacencyRow(sid, count, dir, canonicalSelf, selfName) {
         + `<div class="speaker-adjacency-row" onclick="toggleAdjacencyRow(this.parentElement)">`
         + `<span class="speaker-adjacency-chevron">\u25B6</span>`
         + `<span class="speaker-adjacency-nameid">`
-        + `<a class="speaker-link" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(sid)})">${escapeHtml(otherName)}</a>`
+        + `<span class="speaker-adjacency-name">${escapeHtml(otherName)}</span>`
         + ` <span class="speaker-id-inline">(${escapeHtml(sid)})</span>`
         + `</span>`
         + `<span class="speaker-adjacency-count" data-tooltip="${escapeHtml(tip)}">${count}</span>`
