@@ -175,12 +175,19 @@
     }
     /* Touch targets in the info panel: each requirement row taps through to
        that dialogue, and the coloured section-header pill toggles its group.
-       Both are dense desktop rows - size them up for touch. */
+       Both are dense desktop rows - keep a comfortable tap height but trim it
+       (and the section gaps/padding) so the list isn't needlessly tall. */
+    .req-section {
+        margin-top: 6px;
+        padding: 4px 8px 3px;
+    }
     .req-item {
-        min-height: var(--tap-min);
+        min-height: 38px;
+        margin: 1px 0;
     }
     .req-section h4 {
-        min-height: var(--tap-min);
+        min-height: 36px;
+        margin-bottom: 4px;
         display: inline-flex;
         align-items: center;
     }
@@ -218,31 +225,43 @@
     #downstream-content {
         overflow-x: auto;
     }
-    /* Trim the recursive, depth-compounding indent (was 16 + 12) so deep
-       chains run off the right more slowly. The one-off group-box offsets
-       are left as-is. */
+    /* Trim the recursive, depth-compounding indent (desktop is 16 + 12) so
+       deep chains run off the right far more slowly on a narrow screen. The
+       one-off group-box offsets are left as-is. */
     .tree-node {
-        margin-left: 8px;
-        padding-left: 8px;
+        margin-left: 4px;
+        padding-left: 6px;
     }
-    /* Touch targets: the whole label row selects / expands (see tree.js), so
-       a min-height row enlarges both the select and the chevron hit area;
-       stretching the chevron column makes it a full-height target too. The
-       collapsible group / branch headers are clickable rows as well, as is
-       the eligibility tracer's own ``.tree-node-row`` (its rows wrap rather
-       than scroll, but still need a touch-sized height). */
-    .tree-label,
-    .tree-node-row,
+    /* The eligibility tracer's own dialogue rows wrap rather than scroll, but
+       still need a full touch height. */
+    .tree-node-row {
+        min-height: var(--tap-min);
+    }
+    /* Collapsible group / section headers (e.g. "MUST NOT HAVE PLAYED (ALL)",
+       "Alternates"): a 44px header centred its short label and left a wide gap
+       between that label and the dialogue rows beneath it. Trim it - still a
+       comfortable tap target, but the rows now sit close under their header. */
     .req-type-group-header,
     .or-group-header,
     .or-branch-box-header,
     .or-downstream-header,
     .gamedata-group-header,
     .alternates-group-header {
-        min-height: var(--tap-min);
+        min-height: 32px;
     }
+    /* The upstream / downstream tree rows themselves are denser: a shorter
+       row and tighter vertical margin (still a comfortable tap height), and
+       trimmed horizontal padding to claw back the left gutter. */
+    .tree-label {
+        min-height: 38px;
+        margin: 1px 0;
+        padding: 2px 6px;
+    }
+    /* The chevron column was a full 44px wide, leaving a large dead gutter on
+       the left of every row (leaf rows have no chevron at all). Narrow it -
+       it stays full row height, so it's still an easy target. */
     .tree-label .toggle {
-        min-width: var(--tap-min);
+        min-width: 30px;
         align-self: stretch;
         display: flex;
         align-items: center;
