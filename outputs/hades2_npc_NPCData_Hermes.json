@@ -1,0 +1,1378 @@
+{
+  "alternates": {},
+  "dependents": {
+    "CharonPostTrueEnding01": [
+      {
+        "name": "HermesFieldAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "HermesWithHecate01",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HadesWithPersephoneGift02": [
+      {
+        "name": "HermesFieldAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateAboutFates01": [
+      {
+        "name": "HermesFieldAboutTyphon02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HecateBossAboutFates01": [
+      {
+        "name": "HermesFieldAboutTyphon02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HermesFieldAboutTyphon01": [
+      {
+        "name": "HermesFieldAboutTyphon02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesGift05": [
+      {
+        "name": "HermesFieldGiftDecline01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesGift06": [
+      {
+        "name": "HermesFieldAboutSupport01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesGift08": [
+      {
+        "name": "HermesFieldGiftDecline01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NemesisWithHecate02": [
+      {
+        "name": "HermesWithHecate01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NyxWithHecate01": [
+      {
+        "name": "HermesWithHecate01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting02": [
+      {
+        "name": "HermesFieldAboutTyphon03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalacePostTrueEnding01": [
+      {
+        "name": "HermesFieldAboutPalace03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HermesFieldAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 14,
+    "totalSpeakers": 1,
+    "totalTextlines": 16,
+    "unresolvedRefs": [
+      "CharonPostTrueEnding01",
+      "FatesEpilogue01",
+      "HadesWithPersephoneGift02",
+      "HecateAboutFates01",
+      "HecateBossAboutFates01",
+      "HermesGift05",
+      "HermesGift06",
+      "HermesGift08",
+      "NemesisWithHecate02",
+      "NyxWithHecate01",
+      "ZeusPalaceMeeting02",
+      "ZeusPalacePostTrueEnding01"
+    ]
+  },
+  "textlines": {
+    "HermesFieldAboutBusiness01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "All right, M, I don't want to hold you up now that you're here, you've got important business after all. Just making sure you made it in one piece!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Still in one piece, Lord Hermes, but we'll see how long that sticks. Though who knows? Perhaps Typhon will flatten me, instead of tearing me to shreds."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Oh that is grim. Although you know what else is? This entire situation we're in. I mean, look at this place! So how about we both get out of here?"
+        }
+      ],
+      "name": "HermesFieldAboutBusiness01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.TyphonHead": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "TyphonHead"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 672
+    },
+    "HermesFieldAboutCharon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "How's everything with you and Charon been, now that the Underworld is no longer under Titan governance?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Oh, it's been great! Which is to say it hasn't changed too much. He can't go back to ferrying Shades of the dead until the Underworld is up and running like it used to be."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "My impression is that may take a while. Father is meticulous about taking stock of everything that's changed, and doesn't want to rush into reopening till everything is prepared."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "You lost me after doesn't want to rush, honestly, M. Long as your father knows he's got some helping hands available whenever he may need."
+        }
+      ],
+      "name": "HermesFieldAboutCharon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:TextLinesRecord.TrueEndingFinale01": [
+          {
+            "Comparison": "==",
+            "CountPathTrue": true,
+            "Path": [
+              "TextLinesRecord",
+              "TrueEndingFinale01"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalacePostTrueEnding01",
+          "HadesWithPersephoneGift02",
+          "CharonPostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 606
+    },
+    "HermesFieldAboutGold01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Not too much coin you've got there, M. I'd spot you some, it's just that my professional associate, he's very strict about not passing it about unnecessarily and all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh that's all right. I really ought be able to withstand the rage of Typhon with or without these very tempting wares."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Now that's an attitude! Might be just a little overconfident there, mind, but then again you've taken down some monsters once or twice!"
+        }
+      ],
+      "name": "HermesFieldAboutGold01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 15,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.Resources.Money": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "GameState",
+                  "Resources",
+                  "Money"
+                ],
+                "Value": 200
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:NextInteractLines.Name": [
+              {
+                "IsAny": [
+                  "HermesFieldAboutGold01"
+                ],
+                "Path": [
+                  "NextInteractLines",
+                  "Name"
+                ],
+                "PathFromSource": true
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:GameState.EnemyKills.TyphonHead": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "TyphonHead"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 819
+    },
+    "HermesFieldAboutLittleToSay01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "It's getting busier for me again, M, so I'll likely need to keep these little conversations nice and quick."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of course, Lord Hermes. I don't expect you to take time out of your schedule just for my sake. Do as you must."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "I always do, but I did want to tell you cheers again, for coming all this way not just tonight but when I asked you in the first place, way back when. See you when you stop by, all right? Briefly, but still."
+        }
+      ],
+      "name": "HermesFieldAboutLittleToSay01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 888
+    },
+    "HermesFieldAboutPalace01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Don't fret too much about Pop's Palace up there, M! Old Typhon's big and strong and all but he can't crush what he can't see! Well, not as easily as if he could see it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's not entirely assuring. So Lord Uncle Zeus and the rest have concealed their seat of power, leaving Typhon to direct his fury at this fortress?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Yep, more or less! They figure that if we have to take on Typhon, and we do, this is the perfect spot! After all, it's a long way down from the summit. A quick way down, mind!"
+        }
+      ],
+      "name": "HermesFieldAboutPalace01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 478
+    },
+    "HermesFieldAboutPalace02": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "So, what did you think of Pop's Palace? Finally got to see the glory with your own eyes, M! A serious accomplishment given you're not supposed to be up here at all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Palace of Zeus wasn't like any place I'd ever seen... it's very beautiful, but very bright. I don't know how you all could live up there. But you must feel the same about where I'm from."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Well I for one quite like it dark but I've spent more time in the Underworld than everybody else up here combined! As for the Palace, least it's kept us safe in all of this!"
+        }
+      ],
+      "name": "HermesFieldAboutPalace02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Story01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 510
+    },
+    "HermesFieldAboutPalace03": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Too bad Pop's Palace is shut down for now, heightened security, something like that. You don't mind do you? No need to dally over there if you ask me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...No, between us, I don't really mind at all. I can still keep up with the King and Queen and all the rest by Boon, and this means I can get back a little sooner on a good night."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "See, that's exactly how I look at it! The sooner you get past that massive monster likely lurking behind that huge gate back there, the sooner you can rest up for the next one!"
+        }
+      ],
+      "name": "HermesFieldAboutPalace03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalacePostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 552
+    },
+    "HermesFieldAboutSupport01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Knew I could count on you here, M, not just with Typhon, but my special shrines! You've donated a lot of coin to a good cause, so cheers!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What cause would that be, now that you mention it? Lord Charon's been working to destroy all the coins he can get his hands on... you're not racing to do the same, are you?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Call it a bit of healthy competition between professional associates. He had a head start and has got the upper hand for now, but thanks to you, I have been catching up!"
+        }
+      ],
+      "name": "HermesFieldAboutSupport01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:GameState.SurfaceShopPurchases": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SurfaceShopPurchases"
+            ],
+            "Value": 25
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HermesGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 759
+    },
+    "HermesFieldAboutSurfaceShop01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "You should have everything you ordered from my special shrine, with faster shipping, free of charge! Now comes the hard part. Think you're ready for it, M?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'd be less ready were it not for you. Thank you for meeting with me here. Does Olympus know you're doing this?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "They know I'm out delivering supplies! We're all on the same side anyway, right? No need to bore them with the details when they've got their hands completely full."
+        }
+      ],
+      "name": "HermesFieldAboutSurfaceShop01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:SessionMapState.HasSurfaceShopDelivery": [
+          {
+            "PathTrue": [
+              "SessionMapState",
+              "HasSurfaceShopDelivery"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 711
+    },
+    "HermesFieldAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "You made it all the way up here, that's great! Except what isn't great is Typhon, you've run into him already probably? A mountain-sized monstrosity and all his brood?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This storm, this... infestation. All of this is Typhon's doing, then? How did he get here? How do we stop him?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "No easy answers for you, M, except Gramps brought this on us, all part of his plan. The others can hold fast awhile in Pop's Palace but they need your help. I better report to Hec!"
+        }
+      ],
+      "name": "HermesFieldAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 276
+    },
+    "HermesFieldAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Can't shake the feeling that I failed you here, M. I was supposed to figure out what Gramps was up to, but I wasn't quick enough. So now you're fighting Typhon face to face!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hermes, we'll have to go through everything that could have turned out differently once all of this is over. But for now, our present matters seem more urgent than the past."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "I know. You're right. It's just I'm starting to accept that all of this is what Gramps wanted to achieve: first capture the Three Fates so they can't mess with him, then wake up Typhon so he can mess with us...! Then take over everything."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You didn't know all the details, but long since figured out Chronos was up to something big. Had you not acted swiftly then, I wouldn't be here now. We wouldn't have this chance."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "I prefer guarantees to chances, M! But hey, you're right. We do the best we can with what we've got."
+        }
+      ],
+      "name": "HermesFieldAboutTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "HecateAboutFates01",
+          "HecateBossAboutFates01"
+        ],
+        "RequiredTextLines": [
+          "HermesFieldAboutTyphon01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 327
+    },
+    "HermesFieldAboutTyphon03": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "You've knocked Typhon around a bit, but he's still plenty mad. Isn't there something you or Hec can do to make him maybe go away for good?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If by make him go away for good you mean have his whole existence flash before his many eyes before he's finally destroyed, then yes, that's in the works. But it may take some time."
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Oh great! Can't do things quick if they don't take some time. Well then don't let me keep you from your research, see you later, M!"
+        }
+      ],
+      "name": "HermesFieldAboutTyphon03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalaceMeeting02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 386
+    },
+    "HermesFieldAboutTyphonDeath01": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Now wait, is Typhon gone, or isn't he? Because there's been no sign of him but now Gramps has these little time-pockets, and once we go in, it's like Typhon never left!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's more or less a way to understand it, but... how are you even here? I didn't realize Grandfather was sending others through. Do you even know how to get back?"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "I run fast enough, I can get back! Gramps also left the others with the means to get us out, and we're keeping a close eye on him. I better take a look around!"
+        }
+      ],
+      "name": "HermesFieldAboutTyphonDeath01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "Q_PreBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 432
+    },
+    "HermesFieldGiftDecline01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hermes, I've a little gift for you while we're both here, if you don't mind! May this Ambrosia ensure you're always as light on your feet as can be!"
+        },
+        {
+          "speaker": "NPC_Hermes_01",
+          "text": "Really appreciate this, M, but can't accept. Wouldn't do if I showed up with a bunch of Ambrosia right now, no matter how much I or anyone might want a sip. Though, cheers!"
+        }
+      ],
+      "name": "HermesFieldGiftDecline01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.Q_PreBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "Q_PreBoss01"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "HermesGift08"
+        ],
+        "RequiredTextLines": [
+          "HermesGift05"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 998
+    },
+    "HermesFirstPickUp": {
+      "dialogueLines": [
+        {
+          "speaker": "HermesUpgrade",
+          "text": "How's things, you good? I'm good. Mostly! And good to see your task is underway, but change of plan, though it's a lot to ask: Up for a visit to Olympus sometime soon?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hermes, just a moment, what do you mean Olympus? My task is to stop Chronos in the Underworld. I can hardly breathe the surface air, much less get to a mountaintop!"
+        },
+        {
+          "speaker": "HermesUpgrade",
+          "text": "Come on, M! You have your ways! Gramps is up to something bad, more than his usual attacks, so just give it some thought. I wouldn't ask if it was nothing, right? Now got to run, and so do you. I'll be in touch by Boon!"
+        }
+      ],
+      "name": "HermesFirstPickUp",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsNone": [
+              "Q"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 228
+    },
+    "HermesWithHecate01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hermes_01",
+          "text": "What can I say? It's been a real pleasure, Hec. Always has. Cheers for taking me into the fold and all, and I'll be keeping you informed. You've got my guarantee!"
+        },
+        {
+          "speaker": "NPC_Hecate_01",
+          "text": "And you've my gratitude, Hermes. If not for you, we would have been entirely caught out, and things would have gone worse. Shall you be visiting more frequently henceforth?"
+        },
+        {
+          "speaker": "NPC_Hermes_01",
+          "text": "Don't think I can just yet, Pop doesn't want me running off so much, the family's got a lot of messages they want to send. But I'll keep well in touch with you and M, all right?"
+        }
+      ],
+      "name": "HermesWithHecate01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 15,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hermes_01",
+      "partner": "NPC_Hecate_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "FatesEpilogue01"
+        ],
+        "RequiredTextLines": [
+          "NyxWithHecate01",
+          "NemesisWithHecate02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hermes.lua",
+      "sourceLine": 936
+    }
+  }
+}

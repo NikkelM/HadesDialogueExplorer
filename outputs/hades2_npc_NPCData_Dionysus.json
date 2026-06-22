@@ -1,0 +1,3561 @@
+{
+  "alternates": {
+    "DionysusAboutCirce01": [
+      "DionysusAboutCirce01_B"
+    ],
+    "DionysusAboutCirce01_B": [
+      "DionysusAboutCirce01"
+    ],
+    "DionysusAboutPrometheus01": [
+      "DionysusAboutPrometheus01_B"
+    ],
+    "DionysusAboutPrometheus01_B": [
+      "DionysusAboutPrometheus01"
+    ],
+    "DionysusFirstMeeting": [
+      "DionysusFirstMeeting_B"
+    ],
+    "DionysusFirstMeeting_B": [
+      "DionysusFirstMeeting"
+    ]
+  },
+  "dependents": {
+    "DionysusAboutAmbrosia01": [
+      {
+        "name": "DionysusAboutAmbrosia02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusAboutAmbrosia02": [
+      {
+        "name": "DionysusGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusAboutCirce01": [
+      {
+        "name": "DionysusAboutCirce01_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "DionysusAboutCirce01_B": [
+      {
+        "name": "DionysusAboutCirce01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "DionysusAboutPrometheus01": [
+      {
+        "name": "DionysusAboutPrometheus01_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "DionysusAboutPrometheus02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "DionysusAboutPrometheus01_B": [
+      {
+        "name": "DionysusAboutPrometheus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "DionysusAboutPrometheus02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "DionysusFirstMeeting": [
+      {
+        "name": "DionysusFirstMeeting_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "DionysusFirstMeeting_B": [
+      {
+        "name": "DionysusFirstMeeting",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "DionysusGift01": [
+      {
+        "name": "DionysusLowHealth01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusAboutAutomatons01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusGift03": [
+      {
+        "name": "DionysusAboutPrometheus02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusGift05": [
+      {
+        "name": "DionysusAboutHeracles01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusGift06": [
+      {
+        "name": "DionysusAboutAmbrosia01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusGift07": [
+      {
+        "name": "DionysusAboutRelationships01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusAboutLeopard01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusAboutAmbrosia03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ErisBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "DionysusPostEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "DionysusPostEpilogue01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "DionysusAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HeraclesGift05": [
+      {
+        "name": "DionysusAboutHeracles01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MorosBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NemesisBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "OdysseusBathHouse01": [
+      {
+        "name": "DionysusAboutSprings01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutDionysus01": [
+      {
+        "name": "DionysusAboutPrometheus03",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 31,
+    "totalSpeakers": 1,
+    "totalTextlines": 95,
+    "unresolvedRefs": [
+      "DoraBathHouse01",
+      "ErisBathHouse01",
+      "FatesEpilogue01",
+      "HecateBathHouse01",
+      "HeraclesGift05",
+      "MorosBathHouse01",
+      "NemesisBathHouse01",
+      "OdysseusBathHouse01",
+      "PrometheusAboutDionysus01"
+    ]
+  },
+  "textlines": {
+    "DionysusAboutAmbrosia01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Say, any leads on finding us a box of good bottles of Ambrosia yet or what? We're down to our emergency ration here, making it last. I'm trying to keep everybody calm!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've not encountered such a box, and am uncertain how to best distinguish a good bottle from another. I'd no idea that Ambrosia could go bad..."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well then, I'll let you in on a little secret, baby...! Just as soon as I remember what it was... haha, all this shaking lately, I can't even think! Erm, you want one of these?"
+        }
+      ],
+      "name": "DionysusAboutAmbrosia01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutAmbrosia02"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1531
+    },
+    "DionysusAboutAmbrosia02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh hey! The mountain finally stopped shaking for a bit and I remembered what I wanted you to know! A box of bottles of Ambrosia, that's just four of them at once. Technical term!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So you don't just want one bottle of Ambrosia but four, and you don't want me to, say, give one bottle at a time..."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Come on look, how many guests I have... no single bottle's going to do! But now you know what we need to survive. I'll be counting on you, Mel baby!"
+        }
+      ],
+      "name": "DionysusAboutAmbrosia02",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutAmbrosia01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.TyphonHead": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "TyphonHead"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusAboutAmbrosia01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1557
+    },
+    "DionysusAboutAmbrosia03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh you should have seen it, baby, the Ambrosia that you brought, it kicked things up like you would not believe!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I can imagine! Though things don't seem that different than before. Have you depleted the entire box already?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "No! I mean... not really! I mean, maybe. But I have got a lead on a reserve so vast that we won't need donations anymore. And for you, I've got a little something extra here."
+        }
+      ],
+      "name": "DionysusAboutAmbrosia03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:TextLinesRecord.DionysusGift07": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "TextLinesRecord",
+              "DionysusGift07"
+            ],
+            "SumPrevRuns": 8,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1596
+    },
+    "DionysusAboutApollo01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey you didn't tell Apollo anything about what's going on in here, did you? Because I, erm, I have not sent him an invite yet. I know he's busy wanting to be left alone!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Apollo has been gracious to support me with his Boons, but no, I've not informed him or any of your relatives about your feasting. That's your business not mine."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whew, cheers! He likes to keep things squeaky clean, you know, but I prefer it any other way! Something about you made me think of him but probably I'm just out of my mind!"
+        }
+      ],
+      "name": "DionysusAboutApollo01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutHeracles01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.UseRecord.ApolloUpgrade": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "CurrentRun",
+              "UseRecord",
+              "ApolloUpgrade"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1476
+    },
+    "DionysusAboutAutomatons01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you run into any trouble with all the Automatons supposedly defending your domain? They attack me indiscriminately from your foes."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Maybe they think you're too uptight! Come on Mel baby, you don't need to worry about us! I've got my special ways, which not even the works of Lord Hephaestus can resist."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your special ways... so then you know a means to bypass their threat detection. Can you show me how?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh I can show you lots of things. Those clankers you're still on about, they're just like family! Sure, they fight sometimes, but they mean well. Just stay out of their way, yeah?"
+        }
+      ],
+      "name": "DionysusAboutAutomatons01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.RoomsEntered.P_MiniBoss01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "RoomsEntered",
+              "P_MiniBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 874
+    },
+    "DionysusAboutCatFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, little kitten, meooow, hahaha! And hey to you, Mel baby! So how about an introduction to your feline companion, yeah?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, erm, this is Toula, and we keep each other safe. And fear not, for I'll be watching her closely, lest she help herself to all the nourishment about."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "No need for that, we've plenty here to go around, even with lots of different appetites! We're all just a bunch of animals here so yours are more than welcome to join the pack!"
+        }
+      ],
+      "name": "DionysusAboutCatFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSprings01",
+        "DionysusAboutFrogFamiliar01",
+        "DionysusAboutRavenFamiliar01",
+        "DionysusAboutHoundFamiliar01",
+        "DionysusAboutPolecatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "CatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 722
+    },
+    "DionysusAboutCirce01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey you look, ah, I mean, wow. Did you grow bigger, and I mean that purely as a compliment... or did I grow smaller, or... eugh, my head..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, you mean... my unusually greater height! It's due to a fleeting bit of magick from my companion, the enchantress called Circe. So the effect is rather noticeable, then?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I mean, yeah! Circe, huh, I know that name! Sounds like she knows a trick or two! Maybe she'll get an invite to the next one of these!"
+        }
+      ],
+      "name": "DionysusAboutCirce01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutCirce01_B"
+      ],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Dionysus_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Dionysus_01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceEnlargeTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceEnlargeTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusAboutCirce01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1110
+    },
+    "DionysusAboutCirce01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey you look, erm... did you shrink down or something, or... did I grow bigger all of a sudden, or... oh, my head..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, right... a reminder about my temporarily reduced stature. It's due to a bit of magick from my companion, the enchantress Circe. So the effect is rather noticeable, then?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I mean, yeah! Circe, huh, I know that name! Sounds like she knows a trick or two! Maybe she'll get an invite to the next one of these!"
+        }
+      ],
+      "name": "DionysusAboutCirce01_B",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutCirce01"
+      ],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Dionysus_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Dionysus_01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceShrinkTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceShrinkTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusAboutCirce01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1144
+    },
+    "DionysusAboutCirce02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey look at you, Mel baby, you are huge! I like it! Once knew some Amazons about your size, they were a real handful, if you know what I mean!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think I do know, yes, now that you've helpfully reminded me how I have temporarily increased in size. It offers me a tactical advantage for the night."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh I am positively sure it does! And if my Amazonian companions were here they would wholeheartedly agree. And probably demand you wrestle them."
+        }
+      ],
+      "name": "DionysusAboutCirce02",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutCirce03"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceEnlargeTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceEnlargeTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1179
+    },
+    "DionysusAboutCirce03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Aw, look how little you are, baby! Ahem that's sounding a bit rude, when I say baby you know I don't mean it like that!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's quite all right. I know my reduced stature may be off-putting. All part of the advantage it affords."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well I like 'em in every shape and size, it isn't all the same, it's all different! Small? Cool. Bigger? Great! I'm all about variety!"
+        }
+      ],
+      "name": "DionysusAboutCirce03",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutCirce02"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceShrinkTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceShrinkTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1205
+    },
+    "DionysusAboutFeast01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Heeey, look who decided to reconsider coming to our little gathering! Welcome back, Mel baby, now go on, you grab yourself a cup and mingle with the crowd!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "As tempting as that sounds, Lord Dionysus, unfortunately I don't think I can. There are various perils beyond, and your fellow Olympians can only do so much to hold them off."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "And I feel bad for them, really! Almighty gods with limitless power having to fend for themselves. Good thing I can drown my sorrows here, and guess what? So can you!"
+        }
+      ],
+      "name": "DionysusAboutFeast01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 448
+    },
+    "DionysusAboutFeast02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You really are just passing through? Look at all these temptations in every form! The liquid kind, the sumptuous kind, mm! But you're unmoved and undeterred?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Look, I would truly love to stay. Enjoy a beverage and a bite... speak with all these doubtless-interesting guests... but I can't. Don't you understand? Your mountain is burning!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well if it's burning, baby, let it burn, I say! But I don't want to argue anymore, I mean, it's just another form of fighting, yeah? So you go do your thing, and I'll do mine!"
+        }
+      ],
+      "name": "DionysusAboutFeast02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 474
+    },
+    "DionysusAboutFeast03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Dionysus, just how long have you been feasting, anyhow? Here in this spot, I mean. Night after night, you're going at it like there's no tomorrow."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Mel baby, just call me Dionysus if you please, the Lord thing doesn't suit me, yeah? As for how long we've carried on like this, I've no idea! A while probably. Might be a new record! Heh. Sure you don't want to join?"
+        }
+      ],
+      "name": "DionysusAboutFeast03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 499
+    },
+    "DionysusAboutFeast04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What if you couldn't feast any longer? Imagine something so dire that it forced you to put a stop to this way of life. Brought ruin to everything you hold dear!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I know what you're trying to do, baby, and it isn't going to work. I've tuned out every bit of negativity, including yours! And since I'm a good host, I'm still going to give you this."
+        }
+      ],
+      "name": "DionysusAboutFeast04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 519
+    },
+    "DionysusAboutFeast05": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What's the occasion for the feasting, anyway? I fail to see what cause there is to celebrate right now."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Don't you get it, baby? Every moment that we live and breathe is more than cause enough! Maybe you're into feeling bad, I don't know, but me? I'm into feeling good!"
+        }
+      ],
+      "name": "DionysusAboutFeast05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:TextLinesRecord.TrueEndingFinale01": [
+          {
+            "Comparison": "==",
+            "CountPathTrue": true,
+            "Path": [
+              "TextLinesRecord",
+              "TrueEndingFinale01"
+            ],
+            "SumPrevRuns": 8,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 540
+    },
+    "DionysusAboutFeast06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey glad you could make it! I know there's a lot going on, but what's it all for if you can't kick back once in a while, yeah? So ease up a bit, you're here!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm just passing through. Though, I truly appreciate your hospitality. Perhaps if and when all this is finally resolved, I can kick back, as you say."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh I'll hold you to that, if I can remember you said it! For now though cheers to your success and all, and may your warring wrap up peaceably and soon!"
+        }
+      ],
+      "name": "DionysusAboutFeast06",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutTravels01",
+        "DionysusAboutSatyrs01",
+        "DionysusAboutLeopard01",
+        "DionysusAboutRelationships01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 565
+    },
+    "DionysusAboutFrogFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "What's that with you, some sort of frog? Well sure, since frogs and me, we go way back! The only rule is there's no swimming in the spring or guests might get a little eugh!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's Frinos, and don't worry, not that you ever do. He won't disturb the peace, and avoids most others anyway. Thank you for permitting him here... and me, for that matter."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh absolutely, it's the sort of feast where if you can get in at all, it means you're probably all right! Your frog there too, long as he doesn't sing! He doesn't sing, does he...?"
+        }
+      ],
+      "name": "DionysusAboutFrogFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSprings01",
+        "DionysusAboutCatFamiliar01",
+        "DionysusAboutRavenFamiliar01",
+        "DionysusAboutHoundFamiliar01",
+        "DionysusAboutPolecatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 696
+    },
+    "DionysusAboutHeracles01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Does mighty Heracles ever stop by? He seems to do much of the heavy lifting out on the front lines and probably could use the break... though might bring down the mood."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh believe me I have invited him don't know how many times but he won't budge, big man like that, I mean it figures, yeah? He's all obsessed with laboring away, won't cut loose even for a bit! Though maybe he'll listen to you..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What, to join you for a drink and a splash in the hot springs? Why would Heracles possibly listen to me if your own powers of persuasion haven't been sufficient?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Cause you're a girl, baby! You've got the voice, and the thing you do with your hair, the whole I'm-so-innocent act, it's enough to drive somebody wild! So ask him, yeah?"
+        }
+      ],
+      "name": "DionysusAboutHeracles01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutApollo01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "HeraclesCombatIntro",
+              "HeraclesCombatN",
+              "HeraclesCombatN2",
+              "HeraclesCombatO",
+              "HeraclesCombatO2",
+              "HeraclesCombatP",
+              "HeraclesCombatP2"
+            ],
+            "Value": 1
+          }
+        ],
+        "Path:GameState.EncountersOccurredCache": [
+          {
+            "HasAny": [
+              "HeraclesCombatP",
+              "HeraclesCombatP2"
+            ],
+            "Path": [
+              "GameState",
+              "EncountersOccurredCache"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift05",
+          "HeraclesGift05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1375
+    },
+    "DionysusAboutHeracles02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Old Heracles decided to stop by, you see him there?! He's like a big old ox! Hop in the bath with him, go on, I want to see you try! Unless you did already and I missed it, eugh..."
+        }
+      ],
+      "name": "DionysusAboutHeracles02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": true,
+              "Units": [
+                "NPC_Heracles_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1423
+    },
+    "DionysusAboutHoundFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Mel, baby, I insist you introduce me to your dog there right away! I've not seen such a gorgeous breed since last I traveled west! I used to travel all around, you know."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Dionysus, please meet Hecuba, who's in my care for now, and always on her best behavior as you'll see. Your journeys must have been amazing... seeing the world..."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh that they were but now I'm here where it's amazing too! Things never stay the same for very long, got to enjoy them while they last. Nothing lasts forever! Except us!"
+        }
+      ],
+      "name": "DionysusAboutHoundFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSprings01",
+        "DionysusAboutFrogFamiliar01",
+        "DionysusAboutCatFamiliar01",
+        "DionysusAboutRavenFamiliar01",
+        "DionysusAboutPolecatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "HoundFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 773
+    },
+    "DionysusAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "That Fig Leaf that you're carrying... it's from my private wardrobe! So how come you have it and not me? What, did I just hand it over as a gift?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You did exactly that, yes. I offered you a bottle of Nectar, and you gave me this Leaf in exchange. Don't you recall?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Don't I recall... erm, sometimes! But not always, not so much of late! Well if past-me thought he should give you such a thing, he must have had a real good feeling for you, yeah?"
+        }
+      ],
+      "name": "DionysusAboutKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.SkipEncounterKeepsake": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "SkipEncounterKeepsake"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 672
+    },
+    "DionysusAboutLeopard01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Quite an impressive cat beside you there. How did you manage to domesticate her? I thought such creatures tended to roam free."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Domesticate her, Mel baby, you ought to know that Maena here, she is as wild as they come! And believe me I have known a lot of leopards in my time!"
+        }
+      ],
+      "name": "DionysusAboutLeopard01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutTravels01",
+        "DionysusAboutSatyrs01",
+        "DionysusAboutFeast06",
+        "DionysusAboutRelationships01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 825
+    },
+    "DionysusAboutMortals01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You're not from around here, so how fare the mortals as of late? You've surely seen a few of them along your path. It's been a little while since I heard from them!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "They've been better! Most probably are praying to our family for peace, since Chronos flung open the Underworld's gates, leaving the dead to roam the land."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Which means that mortals get to spend more time with long-lost relatives of theirs! Come on, stay positive, Mel baby! That's how mortals get by! It'll be all right!"
+        }
+      ],
+      "name": "DionysusAboutMortals01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 989
+    },
+    "DionysusAboutOlympians01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Not told my Dad about this little gathering of ours, have you? Because we wouldn't want to have to pack it up and find some other secret spot. It's perfect here!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think Lord Zeus has far more urgent matters to consider than your never-ending feast, which I daresay would be even better if the legions of Chronos weren't about. The rest of the Olympians don't even know that this is going on?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Right you are, baby! For this is an exclusive gathering only for guests I know are going to be cool. Which can't explain how you keep stumbling upon it, but hey! Details, right?"
+        }
+      ],
+      "name": "DionysusAboutOlympians01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1013
+    },
+    "DionysusAboutPanAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whoa, watch with those knives, Mel baby, wouldn't want you accidentally sticking it to someone here! Though, wait wait wait, I've seen those two before..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps you know these blades from when they belonged to the nature god called Pan. Though I didn't steal them or anything! And I'll be careful."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh, yeah, Paaan! I love Pan, he is wild, and he really gets around! Even once helped Dad out with his Typhon problem way back when. You tell him I said hey! Pan, not Dad."
+        }
+      ],
+      "name": "DionysusAboutPanAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.DaggerHomingThrowAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "DaggerHomingThrowAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 847
+    },
+    "DionysusAboutPolecatFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, it's that polecat, she's with you? Seen her pawing on the mountain here and there, just lying low, the same as me and everybody here! She got a name?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh yes, I'd like to introduce you to Gale, who is a rather independent sort and has been helping scout ahead a bit. I'm impressed you knew her for a polecat right away!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh I know animals, Mel baby! Why, I'm an animal myself, all of us are! Though we'll try not to act like it with Gale. And don't worry about Maena here either, she doesn't bite! Hard."
+        }
+      ],
+      "name": "DionysusAboutPolecatFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSprings01",
+        "DionysusAboutFrogFamiliar01",
+        "DionysusAboutCatFamiliar01",
+        "DionysusAboutRavenFamiliar01",
+        "DionysusAboutHoundFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 797
+    },
+    "DionysusAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you had any run-ins with Prometheus? Since Chronos wouldn't dare show his face on this mountain, he must have sent this lackey of his to keep all of Olympus occupied."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Prometheus, he's back?! I must be out of the loop. Thought he was still strapped to some mountainside, getting his innards gnawed at by an Eagle, something nasty of the sort!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That did supposedly occur. But he is definitely back, personally leading the vanguard trying to tear Olympus apart. If he prevails... no more feasting."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hahahaha, come on, baby, it can't be all that bad! What's he going to do, cook our food with the flame he took from Dad? Tell you what, next time you see him, tell him to stop by!"
+        }
+      ],
+      "name": "DionysusAboutPrometheus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusAboutPrometheus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1232
+    },
+    "DionysusAboutPrometheus01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you had any run-ins with the Titan Prometheus? Chronos was in league with him. He's been causing quite a commotion, all told."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Prometheus, he's back?! I must be out of the loop. Thought he was still strapped to some mountainside, getting his innards gnawed at by an Eagle, something nasty of the sort!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That did supposedly occur, but he is definitely back, personally leading the vanguard that was trying to tear Olympus apart. And he's still out there, sowing dissent."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hahahaha, come on, baby, it can't be all that bad! What's he going to do, cook our food with the flame he took from Dad? Tell you what, next time you see him, tell him to stop by!"
+        }
+      ],
+      "name": "DionysusAboutPrometheus01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusAboutPrometheus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1274
+    },
+    "DionysusAboutPrometheus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "So did you have a chat with old Prometheus on my behalf or what? I'd go on over and invite him here myself, but I'm the host, heh! It wouldn't do for me to slip away, would it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of all the things for you to vividly recall. You truly wanted me to direct one of our most bitter foes here, to a feast not even your closest family members know about?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I mean... yeah, heh! We gods can be so stubborn and stuck up, waving our weapons at each other when we ought to wave an olive branch instead! Now you go tell that hothead that we're saving him a spot!"
+        }
+      ],
+      "name": "DionysusAboutPrometheus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "DionysusAboutPrometheus01",
+          "DionysusAboutPrometheus01_B"
+        ],
+        "RequiredTextLines": [
+          "DionysusGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1317
+    },
+    "DionysusAboutPrometheus03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I felt quite foolish, but did ask Prometheus on your behalf if he'd attend this feast. He already knew what I was going to say, being the Titan of Foresight and all. He sensed no ill motive... and took it for a fiendish trap for that very reason."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "And he's supposed to be one of the wiser ones? What made you all so cynical, baby? You don't trust anyone or anything! No wonder everything is all screwed up out there!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So you do know things are dire! I thought you weren't paying any attention, burying your head in the sand and tuning out whatever you've no wish to hear."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You got it half right. See, I don't like to worry about the things I can't control! Wine, I can control. The quality of this feast, I can control! But all the in-fighting? Heh. Plenty of other gods who specialize in that."
+        }
+      ],
+      "name": "DionysusAboutPrometheus03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutDionysus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1346
+    },
+    "DionysusAboutRavenFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whoa who's the bird, and I don't mean you, Mel baby! That raven flew in here, all skittish-looking, like it's seen a ghost! Do ravens drink? Might take the edge off just a bit."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "My raven Raki can become a little nervous around strangers... or just about anything, really. I don't think he cares for wine, although this atmosphere may do him good."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Might do you some good too, you know. Your pets are welcome here, since we're all animals deep down, know what I mean?"
+        }
+      ],
+      "name": "DionysusAboutRavenFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSprings01",
+        "DionysusAboutFrogFamiliar01",
+        "DionysusAboutCatFamiliar01",
+        "DionysusAboutHoundFamiliar01",
+        "DionysusAboutPolecatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "RavenFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 748
+    },
+    "DionysusAboutRelationships01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Got anybody special in your life or what Mel baby, 'cause if you just let me know, I'll get 'em in! Can easily spare one or two more invitations here!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I appreciate the offer, thanks. I'm not bound in the way Lord Uncle Zeus and Queen Hera are if that's what you mean, but have most of my needs fulfilled."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well that's a way to put it. I like having all my needs met too! Long as you're also getting your desires met, but anyway, your mate or mates are welcome to stop by!"
+        }
+      ],
+      "name": "DionysusAboutRelationships01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutTravels01",
+        "DionysusAboutSatyrs01",
+        "DionysusAboutFeast06",
+        "DionysusAboutLeopard01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.TextLinesRecord": [
+          {
+            "Comparison": ">=",
+            "CountOf": [
+              "MorosBecomingCloser01",
+              "MorosBecomingCloser01_B",
+              "NemesisPostCombatBecomingCloser01",
+              "IcarusBecomingCloser01",
+              "ErisBecomingCloser01"
+            ],
+            "Path": [
+              "GameState",
+              "TextLinesRecord"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 589
+    },
+    "DionysusAboutSatyrs01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I must admit I'm unaccustomed to seeing Satyrs that make no attempt to skewer me on sight. Old friends of yours?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh yeah, all these old goats and I, we go way back! Proper Satyrs that love a proper good time. As for everything else, they just don't pay it any mind. And neither do I!"
+        }
+      ],
+      "name": "DionysusAboutSatyrs01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutTravels01",
+        "DionysusAboutFeast06",
+        "DionysusAboutLeopard01",
+        "DionysusAboutRelationships01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 966
+    },
+    "DionysusAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Mel baby, we're past the small-talk stage of our relationship, so we should take the next big step: smaller talk!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And what exactly is the difference between small and smaller talk? Do we lower our voices?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Even better, we will hardly talk at all! The bond we share speaks volumes anyway! It's great, just try it, ready? Go!"
+        }
+      ],
+      "name": "DionysusAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          },
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "DionysusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1789
+    },
+    "DionysusAboutSprings01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Sure you don't want to join us for a soak in the spring? It's cold out, yeah, but not in there! Forge of Hephaestus pumping in just the right amount of heat!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We have a spring like this where I reside! It's very comfortable... except, I really shouldn't bathe right now. For a variety of reasons."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "And yet you keep on showing up! Come on Mel baby, you want in, no need to be shy, we're friends here, all of us! Some more than friends even! Heh! All in due time I guess?"
+        }
+      ],
+      "name": "DionysusAboutSprings01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutFrogFamiliar01",
+        "DionysusAboutCatFamiliar01",
+        "DionysusAboutRavenFamiliar01",
+        "DionysusAboutHoundFamiliar01",
+        "DionysusAboutPolecatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeBathHouse": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeBathHouse"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "DoraBathHouse01",
+          "HecateBathHouse01",
+          "OdysseusBathHouse01",
+          "MorosBathHouse01",
+          "NemesisBathHouse01",
+          "ErisBathHouse01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 907
+    },
+    "DionysusAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Now then what sort of nymph are you? Oh wait wait wait, Mel baby, I know you, just how long has it been?!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Certainly it's been some nights, to have induced a lapse of memory. How have you fared, along with all your guests?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh we've been good as grapes here, yeah? Each night's a journey through the mind! Here, think on one of these!"
+        }
+      ],
+      "name": "DionysusAboutTimePassing01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered.P_Story01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "P_Story01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1502
+    },
+    "DionysusAboutTravels01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "My headmistress was a wanderer like you. She taught me something of your journeys and travails. You've crossed the world... met many different beings! Yet you'd rather be here, like this?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Haha, oh absolutely, yes! I mean just look around you, everybody's beautiful, the weather's perfect, and we're fully stocked! What, you think I'd rather be out for a stroll?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No, I... merely thought a life of travel might have made your disposition somewhat different! I don't know... more introspective? More solitary, perhaps."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You're still young, baby! If you'd seen all I'd seen then you'd appreciate the finer things the same as me. No forcing it! You'll get there, maybe once all of this is over with!"
+        }
+      ],
+      "name": "DionysusAboutTravels01",
+      "narrativePriorityClusterMembers": [
+        "DionysusAboutSatyrs01",
+        "DionysusAboutFeast06",
+        "DionysusAboutLeopard01",
+        "DionysusAboutRelationships01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 937
+    },
+    "DionysusAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you any idea why this mountain has been shaking ceaselessly, doubtless to the occasional dismay of your honored guests?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Yes I do! Sometimes the feasting gets a little rowdy, if you know what I mean, with all the dancing and whatnot! Uncle Poseidon's not the only Earth-Shaker on Olympus!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No. Typhon has awakened! The Father of All Monsters now threatens your own father's palace. You can ignore Chronos somehow, fine. Prometheus, perhaps. But not this."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh no! Typhon's out there, come to ruin everything! Whatever will we do?! Hahaha, see that, baby? Nobody cares! Whatever happens, happens! And we're gonna feast until it does, no matter what! Nice try with that one, though."
+        }
+      ],
+      "name": "DionysusAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1442
+    },
+    "DionysusAboutZagreus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "What did you say happened to Zag, everything good with him still, yeah? You ought to bring him next you come this way, oh he'd be into it!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I previously mentioned Chronos, our Titan grandfather who's relentlessly attacking this mountain, holds the members of my immediate family captive; Zagreus included. So he can't make it to the feast right now."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Ah that's too bad, though maybe later, yeah? I've always felt a bond with him, a real connection, so if you see the Zag man, let him know he's welcome to my feast here anytime!"
+        }
+      ],
+      "name": "DionysusAboutZagreus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1039
+    },
+    "DionysusAboutZagreus02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sounds as though you and my brother Zagreus were fairly close. What was he like? Seeing as I have no real memory of him, since Chronos took him back when I was very small."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You know I haven't heard from him in quite a while, yeah? Erm, come to think of it, we never really talked too much, although I sent him lots of Boons! How is he anyway?"
+        }
+      ],
+      "name": "DionysusAboutZagreus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1064
+    },
+    "DionysusAboutZagreus03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "How is the Zag man lately anyway, is everything all right with him? Stopped sending him my Boons a while back..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well now that Zagreus is freed from temporal imprisonment, along with my mother, father, and the House of Hades staff, I think he's doing very well! I'm certain he'd be pleased to hear from you."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well that is a relief as I thought maybe I offended in some way! He could have gone and cut me off, but he did not."
+        }
+      ],
+      "name": "DionysusAboutZagreus03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1085
+    },
+    "DionysusChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Things are happening all over but this is the only happening place on this mountain, baby."
+        }
+      ],
+      "name": "DionysusChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1821
+    },
+    "DionysusChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Just one drink isn't going to hurt! It's going to do the opposite, you'll see!"
+        }
+      ],
+      "name": "DionysusChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1831
+    },
+    "DionysusChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Can't stay and hang out, you got places to go, people to see, I get it, baby!"
+        }
+      ],
+      "name": "DionysusChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1841
+    },
+    "DionysusChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You look like you're having a night! And wouldn't you know it, so am I!"
+        }
+      ],
+      "name": "DionysusChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1851
+    },
+    "DionysusChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Been going for a while here, baby, and we plan to keep going till all this is over!"
+        }
+      ],
+      "name": "DionysusChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1862
+    },
+    "DionysusChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Come on now, relax and have a drink, mingle a bit, this is a feast, you know!"
+        }
+      ],
+      "name": "DionysusChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1872
+    },
+    "DionysusChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Remember, don't go telling Dad about this little gathering of ours, all right?"
+        }
+      ],
+      "name": "DionysusChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1883
+    },
+    "DionysusChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You're always welcome here but not your worries, baby, you leave those behind!"
+        }
+      ],
+      "name": "DionysusChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1892
+    },
+    "DionysusChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, pull yourself together, baby, we're just getting started!"
+        }
+      ],
+      "name": "DionysusChat09",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1903
+    },
+    "DionysusChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Sure you don't want to take a quick dip in the spring? It'll warm you right up!"
+        }
+      ],
+      "name": "DionysusChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1914
+    },
+    "DionysusChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "This mountain isn't going anywhere, and neither are we!"
+        }
+      ],
+      "name": "DionysusChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1925
+    },
+    "DionysusChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Come all this way and can't even hang out, that's just not right, baby!"
+        }
+      ],
+      "name": "DionysusChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1935
+    },
+    "DionysusChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "If you're sick of all the fighting, I've got just the thing for you!"
+        }
+      ],
+      "name": "DionysusChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1945
+    },
+    "DionysusChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "The water's nice and warm, but if you don't want to take a dip, it's cool!"
+        }
+      ],
+      "name": "DionysusChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1955
+    },
+    "DionysusChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I'd ask you tell the fam I told them cheers but that might get a little awkward, yeah?"
+        }
+      ],
+      "name": "DionysusChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1965
+    },
+    "DionysusChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Leave your worries at the gate and have yourself a cup of something, here!"
+        }
+      ],
+      "name": "DionysusChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1975
+    },
+    "DionysusChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Know that all of us are with you all the way, so cheers to your success!"
+        }
+      ],
+      "name": "DionysusChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1986
+    },
+    "DionysusChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Take it from me, there is never a bad time for a good feast!"
+        }
+      ],
+      "name": "DionysusChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1996
+    },
+    "DionysusChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Wait wait wait weren't you just here? It's all a blur for me!"
+        }
+      ],
+      "name": "DionysusChat19",
+      "otherRequirements": {
+        "PathTrue:PrevRun.RoomsEntered.P_Story01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2006
+    },
+    "DionysusChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "No use fighting the inevitable when you're thirsty, yeah?"
+        }
+      ],
+      "name": "DionysusChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2023
+    },
+    "DionysusChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Take a load off, relax, have a drink and all that! The night's still young!"
+        }
+      ],
+      "name": "DionysusChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2033
+    },
+    "DionysusChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well don't just stand there, eat! Drink! Whatever you fancy!"
+        }
+      ],
+      "name": "DionysusChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2043
+    },
+    "DionysusChat23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "The moon is shining, the water's warm, the Nectar's flowing, what is not to like?"
+        }
+      ],
+      "name": "DionysusChat23",
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "~=",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2053
+    },
+    "DionysusChat24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You keep on showing up but never stick around, quit teasing us, baby!"
+        }
+      ],
+      "name": "DionysusChat24",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2071
+    },
+    "DionysusChat25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey Mel baby, you're bringing down the mood a bit looking like that, you get me, yeah?"
+        }
+      ],
+      "name": "DionysusChat25",
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<",
+              "Value": 0.6
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2081
+    },
+    "DionysusChat26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh you missed a real good time last night... or might have been the night before..."
+        }
+      ],
+      "name": "DionysusChat26",
+      "otherRequirements": {
+        "PathFalse:PrevRun.RoomsEntered.P_Story01": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2098
+    },
+    "DionysusChat27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Everybody! It's the Zag man's sister, let's all give her a warm welcome, yeah?"
+        }
+      ],
+      "name": "DionysusChat27",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2114
+    },
+    "DionysusChat28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh you missed such a good time, baby, but more good times are always to be had!"
+        }
+      ],
+      "name": "DionysusChat28",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2130
+    },
+    "DionysusChat29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Just be cool, Mel baby, everybody's doing their thing so let's do ours here, yeah?"
+        }
+      ],
+      "name": "DionysusChat29",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2139
+    },
+    "DionysusChat30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Think I've got one of your favorites somewhere, is it maybe one of these?"
+        }
+      ],
+      "name": "DionysusChat30",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2148
+    },
+    "DionysusChat31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You want to be your best out there, so take a breather and recharge a bit, you know?"
+        }
+      ],
+      "name": "DionysusChat31",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2157
+    },
+    "DionysusChat32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Sure I can get you Boons and all but let me know if I can get you a massage!"
+        }
+      ],
+      "name": "DionysusChat32",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2166
+    },
+    "DionysusChat33": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Weren't you just here, baby, or have we been feasting all night long?"
+        }
+      ],
+      "name": "DionysusChat33",
+      "otherRequirements": {
+        "PathTrue:PrevRun.RoomsEntered.P_Story01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2175
+    },
+    "DionysusChat34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Remember, don't let on to anybody that we're here, they'll never understand!"
+        }
+      ],
+      "name": "DionysusChat34",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2192
+    },
+    "DionysusChat35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Do let me know if I can get you anything besides the usual stuff, yeah?"
+        }
+      ],
+      "name": "DionysusChat35",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2201
+    },
+    "DionysusChat36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whatever you're craving, we probably have it somewhere around here!"
+        }
+      ],
+      "name": "DionysusChat36",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2210
+    },
+    "DionysusChat37": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Don't look now but one of the Satyrs there, I think he fancies you!"
+        }
+      ],
+      "name": "DionysusChat37",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2219
+    },
+    "DionysusChat38": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "So cool of you stop by our exclusive get-together here, always a treat, baby!"
+        }
+      ],
+      "name": "DionysusChat38",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2228
+    },
+    "DionysusChat39": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "See all the Nymphs and Satyrs there? Hey I could make an introduction if you like!"
+        }
+      ],
+      "name": "DionysusChat39",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2237
+    },
+    "DionysusChat40": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whoa-hoho, either I had a few too many there... or I just haven't had enough!"
+        }
+      ],
+      "name": "DionysusChat40",
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2246
+    },
+    "DionysusFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Now who is this, what sort of Nymph do we have here? Not from the waters nor the woods, but wait wait wait! Those eyes! Zag, man, is that you?! You've changed! I like it!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Dionysus, I presume? I'm Melinoë, sister to Zagreus. I've come to the mountain's aid at the family's behest! But, what is the meaning of this festivity? Aren't you at war?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Ohhh, Mel, right, the others mentioned you. Erm, listen baby, I'm into lots of different things, but war just isn't one of them. What's the use, we gods can't die! But we can live!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your mountain is under siege. Chronos took my side of the family, and soon he may take yours!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "All the more reason to raise a cup while we still can, yeah? Heh. Though I get it! Not your thing. But why not have a little pick-me-up for the road ahead?"
+        }
+      ],
+      "name": "DionysusFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusFirstMeeting_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 358
+    },
+    "DionysusFirstMeeting_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Now who is this, what sort of Nymph do we have here? Not from the waters nor the woods, but wait wait wait! Those eyes! Zag, man, is that you?! You've changed! I like it!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Dionysus, I presume? I'm Melinoë, sister to Zagreus. I've been coming to the mountain's aid at the family's behest. Why all the festivity? The end of the war?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Ohhh, Mel, right, the others mentioned you. Erm, listen baby, I'm into lots of different things, but war just isn't one of them. What's the use, we gods can't die! But we can live!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I said the end of the war. Though I suppose your mountain technically still is under siege."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "All the more reason to raise a cup while we still can, yeah? Heh. Though I get it! Not your thing. But why not have a little pick-me-up for the road ahead?"
+        }
+      ],
+      "name": "DionysusFirstMeeting_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DionysusFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 402
+    },
+    "DionysusGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I... don't wish to be just some ungrateful guest. I know you have your customs here, and I have studied them. So, please! For all your cheer and generosity!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Whoa, this is Nectar, it's the real thing, we could use every drop that we can get! Then here is something for my most distinguished guests, of which I have decided you are one!"
+        }
+      ],
+      "name": "DionysusGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Dionysus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Dionysus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2262
+    },
+    "DionysusGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, nice, more Nectar always good to have around in case the wine runs out, not that it ever does or ever will! Now, what exactly do we toast to next?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "To emerging from peril unscathed? Or whatever you decide. I know maintaining high morale is paramount, especially with the mountain under siege."
+        }
+      ],
+      "name": "DionysusGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2289
+    },
+    "DionysusGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, sure, I'll take that Nectar off your hands! As this here's just the place to put it to its proper use. But don't you get all sad and sappy with me, you're at a feast, not at a wake!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I must admit, I'm unable to cast aside my fears and worries quite like you, Dionysus. It's little wonder mortals make so many offerings in your name... as now do I."
+        }
+      ],
+      "name": "DionysusGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2332
+    },
+    "DionysusGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Now that's the spirit, giving back to the community, I like it, yeah? After all, you know I can't make cheer and revelry for everyone all by myself, don't you? Though between us, I still can make an awful lot."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Such cheer and revelry that you've created, seemingly out of thin air... and during such a time. Well, if this truly is to be a never-ending feast, then you'll need plenty of supplies!"
+        }
+      ],
+      "name": "DionysusGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2357
+    },
+    "DionysusGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey this is great, there's not an entrance fee or anything, but tips are always welcome as our Nectar's running dangerously low. Got any more to spare?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, erm, looks to me as if you've all had quite enough for now. But if I happen on a surplus... I'll bring more."
+        }
+      ],
+      "name": "DionysusGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2380
+    },
+    "DionysusGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "All right, now that's exactly what we need, and ought to last till, what, tomorrow night at least? You've got my thanks and more, Mel baby! Who's your supplier, might I ask?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've no single Nectar source I rely on; I know a Broker who tends to have some, and at other times I find a bottle here and there. Has it truly been that difficult to find?"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh this stuff's not impossible to get most of the time, we just go through a lot is all! And now my guests are pining for Ambrosia more and more. Happen to have a box of that?"
+        }
+      ],
+      "name": "DionysusGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2413
+    },
+    "DionysusGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Here you are, then, Dionysus! One box of good bottles of Ambrosia. May this help keep things festive for your guests for quite some time... at least till next I happen to stop in..."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Mel, baby, I could kiss you, did you really bring all this for us?! This is exactly what we needed, I mean... how'd you even know? Can you read minds?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...You previously asked if I had access to Ambrosia, but... I cannot yet read minds most of the time. That is a very advanced skill."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Oh come on you can probably read everything that's going on in mine! And mostly you'll be reading gratitude. I thought you were a little stiff at first but you're all right!"
+        }
+      ],
+      "name": "DionysusGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {},
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift06",
+          "DionysusAboutAmbrosia02"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 2453
+    },
+    "DionysusLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Mel baby, you look like hell if you don't mind me saying, I mean what did you fall down the mountainside on your way here? Care to wash up?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Please pardon my disheveled state. I had to cross a doomed city of the risen dead, infiltrate an enemy armada, and climb halfway to the Palace of Zeus to get here."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "No excuses! Now either get out of that positively ripe dress you've got on and make like all my other guests, or move along! We enforce a strict code of attire."
+        }
+      ],
+      "name": "DionysusLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ],
+        "Path:GameState.RoomsEntered.P_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "P_Story01"
+            ],
+            "Value": 4
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 629
+    },
+    "DionysusPostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Been hearing wild tales from outside, can you back any of it up, baby? Something about the dawning of another age?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "A recent prophecy from the Three Fates. They have foreseen a distant time when mortals won't be as beholden to the gods... perhaps that shall be cause for a real feast."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "You're thinking maybe all the other gods will end up feasting here! Then we'll have better things to do than pushing mortalkind around. And it'll be a prophecy fulfilled!"
+        }
+      ],
+      "name": "DionysusPostEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          },
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "FatesEpilogue01"
+        ],
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1756
+    },
+    "DionysusPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think you should be able to come out now, as the greatest threats facing your mountain are gone for the most part. Well, granted there are vicious Satyrs out there still."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, easy with the Satyr talk, it really isn't cool! You think my Satyr friends here ever talk that way about us gods? And what do you mean, greatest threats?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Typhon, the Father of All Monsters; Chronos, the Titan of Time; the former utterly destroyed, the latter pacified. The war is over! Olympus is secure!"
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "The war is over?! Hear that everybody, the war is over! If that's not cause for celebration, I don't know what is, so grab a drink, take a dip, shake your hips, you know it, yeah!"
+        }
+      ],
+      "name": "DionysusPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1636
+    },
+    "DionysusPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Dionysus, won't you at least notify your family members that you're well? Some of them must be concerned for you."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "I'm sure I'll get around to it one of these nights, baby, but we're still celebrating your success, you won the war!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I did not personally win the war. We stood together as a family and prevailed. I merely did my part."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "And I am doing my part right now! The others know I'm going to be fine, I just need a little space what with all the excitement... a little space with all these fabulous guests!"
+        }
+      ],
+      "name": "DionysusPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1689
+    },
+    "DionysusPostTrueEnding03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Hey, wait wait wait, hold on, if you're not jesting that whatever war was on is over, then how come you keep showing up to get these battle-ready Boons from me?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Suffice it to say there are still battles to be won. But I'll spare you the details, for the sake of your sanity and mine."
+        },
+        {
+          "speaker": "NPC_Dionysus_01",
+          "text": "Well cheers I've not much sanity to spare! Sounds like you'll be around, you've got the special pass, so stop by anytime!"
+        }
+      ],
+      "name": "DionysusPostTrueEnding03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Dionysus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Dionysus.lua",
+      "sourceLine": 1725
+    }
+  }
+}

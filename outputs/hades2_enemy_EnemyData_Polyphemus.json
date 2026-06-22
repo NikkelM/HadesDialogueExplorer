@@ -1,0 +1,5257 @@
+{
+  "alternates": {
+    "PolyphemusAboutAltFight01": [
+      "PolyphemusAboutAltFight01_B"
+    ],
+    "PolyphemusAboutAltFight01_B": [
+      "PolyphemusAboutAltFight01"
+    ],
+    "PolyphemusAboutShrine02": [
+      "PolyphemusAboutShrine02_B"
+    ],
+    "PolyphemusAboutShrine02_B": [
+      "PolyphemusAboutShrine02"
+    ],
+    "PolyphemusAboutUnderworld01": [
+      "PolyphemusAboutUnderworld01B"
+    ],
+    "PolyphemusAboutUnderworld01B": [
+      "PolyphemusAboutUnderworld01"
+    ]
+  },
+  "dependents": {
+    "FatesEpilogue01": [
+      {
+        "name": "PolyphemusPostEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PolyphemusAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesFieldAboutPolyphemus01": [
+      {
+        "name": "PolyphemusAboutHeracles01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusLooseEndsQuest02": [
+      {
+        "name": "PolyphemusAboutOdysseusQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight01": [
+      {
+        "name": "PolyphemusAboutAltFight01_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PolyphemusAboutAltFight03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PolyphemusAboutMedea01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight01_B": [
+      {
+        "name": "PolyphemusAboutAltFight01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PolyphemusAboutAltFight03",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight03": [
+      {
+        "name": "PolyphemusAboutAltFight04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight04": [
+      {
+        "name": "PolyphemusAboutAltFight05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight05": [
+      {
+        "name": "PolyphemusAboutAltFight06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight06": [
+      {
+        "name": "PolyphemusAboutAltFight07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight07": [
+      {
+        "name": "PolyphemusAboutAltFight08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight08": [
+      {
+        "name": "PolyphemusAboutAltFight09",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight09": [
+      {
+        "name": "PolyphemusAboutAltFight10",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutChronos01": [
+      {
+        "name": "PolyphemusAboutChronos02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutDocks01": [
+      {
+        "name": "PolyphemusAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PolyphemusAboutEphyra01": [
+      {
+        "name": "PolyphemusAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PolyphemusAboutInsomnia01": [
+      {
+        "name": "PolyphemusAboutInsomnia02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutMedea01": [
+      {
+        "name": "PolyphemusAboutShrine02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutNobody01": [
+      {
+        "name": "PolyphemusAboutNobody02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PolyphemusAboutNobodyKeepsake01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutNobody02": [
+      {
+        "name": "PolyphemusAboutNobody03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutNobodyKeepsake01": [
+      {
+        "name": "PolyphemusAboutNobody03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutOdysseusQuest01": [
+      {
+        "name": "PolyphemusAboutNobody04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PolyphemusAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutPackagedBounties01": [
+      {
+        "name": "PolyphemusAboutShrine01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "PolyphemusAboutPoseidon01": [
+      {
+        "name": "PolyphemusAboutPoseidon02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutShrine01": [
+      {
+        "name": "PolyphemusAboutShrine02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PolyphemusAboutShrine02_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutShrine02": [
+      {
+        "name": "PolyphemusAboutShrine02_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutShrine02_B": [
+      {
+        "name": "PolyphemusAboutShrine02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutUnderworld01": [
+      {
+        "name": "PolyphemusAboutUnderworld01B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutUnderworld01B": [
+      {
+        "name": "PolyphemusAboutUnderworld01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusLostAgainstHim01": [
+      {
+        "name": "PolyphemusLostAgainstHim02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusLostAgainstHim02": [
+      {
+        "name": "PolyphemusAboutUnderworld01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PoseidonAboutPolyphemus01": [
+      {
+        "name": "PolyphemusAboutPoseidon01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 38,
+    "totalSpeakers": 1,
+    "totalTextlines": 132,
+    "unresolvedRefs": [
+      "FatesEpilogue01",
+      "HeraclesFieldAboutPolyphemus01",
+      "OdysseusLooseEndsQuest02",
+      "PoseidonAboutPolyphemus01"
+    ]
+  },
+  "textlines": {
+    "MedeaMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You bear my favored Aspect of Revaal! The Cyclops truly is in for it now."
+        }
+      ],
+      "name": "MedeaMiscStart01",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.LobCloseAttackAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "LobCloseAttackAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3403
+    },
+    "MedeaMiscStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Aspect of the Goddess Hel... I shall enjoy bearing witness to her power."
+        }
+      ],
+      "name": "MedeaMiscStart02",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.LobGunAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "LobGunAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3422
+    },
+    "MedeaMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Moon is full and getting in my eyes... on such an eve, I envy you, Lord Polyphemus."
+        }
+      ],
+      "name": "MedeaMiscStart03",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3441
+    },
+    "MedeaMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I was right in the middle of a new concoction, but I'd abandon anything for this."
+        }
+      ],
+      "name": "MedeaMiscStart04",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3462
+    },
+    "MedeaMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "There really is quite a distinct aroma here, between the corpses and the shepherd's flock..."
+        }
+      ],
+      "name": "MedeaMiscStart05",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3477
+    },
+    "MedeaMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My poisons are for mortal use, but also work on goddesses."
+        }
+      ],
+      "name": "MedeaMiscStart06",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3492
+    },
+    "MedeaMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Let's have another brush with death now, sorceress."
+        }
+      ],
+      "name": "MedeaMiscStart07",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3505
+    },
+    "MedeaMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Come demonstrate to us your knowledge of the necromantic arts."
+        }
+      ],
+      "name": "MedeaMiscStart08",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3518
+    },
+    "MedeaMiscStart09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate requires me to test your wherewithal, if you would be so kind?"
+        }
+      ],
+      "name": "MedeaMiscStart09",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3531
+    },
+    "MedeaMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I shall not hesitate to draw some of your blood here, sorceress."
+        }
+      ],
+      "name": "MedeaMiscStart10",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3546
+    },
+    "MedeaMiscStart11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "All my research has made me welcome this as a refreshing change of pace."
+        }
+      ],
+      "name": "MedeaMiscStart11",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3562
+    },
+    "MedeaMiscStart12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Perhaps I have already cursed you, sorceress! Let's see you break the spell."
+        }
+      ],
+      "name": "MedeaMiscStart12",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3575
+    },
+    "MedeaMiscStart13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Careful, lest I cut that tender throat of yours like that of a mewling babe."
+        }
+      ],
+      "name": "MedeaMiscStart13",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3590
+    },
+    "MedeaMiscStart14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Sacrifices must be made on nights such as this. Yours or mine ought to suffice."
+        }
+      ],
+      "name": "MedeaMiscStart14",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 16
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3603
+    },
+    "MedeaMiscStart15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "As blood is shortly to be drawn, rest easy knowing not one drop shall go to waste."
+        }
+      ],
+      "name": "MedeaMiscStart15",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3622
+    },
+    "MedeaMiscStart16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Know that your youth does not entitle you to mercy, sorceress."
+        }
+      ],
+      "name": "MedeaMiscStart16",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3635
+    },
+    "MedeaMiscStart17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Come, sorceress! Seek vengeance now for what we did to you before..."
+        }
+      ],
+      "name": "MedeaMiscStart17",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:PrevRun.BossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "PrevRun",
+              "BossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3648
+    },
+    "MedeaMiscStart18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I heed the summons of the will of Night. Indeed, I'm more than happy to oblige."
+        }
+      ],
+      "name": "MedeaMiscStart18",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3671
+    },
+    "MedeaMiscStart19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You spoke the Vow of Rivals, so as mortals sometimes say: You asked for this."
+        }
+      ],
+      "name": "MedeaMiscStart19",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3686
+    },
+    "MedeaMiscStart20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My craft can kill most anything in moments, but not you. It may prove quite unpleasant though."
+        }
+      ],
+      "name": "MedeaMiscStart20",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3701
+    },
+    "MedeaMiscStart21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How is it that you're so resistant to my curses, sorceress...?"
+        }
+      ],
+      "name": "MedeaMiscStart21",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3714
+    },
+    "MedeaMiscStart22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "...Well, Lord Polyphemus. Perhaps we might catch up some more some other eve."
+        }
+      ],
+      "name": "MedeaMiscStart22",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3729
+    },
+    "MedeaMiscStart23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "When you invoke the will of Night, you'd best not flinch."
+        }
+      ],
+      "name": "MedeaMiscStart23",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3745
+    },
+    "PolyphemusAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I thank you, sorceress! Infusing Fear into the night lets me conduct certain experiments I normally cannot. Though I'm also bound to test you here, as does Great Hecate below."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Test me! Lady Medea, what of the massive Cyclops already barring my path? He'll try to eat us both!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nah. This witch here's not exactly to my taste, and besides... we got ourselves a little arrangement now. Since I can't smell as easy what with all the bodies popping up."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Your fight is with the Cyclops still! My aim is merely to enact the will of Night in my own way. Do try your best to pretend I'm not even here, which may be difficult, admittedly..."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Story01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1119
+    },
+    "PolyphemusAboutAltFight01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I thank you, sorceress! Infusing Fear into the night lets me conduct certain experiments I normally cannot. Though I'm also bound to test you here, as does Great Hecate below."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea! I thought you were supposed to be conducting research. And what do you mean, test me? That massive Cyclops already barring my path will try to eat us both!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nah. This witch here's not exactly to my taste, and besides... we got ourselves a little arrangement now. Since I can't smell as easy what with all the bodies popping up."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Your fight is with the Cyclops still! My aim is merely to enact the will of Night in my own way. Do try your best to pretend I'm not even here, which may be difficult, admittedly..."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.N_Story01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1158
+    },
+    "PolyphemusAboutAltFight02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "...Are you quite serious, Cyclops? The bodies of the dead ought not to be consumed; all sorts of diseases and the like!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I'm telling you, they can be pretty good! Just got to age 'em right. But anyways we can pick up on that later. Got a warm one over there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, I cannot believe the two of you are getting on like this. The Testament of Night requires that you form alliances with those who stand in our way?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "We merely have a common interest, sorceress! The Cyclops yet stands in your way, so have at him! I'm here to make the night more foul at your own behest."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1198
+    },
+    "PolyphemusAboutAltFight03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Where'd that one witch go, and all the bodies, huh? And just as I was starting to like the new aroma around here..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You and all of us are subject to the will of Night, Cyclops. Lady Medea was drawn here for that reason alone. For my part, I find it easier not having to contend with you both."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You want things easy, then what are you even doing over here? You just passed through one of the hardest towns I know, and things are only gonna get rougher."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PolyphemusAboutAltFight01",
+          "PolyphemusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1225
+    },
+    "PolyphemusAboutAltFight04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You fixed it, meat! This witch is back, there's bodies everywhere! I've had it good. But you're about to get it bad."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, aren't you supposed to stand with me here rather than with him? Though, the will of Night ought never to be questioned, and this is all part of the Vows I spoke..."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Night brings terror, sorceress... a fear of the impossible and the unknown. I merely am fulfilling my responsibility unto that cause, so please! Address Lord Polyphemus here, not me."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hah! Lord Polyphemus. Think I like the sound of that! After all, lords tend to have big appetites. Now come on over and I'll add you to the corpses on the ground."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1250
+    },
+    "PolyphemusAboutAltFight05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Even with all the extra bodies here, I can always sniff you out. You're on my turf, and you'll address me as Lord Polyphemus from now on."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You can't be serious. You're not entitled to a greater status just because you asked! Or has Lady Medea poisoned your mind with newfound delusions?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Don't look at me, sorceress. I'm here by will of Night alone, sworn to a Vow of Silence... even though it's difficult to keep."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "She don't want to talk to you, she said, but you keep on tryin'. And you know what? I don't want to talk to you, either."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight04"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1278
+    },
+    "PolyphemusAboutAltFight06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "...I'm telling ya, it feels funny. Itches maybe, burns a little, I don't know. You sure it's gonna help me with my sleep?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well for mortals, it induces an eternal sleep, preceded by a pain beyond compare. I made no more assurances, and... come to think? This may not be the remedy for you..."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Least it hasn't messed up my sense of smell too much. 'Cause otherwise I wouldn't know we got ourselves somebody else who probably could use your remedies."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 39,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight05"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1304
+    },
+    "PolyphemusAboutAltFight07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff, Sniff> Eugh, my damn nose is all stuffed up. Think I'm allergic to something you got on you there, witch."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You're resistant to such toxins as could kill the strongest ox, Lord Polyphemus. Perhaps you've an aversion to the sorceress whom we must fight?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff> What, she's here? Ugh, I'm losin' it if I can't even smell 'er when she's right in front of me like this."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight06"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1327
+    },
+    "PolyphemusAboutAltFight08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff, Sniff> Well what am I supposed to do on nights like this? If I can't even smell her, I don't know where I'm supposed to kick."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Lord Polyphemus, your nasal passages must be utterly congested. The one to whom you're referring is right there! Next time, I shall have to unearth something you can use."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff> All right, sounds good, it's really not so bad. It's just if I can't smell my food, then I can't properly enjoy my meal."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 41,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight07"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1359
+    },
+    "PolyphemusAboutAltFight09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Inhale> Yeah, you know I think that might have done the trick! 'Cause I can smell every last corpse a couple fields away. You're all right, witch! What'd you even give me?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, it's just... I'd stashed away old herbal remedies my aunt had given me. Thought I would never find a use for them, but... didn't have the heart to throw them out."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Well that was awful generous of you, though now I'm in the mood for a quick bite. Or maybe a quick nap? You want to stick around?"
+        }
+      ],
+      "name": "PolyphemusAboutAltFight09",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 42,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight08"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1391
+    },
+    "PolyphemusAboutAltFight10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "...At any rate, Lord Polyphemus, we oughtn't even be speaking thus, for that is not my charge. But should you require any other remedies or toxins, I'm not far."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, you'd consort with Polyphemus there even without the Oath of the Unseen taking effect? I can't believe this! He's repeatedly attempted to devour me!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Watch with the attitude there, meat. The witch just said that she don't want to talk. You ever got somethin' to say here, you say it to me."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight10",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 43,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutAltFight09"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1422
+    },
+    "PolyphemusAboutAltFight11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Such appalling silence in these outskirts! I've grown too much accustomed to the bustle of the city, and its lingering scents of blood and decay."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, does Headmistress even know what you're doing here? She hadn't mentioned you'd be testing me."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate knows all. But now that you are Matron of the Oath, the consequences are yours to decide. And tonight, you spoke the Vows! Long have I been dying to oblige..."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight11",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1447
+    },
+    "PolyphemusAboutAltFight12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Am I to merely be a shadow in the dark...? I cannot help but intervene not just with actions here but words. Lord Polyphemus, talk to her, would you?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Sure, whatever you say there, witch. Let me go ahead and give this piece of meat I smell here a real talking-to."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight12",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 44,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1471
+    },
+    "PolyphemusAboutAltFight13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "If I might briefly break my Vow of Silence, you look simply terrible, sorceress! More dead than alive. And now the Cyclops and I have to push you closer to the brink."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I had some difficulties in Ephyra on the way, though thank you for noticing. I know the will of Night demands you show no mercy to me here; anything but."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I don't think the will of Night ought be your chief concern... Lord Polyphemus, he is positively salivating. The power of the scent of blood! Particularly yours."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight13",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1504
+    },
+    "PolyphemusAboutAltFight14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Those accursed curing pools there in the corners of the field... the Mandragora thrives in bloodied soil, but in doing so, it filters toxins out. How rather fortunate for you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your toxins are so potent, they immediately make me feel as though I'm burning up, even with those curing pools nearby."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What can I say? I try! You'll even find that, no matter how many times you take ill, you won't become resistant... let alone immune."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight14",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1535
+    },
+    "PolyphemusAboutAltFight15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My curses and concoctions are quite lethal normally. But you've been able to withstand them! I don't know whether to be impressed with you, or disappointed in myself."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I thought this was to be a test of my abilities and growth! It more appears to be a test of your latest experiments."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Must it merely be one or the other? Great Hecate has taught us always to be learning something more. That way, we shall grow as strong as the deadliest of poisons..."
+        }
+      ],
+      "name": "PolyphemusAboutAltFight15",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1561
+    },
+    "PolyphemusAboutAltFightBackOn01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well, sorceress! You're utterly committed to the Oath. As your fight remains with Lord Polyphemus, I'm to be mostly silent henceforth; though I have no wish to be rude."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you're here because of certain obligations, Lady Medea, so I certainly bear no ill will. Well not to you, at least, but to Lord Polyphemus, I am not so sure."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Now he's upset again. Please understand that I am not responsible for any actions that the Cyclops takes... I hardly am responsible for mine."
+        }
+      ],
+      "name": "PolyphemusAboutAltFightBackOn01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1634
+    },
+    "PolyphemusAboutAltFightBackOn02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, I quite like it here! As much as I've enjoyed experimenting in my little corner of the city, a bit of the outdoors is giving me some benefit, I think."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If only I could say the same for your various toxins, venoms, poisons, and such, Lady Medea. Doesn't the will of Night forbid the use of certain substances?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Is that so...? Perhaps I'm not entirely caught up on all the latest bylaws; but you have bigger problems here than a bit of sour blood. Oh, Cyclops...?"
+        }
+      ],
+      "name": "PolyphemusAboutAltFightBackOn02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1660
+    },
+    "PolyphemusAboutBarn01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You went through my old barn the other night while I was out. Coulda cased the joint but you didn't. Drank from my well and that was it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm no thief. And besides, your residence is filthy! You could stand to clean it up instead of facing me. Let me know if you need assistance, as I'll soon be passing through again."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nah, thanks. If it was tidy in there I couldn't sniff my way around. And also, you shut up! I don't go tellin' you the way you ought to live!"
+        }
+      ],
+      "name": "PolyphemusAboutBarn01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_PostBoss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_PostBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2307
+    },
+    "PolyphemusAboutBlindness01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Each time you know I'm here, no matter the softness of my approach or anything I do to mask my scent. Your senses are very keen."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Yeah, well, when you lose your eye... you got to learn to compensate. And I never saw too good to start with. Could never tell how far away things were."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It must have been extraordinarily difficult, nevertheless. And now you use these heightened abilities to tend your flock..."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Heightened abilities, I like that. Look, this world's a real ugly place. Difference between you and me is, I don't got to look at it no more. Now, hold still or start running... I don't even care."
+        }
+      ],
+      "name": "PolyphemusAboutBlindness01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutUnderworld01B",
+        "PolyphemusAboutMoving01"
+      ],
+      "narrativePriorityOrdinal": 48,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1841
+    },
+    "PolyphemusAboutBoulders01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You know I can always hear you storming through town all the way from this calm relaxing pasture. Even before my sheep get spooked."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, I figured the boulders raining down back there weren't landing near me by coincidence. You have excellent hearing, and rather good aim."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Aw, thanks. And you got excellent taste, I'm sure. Now hold still, so I can practice my rather good aim some more."
+        }
+      ],
+      "name": "PolyphemusAboutBoulders01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSheep01",
+        "PolyphemusAboutCyclopes01",
+        "PolyphemusAboutFlock01",
+        "PolyphemusAboutMeat01"
+      ],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1827
+    },
+    "PolyphemusAboutChronos01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hey what's your beef with Chronos, anyways? He wants to change stuff up a bit, so what? Life's hard up here. It could be easier."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It won't be. That town back there, as you call it, would have been bustling with mortals. Now it's a festering necropolis. All thanks to the Titan."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "My sheep, they're glad to be alive. No complaints. But individuals like you? You got too many ideals. Best I eat you, and be done."
+        }
+      ],
+      "name": "PolyphemusAboutChronos01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusPostEpilogue01",
+        "PolyphemusAboutEphyra01",
+        "PolyphemusAboutChronos02"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PolyphemusAboutDocks01",
+          "PolyphemusAboutEphyra01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2094
+    },
+    "PolyphemusAboutChronos02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "So what does Chronos offer you exactly for these ineffectual attempts to bar my passage?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Don't see how that's any of your business, meat. You're the one barging into my turf, making a fuss in my town. Falls on me to keep things nice and orderly."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Ephyra is not your town. Unless that was your arrangement with the Titan, though the city wasn't his to give away. In any case, ready to earn your nightly keep?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ohh you don't know the next thing about my arrangement. For one, I always take my pay up front. But with you here... I get a little bonus."
+        }
+      ],
+      "name": "PolyphemusAboutChronos02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusPostEpilogue01",
+        "PolyphemusAboutEphyra01",
+        "PolyphemusAboutChronos01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutChronos01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2119
+    },
+    "PolyphemusAboutCyclopes01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What's become of the other Cyclopes? Your kind once aided the gods against the Titans, crafting weapons of war and such. Yet you turn your back..."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "What, you think we all keep in touch just 'cause we got one eye at most? What they did and what happened to 'em don't matter to me. 'Specially not when I'm hungry..."
+        }
+      ],
+      "name": "PolyphemusAboutCyclopes01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSheep01",
+        "PolyphemusAboutBoulders01",
+        "PolyphemusAboutFlock01",
+        "PolyphemusAboutMeat01"
+      ],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2214
+    },
+    "PolyphemusAboutDiet01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I try to watch my diet. Three square meals, that's it. No snacks. You're making it real difficult for me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Where I am from, we fast under the waxing moon, and grow nutritious plants and funguses. I could bring you some next time if you would like?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "...I can't just save you for later. You'd try to run. They always do. Oh, I know! I'll just start with the legs!"
+        }
+      ],
+      "name": "PolyphemusAboutDiet01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 51,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1723
+    },
+    "PolyphemusAboutDocks01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I made those docks back there with my bare hands. Know some guys, they tally every skiff and trireme in the drink. We know where you're going."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So what if you do? You're just another servant of Chronos. The gods shall punish you when all this is over."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ehh, what do you know about it? They only care about their own! I'm just a joke to them. Am I a joke... to you?"
+        }
+      ],
+      "name": "PolyphemusAboutDocks01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutFriendship01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.O_Intro": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "O_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2283
+    },
+    "PolyphemusAboutDreamRuns01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Finally! Been so long since last I tried to eat ya that the sheep were starting to think you left us high and dry out here. Where'd you go anyways?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Would you believe it if I told you I've been delving deep into my dreams? You end up fast asleep a lot, so you must know a thing or two of dreaming at this point."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ah, yeah. Although my dreams are pretty simple nowadays. Eating a good meal, taking a good nap, stuff like that. Come to think, I'm living the dream right now, aren't I?"
+        }
+      ],
+      "name": "PolyphemusAboutDreamRuns01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:IsDreamRun": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "IsDreamRun"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2965
+    },
+    "PolyphemusAboutEphyra01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Are you the one responsible for that spectral barrier at the city gates? It has the markings of Chronos all over it, and you seem to be the extra backup in case it fails."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh that thing, yeah. I knew it'd never hold. But they keep fixing it anyways! Almost like somebody out there don't want you here..."
+        }
+      ],
+      "name": "PolyphemusAboutEphyra01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusPostEpilogue01",
+        "PolyphemusAboutChronos01",
+        "PolyphemusAboutChronos02"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2270
+    },
+    "PolyphemusAboutFlock01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Can't you see I'm busy over here? Personally, I can't see a thing. Do I complain? No. I just tend my flock."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your blasted sheep are some of the most high-strung animals I have ever encountered."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Sheep are fast. It's not an easy job. And it's even harder when somebody makes a ruckus in my meadow. So what choice do I got? Besides eatin' you?"
+        }
+      ],
+      "name": "PolyphemusAboutFlock01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSheep01",
+        "PolyphemusAboutCyclopes01",
+        "PolyphemusAboutBoulders01",
+        "PolyphemusAboutMeat01"
+      ],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1687
+    },
+    "PolyphemusAboutFriendship01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You coulda had my friendship. A couple of my sheep. But instead? You spit in my eye."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have done no such thing. I merely need access to the docks. Yet you insist on getting in my way."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Put yourself in my sandals. What would you do? You'd say: I don't like the way you're treating me. I am gonna eat you."
+        }
+      ],
+      "name": "PolyphemusAboutFriendship01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutDocks01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1701
+    },
+    "PolyphemusAboutHeracles01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "How is it you detain me every time, yet the mighty Heracles can rampage through the city all he likes and never has to deal with you? Or so he says."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "It's called a double standard, little sheep. Don't need my eye to know he's way bigger than you. You can knock me out for a nice short nap; he can knock me into next week. No thanks."
+        }
+      ],
+      "name": "PolyphemusAboutHeracles01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 50,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesFieldAboutPolyphemus01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2179
+    },
+    "PolyphemusAboutInsomnia01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Funny. Running into you again and again like this? It's made for some of the best sleep I got in years."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Is that so? Well it would be even easier for me to knock you out cold if you didn't fight back."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Eh, the fight's what does the trick. I don't give it my all, I don't get that deep relaxing slumber afterwards. Or the opportunity to get a hearty meal."
+        }
+      ],
+      "name": "PolyphemusAboutInsomnia01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 49,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 10
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2433
+    },
+    "PolyphemusAboutInsomnia02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know, if you've been having trouble sleeping, there's got to be a better solution than these repeated drubbings from me."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I tried a lot of stuff. Sleeping on a full stomach, sleeping on an empty stomach. Nothing worked, but this? This works just fine for now..."
+        }
+      ],
+      "name": "PolyphemusAboutInsomnia02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSleep01",
+        "PolyphemusAboutTimePassing01",
+        "PolyphemusAboutUnderworld01",
+        "PolyphemusAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutInsomnia01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2460
+    },
+    "PolyphemusAboutMeat01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "For all these nights we've fought, you don't even know my name, do you, Cyclops? I'm still nothing but a piece of meat."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hey, you said it, not me. Besides, it's not like I'm the one stomping in here, frightening my sheep... well no I guess I do some of the time, but still."
+        }
+      ],
+      "name": "PolyphemusAboutMeat01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSheep01",
+        "PolyphemusAboutCyclopes01",
+        "PolyphemusAboutBoulders01",
+        "PolyphemusAboutFlock01"
+      ],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2866
+    },
+    "PolyphemusAboutMedea01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Somethin' nasty in the air tonight. And it's not just you or the stink from town. Must be that witch up to no good. You palling up with her?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you know of Lady Medea then you must know she's not somebody to be crossed. She would not hesitate to curse my foes; including you."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Was that a threat? I think it was. You don't go saying stuff like that, not in this town. Your pal knows to stay where I can't smell her, unlike you."
+        }
+      ],
+      "name": "PolyphemusAboutMedea01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 45,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:CurrentRun.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2155
+    },
+    "PolyphemusAboutMelinoe01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I know your scent but don't got any real clue what you look like. Probably you're kind of like this shepherd's crook I got between my teeth. No meat on you at all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps if you knew my appearance you'd be less inclined to treat me as livestock. My hair is pale as wheat; I'm clad in saffron and silver; and I wield the Nocturnal Arms, forged in the depths of Chaos."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Mmm, wheat and saffron! Throw in some sheep's milk, pinch of sea-salt, little of this, little of that? Then throw it in the fire for a bit... and you'll have bread to die for."
+        }
+      ],
+      "name": "PolyphemusAboutMelinoe01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutThessaly01",
+        "PolyphemusAboutPast01"
+      ],
+      "narrativePriorityOrdinal": 46,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2196
+    },
+    "PolyphemusAboutMoving01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Living here, it has its ups and downs. Lately for instance I don't get a lot of peace, though I sleep like a rock. I don't know, maybe I ought to move..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wholeheartedly support that choice. Aren't you more accustomed to island living anyhow? This city life, even on the outskirts here... the pace is far too quick."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I know what you want me to do. Although I miss the island life now that you bring it up. Still got unwanted company sometimes but not so much as now."
+        }
+      ],
+      "name": "PolyphemusAboutMoving01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutBlindness01",
+        "PolyphemusAboutUnderworld01B"
+      ],
+      "narrativePriorityOrdinal": 48,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 8
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1764
+    },
+    "PolyphemusAboutName01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Who told you you could call me by my name, eh? I never introduced myself to you. What, you gonna start calling me Poly next like I'm your pal?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I can't imagine you have many pals with how you go on trying to eat anything that moves. Though, we could still be friends! Put all that trying-to-eat-me behind us?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nah! Got all the pals I need. The sheep back there, dead below the dirt down here. You know what I do need, though? Yeah I think you do."
+        }
+      ],
+      "name": "PolyphemusAboutName01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:CurrentRun.SpeechRecord": [
+          {
+            "HasAny": [
+              "/VO/MelinoeField_0529",
+              "/VO/MelinoeField_0530"
+            ],
+            "Path": [
+              "CurrentRun",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1743
+    },
+    "PolyphemusAboutNobody01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You know who's disrespected me like this? Nobody. Nobody took my sheep. Took my eye."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, well, sometimes we've no one to blame but ourselves."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nobody's gonna pay for all that someday. But you're gonna pay right now. Heh. Metaphorically, I mean! I'm not gonna take your money. Just gonna eat ya... bones and all."
+        }
+      ],
+      "name": "PolyphemusAboutNobody01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutNobody02",
+        "PolyphemusAboutNobody03"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 2
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1872
+    },
+    "PolyphemusAboutNobody02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You said nobody took your eye before, as well as your sheep. How did you lose them, then?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nobody played a dirty trick on me, is how. Bunch of sailors thought they could get away with my sheep, so I ate a couple of 'em. The sailors, that is! But Nobody got me when I wasn't looking. Then he got away..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And you've sought vengeance on this Nobody ever since?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh, not me personally! Someday, somebody's gonna get Nobody for what he did. Though, I am gonna get you right here and now."
+        }
+      ],
+      "name": "PolyphemusAboutNobody02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutNobody01",
+        "PolyphemusAboutNobody03"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutNobody01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1900
+    },
+    "PolyphemusAboutNobody03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "No wonder you and Nobody are pals. He and his rats are the only ones that ever got away from me, other than you. That worthless good-for-nothing put you up to this?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "His name is Odysseus! He's a great hero and tactician, though you needn't worry about slaying him, for he's long dead already. Not your problem anymore."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Don't matter if he's dead, I'll eat him anyways. And don't care what he calls himself. He's always gonna be a Nobody to me. Now how 'bout I send him a message?"
+        }
+      ],
+      "name": "PolyphemusAboutNobody03",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutNobody01",
+        "PolyphemusAboutNobody02"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutNobody02",
+          "PolyphemusAboutNobodyKeepsake01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1924
+    },
+    "PolyphemusAboutNobody04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nobody's not with you this time, is he? Good at running away, that guy. Knew I'd seen the last of him, found out I smelled the last of him, and maybe now I heard the last of him too."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't think Odysseus plans to make a habit of visiting, no. Which means you won't ever get to hear what happened when he first escaped from you. It's quite a tale!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Think I can live with that. Nobody's a dirty sneak... who's gonna want a story about a guy like him?"
+        }
+      ],
+      "name": "PolyphemusAboutNobody04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutOdysseusQuest01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1944
+    },
+    "PolyphemusAboutNobodyKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff, Sniff> I never forget a scent, you know. And you got somethin' that's familiar to me from way back when. I know those Bones. Nobody had 'em before you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You must mean these Knuckle Bones... if they've ever been a source of ill fortune for you before, then perhaps you know what's coming."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nobody's your pal, is that what you expect me to believe? Then first I'm gonna crush your bones, and then I'll eat 'em. And those Knuckle Bones, too."
+        }
+      ],
+      "name": "PolyphemusAboutNobodyKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.BossPreDamageKeepsake": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "BossPreDamageKeepsake"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutNobody01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1965
+    },
+    "PolyphemusAboutOdysseusQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hey meat, smells to me like you brought those Knuckle Bones again. Nobody really gave you those, huh?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Ask him yourself, Cyclops. Nobody wants to speak with you. Heed now my voice, Odysseus; one whom you sought is here!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nobody... can't smell ya for nothing but that's your voice, all right. Why not come a little closer so I can hear ya better?"
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "I'm afraid you won't be able to consume me in my current state, Cyclops, because I'm long since dead. A mere projection of a Shade, but I did wish to have a word!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ah, ya really are already dead. Always thought I'd kill ya myself. But ya got the last laugh again."
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "Not here to laugh, but to ask you a question. Back when you imprisoned me and my men, killing several of us, you ended up losing your one eye whilst we escaped... was it worth it?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "...I don't remember most meals. Think that's pretty normal. But I remember your crew... tough meat, aged under the sun and all. But worth my eye? Nah, wasn't the best trade."
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "Nor was it good for me, or them. Well anyhow! It seems we each gave one another lasting, bitter scars. Though mine is merely psychological. I'll leave you to the Princess now, you murderous bastard."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Shove off, pal. I didn't ever want to see you again anyways."
+        }
+      ],
+      "name": "PolyphemusAboutOdysseusQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "OdysseusLooseEndsQuest02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1991
+    },
+    "PolyphemusAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "So how is it over there, across the drink? Heard it's been snowing. Sounds like a real rotten place to live."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What, you mean Mount Olympus? The gods themselves quite like it, enough to want to fiercely defend it from the Titan you decided to support. But, yes... it's rather cold."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh, I could never settle in a place like that. I like the temperature same way I like my meat, nice and hot. 'Course I can also eat it raw. Can't be too picky, and all that."
+        }
+      ],
+      "name": "PolyphemusAboutOlympus01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPrometheus01",
+        "PolyphemusAboutWar01"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.P_Intro": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2347
+    },
+    "PolyphemusAboutPackagedBounties01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I know when somethin's off, and somethin's off. What are you up to, meat? Other than getting caught by me like every other time you tried to sneak through here."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh I'm not sneaking; in fact I'm here for you this time, Cyclops. The Origin of All Existence is interested to see if I have what it takes to lay you to rest."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Origin of All Existence...? You took a job to take me out, that's what I'm hearing from you? Well, you wouldn't be the first to try it. Now let me demonstrate what happened to the rest."
+        }
+      ],
+      "name": "PolyphemusAboutPackagedBounties01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutShrine01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsNone": [
+              "PackageBountyRandomUnderworld_Difficulty1",
+              "PackageBountyRandomUnderworld_Difficulty2",
+              "PackageBountyRandomSurface_Difficulty1",
+              "PackageBountyRandomSurface_Difficulty2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2664
+    },
+    "PolyphemusAboutPackagedBounties02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh hey! The Origin of All Existence wanted me to let you know, you're just not cuttin' it. And the whole deal is off. I also get to eat you now."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I find it exceedingly difficult to believe that Primordial Chaos would have been in contact with you about such matters. Easier to believe this is all part of the current Trial."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "If this is all part of some Trial, that makes me the judge. And I hereby declare you're dinner. That is unless you or your pal Primordial Chaos plan to do somethin' about it."
+        }
+      ],
+      "name": "PolyphemusAboutPackagedBounties02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutShrine02_B"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2681
+    },
+    "PolyphemusAboutPast01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Just wanted to be left alone. Move to the countryside, quiet life of the shepherd and all. Only for you to drag me out of retirement."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've done no such thing. I'm going to the docks. You're choosing to try and stop me, when you could be tending to your sheep instead."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh I'll tend to them all right. But in order to do that, I got to tend to the likes of you first. Just like I used to in the good old days."
+        }
+      ],
+      "name": "PolyphemusAboutPast01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutThessaly01",
+        "PolyphemusAboutMelinoe01"
+      ],
+      "narrativePriorityOrdinal": 46,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1792
+    },
+    "PolyphemusAboutPoseidon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're very obstinate for a peaceful shepherd. Did Poseidon do something to offend you at some point? Is that what this is about?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh, I don't get offended... I get even. And you don't get to ask questions no more... you get eaten."
+        }
+      ],
+      "name": "PolyphemusAboutPoseidon01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSleep01",
+        "PolyphemusAboutTimePassing01",
+        "PolyphemusAboutUnderworld01",
+        "PolyphemusAboutInsomnia02"
+      ],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PoseidonAboutPolyphemus01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2059
+    },
+    "PolyphemusAboutPoseidon02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Last I'll say about Poseidon, I swear. He's my uncle, you know. For what it's worth... I'm sorry if he truly led you to believe you were his son."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Yeah, well, I like to play up the family resemblance just in case. Though I'm glad he's not my pop neither. Otherwise I'd be about to eat my own cousin, and that'd be real weird."
+        }
+      ],
+      "name": "PolyphemusAboutPoseidon02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusLowHealth01",
+        "PolyphemusLowHealth02"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusAboutPoseidon01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2076
+    },
+    "PolyphemusAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "The dead... they talk sometimes, or try. Nothin' better to do around here. Know what they're going on about? I couldn't make it out at first, but sounds an awful lot like... Prometheus."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Titan of Foresight, and one of your allies, in case you've not met; for apparently you serve the same master. What have the wretched dead to say about the likes of him?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Mostly just moans and groans. Might be they're hungry like me! 'Cause if Prometheus really made off with fire from the gods like I'm hearin'... he probably knows how to cook."
+        }
+      ],
+      "name": "PolyphemusAboutPrometheus01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutOlympus01",
+        "PolyphemusAboutWar01"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.P_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "P_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2371
+    },
+    "PolyphemusAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Been finding if I talk too much, it messes with my sleep. Maybe we ought to cut with the chat and go straight to it. But I don't mean to be rude, so you... got any last words, meat?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Certainly, my last words are: You're never going to eat me, and you're never going to stop me, but you're welcome to keep trying, and cheers for all the Wool!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Wait, hold on... so you're the one who's been stealing all my Wool this whole time? Aw, now that does it..."
+        }
+      ],
+      "name": "PolyphemusAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 53,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "PolyphemusAboutOdysseusQuest01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2992
+    },
+    "PolyphemusAboutSheep01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you care so much about your sheep, why keep putting them in harm's way? Not to mention eating them. Let them leave here, now."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "'Scuse me? I didn't ask you for your shepherding advice, and besides... these sheep got nowhere else to be. And we're the dinner entertainment."
+        }
+      ],
+      "name": "PolyphemusAboutSheep01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutCyclopes01",
+        "PolyphemusAboutBoulders01",
+        "PolyphemusAboutFlock01",
+        "PolyphemusAboutMeat01"
+      ],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1858
+    },
+    "PolyphemusAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hairs on the back of my neck all standin' up, and not 'cause of you. Or maybe it is, but... it's like I got a mark on me. Not had this feeling in a while."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Nothing personal, Cyclops. But the Testament of Night requires your defeat. You needn't concern yourself with the inner workings of it, so how about we just fight."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Testament of what? I didn't get a damn word you said at the beginnin' there, but you got me on board at just fight!"
+        }
+      ],
+      "name": "PolyphemusAboutShrine01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPackagedBounties01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        },
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyAxeHeat1NBoss",
+              "BountyDaggerHeat2NBoss",
+              "BountyStaffHeat4NBoss",
+              "BountySuitHeat8NBoss",
+              "BountyLobHeat12NBoss",
+              "BountyTorchHeat16NBoss",
+              "BountyShrineStaffNBoss",
+              "BountyShrineDaggerNBoss",
+              "BountyShrineTorchNBoss",
+              "BountyShrineAxeNBoss",
+              "BountyShrineLobNBoss",
+              "BountyShrineSuitNBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "PolyphemusAboutPackagedBounties01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2700
+    },
+    "PolyphemusAboutShrine02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "So you can mess with how things work at night? Between the feeling in my gut and the nonsense you've been talkin', I can tell you've been up to no good. You some kind of witch?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea isn't the only one to practice around here. Since you're finally wising up to our true strength, know that you violate the will of Night herself by standing in my way."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "See, there you go again with all the fancy talk. But hey, I could go for a fancy meal just as soon as a tough piece of meat! Maybe you're both."
+        }
+      ],
+      "name": "PolyphemusAboutShrine02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ActiveShrineBounty": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutShrine02_B"
+        ],
+        "RequiredTextLines": [
+          "PolyphemusAboutShrine01",
+          "PolyphemusAboutMedea01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2740
+    },
+    "PolyphemusAboutShrine02_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "So you can mess with how things work at night? Between the feeling in my gut and the nonsense you've been talkin', I can tell you've been up to no good. You some kind of witch?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Since you're finally wising up to our true strength, know that you violate the will of Night herself by standing in my way."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "See, there you go again with all the fancy talk. But hey, I could go for a fancy meal just as soon as a tough piece of meat! Maybe you're both."
+        }
+      ],
+      "name": "PolyphemusAboutShrine02_B",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPackagedBounties02"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ActiveShrineBounty": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutShrine02"
+        ],
+        "RequiredTextLines": [
+          "PolyphemusAboutShrine01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2766
+    },
+    "PolyphemusAboutSleep01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Not heard you show up in a while! Glad you're back. Been gone so long it's really been eatin' into my sleep schedule."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "For a moment there, I thought you were genuinely pleased at my return. But you just want me to render you unconscious."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Yeah. That or stand still long enough for me to eat you up. But you don't seem interested in that, so I'll just go for the unconscious thing. I'm easy to please."
+        }
+      ],
+      "name": "PolyphemusAboutSleep01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutTimePassing01",
+        "PolyphemusAboutUnderworld01",
+        "PolyphemusAboutPoseidon01",
+        "PolyphemusAboutInsomnia02"
+      ],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "N_Boss01",
+                "N_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "Path:BiomesReached.N": [
+          {
+            "Comparison": "==",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "BiomesReached",
+              "N"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ],
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2883
+    },
+    "PolyphemusAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Where do you think you're goin', anyways? No ship that sails from the docks back there is gonna take the likes of you. Come to think of it... lately, we've had no ships at all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The deathless fleet of Chronos is still out there in the waters of the Rift. Apparently when one ship sinks, another rises to replace it from the depths, drowned sailors for its crew..."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You're pulling my leg. The dead can sail nowadays? I thought they were no good for anything but food. Might have to teach 'em to take on some of my household chores..."
+        }
+      ],
+      "name": "PolyphemusAboutThessaly01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPast01",
+        "PolyphemusAboutMelinoe01"
+      ],
+      "narrativePriorityOrdinal": 46,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2333
+    },
+    "PolyphemusAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Hey, where you been? My sheep started getting all restless here these past couple of nights. Guess they've gotten used to having you around."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's very considerate of them, though I had other business to take care of, else I would have paid them a visit. Could you arrange for me to meet them but not you?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Nah. My sheep and I are what you call a package deal. The kind of deal I figured you wouldn't pass up for too long."
+        }
+      ],
+      "name": "PolyphemusAboutTimePassing01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSleep01",
+        "PolyphemusAboutUnderworld01",
+        "PolyphemusAboutPoseidon01",
+        "PolyphemusAboutInsomnia02"
+      ],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 10
+          }
+        ],
+        "Path:RoomsEntered": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 5,
+            "TableValuesToCount": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2933
+    },
+    "PolyphemusAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I remember back when first we met, you seemed enormous... much bigger than most any other foe I'd ever faced. But now, you're hardly any match for me."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Aw, thanks. And I remember back when first we met, my sleeping schedule was completely out of whack! But it's all better now. And I've still got my figure! Enormous, was it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's all a matter of perspective, as I've learned. For instance, you're quite minuscule in comparison to the Father of All Monsters, Typhon. He's properly enormous."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I'll have to take your word for it. Anyways just how big can he be? No more than three square meals' worth if I had to guess. Been too long since I had some monster meat..."
+        }
+      ],
+      "name": "PolyphemusAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Value": 8
+          },
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Value": 4
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2394
+    },
+    "PolyphemusAboutUnderworld01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You some kind of deathless goddess of the Underworld, you said? Seems you'd be better off staying on your side of the fence."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm here to pay my relatives a visit. You just keep getting in the way. Almost as though violence better suits you than the shepherd's life."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Why, you're a real thinker for a slice of meat! Just 'cause I'm retired don't mean I don't want to work up an appetite no more, does it now?"
+        }
+      ],
+      "name": "PolyphemusAboutUnderworld01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutSleep01",
+        "PolyphemusAboutTimePassing01",
+        "PolyphemusAboutPoseidon01",
+        "PolyphemusAboutInsomnia02"
+      ],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutUnderworld01B"
+        ],
+        "RequiredTextLines": [
+          "PolyphemusLostAgainstHim02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2226
+    },
+    "PolyphemusAboutUnderworld01B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff> You stink like the dead. But you're not from the town. You're from further below. You'd be better off staying on your side of the fence."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm here to pay my relatives a visit. You just keep getting in the way. Almost as though violence better suits you than the shepherd's life."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Why, you're a real thinker for a slice of meat! Just 'cause I'm retired don't mean I don't want to work up an appetite no more, does it now?"
+        }
+      ],
+      "name": "PolyphemusAboutUnderworld01B",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutBlindness01",
+        "PolyphemusAboutMoving01"
+      ],
+      "narrativePriorityOrdinal": 48,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PolyphemusAboutUnderworld01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2249
+    },
+    "PolyphemusAboutWar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sigh> Look, I'm just a humble shepherd trying to live in peace. But I gotta protect my own, you understand. Plus, I gotta eat."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You call this trying to live in peace?! Perhaps you shouldn't be interfering with my efforts to put an end to this war raging all around us!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "The dead don't bother me. It's the living always been a pain in my behind. Good thing the living taste better than the dead."
+        }
+      ],
+      "name": "PolyphemusAboutWar01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPrometheus01",
+        "PolyphemusAboutOlympus01"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1806
+    },
+    "PolyphemusAltFightAboutMedea01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You know it's nice here with this witch around. I'm normally not big on talk, more about the olfactory, and the auditory, and all that. So I might let her handle the conversatin' for a bit..."
+        }
+      ],
+      "name": "PolyphemusAltFightAboutMedea01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1490
+    },
+    "PolyphemusAltFightMetMedeaEarlier01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well here we are already, sorceress! Mere moments prior we were speaking amicably by my cauldron, and yet now, it's come to this."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you're to confront me here because of the Oath we took, Lady Medea, but the Cyclops hasn't had as good of an excuse..."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Come, you've trespassed on his property, for one, and he is famished, for another! Look at him, he's at a loss for words. Lord Polyphemus, you must say something!"
+        }
+      ],
+      "name": "PolyphemusAltFightMetMedeaEarlier01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1596
+    },
+    "PolyphemusBarelyLostAgainstHim01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Almost got me last time, but not quite. Come to finish the job? You wouldn't be the first to try. But I'm still here, and you don't see anybody else around, do ya?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Finish what job? You're not my mark. I'd just as soon slip past you and be on my way, except your blasted sense of smell and hearing are too good."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Why, thanks. And you know how I keep 'em top-notch like this, don't ya? When you got gifts like these, you gotta put 'em to good use."
+        }
+      ],
+      "name": "PolyphemusBarelyLostAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0.0
+          },
+          {
+            "Comparison": "<",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0.25
+          }
+        ],
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2585
+    },
+    "PolyphemusFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_Unnamed_01",
+          "text": "You frightened my sheep. That's a real no-no in this town."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I apologize for my transgression, Cyclops. What do I owe you for the inconvenience? I can pay."
+        },
+        {
+          "speaker": "NPC_Cyclops_Unnamed_01",
+          "text": "Oh, you'll pay. The punishment's gettin' eaten alive. By me. Sorry, I don't make the rules."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That seems unusually strict. There's no use following a senseless code of law."
+        },
+        {
+          "speaker": "NPC_Cyclops_Unnamed_01",
+          "text": "Hah, only kiddin'! I do make the rules. And I get real tired only eatin' sheep."
+        }
+      ],
+      "name": "PolyphemusFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 1090
+    },
+    "PolyphemusLostAgainstHim01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Wow! Just when I thought I had you last time, you gave me the slip. Didn't think I'd get another shot."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You'll soon have many more such shots. But you're going to fail every time, I promise you."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "How 'bout you promise me the meat on your bones. Though I get the feeling you don't got much to offer."
+        }
+      ],
+      "name": "PolyphemusLostAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2538
+    },
+    "PolyphemusLostAgainstHim02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Don't like playing with my food. Like it even less when my food plays with me. I'm on to that disappearing act of yours."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I am a deathless goddess of the Underworld; the shadows will always take me before you will. Yet you would fight me endlessly anyway?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh yeah! Everybody slips up once in a while. Even you. And when you do... we'll find out just how deathless you are."
+        }
+      ],
+      "name": "PolyphemusLostAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PolyphemusLostAgainstHim01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2560
+    },
+    "PolyphemusLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff> I smell blood. I was just getting ready to prepare my next meal... but the town welcoming committee must have prepped you already."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The welcoming committee, as you call it, are servants of Chronos... and shall suffer for their arrogance. You would cast your lot with them?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You know, I used to have a little trouble eating food that looked back at me, or talked back at me. But I don't got that problem no more."
+        }
+      ],
+      "name": "PolyphemusLowHealth01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPoseidon02",
+        "PolyphemusLowHealth02"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2483
+    },
+    "PolyphemusLowHealth02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ooh, I can tell the town welcoming committee must have done a number on you already. Softened you up good. All the better for me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The city's filled with the unburied dead. I can slay them but they merely rise again; they're very troublesome. The same as you."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Now don't you get testy. This is my pasture not yours. And every little sheep around here answers to me."
+        }
+      ],
+      "name": "PolyphemusLowHealth02",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutPoseidon02",
+        "PolyphemusLowHealth01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2510
+    },
+    "PolyphemusMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Stepped out of line again, little sheep. You know what happens next."
+        }
+      ],
+      "name": "PolyphemusMiscStart01",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3017
+    },
+    "PolyphemusMiscStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "<Sniff> Somethin' stinks... oh I know what it is. It's you."
+        }
+      ],
+      "name": "PolyphemusMiscStart02",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3025
+    },
+    "PolyphemusMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "No sneaking past my sheep. No sneaking past me, neither."
+        }
+      ],
+      "name": "PolyphemusMiscStart03",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3033
+    },
+    "PolyphemusMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "One of these nights... I'm gonna catch you. And I'm gonna eat you."
+        }
+      ],
+      "name": "PolyphemusMiscStart04",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3041
+    },
+    "PolyphemusMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "It's a little early for my dinnertime, but hey! I can be flexible."
+        }
+      ],
+      "name": "PolyphemusMiscStart05",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3049
+    },
+    "PolyphemusMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Phew! Know I could smell you from a league away?"
+        }
+      ],
+      "name": "PolyphemusMiscStart06",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3057
+    },
+    "PolyphemusMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You just don't know what's good for you, do you?"
+        }
+      ],
+      "name": "PolyphemusMiscStart07",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3065
+    },
+    "PolyphemusMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You want some more of this, that's fine by me. Oh, I got plenty."
+        }
+      ],
+      "name": "PolyphemusMiscStart08",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3073
+    },
+    "PolyphemusMiscStart09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Don't normally like eating my food raw. But then, I like to try new stuff."
+        }
+      ],
+      "name": "PolyphemusMiscStart09",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3081
+    },
+    "PolyphemusMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Shh! Think I heard somethin'. You hear it, right? The dinner bell..."
+        }
+      ],
+      "name": "PolyphemusMiscStart10",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3089
+    },
+    "PolyphemusMiscStart11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Well, what do you know? It's dinnertime already..."
+        }
+      ],
+      "name": "PolyphemusMiscStart11",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3098
+    },
+    "PolyphemusMiscStart12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "All this shepherding all day works up a real appetite..."
+        }
+      ],
+      "name": "PolyphemusMiscStart12",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3106
+    },
+    "PolyphemusMiscStart13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Welcome back to the flock, little sheep. Now, come 'ere..."
+        }
+      ],
+      "name": "PolyphemusMiscStart13",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3114
+    },
+    "PolyphemusMiscStart14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Got myself a good night's rest, but not enough to eat..."
+        }
+      ],
+      "name": "PolyphemusMiscStart14",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 1,
+              "Names": [
+                "N_Boss01",
+                "N_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3122
+    },
+    "PolyphemusMiscStart15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You want to get to those docks, I want to eat you. Just the way it is."
+        }
+      ],
+      "name": "PolyphemusMiscStart15",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3137
+    },
+    "PolyphemusMiscStart16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Do remember to watch for falling rocks in this town."
+        }
+      ],
+      "name": "PolyphemusMiscStart16",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3145
+    },
+    "PolyphemusMiscStart17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Here comes some dead meat, fresh from out of town..."
+        }
+      ],
+      "name": "PolyphemusMiscStart17",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3153
+    },
+    "PolyphemusMiscStart18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I really got to do somethin' about that wall you keep on getting through..."
+        }
+      ],
+      "name": "PolyphemusMiscStart18",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3161
+    },
+    "PolyphemusMiscStart19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You're back for some more shepherding, huh, little sheep?"
+        }
+      ],
+      "name": "PolyphemusMiscStart19",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3169
+    },
+    "PolyphemusMiscStart20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "No one gets in this town, no one gets out; those are the rules."
+        }
+      ],
+      "name": "PolyphemusMiscStart20",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3177
+    },
+    "PolyphemusMiscStart21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Got to hand it to ya. I've been sleeping like a baby lately over here."
+        }
+      ],
+      "name": "PolyphemusMiscStart21",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3185
+    },
+    "PolyphemusMiscStart22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "After a hard day's shepherding, I could go for a good knock-out about now."
+        }
+      ],
+      "name": "PolyphemusMiscStart22",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3201
+    },
+    "PolyphemusMiscStart23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Even if I can't eat you, least I'll get some decent sleep here in a bit."
+        }
+      ],
+      "name": "PolyphemusMiscStart23",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "N_Boss01",
+                "N_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3217
+    },
+    "PolyphemusMiscStart24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Guess it's almost my bedtime. But first, a little bit of exercise..."
+        }
+      ],
+      "name": "PolyphemusMiscStart24",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "N_Boss01",
+                "N_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3235
+    },
+    "PolyphemusMiscStart25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Kick you right into the Moon right now if I could see the thing."
+        }
+      ],
+      "name": "PolyphemusMiscStart25",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3253
+    },
+    "PolyphemusMiscStart26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Really want to get stomped on some more, I'm good for it."
+        }
+      ],
+      "name": "PolyphemusMiscStart26",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3267
+    },
+    "PolyphemusMiscStart27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You want to end up like my sheep, you keep this up."
+        }
+      ],
+      "name": "PolyphemusMiscStart27",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3279
+    },
+    "PolyphemusMiscStart28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Ohh, you just wait'll I get these hands on you."
+        }
+      ],
+      "name": "PolyphemusMiscStart28",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3291
+    },
+    "PolyphemusMiscStart29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Little early for my dinnertime, but then, I shouldn't eat so late."
+        }
+      ],
+      "name": "PolyphemusMiscStart29",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3303
+    },
+    "PolyphemusMiscStart30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "You step onto my turf, you pay the price, that's just the rules."
+        }
+      ],
+      "name": "PolyphemusMiscStart30",
+      "otherRequirements": {},
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3315
+    },
+    "PolyphemusMiscStart31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Last time you knocked me out so fast, got the best sleep I had in a while!"
+        }
+      ],
+      "name": "PolyphemusMiscStart31",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossPolyphemus01.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus01",
+                  "ClearTime"
+                ],
+                "Value": 20.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossPolyphemus01": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossPolyphemus02.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus02",
+                  "ClearTime"
+                ],
+                "Value": 30.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossPolyphemus02": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus02"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3327
+    },
+    "PolyphemusMiscStart32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Didn't even get a piece of you last time, but you can't get away forever..."
+        }
+      ],
+      "name": "PolyphemusMiscStart32",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathFalse:PrevRun.EncounterClearStats.BossPolyphemus01.TookDamage": [
+              {
+                "PathFalse": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus01",
+                  "TookDamage"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossPolyphemus01": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathFalse:PrevRun.EncounterClearStats.BossPolyphemus02.TookDamage": [
+              {
+                "PathFalse": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus02",
+                  "TookDamage"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossPolyphemus02": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossPolyphemus02"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 3366
+    },
+    "PolyphemusPostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "This isn't going to last, you know, Cyclops. At some point, the City of Ephyra shall be rebuilt. Its streets will be teeming with mortals, the docks bustling with seafarers... rather than this."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "What are you, an oracle or somethin'? If they try and put the town back together, great. More meat for me whenever I want! You'll have to do for now."
+        }
+      ],
+      "name": "PolyphemusPostEpilogue01",
+      "narrativePriorityClusterMembers": [
+        "PolyphemusAboutEphyra01",
+        "PolyphemusAboutChronos01",
+        "PolyphemusAboutChronos02"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2917
+    },
+    "PolyphemusPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your service to the Titan Chronos is complete, Cyclops! His war against Olympus is ended if you've not already heard. I hold no enmity toward you. Be on your way!"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I was just wondering how come I haven't gotten paid. Thought maybe my shepherding hasn't been up to snuff."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Chronos was compensating you for tending sheep? I thought you were supposed to be guarding the city gates."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "What do you even know about it. You really think I'm gonna leave my flock now, after all we've been through? And I can always earn my meal ticket some other way."
+        }
+      ],
+      "name": "PolyphemusPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2793
+    },
+    "PolyphemusPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I see you decided not to act on my prior recommendation, for the good of your flock, whose sheep you often eat. For how much longer do you plan to bar me from the Rift?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Thinking it might be a while. Got my flock, got my barn, been sleeping better lately... and having to uproot? Settle someplace else? Packing, and unpacking, I don't want any of that."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How fortunate you've made yourself such a comfortable arrangement that happens to be right in my blasted way."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Aw, that's just another perk: I even get my nightly exercise."
+        }
+      ],
+      "name": "PolyphemusPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2815
+    },
+    "PolyphemusPostTrueEnding03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "How come you said whatever war is over, huh? The town's about the same. Last I checked the dead are meant to be underground, not walking through the streets."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The war with Chronos is over, it's just... there are a few remaining details being sorted out, and the Underworld is in enough of a state of disrepair that it isn't back in order yet."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Aw, that's too bad. I'd tell you to go down there and help 'em out, but that might cut into my sleep routine, which has been pretty good lately. Now come on, it's almost bedtime here."
+        }
+      ],
+      "name": "PolyphemusPostTrueEnding03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "N_Boss01",
+                "N_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "Path:BiomesReached.N": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "BiomesReached",
+              "N"
+            ],
+            "SumPrevRuns": 2,
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2836
+    },
+    "PolyphemusWonAgainstHim01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh, hey! I wanted to say thanks. Gave me a real zinger there last time, you know that?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're back. And you're grateful that I vanquished you earlier? You seem more the sort to hold a grudge."
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "I am, I am, it's just... I hadn't had a good night's sleep in I-don't-know-how-long. After you knocked me out cold, I woke up feeling more refreshed than ever! And real hungry, too."
+        }
+      ],
+      "name": "PolyphemusWonAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "Value": 10
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2616
+    },
+    "PolyphemusWonAgainstHim02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Tsch! Don't even try and sneak by. What, you think you were gonna catch me napping here? Not gonna happen."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It might. If you keep blocking my path, you'll get another thrashing, and you'll be sound asleep again in no time. That what you want?"
+        },
+        {
+          "speaker": "NPC_Cyclops_01",
+          "text": "Oh! Got a dilemma on my hands! I'm always sleepy, yeah. But I'm always hungry, too. Guess that makes this a can't-lose proposition."
+        }
+      ],
+      "name": "PolyphemusWonAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 53,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Polyphemus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Polyphemus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Polyphemus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Polyphemus.lua",
+      "sourceLine": 2642
+    }
+  }
+}

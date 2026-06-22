@@ -1,0 +1,1832 @@
+{
+  "alternates": {},
+  "dependents": {
+    "Inspect_Q_Boss01_01": [
+      {
+        "name": "Inspect_Q_Boss01_02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "Inspect_Q_Boss01_03": [
+      {
+        "name": "Inspect_Q_Boss02_03",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "Inspect_Q_Boss02_03": [
+      {
+        "name": "Inspect_Q_Boss01_03",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "Inspect_Q_Intro_01": [
+      {
+        "name": "Inspect_Q_Intro_02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "Inspect_Q_Intro_03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "Inspect_Q_PostBoss_02": [
+      {
+        "name": "Inspect_Q_Story_02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "Inspect_Q_Story_01": [
+      {
+        "name": "Inspect_Q_Story_02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "Inspect_Q_Story_02": [
+      {
+        "name": "Inspect_Q_PostBoss_01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceAboutTyphonDeath01": [
+      {
+        "name": "PalaceBoonExitTyphonDestroyed01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting02": [
+      {
+        "name": "PalaceBoonExitRepeatable01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting03": [
+      {
+        "name": "PalaceBoonExitRepeatable02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting03_A": [
+      {
+        "name": "PalaceBoonExitRepeatable02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting03_B": [
+      {
+        "name": "PalaceBoonExitRepeatable02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting04": [
+      {
+        "name": "PalaceBoonExitRepeatable03",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceMeeting04_B": [
+      {
+        "name": "PalaceBoonExitRepeatable03",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalacePostTrueEnding01": [
+      {
+        "name": "PalaceBoonExit02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 16,
+    "totalSpeakers": 2,
+    "totalTextlines": 26,
+    "unresolvedRefs": [
+      "ZeusPalaceAboutTyphonDeath01",
+      "ZeusPalaceMeeting02",
+      "ZeusPalaceMeeting03",
+      "ZeusPalaceMeeting03_A",
+      "ZeusPalaceMeeting03_B",
+      "ZeusPalaceMeeting04",
+      "ZeusPalaceMeeting04_B",
+      "ZeusPalacePostTrueEnding01"
+    ]
+  },
+  "textlines": {
+    "Inspect_Q_Boss01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Finally, the terrifying storm tearing apart the Fortress of the Gods starts to relent, perhaps because its monstrous source is nowhere to be found."
+        }
+      ],
+      "name": "Inspect_Q_Boss01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2215
+    },
+    "Inspect_Q_Boss01_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The hopeless threat of Typhon, whom the Princess of the Underworld sent howling toward the Earth from which he sprang in all his rage, subsides; but only for the night."
+        }
+      ],
+      "name": "Inspect_Q_Boss01_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_Q_Boss01_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2250
+    },
+    "Inspect_Q_Boss01_03": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Once more, no trace remains of our world's worst monstrosity. And the mere possibility that he could have wreaked further havoc on this mountaintop grows faint."
+        }
+      ],
+      "name": "Inspect_Q_Boss01_03",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "Inspect_Q_Boss02_03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2283
+    },
+    "Inspect_Q_Boss02_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Not even Time itself could stop the fierce Princess from vanquishing that ancient monster which so doggedly attacks the mountain of the gods night after endless night."
+        }
+      ],
+      "name": "Inspect_Q_Boss02_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2460
+    },
+    "Inspect_Q_Boss02_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "United in bitter fury, the father of the gods and the Father of All Monsters nonetheless could neither lay claim to this sacred mountain nor raze it to the Earth."
+        }
+      ],
+      "name": "Inspect_Q_Boss02_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2486
+    },
+    "Inspect_Q_Boss02_03": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Once more, no trace remains of our world's worst monstrosity. And the mere possibility that he could have wreaked further havoc on this mountaintop grows faint."
+        }
+      ],
+      "name": "Inspect_Q_Boss02_03",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "Inspect_Q_Boss01_03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2518
+    },
+    "Inspect_Q_Intro_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "At first, the storm which now engulfs the summit of Olympus may appear to have been wrought by gods in their defense; but its monstrosity belies a far more sinister nature."
+        }
+      ],
+      "name": "Inspect_Q_Intro_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomCountCache.Q_Intro": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomCountCache",
+              "Q_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 697
+    },
+    "Inspect_Q_Intro_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The Fortress of the Gods reels against the incomparable rage of Typhon, Father of Monsters, Giant of Storms, who somehow lurks somewhere very nearby..."
+        }
+      ],
+      "name": "Inspect_Q_Intro_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_Q_Intro_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 748
+    },
+    "Inspect_Q_Intro_03": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Apocalyptic Typhon, lord and father of monstrosity, has fallen to the gods before; and for that ancient bitter loss, he now exacts a most terrible price."
+        }
+      ],
+      "name": "Inspect_Q_Intro_03",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.EnemyKills.TyphonHead": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EnemyKills",
+              "TyphonHead"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_Q_Intro_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 780
+    },
+    "Inspect_Q_Intro_04": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The storm of Typhon, which no longer plagues Olympus, once again engulfs the Princess of the Dead... for there are possibilities in which the Father of All Monsters lives."
+        }
+      ],
+      "name": "Inspect_Q_Intro_04",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 809
+    },
+    "Inspect_Q_MiniBoss02_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Endless horrors spewn from Typhon are of every shape and size, including relatively sinister and larger ones recently fallen to the Princess of the Underworld's wrath."
+        }
+      ],
+      "name": "Inspect_Q_MiniBoss02_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 1499
+    },
+    "Inspect_Q_MiniBoss03_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "One of the serpentine tails of Typhon, lord and father of all monster-kind, slashed through floor after floor of the fortress behind which the Olympians take shelter from his storm."
+        }
+      ],
+      "name": "Inspect_Q_MiniBoss03_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 1668
+    },
+    "Inspect_Q_MiniBoss04_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The enemies of all-seeing Typhon cannot possibly escape his rancor, for his eyes are everywhere upon him, red with rage, and searching endlessly, piercing the very soul."
+        }
+      ],
+      "name": "Inspect_Q_MiniBoss04_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 1876
+    },
+    "Inspect_Q_MiniBoss05_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The foul brood of storm-bringing Typhon crawl through the growing cracks in the stonework of the Fortress of the Gods, as though to shake the mountain to its very core."
+        }
+      ],
+      "name": "Inspect_Q_MiniBoss05_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 1971
+    },
+    "Inspect_Q_PostBoss_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Few ever have laid eyes on the glorious Palace of the King of the Olympians, as only those deemed worthy may enter, or even locate it amongst the mountain peaks."
+        }
+      ],
+      "name": "Inspect_Q_PostBoss_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_Q_Story_02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2752
+    },
+    "Inspect_Q_PostBoss_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Ahead lies the well-hidden and protected Palace of the King and Queen of all the gods, that stronghold from which Olympus has fought back against all too many terrible foes."
+        }
+      ],
+      "name": "Inspect_Q_PostBoss_02",
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.Q_Story01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2781
+    },
+    "Inspect_Q_PreBoss01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Some scarce deliveries risked by swift Hermes represent what aid the gods can finally provide unto the Princess of the Dead, now that the summit of Olympus lies before her."
+        }
+      ],
+      "name": "Inspect_Q_PreBoss01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 1320
+    },
+    "Inspect_Q_Story_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The majestic Palace of Zeus stands resolute and strong, for the combined might of the gods has kept that seat of power safe, even from such monstrous adversaries as they face."
+        }
+      ],
+      "name": "Inspect_Q_Story_01",
+      "otherRequirements": {},
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2932
+    },
+    "Inspect_Q_Story_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Tranquil music made by masterful Apollo reverberates throughout the palace grounds, piercing the grimness of the circumstances like an arrow of pure light."
+        }
+      ],
+      "name": "Inspect_Q_Story_02",
+      "otherRequirements": {},
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "Inspect_Q_PostBoss_02"
+        ],
+        "RequiredTextLines": [
+          "Inspect_Q_Story_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 2965
+    },
+    "PalaceBoonExit01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm unaccustomed to being on this side! I see... Erebus, I think. Wait, Headmistress, is that you? Can you hear me?"
+        },
+        {
+          "speaker": "NPC_Hecate_01",
+          "text": "In the name of Hades. Olympus, I accept this message! ...Melinoë? If you can even hear me yonder, I bid you to return. We have matters to discuss."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...I have to go now, everyone. Please take care, and let the others know I'm sorry to have missed them. I'll return!"
+        }
+      ],
+      "name": "PalaceBoonExit01",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3059
+    },
+    "PalaceBoonExit02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...It has been wonderful to see you all! Farewell for now!"
+        }
+      ],
+      "name": "PalaceBoonExit02",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalacePostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3159
+    },
+    "PalaceBoonExitPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...It sounds like I may not be visiting again anytime soon, so... thank you all, and please let the others know I wish them well. Let's keep in touch by Boon!"
+        }
+      ],
+      "name": "PalaceBoonExitPostTrueEnding01",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3134
+    },
+    "PalaceBoonExitRepeatable01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Goodbye for now, everyone! May you be safe and well when next we meet."
+        }
+      ],
+      "name": "PalaceBoonExitRepeatable01",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalaceMeeting02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3185
+    },
+    "PalaceBoonExitRepeatable02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...We're getting closer, everyone. Please stay safe!"
+        }
+      ],
+      "name": "PalaceBoonExitRepeatable02",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ZeusPalaceMeeting03",
+          "ZeusPalaceMeeting03_A",
+          "ZeusPalaceMeeting03_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3209
+    },
+    "PalaceBoonExitRepeatable03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Should Typhon rise again, I shall return!"
+        }
+      ],
+      "name": "PalaceBoonExitRepeatable03",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ZeusPalaceMeeting04",
+          "ZeusPalaceMeeting04_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3234
+    },
+    "PalaceBoonExitTyphonDestroyed01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Now for Chronos. I'll be counting on your blessings, everyone!"
+        }
+      ],
+      "name": "PalaceBoonExitTyphonDestroyed01",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "FunctionName:RequiredAlive": [
+              {
+                "FunctionArgs": {
+                  "Alive": false,
+                  "Units": [
+                    "NPC_Demeter_Story_01"
+                  ]
+                },
+                "FunctionName": "RequiredAlive"
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.CurrentRoom.UseRecord.NPC_Demeter_Story_01": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "UseRecord",
+                  "NPC_Demeter_Story_01"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.UseRecord": [
+          {
+            "HasAny": [
+              "NPC_Zeus_Story_01",
+              "NPC_Chronos_02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "UseRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "PlayerUnit",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPalaceAboutTyphonDeath01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataQ.lua",
+      "sourceLine": 3110
+    }
+  }
+}

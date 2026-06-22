@@ -1,0 +1,3724 @@
+{
+  "alternates": {},
+  "dependents": {
+    "ErisAboutPackagedBounties01": [
+      {
+        "name": "ErisAboutPackagedBounties02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisAboutRelationship01": [
+      {
+        "name": "ErisBossAboutRelationship02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisAboutRelationship02": [
+      {
+        "name": "ErisBossAboutRelationship02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ErisAboutShrine01": [
+      {
+        "name": "ErisBossAboutShrine01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ErisAboutShrine02": [
+      {
+        "name": "ErisBossAboutShrine02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ErisAboutShrine03": [
+      {
+        "name": "ErisBossAboutShrine03",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ErisBecomingCloser01Choice_ErisAccept": [
+      {
+        "name": "ErisBossAboutBecomingCloser01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ErisBossAboutAltFight01": [
+      {
+        "name": "ErisBossAboutAltFight03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutAltFight03": [
+      {
+        "name": "ErisBossAboutAltFight04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutAres01": [
+      {
+        "name": "ErisBossAboutAres02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutAres02": [
+      {
+        "name": "ErisBossAboutAres03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutObstacles01": [
+      {
+        "name": "ErisBossAboutRandomness01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutProblems01": [
+      {
+        "name": "ErisBossAboutProblems02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutProblems02": [
+      {
+        "name": "ErisBossAboutProblems03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutPrometheus01": [
+      {
+        "name": "ErisBossAboutTyphon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutSuit01": [
+      {
+        "name": "ErisBossAboutNyxAspect01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisBossAboutTyphon01": [
+      {
+        "name": "ErisBossAboutTyphon02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ErisBossAboutTyphon03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisFishing01": [
+      {
+        "name": "ErisBossAboutFishing01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisGift02": [
+      {
+        "name": "ErisBossAboutUnderworld01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisGift05": [
+      {
+        "name": "ErisBossAboutRelationship01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisGift06": [
+      {
+        "name": "ErisBossAboutProblems02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisPostTrueEnding01": [
+      {
+        "name": "ErisBossPostTrueEnding01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisTaverna02": [
+      {
+        "name": "ErisBossMiscStart42",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisGift06": [
+      {
+        "name": "ErisBossAboutProblems02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 25,
+    "totalSpeakers": 1,
+    "totalTextlines": 94,
+    "unresolvedRefs": [
+      "ErisAboutRelationship01",
+      "ErisAboutRelationship02",
+      "ErisAboutShrine01",
+      "ErisAboutShrine02",
+      "ErisAboutShrine03",
+      "ErisBecomingCloser01Choice_ErisAccept",
+      "ErisFishing01",
+      "ErisGift02",
+      "ErisGift05",
+      "ErisGift06",
+      "ErisPostTrueEnding01",
+      "ErisTaverna02",
+      "NemesisGift06"
+    ]
+  },
+  "textlines": {
+    "ErisAboutPackagedBounties01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Ah, you almost beat me here tonight, Trouble! You're way ahead of schedule! Although... huh... What am I saying? Schedule?! What's happening to me...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you're feeling a little out of sorts this evening, perhaps it's simply because Primordial Chaos is exerting influence over reality as we know it."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Oh, right, that makes sense! Chaos made everything. But you know what? Now we can make some chaos, too."
+        }
+      ],
+      "name": "ErisAboutPackagedBounties01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsNone": [
+              "PackageBountyRandomUnderworld_Difficulty1",
+              "PackageBountyRandomUnderworld_Difficulty2",
+              "PackageBountyRandomSurface_Difficulty1",
+              "PackageBountyRandomSurface_Difficulty2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2194
+    },
+    "ErisAboutPackagedBounties02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You made it past Ephyra real quick, Trouble. Must be Primordial Chaos exerting influence over reality again, huh...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The thing is, Eris... I can be entirely forthright with you, yet you still take the absolute least charitable view of anything I say. So what does it matter how I respond?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "See, that's exactly how I feel — what does it matter. Maybe it matters to Chaos, huh? Only one way to find out."
+        }
+      ],
+      "name": "ErisAboutPackagedBounties02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsNone": [
+              "PackageBountyRandomUnderworld_Difficulty1",
+              "PackageBountyRandomUnderworld_Difficulty2",
+              "PackageBountyRandomSurface_Difficulty1",
+              "PackageBountyRandomSurface_Difficulty2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisAboutPackagedBounties01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2213
+    },
+    "ErisBossAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "See anything different about me, babe? Probably not! I haven't changed a bit, but you know what has is the Adamant Rail! I mean just look at it!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That must be someone else's Aspect of the Rail. Perhaps you did or said something to make it change its form... though this could have been my doing as well."
+        },
+        {
+          "speaker": "Eris",
+          "text": "There you go, always trying to take all the credit for yourself! Well the Rail doesn't answer to you, it answers to me. And I've already figured out all the new stuff it can do!"
+        }
+      ],
+      "name": "ErisBossAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2235
+    },
+    "ErisBossAboutAltFight02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Earlier the Rail magickally switched over to this other style again. Like it knew you were on the way! I also knew you were on the way, pretty easy to spot you up there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you any idea whose Aspect that even is, or why your ancient Fate-forged weapon might be magickally changing forms without your influence?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "No! You talk like I'm supposed to be afraid of this thing when you're the one staring down the part that shoots."
+        }
+      ],
+      "name": "ErisBossAboutAltFight02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2267
+    },
+    "ErisBossAboutAltFight03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Damn it I kept waiting for this stupid Rail to switch over to that other form again but it won't budge! Same old piece of junk. Doesn't even reload half the time..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Keep speaking ill of it that way and it may do your bidding less and less! I'm surprised you have an Aspect to your name at all."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Well life's just full of surprises, Trouble! I like this Aspect better anyway. Let's see if it still does my bidding!"
+        }
+      ],
+      "name": "ErisBossAboutAltFight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Eris": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Eris"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2289
+    },
+    "ErisBossAboutAltFight04": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "The Rail switched up on me again! Hey, what if this is my true Aspect and the other one is for somebody else? This one's even got a face like mine, and wings!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Look, the only reason you can sometimes use this Aspect is the Oath of the Unseen. Can't you feel the Fear in the night?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "All I feel right now, babe, is an overwhelming urge to turn you into little crispy slices with this thing. You think I care about some Oath? What am I, Nyx?!"
+        }
+      ],
+      "name": "ErisBossAboutAltFight04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Eris": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Eris"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutAltFight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2318
+    },
+    "ErisBossAboutAltFight05": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You washed up on the wrong part of the beach, Trouble. You see that giant stinking carcass over there? That's what you're gonna look like after this."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm not nearly that size, Eris! Nor am I an aquatic animal, nor are you going to kill me. Though I must say, this part of the beach is horrid, and the carcass doesn't help."
+        },
+        {
+          "speaker": "Eris",
+          "text": "What do you even know about beaches, or carcasses? I've got my special Aspect of the Rail here, and all the sights and sounds and smells of the sea. So who needs you?!"
+        }
+      ],
+      "name": "ErisBossAboutAltFight05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2346
+    },
+    "ErisBossAboutAres01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Just about everybody on Olympus giving you their best, huh? You must be very proud. The gods, they don't agree on much at all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No they do not. Yet when the need arises, they can set their differences aside. Something to try with your own kin."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You know who really gets what's going on up there? Ares. If anybody's brought that family together, it's the god of war. His cause even I can get behind!"
+        }
+      ],
+      "name": "ErisBossAboutAres01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.UseRecord": [
+          {
+            "Comparison": ">=",
+            "CountOf": [
+              "ZeusUpgrade",
+              "HeraUpgrade",
+              "PoseidonUpgrade",
+              "DemeterUpgrade",
+              "HephaestusUpgrade",
+              "AphroditeUpgrade",
+              "HestiaUpgrade",
+              "HermesUpgrade"
+            ],
+            "Path": [
+              "CurrentRun",
+              "UseRecord"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathFalse:CurrentRun.UseRecord.AresUpgrade": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "UseRecord",
+              "AresUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1357
+    },
+    "ErisBossAboutAres02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you admire Ares so much, know that he has lent me his aid; I have his blessing even now. Though I suppose you still won't be compelled to step aside?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "You suppose right! And say you do have Ares making up for all your weakness, it's probably because he wants this war to last and last! He can aid you; I can aid him."
+        }
+      ],
+      "name": "ErisBossAboutAres02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.AresUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "AresUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutAres01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1393
+    },
+    "ErisBossAboutAres03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I can't believe Ares is helping you not me. I kept trying to get through to him, figured he'd hear me out, but it's too stormy on Olympus. Say, would you...? You know..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You want me to ask the god of war to lend you his aid, to make my efforts to support him and his family in their near-hopeless battle against Typhon even more difficult?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "Quit with the sarcasm, Trouble! All I did was ask you for a favor once, but... you had to go and make an insult out of it. Fine! I can get the god of war's attention on my own!"
+        }
+      ],
+      "name": "ErisBossAboutAres03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.AresUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "AresUpgrade"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutAres02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1413
+    },
+    "ErisBossAboutBecomingCloser01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Back to doing what we do! Nothing like trying to shoot you to pieces night after night like nothing happened, huh?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know I shouldn't be surprised that you're about to fight me as per usual, Eris, but... I held out hope you'd start to see me in a different light. So much for that?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "So much for that! And don't be so full of yourself. It's not like we bared our souls to one another! Not sure I even have one. Anyway, no deferential treatment from me here."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The part where you keep going out of your way to bar my passage to Olympus isn't what you would consider deferential treatment then?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "You know you do make a good point there, babe! But I'm not gonna dwell on it and just start shooting you, OK?"
+        }
+      ],
+      "name": "ErisBossAboutBecomingCloser01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ErisBecomingCloser01Choice_ErisAccept"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2398
+    },
+    "ErisBossAboutCharon01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Done with your shopping finally, Trouble? Charon sure seems to have a lot in stock there on that fancy ship of his! Although he hasn't sold me anything."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I doubt he ever would. Lord Charon's loyal to the realm. You're not. It's as simple as that, even if you are his sister."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Loyal to the realm. At least I'm not a suck-up! Though if you like him so much, here's something you can moan and groan about."
+        }
+      ],
+      "name": "ErisBossAboutCharon01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutIcarus01",
+        "ErisBossAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 42,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.ResourcesSpent.Money": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "CurrentRun",
+              "ResourcesSpent",
+              "Money"
+            ],
+            "Value": 725
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1535
+    },
+    "ErisBossAboutCirce01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Whoa, Trouble, you're huge! Like you and Nemmie had a child! Which, come to think of it, is just about the worst thing I've ever imagined. And I've imagined a lot."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then imagine what I'm about to do to you in this form, courtesy of Circe the Enchantress. Had you not been so delinquent, you could have learned from her yourself."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Learned to become a freak, you mean? That's the difference between you and me: You need somebody to teach you everything, while I've got pure instinct!"
+        }
+      ],
+      "name": "ErisBossAboutCirce01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutCirce02"
+      ],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceEnlargeTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceEnlargeTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1445
+    },
+    "ErisBossAboutCirce02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Ah, hahaha, you're so tiny right now, babe! How cuuute. Old Circe must have done that to you, yeah? I've flown by her little island where she's doing all her lunatic experiments."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You had so much promise as a student, Eris... even now you easily identified the work of an experienced enchantress. But only to spurn our craft."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Your craft turns you into a walking joke! I'm just pointing it out. Well, whatever happens next, thanks for the laughs!"
+        }
+      ],
+      "name": "ErisBossAboutCirce02",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutCirce01"
+      ],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceShrinkTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceShrinkTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1468
+    },
+    "ErisBossAboutConsequences01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You're tougher than you look, I'll give you that, Trouble. And I'll give you something else for what you did to me last time."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The outcome of our prior meeting was the direct result of your provocation and hostility. Tonight may go even worse."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Wait, you're telling me our choices have c-c-consequences...? C'mon, don't be so gullible. Anyway! I'm gonna open fire now."
+        }
+      ],
+      "name": "ErisBossAboutConsequences01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1260
+    },
+    "ErisBossAboutDeath01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "So what's it like, having been forcibly dragged back to hell this many times? At least you know where you truly belong."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You and me both, babe. You're the one who's not supposed to be up here! As for getting dragged back down, it's no big deal. I can just fly on back!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But as soon as your strength falters, the spirits of the dead shall take hold of you again. Many of them probably seek vengeance for something you did..."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Well, then they can have a piece of me and feel all better about themselves! After all, I've got so much to give!"
+        }
+      ],
+      "name": "ErisBossAboutDeath01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 43,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Eris": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Eris"
+            ],
+            "Value": 8
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2003
+    },
+    "ErisBossAboutFishing01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "One thing I'll say for this place, it's way easier to fish here than at the Crossroads. I almost feel sorry for you, having to use a rod like some kind of starving mortal."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I thought you didn't care for fishing. If now you do, you ought have more respect for the traditional technique."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Well then I guess that means I don't! But I was just about to shoot that fish swimming around right near the shore when you showed up. Now you get to be first!"
+        }
+      ],
+      "name": "ErisBossAboutFishing01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutRavenFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 41,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsNone": [
+              "CatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ],
+        "Path:GameState.FishingSuccessesManual": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "FishingSuccessesManual"
+            ],
+            "Value": 4
+          }
+        ],
+        "PathNotEmpty:CurrentRun.CurrentRoom.FishingPointChoices": [
+          {
+            "PathNotEmpty": [
+              "CurrentRun",
+              "CurrentRoom",
+              "FishingPointChoices"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WeaponsUnlocked.ToolFishingRod": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WeaponsUnlocked",
+              "ToolFishingRod"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisFishing01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1964
+    },
+    "ErisBossAboutGoldenApples01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Give back the Golden Apple that you took from me last time, and I might just let you walk this once. What do you say?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean the Golden Apple that you very likely stole? Supposedly they grow but in a single garden, and I highly doubt that such a place would let you in."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Life starts to get a lot more interesting once you accept that you don't always need an invitation to show up. Fine! Keep the Apple, then. I've got a whole lot more..."
+        }
+      ],
+      "name": "ErisBossAboutGoldenApples01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.LifetimeResourcesGained.MixerOBoss": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "MixerOBoss"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1873
+    },
+    "ErisBossAboutHarpies01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Too many Harpies around here, though they're all just a bunch of pushovers. They know who's the top bird and treat me like a goddess!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You are a goddess, Eris. Although the Harpies aren't as quick to recognize my own divinity..."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Maybe they don't like you, since you don't have any wings? Although in your case, it could really be a lot of things..."
+        }
+      ],
+      "name": "ErisBossAboutHarpies01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 46,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.EnemyKills": [
+          {
+            "HasAny": [
+              "HarpyCutter",
+              "HarpyCutter_Elite"
+            ],
+            "Path": [
+              "CurrentRun",
+              "EnemyKills"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1725
+    },
+    "ErisBossAboutIcarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You know that wispy Shade-kid, what's-his-name...? Ick, Icky... Icarus! I've seen him stealing glances, flying around... copying me! Where'd he get the wings?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Icarus assuredly is not copying you. This may come as a shock, but there are those attempting to be useful currently... rather than interfering with our plans."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You think he's attempting to be useful? Pff, come on! He's just a little freak. Maybe he's into Harpies and is trying to get in with them... but then again, who cares!"
+        }
+      ],
+      "name": "ErisBossAboutIcarus01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutCharon01",
+        "ErisBossAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 42,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.NPC_Icarus_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Icarus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1490
+    },
+    "ErisBossAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Was that the ringing in my ears just now, or did I maybe hear a little Bell? Oh, you brought along my Keepsake, haven't you! Think that thing's gonna help you here?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If it bothers or confounds you the slightest bit, I'll consider it worthwhile. I know you can't so much as give a simple gift without some underhanded motive."
+        },
+        {
+          "speaker": "Eris",
+          "text": "While you give gifts with only perfectly pure thoughts bouncing around inside your big, targetable head! Come on. Nobody's like that, babe. Not even you."
+        }
+      ],
+      "name": "ErisBossAboutKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutNemesisKeepsake01",
+        "ErisBossAboutMorosKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.LastAwardTrait": [
+          {
+            "IsAny": [
+              "EscalatingKeepsake"
+            ],
+            "Path": [
+              "GameState",
+              "LastAwardTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1900
+    },
+    "ErisBossAboutMistakes01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Another go? Can't always tell if you're stubborn, or just plain... you know. Not that it matters either way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're standing between me and my objective, Eris... or, floating. The point is, sooner or later, you'll come to understand that's a mistake."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Aw, but we all make mistakes, right? Neither one of us would be here otherwise. So you ready now, or what? Let's have some fun."
+        }
+      ],
+      "name": "ErisBossAboutMistakes01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1171
+    },
+    "ErisBossAboutMorosKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You must be really special to Moros if he gave you one of his shiny Pins! Maybe he thinks you won't make it without him! You look like someone who needs saving, babe."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And what is that supposed to mean? I'll have you know Lord Moros offered me this Keepsake as a simple courtesy and nothing more."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Uh huh, sure he did. You're both so dense sometimes, I swear! Now let's see if Lord Moros comes to your rescue..."
+        }
+      ],
+      "name": "ErisBossAboutMorosKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutKeepsake01",
+        "ErisBossAboutNemesisKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BlockDeathKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1941
+    },
+    "ErisBossAboutNemesisKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Oh no, did you bring Nemmie's Evil Eye? Goes to show how much she really thinks of fairness, making you use that thing just to get me back!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I made the choice to bring the Eye, not Nemesis. Although she is Retribution Incarnate, so I'd like to think she would've been supportive had she known."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Doesn't take a genius to put that one together, babe. I'm her little sister! The runt of Nyx's litter, the smallest and easiest to push around. But I always push back... or push first!"
+        }
+      ],
+      "name": "ErisBossAboutNemesisKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutKeepsake01",
+        "ErisBossAboutMorosKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "DeathVengeanceKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1920
+    },
+    "ErisBossAboutNyxAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Eugh, you look like Nyx! That's still the Black Coat thing you're wearing, isn't it? Except you did something..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This is Nyx's own Aspect of Xinth, which deemed me worthy to be its bearer. Perhaps so I could discipline you in your mother's stead."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Discipline me? Babe, I used to fight with Nyx all the time, but not like this. This is way better! Come on, Mother, give me the best you've got."
+        }
+      ],
+      "name": "ErisBossAboutNyxAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.SuitMarkCritAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "SuitMarkCritAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutSuit01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1846
+    },
+    "ErisBossAboutObstacles01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Come on, really? I thought I made myself real clear with you before, but here you are like nothing happened, and it's just another night!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This is just another night to me, Eris. So you stand with Chronos against the gods, so what? You're just another obstacle on my path."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Hate to break it to you, Trouble: Obstacles are things you're supposed to avoid! But in this channel, you're going to run into me every time."
+        }
+      ],
+      "name": "ErisBossAboutObstacles01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1129
+    },
+    "ErisBossAboutPolyphemus01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "What's with that Cyclops over by the Ephyra docks? He almost hit me with a boulder as I flew over here a couple nights ago!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's Polyphemus. He's blind so there's no need to take his boulder-throwing as a personal affront. He was probably aiming at me."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Oh, that's a relief! I took a bunch of his sheep, you don't wanna know why, and was starting to worry he caught on. I get the livestock, you get the heat!"
+        }
+      ],
+      "name": "ErisBossAboutPolyphemus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1577
+    },
+    "ErisBossAboutProblems01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I must say, especially for someone who claims to thrive on pure disorder, you are very punctual and consistent, Eris. Every time I've crossed the Rift, you've been right here."
+        },
+        {
+          "speaker": "Eris",
+          "text": "No need to rub it in! Look, I know this is becoming a problem, but I swear, I can get it under control. Just promise me you won't tell anybody?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You want me to promise not to tell anybody that you're punctual and consistent. Why, because you'd hate for them to start to think better of you for a change?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "Um, yeah! Although, since when do I even care what anybody thinks of me...? That's not who I am! It's all because you're ruining it for me!"
+        }
+      ],
+      "name": "ErisBossAboutProblems01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 39,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1283
+    },
+    "ErisBossAboutProblems02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You have yet to be late for our clashes even once — no matter how quickly I reach these shores, you're here first. But your goal is to be less dependable, not more?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "My goal is never to have a goal in my life! It's just, I'm going through some sort of phase I think. All the competition with you and Nemmie must have got to me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And what is it you think we're competing for? First to be forced back to the depths of the Underworld?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "Never said it's you I'm competing with, babe. And you know what I realized about this whole thing we've got going? Discipline and Disorder go hand in hand."
+        }
+      ],
+      "name": "ErisBossAboutProblems02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutProblems01",
+          "NemesisGift06",
+          "ErisGift06"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1306
+    },
+    "ErisBossAboutProblems03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Maybe it's not such a bad thing that I keep showing up on time. You can always count on Strife! That's kind of got a ring to it, right?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you wish to be dependable, that means not just showing up on time, but making yourself useful in some way. Though I suppose that's probably a step too far."
+        },
+        {
+          "speaker": "Eris",
+          "text": "I can't believe you almost got me thinking there was something wrong with me, and just because I care! But don't worry... I'll make sure something's wrong at least!"
+        }
+      ],
+      "name": "ErisBossAboutProblems03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutProblems02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1331
+    },
+    "ErisBossAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Wait so Prometheus is supposed to be in charge where the real action is? Thought he was busy getting pecked to the brink of death over and over by some bird."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I can attest he and that bird have come to terms. Come on, have pity on me, Eris. I have to deal with fire and feathers here, and again at the top of Olympus."
+        },
+        {
+          "speaker": "Eris",
+          "text": "That is a pretty good appeal, babe... but, unfortunately for you, I don't have a heart. So, come on! Here comes your first helping of fire and feathers for the night."
+        }
+      ],
+      "name": "ErisBossAboutPrometheus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1596
+    },
+    "ErisBossAboutPurpose01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Always ready and eager for the fight. I've never met someone so driven, yet so lacking in any purpose whatsoever."
+        },
+        {
+          "speaker": "Eris",
+          "text": "I'm about to blow your mind, you ready, babe? No purpose is a purpose. Think about it! And now I'm gonna blow away the rest of you, too."
+        }
+      ],
+      "name": "ErisBossAboutPurpose01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1244
+    },
+    "ErisBossAboutRandomness01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Why is it that you're putting all your effort into stopping me? You're Strife; you should be unpredictable! Perhaps lash out at the forces of Chronos, for a change of pace..."
+        },
+        {
+          "speaker": "Eris",
+          "text": "What makes you think I don't? You're not the center of the world, babe! And I couldn't be more unpredictable! Don't know why I keep running into you, though. It's so random!"
+        }
+      ],
+      "name": "ErisBossAboutRandomness01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutObstacles01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1152
+    },
+    "ErisBossAboutRavenFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Aww, loook! You brought an ugly little bird with you! Close as you're ever gonna get to wings like these, babe. But you have to walk everywhere. No wonder you're so unhappy!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I am not unhappy. And I took a boat most of the way here, thanks! Multiple boats! And I'm not about to let you insult Raki to my face, or his."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Babe, come on. That bird is so pale it's probably dying! Here, maybe I can put it out of its misery. And you, too."
+        }
+      ],
+      "name": "ErisBossAboutRavenFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutFishing01"
+      ],
+      "narrativePriorityOrdinal": 41,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "RavenFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1511
+    },
+    "ErisBossAboutRelationship01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You think just 'cause you've been cozying up to me at the Crossroads that I'm gonna let up on you here? Well you're wrong, babe! I know what you're trying to do."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know what I'm trying to do because I've plainly and repeatedly explained myself. And yet, you still pretend as though there's something much more complicated going on."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Ohh, and now you're trying to guilt-trip me to top it off. Well I don't need to take that kind of guff from you. Nobody pushes me around, get it?"
+        }
+      ],
+      "name": "ErisBossAboutRelationship01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 44,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Eris_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Eris_01"
+            ],
+            "Value": 4
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisGift05"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1219
+    },
+    "ErisBossAboutRelationship02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "When last we spoke you said whatever's wrong with you couldn't be fixed. What makes you say such things?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "Appreciate all the concern but I just had a little moment that you're making a big deal. We're all a little broken, right?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps so. But we can better ourselves through effort and discipline, as much as we can muster. Or, we could endlessly get in each other's way."
+        },
+        {
+          "speaker": "Eris",
+          "text": "The thing is, I don't want to have to try. Not with this, not with you. I want things to be easy, you want things to be hard. But at least we really get each other now!"
+        }
+      ],
+      "name": "ErisBossAboutRelationship02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ErisAboutRelationship02"
+        ],
+        "RequiredTextLines": [
+          "ErisAboutRelationship01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2364
+    },
+    "ErisBossAboutRelaxation01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Isn't this great, Trouble? Now before I shoot you all to hell, I just want us both to take a moment to breathe, relax... really just appreciate all that we have."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "These senseless fights with you... I cannot rightly say I appreciate them at all. Though, at least the Moon is beautiful tonight?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "That's the spirit! Now how 'bout we stain that pale glow of hers in blood and ichor, huh? And we'll let the sea drink its fill, for good measure!"
+        }
+      ],
+      "name": "ErisBossAboutRelaxation01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "~=",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1196
+    },
+    "ErisBossAboutSelene01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Moonlight sure is guiding you tonight! Too bad Selene can't just whisk you over to Olympus on that chariot of hers. Why can't she, anyway? I thought she was your friend!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps Selene doesn't easily abandon her responsibilities, although I know that concept may be difficult for you to comprehend. Care to whisk me to Olympus in her stead?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "I'll have to pass. Not like these wings could lift the both of us! Although I do have something here for you instead."
+        }
+      ],
+      "name": "ErisBossAboutSelene01",
+      "narrativePriorityClusterMembers": [
+        "ErisBossAboutIcarus01",
+        "ErisBossAboutCharon01"
+      ],
+      "narrativePriorityOrdinal": 42,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.SpellDrop": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "SpellDrop"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1558
+    },
+    "ErisBossAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Sure is dark out there tonight, huh? Even the dead sailors on the Rift looked a little spooked. Maybe something's up...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "There's Fear in the air. You've defied the will of Night too often, Eris. This time I'm not here merely for Olympus, but for you."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You're telling me Nyx put you up to this? Pff, right! She never cared about me, and she's not about to start now."
+        }
+      ],
+      "name": "ErisBossAboutShrine01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyTorchHeat1OBoss",
+              "BountyAxeHeat2OBoss",
+              "BountyDaggerHeat4OBoss",
+              "BountyStaffHeat8OBoss",
+              "BountySuitHeat12OBoss",
+              "BountyLobHeat16OBoss",
+              "BountyShrineStaffOBoss",
+              "BountyShrineDaggerOBoss",
+              "BountyShrineTorchOBoss",
+              "BountyShrineAxeOBoss",
+              "BountyShrineLobOBoss",
+              "BountyShrineSuitOBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ],
+        "Path:GameState.EnemyKills.Eris": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Eris"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ErisAboutShrine01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2062
+    },
+    "ErisBossAboutShrine02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Fear in the air, you said, last time it was like this. Maybe you really are doing some of Nyx's dirty work! In which case, you're way dumber than I thought..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You were invited and expected to be part of the Unseen. But you turned your back not only on us, but your mother, and the Underworld itself. A price is to be paid for that."
+        },
+        {
+          "speaker": "Eris",
+          "text": "And you've come to collect! Too bad I've got nothing to give. Unless you take payment in these little metal things that the Rail chews up and spits out."
+        }
+      ],
+      "name": "ErisBossAboutShrine02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyTorchHeat1OBoss",
+              "BountyAxeHeat2OBoss",
+              "BountyDaggerHeat4OBoss",
+              "BountyStaffHeat8OBoss",
+              "BountySuitHeat12OBoss",
+              "BountyLobHeat16OBoss",
+              "BountyShrineStaffOBoss",
+              "BountyShrineDaggerOBoss",
+              "BountyShrineTorchOBoss",
+              "BountyShrineAxeOBoss",
+              "BountyShrineLobOBoss",
+              "BountyShrineSuitOBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ErisAboutShrine02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2117
+    },
+    "ErisBossAboutShrine03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Whew, this is my kind of night! Real feeding frenzy out there, like everything is just... way... more. No idea what's going on but I like it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You never gave any consideration to the Oath of the Unseen, yet remain one of its main beneficiaries. Perhaps your mother Nyx did something for you after all."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You mean these occasional evenings of complete and total depravity are meant to make up for everything Nyx didn't do...? Well I guess it's a start!"
+        }
+      ],
+      "name": "ErisBossAboutShrine03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:CurrentRun.TextLinesRecord": [
+          {
+            "HasNone": "<ref:GameData.AboutShrineEvents>",
+            "Path": [
+              "CurrentRun",
+              "TextLinesRecord"
+            ]
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 14
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ErisAboutShrine03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2164
+    },
+    "ErisBossAboutSuit01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "OK what in the hell is that you've got on, babe? You could use a change of style, sure, but this is way out-there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, you must be referring to the Black Coat. You're right that it's not necessarily my preference for attire, but it's not primarily for show. You'll understand in a moment."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Wait I remember the Black Coat! So that's what it looks like? And I thought the Adamant Rail looked ridiculous! Nyx had such bad taste."
+        }
+      ],
+      "name": "ErisBossAboutSuit01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.TraitDictionary.SuitMarkCritAspect": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "SuitMarkCritAspect"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponSuit": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponSuit"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1822
+    },
+    "ErisBossAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "So if you get past me again, what's next for you, Trouble? I've never seen someone go through so much just to see their family. Most of us have to try to stay away from ours!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That terrifying cloud encompassing the summit of Olympus conceals Typhon, in case you haven't heard. I'm surprised you haven't gone to see him for yourself! Anyway Prometheus is next, then Typhon. But you first."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You're telling me you're here to pick bigger and bigger fights? Baaabe! I knew we had something going on, but we have more in common than I thought! C'mon, let's go."
+        }
+      ],
+      "name": "ErisBossAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutPrometheus01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1618
+    },
+    "ErisBossAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're really never going to get out of my way, are you, Eris? You'd rather Typhon lay Mount Olympus to ruin. Although at that point I suppose this war would end."
+        },
+        {
+          "speaker": "Eris",
+          "text": "It sure would! But after that things might not get too orderly for a while, and... who knows what Typhon does from there? Think of the possibilities, babe!"
+        }
+      ],
+      "name": "ErisBossAboutTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutTyphon01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1645
+    },
+    "ErisBossAboutTyphon03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "What happened up there on Olympus last night, babe? Looked like the storm cleared for a little while. Almost flew in for a looksee, but... I don't like the cold!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What happened was, after I got past you, I eventually climbed all the way up to the summit where I sent the Father of All Monsters Typhon crashing to the Earth."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You did? Whoa, you must be really strong, or Typhon must be really weak! And since you're back already then I guess whatever happened didn't mean a thing!"
+        }
+      ],
+      "name": "ErisBossAboutTyphon03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathFalse:PrevRun.UseRecord.NPC_Eris_01": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Eris_01"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.Cleared": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisBossAboutTyphon01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1668
+    },
+    "ErisBossAboutTyphonDeath01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Not seen you here in a while, babe. And what happened to Typhon, anyway? There's been no sign of him at all!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Typhon had to leave reality as we know it. Though, sorry, Eris. I suppose you didn't even have a chance to introduce yourself to him, did you?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "No I didn't, though if he's so easy to get rid of, maybe it's for the best! So what are you going to Olympus for, anyway? It better not be some sort of feast. Because I wasn't invited!"
+        }
+      ],
+      "name": "ErisBossAboutTyphonDeath01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1702
+    },
+    "ErisBossAboutUnderworld01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I almost thought you weren't going to show up! Leave me hanging yet another night, I mean... why not? You're so inconsiderate sometimes!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're telling me while I've been in the Underworld, you've just been waiting here night after night? What am I, supposed to tell you where I'm going in advance?"
+        },
+        {
+          "speaker": "Eris",
+          "text": "That's what a real friend would do, so no, I guess not! Maybe you shouldn't come back. What do I care?"
+        }
+      ],
+      "name": "ErisBossAboutUnderworld01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 4,
+            "TableValuesToCount": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisGift02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2032
+    },
+    "ErisBossCloseMatch01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You got so close to beating me last time, babe! I could feel my wings growing heavy... like the Underworld was calling me home. But I'm totally fine now!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "For the moment. You'll soon feel the Underworld calling you home once more. And you'll go, whether you like it or not."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Ooh, I love a good threat! Well then, let's see who's going home first, huh? Maybe it'll be just like before..."
+        }
+      ],
+      "name": "ErisBossCloseMatch01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0.15
+          },
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1795
+    },
+    "ErisBossFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Heya, sailor! What a coincidence, running into you like this so far away from home. Where you headed? Maybe I could give you a lift."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know perfectly well where I'm headed. And I can get there on my own, thanks."
+        },
+        {
+          "speaker": "Eris",
+          "text": "You sure about that? Because it looks like you've been having a pretty rough night so far. And it's only going to get worse."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't care for your insinuations here, Eris. Speak plain, or get out of my way."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Oh I'll speak plain: You're boring. I don't like you. And you don't get to order me around...!"
+        }
+      ],
+      "name": "ErisBossFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {},
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1097
+    },
+    "ErisBossLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Pff. You took forever getting here! Only to turn up practically as dead as the crews of all those ships headed this way!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Apologies for any inconvenience, Eris. Fortunately there's a quite-refreshing fountain not too far from here, which should do wonders for my injuries."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Oh, then you're so close! Maybe you could make a break for it. The pathway out of here is right behind me..."
+        }
+      ],
+      "name": "ErisBossLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "NamedRequirementsFalse": [
+          "StandardPackageBountyActive"
+        ],
+        "Path:GameState.ShrineUpgrades.HealingReductionShrineUpgrade": [
+          {
+            "Comparison": "<",
+            "Path": [
+              "GameState",
+              "ShrineUpgrades",
+              "HealingReductionShrineUpgrade"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.O_PostBoss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "O_PostBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1747
+    },
+    "ErisBossLowHealth02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Aww, looks like those mean old sailors back there took a couple pieces out of you along your way! But don't worry, babe. I'll end your suffering!"
+        }
+      ],
+      "name": "ErisBossLowHealth02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 45,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 1779
+    },
+    "ErisBossMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Already locked and loaded here, so make your move, Trouble."
+        }
+      ],
+      "name": "ErisBossMiscStart01",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2464
+    },
+    "ErisBossMiscStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "No going back to how things used to be, no matter what you do."
+        }
+      ],
+      "name": "ErisBossMiscStart02",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2471
+    },
+    "ErisBossMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Ready to give it your best shot here, Trouble? Because I sure am!"
+        }
+      ],
+      "name": "ErisBossMiscStart03",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2478
+    },
+    "ErisBossMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Everybody always trying to make a difference. Nobody pulling it off."
+        }
+      ],
+      "name": "ErisBossMiscStart04",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2485
+    },
+    "ErisBossMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Just when I was starting to feel a little bored, along comes Trouble!"
+        }
+      ],
+      "name": "ErisBossMiscStart05",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2492
+    },
+    "ErisBossMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Nothing's gonna change! Except the number of holes you got in you."
+        }
+      ],
+      "name": "ErisBossMiscStart06",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2499
+    },
+    "ErisBossMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "This is for your own good, Trouble. Mine, too!"
+        }
+      ],
+      "name": "ErisBossMiscStart07",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2507
+    },
+    "ErisBossMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Uh-uh-uh! The trail to the mountain's closed, in case you hadn't heard the latest, babe."
+        }
+      ],
+      "name": "ErisBossMiscStart08",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2514
+    },
+    "ErisBossMiscStart09": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Back for another round? Good, 'cause I've got thousands."
+        }
+      ],
+      "name": "ErisBossMiscStart09",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2521
+    },
+    "ErisBossMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Look at us, all settled into our routine. I hate routines!"
+        }
+      ],
+      "name": "ErisBossMiscStart10",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2532
+    },
+    "ErisBossMiscStart11": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Hate to do this to you, babe, but... oh, who am I kidding?"
+        }
+      ],
+      "name": "ErisBossMiscStart11",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2539
+    },
+    "ErisBossMiscStart12": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You look lost, Trouble. Let me help you find your way back home."
+        }
+      ],
+      "name": "ErisBossMiscStart12",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2546
+    },
+    "ErisBossMiscStart13": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Don't need a reason to get in your face. But I just happen to like it!"
+        }
+      ],
+      "name": "ErisBossMiscStart13",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2553
+    },
+    "ErisBossMiscStart14": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "So, ready to get shot all the way back to hell, Trouble?"
+        }
+      ],
+      "name": "ErisBossMiscStart14",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2560
+    },
+    "ErisBossMiscStart15": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Hope you're not sea-sick, babe. 'Cause you are about to get rocked."
+        }
+      ],
+      "name": "ErisBossMiscStart15",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2567
+    },
+    "ErisBossMiscStart16": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "If only you could fly, babe. But you can't! And I can't let you out of here."
+        }
+      ],
+      "name": "ErisBossMiscStart16",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponSuit": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponSuit"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2574
+    },
+    "ErisBossMiscStart17": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "What we're about to do, babe, I can do all night... after night, after night."
+        }
+      ],
+      "name": "ErisBossMiscStart17",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2587
+    },
+    "ErisBossMiscStart18": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "So maybe I can't kill you, Trouble, but I sure can try."
+        }
+      ],
+      "name": "ErisBossMiscStart18",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2594
+    },
+    "ErisBossMiscStart19": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "So maybe I can't kill you, Trouble, but I sure can try."
+        }
+      ],
+      "name": "ErisBossMiscStart19",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2601
+    },
+    "ErisBossMiscStart20": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "How many times am I gonna have to shoot you down, here, babe?"
+        }
+      ],
+      "name": "ErisBossMiscStart20",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2616
+    },
+    "ErisBossMiscStart21": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You're sick, babe! Losing over and over and over, and still you keep on?"
+        }
+      ],
+      "name": "ErisBossMiscStart21",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveDeathsInRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "O_Boss01",
+                "O_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveDeathsInRoom"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2631
+    },
+    "ErisBossMiscStart22": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Can't always stop you, but I can always slow you down."
+        }
+      ],
+      "name": "ErisBossMiscStart22",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2650
+    },
+    "ErisBossMiscStart23": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I'm a good sport, Trouble. Win or lose, it's all the same to me."
+        }
+      ],
+      "name": "ErisBossMiscStart23",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Eris": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Eris"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2665
+    },
+    "ErisBossMiscStart24": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Finally! I can only stand here contemplating the water for so long, you know!"
+        }
+      ],
+      "name": "ErisBossMiscStart24",
+      "otherRequirements": {
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasNone": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:PrevRun.UseRecord.NPC_Eris_01": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Eris_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2680
+    },
+    "ErisBossMiscStart25": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Never thought I was the type to get into any sort of regular routine, but now look at me, babe!"
+        }
+      ],
+      "name": "ErisBossMiscStart25",
+      "otherRequirements": {
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2706
+    },
+    "ErisBossMiscStart26": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You don't really have to climb all the way up that mountain back there, do you, Trouble?"
+        }
+      ],
+      "name": "ErisBossMiscStart26",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2721
+    },
+    "ErisBossMiscStart27": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Let's just have our fun, babe! I don't have all night, and neither do you."
+        }
+      ],
+      "name": "ErisBossMiscStart27",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2728
+    },
+    "ErisBossMiscStart28": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Difference between you and me is I don't care one bit whether I win or lose."
+        }
+      ],
+      "name": "ErisBossMiscStart28",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2735
+    },
+    "ErisBossMiscStart29": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You like this, don't you, Trouble? You don't have to tell me. Just admit it to yourself!"
+        }
+      ],
+      "name": "ErisBossMiscStart29",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2742
+    },
+    "ErisBossMiscStart30": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I hate to be so predictable, but I love making you mad, so... it's kind of a wash!"
+        }
+      ],
+      "name": "ErisBossMiscStart30",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2749
+    },
+    "ErisBossMiscStart31": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Don't take this personally, babe, but some things we just have to do, you know?"
+        }
+      ],
+      "name": "ErisBossMiscStart31",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2756
+    },
+    "ErisBossMiscStart32": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "While I'd love to slow you down with a delightful chat, I think this will get the job done even better."
+        }
+      ],
+      "name": "ErisBossMiscStart32",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2763
+    },
+    "ErisBossMiscStart33": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Look, heh! I know it's been a little rocky between us, but... we'll probably look back at this and laugh!"
+        }
+      ],
+      "name": "ErisBossMiscStart33",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2770
+    },
+    "ErisBossMiscStart34": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You don't look so happy to see me, babe! And I haven't even done anything yet..."
+        }
+      ],
+      "name": "ErisBossMiscStart34",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2777
+    },
+    "ErisBossMiscStart35": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Ungh! This isn't working...! Why won't you stop? What's it going to take, huh?"
+        }
+      ],
+      "name": "ErisBossMiscStart35",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 3,
+              "Names": [
+                "O_Boss01",
+                "O_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2784
+    },
+    "ErisBossMiscStart36": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "You just don't know when to quit, do you, Trouble? Fine!"
+        }
+      ],
+      "name": "ErisBossMiscStart36",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 3,
+              "Names": [
+                "O_Boss01",
+                "O_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2801
+    },
+    "ErisBossMiscStart37": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Look what I got back for some strange reason I can't figure out, Trouble!"
+        }
+      ],
+      "name": "ErisBossMiscStart37",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Eris": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Eris"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2817
+    },
+    "ErisBossMiscStart38": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I like the old Rail fine, but this new one's even better! Though, maybe not for you."
+        }
+      ],
+      "name": "ErisBossMiscStart38",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2833
+    },
+    "ErisBossMiscStart39": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "What a night! Got my new Aspect of the Rail, and a juicy target to try it on."
+        }
+      ],
+      "name": "ErisBossMiscStart39",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2846
+    },
+    "ErisBossMiscStart40": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "Let's work together, babe, to figure out what this new Aspect of the Rail can do!"
+        }
+      ],
+      "name": "ErisBossMiscStart40",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2860
+    },
+    "ErisBossMiscStart41": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "No fooling around, Trouble! I may not be Misery, but I'm the next best thing!"
+        }
+      ],
+      "name": "ErisBossMiscStart41",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2873
+    },
+    "ErisBossMiscStart42": {
+      "dialogueLines": [
+        {
+          "speaker": "Eris",
+          "text": "I may kind of like you, babe, but that won't stop me from doing what needs to be done."
+        }
+      ],
+      "name": "ErisBossMiscStart42",
+      "otherRequirements": {},
+      "owner": "Eris",
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisTaverna02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2885
+    },
+    "ErisBossPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Now that my brother's back, you still have no intention to return the Rail of Adamant, do you? Even though it was in his possession prior to all this."
+        },
+        {
+          "speaker": "Eris",
+          "text": "What makes you think he has greater right to it than me, huh, babe? He wasn't even using it five-sixths of the time! Just another weapon to him, but it's my one-and-only."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How touching! I trust your mother shall make sure it all works out, seeing as she's back as well. I wonder if she's always known you'd get your hands on that thing."
+        },
+        {
+          "speaker": "Eris",
+          "text": "Oh she has! Because this isn't my first time! Then I kind of lost it at one point, and your brother got his hands on it instead... but I always take what's mine."
+        }
+      ],
+      "name": "ErisBossPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 46,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Eris",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ErisPostTrueEnding01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Eris.lua",
+      "sourceLine": 2435
+    }
+  }
+}

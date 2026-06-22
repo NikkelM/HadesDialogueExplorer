@@ -1,0 +1,1123 @@
+{
+  "alternates": {},
+  "dependents": {},
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 0,
+    "totalSpeakers": 1,
+    "totalTextlines": 37,
+    "unresolvedRefs": []
+  },
+  "textlines": {
+    "CerberusBossMiscOutro01": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Placated for the moment, terrifying Cerberus turns his attention from the Princess to the gates of Tartarus below."
+        }
+      ],
+      "name": "CerberusBossMiscOutro01",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 772
+    },
+    "CerberusBossMiscOutro02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Whether he fought ferociously or merely played, three-headed terror Cerberus does not let on."
+        }
+      ],
+      "name": "CerberusBossMiscOutro02",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 778
+    },
+    "CerberusBossMiscOutro03": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The bestial triple-headed guardian of Tartarus regains his senses once again."
+        }
+      ],
+      "name": "CerberusBossMiscOutro03",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 784
+    },
+    "CerberusBossMiscOutro04": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "His coat all matted still with gaping souls, the Hound of Hell nevertheless seems satisfied."
+        }
+      ],
+      "name": "CerberusBossMiscOutro04",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 790
+    },
+    "CerberusBossMiscOutro05": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Unmired for the moment, fearsome Cerberus gives the Princess an appreciative look."
+        }
+      ],
+      "name": "CerberusBossMiscOutro05",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 796
+    },
+    "CerberusBossMiscOutro06": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "A flash of recognition passes 'cross the countenances of the monstrous Hound of Hell."
+        }
+      ],
+      "name": "CerberusBossMiscOutro06",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 802
+    },
+    "CerberusBossMiscOutro07": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Cleansed of his thick miasma-coat, the triple-headed Cerberus finally relents."
+        }
+      ],
+      "name": "CerberusBossMiscOutro07",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 808
+    },
+    "CerberusBossMiscOutro08": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Three frightful yet familiar canine countenances then emerge."
+        }
+      ],
+      "name": "CerberusBossMiscOutro08",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 814
+    },
+    "CerberusBossMiscOutro09": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Then all three monstrously sharp-fanged heads of Cerberus bend low in shame."
+        }
+      ],
+      "name": "CerberusBossMiscOutro09",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 820
+    },
+    "CerberusBossMiscOutro10": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The beast-defeating Princess returns terrifying Cerberus to his senses and familiar form."
+        }
+      ],
+      "name": "CerberusBossMiscOutro10",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 826
+    },
+    "CerberusBossMiscOutro11": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The barely-breathing Princess of the Dead somehow manages to overcome the beast."
+        }
+      ],
+      "name": "CerberusBossMiscOutro11",
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.3
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 832
+    },
+    "CerberusBossMiscOutro12": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Three-headed Cerberus tempers his boundless rage and hides for now his fangs."
+        }
+      ],
+      "name": "CerberusBossMiscOutro12",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 845
+    },
+    "CerberusBossMiscOutro13": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Relieved at last of an infernal itchy-spot, the fire-breathing watchdog looks appeased."
+        }
+      ],
+      "name": "CerberusBossMiscOutro13",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 851
+    },
+    "CerberusBossMiscOutro14": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Three red and many-fanged maws turn now appreciatively toward the Princess of the Dead."
+        }
+      ],
+      "name": "CerberusBossMiscOutro14",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 857
+    },
+    "CerberusBossMiscOutro15": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The dreaded Hound of Hell assumes again a shape so sinister as scarce can be described."
+        }
+      ],
+      "name": "CerberusBossMiscOutro15",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 863
+    },
+    "CerberusBossMiscOutro16": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "What constitutes mere playtime for the terrifying Hound of Hell is ended for the while."
+        }
+      ],
+      "name": "CerberusBossMiscOutro16",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 869
+    },
+    "CerberusBossMiscOutro17": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The grim resourceful Underworld Princess somehow soothes the savage beast."
+        }
+      ],
+      "name": "CerberusBossMiscOutro17",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 875
+    },
+    "CerberusBossMiscOutro18": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "After a furious and world-shaking clash, the dreadful Cerberus recovers his true form."
+        }
+      ],
+      "name": "CerberusBossMiscOutro18",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 881
+    },
+    "CerberusBossMiscOutro19": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Finally the vengeful Princess overcomes again the hellish monster standing in her way."
+        }
+      ],
+      "name": "CerberusBossMiscOutro19",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 887
+    },
+    "CerberusBossMiscOutro20": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Nightmarish Cerberus regains composure and again sets off, perhaps to notify his master that his daughter is nearby."
+        }
+      ],
+      "name": "CerberusBossMiscOutro20",
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.I_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "I_Story01"
+            ],
+            "Value": 4
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 893
+    },
+    "CerberusBossMiscOutro21": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The fire-spewing hound of hell grows momentarily quite calm, having detected finally the Princess of the Dead."
+        }
+      ],
+      "name": "CerberusBossMiscOutro21",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 907
+    },
+    "CerberusBossMiscOutro22": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The many tiny daemons causing hellish Cerberus to itch and scratch so much no longer bother him, for now."
+        }
+      ],
+      "name": "CerberusBossMiscOutro22",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 913
+    },
+    "CerberusBossMiscOutro23": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Even the hottest flames can be extinguished, though the three-headed guardian of hell could always summon more."
+        }
+      ],
+      "name": "CerberusBossMiscOutro23",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 919
+    },
+    "CerberusBossMiscOutro24": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "If all of this was but a playful game for the three-headed Cerberus, then he at least is finally tuckered out."
+        }
+      ],
+      "name": "CerberusBossMiscOutro24",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 930
+    },
+    "CerberusBossMiscOutro25": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Playtime at last is over for old Cerberus, but he shall have another playtime hence."
+        }
+      ],
+      "name": "CerberusBossMiscOutro25",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 943
+    },
+    "CerberusBossMiscOutro26": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The ever-burning hound of hell has finally cooled off for the time being."
+        }
+      ],
+      "name": "CerberusBossMiscOutro26",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 956
+    },
+    "CerberusBossMiscOutro27": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The dreaded watchdog of the gates of Hell decides the time has come to take his leave."
+        }
+      ],
+      "name": "CerberusBossMiscOutro27",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 967
+    },
+    "CerberusBossMiscOutro28": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Ferocious fully-clean and multi-headed Cerberus descends again into the comfort of his pit."
+        }
+      ],
+      "name": "CerberusBossMiscOutro28",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 973
+    },
+    "CerberusBossMiscOutro29": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The Princess once again somehow withstands the fangs and flames of Cerberus himself."
+        }
+      ],
+      "name": "CerberusBossMiscOutro29",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 979
+    },
+    "CerberusBossMiscOutro30": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Playtime for the multi-headed hound of hell is ended for the eve."
+        }
+      ],
+      "name": "CerberusBossMiscOutro30",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 985
+    },
+    "CerberusBossMiscOutro31": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Ensuring time flows freely forth apparently requires cleaning up the mired hound of hell."
+        }
+      ],
+      "name": "CerberusBossMiscOutro31",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 997
+    },
+    "CerberusBossMiscOutro32": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "For this most-brutal and ferocious beast, all that preceded merely was a treat."
+        }
+      ],
+      "name": "CerberusBossMiscOutro32",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 1010
+    },
+    "CerberusBossMiscOutro33": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "The fire-breathing guardian of hell has had his fill of brisk activity for the time being."
+        }
+      ],
+      "name": "CerberusBossMiscOutro33",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 1022
+    },
+    "CerberusBossMiscOutro34": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "After some thought, ferocious Cerberus decides not to devour the Princess."
+        }
+      ],
+      "name": "CerberusBossMiscOutro34",
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 1034
+    },
+    "CerberusBossMiscOutro35": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "This sure beats guarding Underworld gates, the monstrous hound perhaps is thinking at this time."
+        }
+      ],
+      "name": "CerberusBossMiscOutro35",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "InfestedCerberus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 1040
+    },
+    "CerberusBossOutro01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Cerberus... it's really you."
+        },
+        {
+          "speaker": "Speaker_Homer",
+          "text": "Having shed its coat of torment, the soul-devouring Infernal Beast beyond the gates of Tartarus reveals that it is not the monster it appeared, but one more infamously vicious still."
+        }
+      ],
+      "name": "CerberusBossOutro01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 738
+    },
+    "CerberusBossOutro02": {
+      "dialogueLines": [
+        {
+          "speaker": "Speaker_Homer",
+          "text": "His rage dispelled, and his true form revealed, infernal watch-dog Cerberus regards the Underworld Princess with but the faintest glint of recognition in his six terrible eyes."
+        }
+      ],
+      "name": "CerberusBossOutro02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "InfestedCerberus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_InfestedCerberus.lua",
+      "sourceLine": 757
+    }
+  }
+}

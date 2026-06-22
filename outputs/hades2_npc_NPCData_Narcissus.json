@@ -1,0 +1,4877 @@
+{
+  "alternates": {
+    "NarcissusAboutEcho01": [
+      "NarcissusAboutEcho01B"
+    ],
+    "NarcissusAboutEcho01B": [
+      "NarcissusAboutEcho01"
+    ]
+  },
+  "dependents": {
+    "EchoAboutEcho01": [
+      {
+        "name": "NarcissusAboutEcho01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutEcho01B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "EchoAboutNarcissus01": [
+      {
+        "name": "NarcissusAboutEcho02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "EchoAboutNarcissus02": [
+      {
+        "name": "NarcissusAboutEcho03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "EchoAboutNarcissus03": [
+      {
+        "name": "NarcissusAboutEcho04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "EchoAboutNarcissus04": [
+      {
+        "name": "NarcissusAboutWaters01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04_2",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutStillDirtyWaters01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat05",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusSadChat06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisGift08": [
+      {
+        "name": "NarcissusAboutLove02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "NarcissusAboutLittleToSay01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusGift08": [
+      {
+        "name": "NarcissusAboutLove02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "MorosGift08": [
+      {
+        "name": "NarcissusAboutLove02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutBeauty01": [
+      {
+        "name": "NarcissusAboutFriendship01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutFriendship02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutEcho01": [
+      {
+        "name": "NarcissusAboutEcho01B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutStillDirtyWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutEcho01B": [
+      {
+        "name": "NarcissusAboutEcho01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutStillDirtyWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutEcho02": [
+      {
+        "name": "NarcissusAboutEcho01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutEcho01B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04_2",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusAboutStillDirtyWaters01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NarcissusSadChat06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutEcho03": [
+      {
+        "name": "NarcissusAboutSuitors01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NarcissusAboutEcho05": [
+      {
+        "name": "NarcissusAboutEcho06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutEcho06": [
+      {
+        "name": "NarcissusAboutCurse01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship01": [
+      {
+        "name": "NarcissusAboutFriendship02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship02": [
+      {
+        "name": "NarcissusAboutFriendship03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship03": [
+      {
+        "name": "NarcissusAboutFriendship04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship04": [
+      {
+        "name": "NarcissusAboutFriendship05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship05": [
+      {
+        "name": "NarcissusAboutFriendship06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship06": [
+      {
+        "name": "NarcissusAboutBeauty01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutFriendship07",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutChronos01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusChat27",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship07": [
+      {
+        "name": "NarcissusAboutFriendship08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship08": [
+      {
+        "name": "NarcissusAboutFriendship09",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutFriendship09": [
+      {
+        "name": "NarcissusChat21",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusChat23",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusChat28",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NarcissusAboutLove03": [
+      {
+        "name": "NarcissusAboutFriendship01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutNemesis01": [
+      {
+        "name": "NemesisWithNarcissus01_FollowUp",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NemesisWithNarcissus01_FollowUp",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "NarcissusAboutReflection01": [
+      {
+        "name": "NarcissusAboutChronos01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusChat27",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutReflection02": [
+      {
+        "name": "NarcissusAboutReflection03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutWaters01": [
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutWaters01_2": [
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutWaters01_3": [
+      {
+        "name": "NarcissusAboutWaters02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutWaters02": [
+      {
+        "name": "NarcissusAboutWaters01_2",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters01_3",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutWaters05": [
+      {
+        "name": "NarcissusGrantsReward01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGift01": [
+      {
+        "name": "NarcissusAboutLove01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutOceanus01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutOceanus02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutReflection01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGift02": [
+      {
+        "name": "NarcissusAboutSirens01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGift03": [
+      {
+        "name": "NarcissusAboutChamber01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NarcissusGift04": [
+      {
+        "name": "NarcissusChat26",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGift06": [
+      {
+        "name": "NarcissusAboutFriendship02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGift07": [
+      {
+        "name": "NarcissusAboutLittleToSay01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusChat36",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusGrantsReward01": [
+      {
+        "name": "NarcissusAboutLove02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutLove03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutFriendship02",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "NemesisWithNarcissus02_FollowUp",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NarcissusAboutEcho05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusWithEcho01": [
+      {
+        "name": "NarcissusAboutWaters03",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NarcissusAboutWaters04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusWithEcho02": [
+      {
+        "name": "NarcissusAboutWaters04_2",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisGift08": [
+      {
+        "name": "NarcissusAboutLove02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NemesisWithNarcissus01_FollowUp": [
+      {
+        "name": "NemesisWithNarcissus02_FollowUp",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NemesisWithNarcissus02_FollowUp",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 124,
+    "totalSpeakers": 1,
+    "totalTextlines": 119,
+    "unresolvedRefs": [
+      "EchoAboutEcho01",
+      "EchoAboutNarcissus01",
+      "EchoAboutNarcissus02",
+      "EchoAboutNarcissus03",
+      "EchoAboutNarcissus04",
+      "ErisGift08",
+      "FatesEpilogue01",
+      "IcarusGift08",
+      "MorosGift08",
+      "NemesisGift08"
+    ]
+  },
+  "textlines": {
+    "NarcissusAboutBeauty01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Here comes Laurel, or whatever her name is. I was just thinking about the time we met. I looked down into the shimmering waters... and there he was. Our eyes locked; like he could see my soul. We've been together ever since."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have to say, I don't think I've met anyone who's quite so taken with themselves as you, Narcissus. I'm a little envious. When I see myself... I see so many flaws."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oof, I know what you mean. Not everybody's born with perfect skin... lustrous hair... total package. But everybody's beautiful in their own way! Even you."
+        }
+      ],
+      "name": "NarcissusAboutBeauty01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 409
+    },
+    "NarcissusAboutChamber01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sure is nice here, isn't it? The air is thick, the waters, crystal clear. And there's no rain! I couldn't see myself at all when it would rain."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm pleased to know that the untended outer reaches of the Underworld exceed your expectations. Surely Lord Hades would want all his subjects to be well accommodated here."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Come on I know not everybody's gonna get a spot as sweet as this. The best spots in all the Underworld go to those who earned those spots in life, right? Well no wonder!"
+        }
+      ],
+      "name": "NarcissusAboutChamber01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutReflection04"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 382
+    },
+    "NarcissusAboutChronos01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Nothing gets to you! A war rages between the Titan Chronos and the gods, but you've shown not even the slightest concern. What's your secret?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I don't keep secrets, Laurel. It's just that... I don't care. If it doesn't affect me, it doesn't affect me. Got enough problems of my own... such as, how best to get rid of all these."
+        }
+      ],
+      "name": "NarcissusAboutChronos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship06"
+        ],
+        "RequiredTextLines": [
+          "NarcissusAboutReflection01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1278
+    },
+    "NarcissusAboutCurse01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Maybe it is a curse... this thing I've got. The way that everybody falls for me the moment they lay eyes on me, I mean I get it! But still. They don't even know me...."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Mere infatuation, in the guise of love... though to your point, your suitors might do well to interrogate their feelings once in a while. And respect your wish for privacy."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Well the Shades around here aren't so bad I guess. They know where we stand! Back when I lost myself in these waters... they kept me company. Like you."
+        }
+      ],
+      "name": "NarcissusAboutCurse01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutOceanus01",
+        "NarcissusAboutLove01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutEcho06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 927
+    },
+    "NarcissusAboutDanger01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Don't the vicious creatures contaminating these chambers make this a rather dangerous place in which to laze about?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, I've made clear to them that they don't stand a chance with me at all. In my position, it's not good to send mixed messages. Both for my suitor's sakes... and for my own."
+        }
+      ],
+      "name": "NarcissusAboutDanger01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 902
+    },
+    "NarcissusAboutEcho01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're very focused. Centered on the self. Become inured somehow to the incessant singing that always echoes through these halls."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Speak not to me of Echo's this or Echo's that, OK? Echo meant nothing to me and somehow got the wrong idea anyway. And don't you get any ideas either."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Speak not to me of echoes, what...? I'm talking about Scylla's song. You've somehow learned to block it out, though... gods, I think I'm beginning to like it..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "How about I learn to block you out! With this."
+        }
+      ],
+      "name": "NarcissusAboutEcho01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutStillDirtyWaters01",
+        "NarcissusAboutEcho01B",
+        "NarcissusAboutEcho02",
+        "NarcissusAboutEcho03",
+        "NarcissusAboutEcho04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "EchoAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1343
+    },
+    "NarcissusAboutEcho01B": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're very focused. Centered on the self. Become inured somehow to the incessant singing that always echoes through these halls."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Speak not to me of Echo's this or Echo's that, OK? Echo meant nothing to me and somehow got the wrong idea anyway. And don't you get any ideas either."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Echo meant nothing to you, what... I was talking about Scylla's song and how you've blocked it out. Come to think, I can't quite hear it now either."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "How about I learn to block you out! With this."
+        }
+      ],
+      "name": "NarcissusAboutEcho01B",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutStillDirtyWaters01",
+        "NarcissusAboutEcho01",
+        "NarcissusAboutEcho02",
+        "NarcissusAboutEcho03",
+        "NarcissusAboutEcho04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutEcho01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1375
+    },
+    "NarcissusAboutEcho02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Look, I can tell you're having trouble moving on. Maybe you ought to spend a little time down in the Fields. Clear your head, put the pieces of your heart back together, and all that?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you mean the Mourning Fields, I don't think that's a healing place. The Shades there wallow in self-pity and speechless despair. Although, there is one who repeats whatever I say to her..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Repeats whatever you say to her! I knew a Nymph like that one time. Nice girl. But she didn't get me! Only ever talked about herself. I had to cut her off."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So you do know Echo, the Mountain Nymph! She's languishing in the Fields even now. Apparently because of you. I can hardly get through to her..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, that's too bad. Well, tell her Narcissus really wants what's best for her. Unless that's me. Don't tell her that part, though."
+        }
+      ],
+      "name": "NarcissusAboutEcho02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutStillDirtyWaters01",
+        "NarcissusAboutEcho01",
+        "NarcissusAboutEcho01B",
+        "NarcissusAboutEcho03",
+        "NarcissusAboutEcho04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "EchoAboutNarcissus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1411
+    },
+    "NarcissusAboutEcho03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I spoke to Echo about you. Said you didn't mean to hurt her, though perhaps I shouldn't have. She responded in her usual way but I could tell something happened. You broke her heart?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "She broke her own heart! They always fall for people who don't love them back. Anyway, I'm sure she'll find someone who thinks she's... awesome. Plenty of fish... in the sea!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, I've noticed. So, has anybody ever fallen out of love with you? Or do they all end up in the Mourning Fields, pining for you for eternity?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "All I know is no one's ever loved me as much as me. They're all too busy feeling sorry for themselves to really care, you know? Can't love someone... if you can't love yourself."
+        }
+      ],
+      "name": "NarcissusAboutEcho03",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutStillDirtyWaters01",
+        "NarcissusAboutEcho01",
+        "NarcissusAboutEcho01B",
+        "NarcissusAboutEcho02",
+        "NarcissusAboutEcho04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "EchoAboutNarcissus02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1451
+    },
+    "NarcissusAboutEcho04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey tell me something. Is Echo really not OK? I thought about the things you said, how she was all alone down in the Fields... how could I hurt someone without even trying, you know?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Narcissus, don't take this the wrong way, but I'm impressed you've given any thought to someone else. As for Echo, she seems to be getting by. Is there something you'd like to say to her should I cross paths with her again?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sure, um... go ahead and tell her that I hope she finds someone who loves her like I love me. But don't tell her I said it, she'd just get the wrong idea and her heart would break... again."
+        }
+      ],
+      "name": "NarcissusAboutEcho04",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutStillDirtyWaters01",
+        "NarcissusAboutEcho01",
+        "NarcissusAboutEcho01B",
+        "NarcissusAboutEcho02",
+        "NarcissusAboutEcho03"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "EchoAboutNarcissus03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1484
+    },
+    "NarcissusAboutEcho05": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Do you think you'll ever visit Echo again in the Fields? You seemed to have no trouble getting there and back."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You know, maybe I might! But it's a little crowded there, and I do like it here. So then again, maybe I won't! We made a clean break. Why mess with a perfectly good thing?"
+        }
+      ],
+      "name": "NarcissusAboutEcho05",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutEcho06"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGrantsReward01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1510
+    },
+    "NarcissusAboutEcho06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You know the strangest thing happened lately... I found myself thinking about Echo... as a friend. You said we're cursed but, I like mine. I'm blessed! But what about her?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Good question! Why don't you visit her again and ask yourself? You spoke to her of friendship. Friends share each other's burdens."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sort of like how you share the burden of this limitless supply of gifts, right? Here's the thing, though: I don't think I can leave this place again... now that the waters here are clear."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You'd be leaving only temporarily. And the love of your life is always with you, even if you can't always gaze longingly into his eyes."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "All right, all right, stop pushing me around! But if you do see Echo, tell her that her friend said hi, OK?"
+        }
+      ],
+      "name": "NarcissusAboutEcho06",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutEcho05"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutEcho05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1533
+    },
+    "NarcissusAboutFriendship01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...I keep on thinking why is it so many friends can't just be friends? Like, what is wrong with that? They have to make it all romantic and then ruin everything!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps they're simply striving not to feel alone. We can't always control our feelings, or even tell what's causing them. So they get in the way of what's best for us."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Not for me! But probably for everybody else. Anyway, true friendship's just another type of love, and should be able to go through a rough patch every now and then."
+        }
+      ],
+      "name": "NarcissusAboutFriendship01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove02",
+        "NarcissusAboutLove03",
+        "NarcissusAboutFriendship02",
+        "NarcissusAboutFriendship03"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutLove03",
+          "NarcissusAboutBeauty01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 533
+    },
+    "NarcissusAboutFriendship02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey wait, you're kind of like a friend of mine by now, aren't you? Unless you're playing the long game... make me let my guard down then go in for the kill! The ultimate suitor..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I understand your need to remain guarded when so many have attempted to win your affections even though you've made quite clear that you're not interested. But that's not me."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Can't be too careful these days. So like, no sudden movements or anything, OK? If you're not here for me... must be for one of these."
+        }
+      ],
+      "name": "NarcissusAboutFriendship02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove02",
+        "NarcissusAboutLove03",
+        "NarcissusAboutFriendship01",
+        "NarcissusAboutFriendship03"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 5
+        }
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "NarcissusGrantsReward01"
+        ],
+        "RequiredTextLines": [
+          "NarcissusGift06",
+          "NarcissusAboutFriendship01",
+          "NarcissusAboutBeauty01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 564
+    },
+    "NarcissusAboutFriendship03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey I wanted you to know, I've come to the conclusion that you really aren't here to sweep me off my feet. Instead, I've come to a conclusion that's... more disturbing."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "More disturbing? Very well, I've braced myself. What's your conclusion about me, Narcissus? After all this time."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "My conclusion is you're only here for the free gifts I offer you repeatedly without a second thought. If I weren't so selfless, then no one would like me... for who I am."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Don't you think I'm capable of appreciating your company as well as your gifts? Your generosity is part of who you are. Though, why not put it to the test if you're uncertain?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...No! No, or... maybe. Look I'd not considered that before. The ramifications, augh! Please leave me to consider what this means. But first..."
+        }
+      ],
+      "name": "NarcissusAboutFriendship03",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove02",
+        "NarcissusAboutLove03",
+        "NarcissusAboutFriendship01",
+        "NarcissusAboutFriendship02"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 597
+    },
+    "NarcissusAboutFriendship04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What if I didn't give you any gift this time, what would you think about that, huh? I'm warning you, I'll do it!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Go right ahead, if it makes you feel better or lets you put your inhibitions to rest! I've little need for most resources that you offer at this point anyhow."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You're bluffing! You want me to bestow one of my numerous offerings. Well I'll show you! I'm really gonna do it! This time... you get... nothing! How do you like that? Yeah!"
+        }
+      ],
+      "name": "NarcissusAboutFriendship04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 640
+    },
+    "NarcissusAboutFriendship05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...What are you doing here, Laurel? I'm not in search of suitors, I'm no longer giving anything away, and I know I'm not friendship material. Leave me be..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If your newfound concern is to become friendship material, you could start by getting my name right. I'm called Melinoë. Although, I'm getting used to Laurel more and more..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...And just for that, no gift from me this time either! Some friend I am, right? Now let me get back to giving my undivided attention to the only one I really care about."
+        }
+      ],
+      "name": "NarcissusAboutFriendship05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 685
+    },
+    "NarcissusAboutFriendship06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...You're a good friend, man. And much more. Always here for me, you know? Except that time the waters got all murky, but then Laurel, um... Melinoë... she really helped us out."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yet now you've taken to ignoring me because for some reason you find it difficult to fathom that I value your companionship, not just your numerous unwanted gifts."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Not listening! And if my gifts are so unwanted, then I'm sure you wouldn't mind it if I didn't give another one to you again."
+        }
+      ],
+      "name": "NarcissusAboutFriendship06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 724
+    },
+    "NarcissusAboutFriendship07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Sometimes I think about how Echo's doing... how you're doing, meaning you not me... and then I start to wonder do you think about how I'm doing, too. It's messed up."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I assure you it's perfectly fine. But you don't have to wonder what I think; you can just ask! Since I'll keep visiting from time to time, as long as that's all right."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You'll keep visiting even though I've ceased to offer you my gifts, so that your only reason to stop by is to see me?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Either you, or some Sea-Serpent, or some such."
+        }
+      ],
+      "name": "NarcissusAboutFriendship07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 764
+    },
+    "NarcissusAboutFriendship08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You know, ever since I stopped giving you your choice of unwanted gifts, they really piled up... I've got some pretty good ones back there, too..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "They're meant for you and no one else, Narcissus. I'm certain that your would-be suitors would prefer you keep them anyhow."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Well funny thing about that is, some of these Shades, sounds like they've heard of you! But they are way too insecure to give you stuff directly, so... they hand it off to me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What? So then some of those Verdure Samplers, Ancestral Offerings, and such... they were for me in the first place?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Probably most of them lately but I definitely lost count. So anyway, uh... here."
+        }
+      ],
+      "name": "NarcissusAboutFriendship08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 808
+    },
+    "NarcissusAboutFriendship09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey, thanks for stopping by. I thought you'd definitely go away once I held out on giving you free stuff. Especially since a bunch of it was yours. But you didn't give up on me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You seemed as though you were just going through a phase, and not the sort an incantation could alleviate. It's true I didn't always think of you as a friend, Narcissus; but I do now."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "It's funny, I... believe you. And since friends help each other out, why don't you take your pick of one of these. Those Shades back there brought plenty for the both of us."
+        }
+      ],
+      "name": "NarcissusAboutFriendship09",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutFriendship08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 846
+    },
+    "NarcissusAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "There was this wonderful aroma in the air just now... lilac on a summer breeze, or something like that. I thought it was you. But it's just the gift I gave you before. Good stuff."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This Aromatic Phial you gave me does smell rather pleasant, doesn't it? I scarcely notice with all the brine and fishy odor around here. Though it doesn't seem to bother you."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh I just tune it out. Like all the rest. I give my undivided attention... to me... and I guess some of it to you, but you don't stay for long so it's OK."
+        }
+      ],
+      "name": "NarcissusAboutKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutNemesis01"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "FountainRarityKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1118
+    },
+    "NarcissusAboutLittleToSay01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sometimes I'm struck by how incredible I look, and am overcome by a trance-like affection that cannot easily be broken. Not by you, and not even by me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sounds familiar. How is what you're describing any different from what normally occurs when I see you, Narcissus?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Don't worry, man, we can just tune everything out. Like the only thing that exists in this world is you and me. Just us."
+        }
+      ],
+      "name": "NarcissusAboutLittleToSay01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "NarcissusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1888
+    },
+    "NarcissusAboutLooks01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I have one rule, and that's look, but don't touch, OK? In fact, why don't you stand a little farther back, and also tell me how come you keep showing up like this?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've some affairs to settle in the lower reaches of the Underworld. Thought I'd take this rather scenic route, through this chamber of yours."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, it isn't my chamber. I just find the waters here particularly clean and reflective, and far fewer would-be suitors than in Asphodel. Remember to take a gift before you go!"
+        }
+      ],
+      "name": "NarcissusAboutLooks01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 332
+    },
+    "NarcissusAboutLooks02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sometimes I wonder, what would it have been like were I not so unbelievably attractive? Some things would've been easier... not having everybody fall in love with me... maybe arithmetic..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're concerned that you're too winsome for your own good...? Well if it makes you feel any better, I don't find you particularly attractive..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, I know you don't mean that. Though I appreciate you trying to comfort me. As a friend."
+        }
+      ],
+      "name": "NarcissusAboutLooks02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutReflection01"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 356
+    },
+    "NarcissusAboutLove01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's hard to believe you're so completely in love with yourself. Don't you ever... consider the mistakes you've made, or ways in which you can improve? Or not improve, even..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What, are you kidding? How could you possibly improve on this? Though, I definitely see your point. In your case."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Was that a bit of ridicule, or do you in fact have some keen bit of insight or feedback about me you're willing to share?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "If you're unhappy with the way you are, why don't you just, like, change? Or if you can't... get over it I guess, I don't know."
+        }
+      ],
+      "name": "NarcissusAboutLove01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutOceanus01",
+        "NarcissusAboutCurse01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 439
+    },
+    "NarcissusAboutLove02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You know I was thinking... if you don't love me that must mean you've fallen pretty hard for someone else! So who's the lucky guy or gal or whatever?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That isn't any of your business... but, you've opened up to me. Look, I don't really fall in love the way you think. Tales of people falling all over themselves... I can't relate to any of it."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh that's OK! I can't relate to other people's love either. Anyway, as long as you've got something that keeps you going! And since you keep on showing up, I guess you do."
+        }
+      ],
+      "name": "NarcissusAboutLove02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove03",
+        "NarcissusAboutFriendship01",
+        "NarcissusAboutFriendship02",
+        "NarcissusAboutFriendship03"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "MorosGift08",
+          "NemesisGift08",
+          "ErisGift08",
+          "IcarusGift08"
+        ],
+        "RequiredTextLines": [
+          "NarcissusGrantsReward01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 472
+    },
+    "NarcissusAboutLove03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I had plenty of suitors that said they wanted to be friends, but... they were still in love with me. I had to cut 'em off. How come it's harder to be friends than be in love, you know?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps because... when it comes to feelings of infatuation, it takes effort to banish them, not to have them. But cultivating friendships... that takes work."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I guess. I used to think I didn't need friends since I don't get lonely, but like... it's nice sometimes! Having somebody else to talk to about stuff. Like Echo, and like you!"
+        }
+      ],
+      "name": "NarcissusAboutLove03",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove02",
+        "NarcissusAboutFriendship01",
+        "NarcissusAboutFriendship02",
+        "NarcissusAboutFriendship03"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGrantsReward01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 504
+    },
+    "NarcissusAboutNemesis01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Huh, it's only you. Been getting crowded lately between all these chats and what's-her-name stomping around... least you're not her."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What's-her-name, that sounds like Nemesis. Scornful expression, dark hair and armor? What's your concern with her?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Gives me a bad vibe. Storms around, shakes everything up. Something about her, I don't know. Don't hurt my head, OK?"
+        }
+      ],
+      "name": "NarcissusAboutNemesis01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathTrue:GameState.EncountersCompletedCache.NemesisCombatG": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EncountersCompletedCache",
+              "NemesisCombatG"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1147
+    },
+    "NarcissusAboutOceanus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Narcissus, how did you discover this place anyhow? I'd not expected to have a friendly chat along the outskirts of the Underworld."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I always knew my way around the rivers and the seas. After I died, I got stuck in Asphodel for a while. Way too dry. So once the Underworld opened up, I swam straight here. Where it's cool."
+        }
+      ],
+      "name": "NarcissusAboutOceanus01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLove01",
+        "NarcissusAboutCurse01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 953
+    },
+    "NarcissusAboutOceanus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey what's your problem, anyway? Always huffing through here like you're late to something. You got to learn to relax."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sounds like you were there when the Underworld opened up. It shouldn't have."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "How come? That way I'd still be shriveled up in Asphodel! Know what, though, just forget I asked. You're killing my mood here."
+        }
+      ],
+      "name": "NarcissusAboutOceanus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 977
+    },
+    "NarcissusAboutReflection01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Don't worry, man, she's not so bad, she doesn't stay for long. Soon it'll just be you and me again... and all those Shades back there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Pardon the interruption, Narcissus. Were you just... speaking to your own reflection there?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "They're always quick to judge, aren't they? Look, Laurel, or whatever your name is: You'll never understand what I've got. Don't even try."
+        }
+      ],
+      "name": "NarcissusAboutReflection01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutLooks02"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1004
+    },
+    "NarcissusAboutReflection02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...What would you say is your best quality, if you had to choose? The one thing you most adore... what drives everyone around you wild...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, I, erm... well... I'm quite attentive, I think. If you tell me something, you don't have to tell me twice! Chances are I'll take it to heart the first time. Though, why do you ask?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Pff, there she goes, butting into our private conversations! I know your best quality, man: your looks. Whoever says looks aren't everything's a dummy. Like this girl over here! Just give her a gift, and she leaves us alone!"
+        }
+      ],
+      "name": "NarcissusAboutReflection02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutReflection03"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1032
+    },
+    "NarcissusAboutReflection03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Got to say, your hair is looking awesome lately, you know? Whole wet-look thing! Must be all the humidity and brine. Keep it up."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I was about to thank you for the compliment when it occurred to me that you're just talking to yourself again, most likely. In which case, forgive the interruption!"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Don't worry about it. I have plenty of time to myself. But you only get to see me, what, maybe once a day, tops? Better than nothing, though not nearly enough."
+        }
+      ],
+      "name": "NarcissusAboutReflection03",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutReflection02"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutReflection02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1060
+    },
+    "NarcissusAboutReflection04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Hey remember the time you were, like, checking yourself out, and then a bee or something lands right on your face, so you swat it, bam! Your eye was swollen shut for like a week. You looked terrible, man!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Pardon, Narcissus. That sounds like it must have been a harrowing experience. Was your love for yourself tested when the reflection staring back at you had a big puffy eyelid?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "No! I mean... not really. But this love is more than skin-deep. Even if I can't look at me... I can still talk to me... and even if I can't do that, I can always think about me, you know? And so can you."
+        }
+      ],
+      "name": "NarcissusAboutReflection04",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutChamber01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1090
+    },
+    "NarcissusAboutSirens01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Ever been to one of the local shows around here? Scylla and the Sirens keep playing night after night, much as I'd hoped they'd move on to the next stage of their tour by now..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Only music that I care for is my voice. The rest can get so loud, it disturbs the surface of the water. And whatever disturbs the surface of the water... disturbs me."
+        }
+      ],
+      "name": "NarcissusAboutSirens01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "Path:GameState.RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "G_Boss01",
+              "G_Boss02"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1245
+    },
+    "NarcissusAboutSolitude01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Don't you get lonely sitting here, staring into those waters? Especially in a place like this."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Lonely? I don't know the meaning of the word. I have the best company you could ever ask for: Me!"
+        }
+      ],
+      "name": "NarcissusAboutSolitude01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 876
+    },
+    "NarcissusAboutStillDirtyWaters01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're still wallowing in misery trying to see your reflection in a muddy pool. Why not just relocate? The waters aren't like this everywhere."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...I'll never leave you, man. I got us into this, I'll find a way to get us out, OK? So don't you quit on me! We'll figure something out, just need to stay focused. No distractions!"
+        }
+      ],
+      "name": "NarcissusAboutStillDirtyWaters01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutEcho01",
+        "NarcissusAboutEcho01B",
+        "NarcissusAboutEcho02",
+        "NarcissusAboutEcho03",
+        "NarcissusAboutEcho04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          },
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1788
+    },
+    "NarcissusAboutSuitors01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Cutting to the front of the line! Whoever you are, at least you've got more guts than all my other would-be suitors back there. Though you still don't have a chance."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "These Shades must have felt strongly for you in life if they've been lingering nearby. But it wasn't my intent to be out of turn, merely to thank you for your gift the other night."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh I know every opening line there is, and merely to thank you is one of the classics. Acting all demure! Well I know what you really want, and you're not getting it. Just this."
+        }
+      ],
+      "name": "NarcissusAboutSuitors01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutEcho03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 304
+    },
+    "NarcissusAboutSurface01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Not seen you too much lately. I figured you'd moved on. But then I figured, that's impossible. They always come back."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've had a few things to take care of on the surface recently, so I've been spending more evenings up top. Though I appreciate you noting my absence."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I mostly noted more unwanted gifts piling up! Get rid of one of these for me, would ya? Maybe someone you know could use it... way up there."
+        }
+      ],
+      "name": "NarcissusAboutSurface01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusLowHealth02"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "Path:BiomesReached.N": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "BiomesReached",
+              "N"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1310
+    },
+    "NarcissusAboutWaters01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh it's you again. Look, I... want you to leave me alone, OK? Because I'm in a state of grief. And the only one I want to see me that way... is me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "State of grief, wait. What's with the water here...? It's gone all murky or something. Oh, no! You can't see your reflection anymore..."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Don't need to rub it in, dummy! Not like you can do something about it anyway. A lot of things turn ugly after a while. So please excuse me while I mourn for what I've lost..."
+        }
+      ],
+      "name": "NarcissusAboutWaters01",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1570
+    },
+    "NarcissusAboutWaters01_2": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Didn't see you come in. Because I can't really see anything in here anymore... I'm sure the water's gonna clear up, though! At least, I think I'm sure..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Something's amiss. Such contamination typically never lasts more than a night or two. Have you checked other locations? The waters elsewhere don't appear like this."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You're just saying that to lure me away so you can take my spot! And since when are you an expert on water filtration? Nah, these types of problems always fix themselves."
+        }
+      ],
+      "name": "NarcissusAboutWaters01_2",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredFalseTextLines": [
+          "NarcissusAboutWaters02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusAboutWaters01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1596
+    },
+    "NarcissusAboutWaters01_3": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Look, I have done a lot of thinking, and... I've started thinking maybe that these waters aren't gonna clear up after all. I even checked a different spot, and sure enough... same thing."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Forget the waters for a moment, something's going on with you. Though whether you've done this to yourself or someone else has, I can't say. Have you been clinging to feelings of guilt, resentment, that sort of thing?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "No way! I have never been better! Except when the waters were clear. I have never experienced feelings of guilt or resentment in my life. Unless you mean... well... huh."
+        }
+      ],
+      "name": "NarcissusAboutWaters01_3",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredFalseTextLines": [
+          "NarcissusAboutWaters02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusAboutWaters01_2"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1628
+    },
+    "NarcissusAboutWaters02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "These waters are still filthy. I know all sorts of purification rites. You've aided me so often, the least I can do is help sort this out."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "And what exactly do you have in mind, a bunch of soap? I don't think that's gonna work. It's a big sea out there! Nah, I think... I think I'm just gonna have to move on."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That may be just the thing! You said before you wished to mourn for what you've lost. You might attempt that in the Fields below, where Echo now resides. If you can bury your past with her, perhaps your aura may be cleansed."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You think me talking to Echo's gonna clear things up? Well... couldn't hurt, I guess. And they love me down in the Fields! Tell you what. I'm gonna... give it some thought..."
+        }
+      ],
+      "name": "NarcissusAboutWaters02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusAboutWaters01_3"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1660
+    },
+    "NarcissusAboutWaters03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, hey. Yeah I'm still here and everything. Though I've been thinking of a visit to the Fields one of these days... nights? I dunno."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Take all the time you need. I know it must be difficult, and the trip is treacherous. You could accompany me if you wish?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sounds like a date, no thanks. I get around just fine all by myself. But for now... I can still see a bit of me in here if I squint hard enough. It's a good look..."
+        }
+      ],
+      "name": "NarcissusAboutWaters03",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters04",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredFalseTextLines": [
+          "NarcissusWithEcho01"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusAboutWaters02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1695
+    },
+    "NarcissusAboutWaters04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I talked to Echo like you said I should. What gives? This place is still the same! I thought you were gonna fix everything."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I didn't make myself clear. You have to fix everything, not me. You and Echo each are cursed, and your curses now are tangled up. You have more to discuss and sort out."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What do you mean I'm cursed, you're cursed, I mean I've got it all! You don't know what you're talking about...! Unless you do..."
+        }
+      ],
+      "name": "NarcissusAboutWaters04",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04_2"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          },
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusWithEcho01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1724
+    },
+    "NarcissusAboutWaters04_2": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I talked to her again just like you said, but nothing's changed in here. Though I feel kind of different anyway. I guess I'll have to settle for that."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Fear not, I keep my vows; I still have a purification rite to complete. I appreciate that you had the courage to meet with Echo, even if it was for your own sake."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Yeah, well, that's love for you, right? I guess I'll just... hang out here till you do your thing. The Fields are nice and all, but... too many would-be suitors over there."
+        }
+      ],
+      "name": "NarcissusAboutWaters04_2",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutWaters01",
+        "NarcissusAboutWaters01_2",
+        "NarcissusAboutWaters01_3",
+        "NarcissusAboutWaters02",
+        "NarcissusAboutWaters03",
+        "NarcissusAboutWaters04"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          },
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04",
+          "NarcissusWithEcho02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1755
+    },
+    "NarcissusAboutWaters05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Laurel, look! The waters are all clear! You don't know how glad I am to see me. You must have done your thing! I'd give you a hug or something, but... I wouldn't want you to take it the wrong way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Excellent. So then the purification worked out after all. Echo must have taken whatever you said to heart. Perhaps you're not as hopelessly self-absorbed as I feared."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Say what? Sorry, I was just... yeah, I mean, just look at this, the chin, the turn of the cheek... have you ever seen anything like it? Tell Echo I said hi. But as a friend."
+        }
+      ],
+      "name": "NarcissusAboutWaters05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1815
+    },
+    "NarcissusChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You can't have my looks, but you can have this."
+        }
+      ],
+      "name": "NarcissusChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1920
+    },
+    "NarcissusChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I don't mean to be rude, but I'm kind of in the middle of something here?"
+        }
+      ],
+      "name": "NarcissusChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1933
+    },
+    "NarcissusChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Tread softly, OK? I like it when the waters here are perfectly still."
+        }
+      ],
+      "name": "NarcissusChat03",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1945
+    },
+    "NarcissusChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Sometimes I wonder... how could a face be any better looking than this?"
+        }
+      ],
+      "name": "NarcissusChat04",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1961
+    },
+    "NarcissusChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Some come here to reflect... but nobody reflects better than me."
+        }
+      ],
+      "name": "NarcissusChat05",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1978
+    },
+    "NarcissusChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "For somebody who's not a would-be suitor, you sure come around a lot."
+        }
+      ],
+      "name": "NarcissusChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1994
+    },
+    "NarcissusChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Those eyes... that jawline... the hair... oh man, the hair..."
+        }
+      ],
+      "name": "NarcissusChat07",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2006
+    },
+    "NarcissusChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Wow, you know you really do look great tonight, man..."
+        }
+      ],
+      "name": "NarcissusChat08",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2025
+    },
+    "NarcissusChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Don't worry, I'm sure you'll find someone who loves you at some point."
+        }
+      ],
+      "name": "NarcissusChat09",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2044
+    },
+    "NarcissusChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh, it's you again. Just help yourself I guess, and leave the rest to me."
+        }
+      ],
+      "name": "NarcissusChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2060
+    },
+    "NarcissusChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "No one's going to help you if you don't help yourself."
+        }
+      ],
+      "name": "NarcissusChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2072
+    },
+    "NarcissusChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Got everything I need right here. Plus all this stuff I welcome you to take!"
+        }
+      ],
+      "name": "NarcissusChat12",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2085
+    },
+    "NarcissusChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I'm already spoken for, but all this other stuff is up for grabs."
+        }
+      ],
+      "name": "NarcissusChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2102
+    },
+    "NarcissusChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Good to see your face again, man! Don't even worry about her."
+        }
+      ],
+      "name": "NarcissusChat14",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2114
+    },
+    "NarcissusChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Look at yourself, man! You're too good for any of these dummies."
+        }
+      ],
+      "name": "NarcissusChat15",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2133
+    },
+    "NarcissusChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Take one of these, maybe it'll help you get your own suitors."
+        }
+      ],
+      "name": "NarcissusChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2152
+    },
+    "NarcissusChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I felt that piercing gaze upon me once again and figured it was you."
+        }
+      ],
+      "name": "NarcissusChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2164
+    },
+    "NarcissusChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "These waters are so clear, they really bring out the best in me."
+        }
+      ],
+      "name": "NarcissusChat18",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2176
+    },
+    "NarcissusChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You're always looking out for me! And you found me. So good job."
+        }
+      ],
+      "name": "NarcissusChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2193
+    },
+    "NarcissusChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Congratulations finding me again! Now take your prize, and go."
+        }
+      ],
+      "name": "NarcissusChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2206
+    },
+    "NarcissusChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Stay as long as you like! Or better yet, pick one of these and go."
+        }
+      ],
+      "name": "NarcissusChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2220
+    },
+    "NarcissusChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Take what you want, but only one. Not playing favorites here."
+        }
+      ],
+      "name": "NarcissusChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2240
+    },
+    "NarcissusChat23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Why don't you take one of these away from me, then go away yourself."
+        }
+      ],
+      "name": "NarcissusChat23",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2252
+    },
+    "NarcissusChat24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Get your own reflective pool and choice of complimentary gift!"
+        }
+      ],
+      "name": "NarcissusChat24",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2271
+    },
+    "NarcissusChat25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Ungh, still not a single dent in my stockpile of stuff to give away..."
+        }
+      ],
+      "name": "NarcissusChat25",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2288
+    },
+    "NarcissusChat26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh hey! Uh, since you're not a would-be suitor, feel free to cut in line."
+        }
+      ],
+      "name": "NarcissusChat26",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2301
+    },
+    "NarcissusChat27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What's new, Laurel, same old same old? OK good seeing you, buh-bye!"
+        }
+      ],
+      "name": "NarcissusChat27",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship06"
+        ],
+        "RequiredTextLines": [
+          "NarcissusAboutReflection01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2320
+    },
+    "NarcissusChat28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I know you're still kind of obsessed with me, but I get it, believe me I do."
+        }
+      ],
+      "name": "NarcissusChat28",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NarcissusAboutFriendship09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2342
+    },
+    "NarcissusChat29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Look at the definition in the chin... the hue of the eyes... the curl of the lip..."
+        }
+      ],
+      "name": "NarcissusChat29",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2361
+    },
+    "NarcissusChat30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...When our eyes meet like this, nothing else matters... and they meet like this a lot."
+        }
+      ],
+      "name": "NarcissusChat30",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2380
+    },
+    "NarcissusChat31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Stare for as long as you require, then take one of these."
+        }
+      ],
+      "name": "NarcissusChat31",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2399
+    },
+    "NarcissusChat32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "My love is unavailable, but I have lots of other gifts to give away."
+        }
+      ],
+      "name": "NarcissusChat32",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2415
+    },
+    "NarcissusChat33": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Just thinking about how great I am, you know? It happens all the time."
+        }
+      ],
+      "name": "NarcissusChat33",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2431
+    },
+    "NarcissusChat34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You're looking at the one-and-only... and I should be looking at me now, too."
+        }
+      ],
+      "name": "NarcissusChat34",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2447
+    },
+    "NarcissusChat35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I wasn't born this attractive... oh who am I kidding, yes I was."
+        }
+      ],
+      "name": "NarcissusChat35",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2463
+    },
+    "NarcissusChat36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Not seen you back here in a while... not that I'd notice either way."
+        }
+      ],
+      "name": "NarcissusChat36",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "Path:RoomsEntered.G_Story01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "G_Story01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2479
+    },
+    "NarcissusChat37": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You just keep showing up, huh... well I would definitely too if I were you."
+        }
+      ],
+      "name": "NarcissusChat37",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "PathTrue:PrevRun.RoomsEntered.G_Story01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "G_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2506
+    },
+    "NarcissusChat38": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "There's a lot to like about this place... and you are looking at it right now."
+        }
+      ],
+      "name": "NarcissusChat38",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2525
+    },
+    "NarcissusChat39": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I try to blink as infrequently as possible, so as not to lose sight of what counts..."
+        }
+      ],
+      "name": "NarcissusChat39",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2541
+    },
+    "NarcissusChat40": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "...Hey beautiful... looks like you've got a visitor... give her a gift already, huh?"
+        }
+      ],
+      "name": "NarcissusChat40",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2557
+    },
+    "NarcissusDreamRun": {
+      "dialogueLines": [],
+      "name": "NarcissusDreamRun",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.IsDreamRun": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2686
+    },
+    "NarcissusFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "Well, would you look at that. Another would-be suitor journeyed far and wide, just to gaze upon me, not that I blame you... and get totally rejected! Fine. Ogle if you must."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You have the wrong idea. I'm not seeking a mate. I don't even know who you are."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What? I'm Narcissus, dummy! The Narcissus? And if you're no would-be suitor... then why don't you relieve me of one of these innumerable gifts the others offered in vain. Then beat it."
+        }
+      ],
+      "name": "NarcissusFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 215
+    },
+    "NarcissusGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "As you've made no attempt to snap my head from my shoulders unlike many other things lurking about, I'm compelled to give you this. Just as a casual acquaintance, to be clear."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You'd give me such tokens of affection, full knowing I've already got a lot of them and, more importantly, am spoken for? Fine! Here's something to remember me by."
+        }
+      ],
+      "name": "NarcissusGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2709
+    },
+    "NarcissusGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Whoa, a present, you're so thoughtful and all that. Don't mean to be rude about it... just don't get the wrong idea, OK?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If I'm to keep taking from your copious supply of unused gifts, seems only fair that I give something in return from time to time."
+        }
+      ],
+      "name": "NarcissusGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2734
+    },
+    "NarcissusGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh! How thoughtful, and all that. You dummy, though! Don't you realize I'm just going to add this to the pile with the rest, so that some other would-be suitor ends up taking it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sure, it's a gift! You get to decide what to do with it. Perhaps one of those other would-be suitors would enjoy it, if that's what you want."
+        }
+      ],
+      "name": "NarcissusGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2758
+    },
+    "NarcissusGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Oh whoa, for me, how thoughtful. Look: Try all you like, I can't requite your love. Thought I'd make myself about as clear as these waters, just in case you've got the wrong idea again."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not every gesture needs to be interpreted as having some romantic overtones, does it? You've made your feelings unambiguous, and I appreciate that. As a friend."
+        }
+      ],
+      "name": "NarcissusGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2782
+    },
+    "NarcissusGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Hey, some Nectar, how thoughtful! I used to mean it when I said it, but... there comes a point you get so many gifts you don't know what to say anymore. But you stick to how thoughtful anyway..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "In my family, the act of giving is a social custom, and a simple show of courtesy if nothing else. It should be thoughtful, as you say. But it can also be reflexive I suppose."
+        }
+      ],
+      "name": "NarcissusGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2807
+    },
+    "NarcissusGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "You really want to hear me say it again, huh? All right fine! How thoughtful! How. Thoughtful!! That's my line! But you know what? I'm starting to think you might not be so thoughtful after all!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Narcissus, please, it's not my wish to offend. You don't have to take the Nectar if you don't want it. I just noticed you don't seem to have much of it around! Have you even tried it?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What do you mean, tried it? Tried it how? All I've tried to do, Laurel, is look into these longing eyes in peace. Though I'll accept your Nectar, just this once, for the last time, OK?"
+        }
+      ],
+      "name": "NarcissusGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Narcissus_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Narcissus_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2841
+    },
+    "NarcissusGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you said that you're not interested in Nectar anymore, but I did want to give you this. To our continued friendship, and for all you've done for me these many nights!"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "This is Ambrosia, whoa... this stuff is for the gods, not river spirits, no matter how uncommonly attractive they may be! What's the catch?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The only catch is that you have to stop misreading my intentions whenever I occasionally give you things. Far less often than you give me things, I might add!"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Well I don't know... but having given it some extra thought, I will accept. But just this once, OK? Maybe I'll share this... with me."
+        }
+      ],
+      "name": "NarcissusGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 7,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NarcissusDirtyWater"
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusGift06",
+          "NarcissusAboutWaters05"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2871
+    },
+    "NarcissusGrantsReward01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Don't know how to thank you for the water-cleaning thing. So crisp and clear! I can see every perfect feature on this face. You've got a real future in water sanitation!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps the improved image quality will help you start to notice details other than yourself. The effect of the purification should last longer if you do."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "What I'm trying to say is, I've decided to give to you the greatest gift of all that I've received. So here's something from my private reserve!"
+        }
+      ],
+      "name": "NarcissusGrantsReward01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "Path:GameState.LifetimeResourcesGained.Mixer5Common": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "Mixer5Common"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NarcissusAboutWaters05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1855
+    },
+    "NarcissusLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Uh whoa what's wrong with you? Coming in here like that. You don't need me, dummy. You need a doctor, or healer, or something."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, well, I've found those somewhat difficult to locate around here. Though on the flip side, no shortage of fishlike monstrosities determined to cut me a set of gills."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Yeah that's what they all say. Look, there's probably a fountain or something somewhere around here. Wash up, come back, we'll talk."
+        }
+      ],
+      "name": "NarcissusLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 244
+    },
+    "NarcissusLowHealth02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Whew, you are never gonna find a mate looking all scratched up like that, bleeding everywhere. Might have something you could use to patch yourself up, if it'll make you go away."
+        }
+      ],
+      "name": "NarcissusLowHealth02",
+      "narrativePriorityClusterMembers": [
+        "NarcissusAboutSurface01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 277
+    },
+    "NarcissusSadChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I still can't see myself. Am I still here? Are any of us here? Man..."
+        }
+      ],
+      "name": "NarcissusSadChat01",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2575
+    },
+    "NarcissusSadChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Ugh, why did this have to happen to me? To us? It isn't fair!"
+        }
+      ],
+      "name": "NarcissusSadChat02",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2593
+    },
+    "NarcissusSadChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Please leave me to my sorrow. But take a complimentary gift on your way out!"
+        }
+      ],
+      "name": "NarcissusSadChat03",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2612
+    },
+    "NarcissusSadChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Man... this is the worst thing that's ever happened to anyone..."
+        }
+      ],
+      "name": "NarcissusSadChat04",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2630
+    },
+    "NarcissusSadChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Still can't see anything in here... but if I squint, or tilt my head a certain way..."
+        }
+      ],
+      "name": "NarcissusSadChat05",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2649
+    },
+    "NarcissusSadChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "I'm kind of in a crisis here, so just help yourself, and go."
+        }
+      ],
+      "name": "NarcissusSadChat06",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeNarcissusWaters": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeNarcissusWaters"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B",
+          "NarcissusAboutEcho02"
+        ],
+        "RequiredTextLines": [
+          "EchoAboutNarcissus04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2667
+    },
+    "NarcissusWithEcho01": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEcho01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2984
+    },
+    "NarcissusWithEcho02": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEcho02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 2996
+    },
+    "NarcissusWithEcho03": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEcho03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3008
+    },
+    "NarcissusWithEchoChat01": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3021
+    },
+    "NarcissusWithEchoChat02": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3033
+    },
+    "NarcissusWithEchoChat03": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3045
+    },
+    "NarcissusWithEchoChat04": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3057
+    },
+    "NarcissusWithEchoChat05": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3069
+    },
+    "NarcissusWithEchoChat06": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3081
+    },
+    "NarcissusWithEchoChat07": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3093
+    },
+    "NarcissusWithEchoChat08": {
+      "dialogueLines": [],
+      "name": "NarcissusWithEchoChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Narcissus_Field_01",
+      "partner": "NPC_Echo_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 3105
+    },
+    "NemesisWithNarcissus01_FollowUp": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Are you all right? Nemesis can be rather terse. She didn't hurt you or anything, did she?"
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "She said something just there... about how I'm stuck forever in the company of a buffoon. She couldn't have meant... no way. She's jealous. She likes me! And playing hard-to-get. Unlike some people, who come on a little strong."
+        }
+      ],
+      "name": "NemesisWithNarcissus01_FollowUp",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:Encounter.NemesisShopping": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "Encounter",
+              "NemesisShopping"
+            ],
+            "SumPrevRooms": 12,
+            "Value": 0,
+            "ValuesToCount": [
+              true
+            ]
+          }
+        ],
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRooms": 99,
+            "TableValuesToCount": [
+              "NemesisCombatIntro",
+              "NemesisCombatF",
+              "NemesisCombatG",
+              "NemesisCombatH",
+              "NemesisCombatI",
+              "NemesisRandomEvent",
+              "BridgeNemesisRandomEvent"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.BridgeNemesisRandomEvent": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "BridgeNemesisRandomEvent"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.NemesisCombatH": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "NemesisCombatH"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.NemesisRandomEvent": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "NemesisRandomEvent"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "NarcissusAboutNemesis01"
+        ],
+        "RequiredTextLines": [
+          "NarcissusAboutNemesis01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1173
+    },
+    "NemesisWithNarcissus02_FollowUp": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't think Nemesis was playing hard-to-get. She wants to make certain you don't have too much of a good thing! Fortunately, I think she may leave you alone from here out."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Is that so? Or are you just trying to get her out of the picture so you can have me to yourself? Expecting special favors just because you helped me with the water situation, eugh!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What? I don't want any special favors from you! Although... I fear I've grown accustomed to the gifts you've offered me each time I visit. How easily we take to certain habits."
+        },
+        {
+          "speaker": "NPC_Narcissus_01",
+          "text": "Yeah well, I've taken to getting a headache whenever you talk about this stuff. I'm gonna keep giving you these because I pity you... and because I don't want 'em."
+        }
+      ],
+      "name": "NemesisWithNarcissus02_FollowUp",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 31,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:Encounter.NemesisShopping": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "Encounter",
+              "NemesisShopping"
+            ],
+            "SumPrevRooms": 12,
+            "Value": 0,
+            "ValuesToCount": [
+              true
+            ]
+          }
+        ],
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRooms": 99,
+            "TableValuesToCount": [
+              "NemesisCombatIntro",
+              "NemesisCombatF",
+              "NemesisCombatG",
+              "NemesisCombatH",
+              "NemesisCombatI",
+              "NemesisRandomEvent",
+              "BridgeNemesisRandomEvent"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.BridgeNemesisRandomEvent": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "BridgeNemesisRandomEvent"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.NemesisCombatH": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "NemesisCombatH"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredBiomeCache.NemesisRandomEvent": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredBiomeCache",
+              "NemesisRandomEvent"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Narcissus_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "NemesisWithNarcissus01_FollowUp"
+        ],
+        "RequiredTextLines": [
+          "NemesisWithNarcissus01_FollowUp",
+          "NarcissusGrantsReward01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Narcissus.lua",
+      "sourceLine": 1205
+    }
+  }
+}

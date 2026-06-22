@@ -1,0 +1,4758 @@
+{
+  "alternates": {},
+  "dependents": {
+    "ArachneAboutCurse02": [
+      {
+        "name": "MedeaAboutCuringCurses01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "CharonGift04": [
+      {
+        "name": "MedeaAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutMedea01": [
+      {
+        "name": "MedeaAboutCirce02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift06": [
+      {
+        "name": "MedeaAboutCirce02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "EchoAboutNymphs01": [
+      {
+        "name": "MedeaAboutCuringCurses01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HeraclesFieldAboutMedea01": [
+      {
+        "name": "MedeaAboutHeracles02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift07": [
+      {
+        "name": "MedeaAboutHeracles02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamMeeting01": [
+      {
+        "name": "MedeaGrantsHypnosSpell01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosFinalDreamMeeting01": [
+      {
+        "name": "MedeaAboutHypnos01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosWakeUp02": [
+      {
+        "name": "MedeaGrantsHypnosSpell02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusGift06": [
+      {
+        "name": "MedeaAboutIcarus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutAltFight01": [
+      {
+        "name": "MedeaAboutShrine01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutCharon01": [
+      {
+        "name": "MedeaAboutCharon02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutCirce01": [
+      {
+        "name": "MedeaAboutCirce02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutConcoctionQuestComplete01": [
+      {
+        "name": "MedeaAboutExperiments01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutCurses01": [
+      {
+        "name": "MedeaAboutCurses02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutHeracles01": [
+      {
+        "name": "MedeaAboutHeracles02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutKeepsake01": [
+      {
+        "name": "MedeaAboutKeepsake02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutVengeance01": [
+      {
+        "name": "MedeaAboutEmptiness01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift01": [
+      {
+        "name": "MedeaAboutWitchcraft01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift02": [
+      {
+        "name": "MedeaAboutVengeance01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutCuringCurses01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaGrantsHypnosSpell01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutConcoctionQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift03": [
+      {
+        "name": "MedeaAboutEarlyArrival01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutReputation01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift04": [
+      {
+        "name": "MedeaAboutCharon01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaHubMeeting02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaChat25",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift05": [
+      {
+        "name": "MedeaAboutTimePassing01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift06": [
+      {
+        "name": "MedeaAboutEmptiness01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutTrust01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutCirce02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift07": [
+      {
+        "name": "MedeaAboutCurses02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaGift08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift08": [
+      {
+        "name": "MedeaAboutHeracles02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaPostTrueEnding02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaPostTrueEnding03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGiftTears01": [
+      {
+        "name": "MedeaAboutConcoctionQuestComplete01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGrantsHiddenAspect01": [
+      {
+        "name": "MedeaAboutHiddenAspectProgress01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGrantsHypnosSpell01": [
+      {
+        "name": "MedeaGrantsHypnosSpell02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGrantsHypnosSpell02": [
+      {
+        "name": "MedeaAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaHubMeeting01": [
+      {
+        "name": "MedeaHubMeeting02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaPostTrueEnding01": [
+      {
+        "name": "MedeaPostTrueEnding02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaPostTrueEnding03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NyxWithHecate01": [
+      {
+        "name": "MedeaAboutNyx01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PolyphemusAboutAltFight01": [
+      {
+        "name": "MedeaAboutThessaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "MedeaAboutConcoctionQuest01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "MedeaHubMeeting02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PolyphemusAboutAltFight01_B": [
+      {
+        "name": "MedeaAboutThessaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "MedeaAboutConcoctionQuest01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "MedeaHubMeeting02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "SeleneAboutMedea01": [
+      {
+        "name": "MedeaAboutSelene01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalacePostTrueEnding01": [
+      {
+        "name": "MedeaPostTrueEnding03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "MedeaHubMeeting02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 61,
+    "totalSpeakers": 1,
+    "totalTextlines": 110,
+    "unresolvedRefs": [
+      "ArachneAboutCurse02",
+      "CharonGift04",
+      "CirceAboutMedea01",
+      "CirceGift06",
+      "EchoAboutNymphs01",
+      "HeraclesFieldAboutMedea01",
+      "HeraclesGift07",
+      "HypnosDreamMeeting01",
+      "HypnosFinalDreamMeeting01",
+      "HypnosWakeUp02",
+      "IcarusGift06",
+      "MedeaHubMeeting01",
+      "NyxWithHecate01",
+      "PolyphemusAboutAltFight01",
+      "PolyphemusAboutAltFight01_B",
+      "SeleneAboutMedea01",
+      "ZeusPalacePostTrueEnding01"
+    ]
+  },
+  "textlines": {
+    "MedeaAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Fear nothing, sorceress, at least not from me here. Beyond the city gates, I shall be testing your resolve whenever you speak the Vows; but in this pharmacy as I call it, I merely test the potency of my concoctions and the like."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But you fought against me with such rancor, Lady Medea. If there is some bad blood between us, I would like to know the cause."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Perish the very thought! I merely wish for you to not let down your guard with anyone. And besides, there's no bad blood for those of our predilection. All blood has its uses."
+        }
+      ],
+      "name": "MedeaAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.N_Boss02": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss02"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2061
+    },
+    "MedeaAboutAltFight02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The will of Night is calling to me once again... how sickening, that I'm to curse our enemies, only to stand within their ranks alongside that dread Cyclops but a little while hence!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "These curses that you offer me may negatively impact him... but I suppose not you. Although, isn't it quite common for curses to backfire?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The curses of an amateur, most certainly, but mine? Hmhmhmhmhmhm, no. Well, this shall be highly instructional at least! Until we see each other soon beyond the gates."
+        }
+      ],
+      "name": "MedeaAboutAltFight02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Boss02": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss02"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2087
+    },
+    "MedeaAboutAltFight03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What are the matters of dispute between that Cyclops Polyphemus and yourself, anyhow, sorceress? I get a bit of thrill seeing you fight, but would prefer to know the history."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "There is no history! The first night I tried to leave the city, he was there. He's tried to make a meal of me since. He must be working for Chronos... or was, at some point."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "He's just a shepherd. Perhaps you met him on an empty stomach, that can make anybody irritable. But, do as you must! I'll intervene only if the Oath requires it."
+        }
+      ],
+      "name": "MedeaAboutAltFight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:EnemyKills.Polyphemus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "EnemyKills",
+              "Polyphemus"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Boss02": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss02"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2113
+    },
+    "MedeaAboutAltFight04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Decided to revoke the Vow of Rivals for the time? I do not blame you in the least. As exhilarating as it is for me, I appreciate the undivided silence here."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Polyphemus must miss your company. I'm still surprised the two of you seem to get on so well... I can't imagine what you have in common."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "No, I don't think you can... but, he need not see me constantly. He is a shepherd thus a rather patient sort. You'll likely speak the Vow again, and we shall all catch up."
+        }
+      ],
+      "name": "MedeaAboutAltFight04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Polyphemus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Polyphemus"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Boss02": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss02"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2147
+    },
+    "MedeaAboutApollo01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ah! You bear the light of Apollo himself! Well, just remember that he's not the only one who can create a decent plague around here."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Apollo certainly has a broad range of talents. So, he would sometimes cast down plagues on mortalkind? Do you know why?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Why do the gods do anything at all? Simply because they can! Besides, a good plague now and then helps keep the common stock in line."
+        }
+      ],
+      "name": "MedeaAboutApollo01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHera01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.ApolloUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "ApolloUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1666
+    },
+    "MedeaAboutArtemis01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you happened to see Lady Artemis about? She's been hunting through our woods as well as in Ephyra here, though I've not seen her on the surface recently."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well come to think I have detected the aroma of a living being recently, with a, how to put it, a pastoral sort of quality. I thought perhaps it was the Cyclops Shepherd but it might have been the goddess of the hunt!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, despite your heightened senses for the living and the dead, you can't distinguish between our graceful Artemis and that foul Cyclops?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "No, sorceress... because they each see fit to coat themselves from head to foot in furs, which makes them smell. You'll notice it henceforth now that I've called it out."
+        }
+      ],
+      "name": "MedeaAboutArtemis01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutRain01",
+        "MedeaAboutFamiliars01",
+        "MedeaAboutEarlyArrival01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "ArtemisCombatN",
+              "ArtemisCombatN2"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.EncountersOccurredCache": [
+          {
+            "HasAny": [
+              "ArtemisCombatN",
+              "ArtemisCombatN2"
+            ],
+            "Path": [
+              "GameState",
+              "EncountersOccurredCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1229
+    },
+    "MedeaAboutBlood01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I have to thank you, sorceress! After you last rampaged throughout this city, I obtained a sample of your blood. Oh, it's very potent stuff!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Erm, you're welcome, Lady Medea. Although, moving forward, please ask me prior to using my lifeblood as part of your experiments."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How about I use it anyway but never mention doing so again? Fear not, I use it only toward a common outcome we desire...!"
+        }
+      ],
+      "name": "MedeaAboutBlood01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCirce01",
+        "MedeaAboutCurses01",
+        "MedeaAboutUndead01",
+        "MedeaAboutReputation01",
+        "MedeaAboutSuffering01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 611
+    },
+    "MedeaAboutCharon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Boatman Charon provides you with all manner of supplies, I know, but thus far I've not managed to persuade that out of him. From one sorceress to another... any advice?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're not the first to have some difficulty getting through to him, but for whatever reason, he and I seem to have a connection. I could entreat him on your behalf?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "That would be positively dreadful, no! I'd rather lead the life of an ascetic than debase myself in begging favors. I shall work my way past his defenses yet."
+        }
+      ],
+      "name": "MedeaAboutCharon01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCirce02",
+        "MedeaAboutTalos01",
+        "MedeaAboutHeracles02",
+        "MedeaAboutIcarus01",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift04",
+          "MedeaGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1272
+    },
+    "MedeaAboutCharon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You know I finally managed to persuade the Boatman Charon to provide me with my share of his supplies! He's certainly a stubborn one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, glad to hear it. I'm not certain why he withheld his wares from you to begin with. How did you finally persuade him?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well, you see, I really shouldn't say. And it's not like he's going to, either! You can't truly understand him, can you...?"
+        }
+      ],
+      "name": "MedeaAboutCharon02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHeracles01",
+        "MedeaAboutWitchcraft01",
+        "MedeaAboutHecate01",
+        "MedeaAboutCuringCurses01",
+        "MedeaAboutCirceKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:TextLinesRecord.MedeaAboutCharon01": [
+          {
+            "Comparison": "==",
+            "CountPathTrue": true,
+            "Path": [
+              "TextLinesRecord",
+              "MedeaAboutCharon01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutCharon01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1300
+    },
+    "MedeaAboutCirce01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How absurd, the very idea of family, sorceress. That we've some innate bond with those who share some of our blood! You've met my Aunt Circe; do you believe that we're at all alike?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe seems very devoted to our craft in her own right. Just, not in the same way as you, Lady Medea. Are you so loath to think that you may have something in common?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Circe was never willing to push our practice to the depths of what it can achieve. She would turn mortals into livestock; I would turn them dead. A differing approach is all, perhaps..."
+        }
+      ],
+      "name": "MedeaAboutCirce01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCurses01",
+        "MedeaAboutBlood01",
+        "MedeaAboutUndead01",
+        "MedeaAboutReputation01",
+        "MedeaAboutSuffering01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1505
+    },
+    "MedeaAboutCirce02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you don't mind me asking, do you and Lady Circe not communicate at all anymore? I know the way to her isle, if you wanted to pay her a visit for any reason."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My reasons for visiting my Aunt in her strange habitat would not be ones I would describe. Why do such thoughts even occur to you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It sounds as though you don't get on too well. I'm grateful to know my uncles and such on Olympus, so I thought... perhaps it might be good to see your aunt again."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "All my existence, others have presumed to know what's good for me, including her. I recommend you not make that mistake yourself. I feel no obligation to my family by blood; I choose all those to whom I am attached."
+        }
+      ],
+      "name": "MedeaAboutCirce02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCharon01",
+        "MedeaAboutTalos01",
+        "MedeaAboutHeracles02",
+        "MedeaAboutIcarus01",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift06",
+          "CirceGift06",
+          "MedeaAboutCirce01",
+          "CirceAboutMedea01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1532
+    },
+    "MedeaAboutCirceKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "There's something horrid in the air, and I don't mean in a good way. Ah, you've one of my Aunt Circe's Crystal Figurines. The old enchantment on it, more specifically."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, my apologies, but... yes, this is a keepsake that I got from her. Should I avoid bringing it here?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I care not and shall not bring it up again. For me, her work was never right. But if it has some benefit for you, than I cannot deny that. Though I would smash it underfoot myself."
+        }
+      ],
+      "name": "MedeaAboutCirceKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHeracles01",
+        "MedeaAboutWitchcraft01",
+        "MedeaAboutHecate01",
+        "MedeaAboutCharon02",
+        "MedeaAboutCuringCurses01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:CurrentRun.TraitCache": [
+          {
+            "HasAny": [
+              "BossMetaUpgradeKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "TraitCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1087
+    },
+    "MedeaAboutConcoctionQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate informs me you have regularly crossed the Mourning Fields. There's something I would ask, as much as it pains me; for a concoction I've been dying to complete."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Certainly no harm in asking, Lady Medea. What is it that you seek, and to what end?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I need the vapor from the Tears spilled by sorry souls that linger in that place. If you could gather up some Tears, declaring them for me, then collect their boiled essence from your Cauldron, I'd be very much obliged."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And which sort of concoction would be possible, once you possess these essences of sorrow?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "One that shall be of no small benefit to you and I alike. You needn't go too far out of your way, of course."
+        }
+      ],
+      "name": "MedeaAboutConcoctionQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.H_Intro": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "H_Intro"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:RoomsEntered.H_Intro": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "H_Intro"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PolyphemusAboutAltFight01",
+          "PolyphemusAboutAltFight01_B"
+        ],
+        "RequiredTextLines": [
+          "MedeaGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1986
+    },
+    "MedeaAboutConcoctionQuestComplete01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh good, you're just in time. Those Tears you brought me were the missing touch I lacked for something that had been the subject of my studies for some time. I'm pleased to offer you a sample of it now, if you would like?"
+        }
+      ],
+      "name": "MedeaAboutConcoctionQuestComplete01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGiftTears01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2036
+    },
+    "MedeaAboutCuringCurses01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Seeing as you have considerable expertise with curses, Lady Medea, I was wondering if I could ask about a curse that has been troubling a companion of mine."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Certainly not. Unless you think that it may be a curse that I administered myself. A curse of any quality is not to be discussed, unless of course you are Great Hecate herself. The rest of us ought never to dare."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But, are you certain? The curse I have in mind may not be quite as bad as you presume."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "So too may it be worse than you presume. If you respect my expertise with curses, then respect my position on the subject, sorceress. I shall never bear the curses of others."
+        }
+      ],
+      "name": "MedeaAboutCuringCurses01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHeracles01",
+        "MedeaAboutWitchcraft01",
+        "MedeaAboutHecate01",
+        "MedeaAboutCharon02",
+        "MedeaAboutCirceKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "EchoAboutNymphs01",
+          "ArachneAboutCurse02"
+        ],
+        "RequiredTextLines": [
+          "MedeaGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 993
+    },
+    "MedeaAboutCurses01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What gives your incantations such great potency, Lady Medea? So many curses have intangible effects, yet yours pierce like a blade..."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "A well-wrought curse requires suitable reagents, and pure intention without compromise. Any hesitancy, any second-guessing undermines an ill effect."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That I understand... it's the pure intent toward misfortune that I struggle to achieve. How can one wish such ill upon another, without imagining some of it turning back one's way?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "With practice, sorceress! Ill intent does threaten to reflect back upon oneself, often with greater potency. But with the blackest of intent... there's nothing to reflect at all."
+        }
+      ],
+      "name": "MedeaAboutCurses01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCirce01",
+        "MedeaAboutBlood01",
+        "MedeaAboutUndead01",
+        "MedeaAboutReputation01",
+        "MedeaAboutSuffering01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 931
+    },
+    "MedeaAboutCurses02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What is it about curses that's so singularly fascinating to you, Lady Medea? I've never been able to fixate on any one branch of our craft... I sometimes fear I'll not master any of it."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Nonsense, sorceress. You've always had a necromantic tendency, and, as I understand, a disposition toward dream. As for curses... I suppose I like how personal they are."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But the curses that you offer me each night tend to spread far and wide through the ranks of our foes... they don't seem particularly personal."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "They're not the curses that most fascinate me, but the ones I can concoct as a result. You know the goddess Nemesis; with curses, I can wield her power for myself. Though speak not a word of this to her, or else..."
+        }
+      ],
+      "name": "MedeaAboutCurses02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutThessaly01",
+        "MedeaAboutOptimism01",
+        "MedeaAboutPoisons01",
+        "MedeaAboutSolitude01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutCurses01",
+          "MedeaGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 958
+    },
+    "MedeaAboutEarlyArrival01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The night is young and you're already here! I appreciate you making this little corner of Ephyra one of your first stops as you attempt to flee these desecrated streets."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, erm, yes of course. Most of the other alleyways and such have nothing good for me in store... only the wretched dead with nowhere left to go."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ah well, to each their own! I quite enjoy exploring the various dead ends, although of late I've lingered more and more. I've accumulated more than enough to work with."
+        }
+      ],
+      "name": "MedeaAboutEarlyArrival01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutRain01",
+        "MedeaAboutFamiliars01",
+        "MedeaAboutArtemis01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:CurrentRun.BiomeDepthCache": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "BiomeDepthCache"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 535
+    },
+    "MedeaAboutEmptiness01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Do you ever feel as though your curses leave you empty, Lady Medea? When I yield to darker thoughts, after the initial rush subsides, I don't often like the sensation that lingers."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Why, to feel empty is the entire purpose of this pharmaceutical enterprise, sorceress. To feel empty is to truly be at peace. The closest we can get to mortal death."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I understand what you mean, but... I would rather feel fulfilled, or happy, or excited, not just... nothing at all. Our senses and intuitions are what drive us."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "They drive us to get rid of them. I rid myself of feeling all the time; rancor? Curse. Hunger? Sustenance. Lust? And on and on. For each affliction, there exists a cure."
+        }
+      ],
+      "name": "MedeaAboutEmptiness01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutPylons01",
+        "MedeaPostTrueEnding02"
+      ],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutVengeance01",
+          "MedeaGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 721
+    },
+    "MedeaAboutEphyra01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "How long have you resided here, Lady Medea? I thought all our forces fled once the city was overrun, but you seem rather comfortable."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, yes! All the death and panic made for many vacancies. I slipped in through the shadows soon after the city fell, and remained, practicing, observing.... Great Hecate has eyes upon the surface everywhere..."
+        }
+      ],
+      "name": "MedeaAboutEphyra01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 479
+    },
+    "MedeaAboutExperiments01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Most practitioners of our craft would have condemned my experimentation, or turned their noses at the very least. But not you, sorceress. I laud your intestinal fortitude."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your experimentation as you call it is not for me to judge. That would make me no different than so many others who misunderstand the nature of what we do."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I must admit I do enjoy how next to no one even dares approach us out of fear that we lash out. Perhaps not for the best, long-term, but as for now? I can experiment in peace. Though you at least are always welcome here."
+        }
+      ],
+      "name": "MedeaAboutExperiments01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutConcoctionQuestComplete01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2261
+    },
+    "MedeaAboutFamiliars01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I spy a living creature other than yourself! They're quite uncommon in this city recently, notwithstanding birds of prey, of course. You must have multiple Familiars, I suppose?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, so please keep this one clear of your experiments, Lady Medea. I sometimes wonder why you don't have a Familiar yourself, if but for the companionship."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well, I once attempted to enthrall one of the Bronzebeaks pecking at the carcasses out there, but that relationship did not last long. To look after the living can be such a liability..."
+        }
+      ],
+      "name": "MedeaAboutFamiliars01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutRain01",
+        "MedeaAboutArtemis01",
+        "MedeaAboutEarlyArrival01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar",
+              "RavenFamiliar",
+              "CatFamiliar",
+              "HoundFamiliar",
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1918
+    },
+    "MedeaAboutFoes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ah, the sorceress returns. Not had your fill of this putrescent atmosphere? Or merely not succeeded yet in breaking the Titan's siege?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not succeeded yet. Chronos can replenish his forces as quickly as Olympus can repel them. Have you found any weaknesses in their ranks?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "They cannot be permanently slain, are barely susceptible to my most noxious poisons, and are single-minded in their devotion to the Titan Lord. Any of those sound like weaknesses?"
+        }
+      ],
+      "name": "MedeaAboutFoes01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 409
+    },
+    "MedeaAboutHecate01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How fares Great Hecate amid such inauspicious nights? Scarce has she had occasion lately to illuminate this place..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Headmistress seems well enough. I've not once seen hardship ever get to her. But then, perhaps she wears that veil of hers so as to never show even a trace of doubt."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "We all wear veils, don't we, sorceress? Great Hecate, she merely puts aside all pretenses about it. Well, good to know that she is still herself. And I remain her humble servant, here."
+        }
+      ],
+      "name": "MedeaAboutHecate01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHeracles01",
+        "MedeaAboutWitchcraft01",
+        "MedeaAboutCharon02",
+        "MedeaAboutCuringCurses01",
+        "MedeaAboutCirceKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Hecate_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Hecate_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1202
+    },
+    "MedeaAboutHera01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Glorious Hera has opted to lend to you her power, if my senses don't deceive. You're family of hers, and come to her defense. Perhaps she shall be favorable to you!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "She has been thus far. I know the gods can take care of themselves, but we seem to have a mutual understanding and a shared interest at the moment."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How mercenary. And the proper posture with the gods, I think! You needn't second-guess my aid. Great Hecate wills it, so it shall be yours."
+        }
+      ],
+      "name": "MedeaAboutHera01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutApollo01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.HeraUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HeraUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1691
+    },
+    "MedeaAboutHeracles01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I meant to warn you, by the way, to not engage with the big burly lion-maned fellow who sometimes stalks about the streets out there..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You must mean Heracles. We've already met, and I gathered that I ought to keep my distance. He says he serves the gods but... he's a threat?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, he's just a big downer! I cure his injuries yet still he incurs more, and not even I possess the power yet to cure his spirit. The dead have more cheer than a man like that. Now, come! I've curses to concoct."
+        }
+      ],
+      "name": "MedeaAboutHeracles01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutWitchcraft01",
+        "MedeaAboutHecate01",
+        "MedeaAboutCharon02",
+        "MedeaAboutCuringCurses01",
+        "MedeaAboutCirceKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ],
+            "Value": 2
+          }
+        ],
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1400
+    },
+    "MedeaAboutHeracles02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "That ever-sulking Heracles has kept storming about. Not posed you too much trouble, has he? I could lay more curses on him if you like, though fear diminishing returns."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think I can manage, though thank you for the offer. It sounds like you two know each other reasonably well."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You've met us, sorceress! He and I are about as close as the Moon is to the Earth. But in keeping our distance, we've grown closer in a way. For even the Moon must come to rest at times."
+        }
+      ],
+      "name": "MedeaAboutHeracles02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCharon01",
+        "MedeaAboutCirce02",
+        "MedeaAboutTalos01",
+        "MedeaAboutIcarus01",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift08",
+          "HeraclesGift07",
+          "MedeaAboutHeracles01",
+          "HeraclesFieldAboutMedea01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1433
+    },
+    "MedeaAboutHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "That artifact that you bear... Revaal herself! But in the guise of whomever came forth to me in dream. So then the phrase I told you took effect... what more did you unveil?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This is the Aspect of a goddess known as Hel, who presides over some distant realm of the dead that's white with frost. How she ends up bearing Revaal, I do not know."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "This Goddess Hel apparently has taste! Perhaps it shall be I who, on some frigid evening, first shall introduce her to the intoxicating power of the Argent Skull...! Or perhaps you!"
+        }
+      ],
+      "name": "MedeaAboutHiddenAspect01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutMedeaAspect01",
+        "MedeaAboutKeepsake01",
+        "MedeaAboutKeepsake02"
+      ],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.LobGunAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "LobGunAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1742
+    },
+    "MedeaAboutHiddenAspectProgress01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Concerning my dream of the skull Revaal... have you yet made attempts using the invocation I relayed?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I haven't, Lady Medea... I'm reluctant to speak it before the Silver Pool until I'm certain what effect it may induce."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Courage, sorceress. Experiments require willingness toward unforeseen outcomes. Remember now to say, I see you gather countless dead in cold and dark domains. It should be fine!"
+        }
+      ],
+      "name": "MedeaAboutHiddenAspectProgress01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathFalse:GameState.WorldUpgradesRevealed.LobGunAspect": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesRevealed",
+              "LobGunAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGrantsHiddenAspect01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1824
+    },
+    "MedeaAboutHouse01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How is it in your father's House, I've always wondered, sorceress? He has the pick of the litter when it comes to the dead... the Shade of Orpheus performing songs and such!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The House is undergoing renovation still, but even so its grandeur is unmatched. And Father does have many noble Shades in his employ... the hero Achilles, his royal guard; brave Theseus, the champion of Elysium..."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Powerful Achilles...! I've always longed to meet with him, but as for young Theseus... I must have poisoned that particular relationship a while back. Ah, well!"
+        }
+      ],
+      "name": "MedeaAboutHouse01",
+      "narrativePriorityClusterMembers": [
+        "MedeaPostTrueEnding03"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1956
+    },
+    "MedeaAboutHypnos01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I woke him up, Lady Medea! Lord Hypnos, I mean. Thank you for all your guidance with the Dream Vapors. The House of Hades owes you a great debt."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Those are such tidings as I wish to hear! All I ask in return is that the Underworld gates remain ajar yet for some time. The dead and I, we still have many matters to explore..."
+        }
+      ],
+      "name": "MedeaAboutHypnos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosFinalDreamMeeting01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1639
+    },
+    "MedeaAboutIcarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What first I took to be a massive bird of prey appears to be a Shade, with manufactured wings! I did not quite believe my eyes. Have you encountered such a thing out there?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think you probably mean Icarus, so yes; and he's with us! Has often helped me as I voyage through the Rift. And he's apprentice to Daedalus himself!"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well, you sound quite enthusiastic about him! It's fortunate I hesitated, then, before I cursed his wings with rot. I imagine you would disapprove."
+        }
+      ],
+      "name": "MedeaAboutIcarus01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCharon01",
+        "MedeaAboutCirce02",
+        "MedeaAboutTalos01",
+        "MedeaAboutHeracles02",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Icarus_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpawnRecord",
+              "NPC_Icarus_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "IcarusGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1469
+    },
+    "MedeaAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Thank you again for the gift, Lady Medea. This bit of fleece is extraordinary, isn't it... and very soft!"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You have the blackened tuft of wool I gave to you! It once shone golden as the sun. But I saw fit to modify its properties, to make it better serve sorceresses such as we..."
+        }
+      ],
+      "name": "MedeaAboutKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutMedeaAspect01",
+        "MedeaAboutHiddenAspect01",
+        "MedeaAboutKeepsake02"
+      ],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:CurrentRun.TraitCache": [
+          {
+            "HasAny": [
+              "DamagedDamageBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "TraitCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1033
+    },
+    "MedeaAboutKeepsake02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It's far too early in the night for that bit of Blackened Fleece to do you any good, you know. But, if you're merely trying to impress me by bringing it back... you have!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've been meaning to ask you about it, and how it came to have such an intensity. No beast I've ever heard of had a coat like this."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I prefer we not get into the long series of events that ultimately made this fleece the way it is. All you need know is that it should be useful if you shed some blood. Now do take it away."
+        }
+      ],
+      "name": "MedeaAboutKeepsake02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutMedeaAspect01",
+        "MedeaAboutHiddenAspect01",
+        "MedeaAboutKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:CurrentRun.TraitCache": [
+          {
+            "HasAny": [
+              "DamagedDamageBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "TraitCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutKeepsake01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1056
+    },
+    "MedeaAboutMedeaAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Why, if it isn't my own Aspect of the Argent Skull Revaal. It's been a while since I harnessed her unmitigated fury. Is she agreeable with you most of the time?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, but... the Argent Skull, you speak of it — of her, as though she is a living being, not a weapon, or a tool. Even now I tend to still conflate the two with the Nocturnal Arms."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Arms are known by many different names, and I suspect don't care which ones you choose. They lust for souls, not proper etiquette. So do indulge that one for me."
+        }
+      ],
+      "name": "MedeaAboutMedeaAspect01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHiddenAspect01",
+        "MedeaAboutKeepsake01",
+        "MedeaAboutKeepsake02"
+      ],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.LobCloseAttackAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "LobCloseAttackAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1717
+    },
+    "MedeaAboutMoon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ah, it's nice and dark for now at least! A new moon is my favored time of month... new beginnings, new opportunities... and very little light."
+        }
+      ],
+      "name": "MedeaAboutMoon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2290
+    },
+    "MedeaAboutNyx01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It ought be somewhat easier henceforth to meet our obligations to the will of Night now that Nyx herself is finally returned to us. You're largely to thank for that, I hear?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Nyx was held captive in the House of Hades along with my immediate family and more. It was an honor to have finally met... we owe her so much."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well at the risk of minor blasphemy, I'd sooner say that she owes you now, sorceress. But, certainly if not for her, few aspects of my research would bear fruit."
+        }
+      ],
+      "name": "MedeaAboutNyx01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCharon01",
+        "MedeaAboutCirce02",
+        "MedeaAboutTalos01",
+        "MedeaAboutHeracles02",
+        "MedeaAboutIcarus01",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NyxWithHecate01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1337
+    },
+    "MedeaAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ah, to face such cataclysmic times, and all this tragedy! Truly these are memorable nights. How fare your journeys to that cursed place the gods call home?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Eventful, in a word! Your concoctions have been broadly useful on the way. I always thought such magick focused on a single victim at a time."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Reach a certain point, and the world itself can be the single target of your wrath. Keep practicing, sorceress! We've no shortage of enemies on whom to ply our trade."
+        }
+      ],
+      "name": "MedeaAboutOlympus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1145
+    },
+    "MedeaAboutOptimism01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your curses have been of great help, Lady Medea. Though if only I had your optimism. You're always smiling, even in such a place as this."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What's not to like? No shortage here of blood for my research, and the dead are wise enough to stay afield of me. Now here, let's cast another curse and you'll be right as rot!"
+        }
+      ],
+      "name": "MedeaAboutOptimism01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutThessaly01",
+        "MedeaAboutPoisons01",
+        "MedeaAboutSolitude01",
+        "MedeaAboutCurses02"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "Value": 5
+          }
+        ],
+        "PathFalse:PrevRun.Cleared": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 824
+    },
+    "MedeaAboutPoisons01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Vast is the breadth of our craft, isn't it, sorceress? For all your studies with Great Hecate, I suspect you've scarce learned anything about my areas of expertise..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're right that my experience is no match for yours, Lady Medea. I've spent very little time with mortals... still-living ones, that is."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Of late, I'm spending little time with the still-living ones, myself. Most are highly susceptible to insinuation, or at least to certain types of toxins, easily administered in food or drink."
+        }
+      ],
+      "name": "MedeaAboutPoisons01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutThessaly01",
+        "MedeaAboutOptimism01",
+        "MedeaAboutSolitude01",
+        "MedeaAboutCurses02"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 636
+    },
+    "MedeaAboutPylons01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What are these Pylons doing everywhere, Lady Medea? They control the barrier before the docks, that much is clear. Perhaps the Titan's legions use them to coordinate attacks."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "They are the product of a very sick mind. Imprisoning so many Shades in the tiniest enclosures wherein all their Psyche may be drained! Can you imagine, sorceress?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's terrible! I hadn't realized the Pylons worked that way. Though who keeps fixing them? You even have one here!"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The hideous thing won't seem to go away! Keeps re-materializing practically each night! Though I get so caught up with all my cauldronwork, I seldom pay it any heed..."
+        }
+      ],
+      "name": "MedeaAboutPylons01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutEmptiness01",
+        "MedeaPostTrueEnding02"
+      ],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1851
+    },
+    "MedeaAboutRain01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It has been raining somewhat frequently of late. All the better to spread some of the plague about. Unless it isn't to your liking, sorceress?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't mind it; the rain, that is. I often don't even notice. And the weather here is positively placid in comparison to what the summit of Olympus has been like."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Would that I could witness that myself. When it comes to my research, the more unlivable the surrounding conditions, the more expeditiously I get results."
+        }
+      ],
+      "name": "MedeaAboutRain01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutFamiliars01",
+        "MedeaAboutArtemis01",
+        "MedeaAboutEarlyArrival01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "WetState"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Intro": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1885
+    },
+    "MedeaAboutReputation01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know, for all the dread and despair everywhere I turn, you've come to be a welcome sight, Lady Medea. I'm pleased to know you a bit better now."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Do not profess to know me, sorceress. You know my reputation, and express surprise that I do not appear as cruel as it suggests. Yet the greatest cruelties can be cleverly disguised..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I meant no offense. I don't profess to know you well at all, only to say I look forward to our encounters. As for your reputation, I care little for what others say of those such as us."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Perhaps you ought care more, for we are rightly to be feared. And there are those who'd turn upon us, sullying our names, or worse. Safeguard your trust, is my advice to you."
+        }
+      ],
+      "name": "MedeaAboutReputation01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCirce01",
+        "MedeaAboutCurses01",
+        "MedeaAboutBlood01",
+        "MedeaAboutUndead01",
+        "MedeaAboutSuffering01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 789
+    },
+    "MedeaAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It's nice, you know? That we could speak like this. But from one sorceress to another, it sometimes is a pain to use one's breath! Lately I've been less inclined, at least."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "A quick greeting is enough to liven up my evenings, Lady Medea. Or deaden them depending on your preference. We needn't ever chat for long."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Good. The deeper I get into my research, the less I wish to speak of it. Yet I do enjoy sharing the results."
+        }
+      ],
+      "name": "MedeaAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift08",
+          "MedeaGrantsHiddenAspect01",
+          "MedeaGrantsHypnosSpell02",
+          "MedeaAboutConcoctionQuestComplete01",
+          "MedeaAboutAltFight01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2421
+    },
+    "MedeaAboutSelene01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I see the light on you; the power of Selene. I want to make perfectly clear I have no qualms with her. No need for her to strike me down and ruin all my work."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Is there some incident that put the two of you at odds that I should be aware of, Lady Medea? I've been working closely with Sister Selene, so tell me if there's something I can do."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Unless you could persuade her to turn down that dare-I-say-it rather garish light a bit, then no, I don't presume you can. Sometimes I envy your acquaintances who live beneath the Earth..."
+        }
+      ],
+      "name": "MedeaAboutSelene01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCharon01",
+        "MedeaAboutCirce02",
+        "MedeaAboutTalos01",
+        "MedeaAboutHeracles02",
+        "MedeaAboutIcarus01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.SpellDrop": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "SpellDrop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "SeleneAboutMedea01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1368
+    },
+    "MedeaAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Testament of Night requires that the Cyclops must be vanquished, no? I shall be forced to make that difficult."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know and understand. Though I sometimes wonder whether Polyphemus has any idea about all this."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "He's not a complicated sort, but his instincts are quite well-honed. In his own words, he knows when something's up. I suppose we shall be seeing you quite soon?"
+        }
+      ],
+      "name": "MedeaAboutShrine01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyShrineAxeNBoss",
+              "BountyShrineDaggerNBoss",
+              "BountyShrineStaffNBoss",
+              "BountyShrineSuitNBoss",
+              "BountyShrineLobNBoss",
+              "BountyShrineTorchNBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaAboutAltFight01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 437
+    },
+    "MedeaAboutSolitude01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're always on your own, Lady Medea. Are there no family members or loved ones who could be accompanying you in your... experiments?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh they are with me, in a way; their spirits or their memories. But why suggest that solitude's in need of remedy? There can be times when one could use companionship, but such impulses can be sated, case-by-case."
+        }
+      ],
+      "name": "MedeaAboutSolitude01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutThessaly01",
+        "MedeaAboutOptimism01",
+        "MedeaAboutPoisons01",
+        "MedeaAboutCurses02"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 883
+    },
+    "MedeaAboutSuffering01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You must know a great deal about mortals. How they live, suffer, and die. Have you found ways to ease their passing, at least?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Whyever would I do a thing like that? Great Hecate herself says that the greatest teacher is out there. To suffer is to learn! I merely wish to become a good teacher, myself."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Mortal cries of anguish and despair do nothing to move you to compassion, or to mercy at least? I find them quite unnerving."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You learn to close your heart to all of it. No mortal has a right to live for long! Certainly there exist those whose skill is to ease suffering; I merely seek to understand its cause."
+        }
+      ],
+      "name": "MedeaAboutSuffering01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCirce01",
+        "MedeaAboutCurses01",
+        "MedeaAboutBlood01",
+        "MedeaAboutUndead01",
+        "MedeaAboutReputation01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 904
+    },
+    "MedeaAboutTalos01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Olympians must have their staunchest of defenders in the fray. Still leaning too much on Automatons for their own good, is what I'm hearing, though."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What you've heard sounds like what I might say. The Automatons of Mount Olympus make up for an almost complete lack of cognitive acuity with lots of adamantine strength. One called Talos is the worst of them."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "They still have Talos after all this time? Likely remodeled since we met; there wasn't too much left of him back then."
+        }
+      ],
+      "name": "MedeaAboutTalos01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutNyx01",
+        "MedeaAboutCharon01",
+        "MedeaAboutCirce02",
+        "MedeaAboutHeracles02",
+        "MedeaAboutIcarus01",
+        "MedeaAboutSelene01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:RoomsEntered.P_MiniBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_MiniBoss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1171
+    },
+    "MedeaAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Cyclops tells me that you voyage through the Rift of Thessaly to gain that mountain night upon night, is that so? Eugh, I've no fond memories of my nights spent at sea..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Titan's fleet has inadvertently been helping me get all the way from here to there, indeed. What is it about travel by sea that didn't suit you? I can imagine many possibilities."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well I have to say, it mostly was the crew with whom I sailed. Some of their Shades are likely loitering about Elysium still... although their stay may not be quite as pleasant as for some."
+        }
+      ],
+      "name": "MedeaAboutThessaly01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutOptimism01",
+        "MedeaAboutPoisons01",
+        "MedeaAboutSolitude01",
+        "MedeaAboutCurses02"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.P_Intro": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "P_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PolyphemusAboutAltFight01",
+          "PolyphemusAboutAltFight01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 503
+    },
+    "MedeaAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It has been far too many nights since last we saw each other, sorceress! More urgent matters in the Underworld, I presume?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, you could say that. How have you fared? Any new developments I should know about?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, I've been faring as well as could be expected, if not more. The opportunities remain abundant here. May your journeys likewise yield all that you desire."
+        }
+      ],
+      "name": "MedeaAboutTimePassing01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:BiomesReached.F": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "BiomesReached",
+              "F"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 3
+          }
+        ],
+        "Path:SpawnRecord.NPC_Medea_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Medea_01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 568
+    },
+    "MedeaAboutTrust01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "...You'd mentioned that you've come to trust in me. I wanted you to know it meant a lot. No one has told me so in recent times... even Great Hecate must keep me at arm's length."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea, surely your inclination to conducting research all alone has something to do with this. You'd be welcome and safe at the Crossroads if you wish to join us there."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "No, I do not lack for company. The mere thought of being surrounded by the living and the dead alike makes the bile in my belly rise. But I don't mind you like so many of the rest."
+        }
+      ],
+      "name": "MedeaAboutTrust01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 758
+    },
+    "MedeaAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The most outrageous bit of hearsay has been wafting lately on the winds, about what ails the mountain of the gods! You've been heading that way... what's going on?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If the hearsay concerned an ancient and enormous monstrosity looking to crush Olympus to pieces, assuming the Titan's legions don't achieve it first... it's not hearsay."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, my. Then I know which monstrosity you mean. And you intend to challenge him and all the rest? You're entirely mad, sorceress...! But so's the world over."
+        }
+      ],
+      "name": "MedeaAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1117
+    },
+    "MedeaAboutUndead01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Shades about this place... they're trapped in the decaying bodies of their mortal selves, aren't they? Unable to travel to my father's realm."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I know, right? This is a revolution in the necromantic arts! These shuffling wretches, trapped on the very verge of death... I could study them for moons and moons on end!"
+        }
+      ],
+      "name": "MedeaAboutUndead01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutCirce01",
+        "MedeaAboutCurses01",
+        "MedeaAboutBlood01",
+        "MedeaAboutReputation01",
+        "MedeaAboutSuffering01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 661
+    },
+    "MedeaAboutVengeance01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You work so tirelessly at your craft, Lady Medea. If I may ask, where do you find the strength for your pursuits night after night?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It's very much straightforward, sorceress. I seek to punish all who wronged me, in proportion to the harm they caused. Though have no fear, you're not on any list of mine!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you been wronged so often that you need more than one list of wrongdoers? What happens when you've cursed them all?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My lists are based on categories of affront; from mere dislikes, to deep betrayals. As for what happens after I've achieved my work... I'll have to get back to you on that one."
+        }
+      ],
+      "name": "MedeaAboutVengeance01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 685
+    },
+    "MedeaAboutWitchcraft01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How much has changed with time. It's not as often that I see familiar faces such as yours, or hateful ones. So many fail to understand our ways."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You've always seemed to have ways of making them understand, Lady Medea. Though, do you find you miss living among mortals?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Locating live subjects for my research used to be easier, but that exception notwithstanding, no. A few true friends are better than a thousand friendly-feigning strangers."
+        }
+      ],
+      "name": "MedeaAboutWitchcraft01",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHeracles01",
+        "MedeaAboutHecate01",
+        "MedeaAboutCharon02",
+        "MedeaAboutCuringCurses01",
+        "MedeaAboutCirceKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 852
+    },
+    "MedeaChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Such a terrible shame were a terrible curse to befall our enemies this eve..."
+        }
+      ],
+      "name": "MedeaChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2571
+    },
+    "MedeaChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Those who seek to do us wrong deserve no quarter whatsoever, sorceress."
+        }
+      ],
+      "name": "MedeaChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2582
+    },
+    "MedeaChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "We cannot always bring our foes an agonizing death, yet we may strive."
+        }
+      ],
+      "name": "MedeaChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2593
+    },
+    "MedeaChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Ill fortune comes in many different forms; you need but choose."
+        }
+      ],
+      "name": "MedeaChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2604
+    },
+    "MedeaChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "On lonesome nights as this, a concoction of a certain potency is certainly in order."
+        }
+      ],
+      "name": "MedeaChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2615
+    },
+    "MedeaChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You shall develop a taste for my poisons in due course, sorceress."
+        }
+      ],
+      "name": "MedeaChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2626
+    },
+    "MedeaChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Together let us curse our enemies this night, and into the beyond."
+        }
+      ],
+      "name": "MedeaChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2637
+    },
+    "MedeaChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What shall it take to bring our enemies to heel? Let us find out."
+        }
+      ],
+      "name": "MedeaChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2648
+    },
+    "MedeaChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "If you seek the spread of pain and suffering, you've come to the right place."
+        }
+      ],
+      "name": "MedeaChat09",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2659
+    },
+    "MedeaChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The best protection against curses is to put in place some curses of one's own."
+        }
+      ],
+      "name": "MedeaChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2670
+    },
+    "MedeaChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Our enemies shall come to understand the essence of fear itself."
+        }
+      ],
+      "name": "MedeaChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2681
+    },
+    "MedeaChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The very air we breathe shall be as poison to all those who stand against us."
+        }
+      ],
+      "name": "MedeaChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2692
+    },
+    "MedeaChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Our will and influence shall spread forth like a plague."
+        }
+      ],
+      "name": "MedeaChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2703
+    },
+    "MedeaChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I do suggest that you not linger here too long; ill side-effects and all."
+        }
+      ],
+      "name": "MedeaChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2714
+    },
+    "MedeaChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Unpleasantries take many different forms, and I would master them all."
+        }
+      ],
+      "name": "MedeaChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2725
+    },
+    "MedeaChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "This night practically begs for a real atrocity of some sort, no?"
+        }
+      ],
+      "name": "MedeaChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2736
+    },
+    "MedeaChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Welcome back to the necropolis, and may your stay be pleasantly short-lived."
+        }
+      ],
+      "name": "MedeaChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2747
+    },
+    "MedeaChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I've an absolutely appalling idea I'm dying to attempt, if you'll indulge me?"
+        }
+      ],
+      "name": "MedeaChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2758
+    },
+    "MedeaChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Why don't we go and spread some more malaise about, no?"
+        }
+      ],
+      "name": "MedeaChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2769
+    },
+    "MedeaChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "To achieve aught of value, sacrifices always must be made, sorceress."
+        }
+      ],
+      "name": "MedeaChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2780
+    },
+    "MedeaChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "May blight befall our enemies... and even those we simply do not like."
+        }
+      ],
+      "name": "MedeaChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2791
+    },
+    "MedeaChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I've several more unspeakable transgressions against nature here for you."
+        }
+      ],
+      "name": "MedeaChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2802
+    },
+    "MedeaChat23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The more hatred we harbor for our enemies, the stronger our curses shall become."
+        }
+      ],
+      "name": "MedeaChat23",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2813
+    },
+    "MedeaChat24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You may have blessings from the gods above, but I can offer something they cannot."
+        }
+      ],
+      "name": "MedeaChat24",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2824
+    },
+    "MedeaChat25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate has taught you well, but if someone so much as touches you, I'll make them suffer."
+        }
+      ],
+      "name": "MedeaChat25",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2835
+    },
+    "MedeaChat26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The air is absolutely putrid this eve; I almost didn't hear you come in, sorceress!"
+        }
+      ],
+      "name": "MedeaChat26",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2852
+    },
+    "MedeaChat27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The dead shall long for the comfort of their graves once we are through with them."
+        }
+      ],
+      "name": "MedeaChat27",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2863
+    },
+    "MedeaChat28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Moon isn't bright, the night is cold, the dead are writhing in the Earth; I've no complaints!"
+        }
+      ],
+      "name": "MedeaChat28",
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2874
+    },
+    "MedeaChat29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The pouring rain is bad for my concoctions though does provide a certain wretchedness."
+        }
+      ],
+      "name": "MedeaChat29",
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "WetState"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2894
+    },
+    "MedeaChat30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "What an absolutely dreadful night! I scarce imagine how conditions for my work could be improved."
+        }
+      ],
+      "name": "MedeaChat30",
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 20
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2913
+    },
+    "MedeaChat31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "My little pharmacy has limited supply, for I only offer the freshest of ingredients..."
+        }
+      ],
+      "name": "MedeaChat31",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2933
+    },
+    "MedeaChat32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Do watch your back out there lest someone give it a good stabbing, sorceress."
+        }
+      ],
+      "name": "MedeaChat32",
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2944
+    },
+    "MedeaDreamRun": {
+      "dialogueLines": [],
+      "name": "MedeaDreamRun",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.IsDreamRun": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2956
+    },
+    "MedeaFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Hail, sorceress! Welcome to Ephyra. Suffering spreads every which way you cast your gaze, and on a night most foul. Simply appalling, no?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Indeed, Lady Medea. Unfortunately, I can only appreciate the suffering for so long, as Olympus calls. Though, how fares your research?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, I've been dying to show you! The air here's absolutely poisonous. The conditions? Utterly atrocious! Observe what I have wrought..."
+        }
+      ],
+      "name": "MedeaFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 373
+    },
+    "MedeaGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I almost pity our enemies, knowing you shall make them rue each night they dare oppose us, Lady Medea. Please, I wanted you to have this."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The Nectar of the gods! Why, this shall be most useful to my work. For the strongest curses come from honeyed words! Here, let me make this worth your while."
+        }
+      ],
+      "name": "MedeaGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3012
+    },
+    "MedeaGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Another Nectar bottle you can spare on my behalf? Oh, this shall be a splendid complement with several much less pleasant ingredients, whose aroma this ought to disguise!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I shudder to think what concoction you have in mind, though trust you shall make use of that in service to our cause."
+        }
+      ],
+      "name": "MedeaGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3040
+    },
+    "MedeaGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "One always could see plain your talent, sorceress; but truth be told, I thought your heart would be a liability. Perhaps, however... I was wrong in that."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm thankful for your faith in me. My heart is never so assertive that it would lead me astray. Or so I tell myself, anyway..."
+        }
+      ],
+      "name": "MedeaGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3068
+    },
+    "MedeaGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "The gods of Olympus have not always been particularly kind. Yet you, a true-blood relative of theirs, would show me favor for little more than carrying out my oath to Great Hecate? Unnecessary, this; I've only curses in return."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're so much more than your curses, Lady Medea. Perhaps the gods of Olympus and the dead never told you so, but I believe it's true."
+        }
+      ],
+      "name": "MedeaGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3094
+    },
+    "MedeaGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Keep sweetening this atmosphere and it may start to undermine my craft...! I cannot stand over my cauldron thinking all these pleasant thoughts. Imagine the result!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I certainly can. You're one of the greatest practitioners of our craft I have ever known. The depth of your ability is beyond compare, and surely its breadth is boundless too."
+        }
+      ],
+      "name": "MedeaGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3120
+    },
+    "MedeaGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Repeated acts of kindness tend to rouse my innermost suspicions or my wrath, but in your case... what little ulterior motive I detect seems more or less benign. And now I've more than enough Nectar for my purposes, thank you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're most welcome. I've likewise always needed to be guarded, as our enemies abound. So when I come to trust someone, I want them to know it."
+        }
+      ],
+      "name": "MedeaGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.N_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "N_Story01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3147
+    },
+    "MedeaGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "For your devotion to our cause, Lady Medea! You may have all the Nectar you require, but I'd like you to have this, too. Though it may not be suitable for your concoctions."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You would regard me as some goddess from on high, with such a precious gift. If you but knew me better, you'd rescind the offer on the spot. This is unnecessary, sorceress; as you observed, I cannot use it anyway."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You could enjoy it...? Perhaps with me or someone else. Or simply keep it."
+        }
+      ],
+      "name": "MedeaGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift06",
+          "MedeaAboutConcoctionQuestComplete01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3182
+    },
+    "MedeaGift08": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Since Ambrosia can be so good as to leave you desiring more, I wanted you to have this. For being quite possibly the most welcome sight in all Ephyra."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "To have been blessed by one such as you, after having cursed so very many, however much they had it coming... I've merely done my service to Great Hecate in working with you, sorceress. You need not compensate me more."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It isn't compensation, merely a gift. Your past is your business; I know only the Lady Medea whom I've met and come to understand. She is so much the sorceress I've aspired to be... with less emphasis on cursing, but still."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You were so young when first we met... I thought as you grew older, you would harden, grow crueler, as many of us do. Yet you have proven quite resistant, and in turn... you've made me more resistant to it, too. I'm most grateful."
+        }
+      ],
+      "name": "MedeaGift08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift07"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 3224
+    },
+    "MedeaGiftTears01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "This should be what you sought: one vial of vaporized Tears from the Mourning Fields. May you use it well."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, this is it! To think of all the sorrow concentrated here. I shall be working with this very soon. Thank you so much!"
+        }
+      ],
+      "name": "MedeaGiftTears01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeMedeaTears": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeMedeaTears"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2977
+    },
+    "MedeaGrantsHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "How the dead are drawn to you, sorceress; I've seen it plain! Even the Skull of Revaal must worship the ground beneath your feet! I dreamt of her quite recently, in fact..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of all the Nocturnal Arms, Revaal's connection to the dead perhaps is the strongest. What happened in the dream?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "It sent a shiver down my spine. I was in the Underworld, yet not the one we know! It was so very cold... and there sat a fierce Queen; not your mother, mind you. And she intoned, I see you gather countless dead in cold and dark domains."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I see you gather countless dead in cold and dark domains. She must have given you a waking-phrase! Did she believe you still to be the bearer of the Argent Skull? "
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I doubt that... because it's you we saw bearing the Skull, not I. My time with her for now has passed. Yours, it seems, may be only beginning..."
+        }
+      ],
+      "name": "MedeaGrantsHiddenAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "StaffHiddenAspectRevealInProgress",
+          "DaggerHiddenAspectRevealInProgress",
+          "TorchHiddenAspectRevealInProgress",
+          "AxeHiddenAspectRevealInProgress",
+          "SuitHiddenAspectRevealInProgress"
+        ],
+        "Path:GameState.WeaponsUnlocked": [
+          {
+            "HasAll": [
+              "WeaponStaffSwing",
+              "WeaponDagger",
+              "WeaponTorch",
+              "WeaponAxe",
+              "WeaponLob",
+              "WeaponSuit"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAll": [
+              "LobCloseAttackAspect",
+              "LobImpulseAspect"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAny": [
+              "LobCloseAttackAspect5",
+              "LobImpulseAspect5"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1768
+    },
+    "MedeaGrantsHypnosSpell01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wanted to mention, Lord Hypnos still is slumbering in the Crossroads. I tried Dream Vapors on him to no avail. Can you think of anything more potent, perhaps?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well, I can think of how to make Dream Vapors more potent, sorceress! They practically could rouse the dead. As for that dormant son of Nyx, who knows? But little harm in trying!"
+        }
+      ],
+      "name": "MedeaGrantsHypnosSpell01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGift02",
+          "HypnosDreamMeeting01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1571
+    },
+    "MedeaGrantsHypnosSpell02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your stronger Dream Vapors helped me get deeper into the psyche of Lord Hypnos, but unfortunately not deep enough. He's still dozing away. Anything else I can try?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, there's always something. Rearrange some pieces of his mind, perhaps. Have you tried stabbing him repeatedly?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I was thinking more along the lines of his connection to his brother, the incarnate of Death. Is there some way to imbue the Dream Vapors with the essence of the dead?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Why certainly, the properties of Sleep and Death go hand in hand. I think I can point you in the right direction on that one! Do tell me how it goes...?"
+        }
+      ],
+      "name": "MedeaGrantsHypnosSpell02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {},
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaGrantsHypnosSpell01",
+          "HypnosWakeUp02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 1600
+    },
+    "MedeaHubFirstMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "So many more Shades of the dead now linger here! And the earthy aroma, quite unlike before. These Crossroads changed since last I visited!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Welcome back to the abode, Lady Medea. What brings you here, and will you be staying with us for a little while?"
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "No, I am Great Hecate's eyes upon the surface. But the night is young, and I've business with the Broker there; a surplus of Bones to exchange. See you above and below, sorceress."
+        }
+      ],
+      "name": "MedeaHubFirstMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "NearTrueEnding",
+          "HecateMissing"
+        ],
+        "Path:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "Value": 5
+          }
+        ],
+        "PathFalse:CurrentRun.RoomsEntered.N_Story01": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "RoomsEntered",
+              "N_Story01"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeMarket": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeMarket"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2452
+    },
+    "MedeaHubMeeting02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "This place is positively bustling with life...! It's a little overwhelming for me here if you must know. Are you accustomed to all this?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, yes! Or at least I've been growing more accustomed, Lady Medea. Let me know if we can make your visit here more comfortable in any way."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh no, I don't think I'll be staying here for long. Once all my business with the Broker's settled up, I shall be on my way. But see you in Ephyra sometime soon?"
+        }
+      ],
+      "name": "MedeaHubMeeting02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "Path:GameState.CosmeticsPurchasedCountCache.Total": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "CosmeticsPurchasedCountCache",
+              "Total"
+            ],
+            "Value": 20
+          }
+        ],
+        "Path:GameState.WorldUpgradesAdded": [
+          {
+            "HasAll": [
+              "WorldUpgradeGameStats",
+              "WorldUpgradeRunHistory",
+              "WorldUpgradeMusicPlayer"
+            ],
+            "Path": [
+              "GameState",
+              "WorldUpgradesAdded"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "PolyphemusAboutAltFight01",
+          "PolyphemusAboutAltFight01_B"
+        ],
+        "RequiredTextLines": [
+          "MedeaHubMeeting01",
+          "MedeaGift04",
+          "ZeusPalacePostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2510
+    },
+    "MedeaLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Forgive my gawking, sorceress, but you've clearly suffered on your way... might I perhaps take a quick sample of your blood?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No thank you, Lady Medea. My night is off to a wretched enough start. As long as I can salvage it somehow."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well suit yourself. And if it makes you feel any better, our enemies soon shall accrue far worse ailments."
+        }
+      ],
+      "name": "MedeaLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2177
+    },
+    "MedeaLowHealth02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "I practically mistook you for the shambles of a corpse for how much lifeblood you appear to have already lost! Well, let me help you take vengeance at the least."
+        }
+      ],
+      "name": "MedeaLowHealth02",
+      "narrativePriorityClusterMembers": [
+        "MedeaLowHealth03"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2210
+    },
+    "MedeaLowHealth03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Well you look positively hideous, if you'll forgive my candor, sorceress! What have all those decaying wretches out there done to you?"
+        }
+      ],
+      "name": "MedeaLowHealth03",
+      "narrativePriorityClusterMembers": [
+        "MedeaLowHealth02"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2235
+    },
+    "MedeaPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate herself was generous enough to notify me of your latest exploits, sorceress. And I wouldn't have believed a word of it had I been told by any other being save for her. So then, the Titan Lord has truly been de-fanged?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So it seems, Lady Medea. And the monstrosity that loomed over Olympus is gone, too. Some traces of both threats remain, but we think we can handle them."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You apparently can handle anything. My only fear is that this means we may not see each other quite as often as we have, and... shall I be forced to leave Ephyra soon? So that mortals may then rob this city of its character..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That won't be an immediate concern. The Underworld will not go back to how it used to be for quite some time; the dead shall have to wallow for a while longer."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Oh, how utterly terrible! But only for the dead. As for me personally, why... I don't even know whom to curse!"
+        }
+      ],
+      "name": "MedeaPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2311
+    },
+    "MedeaPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Great Hecate still hasn't told me how exactly you managed to induce within the Titan Lord a reawakening of sorts. No mere curse, that... so much she has yet to teach me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The greatest teacher is out there, she always says, though, right? But, I feel the same way. For as long as I've known Headmistress, there's so much to her that I can't even begin to understand."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "We dwell in shadows; so it must be. But I take comfort knowing if ever I truly felt alone, in the crippling, pathetic way mortals refer to their abandonment... then I can always call on her, or you."
+        }
+      ],
+      "name": "MedeaPostTrueEnding02",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutPylons01",
+        "MedeaAboutEmptiness01"
+      ],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaPostTrueEnding01",
+          "MedeaGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2353
+    },
+    "MedeaPostTrueEnding03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "You noted traces of the greater threats we faced remain. How fare your efforts to dispel them all? Do tell if there is more that I could do."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh I'd say it's coming along, thank you for the curses! I don't know how close we are to completion. I'm still unaccustomed to tasks where urgency isn't of the utmost importance."
+        },
+        {
+          "speaker": "NPC_Medea_01",
+          "text": "Impatience, haste, urgency... they're mostly mortal impulses, I think. A steady hand and bided time, now that is the province of the divine. I remain forever at your service, sorceress."
+        }
+      ],
+      "name": "MedeaPostTrueEnding03",
+      "narrativePriorityClusterMembers": [
+        "MedeaAboutHouse01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 37,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Medea_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MedeaPostTrueEnding01",
+          "ZeusPalacePostTrueEnding01",
+          "MedeaGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Medea.lua",
+      "sourceLine": 2387
+    }
+  }
+}

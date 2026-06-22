@@ -1,0 +1,483 @@
+{
+  "alternates": {},
+  "dependents": {
+    "MegaeraWithSisyphus01_FollowUp": [
+      {
+        "name": "MegaeraWithSisyphus01",
+        "type": "RequiredQueuedTextLines"
+      }
+    ],
+    "MegaeraWithSisyphus02_FollowUp": [
+      {
+        "name": "MegaeraWithSisyphus02",
+        "type": "RequiredQueuedTextLines"
+      }
+    ],
+    "MegaeraWithSisyphus03_FollowUp": [
+      {
+        "name": "MegaeraWithSisyphus03",
+        "type": "RequiredQueuedTextLines"
+      }
+    ],
+    "SisyphusMeeting04": [
+      {
+        "name": "MegaeraWithSisyphus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ThanatosWithSisyphus01_FollowUp": [
+      {
+        "name": "ThanatosWithSisyphus01",
+        "type": "RequiredQueuedTextLines"
+      }
+    ],
+    "ThanatosWithSisyphus02_FollowUp": [
+      {
+        "name": "ThanatosWithSisyphus02",
+        "type": "RequiredQueuedTextLines"
+      }
+    ],
+    "ThanatosWithSisyphus03_FollowUp": [
+      {
+        "name": "ThanatosWithSisyphus03",
+        "type": "RequiredQueuedTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "ArtemisUpgrade": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "AthenaUpgrade": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "ChaosUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "CharProtag": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "Charon": {
+      "description": "Stygian Boatman",
+      "name": "Charon (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "DionysusUpgrade": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "Hades": {
+      "description": "God of the Dead",
+      "name": "Hades (Boss)"
+    },
+    "Harpy": {
+      "description": "First of the Furies",
+      "name": "Megaera (Boss)"
+    },
+    "Harpy2": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "Harpy3": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HermesUpgradeRare": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "Minotaur": {
+      "description": "Bull of Minos",
+      "name": "Asterius"
+    },
+    "MysteryUpgrade": {
+      "name": "? ? ? (Chaos)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Achilles_Story_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles (Field)"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Bouldy"
+    },
+    "NPC_Cerberus_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Field)"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Eurydice_01": {
+      "description": "Carefree Muse",
+      "name": "Eurydice"
+    },
+    "NPC_FurySister_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_FurySister_02": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "NPC_FurySister_03": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "NPC_FurySister_Unnamed_02": {
+      "name": "? ? ? (Alecto)"
+    },
+    "NPC_FurySister_Unnamed_03": {
+      "name": "? ? ? (Tisiphone)"
+    },
+    "NPC_Hades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx (Field)"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Orpheus_Story_01": {
+      "description": "Court Musician",
+      "name": "Orpheus (Field)"
+    },
+    "NPC_Patroclus_01": {
+      "description": "Fallen Warrior",
+      "name": "Patroclus"
+    },
+    "NPC_Patroclus_Unnamed_01": {
+      "name": "? ? ? (Patroclus)"
+    },
+    "NPC_Persephone_01": {
+      "description": "Goddess of Verdure",
+      "name": "Persephone"
+    },
+    "NPC_Persephone_Home_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone (House)"
+    },
+    "NPC_Persephone_Unnamed_01": {
+      "name": "? ? ? (Persephone)"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_SisyphusAndBouldy_01": {
+      "name": "Sisyphus & Bouldy"
+    },
+    "NPC_Sisyphus_01": {
+      "description": "Tortured Soul",
+      "name": "Sisyphus"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Thanatos_Field_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos (Field)"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "PlayerUnit": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PlayerUnit_Intro": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Seas",
+      "name": "Poseidon"
+    },
+    "SkellyBackstory": {
+      "description": "Schelemeus, Former Captain",
+      "name": "Skelly"
+    },
+    "Storyteller": {
+      "name": "Narrator"
+    },
+    "Theseus": {
+      "description": "Hero of Athens",
+      "name": "Theseus"
+    },
+    "TrainingMelee": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "TrialUpgrade": {
+      "description": "Origin of Creation",
+      "name": "Chaos"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 7,
+    "totalSpeakers": 1,
+    "totalTextlines": 6,
+    "unresolvedRefs": [
+      "MegaeraWithSisyphus01_FollowUp",
+      "MegaeraWithSisyphus02_FollowUp",
+      "MegaeraWithSisyphus03_FollowUp",
+      "SisyphusMeeting04",
+      "ThanatosWithSisyphus01_FollowUp",
+      "ThanatosWithSisyphus02_FollowUp",
+      "ThanatosWithSisyphus03_FollowUp"
+    ]
+  },
+  "textlines": {
+    "MegaeraWithSisyphus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_FurySister_01",
+          "text": "...You help him out again, you'll get a thousand lashes next we meet. And when I return, this little rock of yours had better be up there rather than here, or else you'll get a thousand more."
+        },
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "Sounds good, sounds good, Madam, that's more than equitable really, I'll hold you to that! Be seeing you around!"
+        }
+      ],
+      "name": "MegaeraWithSisyphus01",
+      "otherRequirements": {
+        "RequiredKills": {
+          "Harpy": 2
+        }
+      },
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_FurySister_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "MegaeraWithSisyphus01_FollowUp"
+        ],
+        "RequiredTextLines": [
+          "SisyphusMeeting04"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5244
+    },
+    "MegaeraWithSisyphus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_FurySister_01",
+          "text": "...And you'll keep busy with your boulder if you know what's good for you, you little cheat. Don't go thinking I'm not watching you."
+        },
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "I appreciate your vigilance, Madam, and surely I'll be getting Bouldy up this very hill in no time flat, despite the fact that I have never once achieved this!"
+        }
+      ],
+      "name": "MegaeraWithSisyphus02",
+      "otherRequirements": {},
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_FurySister_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "MegaeraWithSisyphus02_FollowUp"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5294
+    },
+    "MegaeraWithSisyphus03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_FurySister_01",
+          "text": "...And when this matter with the Prince is over with, we will be getting back to how things used to be. Until such time, I'd better regularly see your boulder on that hill."
+        },
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "Entirely makes sense to me, Madam, and rest assured that Bouldy, erm, that is to say this boulder here, that I will push it regularly, moving forward, same as ever! Now good-bye!"
+        }
+      ],
+      "name": "MegaeraWithSisyphus03",
+      "otherRequirements": {},
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_FurySister_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "MegaeraWithSisyphus03_FollowUp"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5344
+    },
+    "ThanatosWithSisyphus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Thanatos_01",
+          "text": "...And, lastly, you're forbidden from offering further assistance to Prince Zagreus. Do we understand each other?"
+        },
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "Why, absolutely, Master Thanatos, I wouldn't think of it! My mind is fully occupied with all the latest boulder-pushing strategies, besides."
+        },
+        {
+          "speaker": "NPC_Thanatos_01",
+          "text": "Enough! Get back to work, and I'll get back to mine."
+        }
+      ],
+      "name": "ThanatosWithSisyphus01",
+      "otherRequirements": {},
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_Thanatos_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "ThanatosWithSisyphus01_FollowUp"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5394
+    },
+    "ThanatosWithSisyphus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "I understand you, Master Thanatos, and will be doing as you say. No more assistance for Prince Zagreus, dead serious this time."
+        },
+        {
+          "speaker": "NPC_Thanatos_01",
+          "text": "Good. It shall be both our skins if you are caught in one of your deceptions. See to it that this doesn't happen."
+        }
+      ],
+      "name": "ThanatosWithSisyphus02",
+      "otherRequirements": {},
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_Thanatos_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "ThanatosWithSisyphus02_FollowUp"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5449
+    },
+    "ThanatosWithSisyphus03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Thanatos_01",
+          "text": "...You would be wise to heed my words next time, and fear the consequences of eluding me. Death can be most unpleasant, as I'm sure you know."
+        },
+        {
+          "speaker": "NPC_Sisyphus_01",
+          "text": "Well, that's just it, Master Thanatos. I never was terribly fearful of you gods, if you'll forgive my saying so. Far as I can tell, all of you seem to have your struggles much like mortals do. A fear of death aside."
+        },
+        {
+          "speaker": "NPC_Thanatos_01",
+          "text": "What would you know of the struggles of gods? Now you have eternity to think on what you've done. Maybe I'll check again with you after another aeon or two, see if you've learned anything more."
+        }
+      ],
+      "name": "ThanatosWithSisyphus03",
+      "otherRequirements": {},
+      "owner": "NPC_Sisyphus_01",
+      "partner": "NPC_Thanatos_01",
+      "requirements": {
+        "RequiredQueuedTextLines": [
+          "ThanatosWithSisyphus03_FollowUp"
+        ]
+      },
+      "section": "TextLineSet",
+      "source": "Hades 1",
+      "sourceFile": "EncounterData.lua",
+      "sourceLine": 5498
+    }
+  }
+}
