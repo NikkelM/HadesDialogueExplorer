@@ -14,6 +14,10 @@
 
 const _PAD = 6;        // spotlight padding around the target, px
 const _GAP = 12;       // card gap from the viewport edge, px
+// Keep the spotlight ring at least this far inside the viewport edges when the
+// (padded) target would otherwise spill off-screen - e.g. a detail panel taller
+// than the window, or a panel flush against the left edge.
+const _VIEW_MARGIN = 4;
 // Card distance from the highlighted target. Larger than _GAP so the card
 // clears the spotlight ring (which already extends ~_PAD beyond the target)
 // and leaves a comfortable visible gap below / above the highlight.
@@ -65,8 +69,18 @@ function _scrollParent(el) {
 }
 
 // Resolve a step target to a visible element, or null (selector miss,
-// detached node, or zero-size element -> treat as a no-target step).
+// detached node, or zero-size element -> treat as a no-target step). An
+// array target resolves to its first visible element (used for scroll /
+// resize-observe); the spotlight itself spans the union of all of them, see
+// ``_resolveAllTargets`` / ``_unionRect``.
 function _resolveTarget(t) {
+    if (Array.isArray(t)) {
+        for (const sel of t) {
+            const el = _resolveTarget(sel);
+            if (el) return el;
+        }
+        return null;
+    }
     let el = null;
     if (typeof t === 'function') {
         try { el = t(); } catch { el = null; }
@@ -79,6 +93,36 @@ function _resolveTarget(t) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 && r.height === 0) return null;
     return el;
+}
+
+// Resolve every visible element a step target names (one for a single
+// selector, several for an array). The spotlight covers their union, so a
+// step can highlight two side-by-side panels at once.
+function _resolveAllTargets(t) {
+    const list = Array.isArray(t) ? t : [t];
+    const els = [];
+    for (const sel of list) {
+        const el = _resolveTarget(sel);
+        if (el) els.push(el);
+    }
+    return els;
+}
+
+// Union of the given elements' bounding rects, or null when none qualify.
+function _unionRect(els) {
+    let u = null;
+    for (const el of els) {
+        const r = el.getBoundingClientRect();
+        if (!u) {
+            u = { top: r.top, left: r.left, right: r.right, bottom: r.bottom };
+        } else {
+            u.top = Math.min(u.top, r.top);
+            u.left = Math.min(u.left, r.left);
+            u.right = Math.max(u.right, r.right);
+            u.bottom = Math.max(u.bottom, r.bottom);
+        }
+    }
+    return u;
 }
 
 function _buildDom() {
@@ -136,15 +180,27 @@ function _buildDom() {
 // the card beside it (a bottom sheet on phones, where CSS owns placement).
 function _position() {
     if (!_active) return;
-    const el = _resolveTarget(_steps[_index].target);
-    if (el) {
-        const r = el.getBoundingClientRect();
+    const els = _resolveAllTargets(_steps[_index].target);
+    const r = els.length ? _unionRect(els) : null;
+    if (r) {
         _spotlight.classList.remove('tour-spotlight-untargeted');
-        _spotlight.style.top = (r.top - _PAD) + 'px';
-        _spotlight.style.left = (r.left - _PAD) + 'px';
-        _spotlight.style.width = (r.width + _PAD * 2) + 'px';
-        _spotlight.style.height = (r.height + _PAD * 2) + 'px';
-        _placeCard(r);
+        // Clamp the padded highlight to the viewport so the border ring stays
+        // on-screen even when the target is larger than the window or sits at
+        // its edge (e.g. a full detail panel taller than the viewport, or the
+        // left-most panel whose left edge would otherwise fall off-screen).
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const top = Math.max(_VIEW_MARGIN, r.top - _PAD);
+        const left = Math.max(_VIEW_MARGIN, r.left - _PAD);
+        const right = Math.min(vw - _VIEW_MARGIN, r.right + _PAD);
+        const bottom = Math.min(vh - _VIEW_MARGIN, r.bottom + _PAD);
+        const width = Math.max(0, right - left);
+        const height = Math.max(0, bottom - top);
+        _spotlight.style.top = top + 'px';
+        _spotlight.style.left = left + 'px';
+        _spotlight.style.width = width + 'px';
+        _spotlight.style.height = height + 'px';
+        _placeCard({ top, left, right, bottom, width, height });
     } else {
         // No target: dim everything, centre the card. Drop the highlight ring so
         // the zero-size cut-out doesn't show as a stray square (visible on phones,
