@@ -159,6 +159,86 @@
     cursor: help;
 }
 
+/* Inline play-priority badge appended to the status detail sentence. */
+.eligibility-rank-inline {
+    white-space: nowrap;
+}
+.eligibility-rank-unranked {
+    cursor: help;
+}
+
+/* "Will play before this" note: surfaces the eligible siblings that the
+   game would resolve ahead of this dialogue (H2 ordinal / H1 priority
+   tier), or reassures the user it is next. The whole block carries the
+   best-effort disclaimer tooltip, so flag it with the help cursor. */
+.eligibility-play-order {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.55rem;
+    border-left: 2px solid #c4a56e;
+    background: rgba(196, 165, 110, 0.08);
+    border-radius: 0 4px 4px 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: 1.45;
+    cursor: help;
+}
+.eligibility-play-order-next {
+    color: #cdbb92;
+    font-weight: 600;
+}
+.eligibility-play-order-head {
+    margin-bottom: 0.3rem;
+    color: #cdbb92;
+    font-weight: 600;
+}
+.eligibility-play-order-list {
+    list-style: none;
+    margin: 0.1rem 0 0;
+    padding: 0;
+    /* Shared columns so badges, names and the Trace buttons each line up
+       in one column (the Trace offset by the longest name in the list),
+       mirroring the fixed-width-column alignment used elsewhere. */
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    justify-content: start;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    font-size: var(--fs-base);
+}
+.eligibility-play-order-item {
+    display: contents;
+}
+.eligibility-play-order-badge,
+.eligibility-play-order-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.eligibility-play-order-trace {
+    flex-shrink: 0;
+    padding: 2px 10px;
+    background: var(--bg);
+    color: var(--text-color);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: var(--fs-xs);
+    cursor: pointer;
+    text-decoration: none;
+}
+.eligibility-play-order-trace:hover {
+    background: var(--border);
+}
+.eligibility-play-order-tag {
+    font-size: var(--fs-2xs);
+    color: #9a9ab0;
+    border: 1px solid #4a4636;
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-left: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
 /* Unplayed list */
 .eligibility-tree {
     margin-top: 1rem;

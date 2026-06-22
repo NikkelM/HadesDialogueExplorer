@@ -11,10 +11,11 @@
  */
 
 import { textlines, speakers, alternates } from './data.js';
-import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, formatReqType } from './utilities.js';
+import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
+import { computePlayAhead } from './play-order.js';
 import { renderOtherRequirementsSectionHtml } from './info-panel.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -335,31 +336,37 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     }
 
     let html = `<div class="eligibility-summary">`;
+    const rankInline = playRankInline(rootTl);
 
     if (rootPlayed) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
-        html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.</div>`;
+        html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.${rankInline}</div>`;
     } else if (directlyEligible) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
-        html += total === 0
-            ? `<div class="eligibility-detail">This dialogue has no prerequisites and is immediately eligible to play.</div>`
-            : `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+        html += `<div class="eligibility-detail">${total === 0
+            ? 'This dialogue has no prerequisites and is immediately eligible to play.'
+            : total === 1
+                ? 'Its prerequisite has been played. This dialogue should be eligible.'
+                : `All ${total} prerequisites have been played. This dialogue should be eligible.`}${rankInline}</div>`;
         html += chainNote;
     } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo)) {
+        // No play-priority here: a permanently-unobtainable dialogue never
+        // plays, so its rank is moot, and the detail line introduces the
+        // reasons list with a colon.
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
         html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
     } else if (indeterminate) {
         html += `<div class="eligibility-status eligibility-indeterminate">? Indeterminate</div>`;
-        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from this save: this dialogue gates on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active). Its resolvable prerequisites are satisfied.</div>`;
+        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from this save: this dialogue gates on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active). Its resolvable prerequisites are satisfied.${rankInline}</div>`;
         html += chainNote;
     } else if (total === 0) {
         // Blocked, but gated entirely by alternative branches (no flat chain).
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
-        html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.</div>`;
+        html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.${rankInline}</div>`;
     } else {
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
-        html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.</div>`;
+        html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.${rankInline}</div>`;
         html += `<div class="eligibility-progress-bar"><div class="eligibility-progress-fill" style="width:${total > 0 ? (played / total * 100) : 0}%"></div></div>`;
         const completeTip = completed.length
             ? 'Already complete:\n' + completed.join('\n')
@@ -369,8 +376,68 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += chainNote;
     }
 
+    if (directlyEligible) html += renderPlayAheadHtml(rootName, saveCtx);
+
     html += `</div>`;
     return html;
+}
+
+// Inline play-priority badge for the traced dialogue, appended to the
+// status detail sentence (a leading space is included). H2 shows the
+// NarrativeData ordinal badge (``#N/M``); H1 shows the priority-tier
+// badge(s). H2 lines absent from the priority list have no ordinal - call
+// that out, since they only surface via the random fallback.
+function playRankInline(tl) {
+    if (!tl) return '';
+    const badge = renderPriorityBadgeHtml(tl);
+    if (badge) {
+        return ` <span class="eligibility-rank-inline">Play priority: ${badge}</span>`;
+    }
+    return ` <span class="eligibility-rank-inline eligibility-rank-unranked" `
+        + `data-tooltip="This dialogue isn\u2019t listed in its context\u2019s NarrativeData priority order, so it only plays via the random fallback once the ranked lines are exhausted.">`
+        + `Play priority: <span class="muted">unranked (random fallback)</span></span>`;
+}
+
+// "Will play before this" note for an eligible dialogue. Lists the
+// currently-eligible siblings that rank ahead of it in its play context
+// (H2: lower NarrativeData ordinal; H1: higher priority tier), each with
+// its own rank badge, or assures the user it is next when nothing
+// outranks it. Returns '' when the dialogue has no play context (unknown
+// / ownerless). The disclaimer spells out the limits: only
+// save-resolvable dialogue prerequisites are considered, run-scoped /
+// timing gates aren't, and equal-rank lines are random in-game.
+function renderPlayAheadHtml(rootName, saveCtx) {
+    const res = computePlayAhead(rootName, saveCtx);
+    if (!res) return '';
+    const disclaimer = 'Best-effort, from the dialogue prerequisites this tool can resolve from your save. '
+        + 'The game also weighs run-scoped and timing requirements that aren\u2019t checked here, and picks at '
+        + 'random among equally-ranked lines, so the real order may differ.';
+    const tipAttr = ` data-tooltip="${escapeHtml(disclaimer)}"`;
+    if (res.ahead.length === 0) {
+        return `<div class="eligibility-play-order"${tipAttr}>`
+            + `<span class="eligibility-play-order-next">This dialogue will most likely play next.</span>`
+            + `</div>`;
+    }
+    const n = res.ahead.length;
+    const items = res.ahead.map(a =>
+        `<li class="eligibility-play-order-item" role="listitem">`
+        + `<span class="eligibility-play-order-badge">${renderPriorityBadgeHtml(textlines[a.name])}</span>`
+        + `<span class="eligibility-play-order-name">`
+        + `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(a.name)})">${escapeHtml(a.name)}</a>`
+        + (a.repeatable
+            ? ` <span class="eligibility-play-order-tag" data-tooltip="Repeatable - it can keep playing, so it may recur ahead of this one.">repeatable</span>`
+            : '')
+        + `</span>`
+        + `<a class="eligibility-play-order-trace" aria-label="Trace eligibility" `
+        + `data-tooltip="Trace this dialogue\u2019s eligibility" `
+        + `onclick="event.stopPropagation(); navigateToEligibility(${jsAttr(a.name)})">Trace</a>`
+        + `</li>`,
+    ).join('');
+    return `<div class="eligibility-play-order"${tipAttr}>`
+        + `<div class="eligibility-play-order-head">At least ${n} other potentially eligible dialogue${n === 1 ? '' : 's'} `
+        + `rank${n === 1 ? 's' : ''} ahead and will likely play before this one (not considering non-dialogue requirements):</div>`
+        + `<ul class="eligibility-play-order-list" role="list">${items}</ul>`
+        + `</div>`;
 }
 
 function renderUnplayedListHtml(chain, mandatory, rootName, groups) {

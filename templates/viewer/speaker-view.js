@@ -34,6 +34,7 @@ import {
     renderSaveBadgeHtml,
 } from './utilities.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+import { mergedSectionKey, playRank } from './play-order.js';
 
 // Priority filter scheme. Both games slice a speaker's owned dialogues
 // on the same axis - repeatability (the ``playOnce`` flag) - matching
@@ -135,7 +136,10 @@ function sectionDisplay(sectionKey) {
 
 // H1 fragments dialogue contexts across many section keys where H2 uses
 // one. The speaker view collapses each context into a single displayed
-// group (matching H2), keyed by a representative section key. Three
+// group (matching H2), keyed by a representative section key, via the
+// shared ``mergedSectionKey`` / ``MERGED_SECTION_KEYS`` map in
+// ``play-order.js`` (single-sourced so the within-section sort and the
+// eligibility tracer's play-order note group lines the same way). Three
 // kinds of fragmentation are collapsed:
 //   - Priority variants that share a label, e.g. "God boon pickup"
 //     (SuperPriorityPickup / PriorityPickup / Pickup) and the four
@@ -150,35 +154,6 @@ function sectionDisplay(sectionKey) {
 // Priority order within a merged group is preserved via
 // ``narrativePrioritySectionTier`` (see ``compareWithinSection``). These
 // keys are H1-only (absent in H2), so the map is a no-op there.
-const _MERGED_SECTION_KEYS = {
-    // "God boon pickup"
-    PickupTextLineSets: 'PickupTextLineSets',
-    PriorityPickupTextLineSets: 'PickupTextLineSets',
-    SuperPriorityPickupTextLineSets: 'PickupTextLineSets',
-    // "NPC interaction" (interact + repeatable fallback + on-death / trophy)
-    InteractTextLineSets: 'InteractTextLineSets',
-    RepeatableTextLineSets: 'InteractTextLineSets',
-    OnDeathTextLineSets: 'InteractTextLineSets',
-    OnTrophyRevealedTextLineSets: 'InteractTextLineSets',
-    OnTrophyUnlockedTextLineSets: 'InteractTextLineSets',
-    // "Misc. interaction"
-    TextLineSet: 'TextLineSet',
-    OnUsedTextLineSets: 'TextLineSet',
-    // "Boss introduction" (four intro tiers + repeatable fallback)
-    BossPresentationIntroTextLineSets: 'BossPresentationIntroTextLineSets',
-    BossPresentationPriorityIntroTextLineSets: 'BossPresentationIntroTextLineSets',
-    BossPresentationSuperPriorityIntroTextLineSets: 'BossPresentationIntroTextLineSets',
-    BossPresentationTextLineSets: 'BossPresentationIntroTextLineSets',
-    BossPresentationRepeatableTextLineSets: 'BossPresentationIntroTextLineSets',
-    // "Boss outro" (+ repeatable fallback)
-    BossPresentationOutroTextLineSets: 'BossPresentationOutroTextLineSets',
-    BossPresentationOutroRepeatableTextLineSets: 'BossPresentationOutroTextLineSets',
-};
-
-function mergedSectionKey(sectionKey) {
-    return _MERGED_SECTION_KEYS[sectionKey] || sectionKey;
-}
-
 // Display order for the H1 boss-encounter section groups, following the
 // in-game flow rather than raw dialogue counts: introduction -> phase
 // transition -> outro. (Repeatable intro/outro fold into introduction /
@@ -307,36 +282,11 @@ function renderEligibilityChips(entry, speakerId, currentFilter, priorityFilter)
 // line is eligible - sort after all of them (mirroring H2's
 // repeatables-last). Ties fall back to alphabetical by name.
 function compareWithinSection(a, b, game) {
-    if ((game || getActiveGame()) === 'hades2') {
-        const ra = Number.isInteger(a.tl.narrativePriorityOrdinal) ? a.tl.narrativePriorityOrdinal : Infinity;
-        const rb = Number.isInteger(b.tl.narrativePriorityOrdinal) ? b.tl.narrativePriorityOrdinal : Infinity;
-        if (ra !== rb) return ra - rb;
-    } else {
-        const ra = h1SortRank(a.tl);
-        const rb = h1SortRank(b.tl);
-        if (ra !== rb) return ra - rb;
-    }
+    const g = game || getActiveGame();
+    const ra = playRank(a.tl, g);
+    const rb = playRank(b.tl, g);
+    if (ra !== rb) return ra - rb;
     return a.name.localeCompare(b.name);
-}
-
-// H1 play-order rank for a textline within its section. Play-once lines
-// rank by narrative-priority tier (0..3); repeatable lines are the
-// lowest-priority fallback and rank after every play-once tier.
-function h1SortRank(tl) {
-    if (!(tl && tl.playOnce)) return 4;
-    return h1TierRank(tl);
-}
-
-// H1 narrative-priority tier as a sortable rank (lower plays first):
-// super-priority, then priority, then normal, then low (the final
-// fallback). Mirrors the tier the per-row badge shows
-// (``narrativePrioritySectionTier``).
-function h1TierRank(tl) {
-    const sec = tl && tl.narrativePrioritySectionTier;
-    if (sec === 'super') return 0;
-    if (sec === 'priority') return 1;
-    if (sec === 'low') return 3;
-    return 2;
 }
 
 // Render the summary cards: owned/guest totals and the per-section
