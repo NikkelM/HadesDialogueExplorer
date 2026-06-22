@@ -40,6 +40,38 @@ def test_js_requirement_sets_match_canonical_map():
     assert _extract_js_set(text, "OR_REQ_TYPES") == _fields_with("any")
     assert _extract_js_set(text, "NEGATIVE_REQ_TYPES") == _fields_with("none")
     assert _extract_js_set(text, "COUNT_MIN_REQ_TYPES") == _fields_with("count-min")
+    # The two count-permissive JS sets (global count-max + the run-count
+    # cooldown fields) together cover exactly the Python "count-permissive"
+    # fields. Without this, a typo in either hand-maintained set would
+    # mis-evaluate save eligibility undetected.
+    assert (
+        _extract_js_set(text, "COUNT_MAX_REQ_TYPES")
+        | _extract_js_set(text, "RUNS_SINCE_REQ_TYPES")
+        == _fields_with("count-permissive")
+    )
+
+
+def test_js_sets_partition_every_canonical_field():
+    """Every requirement field is classified by exactly one JS set, and the
+    six sets together cover the whole canonical map - so neither side can add
+    an unknown field or drop a known one without failing here."""
+    text = _REQUIREMENTS_JS.read_text(encoding="utf-8")
+    js_sets = [
+        _extract_js_set(text, name)
+        for name in (
+            "AND_REQ_TYPES",
+            "OR_REQ_TYPES",
+            "NEGATIVE_REQ_TYPES",
+            "COUNT_MIN_REQ_TYPES",
+            "COUNT_MAX_REQ_TYPES",
+            "RUNS_SINCE_REQ_TYPES",
+        )
+    ]
+    union = set().union(*js_sets)
+    # Disjoint partition: no field lives in two sets.
+    assert sum(len(s) for s in js_sets) == len(union), "a field appears in two JS sets"
+    # Complete: the union is exactly the canonical field set.
+    assert union == set(REQUIREMENT_BLOCKING_SEMANTICS)
 
 
 def test_js_evaluated_sets_exclude_run_count_fields():

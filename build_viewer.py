@@ -296,13 +296,33 @@ def build_split(payload: dict) -> dict:
     version = hashlib.sha256(
         (js_data + css_data + json_data).encode("utf-8")
     ).hexdigest()[:10]
+    # Content-Security-Policy for the hosted (web) build only - the offline
+    # single-file bundle is opened via file://, where a 'self' policy misfires,
+    # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
+    # headers, so it goes in a <meta>. 'unsafe-inline' is required by the
+    # pre-paint inline scripts and the generated inline onclick/style handlers;
+    # the policy still blocks external script loading, eval, plugins and <base>
+    # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
+    # so framing can't be restricted here.)
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "font-src 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'none'"
+    )
     index_html = (
         INDEX_TEMPLATE.read_text(encoding="utf-8")
         .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
         .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
         .replace(
             '<meta name="viewer-version" content="">',
-            f'<meta name="viewer-version" content="{version}">',
+            f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n'
+            f'    <meta name="viewer-version" content="{version}">',
         )
     )
 

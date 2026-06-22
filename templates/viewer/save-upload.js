@@ -16,6 +16,10 @@ import {
 } from './save-parser.js';
 import { gameLabels } from './data.js';
 
+// A genuine ProfileX.sav is only a few MB; reject larger files outright rather
+// than reading them into memory.
+const MAX_SAVE_FILE_BYTES = 64 * 1024 * 1024;
+
 export function initSaveUpload() {
     const input = document.getElementById('save-file-input');
     const status = document.getElementById('save-status');
@@ -27,6 +31,14 @@ export function initSaveUpload() {
 
         if (!validateSaveFilename(file.name)) {
             showStatus('error', 'Invalid file: must be Profile1-4.sav');
+            input.value = '';
+            return;
+        }
+
+        // A real ProfileX.sav is a few MB at most; reject anything absurd
+        // before reading the whole file into memory.
+        if (file.size > MAX_SAVE_FILE_BYTES) {
+            showStatus('error', 'Invalid file: too large to be a save');
             input.value = '';
             return;
         }

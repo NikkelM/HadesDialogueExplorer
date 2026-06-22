@@ -24,7 +24,17 @@ const _GAME_ID_MAP = {
   [GAME_VERSION_HADES2_PATCH11]: 'hades2',
 };
 
+// The game ids a save may legitimately carry; a persisted save with anything
+// else (tampered localStorage) is rejected so restore fails closed.
+const _VALID_GAME_IDS = new Set(Object.values(_GAME_ID_MAP));
+
 // --- LZ4 block decompressor (decompression only) ---
+
+// Absolute cap on decompressed output. A real save (even 100% completion)
+// decompresses to well under this; the ceiling stops a crafted "decompression
+// bomb" block (long match-length extensions claiming a huge match) from
+// growing the buffer without bound.
+const MAX_DECOMPRESSED_BYTES = 256 * 1024 * 1024;
 
 // ``initialSize`` is a starting capacity hint; the save format doesn't store
 // the uncompressed size, so the output buffer is grown on demand if a save
@@ -36,6 +46,9 @@ export function decompressLz4Block(input, initialSize) {
 
   function ensureCapacity(extra) {
     if (op + extra <= out.length) return;
+    if (op + extra > MAX_DECOMPRESSED_BYTES) {
+      throw new Error('decompressed save exceeds size limit');
+    }
     let cap = out.length || 1;
     while (cap < op + extra) cap *= 2;
     const grown = new Uint8Array(cap);
@@ -52,12 +65,17 @@ export function decompressLz4Block(input, initialSize) {
     if (literalLen === 15) {
       let b;
       do {
+        if (ip >= input.length) return out.slice(0, op); // truncated stream
         b = input[ip++];
         literalLen += b;
       } while (b === 255);
     }
 
-    // Copy literals
+    // Copy literals. A valid block's final literal run ends exactly at the
+    // input end; anything claiming more is truncated/corrupt, so copy only
+    // what's there and stop rather than reading past the buffer (undefined
+    // bytes would silently become 0).
+    if (ip + literalLen > input.length) literalLen = input.length - ip;
     ensureCapacity(literalLen);
     for (let i = 0; i < literalLen; i++) {
       out[op++] = input[ip++];
@@ -75,15 +93,19 @@ export function decompressLz4Block(input, initialSize) {
     if (matchLen === 15) {
       let b;
       do {
+        if (ip >= input.length) return out.slice(0, op); // truncated stream
         b = input[ip++];
         matchLen += b;
       } while (b === 255);
     }
     matchLen += 4; // minimum match length is 4
 
-    // Copy match (may overlap - byte-by-byte copy required)
-    ensureCapacity(matchLen);
+    // Copy match (may overlap - byte-by-byte copy required). A back-reference
+    // pointing before the start of the output is corrupt; stop cleanly instead
+    // of reading out[negative] (which yields undefined -> 0).
     let matchPos = op - offset;
+    if (matchPos < 0) break;
+    ensureCapacity(matchLen);
     for (let i = 0; i < matchLen; i++) {
       out[op++] = out[matchPos++];
     }
@@ -110,12 +132,23 @@ function decodeLuabins(data) {
   function readF64() { const v = view.getFloat64(pos, true); pos += 8; return v; }
   function readString() {
     const len = readI32();
+    // A negative or out-of-range length means corrupt input; fail loudly
+    // rather than slicing past the buffer (TextDecoder would silently return
+    // whatever it could).
+    if (len < 0 || pos + len > data.length) {
+      throw new Error(`luabins string length out of range: ${len} at offset ${pos - 4}`);
+    }
     const bytes = data.slice(pos, pos + len);
     pos += len;
     return new TextDecoder().decode(bytes);
   }
 
-  function readValue(type) {
+  // Nested-table depth ceiling: real Hades saves nest only a few levels;
+  // a deep chain on corrupt input would otherwise recurse until the stack
+  // blows. 64 is far beyond any genuine save.
+  const MAX_DEPTH = 64;
+
+  function readValue(type, depth) {
     switch (type) {
       case LUABINS_NIL: return null;
       case LUABINS_FALSE: return false;
@@ -123,15 +156,21 @@ function decodeLuabins(data) {
       case LUABINS_NUMBER: return readF64();
       case LUABINS_STRING: return readString();
       case LUABINS_TABLE: {
+        if (depth >= MAX_DEPTH) throw new Error('luabins table nesting too deep');
         const arraySize = readI32();
         const hashSize = readI32();
+        if (arraySize < 0 || hashSize < 0) {
+          throw new Error(`luabins table size out of range: ${arraySize}/${hashSize}`);
+        }
         const total = arraySize + hashSize;
         const table = {};
         for (let i = 0; i < total; i++) {
           const keyType = readU8();
-          const key = readValue(keyType);
+          // Keys are assumed to be strings or numbers (true for all real Hades
+          // saves); a table/boolean key would stringify via object coercion.
+          const key = readValue(keyType, depth + 1);
           const valType = readU8();
-          const val = readValue(valType);
+          const val = readValue(valType, depth + 1);
           table[key] = val;
         }
         return table;
@@ -145,7 +184,7 @@ function decodeLuabins(data) {
   const values = [];
   for (let i = 0; i < count; i++) {
     const type = readU8();
-    values.push(readValue(type));
+    values.push(readValue(type, 0));
   }
   return values;
 }
@@ -475,7 +514,7 @@ export function restoreSaveProgress() {
   }
 
   if (!data || data.v !== SAVE_STORAGE_SCHEMA || !Array.isArray(data.played)
-      || typeof data.gameId !== 'string') {
+      || typeof data.gameId !== 'string' || !_VALID_GAME_IDS.has(data.gameId)) {
     _removePersistedSave(store);
     return null;
   }

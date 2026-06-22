@@ -544,6 +544,66 @@ test('restoreSaveProgress drops a corrupt (unparseable) cache and returns null',
     }
 });
 
+test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
+    const store = installMockLocalStorage();
+    try {
+        store.setItem('hde.save', JSON.stringify({
+            v: 2, gameId: 'hades3', runs: 1, played: ['Old01'],
+        }));
+        assert.equal(restoreSaveProgress(), null);
+        // The invalid entry is purged so restore fails closed.
+        assert.equal(store.getItem('hde.save'), null);
+    } finally {
+        clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+// --- LZ4 corrupt-input hardening ---
+// A user's .sav is the only untrusted input; the decompressor must fail
+// cleanly (no infinite loop, no throw, no out-of-bounds read) on malformed
+// blocks rather than returning silent garbage. The upload path catches a
+// throw and shows "Parse error", but these decode-level guards keep a
+// corrupt block from producing undefined-as-0 bytes.
+
+test('decompressLz4Block stops cleanly on a back-reference before the buffer start', () => {
+    // token=0x00 (no literals, min match), then an offset of 5 while nothing
+    // has been output yet -> matchPos would be negative.
+    const block = new Uint8Array([0x00, 0x05, 0x00]);
+    let out;
+    assert.doesNotThrow(() => { out = decompressLz4Block(block, 16); });
+    assert.equal(out.length, 0);
+});
+
+test('decompressLz4Block stops cleanly on a truncated length extension', () => {
+    // literalLen nibble = 15 signals an extension byte that never arrives.
+    const block = new Uint8Array([0xF0]);
+    let out;
+    assert.doesNotThrow(() => { out = decompressLz4Block(block, 16); });
+    assert.equal(out.length, 0);
+});
+
+test('decompressLz4Block copies only the available bytes of a truncated literal run', () => {
+    // token claims 5 literals but only 2 bytes follow.
+    const block = new Uint8Array([0x50, 0xAA, 0xBB]);
+    const out = decompressLz4Block(block, 16);
+    assert.deepEqual(Array.from(out), [0xAA, 0xBB]);
+});
+
+test('decompressLz4Block rejects a decompression bomb (oversized match length)', () => {
+    // One literal to seed the window, then a match whose length-extension
+    // bytes claim ~280 MB - past the absolute output cap.
+    const ext = 1_100_000;
+    const block = new Uint8Array(4 + ext + 1);
+    block[0] = 0x1F;              // 1 literal, match-length nibble = 15 (extends)
+    block[1] = 0xAA;             // the literal
+    block[2] = 0x01;             // match offset LE = 1
+    block[3] = 0x00;
+    block.fill(0xFF, 4, 4 + ext); // 0xFF extension bytes each add 255 to matchLen
+    block[4 + ext] = 0x00;        // terminator
+    assert.throws(() => decompressLz4Block(block, 16), /size limit/);
+});
+
 test('persistence is a silent no-op when localStorage is unavailable', () => {
     uninstallMockLocalStorage(); // ensure absent
     clearSaveProgress();
