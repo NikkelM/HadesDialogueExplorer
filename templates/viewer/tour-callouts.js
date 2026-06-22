@@ -17,7 +17,7 @@ export function maybeStartSaveCallout() {
         steps.push({
             target: () => document.querySelector('#info-content .save-progress-pill'),
             title: 'Save progress',
-            body: 'This dialogue now shows its own status - played, eligible, blocked, indeterminate, or not obtainable in this save.',
+            body: 'This dialogue now shows its own status - played, eligible, blocked, or not obtainable in this save.',
         });
     }
     // The same status as a small dot on every row of the prerequisite /
