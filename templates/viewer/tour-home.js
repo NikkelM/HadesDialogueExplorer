@@ -33,12 +33,14 @@ const HOME_TOUR_STEPS = [
         title: 'Dialogue details',
         body: 'The selected line, with badges for its narrative priority (its rank within the set) and whether it plays once or can repeat. Hover a badge to read what it means.',
         interactive: true,
+        blockNavigation: true,
     },
     {
         target: '#info-content .meta',
         title: 'Owner and type',
         body: 'Who speaks the line and which dialogue context it belongs to. Hover or tap the dotted text to reveal the internal game id.',
         interactive: true,
+        blockNavigation: true,
     },
     {
         target: '#info-content .dialogue-section',
