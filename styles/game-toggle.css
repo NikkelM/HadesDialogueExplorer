@@ -23,6 +23,19 @@
     cursor: pointer;
     border-right: 1px solid var(--border);
     transition: background-color 0.12s ease, color 0.12s ease;
+    /* Reserve the bold (.active) width via a hidden bold twin so toggling the
+       active game never resizes the control - which would shift the flex
+       search bar beside it. */
+    display: inline-grid;
+    justify-items: center;
+    align-content: center;
+}
+.game-toggle-btn::after {
+    content: attr(data-label);
+    font-weight: 600;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
 }
 .game-toggle-btn:last-child { border-right: none; }
 .game-toggle-btn:hover { background: var(--border); }
