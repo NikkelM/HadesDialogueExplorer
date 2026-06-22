@@ -341,7 +341,9 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.</div>`;
     } else if (directlyEligible) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
-        html += `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
+        html += total === 0
+            ? `<div class="eligibility-detail">This dialogue has no prerequisites and is immediately eligible to play.</div>`
+            : `<div class="eligibility-detail">All ${total} prerequisite${total === 1 ? '' : 's'} have been played. This dialogue should be eligible.</div>`;
         html += chainNote;
     } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo)) {
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
