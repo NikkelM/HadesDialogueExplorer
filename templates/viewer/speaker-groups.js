@@ -195,9 +195,10 @@ function _deriveGroupDownstream(ownedTextlines) {
 }
 
 // Returns the aggregated entry for the group containing ``speakerId``.
-// Single-member groups pass the underlying speaker entry through
-// unchanged with an empty ``_members`` augment so renderers can
-// still test for sibling presence via ``entry._members.length``.
+// Single-member groups pass the underlying speaker entry through with
+// a single-id ``_members`` augment (so renderers can test for sibling
+// presence via ``entry._members.length``) but still re-derive adjacency
+// so the OTHER axis is collapsed to canonical ids.
 // Multi-member groups merge ownedTextlines, asSpeakerTextlines (with
 // group-owned subtracted), sectionCounts, priorityCounts across
 // members, then re-derive adjacency using the canonical mapping so
@@ -212,7 +213,20 @@ export function getSpeakerGroupEntry(speakerId) {
     const canonEntry = speakers[canon] || {};
 
     if (members.length === 1) {
-        const single = { ...canonEntry, _canonicalId: canon, _members: members.slice() };
+        // Re-derive adjacency even for singletons so the OTHER axis is
+        // collapsed to canonical ids, matching the multi-member path and
+        // the detail builder. The raw per-owner maps emitted by the
+        // pipeline can key an edge under an alias id (e.g. ``SpellDrop``)
+        // that the detail files under its canonical id (``NPC_Selene_01``),
+        // which would leave the expanded row showing no individual links.
+        const ownedSingle = canonEntry.ownedTextlines || [];
+        const single = {
+            ...canonEntry,
+            adjacencyUpstream: _deriveGroupUpstream(ownedSingle),
+            adjacencyDownstream: _deriveGroupDownstream(ownedSingle),
+            _canonicalId: canon,
+            _members: members.slice(),
+        };
         _groupEntryCache[canon] = single;
         return single;
     }

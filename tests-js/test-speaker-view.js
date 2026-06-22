@@ -58,6 +58,21 @@ function buildSpeakerFixture() {
     const base = buildFixtureData();
     return {
         ...base,
+        textlines: {
+            ...base.textlines,
+            // Wire the Aphrodite -> Zeus requirement edge (and its mirror
+            // dependents entry below) so the speaker view's canonical
+            // adjacency re-derive reproduces the cross-speaker links the
+            // adjacency tests exercise.
+            AphroditeWithZeus01: {
+                ...base.textlines.AphroditeWithZeus01,
+                requirements: { RequiredTextLines: ['ZeusWithAphrodite01'] },
+            },
+        },
+        dependents: {
+            ...base.dependents,
+            ZeusWithAphrodite01: ['AphroditeWithZeus01'],
+        },
         speakers: {
             ...base.speakers,
             NPC_Zeus_01: {
@@ -68,8 +83,6 @@ function buildSpeakerFixture() {
                 sourceFiles: ['NPCData.lua'],
                 sectionCounts: { GiftTextLineSets: 1 },
                 priorityCounts: { super: 0, priority: 0, plain: 1 },
-                adjacencyUpstream: {},
-                adjacencyDownstream: { NPC_Aphrodite_01: 1 },
             },
             NPC_Aphrodite_01: {
                 name: 'Aphrodite',
@@ -79,8 +92,6 @@ function buildSpeakerFixture() {
                 sourceFiles: ['NPCData.lua'],
                 sectionCounts: { GiftTextLineSets: 1 },
                 priorityCounts: { super: 0, priority: 1, plain: 0 },
-                adjacencyUpstream: { NPC_Zeus_01: 1 },
-                adjacencyDownstream: {},
             },
             NPC_Orpheus_01: {
                 name: 'Orpheus',
@@ -90,8 +101,6 @@ function buildSpeakerFixture() {
                 sourceFiles: ['NPCData.lua', 'DeathLoopData.lua'],
                 sectionCounts: { InteractTextLineSets: 1 },
                 priorityCounts: { super: 1, priority: 0, plain: 0 },
-                adjacencyUpstream: {},
-                adjacencyDownstream: {},
             },
         },
     };
@@ -925,8 +934,21 @@ test('renderAdjacency rows are expandable with a count chip and an empty (lazy) 
 });
 
 test('renderAdjacency tags a self-reference row', () => {
+    // Zeus owns a second gift line that requires another Zeus line (a
+    // self edge) as well as the cross-speaker Aphrodite line, so the
+    // canonical upstream re-derive yields both a self row and an
+    // other-speaker row.
     const fixture = buildSpeakerFixture();
-    fixture.speakers.NPC_Zeus_01.adjacencyUpstream = { NPC_Zeus_01: 3, NPC_Aphrodite_01: 1 };
+    fixture.textlines.ZeusGift02 = {
+        owner: 'NPC_Zeus_01',
+        section: 'GiftTextLineSets',
+        playOnce: false,
+        narrativePrioritySectionTier: 'normal',
+        narrativePrioritySetLevel: null,
+        dialogueLines: [],
+        requirements: { RequiredTextLines: ['ZeusWithAphrodite01', 'AphroditeWithZeus01'] },
+    };
+    fixture.speakers.NPC_Zeus_01.ownedTextlines = ['ZeusWithAphrodite01', 'ZeusGift02'];
     loadData(fixture);
     resetSpeakerGroups();
     const html = render('NPC_Zeus_01', {});
