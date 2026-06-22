@@ -67,11 +67,14 @@ export let _reqTypeOrderIndex;
 // fixtures and ad-hoc tests keep working unchanged.
 function _normalizePayload(DATA) {
     if (DATA && typeof DATA === 'object' && DATA.games) {
+        const ids = Array.isArray(DATA.gameIds) && DATA.gameIds.length
+            ? DATA.gameIds
+            : Object.keys(DATA.games);
         return {
             games: DATA.games,
-            gameIds: Object.keys(DATA.games),
+            gameIds: ids,
             gameLabels: DATA.gameLabels || {},
-            defaultGame: DATA.defaultGame || Object.keys(DATA.games)[0],
+            defaultGame: DATA.defaultGame || ids[0],
             defaultDialogue: DATA.defaultDialogue || {},
         };
     }
@@ -100,11 +103,55 @@ export function loadData(DATA) {
     defaultDialogue = norm.defaultDialogue;
     duplicates = (DATA && DATA.duplicates) || [];
     currentGame = null;
-    // Single-game fixtures that don't call setActiveGame themselves
-    // expect the per-binding state to be live after loadData returns,
-    // so activate the default eagerly. Multi-game callers will
-    // override this via setActiveGame(initialGame) immediately after.
-    setActiveGame(defaultGame);
+    // Activate a game whose blob is actually present. In the full-payload and
+    // single-game-fixture cases the default game is always loaded, so this is
+    // just ``setActiveGame(defaultGame)``. In the split build's progressive
+    // boot only the initially-requested game's blob has arrived (the others
+    // stream in afterwards via ``registerGameData``), and that game may not be
+    // the default - so fall back to the first loaded game. Multi-game callers
+    // re-activate the URL's game via ``setActiveGame`` immediately after.
+    const activate = isGameLoaded(defaultGame)
+        ? defaultGame
+        : gameIds.find((g) => isGameLoaded(g));
+    if (activate) setActiveGame(activate);
+}
+
+// --- Progressive (split-build) game loading ------------------------
+//
+// The split/web build streams the active game's data first to unblock
+// interactivity, then loads the remaining game(s) in the background so a later
+// toggle is instant. These helpers let the boot code register the freshly
+// fetched blobs and let navigation await a not-yet-arrived game. The single
+// inline bundle ships every game at once, so none of this fires there.
+
+// In-flight per-game fetch promises, parked here so a toggle or cross-game
+// link that fires before the background load finishes can await it instead of
+// erroring on a missing blob.
+const _pendingGameLoads = {};
+
+export function setPendingGameLoad(gameId, promise) {
+    _pendingGameLoads[gameId] = promise;
+}
+
+// True once the game's data blob is present (has its textlines map).
+export function isGameLoaded(gameId) {
+    return !!(games && games[gameId] && games[gameId].textlines);
+}
+
+// Resolve once the game's data is available: immediately if already loaded,
+// otherwise awaiting the in-flight background fetch. Resolves ``false`` when no
+// loader is registered (nothing more we can do - the caller should degrade).
+export function ensureGameLoaded(gameId) {
+    if (isGameLoaded(gameId)) return Promise.resolve(true);
+    if (_pendingGameLoads[gameId]) return _pendingGameLoads[gameId];
+    return Promise.resolve(false);
+}
+
+// Merge a background-fetched game blob into the registry. Idempotent.
+export function registerGameData(gameId, blob) {
+    if (!games) games = {};
+    games[gameId] = blob;
+    delete _pendingGameLoads[gameId];
 }
 
 // Swap every per-game binding to the requested game's blob. Throws on
@@ -159,9 +206,12 @@ export function getDefaultDialogue() {
 
 // Resolve a requested game id from a URL hash to a valid id. Unknown
 // or missing ids fall back to ``defaultGame`` with a console warning
-// so the viewer never lands in an unknown-game limbo state.
+// so the viewer never lands in an unknown-game limbo state. Validates
+// against the known ``gameIds`` (not the loaded blobs) so a deep link to
+// a game whose data is still streaming in (split build) resolves to that
+// game rather than the default.
 export function resolveGame(requested) {
-    if (requested && games && games[requested]) {
+    if (requested && Array.isArray(gameIds) && gameIds.includes(requested)) {
         return requested;
     }
     if (requested) {

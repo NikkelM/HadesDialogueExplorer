@@ -20,7 +20,7 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, isGameLoaded, ensureGameLoaded } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
@@ -178,7 +178,7 @@ export function switchToGame(gameId) {
 // even when the caller didn't think to set it (every
 // non-toggle-click navigation - search, tree click, inline link -
 // implicitly stays in the active game).
-export function navigateToState(state) {
+export async function navigateToState(state) {
     // During a tour step flagged ``blockNavigation`` the engine sets this
     // class so the user can expand/collapse rows and read tooltips without a
     // click navigating to a different dialogue and stranding the tour.
@@ -189,6 +189,11 @@ export function navigateToState(state) {
     const fullState = Object.assign({ game: getActiveGame() }, state || {});
     const requestedGame = fullState.game;
     if (requestedGame && requestedGame !== getActiveGame()) {
+        // Split build: the target game's data may still be streaming in. Await
+        // its background load before swapping (resolves instantly once loaded).
+        // Bail rather than throw if it never arrives (no loader / fetch failed).
+        if (!isGameLoaded(requestedGame)) await ensureGameLoaded(requestedGame);
+        if (!isGameLoaded(requestedGame)) return;
         switchToGame(requestedGame);
     }
     const serialized = serializeUrlState(fullState);
@@ -205,7 +210,7 @@ export function navigateToState(state) {
 // (browser back across a toggle, shared deep link into the other
 // game), swap data bindings first so the rest of the state
 // resolves against the right namespace.
-export function applyHashFromUrl() {
+export async function applyHashFromUrl() {
     const state = parseUrlState(window.location.hash);
     const resolvedGame = resolveGame(state.game);
     state.game = resolvedGame;
@@ -213,6 +218,9 @@ export function applyHashFromUrl() {
     if (key === urlSelection) return;
     urlSelection = key;
     if (resolvedGame !== getActiveGame()) {
+        // Await the target game's data if it's still streaming in (split build).
+        if (!isGameLoaded(resolvedGame)) await ensureGameLoaded(resolvedGame);
+        if (!isGameLoaded(resolvedGame)) return;
         switchToGame(resolvedGame);
     }
     applyState(state);
@@ -418,22 +426,30 @@ export function syncActiveGameToSave() {
     const saveGame = getSaveGameId();
     if (!saveGame || saveGame === getActiveGame()) return false;
     const prev = parseUrlState(window.location.hash);
-    const targetData = (games && games[saveGame]) || {};
-    const target = { game: saveGame };
-    if (prev.view === 'duplicates') {
-        target.view = 'duplicates';
-        if (prev.dup) target.dup = prev.dup;
-        if (prev.q) target.q = prev.q;
-    } else if (prev.speaker && targetData.speakers && targetData.speakers[prev.speaker]) {
-        target.view = 'speaker';
-        target.speaker = prev.speaker;
-        if (prev.priority) target.priority = prev.priority;
-        if (prev.eligibility) target.eligibility = prev.eligibility;
-    } else if (prev.dialogue && targetData.textlines && targetData.textlines[prev.dialogue]) {
-        // Keep dialogue + eligibility views (both keyed on a real textline).
-        target.view = (prev.view === 'eligibility') ? 'eligibility' : 'dialogue';
-        target.dialogue = prev.dialogue;
-    }
-    navigateToState(target);
+    // The switch (and the entity-validity check below) needs the save game's
+    // data, which may still be streaming in on the split build - load it first.
+    // The synchronous ``return true`` tells the caller a switch is in progress
+    // so it skips the redundant same-game refresh.
+    (async () => {
+        await ensureGameLoaded(saveGame);
+        if (!isGameLoaded(saveGame)) return;
+        const targetData = (games && games[saveGame]) || {};
+        const target = { game: saveGame };
+        if (prev.view === 'duplicates') {
+            target.view = 'duplicates';
+            if (prev.dup) target.dup = prev.dup;
+            if (prev.q) target.q = prev.q;
+        } else if (prev.speaker && targetData.speakers && targetData.speakers[prev.speaker]) {
+            target.view = 'speaker';
+            target.speaker = prev.speaker;
+            if (prev.priority) target.priority = prev.priority;
+            if (prev.eligibility) target.eligibility = prev.eligibility;
+        } else if (prev.dialogue && targetData.textlines && targetData.textlines[prev.dialogue]) {
+            // Keep dialogue + eligibility views (both keyed on a real textline).
+            target.view = (prev.view === 'eligibility') ? 'eligibility' : 'dialogue';
+            target.dialogue = prev.dialogue;
+        }
+        navigateToState(target);
+    })();
     return true;
 }

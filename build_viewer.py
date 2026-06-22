@@ -269,6 +269,11 @@ def _ensure_clean_dist() -> None:
         target = DIST_DIR / name
         if target.exists():
             target.unlink()
+    # Per-game data files have dynamic names (``data-<gameId>.json``); remove
+    # any from a previous build so a renamed/removed game can't leave a stale
+    # blob behind.
+    for stale in DIST_DIR.glob("data-*.json"):
+        stale.unlink()
 
 
 def build_split(payload: dict) -> dict:
@@ -276,6 +281,12 @@ def build_split(payload: dict) -> dict:
 
     ``payload`` is the per-game-bundled dict produced by :func:`main`
     (``{games: {hades1: {...}, hades2: {...}}, defaultGame, gameLabels}``).
+
+    The heavy per-game graphs are written as separate ``data-<gameId>.json``
+    files and the entry-point ``data.json`` is a small meta document that lists
+    them plus the cross-game UI hints. This lets the viewer load the active
+    game first (unblocking interactivity) and stream the rest in the
+    background, instead of shipping every game in one blocking payload.
 
     Returns a dict mapping output name -> file size in bytes, used by
     the caller for reporting and by ``build_bundle`` to inline the same
@@ -285,17 +296,33 @@ def build_split(payload: dict) -> dict:
 
     css_data = build_css()
     js_data = build_js()
-    json_data = json.dumps(payload, separators=(",", ":"))
+
+    games = payload.get("games", {})
+    # Heavy per-game blobs, one file each.
+    per_game_json = {
+        gid: json.dumps(blob, separators=(",", ":")) for gid, blob in games.items()
+    }
+    # Small meta entry point: everything the viewer needs to render the toggle
+    # and the cross-game duplicates view before (or without) the per-game blobs.
+    meta = {
+        "gameIds": list(games.keys()),
+        "gameLabels": payload.get("gameLabels", {}),
+        "defaultGame": payload.get("defaultGame"),
+        "defaultDialogue": payload.get("defaultDialogue", {}),
+        "duplicates": payload.get("duplicates", []),
+    }
+    meta_json = json.dumps(meta, separators=(",", ":"))
 
     # Cache-busting: a short content hash appended to the asset URLs so a
-    # plain browser refresh always fetches a changed build instead of
-    # serving a stale cached viewer.js / viewer.css / data.json. The hash
-    # covers all three artifacts, so any change bumps the version. The same
-    # token is exposed via the ``viewer-version`` meta tag so the split-build
-    # data.json fetch (init.js) can bust its own cache too.
-    version = hashlib.sha256(
-        (js_data + css_data + json_data).encode("utf-8")
-    ).hexdigest()[:10]
+    # plain browser refresh always fetches a changed build instead of serving a
+    # stale viewer.js / viewer.css / data file. The hash covers every artifact
+    # (js, css, meta, and each per-game blob in a stable order), so any change
+    # bumps the version. The token is exposed via the ``viewer-version`` meta
+    # tag so the split-build data fetches (init.js) bust their own cache too.
+    hash_src = js_data + css_data + meta_json + "".join(
+        per_game_json[gid] for gid in sorted(per_game_json)
+    )
+    version = hashlib.sha256(hash_src.encode("utf-8")).hexdigest()[:10]
     # Content-Security-Policy for the hosted (web) build only - the offline
     # single-file bundle is opened via file://, where a 'self' policy misfires,
     # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
@@ -329,7 +356,9 @@ def build_split(payload: dict) -> dict:
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
     (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
     (DIST_DIR / "viewer.css").write_text(css_data, encoding="utf-8")
-    (DIST_DIR / "data.json").write_text(json_data, encoding="utf-8")
+    (DIST_DIR / "data.json").write_text(meta_json, encoding="utf-8")
+    for gid, blob_json in per_game_json.items():
+        (DIST_DIR / f"data-{gid}.json").write_text(blob_json, encoding="utf-8")
 
     # Copy the per-game favicons verbatim (referenced by relative path in
     # the split build's index.html).
@@ -337,12 +366,19 @@ def build_split(payload: dict) -> dict:
         shutil.copyfile(STATIC_DIR / name, DIST_DIR / name)
 
     sizes = {name: (DIST_DIR / name).stat().st_size for name in _SPLIT_OUTPUT_NAMES}
+    game_sizes = {
+        gid: (DIST_DIR / f"data-{gid}.json").stat().st_size for gid in per_game_json
+    }
+    game_report = ", ".join(
+        f"data-{gid}.json {size/1024:.0f} KB" for gid, size in game_sizes.items()
+    )
     print(
         f"Split build -> dist/: "
         f"index.html {sizes['index.html']/1024:.1f} KB, "
         f"viewer.js {sizes['viewer.js']/1024:.1f} KB, "
         f"viewer.css {sizes['viewer.css']/1024:.1f} KB, "
-        f"data.json {sizes['data.json']/1024:.0f} KB"
+        f"data.json (meta) {sizes['data.json']/1024:.0f} KB, "
+        f"{game_report}"
     )
     return sizes
 
@@ -362,11 +398,14 @@ def _inline_data_for_bundle(json_text: str) -> str:
     return json_text.replace("<", "\\u003C")
 
 
-def build_bundle() -> None:
+def build_bundle(payload: dict) -> None:
     """Stitch the split outputs into a single ``dialogue_explorer.html``.
 
-    Reads the four ``dist/`` artifacts produced by :func:`build_split`
-    and inlines them so the result opens directly from ``file://``.
+    Reads the viewer.js / viewer.css artifacts produced by :func:`build_split`
+    and inlines them, along with the *full* multi-game ``payload`` (the split
+    build's ``data.json`` is only a meta index now, so the bundle inlines every
+    game's data instead), so the result opens directly from ``file://`` with no
+    network fetches.
     """
     # Read the *template* (not dist/index.html, which build_split has
     # rewritten with cache-busting query strings) so the exact-match inlining
@@ -375,7 +414,9 @@ def build_bundle() -> None:
     index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
     viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
     viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
-    json_text = (DIST_DIR / "data.json").read_text(encoding="utf-8")
+    # The bundle ships every game inline (no background loading), so embed the
+    # whole payload rather than the split build's meta-only data.json.
+    json_text = json.dumps(payload, separators=(",", ":"))
 
     css_link = '<link rel="stylesheet" href="viewer.css">'
     if css_link not in index_html:
@@ -624,7 +665,7 @@ def main(argv=None):
             # Bundle-only run still needs the split outputs to stitch
             # from; refresh them so we don't bundle stale content.
             build_split(payload)
-        build_bundle()
+        build_bundle(payload)
 
 
 if __name__ == "__main__":

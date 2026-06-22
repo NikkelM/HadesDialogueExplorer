@@ -10,7 +10,7 @@ These guardrails make sure:
 * every distinct ``otherRequirements`` key encountered in the merged
   H1 dataset is covered by either the textline-set tooltip map or
   the new OtherReq tooltip map (data-driven completeness check,
-  skipped when ``dist/data.json`` is absent so the test suite stays
+  skipped when ``dist/data-hades1.json`` is absent so the test suite stays
   runnable in a fresh clone).
 """
 
@@ -103,14 +103,14 @@ def test_curated_label_count_is_reasonable():
 
 def _load_h1_other_req_keys_from_data() -> set[str] | None:
     """Returns the set of distinct ``otherRequirements`` keys observed
-    on H1 textlines in ``dist/data.json``, or None if the build
-    artifact is not present (fresh clone, CI before build, etc.)."""
-    path = os.path.join("dist", "data.json")
+    on H1 textlines in the built ``dist/data-hades1.json`` per-game blob,
+    or None if the build artifact is not present (fresh clone, CI before
+    build, etc.)."""
+    path = os.path.join("dist", "data-hades1.json")
     if not os.path.exists(path):
         return None
     with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    h1 = data.get("games", {}).get("hades1")
+        h1 = json.load(f)
     if not h1 or "textlines" not in h1:
         return None
     keys: set[str] = set()
@@ -127,13 +127,13 @@ def test_full_dataset_coverage_under_either_tooltip_map():
     requirement field that the parser starts catching will fail
     this test until a tooltip is provided.
 
-    Skipped when ``dist/data.json`` is absent so a fresh clone can
+    Skipped when ``dist/data-hades1.json`` is absent so a fresh clone can
     still run the suite before the first ``build_viewer.py``."""
     observed = _load_h1_other_req_keys_from_data()
     if observed is None:
         pytest.skip(
-            "dist/data.json not present - run "
-            "`python build_viewer.py` to populate the merged dataset "
+        "dist/data-hades1.json not present - run "
+        "`python build_viewer.py` to populate the per-game dataset "
             "and re-run."
         )
     covered = set(HADES1_REQ_TYPE_TOOLTIPS) | set(HADES1_OTHER_REQ_TOOLTIPS)

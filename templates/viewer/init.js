@@ -3,7 +3,7 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData, resolveGame } from './data.js';
+import { loadData, resolveGame, registerGameData, setPendingGameLoad } from './data.js';
 import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
@@ -90,36 +90,74 @@ function showLoadError(err) {
 }
 
 // Dual-mode boot:
-//   1. Bundled single-file: data is inlined as
-//      ``<script type="application/json" id="viewer-data">``; we read
-//      its textContent and JSON.parse it. Works from ``file://``.
-//   2. Split build: no inline element, so fetch ``data.json``. Requires
-//      an HTTP server (local dev or GH Pages).
-// Wrapped in an async function so a synchronous JSON.parse throw is
-// caught by the same try/catch as a network failure.
+//   1. Bundled single-file: every game's data is inlined as
+//      ``<script type="application/json" id="viewer-data">``; we read its
+//      textContent and JSON.parse it. Works from ``file://``.
+//   2. Split build: the entry point ``data.json`` is a small meta document
+//      (game ids, labels, default game/dialogue, cross-game duplicates) that
+//      lists the per-game data files. We fetch the meta, then the active
+//      game's ``data-<id>.json`` to unblock interactivity, then stream the
+//      remaining game(s) in the background so a later toggle never re-blocks.
+//      Requires an HTTP server (local dev or GH Pages).
+// Wrapped in an async function so a synchronous JSON.parse throw is caught by
+// the same try/catch as a network failure.
 async function boot() {
     try {
         const inline = document.getElementById('viewer-data');
-        let data;
         if (inline) {
-            data = JSON.parse(inline.textContent);
-        } else {
-            // Match the cache-busting version on the asset URLs (set by
-            // build_viewer.py via the viewer-version meta tag) so a stale
-            // data.json is never served after a rebuild.
-            const meta = document.querySelector('meta[name="viewer-version"]');
-            const v = meta && meta.content ? '?v=' + encodeURIComponent(meta.content) : '';
-            const r = await fetch('data.json' + v);
-            if (!r.ok) {
-                throw new Error('HTTP ' + r.status + ' fetching data.json');
-            }
-            data = await r.json();
+            init(JSON.parse(inline.textContent));
+            return;
         }
-        init(data);
+        // Match the cache-busting version on the asset URLs (set by
+        // build_viewer.py via the viewer-version meta tag) so stale data files
+        // are never served after a rebuild.
+        const verMeta = document.querySelector('meta[name="viewer-version"]');
+        const v = verMeta && verMeta.content ? '?v=' + encodeURIComponent(verMeta.content) : '';
+        const fetchJson = async (file) => {
+            const r = await fetch(file + v);
+            if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + file);
+            return r.json();
+        };
+
+        const meta = await fetchJson('data.json');
+        // Decide which game to load first from the URL (shared deep links land
+        // in the right game), else the build-time default.
+        const want = parseUrlState(window.location.hash).game;
+        const ids = Array.isArray(meta.gameIds) ? meta.gameIds : [];
+        const initialGame = (want && ids.includes(want)) ? want : meta.defaultGame;
+
+        const initialBlob = await fetchJson(_gameFile(initialGame));
+        init({
+            games: { [initialGame]: initialBlob },
+            gameIds: meta.gameIds,
+            gameLabels: meta.gameLabels,
+            defaultGame: meta.defaultGame,
+            defaultDialogue: meta.defaultDialogue,
+            duplicates: meta.duplicates,
+        });
+
+        // Background-load the remaining game(s) so switching is instant. Each
+        // in-flight promise is parked via ``setPendingGameLoad`` so a toggle or
+        // cross-game link that fires during the window awaits it (see
+        // ``ensureGameLoaded``). A failed background load is non-fatal - the
+        // active game stays fully usable; the affected game's view just stays
+        // unavailable until reload.
+        for (const gid of ids) {
+            if (gid === initialGame) continue;
+            const p = fetchJson(_gameFile(gid))
+                .then((blob) => { registerGameData(gid, blob); })
+                .catch((err) => { console.warn('Background load of ' + gid + ' failed:', err); });
+            setPendingGameLoad(gid, p);
+        }
     } catch (err) {
         console.error('Viewer boot failed:', err);
         showLoadError(err);
     }
+}
+
+// Per-game data file name in the split build (paired with the meta data.json).
+function _gameFile(gameId) {
+    return 'data-' + gameId + '.json';
 }
 
 boot();
