@@ -4,7 +4,7 @@
 // ``let`` declaration in the other modules has been initialised.
 
 import { loadData, resolveGame } from './data.js';
-import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding } from './navigation.js';
+import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
@@ -42,8 +42,12 @@ function init(data) {
         applyHashFromUrl();
     }
     window.addEventListener('hashchange', applyHashFromUrl);
-    // Re-render current view when a save file is loaded
-    window.addEventListener('save-loaded', forceRefresh);
+    // On a freshly loaded save, switch to the save's game (so its progress is
+    // visible right away); that switch re-renders, so only fall back to a
+    // plain refresh when the save already matches the active game.
+    window.addEventListener('save-loaded', () => {
+        if (!syncActiveGameToSave()) forceRefresh();
+    });
     // Onboarding: offer the save callout after the re-render above has drawn
     // the status badges (this listener is registered after forceRefresh, so it
     // runs second on the same event).

@@ -20,14 +20,14 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
 import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
 import { renderGameToggle, updateFavicon } from './game-toggle.js';
 import { refreshSaveStatus } from './save-upload.js';
-import { getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+import { getSaveProgress, saveMatchesActiveGame, getSaveGameId } from './save-parser.js';
 
 // Tracks the canonical serialization of the state currently
 // reflected in ``window.location.hash`` so the ``hashchange``
@@ -395,8 +395,45 @@ export function clearSelection() {
 
 // Force a full re-render of the current view (bypasses the dedup key).
 // Used when the rendering context changes without a URL change (e.g. a
-// save file is loaded/cleared).
+// save file is loaded).
 export function forceRefresh() {
     urlSelection = '';
     applyHashFromUrl();
+}
+
+// On a freshly loaded save, switch the active game to the one the save
+// belongs to so its progress shows immediately - a user may load a Hades 1
+// save while the viewer is on its default Hades II view. Returns true if it
+// switched (so the caller can skip a redundant refresh); no-op when the save
+// already matches the active game.
+//
+// Unlike the game-toggle (which keeps the current entity so a cross-game
+// duplicate stays put), this is a side effect of loading a save, so it must
+// not strand the user on a now-broken view: textline / speaker names are not
+// shared across games, so a carried-over ``dialogue`` / ``speaker`` usually
+// doesn't resolve in the save's game. Carry the entity over only when it
+// actually exists in the target game; otherwise land on that game's clean
+// home. The cross-game duplicates view (no per-game entity) is always kept.
+export function syncActiveGameToSave() {
+    const saveGame = getSaveGameId();
+    if (!saveGame || saveGame === getActiveGame()) return false;
+    const prev = parseUrlState(window.location.hash);
+    const targetData = (games && games[saveGame]) || {};
+    const target = { game: saveGame };
+    if (prev.view === 'duplicates') {
+        target.view = 'duplicates';
+        if (prev.dup) target.dup = prev.dup;
+        if (prev.q) target.q = prev.q;
+    } else if (prev.speaker && targetData.speakers && targetData.speakers[prev.speaker]) {
+        target.view = 'speaker';
+        target.speaker = prev.speaker;
+        if (prev.priority) target.priority = prev.priority;
+        if (prev.eligibility) target.eligibility = prev.eligibility;
+    } else if (prev.dialogue && targetData.textlines && targetData.textlines[prev.dialogue]) {
+        // Keep dialogue + eligibility views (both keyed on a real textline).
+        target.view = (prev.view === 'eligibility') ? 'eligibility' : 'dialogue';
+        target.dialogue = prev.dialogue;
+    }
+    navigateToState(target);
+    return true;
 }
