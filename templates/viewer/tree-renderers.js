@@ -76,6 +76,7 @@ function appendEmptyTreeNote(rootNode, text) {
 export function renderUpstream(name) {
     const container = document.getElementById('upstream-content');
     container.innerHTML = '';
+    container.setAttribute('role', 'tree');
     const rootPath = new Set();
     const rootNode = createNodeEl(name, null, 'upstream', rootPath);
     rootNode.classList.add('root');
@@ -89,6 +90,7 @@ export function renderUpstream(name) {
         appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
+        rootNode.querySelector('.tree-label').setAttribute('aria-expanded', 'true');
     } else {
         appendEmptyTreeNote(rootNode, 'This textline has no dialogue prerequisites.');
     }
@@ -98,6 +100,7 @@ export function renderUpstream(name) {
 export function renderDownstream(name) {
     const container = document.getElementById('downstream-content');
     container.innerHTML = '';
+    container.setAttribute('role', 'tree');
     const rootPath = new Set();
     const rootNode = createNodeEl(name, null, 'downstream', rootPath);
     rootNode.classList.add('root');
@@ -111,6 +114,7 @@ export function renderDownstream(name) {
         appendChildrenWithTypeGrouping(childContainer, kids, 'downstream', newPath, name);
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
+        rootNode.querySelector('.tree-label').setAttribute('aria-expanded', 'true');
     } else {
         appendEmptyTreeNote(rootNode, 'No other textlines depend on this one.');
     }

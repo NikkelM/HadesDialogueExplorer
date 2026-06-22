@@ -171,6 +171,15 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
 
     const label = document.createElement('div');
     label.className = 'tree-label';
+    // Keyboard accessibility: each row is a focusable ARIA tree item. The
+    // delegated handler in tree-keyboard.js reads ``data-name`` to select it
+    // and toggles ``aria-expanded`` via the chevron. (The interleaved group
+    // headers are separate inline-onclick elements already made operable by
+    // keyboard-a11y.js.)
+    label.tabIndex = 0;
+    label.setAttribute('role', 'treeitem');
+    label.dataset.name = name;
+    if (expandable) label.setAttribute('aria-expanded', 'false');
 
     const toggle = document.createElement('span');
     toggle.className = 'toggle';
@@ -362,6 +371,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                 if (!childContainer.classList.contains('expanded')) {
                     childContainer.classList.add('expanded');
                     toggle.textContent = '\u25BC';
+                    label.setAttribute('aria-expanded', 'true');
                     ensureExpandedContentVisible(childContainer);
                 }
                 return childContainer;
@@ -374,6 +384,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             appendChildrenWithTypeGrouping(childContainer, kids, direction, newPath, name);
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
+            label.setAttribute('aria-expanded', 'true');
             ensureExpandedContentVisible(childContainer);
             return childContainer;
         };
@@ -387,6 +398,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                 && childContainer.classList.contains('expanded')) {
                 childContainer.classList.remove('expanded');
                 toggle.textContent = '\u25B6';
+                label.setAttribute('aria-expanded', 'false');
                 return;
             }
             expandNode();

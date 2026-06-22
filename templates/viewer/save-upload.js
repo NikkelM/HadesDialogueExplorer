@@ -59,6 +59,20 @@ export function initSaveUpload() {
         }
         input.value = '';
     });
+
+    // Keyboard activation. A ``<label for>`` opens the file picker on mouse
+    // click but isn't reachable by keyboard; with the label made focusable
+    // (role="button", tabindex=0) wire Enter / Space to trigger the hidden
+    // input so keyboard and screen-reader users can load a save too.
+    const trigger = document.querySelector('.save-upload-btn');
+    if (trigger) {
+        trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                input.click();
+            }
+        });
+    }
 }
 
 // Re-hydrate a previously cached save on page load. Sets the in-memory

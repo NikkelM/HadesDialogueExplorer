@@ -62,6 +62,15 @@ header h1 {
     outline: none;
 }
 #search:focus { border-color: var(--accent-color); }
+
+/* Visible focus ring for keyboard users on the viewer's inline-onclick
+   controls (made focusable by keyboard-a11y.js). Only shows for keyboard
+   focus (:focus-visible), so mouse clicks don't leave a lingering outline. */
+[onclick]:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
 #search-results {
     position: absolute;
     top: 100%;

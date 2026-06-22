@@ -10,6 +10,8 @@ import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave } from './save-upload.js';
+import { initKeyboardA11y } from './keyboard-a11y.js';
+import { initTreeKeyboard } from './tree-keyboard.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
@@ -32,6 +34,11 @@ function init(data) {
     initTooltip();
     initGameToggle();
     initSaveUpload();
+    // Make inline-onclick controls keyboard-operable (focusable + Enter/Space).
+    // Set up before the first render so the controls it draws are covered too.
+    initKeyboardA11y();
+    // Arrow-key / Enter navigation for the prerequisite & dependent trees.
+    initTreeKeyboard();
     // Re-hydrate a cached save before the first render so its badges show
     // immediately (indistinguishable from a freshly loaded save).
     restoreSavedSave();

@@ -56,6 +56,10 @@
 }
 .tree-label:hover { background: var(--border); }
 .tree-label.active { background: var(--border); color: var(--accent-color); }
+.tree-label:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
+}
 .tree-label .toggle {
     /* Generous click target so the chevron isn't a pixel-precision
        target. The arrow stays centered horizontally via `text-align`
