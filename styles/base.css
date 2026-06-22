@@ -9,12 +9,22 @@
     --fs-xl:   1rem;       /* 16px - headings */
     --fs-2xl:  1.125rem;   /* 18px - large headings */
     --fs-3xl:  1.375rem;   /* 22px - display stat */
+
+    /* Core colour palette. One source of truth for the recurring values. */
+    --bg:           #1a1a2e;   /* page background */
+    --surface:      #16213e;   /* header / panel surface */
+    --border:       #0f3460;   /* default panel border (blue) */
+    --accent-color: #e94560;   /* pink accent: titles, links, highlights */
+    --text-color:   #e0e0e0;   /* primary body text */
+    --text-muted:   #888;      /* muted secondary text */
+    --text-dim:     #666;      /* dim secondary text */
+    --danger:       #e57373;   /* blocked / warning / error red */
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #1a1a2e;
-    color: #e0e0e0;
+    background: var(--bg);
+    color: var(--text-color);
     height: 100vh;
     height: 100dvh;
     display: flex;
@@ -22,9 +32,9 @@ body {
     overflow: hidden;
 }
 header {
-    background: #16213e;
+    background: var(--surface);
     padding: 12px 20px;
-    border-bottom: 1px solid #0f3460;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 16px;
@@ -32,7 +42,7 @@ header {
 }
 header h1 {
     font-size: var(--fs-xl);
-    color: #e94560;
+    color: var(--accent-color);
     white-space: nowrap;
 }
 .search-container {
@@ -43,22 +53,22 @@ header h1 {
 #search {
     width: 100%;
     padding: 6px 12px;
-    border: 1px solid #0f3460;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    background: #1a1a2e;
-    color: #e0e0e0;
+    background: var(--bg);
+    color: var(--text-color);
     font-size: var(--fs-base);
     line-height: 18px;
     outline: none;
 }
-#search:focus { border-color: #e94560; }
+#search:focus { border-color: var(--accent-color); }
 #search-results {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    background: #16213e;
-    border: 1px solid #0f3460;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-top: none;
     border-radius: 0 0 4px 4px;
     max-height: 450px;
@@ -74,7 +84,7 @@ header h1 {
     color: #aaa;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: #0f3460;
+    background: var(--border);
     border-bottom: 1px solid #0a2647;
     position: sticky;
     top: 0;
@@ -87,7 +97,7 @@ header h1 {
     border-bottom: 1px solid #0f346040;
 }
 .search-item:hover,
-.search-item.is-active { background: #0f3460; }
+.search-item.is-active { background: var(--border); }
 /* Suppress the pure-CSS :hover highlight while the user is driving
    the dropdown from the keyboard. Without this, a row that happens
    to sit under the mouse cursor when ArrowUp/ArrowDown is pressed
@@ -97,8 +107,8 @@ header h1 {
    removed on the next real mouse movement, so visible state always
    matches the latest input modality. */
 #search-results.kbd-mode .search-item:hover { background: transparent; }
-#search-results.kbd-mode .search-item.is-active { background: #0f3460; }
-.search-item .npc { color: #888; font-size: var(--fs-xs); margin-left: 8px; }
+#search-results.kbd-mode .search-item.is-active { background: var(--border); }
+.search-item .npc { color: var(--text-muted); font-size: var(--fs-xs); margin-left: 8px; }
 .search-item-cross .cross-game-badge { margin-left: 8px; vertical-align: middle; }
 /* In a search row the whole row is the link; the badge is a static
    label, so freeze its hover to the base look (the global
@@ -117,31 +127,31 @@ header h1 {
     word-break: break-word;
 }
 .search-item-text .snippet-speaker {
-    color: #888;
+    color: var(--text-muted);
     font-weight: bold;
     margin-right: 2px;
 }
 .search-item-text .snippet-choice-label {
-    color: #888;
+    color: var(--text-muted);
     font-weight: bold;
     font-style: italic;
     margin-right: 2px;
 }
 .search-item mark {
-    background: #e94560;
+    background: var(--accent-color);
     color: #fff;
     padding: 0 2px;
     border-radius: 2px;
 }
 .header-nav-link {
     appearance: none;
-    background: #1a1a2e;
-    color: #e0e0e0;
+    background: var(--bg);
+    color: var(--text-color);
     font-family: inherit;
     font-size: var(--fs-base);
     line-height: 18px;
     padding: 6px 14px;
-    border: 1px solid #0f3460;
+    border: 1px solid var(--border);
     border-radius: 4px;
     cursor: pointer;
     text-decoration: none;
@@ -149,7 +159,7 @@ header h1 {
     transition: background-color 0.12s ease, color 0.12s ease;
 }
 .header-nav-link:hover {
-    background: #0f3460;
+    background: var(--border);
 }
 .header-nav-link[hidden] {
     display: none;
@@ -189,15 +199,15 @@ main {
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #1a1a2e; }
-::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #e94560; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
 /* The corner is the small square where the horizontal and vertical
    scrollbars meet on a 2-axis-scrolling container (`.panel-body`).
    Without this rule, browsers paint it plain white, which stands out
    against the dark panel background. Match the track colour so the
    corner blends into the scrollbar gutter. */
-::-webkit-scrollbar-corner { background: #1a1a2e; }
+::-webkit-scrollbar-corner { background: var(--bg); }
 
 /* Site disclaimer - pinned to the bottom of the middle panel
    (upstream/prerequisites) in 3-column dialogue view, and to the

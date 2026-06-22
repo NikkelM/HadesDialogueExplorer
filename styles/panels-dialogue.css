@@ -2,14 +2,14 @@
    text with the speaker name prefix. Italic prose with a coloured
    speaker tag to break up the wall of text. */
 .dialogue-section { margin-top: 10px; }
-.dialogue-section h4 { font-size: var(--fs-sm); color: #888; margin-bottom: 6px; }
+.dialogue-section h4 { font-size: var(--fs-sm); color: var(--text-muted); margin-bottom: 6px; }
 .dialogue-line {
     padding: 6px 10px;
     margin: 4px 0;
     font-size: var(--fs-sm);
     color: #ccd6e0;
-    background: #1a1a2e;
-    border-left: 3px solid #0f3460;
+    background: var(--bg);
+    border-left: 3px solid var(--border);
     border-radius: 0 4px 4px 0;
     line-height: 1.5;
     font-style: italic;
@@ -17,7 +17,7 @@
 .dialogue-line .speaker-name {
     font-style: normal;
     font-weight: 600;
-    color: #e94560;
+    color: var(--accent-color);
 }
 .dialogue-line .speaker-name[data-tooltip] {
     cursor: help;
@@ -25,7 +25,7 @@
 }
 .dialogue-line .speaker-sep {
     font-style: normal;
-    color: #e94560;
+    color: var(--accent-color);
     margin-right: 4px;
 }
 
@@ -39,7 +39,7 @@
 .dialogue-line.choice-prompt .choice-prompt-label {
     font-style: normal;
     font-weight: 600;
-    color: #e94560;
+    color: var(--accent-color);
     margin-right: 4px;
 }
 .dialogue-line.choice-option {

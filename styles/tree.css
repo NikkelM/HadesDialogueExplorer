@@ -1,7 +1,7 @@
 /* Tree view nodes, edges, labels */
 .tree-node {
     margin-left: 16px;
-    border-left: 1px solid #0f3460;
+    border-left: 1px solid var(--border);
     padding-left: 12px;
 }
 .tree-node.root { margin-left: 0; border-left: none; padding-left: 0; }
@@ -54,8 +54,8 @@
     width: max-content;
     min-width: 100%;
 }
-.tree-label:hover { background: #0f3460; }
-.tree-label.active { background: #0f3460; color: #e94560; }
+.tree-label:hover { background: var(--border); }
+.tree-label.active { background: var(--border); color: var(--accent-color); }
 .tree-label .toggle {
     /* Generous click target so the chevron isn't a pixel-precision
        target. The arrow stays centered horizontally via `text-align`
@@ -66,7 +66,7 @@
     min-width: 24px;
     padding: 2px 4px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-xs);
     flex-shrink: 0;
 }
@@ -83,7 +83,7 @@
    long textline names to wrap mid-word. That was dropped: rows stay on a
    single line (`.tree-label` is `white-space: nowrap`) and the
    `.panel-body` scrolls horizontally so deep chains push content right. */
-.tree-label .npc-tag { font-size: var(--fs-2xs); color: #666; margin-left: auto; flex-shrink: 0; }
+.tree-label .npc-tag { font-size: var(--fs-2xs); color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
 
 /* Narrative-priority badge. Same compact pill style as the
    other inline tree badges (`.edge-type`, `.tree-blocked-badge`); three
@@ -164,7 +164,7 @@
 }
 .tree-children { display: none; }
 .tree-children.expanded { display: block; }
-.cycle-marker { color: #e94560; font-size: var(--fs-xs); font-style: italic; }
+.cycle-marker { color: var(--accent-color); font-size: var(--fs-xs); font-style: italic; }
 
 /* GameData group boxes wrap contiguous tree children that all came from
    the same `GameData.X` list expansion. Collapsible via header click. */
@@ -189,7 +189,7 @@
 .gamedata-group-header .toggle {
     width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -200,7 +200,7 @@
 }
 .gamedata-group-count {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     margin-left: auto;
 }
 .gamedata-group-children { display: none; }
@@ -251,12 +251,12 @@
 .group-status-met { background: #4caf50; }
 .group-status-unmet { background: #78909c; }
 .group-status-unknown { background: #8b95d6; }
-.group-status-unobtainable { background: #e57373; }
+.group-status-unobtainable { background: var(--danger); }
 .req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
 .req-type-group-header .toggle {
     width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -284,7 +284,7 @@
 }
 .req-type-group-count {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     margin-left: auto;
 }
 .req-type-group-children { display: none; padding-top: 2px; }
@@ -329,7 +329,7 @@
 .or-group-header .toggle {
     width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -368,7 +368,7 @@
 .or-branch-box-header .toggle {
     width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -382,7 +382,7 @@
 }
 .or-branch-box-count {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     margin-left: auto;
 }
 .or-branch-box-children { display: none; padding-top: 2px; }
@@ -421,7 +421,7 @@
     margin: 6px 0 2px 1.6rem;
     font-size: var(--fs-sm);
     font-style: italic;
-    color: #888;
+    color: var(--text-muted);
 }
 
 /* Downstream OR-routed dependents section. Mirrors the upstream
@@ -449,7 +449,7 @@
 .or-downstream-header .toggle {
     width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -464,7 +464,7 @@
 }
 .or-downstream-count {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     margin-left: auto;
 }
 .or-downstream-children { display: none; padding-top: 2px; }

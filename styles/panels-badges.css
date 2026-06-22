@@ -59,7 +59,7 @@
     padding: 1px 5px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.06);
-    color: #888;
+    color: var(--text-muted);
     font-style: italic;
 }
 .tree-unresolved-badge.unresolved-cat-back-compatibility {
@@ -67,15 +67,15 @@
     background: rgba(201, 169, 110, 0.10);
 }
 .tree-unresolved-badge.unresolved-cat-typo-or-bug {
-    color: #e07b7b;
+    color: var(--danger);
     background: rgba(224, 123, 123, 0.10);
 }
 .tree-unresolved-badge.unresolved-cat-cut-content {
-    color: #888;
+    color: var(--text-muted);
     background: rgba(136, 136, 136, 0.10);
 }
 .tree-unresolved-badge.unresolved-cat-uncategorized {
-    color: #d97a7a;
+    color: var(--danger);
     background: rgba(217, 122, 122, 0.12);
 }
 

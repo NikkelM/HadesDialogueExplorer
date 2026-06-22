@@ -6,7 +6,7 @@
    to follow the cursor, toggled via the ``.visible`` class.
 
    Colour palette intentionally echoes the dark info-panel cards
-   (``#16213e`` background + ``#0f3460`` border) so it reads as part
+   (``var(--surface)`` background + ``var(--border)`` border) so it reads as part
    of the viewer, while the slightly darker background, drop shadow,
    and small offset keep it distinguishable from the underlying
    surface. */
@@ -21,9 +21,9 @@
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: var(--fs-sm);
     line-height: 1.5;
-    color: #e0e0e0;
+    color: var(--text-color);
     background: #0e1530;
-    border: 1px solid #0f3460;
+    border: 1px solid var(--border);
     border-radius: 4px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
     /* ``pre-line`` preserves explicit ``\n`` from the source string

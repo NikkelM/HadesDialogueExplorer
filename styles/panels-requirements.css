@@ -85,10 +85,10 @@
    line up vertically down the requirements list, mirroring the tree
    view layout. */
 .req-item .priority-badge { margin-left: auto; }
-.req-item:hover { background: #0f3460; }
+.req-item:hover { background: var(--border); }
 .req-item.resolved { color: #a8dadc; }
-.req-item.unresolved { color: #888; font-style: italic; }
-.req-item.unresolved::after { content: " \26A0  external"; font-size: var(--fs-2xs); color: #666; }
+.req-item.unresolved { color: var(--text-muted); font-style: italic; }
+.req-item.unresolved::after { content: " \26A0  external"; font-size: var(--fs-2xs); color: var(--text-dim); }
 
 /* Category-specific colors for unresolved refs - overrides the generic
    .unresolved color so the user can visually distinguish intentional
@@ -102,25 +102,25 @@
     color: #c9a96e;
 }
 .req-item.unresolved.unresolved-cat-typo-or-bug {
-    color: #e07b7b;
+    color: var(--danger);
 }
 .req-item.unresolved.unresolved-cat-typo-or-bug::after {
     content: " \26A0  typo/bug";
-    color: #e07b7b;
+    color: var(--danger);
 }
 .req-item.unresolved.unresolved-cat-cut-content {
-    color: #888;
+    color: var(--text-muted);
 }
 .req-item.unresolved.unresolved-cat-cut-content::after {
     content: " \2702  cut";
-    color: #888;
+    color: var(--text-muted);
 }
 .req-item.unresolved.unresolved-cat-uncategorized {
-    color: #d97a7a;
+    color: var(--danger);
 }
 .req-item.unresolved.unresolved-cat-uncategorized::after {
     content: " \26A0  uncategorized";
-    color: #d97a7a;
+    color: var(--danger);
 }
 
 /* "Other requirements" list - non-textline gating fields rendered as

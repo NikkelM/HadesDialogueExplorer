@@ -5,7 +5,7 @@
     gap: 4px;
     padding: 8px 10px;
     border-radius: 4px;
-    border-left: 3px solid #888;
+    border-left: 3px solid var(--text-muted);
     background: rgba(255, 255, 255, 0.04);
     margin-top: 8px;
 }
@@ -14,15 +14,15 @@
     background: rgba(201, 169, 110, 0.08);
 }
 .unresolved-banner.unresolved-cat-typo-or-bug {
-    border-left-color: #e07b7b;
+    border-left-color: var(--danger);
     background: rgba(224, 123, 123, 0.08);
 }
 .unresolved-banner.unresolved-cat-cut-content {
-    border-left-color: #888;
+    border-left-color: var(--text-muted);
     background: rgba(136, 136, 136, 0.08);
 }
 .unresolved-banner.unresolved-cat-uncategorized {
-    border-left-color: #d97a7a;
+    border-left-color: var(--danger);
     background: rgba(217, 122, 122, 0.10);
 }
 .unresolved-cat-badge {
@@ -30,7 +30,7 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #e0e0e0;
+    color: var(--text-color);
 }
 .unresolved-cat-reason {
     font-size: var(--fs-sm);

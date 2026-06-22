@@ -25,7 +25,7 @@
 .gamedata-group-header-inline .toggle {
     min-width: 12px;
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-2xs);
     flex-shrink: 0;
 }
@@ -36,7 +36,7 @@
 }
 .gamedata-group-header-inline .gamedata-group-count {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     margin-left: auto;
 }
 /* Collapsed by default + override via `.expanded` mirrors the

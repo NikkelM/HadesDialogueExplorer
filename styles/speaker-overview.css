@@ -26,7 +26,7 @@ body.layout-speaker #panel-info {
 }
 .speaker-name.clickable:hover,
 .npc-tag.clickable:hover {
-    color: #e94560;
+    color: var(--accent-color);
 }
 
 .speaker-overview {
@@ -44,7 +44,7 @@ body.layout-speaker #panel-info {
     align-items: start;
     gap: 16px;
     padding: 12px;
-    border: 1px solid #0f3460;
+    border: 1px solid var(--border);
     border-radius: 6px 6px 0 0;
 }
 .speaker-overview-header-main {
@@ -60,12 +60,12 @@ body.layout-speaker #panel-info {
     gap: 6px;
 }
 .speaker-overview-header h3 {
-    color: #e94560;
+    color: var(--accent-color);
     font-size: var(--fs-2xl);
     margin-bottom: 4px;
 }
 .speaker-overview-header .speaker-id {
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-base);
     font-weight: normal;
 }
@@ -85,14 +85,14 @@ body.layout-speaker #panel-info {
     gap: 6px;
 }
 .speaker-similar-label {
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
     font-size: var(--fs-2xs);
     letter-spacing: 0.5px;
 }
 .speaker-similar-pill {
     display: inline-block;
-    background: #0f3460;
+    background: var(--border);
     color: #d8dbe6;
     border: 1px solid #1c4584;
     border-radius: 12px;
@@ -109,13 +109,13 @@ body.layout-speaker #panel-info {
     border-color: #2a5aa8;
 }
 .speaker-overview-header .speaker-ids {
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-sm);
     margin-bottom: 4px;
     line-height: 1.6;
 }
 .speaker-overview-header .speaker-ids code {
-    background: #0f3460;
+    background: var(--border);
     color: #b8b8b8;
     padding: 1px 5px;
     border-radius: 3px;
@@ -125,11 +125,11 @@ body.layout-speaker #panel-info {
     padding: 16px;
 }
 .speaker-overview-missing h3 {
-    color: #e94560;
+    color: var(--accent-color);
     margin-bottom: 8px;
 }
 .speaker-overview-missing code {
-    background: #0f3460;
+    background: var(--border);
     padding: 1px 4px;
     border-radius: 3px;
 }
@@ -137,8 +137,8 @@ body.layout-speaker #panel-info {
 /* Summary section: a single 3-column row (owned / as-speaker / sections)
  * on the same grid as the header so columns line up. */
 .speaker-summary {
-    background: #16213e;
-    border: 1px solid #0f3460;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-top: none;
     border-radius: 0 0 6px 6px;
     padding: 12px;
@@ -157,25 +157,25 @@ body.layout-speaker #panel-info {
 .speaker-summary-row + .speaker-summary-row {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid #0f3460;
+    border-top: 1px solid var(--border);
 }
 .speaker-summary-cell {
     min-width: 0;
 }
 .speaker-summary-cell h4 {
     font-size: var(--fs-2xs);
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
 .speaker-summary-value {
     font-size: var(--fs-3xl);
-    color: #e0e0e0;
+    color: var(--text-color);
 }
 .speaker-summary-note {
     font-size: var(--fs-xs);
-    color: #666;
+    color: var(--text-dim);
     font-style: italic;
 }
 .speaker-section-list {
@@ -194,7 +194,7 @@ body.layout-speaker #panel-info {
     gap: 6px;
 }
 .priority-chip {
-    background: #0f3460;
+    background: var(--border);
     color: #b8b8b8;
     border: 1px solid #1c4584;
     border-radius: 12px;
@@ -205,12 +205,12 @@ body.layout-speaker #panel-info {
 }
 .priority-chip:hover {
     background: #1c4584;
-    color: #e0e0e0;
+    color: var(--text-color);
 }
 .priority-chip.is-active {
-    background: #e94560;
+    background: var(--accent-color);
     color: #fff;
-    border-color: #e94560;
+    border-color: var(--accent-color);
 }
 /* A filter/eligibility chip whose selection would yield no dialogues:
    greyed out and unclickable (the button also carries ``disabled``). */
@@ -251,7 +251,7 @@ body.layout-speaker #panel-info {
 .eligibility-chip-eligible::before { background: #ffb74d; }
 .eligibility-chip-blocked::before { background: #78909c; }
 .eligibility-chip-indeterminate::before { background: #8b95d6; }
-.eligibility-chip-unobtainable::before { background: #e57373; }
+.eligibility-chip-unobtainable::before { background: var(--danger); }
 
 /* Save-progress summary cell: the per-status counts list reuses the
    section-list rhythm; each row leads with the same coloured dot. */
@@ -259,7 +259,7 @@ body.layout-speaker #panel-info {
     margin-right: 5px;
 }
 .speaker-count {
-    color: #888;
+    color: var(--text-muted);
     font-size: var(--fs-xs);
     margin-left: 4px;
 }
@@ -272,15 +272,15 @@ body.layout-speaker #panel-info {
 }
 .speaker-adjacency-col {
     flex: 1;
-    background: #16213e;
-    border: 1px solid #0f3460;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 10px 12px;
     min-width: 0;
 }
 .speaker-adjacency-col h4 {
     font-size: var(--fs-xs);
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0;
@@ -288,11 +288,11 @@ body.layout-speaker #panel-info {
     align-items: center;
     gap: 5px;
 }
-.speaker-adjacency-dir { color: #e94560; font-size: var(--fs-base); line-height: 1; }
+.speaker-adjacency-dir { color: var(--accent-color); font-size: var(--fs-base); line-height: 1; }
 .speaker-adjacency-head { margin-bottom: 6px; }
 .speaker-adjacency-sub {
     font-size: var(--fs-xs);
-    color: #666;
+    color: var(--text-dim);
     margin: 2px 0 0;
 }
 .speaker-adjacency-list {
@@ -324,7 +324,7 @@ body.layout-speaker #panel-info {
 }
 .speaker-adjacency-chevron {
     font-size: 0.65em;
-    color: #666;
+    color: var(--text-dim);
     transition: transform 0.15s;
     flex-shrink: 0;
 }
@@ -338,7 +338,7 @@ body.layout-speaker #panel-info {
     font-size: var(--fs-sm);
     font-weight: 600;
     color: #dfe2f0;
-    background: #0f3460;
+    background: var(--border);
     border: 1px solid #1c4584;
     border-radius: 10px;
     padding: 0 8px;
@@ -367,7 +367,7 @@ body.layout-speaker #panel-info {
     font-size: var(--fs-sm);
     color: #cdcde0;
 }
-.speaker-adjacency-dep:hover { color: #e94560; }
+.speaker-adjacency-dep:hover { color: var(--accent-color); }
 .speaker-adjacency-reqs {
     margin-left: 16px;
     margin-top: 1px;
@@ -375,14 +375,14 @@ body.layout-speaker #panel-info {
     line-height: 1.45;
 }
 .speaker-adjacency-reqs .textline-link { font-size: var(--fs-sm); color: #aab0c8; }
-.speaker-adjacency-reqs .textline-link:hover { color: #e94560; }
+.speaker-adjacency-reqs .textline-link:hover { color: var(--accent-color); }
 .speaker-adjacency-req-label {
     color: #6a6a82;
     font-style: italic;
     margin-right: 4px;
 }
 .speaker-adjacency-sep { color: #555; }
-.speaker-adjacency-detail-empty { color: #666; font-style: italic; padding: 2px 0; }
+.speaker-adjacency-detail-empty { color: var(--text-dim); font-style: italic; padding: 2px 0; }
 .speaker-adjacency-self {
     font-size: var(--fs-2xs);
     color: #c4a56e;
@@ -398,16 +398,16 @@ body.layout-speaker #panel-info {
     cursor: pointer;
     text-decoration: none;
 }
-.speaker-link:hover { color: #e94560; }
+.speaker-link:hover { color: var(--accent-color); }
 .speaker-id-inline {
-    color: #666;
+    color: var(--text-dim);
     font-size: var(--fs-xs);
 }
 
 /* Textline list (the main body): controls strip + grouped sections. */
 .speaker-textlines {
-    background: #16213e;
-    border: 1px solid #0f3460;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 10px 12px;
 }
@@ -417,28 +417,28 @@ body.layout-speaker #panel-info {
     align-items: center;
     padding-bottom: 8px;
     margin-bottom: 8px;
-    border-bottom: 1px solid #0f3460;
+    border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
 }
 .speaker-control-label {
     font-size: var(--fs-xs);
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 .speaker-textlines-empty {
-    color: #666;
+    color: var(--text-dim);
     font-style: italic;
     padding: 8px 0;
 }
 .speaker-textline-group + .speaker-textline-group {
     margin-top: 12px;
     padding-top: 8px;
-    border-top: 1px solid #0f3460;
+    border-top: 1px solid var(--border);
 }
 .speaker-textline-group-header {
     font-size: var(--fs-xs);
-    color: #888;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
@@ -451,7 +451,7 @@ body.layout-speaker #panel-info {
 .speaker-textline-group-header:hover { color: #b8b8b8; }
 .speaker-group-chevron {
     font-size: 0.7em;
-    color: #666;
+    color: var(--text-dim);
     transition: transform 0.15s;
     display: inline-block;
 }
@@ -506,7 +506,7 @@ body.layout-speaker #panel-info {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.textline-link:hover { color: #e94560; }
+.textline-link:hover { color: var(--accent-color); }
 /* The dialogue name is the row's primary element: brighter and heavier
    than the badges that trail it. */
 .speaker-textline-row > .textline-link {
@@ -534,7 +534,7 @@ body.layout-speaker #panel-info {
 }
 
 .muted {
-    color: #666;
+    color: var(--text-dim);
     font-style: italic;
 }
 

@@ -16,7 +16,7 @@
    speaker overview keep their lighter treatment. Higher specificity than the
    ``[data-tooltip]`` rule above so it wins regardless of stylesheet order. */
 .textline-info .meta .speaker-name.clickable {
-    color: #e94560;
+    color: var(--accent-color);
     cursor: pointer;
     border-bottom-color: #e9456066;
 }

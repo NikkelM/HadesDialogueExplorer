@@ -10,7 +10,7 @@
 }
 
 .eligibility-target-link {
-    color: var(--accent-color, #e94560);
+    color: var(--accent-color);
     cursor: pointer;
 }
 
@@ -20,7 +20,7 @@
 
 .eligibility-target-meta {
     font-size: var(--fs-base);
-    color: var(--text-muted, #aaa);
+    color: var(--text-muted);
     margin-bottom: 1rem;
 }
 
@@ -28,8 +28,8 @@
 .eligibility-summary {
     padding: 0.8rem 1rem;
     border-radius: 6px;
-    background: var(--panel-bg, #1a1a2a);
-    border: 1px solid var(--border-color, #3a3a4a);
+    background: #1a1a2a;
+    border: 1px solid #3a3a4a;
     margin-bottom: 1rem;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .eligibility-status.eligibility-unobtainable {
-    color: #e57373;
+    color: var(--danger);
 }
 
 .eligibility-status.eligibility-indeterminate {
@@ -101,7 +101,7 @@
 
 .eligibility-detail {
     font-size: var(--fs-base);
-    color: var(--text-muted, #bbb);
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
 }
 
@@ -122,7 +122,7 @@
 
 .eligibility-progress-label {
     font-size: var(--fs-sm);
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
 }
 /* When a save is loaded and at least one prerequisite is already complete,
    the label carries a tooltip listing them - hint that with the standard
@@ -146,7 +146,7 @@
     border-radius: 0 4px 4px 0;
     font-size: var(--fs-xs);
     font-style: italic;
-    color: var(--text-muted, #9aa4b2);
+    color: #9aa4b2;
     line-height: 1.4;
 }
 .eligibility-chain-note::before {
@@ -167,12 +167,12 @@
 .eligibility-tree-header {
     margin: 0 0 0.2rem 0;
     font-size: var(--fs-lg);
-    color: var(--text-color, #eee);
+    color: var(--text-color);
 }
 
 .eligibility-tree-hint {
     font-size: var(--fs-sm);
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     margin-bottom: 0.6rem;
 }
 
@@ -193,7 +193,7 @@
 
 .eligibility-item:hover {
     background: #2a2a3e;
-    border-color: var(--accent-color, #e94560);
+    border-color: var(--accent-color);
 }
 
 .eligibility-item-main {
@@ -214,7 +214,7 @@
 .eligibility-item-name {
     font-family: 'Consolas', monospace;
     font-size: var(--fs-base);
-    color: var(--text-color, #e0e0e0);
+    color: var(--text-color);
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -226,7 +226,7 @@
     margin-top: 0.2rem;
     padding-left: 3.25rem;
     font-size: var(--fs-sm);
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -238,7 +238,7 @@
 }
 
 .eligibility-ref {
-    color: var(--accent-color, #e94560);
+    color: var(--accent-color);
     cursor: pointer;
 }
 
@@ -274,14 +274,14 @@
     gap: 0.5rem;
     font-family: 'Consolas', monospace;
     font-size: var(--fs-base);
-    color: var(--text-color, #e0e0e0);
+    color: var(--text-color);
 }
 
 .eligibility-gate-refs {
     margin: 0.3rem 0 0;
     padding-left: 1.4rem;
     font-size: var(--fs-sm);
-    color: var(--text-muted, #bbb);
+    color: var(--text-muted);
     line-height: 1.5;
 }
 
@@ -461,5 +461,5 @@
 }
 
 .tree-unplayed .tree-name {
-    color: #e0e0e0;
+    color: var(--text-color);
 }

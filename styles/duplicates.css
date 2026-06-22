@@ -7,6 +7,8 @@
 .duplicates-header {
     display: block;
     margin-bottom: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
 }
 
 .duplicates-header h3 {
@@ -29,17 +31,17 @@
     width: 100%;
     max-width: 500px;
     padding: 6px 12px;
-    border: 1px solid #0f3460;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    background: #1a1a2e;
-    color: #e0e0e0;
+    background: var(--bg);
+    color: var(--text-color);
     font-size: var(--fs-base);
     line-height: 18px;
     outline: none;
 }
 
 .duplicates-search:focus {
-    border-color: #e94560;
+    border-color: var(--accent-color);
 }
 
 .duplicates-empty {
@@ -72,19 +74,19 @@
     border: 1px solid transparent;
     border-radius: 4px;
     background: transparent;
-    color: var(--text-color, #e0e0e0);
+    color: var(--text-color);
     font-size: var(--fs-base);
     text-align: left;
     cursor: pointer;
 }
 
 .duplicates-speaker-item:hover {
-    background: #16213e;
+    background: var(--surface);
 }
 
 .duplicates-speaker-item.is-active {
-    background: #0f3460;
-    border-color: var(--accent-color, #e94560);
+    background: var(--border);
+    border-color: var(--accent-color);
 }
 
 .duplicates-speaker-name {
@@ -93,14 +95,14 @@
 
 .duplicates-speaker-count {
     font-size: var(--fs-sm);
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     background: rgba(255, 255, 255, 0.06);
     padding: 0.1rem 0.45rem;
     border-radius: 8px;
 }
 
 .duplicates-speaker-item.is-active .duplicates-speaker-count {
-    color: var(--text-color, #e0e0e0);
+    color: var(--text-color);
 }
 
 /* Detail pane: the selected speaker's shared dialogues, tiled across
@@ -130,24 +132,24 @@
     width: var(--dup-name-col, max-content);
     font-size: var(--fs-base);
     font-family: 'Consolas', monospace;
-    color: var(--text-color, #e0e0e0);
+    color: var(--text-color);
 }
 
 .duplicates-game-link {
     font-size: var(--fs-base);
-    color: var(--link-color, #e94560);
+    color: var(--accent-color);
     cursor: pointer;
     text-decoration: none;
     padding: 0.25rem 0.55rem;
-    border: 1px solid var(--border-color, #333);
+    border: 1px solid var(--border);
     border-radius: 3px;
     background: transparent;
     text-align: center;
 }
 
 .duplicates-game-link:hover {
-    background: #0f3460;
-    border-color: var(--accent-color, #e94560);
+    background: var(--border);
+    border-color: var(--accent-color);
 }
 
 /* Keep the wider name-to-pill gap while the two game pills sit close together. */

@@ -53,7 +53,7 @@
         flex: initial;
         overflow: visible;
         border-right: none;
-        border-bottom: 1px solid #0f3460;
+        border-bottom: 1px solid var(--border);
     }
     .panel:last-child { border-bottom: none; }
     .panel-body {
