@@ -39,27 +39,32 @@ if ($dirty) {
     exit 1
 }
 
-# Run extraction pipeline
+# Point the deploy branch at main and switch to it BEFORE generating outputs.
+# ``checkout -B deploy main`` resets (or creates) deploy at main's commit;
+# because that equals the current HEAD the working tree doesn't change, so the
+# switch neither stalls on materialising the previous deploy commit (whose
+# different file layout triggered interactive "delete this directory?" prompts)
+# nor clobbers freshly extracted outputs. Generating *after* the switch keeps
+# the (gitignored) outputs on the branch they're committed to - generating
+# first on main and then resetting would delete them before they're staged.
+Invoke-Git checkout -B deploy main
+
+# Run extraction pipeline (now on the deploy branch)
 Write-Host "Running extraction pipeline..."
 python generate_data.py
-if ($LASTEXITCODE -ne 0) { Write-Error "Extraction pipeline failed."; exit 1 }
+if ($LASTEXITCODE -ne 0) {
+    Invoke-Git checkout main
+    Write-Error "Extraction pipeline failed."
+    exit 1
+}
 
 $jsons = Get-ChildItem -Path outputs\*.json -ErrorAction SilentlyContinue
 if (-not $jsons -or $jsons.Count -eq 0) {
+    Invoke-Git checkout main
     Write-Error "No outputs/*.json files found after extraction."
     exit 1
 }
 Write-Host "Found $($jsons.Count) output files"
-
-# Create or reset deploy branch to match main
-git show-ref --verify --quiet refs/heads/deploy 2>$null
-$deployExists = ($LASTEXITCODE -eq 0)
-if ($deployExists) {
-    Invoke-Git checkout deploy
-    Invoke-Git reset --hard main
-} else {
-    Invoke-Git checkout -b deploy
-}
 
 # Stage outputs (force-add despite gitignore)
 Invoke-Git add --force outputs/*.json
