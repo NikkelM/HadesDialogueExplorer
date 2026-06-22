@@ -36,9 +36,13 @@
         min-height: 100vh;
         min-height: 100svh;
         overflow: visible;
-        /* Notch / rounded-corner / home-indicator clearance. Resolves to 0
+        /* Notch / rounded-corner / home-indicator clearance. With
+           viewport-fit=cover the page renders edge-to-edge, so these insets
+           keep the header and content out of the unsafe zones (and let the
+           tour's full-screen fixed dim cover the whole display). Resolves to 0
            on devices without insets, so tablets and desktop are unaffected.
            Not observable under headless emulation - verify on a real device. */
+        padding-top: env(safe-area-inset-top);
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
         padding-bottom: env(safe-area-inset-bottom);

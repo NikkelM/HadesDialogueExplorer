@@ -153,8 +153,8 @@ body.tour-open #custom-tooltip {
    below the tour layers but above page content. */
 .tour-help-btn {
     position: fixed;
-    bottom: 14px;
-    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    right: calc(14px + env(safe-area-inset-right));
     z-index: 90;
     width: 40px;
     height: 40px;
@@ -199,9 +199,9 @@ body.tour-open #custom-tooltip {
    on phones and scrolls the target into the upper area). */
 @media (max-width: 599px) {
     .tour-card {
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
+        left: calc(8px + env(safe-area-inset-left));
+        right: calc(8px + env(safe-area-inset-right));
+        bottom: calc(18px + env(safe-area-inset-bottom));
         top: auto !important;
         width: auto;
         max-width: none;
@@ -210,7 +210,7 @@ body.tour-open #custom-tooltip {
        page bottom and can't be scrolled clear of a bottom sheet, so the card
        moves above it. */
     .tour-card.tour-card-pinned-top {
-        top: 8px !important;
+        top: calc(18px + env(safe-area-inset-top)) !important;
         bottom: auto;
     }
     /* Touch-sized controls. */
