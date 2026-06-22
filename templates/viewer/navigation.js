@@ -20,7 +20,7 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, isGameLoaded, ensureGameLoaded } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, isGameLoaded, ensureGameLoaded, gameLabels } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
@@ -178,6 +178,52 @@ export function switchToGame(gameId) {
 // even when the caller didn't think to set it (every
 // non-toggle-click navigation - search, tree click, inline link -
 // implicitly stays in the active game).
+// Ensure ``gameId``'s data is loaded (awaiting/retrying an in-flight or failed
+// split-build fetch) and activate it. Returns true on success; on failure
+// surfaces a transient message and returns false so the caller aborts the
+// navigation instead of switching to an empty game. A no-op true when the game
+// is already active.
+async function _switchGameOrNotify(gameId) {
+    if (gameId === getActiveGame()) return true;
+    if (!isGameLoaded(gameId)) await ensureGameLoaded(gameId);
+    if (!isGameLoaded(gameId)) {
+        _notifyGameUnavailable(gameId);
+        return false;
+    }
+    _clearGameError();
+    switchToGame(gameId);
+    return true;
+}
+
+// Transient banner shown when a game's data can't be loaded (e.g. a network
+// blip dropped the background fetch and the on-demand retry also failed), so a
+// dead toggle isn't silent. Reuses the #app-error mount but auto-dismisses,
+// unlike the fatal boot-load error.
+let _gameErrTimer = null;
+function _notifyGameUnavailable(gameId) {
+    if (typeof document === 'undefined') return;
+    const mount = document.getElementById('app-error');
+    if (!mount) return;
+    const label = (gameLabels && gameLabels[gameId]) || gameId;
+    mount.textContent = 'Couldn\u2019t load ' + label + ' data - check your connection and try again.';
+    mount.hidden = false;
+    if (_gameErrTimer) clearTimeout(_gameErrTimer);
+    _gameErrTimer = setTimeout(() => {
+        mount.hidden = true;
+        mount.textContent = '';
+        _gameErrTimer = null;
+    }, 6000);
+}
+
+// Clear a lingering game-load error banner once a switch succeeds, so a
+// recovered retry doesn't leave a stale "couldn't load" message on screen.
+function _clearGameError() {
+    if (typeof document === 'undefined') return;
+    if (_gameErrTimer) { clearTimeout(_gameErrTimer); _gameErrTimer = null; }
+    const mount = document.getElementById('app-error');
+    if (mount && !mount.hidden) { mount.hidden = true; mount.textContent = ''; }
+}
+
 export async function navigateToState(state) {
     // During a tour step flagged ``blockNavigation`` the engine sets this
     // class so the user can expand/collapse rows and read tooltips without a
@@ -189,12 +235,10 @@ export async function navigateToState(state) {
     const fullState = Object.assign({ game: getActiveGame() }, state || {});
     const requestedGame = fullState.game;
     if (requestedGame && requestedGame !== getActiveGame()) {
-        // Split build: the target game's data may still be streaming in. Await
-        // its background load before swapping (resolves instantly once loaded).
-        // Bail rather than throw if it never arrives (no loader / fetch failed).
-        if (!isGameLoaded(requestedGame)) await ensureGameLoaded(requestedGame);
-        if (!isGameLoaded(requestedGame)) return;
-        switchToGame(requestedGame);
+        // Split build: the target game's data may still be streaming in (or a
+        // prior background load failed). Load/retry it before swapping; abort
+        // with a message if it can't be loaded rather than failing silently.
+        if (!await _switchGameOrNotify(requestedGame)) return;
     }
     const serialized = serializeUrlState(fullState);
     urlSelection = serialized;
@@ -218,10 +262,9 @@ export async function applyHashFromUrl() {
     if (key === urlSelection) return;
     urlSelection = key;
     if (resolvedGame !== getActiveGame()) {
-        // Await the target game's data if it's still streaming in (split build).
-        if (!isGameLoaded(resolvedGame)) await ensureGameLoaded(resolvedGame);
-        if (!isGameLoaded(resolvedGame)) return;
-        switchToGame(resolvedGame);
+        // Load/retry the target game's data (it may still be streaming in, or a
+        // prior background load failed); abort with a message if it can't load.
+        if (!await _switchGameOrNotify(resolvedGame)) return;
     }
     applyState(state);
 }
@@ -432,7 +475,10 @@ export function syncActiveGameToSave() {
     // so it skips the redundant same-game refresh.
     (async () => {
         await ensureGameLoaded(saveGame);
-        if (!isGameLoaded(saveGame)) return;
+        if (!isGameLoaded(saveGame)) {
+            _notifyGameUnavailable(saveGame);
+            return;
+        }
         const targetData = (games && games[saveGame]) || {};
         const target = { game: saveGame };
         if (prev.view === 'duplicates') {

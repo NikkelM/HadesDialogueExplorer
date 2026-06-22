@@ -124,13 +124,19 @@ export function loadData(DATA) {
 // fetched blobs and let navigation await a not-yet-arrived game. The single
 // inline bundle ships every game at once, so none of this fires there.
 
-// In-flight per-game fetch promises, parked here so a toggle or cross-game
-// link that fires before the background load finishes can await it instead of
-// erroring on a missing blob.
+// In-flight per-game load promises, parked here so concurrent requests reuse a
+// single fetch and so a toggle / cross-game link that fires before a load
+// finishes can await it instead of erroring on a missing blob.
 const _pendingGameLoads = {};
 
-export function setPendingGameLoad(gameId, promise) {
-    _pendingGameLoads[gameId] = promise;
+// How to fetch + install a game's data blob (split build). Registered by the
+// boot code, which owns the fetch URL + cache-busting. Receives a gameId and
+// returns a promise that resolves once the blob has been handed to
+// ``registerGameData`` (it may reject on a network / parse failure).
+let _gameLoader = null;
+
+export function setGameLoader(fn) {
+    _gameLoader = (typeof fn === 'function') ? fn : null;
 }
 
 // True once the game's data blob is present (has its textlines map).
@@ -138,16 +144,40 @@ export function isGameLoaded(gameId) {
     return !!(games && games[gameId] && games[gameId].textlines);
 }
 
-// Resolve once the game's data is available: immediately if already loaded,
-// otherwise awaiting the in-flight background fetch. Resolves ``false`` when no
-// loader is registered (nothing more we can do - the caller should degrade).
-export function ensureGameLoaded(gameId) {
+// Start (or reuse) a load for a game; resolves to whether it is now loaded.
+// Never rejects. A failed attempt clears its slot so a later call retries -
+// so a toggle to a game whose background preload failed re-fetches on demand
+// instead of silently doing nothing.
+function _loadGame(gameId) {
     if (isGameLoaded(gameId)) return Promise.resolve(true);
     if (_pendingGameLoads[gameId]) return _pendingGameLoads[gameId];
-    return Promise.resolve(false);
+    if (!_gameLoader) return Promise.resolve(false);
+    const pr = Promise.resolve()
+        .then(() => _gameLoader(gameId))
+        .then(() => isGameLoaded(gameId))
+        .catch(() => false);
+    _pendingGameLoads[gameId] = pr;
+    // Drop a failed attempt's slot so a subsequent request can retry. (A
+    // success clears it via registerGameData.)
+    pr.then((ok) => { if (!ok && _pendingGameLoads[gameId] === pr) delete _pendingGameLoads[gameId]; });
+    return pr;
 }
 
-// Merge a background-fetched game blob into the registry. Idempotent.
+// Kick off a background load of a not-yet-active game (boot). Same machinery
+// as the on-demand ``ensureGameLoaded`` so a click during the window reuses it.
+export function preloadGame(gameId) {
+    return _loadGame(gameId);
+}
+
+// Resolve once the game's data is available - loading or retrying on demand.
+// Resolves ``false`` when it can't be loaded (no loader, or the fetch keeps
+// failing) so the caller can surface that rather than throwing on a missing
+// blob.
+export function ensureGameLoaded(gameId) {
+    return _loadGame(gameId);
+}
+
+// Merge a fetched game blob into the registry. Idempotent.
 export function registerGameData(gameId, blob) {
     if (!games) games = {};
     games[gameId] = blob;

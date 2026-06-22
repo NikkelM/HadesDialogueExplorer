@@ -3,7 +3,7 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData, resolveGame, registerGameData, setPendingGameLoad } from './data.js';
+import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame } from './data.js';
 import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
@@ -118,6 +118,10 @@ async function boot() {
             if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + file);
             return r.json();
         };
+        // Register how to (re)fetch a game's blob so both the background preload
+        // below and any on-demand retry (e.g. a toggle after a failed preload)
+        // go through the same fetch + cache-busting.
+        setGameLoader((gid) => fetchJson(_gameFile(gid)).then((blob) => registerGameData(gid, blob)));
 
         const meta = await fetchJson('data.json');
         // Decide which game to load first from the URL (shared deep links land
@@ -136,18 +140,17 @@ async function boot() {
             duplicates: meta.duplicates,
         });
 
-        // Background-load the remaining game(s) so switching is instant. Each
-        // in-flight promise is parked via ``setPendingGameLoad`` so a toggle or
-        // cross-game link that fires during the window awaits it (see
-        // ``ensureGameLoaded``). A failed background load is non-fatal - the
-        // active game stays fully usable; the affected game's view just stays
-        // unavailable until reload.
+        // Background-load the remaining game(s) so switching is instant. The
+        // in-flight promise is tracked in data.js so a toggle / cross-game link
+        // that fires during the window awaits it (see ``ensureGameLoaded``). A
+        // failed preload is non-fatal: the active game stays usable, and the
+        // load is retried on demand when the user actually switches to that game
+        // (navigation surfaces a message if the retry also fails).
         for (const gid of ids) {
             if (gid === initialGame) continue;
-            const p = fetchJson(_gameFile(gid))
-                .then((blob) => { registerGameData(gid, blob); })
-                .catch((err) => { console.warn('Background load of ' + gid + ' failed:', err); });
-            setPendingGameLoad(gid, p);
+            preloadGame(gid).then((ok) => {
+                if (!ok) console.warn('Background load of ' + gid + ' failed; will retry on demand');
+            });
         }
     } catch (err) {
         console.error('Viewer boot failed:', err);
