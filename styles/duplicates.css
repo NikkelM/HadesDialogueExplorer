@@ -71,9 +71,9 @@
     gap: 0.5rem;
     width: 100%;
     padding: 0.4rem 0.6rem;
-    border: 1px solid transparent;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    background: transparent;
+    background: var(--surface);
     color: var(--text-color);
     font-size: var(--fs-base);
     text-align: left;
@@ -81,7 +81,7 @@
 }
 
 .duplicates-speaker-item:hover {
-    background: var(--surface);
+    background: var(--border);
 }
 
 .duplicates-speaker-item.is-active {
