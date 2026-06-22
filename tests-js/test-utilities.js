@@ -101,6 +101,16 @@ test('renderSpeakerHtml: description without friendly label -> description-only 
     loadFixtureData();
 });
 
+test('renderSpeakerHtml: clickable:false -> plain span, no clickable class or navigation', () => {
+    // Search results render owner/snippet speaker names non-clickable so
+    // clicking them falls through to the row's open-dialogue handler
+    // rather than diverting to the speaker overview. The tooltip is kept.
+    assert.equal(
+        renderSpeakerHtml('NPC_Zeus_01', { clickable: false }),
+        '<span class="speaker-name" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
+    );
+});
+
 test('renderSpeakerHtml: tooltip parts are HTML-escaped', () => {
     loadData({
         ...buildFixtureData(),

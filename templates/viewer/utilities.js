@@ -98,32 +98,36 @@ export function displayName(id) {
 //   no friendly + description: "Description"          (id already visible)
 //   no friendly, no quip:      <no tooltip>           (id already visible)
 //
-// Speakers always click through to the speaker overview view. The
+// Speakers click through to the speaker overview view by default. The
 // inline ``onclick`` calls ``event.stopPropagation()`` first so a
 // click on a speaker name inside a parent click-handler container
-// (search-item row, tree row label, info-panel link) routes to the
-// speaker view rather than re-rooting the parent's textline. The
+// (tree row label, info-panel link) routes to the speaker view rather
+// than re-rooting the parent's textline. Pass ``{ clickable: false }``
+// to render the name as plain (tooltip-only) text - used in search
+// results, where every speaker name sits inside a row whose own click
+// should open the matched dialogue, not divert to the speaker. The
 // ``speaker-name`` class itself doesn't visually advertise clickability;
-// the CSS layer adds the cursor + hover styling so the dotted-
-// underline tooltip affordance and the click affordance stay in sync.
+// the CSS layer adds the cursor + hover styling (only with the
+// ``clickable`` class) so the click affordance stays in sync.
 //
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at the
 // call site - the friendly label, internal-ID tooltip, and description
 // quip are all routed through escapeHtml below.
-export function renderSpeakerHtml(id) {
+export function renderSpeakerHtml(id, { clickable = true } = {}) {
     const entry = speakers[id] || {};
     const friendly = entry.name;
     const description = entry.description;
-    const clickAttr = ` onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(id)})"`;
+    const cls = clickable ? 'speaker-name clickable' : 'speaker-name';
+    const clickAttr = clickable ? ` onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(id)})"` : '';
     if (friendly && friendly !== id) {
         const titleParts = [`${friendly} (${id})`];
         if (description) titleParts.push(description);
-        return `<span class="speaker-name clickable" data-tooltip="${escapeHtml(titleParts.join('\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
+        return `<span class="${cls}" data-tooltip="${escapeHtml(titleParts.join('\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
     }
     if (description) {
-        return `<span class="speaker-name clickable" data-tooltip="${escapeHtml(description)}"${clickAttr}>${escapeHtml(id)}</span>`;
+        return `<span class="${cls}" data-tooltip="${escapeHtml(description)}"${clickAttr}>${escapeHtml(id)}</span>`;
     }
-    return `<span class="speaker-name clickable"${clickAttr}>${escapeHtml(id)}</span>`;
+    return `<span class="${cls}"${clickAttr}>${escapeHtml(id)}</span>`;
 }
 
 export function getEdgeClass(type) {
