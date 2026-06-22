@@ -14,7 +14,7 @@ import {
     persistSaveProgress,
     restoreSaveProgress,
 } from './save-parser.js';
-import { getActiveGame, gameLabels } from './data.js';
+import { gameLabels } from './data.js';
 
 export function initSaveUpload() {
     const input = document.getElementById('save-file-input');
@@ -80,15 +80,13 @@ export function refreshSaveStatus() {
         // The save is for the other game (a vanilla H2 save carries no Hades 1
         // progress, so it doesn't apply under Hades 1).
         showStatus('mismatch', `${label} save - switch game to see progress`);
-    } else if (moddedH2 && getActiveGame() === 'hades1') {
-        // A Hades II save shown under Hades 1 via the Zagreus' Journey mod - flag
-        // the mod (it's what makes the cross-game progress apply) and omit runs,
-        // which are Hades II's and don't bear on Hades 1 eligibility.
-        // Non-breaking space keeps "N dialogues" together when the pill wraps.
-        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues`);
     } else if (moddedH2) {
-        // The same modded save under its own game (Hades II): note the mod here
-        // too so the fact is visible in both views, with runs as usual.
+        // A Hades II save with the Zagreus' Journey mod, which ports Hades 1
+        // content into it so its progress applies under both games. The figures
+        // describe the whole save (they aren't re-scoped per active game), so
+        // show them identically in either view rather than silently dropping
+        // runs on a game switch. Non-breaking spaces keep each "N unit" pair
+        // together when the pill wraps.
         showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
     } else {
         showStatus('loaded', `${label}: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
