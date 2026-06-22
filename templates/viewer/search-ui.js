@@ -73,6 +73,7 @@ export function initSearch() {
     const crossTextList = document.getElementById('search-cross-text-list');
     const crossSpeakersHeader = document.getElementById('search-cross-speakers-header');
     const crossSpeakersList = document.getElementById('search-cross-speakers-list');
+    const noMatchesEl = document.getElementById('search-no-matches');
 
     // Sequence counter used to discard stale debounced text-search
     // results when the user has already moved on to a newer query.
@@ -155,6 +156,7 @@ export function initSearch() {
         crossNamesHeader.hidden = true;
         crossTextHeader.hidden = true;
         crossSpeakersHeader.hidden = true;
+        if (noMatchesEl) noMatchesEl.hidden = true;
         clearActive();
         searchInput.setAttribute('aria-expanded', 'false');
     }
@@ -163,7 +165,13 @@ export function initSearch() {
     // single populated section the dropdown is unambiguous. ARIA
     // ``aria-expanded`` on the input mirrors the dropdown's visibility
     // so screen readers know when the listbox is open.
-    function refreshHeadersAndVisibility() {
+    //
+    // ``settled`` is true once every search for the current query has run
+    // (the synchronous sections plus, where applicable, the debounced text
+    // scan). Only then do we show the "No matches found" message for a
+    // non-empty query that produced nothing - showing it while the debounced
+    // text search is still pending would flash it away when results arrive.
+    function refreshHeadersAndVisibility(settled = false) {
         const hasSpeakers = speakersList.children.length > 0;
         const hasNames = namesList.children.length > 0;
         const hasText = textList.children.length > 0;
@@ -183,7 +191,12 @@ export function initSearch() {
         crossSpeakersHeader.hidden = !hasCrossSpeakers;
         crossNamesHeader.hidden = !hasCrossNames;
         crossTextHeader.hidden = !hasCrossText;
-        const visible = populatedSections > 0;
+        // ``onInput`` early-returns (hides) on an empty query, so any call that
+        // reaches here is for a non-empty query: zero populated sections once
+        // settled means the query genuinely matched nothing.
+        const showNoMatches = settled && populatedSections === 0;
+        if (noMatchesEl) noMatchesEl.hidden = !showNoMatches;
+        const visible = populatedSections > 0 || showNoMatches;
         searchResults.classList.toggle('visible', visible);
         searchInput.setAttribute('aria-expanded', visible ? 'true' : 'false');
         reapplyActive();
@@ -351,7 +364,9 @@ export function initSearch() {
         if (query.positive.length === 0 && query.phrases.length === 0) {
             clearTextSection();
             clearCrossTextSection();
-            refreshHeadersAndVisibility();
+            // No text signal -> the debounced text scan won't run, so this is
+            // the final state for this query.
+            refreshHeadersAndVisibility(true);
             return;
         }
         let signalLen = 0;
@@ -360,15 +375,17 @@ export function initSearch() {
         if (signalLen < 3) {
             clearTextSection();
             clearCrossTextSection();
-            refreshHeadersAndVisibility();
+            // Signal too short to run the text scan -> final state.
+            refreshHeadersAndVisibility(true);
             return;
         }
         // Keep the previous text matches visible while the new
         // query computes - that's the whole point of the split-
         // section layout. ``refreshHeadersAndVisibility`` runs now
         // so the name update is visible even if the user pauses
-        // before the debounce fires.
-        refreshHeadersAndVisibility();
+        // before the debounce fires. Not ``settled``: the text scan is
+        // still pending, so don't show "no matches" yet.
+        refreshHeadersAndVisibility(false);
         const nameMatchNames = new Set(nameMatches.map(m => m.name));
         textSearchTimer = setTimeout(() => {
             if (seq !== searchSeq) return;
@@ -379,7 +396,8 @@ export function initSearch() {
             // Exclude names already shown in the cross-game NAME section.
             const crossText = searchCrossGameText(query, crossNameNames, CROSS_LIMIT);
             renderCrossTextSection(crossText);
-            refreshHeadersAndVisibility();
+            // All searches for this query have now run -> settled.
+            refreshHeadersAndVisibility(true);
         }, 120);
     }
 

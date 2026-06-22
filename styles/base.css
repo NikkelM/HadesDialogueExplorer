@@ -105,6 +105,12 @@ header h1 {
     font-size: var(--fs-base);
     border-bottom: 1px solid #0f346040;
 }
+.search-no-matches {
+    padding: 10px 12px;
+    font-size: var(--fs-base);
+    color: var(--text-muted);
+    font-style: italic;
+}
 .search-item:hover,
 .search-item.is-active { background: var(--border); }
 /* Suppress the pure-CSS :hover highlight while the user is driving
