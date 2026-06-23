@@ -223,7 +223,7 @@ export function orBranchVerdict(branch, context, name) {
         return 'unobtainable';
     }
     const textlineSt = requirementSetStatus(branch && branch.requirements, branch && branch.otherRequirements, ctx, name);
-    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs).status;
+    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
     return 'met';

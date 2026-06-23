@@ -525,10 +525,11 @@ export function clearSaveProgress() {
 const SAVE_STORAGE_KEY = 'hde.save';
 // v2 added the run-scoped records (thisRun / thisRoom / queued); v3 added the
 // persisted GameState slice (for resolving non-textline requirements); v4 added
-// the per-run slice (for resolving SumPrevRuns requirements). An older cache
+// the per-run slice (for resolving SumPrevRuns requirements); v5 widened the
+// GameState slice to include QuestStatus (for RequireQuestCount). An older cache
 // lacks these, so the bump forces a re-parse rather than silently leaving them
 // unavailable.
-const SAVE_STORAGE_SCHEMA = 4;
+const SAVE_STORAGE_SCHEMA = 5;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

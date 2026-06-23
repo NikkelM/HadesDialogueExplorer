@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 4, gameId: getActiveGame(), runs: 1, played: [],
+        v: 5, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -369,14 +369,14 @@ function fixtureWithOtherRequirements() {
 test('otherRequirements: with a matching save, gates show met/indeterminate eligibility dots', () => {
     loadData(fixtureWithOtherRequirements());
     _saveStore.set('hde.save', JSON.stringify({
-        v: 4, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+        v: 5, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
     }));
     restoreSaveProgress();
     renderInfo('OrpheusOtherReqDemo');
     // PathTrue:GameState.ReachedTrueEnding -> true in the slice -> satisfied (green dot).
     assert.match(
         lastHtml,
-        /<span class="group-status group-status-met"[^>]*><\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/,
+        /<span class="group-status group-status-met"[^>]*><\/span> <span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/,
     );
     // PathFalse:CurrentRun.Cleared reads live run state -> indeterminate, with a reason.
     assert.match(lastHtml, /class="group-status group-status-unknown" data-tooltip="[^"]*CurrentRun/);
@@ -394,7 +394,7 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
     // lives in the synthetic key so repeating it adds no info.
     assert.match(
         lastHtml,
-        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}"><span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}"><span class="other-req-text"><span class="req-type-name" data-tooltip="Internal name: PathTrue\n\nTruthy-path check tooltip blurb\.">Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/span><\/div>/
     );
     // ``PathFalse`` has a label but no tooltip entry: pill renders the
     // friendly text + header-only tooltip (internal name).
@@ -402,11 +402,11 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
         lastHtml,
         /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
     );
-    // ``FunctionName:RequiredAlive`` -> ``RequiredAlive(Ids=[42]) = true``
-    // (equals separator on the trailing literal).
+    // ``FunctionName:RequiredAlive`` -> ``Function call to `RequiredAlive(Ids=[42])`
+    // must evaluate to `true```.
     assert.match(
         lastHtml,
-        /<span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[42\]<\/code>\) = <code>true<\/code>/
+        /Function call to <code class="other-req-func">RequiredAlive\(Ids=\[42\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
     );
     // Bare key ``NamedRequirementsFalse`` (no registry entry for the
     // fixture name ``NoBossActive``) -> friendly pill, value rendered
@@ -432,7 +432,7 @@ test('otherRequirements: unknown prefixes fall back to the raw escaped key', () 
     // on hover even without a friendly summary.
     assert.match(
         lastHtml,
-        /<div class="other-req-item" data-tooltip="UnknownPrefix = &quot;leave-me-raw&quot;">UnknownPrefix:Foo\.Bar = leave-me-raw<\/div>/
+        /<div class="other-req-item" data-tooltip="UnknownPrefix = &quot;leave-me-raw&quot;"><span class="other-req-text">UnknownPrefix:Foo\.Bar = leave-me-raw<\/span><\/div>/
     );
     // The unknown key must NOT be wrapped in a req-type pill.
     assert.doesNotMatch(lastHtml, /<span class="req-type-name"[^>]*>UnknownPrefix<\/span>/);
@@ -522,7 +522,7 @@ test('otherRequirements: Path:<head> + Comparison records render as "head op val
     // The user's exact requested format: ``GameState.ClearedUnderworldRunsCache > 2``.
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.ClearedUnderworldRunsCache<\/code> &gt; <code>2<\/code><\/span><\/div>/
     );
 });
 
@@ -533,12 +533,12 @@ test('otherRequirements: Path:<head> + membership records render with a verbal o
     // IsAny -> "is one of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/span><\/div>/
     );
     // HasAny -> "contains any of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/span><\/div>/
     );
 });
 
@@ -776,28 +776,28 @@ function fixtureWithFunctionRecords() {
 }
 
 
-test('otherRequirements: FunctionName records render as "funcName(args) = true"', () => {
+test('otherRequirements: FunctionName records render as a "Function call to ... must evaluate to true" line', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
     // Single-arg function.
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-func">RequiredAlive<\/span>\(Ids=<code>\[558096\]<\/code>\) = <code>true<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">RequiredAlive\(Ids=\[558096\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
     );
     // Two-arg function with mixed scalar types.
     assert.match(
         lastHtml,
-        /<span class="other-req-func">RequiredHealthFraction<\/span>\(Comparison=<code>&lt;=<\/code>, Value=<code>0\.49<\/code>\) = <code>true<\/code>/
+        /Function call to <code class="other-req-func">RequiredHealthFraction\(Comparison=&lt;=, Value=0\.49\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
     );
 });
 
 
-test('otherRequirements: FunctionName records with no args render as "func() = true"', () => {
+test('otherRequirements: FunctionName records with no args render as "Function call to func() ..."', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-func">IsBossDifficultyShrineUpgradeActive<\/span>\(\) = <code>true<\/code><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">IsBossDifficultyShrineUpgradeActive\(\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
     );
 });
 
@@ -807,7 +807,7 @@ test('otherRequirements: multiple FunctionName records under one key are AND-joi
     renderInfo('FunctionRecordDemo');
     assert.match(
         lastHtml,
-        /<span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[1\]<\/code>\) = <code>true<\/code> <span class="other-req-and">AND<\/span> <span class="other-req-func">RequiredAliveMulti<\/span>\(Ids=<code>\[2\]<\/code>\) = <code>true<\/code>/
+        /Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[1\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code> <span class="other-req-and">AND<\/span> Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[2\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
     );
 });
 
@@ -1153,7 +1153,7 @@ test('PathTrue row drops the redundant value suffix and carries a Lua tooltip', 
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(
         lastHtml,
-        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/div>/
+        /<div class="other-req-item" data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;ReachedTrueEnding&quot; \}">[^<]*<span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code><\/span><\/div>/
     );
 });
 
@@ -1163,7 +1163,7 @@ test('PathFalse row drops the redundant value suffix and carries a Lua tooltip',
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(
         lastHtml,
-        /data-tooltip="PathFalse: \{ &quot;CurrentRun&quot;, &quot;Cleared&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
+        /data-tooltip="PathFalse: \{ &quot;CurrentRun&quot;, &quot;Cleared&quot; \}">[^<]*<span class="other-req-text"><span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
     );
 });
 
@@ -1187,7 +1187,7 @@ test('multiple PathTrue records under one key render as friendly key joined by A
     // stay visually distinct.
     assert.match(
         lastHtml,
-        /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
+        /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
     );
 });
 
@@ -1199,7 +1199,7 @@ test('PathFalse record carrying a HintId renders friendly (no raw fallback)', ()
     // no visible suffix (it remains in the row's hover tooltip only).
     assert.match(
         lastHtml,
-        /<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Hero\.IsDead<\/code><\/div>/
+        /<span class="req-type-name"[^>]*>Must be false<\/span>: <code class="other-req-path">CurrentRun\.Hero\.IsDead<\/code><\/span><\/div>/
     );
     assert.doesNotMatch(lastHtml, /PathFalse:CurrentRun\.Hero\.IsDead = /);
 });

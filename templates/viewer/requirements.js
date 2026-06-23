@@ -521,9 +521,10 @@ export function directSatisfaction(textlineData, context, name) {
     const ctx = _asContext(context);
     const gs = ctx.gameState;
     const runs = ctx.runs;
+    const runsAgo = ctx.runsAgo;
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs).status);
+        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -533,7 +534,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, runs).status);
+                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

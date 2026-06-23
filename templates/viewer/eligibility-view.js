@@ -567,7 +567,7 @@ export function renderOtherConditionsHtml(rootName) {
     const byKey = new Map();
     let verdict = null;
     if (haveSave) {
-        const res = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs);
+        const res = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
         verdict = res.status;
         for (const c of res.clauses) byKey.set(c.key, c);
     }
@@ -597,7 +597,7 @@ export function renderOtherConditionsHtml(rootName) {
             : renderOtherReqEntryHtml(key, other[key]);
         const tooltip = renderOtherReqTooltip(key, other[key]);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        html += `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}${body}</div>`;
+        html += `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
     }
     html += `</div></div>`;
     return html;
@@ -936,7 +936,7 @@ function renderConditionsHtml(otherRequirements) {
     const other = otherRequirements || {};
     const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
     if (gateKeys.length === 0) return '';
-    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs);
+    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
     const byKey = new Map(clauses.map(c => [c.key, c]));
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {

@@ -113,6 +113,65 @@ function evalSumPrevRuns(rec, root) {
     return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
 }
 
+// Resolve a ``RequireRunsSinceTextLines`` / list operand to an array of textline
+// names: a literal array, a ``<ref:GameData.X>`` indirection, or a single bare
+// name string. Returns null when a referenced list isn't in this build's data.
+function resolveTextLineList(v) {
+    if (Array.isArray(v)) return v;
+    if (typeof v === 'string') {
+        const m = /^<ref:(.+)>$/.exec(v);
+        if (m) { const r = gameDataRefs[m[1]]; return Array.isArray(r) ? r : null; }
+        return [v];
+    }
+    return null;
+}
+
+// Evaluate ``RequireRunsSinceTextLines`` (RequirementsLogic.lua:1095): an AND
+// over ``FunctionArgs.TextLines``; for each name, ``r`` = the fewest runs-ago it
+// was played (``root._runsAgo[name]``; 0 = current run, 1 = last completed run,
+// ...) or "never". The Min/Max window mirrors the engine's early-exit quirks:
+//   both set  -> pass iff Min <= r <= Max; never-played PASSES (no early-exit).
+//   Min only  -> pass iff r >= Min;        never-played PASSES.
+//   Max only  -> pass iff r <  Max (Max exclusive); never-played FAILS.
+function evalRunsSince(rec, root) {
+    const runsAgo = root._runsAgo;
+    if (!runsAgo) return _MET('unknown', 'Counts runs since a textline last played, which needs run history this save didn\u2019t carry.');
+    const args = rec.FunctionArgs || {};
+    const names = resolveTextLineList(args.TextLines);
+    if (!names) return _MET('unknown', 'References a GameData textline list this build doesn\u2019t include.');
+    const { Min: min, Max: max } = args;
+    for (const name of names) {
+        const r = runsAgo[name];
+        const found = r !== undefined;
+        let pass;
+        if (min != null && max != null) pass = found ? (r >= min && r <= max) : true;
+        else if (min != null) pass = found ? (r >= min) : true;
+        else if (max != null) pass = found ? (r < max) : false;
+        else pass = true;
+        if (!pass) return _MET('unmet');
+    }
+    return _MET('met');
+}
+
+// Evaluate ``RequireQuestCount`` (RequirementsLogic.lua:992): count the entries
+// in ``GameState.QuestStatus`` whose status string exactly equals
+// ``FunctionArgs.Status`` (real data uses ``"CashedOut"`` = fully-claimed), then
+// bound that count by the optional Min/Max. ``QuestStatus`` is a plain GameState
+// sub-table fully preserved in the save; an absent table counts as 0.
+function evalQuestCount(rec, root) {
+    const gs = root.GameState;
+    if (!gs) return _MET('unknown', 'No save loaded.');
+    const args = rec.FunctionArgs || {};
+    const qs = gs.QuestStatus;
+    let n = 0;
+    if (qs && typeof qs === 'object') {
+        for (const k in qs) if (qs[k] === args.Status) n++;
+    }
+    if (args.Min != null && n < args.Min) return _MET('unmet');
+    if (args.Max != null && n > args.Max) return _MET('unmet');
+    return _MET('met');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -122,7 +181,9 @@ function evalClause(rec, root) {
         return _MET('unknown', 'Unrecognised condition shape.');
     }
     if (rec.FunctionName) {
-        return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine; not resolved from the save in this pass.`);
+        if (rec.FunctionName === 'RequireRunsSinceTextLines') return evalRunsSince(rec, root);
+        if (rec.FunctionName === 'RequireQuestCount') return evalQuestCount(rec, root);
+        return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
         return _MET('unknown', 'Read from the live speaker / call context, which a save file doesn\u2019t store.');
@@ -266,7 +327,7 @@ function evalSet(otherRequirements, root, stack) {
 // reason for every 'unknown'). ``gameStateSlice`` is the persisted GameState
 // (or null when no save is loaded -> everything 'unknown'); ``runs`` is the
 // persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns.
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null) {
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
     }
@@ -276,7 +337,7 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, run
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    return evalSet(otherRequirements, { GameState: gameStateSlice, _runs: runs }, new Set());
+    return evalSet(otherRequirements, { GameState: gameStateSlice, _runs: runs, _runsAgo: runsAgo }, new Set());
 }
 
 // A nested "mask" of the exact GameState paths any clause in ``textlines``
@@ -322,7 +383,14 @@ export function collectGameStatePaths(textlines, namedReqs) {
 
     const scanRec = (rec) => {
         if (!rec || typeof rec !== 'object') return;
-        if (rec.FunctionName || rec.PathFromSource || rec.PathFromArgs) return;
+        if (rec.FunctionName) {
+            // RequireQuestCount reads the whole GameState.QuestStatus table; the
+            // other resolvable function (RequireRunsSinceTextLines) uses the
+            // run-scoped runsAgo map, not the GameState slice.
+            if (rec.FunctionName === 'RequireQuestCount') markWhole(['GameState', 'QuestStatus']);
+            return;
+        }
+        if (rec.PathFromSource || rec.PathFromArgs) return;
         if (rec.SumPrevRuns !== undefined || rec.SumPrevRooms !== undefined) return;
         const boolPath = rec.PathTrue || rec.PathFalse;
         const emptyPath = rec.PathEmpty || rec.PathNotEmpty;

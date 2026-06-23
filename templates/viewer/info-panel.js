@@ -329,9 +329,9 @@ function _renderPathRecord(head, rec) {
     return null;
 }
 
-// Format a single ``FunctionName`` record as
-// ``funcName(arg1=val1, arg2=val2): true``. Returns null if the record
-// shape is unrecognised so the caller can fall back to raw JSON.
+// Format a single ``FunctionName`` record as the prose ``Function call to
+// `funcName(arg1=val1, arg2=val2)` must evaluate to `true```. Returns null if
+// the record shape is unrecognised so the caller can fall back to raw JSON.
 function _renderFunctionRecord(fnName, rec) {
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
     if (rec.FunctionName !== fnName) return null;
@@ -339,17 +339,14 @@ function _renderFunctionRecord(fnName, rec) {
         if (k !== 'FunctionName' && k !== 'FunctionArgs') return null;
     }
     const args = rec.FunctionArgs;
-    let argsHtml = '';
+    let argsText = '';
     if (args && typeof args === 'object' && !Array.isArray(args)) {
-        const parts = [];
-        for (const [k, v] of Object.entries(args)) {
-            parts.push(`${escapeHtml(k)}=<code>${escapeHtml(_formatScalar(v))}</code>`);
-        }
-        argsHtml = parts.join(', ');
+        argsText = Object.entries(args).map(([k, v]) => `${k}=${_formatScalar(v)}`).join(', ');
     } else if (args !== undefined) {
         return null;
     }
-    return `<span class="other-req-func">${escapeHtml(fnName)}</span>(${argsHtml}) = <code>true</code>`;
+    const signature = `${fnName}(${argsText})`;
+    return `Function call to <code class="other-req-func">${escapeHtml(signature)}</code> must evaluate to <code class="other-req-func">true</code>`;
 }
 
 // Render one of the four "just the path" operator prefixes
@@ -1026,11 +1023,11 @@ function _namedReqIsEmpty(resolved) {
 //     requirement set (e.g. all gates inlined elsewhere).
 // Returns ``null`` when ``names`` is not a non-empty array so the
 // caller can fall through to the existing flat-list rendering.
-function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
+function renderNamedReqExpansionsHtml(key, names, hostTextlineName, dotHtml = '') {
     if (!Array.isArray(names) || names.length === 0) return null;
     const suffix = _NAMED_REQ_SEMANTIC_SUFFIX[key] || '';
     let html = `<div class="other-req-item named-req-item">`
-             + `<div class="named-req-label">${renderOtherReqKeyHtml(key)}:</div>`
+             + `<div class="named-req-label">${dotHtml}${renderOtherReqKeyHtml(key)}:</div>`
              + `<div class="named-req-list">`;
     for (const name of names) {
         const resolved = namedRequirements ? namedRequirements[name] : null;
@@ -1172,7 +1169,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     let overallVerdict = null;
     let gateByKey = null;
     if (showDots) {
-        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState, getSaveContext().runs);
+        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
         overallVerdict = res.status;
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
     }
@@ -1220,15 +1217,15 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         // rendering below if the helper returns null (empty /
         // non-array value).
         if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
-            const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
+            const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName, dotFor(key));
             if (expandedHtml !== null) {
-                otherHtml += dotFor(key) + expandedHtml;
+                otherHtml += expandedHtml;
                 continue;
             }
         }
         const tooltip = renderOtherReqTooltip(key, val);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}${renderOtherReqEntryHtml(key, val)}</div>`;
+        otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}<span class="other-req-text">${renderOtherReqEntryHtml(key, val)}</span></div>`;
     }
 
     if (!otherHtml) return '';

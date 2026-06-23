@@ -265,3 +265,64 @@ test('collectRunPaths: run-relative mask + max look-back depth', () => {
         RoomsEntered: { Q_Boss01: true, Q_Boss02: true },
     });
 });
+
+// --- FunctionName gates: RequireRunsSinceTextLines + RequireQuestCount ---
+
+// Evaluate a FunctionName clause. ``gs`` is the GameState slice (must be
+// truthy for the evaluator to run), ``runsAgo`` the textline -> runs-ago map.
+const evalFn = (rec, gs, runsAgo) => evaluateOtherRequirements(clause(rec), gs || {}, null, runsAgo).status;
+
+test('RequireRunsSinceTextLines Min only: played recently enough, never-played passes', () => {
+    const rec = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Min: 3, TextLines: ['L1'] } };
+    assert.equal(evalFn(rec, {}, { L1: 3 }), 'met');   // r=3 >= 3
+    assert.equal(evalFn(rec, {}, { L1: 4 }), 'met');   // r=4 >= 3
+    assert.equal(evalFn(rec, {}, { L1: 2 }), 'unmet'); // r=2 < 3
+    assert.equal(evalFn(rec, {}, {}), 'met');          // never played -> pass (Min only)
+});
+
+test('RequireRunsSinceTextLines Max only: Max is exclusive, never-played fails', () => {
+    const rec = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Max: 3, TextLines: ['L1'] } };
+    assert.equal(evalFn(rec, {}, { L1: 0 }), 'met');   // r<3
+    assert.equal(evalFn(rec, {}, { L1: 2 }), 'met');   // r=2 < 3
+    assert.equal(evalFn(rec, {}, { L1: 3 }), 'unmet'); // r=3 not < 3 (Max exclusive)
+    assert.equal(evalFn(rec, {}, {}), 'unmet');        // never played -> fail (Max only)
+});
+
+test('RequireRunsSinceTextLines both bounds: inclusive window, never-played passes', () => {
+    const rec = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Min: 2, Max: 4, TextLines: ['L1'] } };
+    assert.equal(evalFn(rec, {}, { L1: 2 }), 'met');   // Min<=r<=Max
+    assert.equal(evalFn(rec, {}, { L1: 4 }), 'met');   // Max inclusive
+    assert.equal(evalFn(rec, {}, { L1: 1 }), 'unmet'); // below Min
+    assert.equal(evalFn(rec, {}, { L1: 5 }), 'unmet'); // above Max
+    assert.equal(evalFn(rec, {}, {}), 'met');          // never played -> pass (both set)
+});
+
+test('RequireRunsSinceTextLines: AND across names, ref + unknown ref', () => {
+    // Trio = ['A','B','C'] (loaded in before()); all must satisfy Min.
+    const rec = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Min: 1, TextLines: '<ref:GameData.Trio>' } };
+    assert.equal(evalFn(rec, {}, { A: 1, B: 2, C: 5 }), 'met');
+    assert.equal(evalFn(rec, {}, { A: 1, B: 0, C: 5 }), 'unmet'); // B too recent
+    const missing = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Min: 1, TextLines: '<ref:GameData.Nope>' } };
+    assert.equal(evalFn(missing, {}, { A: 1 }), 'unknown');       // list not in build
+    assert.equal(evalFn(rec, {}, null), 'unknown');               // no run history
+});
+
+test('RequireQuestCount: counts GameState.QuestStatus entries matching Status', () => {
+    const qs = { Q1: 'CashedOut', Q2: 'CashedOut', Q3: 'Complete', Q4: 'Unlocked' };
+    const max = { FunctionName: 'RequireQuestCount', FunctionArgs: { Status: 'CashedOut', Max: 6 } };
+    assert.equal(evalFn(max, { QuestStatus: qs }), 'met');   // 2 cashed out <= 6
+    const min3 = { FunctionName: 'RequireQuestCount', FunctionArgs: { Status: 'CashedOut', Min: 3 } };
+    assert.equal(evalFn(min3, { QuestStatus: qs }), 'unmet'); // only 2 cashed out
+    const min2 = { FunctionName: 'RequireQuestCount', FunctionArgs: { Status: 'CashedOut', Min: 2 } };
+    assert.equal(evalFn(min2, { QuestStatus: qs }), 'met');
+    assert.equal(evalFn(min2, { QuestStatus: {} }), 'unmet'); // none -> 0 < 2
+    assert.equal(evalFn(min2, {}), 'unmet');                  // absent table -> 0
+});
+
+test('collectGameStatePaths captures QuestStatus for RequireQuestCount', () => {
+    const textlines = {
+        T1: { otherRequirements: { 'FunctionName:RequireQuestCount': [{ FunctionName: 'RequireQuestCount', FunctionArgs: { Status: 'CashedOut', Min: 1 } }] } },
+    };
+    const mask = collectGameStatePaths(textlines, {});
+    assert.deepEqual(mask, { QuestStatus: '*' });
+});

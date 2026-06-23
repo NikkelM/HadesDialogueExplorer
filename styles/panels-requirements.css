@@ -176,6 +176,25 @@
     margin-right: 2px;
     cursor: help;
 }
+/* With a dot as a DIRECT child (a resolved gate row, save loaded), lay the row
+   out as [dot | text] so the text wraps as its own block - wrapped lines align
+   under the text start, not under the dot. Direct-child ``> `` matters: a bare
+   ``:has(.group-status)`` would also match container rows (e.g. the named-
+   requirements expansion) that merely nest dotted gate rows deep inside, wrongly
+   flexing their label/list. The text column may shrink (``min-width: 0``) so long
+   words wrap instead of overflow. */
+.other-req-item:has(> .group-status) {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+.other-req-item:has(> .group-status) > .group-status {
+    flex-shrink: 0;
+    margin-right: 0;
+}
+.other-req-item .other-req-text {
+    min-width: 0;
+}
 /* Path tail inside a resolved Path:<head> entry (e.g.
    ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
    nudged slightly to read as a quoted identifier. */
@@ -199,9 +218,10 @@
     color: #8b949e;
     font-style: italic;
 }
-/* Function name inside a rendered FunctionName:<name> entry (e.g.
-   ``RequiredAlive(Ids=[42]) = true``). Subtle tint to separate the
-   identifier from the surrounding argument list. */
+/* The function-call signature inside a rendered FunctionName:<name> entry
+   (e.g. the ``RequiredAlive(Ids=[42])`` code span in "Function call to
+   `RequiredAlive(Ids=[42])` must evaluate to `true`"). Subtle tint + weight to
+   separate the call from the surrounding prose. */
 .other-req-item .other-req-func {
     color: #c9d1d9;
     font-weight: 600;
