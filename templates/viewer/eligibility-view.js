@@ -358,7 +358,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
     } else if (indeterminate) {
         html += `<div class="eligibility-status eligibility-indeterminate">? Indeterminate</div>`;
-        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined from this save: this dialogue gates on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active). Its resolvable prerequisites are satisfied.${rankInline}</div>`;
+        html += `<div class="eligibility-detail">Eligibility can\u2019t be determined: this dialogue is gated by requirements the save doesn\u2019t include (such as queued textlines). Its resolvable prerequisites are satisfied.${rankInline}</div>`;
         html += chainNote;
     } else if (total === 0) {
         // Blocked, but gated entirely by alternative branches (no flat chain).

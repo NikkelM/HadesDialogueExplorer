@@ -151,6 +151,47 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
     return false;
 }
 
+// Whether a single requirement *group* (one reqType plus its refs) is
+// permanently unsatisfiable because the refs themselves can never be
+// obtained - the transitive sibling of ``reqGroupLocked`` (which covers
+// only the *direct* permanent-lock cases). An AND group whose required line
+// is itself unobtainable, an OR group whose every option is unobtainable, or
+// a count-min group with too few still-obtainable options, can never be
+// satisfied as the played set grows. Returns ``false`` for field types where
+// transitive obtainability doesn't apply (negatives, count-max, run-count -
+// those are handled by ``reqGroupLocked``). ``count`` is the group's
+// threshold; ``selfName`` ignores the host's self-references.
+export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1, selfName = null) {
+    if (!playedSet || !textlines) return false;
+    refreshUnobtainableCaches(playedSet, runsAgo);
+    const others = (Array.isArray(refs) ? refs : [])
+        .filter(r => typeof r === 'string' && r !== selfName);
+    const stack = new Set();
+    if (AND_REQ_TYPES.has(reqType)) {
+        return others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack));
+    }
+    if (OR_REQ_TYPES.has(reqType)) {
+        return others.length > 0
+            && others.every(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack));
+    }
+    if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+        const obtainable = others.filter(
+            r => playedSet.has(r) || !unobtainableRec(r, playedSet, stack)).length;
+        return obtainable < (count || 1);
+    }
+    return false;
+}
+
+// Whether a whole requirement *set* (a textline or one ``orBranches``
+// alternative - both carry ``requirements`` + ``otherRequirements``) is
+// permanently unobtainable. Exposed wrapper over the internal recursive
+// check so the dependency tree can mark an OR branch unobtainable.
+export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsAgo = null) {
+    if (!playedSet || !textlines) return false;
+    refreshUnobtainableCaches(playedSet, runsAgo);
+    return requirementSetUnobtainable(reqHost, hostName, playedSet, new Set());
+}
+
 // Collect the *specific* locks that make ``rootName`` unobtainable, for the
 // tracer to explain why. Returns a de-duplicated list of:
 //   { kind: 'negative', blocker, host }                - a must-not-have-played

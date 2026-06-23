@@ -11,6 +11,7 @@ import {
     reqTypeTitleText,
 } from './utilities.js';
 import { reqGroupStatus, reqGroupLocked, requirementSetStatus, runsSinceGroupTooltip } from './requirements.js';
+import { isGroupUnobtainable, isRequirementSetUnobtainable } from './unobtainable.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.js';
 
@@ -21,6 +22,19 @@ import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.
 // meaningless for downstream dependents).
 function activeSaveContext() {
     return (getSaveProgress() && saveMatchesActiveGame()) ? getSaveContext() : null;
+}
+
+// Whether a requirement set (one ``orBranches`` alternative) carries a
+// non-dialogue gate the tool can't evaluate from a save - a Path /
+// FunctionName / GameState check or any other ``otherRequirements`` entry
+// that isn't merely the count threshold for a textline requirement (those
+// share their key with the requirement, e.g. ``RequiredMinAnyTextLines``).
+// Used to downgrade an otherwise-"met" branch to indeterminate, since its
+// real eligibility hinges on a condition outside the played record.
+function branchHasUnevaluableGates(branch) {
+    const req = (branch && branch.requirements) || {};
+    const other = (branch && branch.otherRequirements) || {};
+    return Object.keys(other).some(k => !(k in req));
 }
 
 // Build the satisfaction verdict dot for a group header. ``status`` is
@@ -41,7 +55,7 @@ function makeGroupStatusBadge(status, detail = null) {
         || (status === 'met' ? 'Satisfied by the loaded save: every line this group needs has played (or, for a "must not have played" gate, none have).'
             : status === 'unmet' ? 'Not satisfied by the loaded save: this group\u2019s condition is not met yet.'
                 : status === 'unobtainable' ? 'Permanently locked: this group can never be satisfied again in this save (a play-once line is past its run-count window, a one-time line has already played, or a count cap is exceeded).'
-                    : 'Can\u2019t be determined from this save: this requirement depends on a run-scoped record the save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active).');
+                    : 'Can\u2019t be determined: this dialogue is gated by requirements the save doesn\u2019t include (such as queued textlines).');
     return badge;
 }
 
@@ -237,10 +251,15 @@ function appendByReqTypeGroups(container, kids, direction, ancestorPath, parentN
                 const cnt = groupCount == null ? 1 : groupCount;
                 status = reqGroupStatus(edgeType, names, ctx, cnt, parentName);
                 // A permanently-locked group (a play-once run-count ref past
-                // its window, a one-time negative line that has played, or an
-                // overflowed count cap) can never be satisfied again, so show
-                // the unobtainable verdict instead of a plain grey "unmet".
-                if (reqGroupLocked(edgeType, names, ctx, cnt, parentName)) status = 'unobtainable';
+                // its window, a one-time negative line that has played, an
+                // overflowed count cap, or - transitively - a required line
+                // that is itself unobtainable) can never be satisfied again,
+                // so show the unobtainable verdict instead of a plain grey
+                // "unmet".
+                if (reqGroupLocked(edgeType, names, ctx, cnt, parentName)
+                    || isGroupUnobtainable(edgeType, names, ctx.played, ctx.runsAgo, cnt, parentName)) {
+                    status = 'unobtainable';
+                }
                 // Run-count groups get a richer tooltip spelling out each
                 // line's runs-ago distance and why the group is met/unmet
                 // (null for every other field type).
@@ -275,27 +294,40 @@ function appendOrAlternatives(container, orKids, direction, ancestorPath, parent
     const total = parentOrBranches.length || (orKids[0] && orKids[0].orBranchTotal) || 0;
     if (total === 0) return;
     // Verdicts for the OR group + each branch against the loaded save. A
-    // branch reuses ``requirementSetStatus`` (met / unmet / unknown - the
-    // last when it carries a save-unverifiable field). The OR group is met
-    // when any branch is met, unmet only when every branch is unmet, and
-    // unknown otherwise (a branch we can't confirm, none met).
+    // branch is 'unobtainable' when its requirement set is permanently
+    // locked (e.g. it requires a line that can never play), 'unknown' when
+    // it is gated only on non-dialogue conditions the tool can't evaluate
+    // (Path / FunctionName / GameState checks), otherwise the met / unmet /
+    // unknown verdict from ``requirementSetStatus``. The OR group is met
+    // when any branch is met, unobtainable when every branch is
+    // unobtainable, unmet only when every branch is unmet, and unknown
+    // otherwise (a branch we can't confirm, none met).
     const ctx = activeSaveContext();
     const branchStatusOf = (bi) => {
         const b = parentOrBranches[bi - 1];
-        return (ctx && b)
-            ? requirementSetStatus(b.requirements, b.otherRequirements, ctx, parentName)
-            : null;
+        if (!ctx || !b) return null;
+        if (isRequirementSetUnobtainable(b, parentName, ctx.played, ctx.runsAgo)) return 'unobtainable';
+        const st = requirementSetStatus(b.requirements, b.otherRequirements, ctx, parentName);
+        // A branch whose textline gates all pass but that also carries
+        // non-dialogue gates can't actually be confirmed satisfied - the
+        // honest verdict is indeterminate, not "met".
+        if (st === 'met' && branchHasUnevaluableGates(b)) return 'unknown';
+        return st;
     };
     let groupStatus = null;
     if (ctx && parentOrBranches.length > 0) {
         let anyMet = false;
         let anyUnknown = false;
+        let allUnobtainable = true;
         for (let bi = 1; bi <= total; bi++) {
             const st = branchStatusOf(bi);
             if (st === 'met') { anyMet = true; break; }
-            if (st !== 'unmet') anyUnknown = true;
+            if (st !== 'unobtainable') allUnobtainable = false;
+            if (st !== 'unmet' && st !== 'unobtainable') anyUnknown = true;
         }
-        groupStatus = anyMet ? 'met' : (anyUnknown ? 'unknown' : 'unmet');
+        groupStatus = anyMet ? 'met'
+            : allUnobtainable ? 'unobtainable'
+                : anyUnknown ? 'unknown' : 'unmet';
     }
     const groupBox = createOrGroupBox(total, groupStatus);
     const groupChildren = groupBox.querySelector('.or-group-children');

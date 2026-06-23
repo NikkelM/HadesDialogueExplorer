@@ -11,7 +11,7 @@ import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
 import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml, renderOtherConditionsHtml } from '../templates/viewer/eligibility-view.js';
-import { isUnobtainable, unobtainableReasons } from '../templates/viewer/unobtainable.js';
+import { isUnobtainable, unobtainableReasons, isGroupUnobtainable, isRequirementSetUnobtainable } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
     return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
@@ -310,6 +310,13 @@ describe('isUnobtainable', () => {
                     { otherRequirements: { RequiredMaxAnyTextLines: { Count: 1 } } },
                 ),
                 M1: tl({}), M2: tl({}), M3: tl({}),
+                // Transitive-group fixtures: ``Locked`` is unobtainable (a
+                // negative gate on a played line), so an AND group requiring
+                // it, an OR group whose only option is it, and a count-min
+                // group needing more than its still-obtainable options, are
+                // all permanently unsatisfiable.
+                Locked: tl({ RequiredFalseTextLines: ['Blocker'] }),
+                Blocker: tl({}),
             },
             speakers: { NPC_Test_01: { name: 'Tester' } },
         });
@@ -410,6 +417,51 @@ describe('isUnobtainable', () => {
         assert.deepEqual(
             unobtainableReasons('MaxAnyGate', new Set(['M1', 'M2'])),
             [{ kind: 'maxany', blockers: ['M1', 'M2'], count: 1 }],
+        );
+    });
+
+    // --- transitive group / set unobtainability (dependency-tree dots) ---
+
+    test('isGroupUnobtainable: an AND group requiring an unobtainable line is locked', () => {
+        const played = new Set(['Blocker']); // makes ``Locked`` unobtainable
+        assert.equal(isGroupUnobtainable('RequiredTextLines', ['Locked'], played, null, 1), true);
+        // A normally-unplayed (still obtainable) ref is not a permanent lock.
+        assert.equal(isGroupUnobtainable('RequiredTextLines', ['NeverPlayed'], played, null, 1), false);
+        // An already-played ref satisfies the AND, so not unobtainable.
+        assert.equal(isGroupUnobtainable('RequiredTextLines', ['Blocker'], played, null, 1), false);
+    });
+
+    test('isGroupUnobtainable: an OR group is locked only when every option is unobtainable', () => {
+        const played = new Set(['Blocker']);
+        assert.equal(isGroupUnobtainable('RequiredAnyTextLines', ['Locked'], played, null, 1), true);
+        // One still-obtainable option keeps the OR group satisfiable.
+        assert.equal(isGroupUnobtainable('RequiredAnyTextLines', ['Locked', 'NeverPlayed'], played, null, 1), false);
+    });
+
+    test('isGroupUnobtainable: a count-min group is locked when too few options remain obtainable', () => {
+        const played = new Set(['Blocker']);
+        // Need 2 of {Locked, NeverPlayed}: only 1 is still obtainable -> locked.
+        assert.equal(isGroupUnobtainable('RequiredMinAnyTextLines', ['Locked', 'NeverPlayed'], played, null, 2), true);
+        // Need 1 of the same: still satisfiable -> not locked.
+        assert.equal(isGroupUnobtainable('RequiredMinAnyTextLines', ['Locked', 'NeverPlayed'], played, null, 1), false);
+    });
+
+    test('isGroupUnobtainable: negative / count-max fields are not transitive-locked here', () => {
+        // Those direct permanent-lock cases are handled by reqGroupLocked, not this helper.
+        assert.equal(isGroupUnobtainable('RequiredFalseTextLines', ['Blocker'], new Set(['Blocker']), null, 1), false);
+    });
+
+    test('isRequirementSetUnobtainable: a branch requiring an unobtainable line is locked', () => {
+        const played = new Set(['Blocker']);
+        assert.equal(
+            isRequirementSetUnobtainable({ requirements: { RequiredTextLines: ['Locked'] } }, null, played, null),
+            true,
+        );
+        // A branch gated only on non-dialogue otherRequirements is not a
+        // permanent lock (it's indeterminate, not unobtainable).
+        assert.equal(
+            isRequirementSetUnobtainable({ otherRequirements: { 'PathTrue:GameState.X': [{}] } }, null, played, null),
+            false,
         );
     });
 });
