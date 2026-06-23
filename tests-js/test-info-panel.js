@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 2, gameId: getActiveGame(), runs: 1, played: [],
+        v: 3, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -365,6 +365,23 @@ function fixtureWithOtherRequirements() {
     return data;
 }
 
+
+test('otherRequirements: with a matching save, gates show met/indeterminate eligibility dots', () => {
+    loadData(fixtureWithOtherRequirements());
+    _saveStore.set('hde.save', JSON.stringify({
+        v: 3, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+    }));
+    restoreSaveProgress();
+    renderInfo('OrpheusOtherReqDemo');
+    // PathTrue:GameState.ReachedTrueEnding -> true in the slice -> satisfied (green dot).
+    assert.match(
+        lastHtml,
+        /<span class="group-status group-status-met"[^>]*><\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/,
+    );
+    // PathFalse:CurrentRun.Cleared reads live run state -> indeterminate, with a reason.
+    assert.match(lastHtml, /class="group-status group-status-unknown" data-tooltip="[^"]*CurrentRun/);
+    clearSaveProgress();
+});
 
 test('otherRequirements: known operator prefixes render as friendly pills with tooltips', () => {
     loadData(fixtureWithOtherRequirements());

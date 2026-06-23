@@ -9,7 +9,8 @@
  * Format documentation derived from TheNormalnij/Hades-SavesExtractor (MIT).
  */
 
-import { getActiveGame } from './data.js';
+import { getActiveGame, games } from './data.js';
+import { collectGameStatePaths, pruneGameState } from './gamestate-eval.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -378,7 +379,34 @@ function extractSaveContext(parsed) {
     }
   }
 
-  return { played, thisRun, thisRoom, queued, lastRun, runsAgo };
+  return { played, thisRun, thisRoom, queued, lastRun, runsAgo, gameState: extractGameStateSlice(gameId, gs) };
+}
+
+// Memoised mask of the GameState paths the H2 dialogue requirements reference
+// (see ``collectGameStatePaths``). Keyed on the H2 data object so it rebuilds
+// after a data swap. The H2 data is read from the registry directly (not the
+// active-game binding) so the slice is correct even when an H2 save is loaded
+// while Hades 1 is the active game.
+let _gsMaskCache = null;
+let _gsMaskFor = null;
+function _h2GameStateMask() {
+  const h2 = games && games.hades2;
+  if (!h2) return null;
+  if (_gsMaskFor !== h2) {
+    _gsMaskFor = h2;
+    _gsMaskCache = collectGameStatePaths(h2.textlines || {}, h2.namedRequirements || {});
+  }
+  return _gsMaskCache;
+}
+
+// Build the minimal persisted GameState slice for an H2 save - just the paths
+// the dialogue requirements actually read. Returns null for non-H2 saves (H1
+// uses a different requirement model, not yet resolved against the save).
+function extractGameStateSlice(gameId, gs) {
+  if (gameId !== 'hades2') return null;
+  const mask = _h2GameStateMask();
+  if (!mask) return null;
+  return pruneGameState(gs, mask);
 }
 
 // --- Public API ---
@@ -396,6 +424,9 @@ let _saveQueued = null;
 let _saveLastRun = null;
 // textline -> runs-ago index (0 = current run); object, or null with no save.
 let _saveRunsAgo = null;
+// Minimal persisted GameState slice for resolving non-textline (GameState)
+// requirements; null for non-H2 saves or when none is loaded.
+let _saveGameState = null;
 
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
@@ -413,6 +444,7 @@ export function getSaveContext() {
     queued: _saveQueued,
     lastRun: _saveLastRun,
     runsAgo: _saveRunsAgo,
+    gameState: _saveGameState,
   };
 }
 
@@ -425,6 +457,7 @@ export function clearSaveProgress() {
   _saveThisRoom = null;
   _saveQueued = null;
   _saveLastRun = null;
+  _saveGameState = null;
   _saveRunsAgo = null;
 }
 
@@ -443,10 +476,11 @@ export function clearSaveProgress() {
 // same-origin, survives reloads/restarts, and keeps the save fully
 // client-side (it never reaches a server).
 const SAVE_STORAGE_KEY = 'hde.save';
-// v2 added the run-scoped records (thisRun / thisRoom / queued); a v1 cache
-// lacks them, so the bump forces a re-parse rather than silently leaving the
-// scoped scopes unavailable.
-const SAVE_STORAGE_SCHEMA = 2;
+// v2 added the run-scoped records (thisRun / thisRoom / queued); v3 added the
+// persisted GameState slice (for resolving non-textline requirements). An older
+// cache lacks these, so the bump forces a re-parse rather than silently leaving
+// them unavailable.
+const SAVE_STORAGE_SCHEMA = 3;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -483,6 +517,7 @@ export function persistSaveProgress(filename) {
       queued: arr(_saveQueued),
       lastRun: arr(_saveLastRun),
       runsAgo: _saveRunsAgo || null,
+      gameState: _saveGameState || null,
     }));
     return true;
   } catch {
@@ -529,6 +564,7 @@ export function restoreSaveProgress() {
   _saveQueued = set(data.queued);
   _saveLastRun = set(data.lastRun);
   _saveRunsAgo = (data.runsAgo && typeof data.runsAgo === 'object') ? data.runsAgo : null;
+  _saveGameState = (data.gameState && typeof data.gameState === 'object') ? data.gameState : null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -552,6 +588,7 @@ export function parseSaveFile(arrayBuffer) {
   _saveQueued = ctx.queued;
   _saveLastRun = ctx.lastRun;
   _saveRunsAgo = ctx.runsAgo;
+  _saveGameState = ctx.gameState;
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   _saveHasBiomesMod = !!parsed.hasBiomesMod;

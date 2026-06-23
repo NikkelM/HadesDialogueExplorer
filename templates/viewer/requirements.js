@@ -15,6 +15,16 @@
  */
 
 import { textlines } from './data.js';
+import { evaluateOtherRequirements } from './gamestate-eval.js';
+
+// Three-state AND: unmet if either side is unmet; else unknown if either is
+// unknown; else met. Used to fold the GameState (non-textline) verdict into the
+// textline-requirement verdict.
+function _combine3(a, b) {
+    if (a === 'unmet' || b === 'unmet') return 'unmet';
+    if (a === 'unknown' || b === 'unknown') return 'unknown';
+    return 'met';
+}
 
 // Every listed line must have played.
 export const AND_REQ_TYPES = new Set([
@@ -492,24 +502,27 @@ export function requirementSetStatus(requirements, otherRequirements, context, n
  *   'met'     - directly eligible now (all requirements confirmed satisfied)
  *   'unmet'   - a resolvable requirement is not satisfied
  *   'unknown' - every resolvable requirement is satisfied, but the dialogue
- *               also gates on a run-scoped record the save doesn't carry
- *               (the H2 textline queue, or a current-run record when no run
- *               is active), so eligibility can't be confirmed
+ *               also gates on something the save can't resolve (a run-scoped
+ *               textline record the save doesn't carry, or a non-textline
+ *               GameState condition that reads live run / room / session state)
  *
- * Shallow by design: this answers "can this dialogue play right now",
- * which depends only on its immediate requirements - transitive history is
- * handled by the eligibility tracer. The dialogue's base requirement set
- * AND, if it carries H2 ``orBranches`` alternatives, the OR group (met
- * when any branch is met, unmet only when all are unmet, unknown
- * otherwise) must both hold. ``name`` is the dialogue's own name, used to
- * ignore self-references.
+ * Combines the textline-record requirements (AND / OR / negative / count, via
+ * ``requirementSetStatus``) with the non-textline GameState gates (the
+ * ``otherRequirements`` Path / aggregation / named conditions, via
+ * ``evaluateOtherRequirements`` against the save's persisted GameState slice).
+ * The base requirement set AND, if the dialogue carries H2 ``orBranches``
+ * alternatives, the OR group (met when any branch is met, unmet only when all
+ * are unmet, unknown otherwise) must both hold. ``name`` ignores
+ * self-references.
  */
 export function directSatisfaction(textlineData, context, name) {
     if (!textlineData) return 'met';
     if (!context) return 'unknown';
     const ctx = _asContext(context);
-    const base = requirementSetStatus(
-        textlineData.requirements, textlineData.otherRequirements, ctx, name);
+    const gs = ctx.gameState;
+    const base = _combine3(
+        requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
+        evaluateOtherRequirements(textlineData.otherRequirements, gs).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -517,7 +530,9 @@ export function directSatisfaction(textlineData, context, name) {
         let anyMet = false;
         let anyUnknown = false;
         for (const b of branches) {
-            const st = requirementSetStatus(b.requirements, b.otherRequirements, ctx, name);
+            const st = _combine3(
+                requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
+                evaluateOtherRequirements(b.otherRequirements, gs).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

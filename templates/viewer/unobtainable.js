@@ -28,7 +28,8 @@
  */
 
 import { textlines } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus } from './requirements.js';
+import { evaluateOtherRequirements } from './gamestate-eval.js';
 
 let _unobtainablePlayedSet = null;
 let _unobtainableTextlines = null;
@@ -182,6 +183,25 @@ export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1
     return false;
 }
 
+// Combined save verdict for one requirement group: the per-type met / unmet /
+// unknown from ``reqGroupStatus``, upgraded to 'unobtainable' when the group is
+// a permanent lock (``reqGroupLocked``) or transitively unobtainable (a
+// required line that can never play - ``isGroupUnobtainable``). The single
+// source the dependency tree and the detail panel both render as a group dot,
+// so the two surfaces can't disagree. ``context`` is a save context (or a bare
+// played Set); ``count`` is the group threshold; ``selfName`` ignores
+// self-references.
+export function requirementGroupVerdict(reqType, refs, context, count = 1, selfName = null) {
+    let st = reqGroupStatus(reqType, refs, context, count, selfName);
+    const played = (context instanceof Set) ? context : ((context && context.played) || null);
+    const runsAgo = (context && context.runsAgo) || null;
+    if (reqGroupLocked(reqType, refs, context, count, selfName)
+        || isGroupUnobtainable(reqType, refs, played, runsAgo, count, selfName)) {
+        st = 'unobtainable';
+    }
+    return st;
+}
+
 // Whether a whole requirement *set* (a textline or one ``orBranches``
 // alternative - both carry ``requirements`` + ``otherRequirements``) is
 // permanently unobtainable. Exposed wrapper over the internal recursive
@@ -190,6 +210,38 @@ export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsA
     if (!playedSet || !textlines) return false;
     refreshUnobtainableCaches(playedSet, runsAgo);
     return requirementSetUnobtainable(reqHost, hostName, playedSet, new Set());
+}
+
+// Combined save verdict for one OR-branch (an ``orBranches`` alternative):
+// 'unobtainable' when the branch can never be satisfied, else the AND of its
+// textline-requirement verdict (``requirementSetStatus``) and its non-textline
+// GameState-gate verdict (``evaluateOtherRequirements``). Shared by the
+// dependency tree and the detail panel so per-branch dots agree.
+export function orBranchVerdict(branch, context, name) {
+    const ctx = (context instanceof Set) ? { played: context } : (context || {});
+    if (ctx.played && isRequirementSetUnobtainable(branch, name, ctx.played, ctx.runsAgo)) {
+        return 'unobtainable';
+    }
+    const textlineSt = requirementSetStatus(branch && branch.requirements, branch && branch.otherRequirements, ctx, name);
+    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState).status;
+    if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
+    if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
+    return 'met';
+}
+
+// Combined verdict for a whole OR group (any-branch-satisfies): met if any
+// branch is met, unobtainable if every branch is unobtainable, unmet if every
+// branch is unmet, unknown otherwise.
+export function orGroupVerdict(branches, context, name) {
+    let anyUnknown = false;
+    let allUnobtainable = true;
+    for (const b of (Array.isArray(branches) ? branches : [])) {
+        const st = orBranchVerdict(b, context, name);
+        if (st === 'met') return 'met';
+        if (st !== 'unobtainable') allUnobtainable = false;
+        if (st !== 'unmet' && st !== 'unobtainable') anyUnknown = true;
+    }
+    return allUnobtainable ? 'unobtainable' : (anyUnknown ? 'unknown' : 'unmet');
 }
 
 // Collect the *specific* locks that make ``rootName`` unobtainable, for the

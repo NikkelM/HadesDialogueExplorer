@@ -8,6 +8,26 @@
     border-left: 3px solid #555;
     background: rgba(255, 255, 255, 0.025);
 }
+/* Save-eligibility group dot in a requirement-section header (met / unmet /
+   indeterminate / unobtainable), matching the dependency tree's group dots. */
+.req-section h4 .group-status {
+    position: relative;
+    top: 1px;
+    margin-right: 3px;
+    cursor: help;
+}
+/* Per-ref save-status dot prefixing a requirement item row. */
+.req-item .save-badge {
+    margin-right: 4px;
+    vertical-align: baseline;
+}
+/* Group dot in an OR-branch (alternates) option header. */
+.or-branch-header .group-status {
+    position: relative;
+    top: 1px;
+    margin-right: 3px;
+    cursor: help;
+}
 .req-section h4 {
     font-size: var(--fs-xs);
     margin: 0 0 6px;
@@ -145,6 +165,15 @@
    ``[data-tooltip]`` mechanism in ``tooltip.js`` / ``styles/panels-
    tooltips.css``. */
 .other-req-item[data-tooltip] {
+    cursor: help;
+}
+/* Save-eligibility dot prefixing a gate row when a matching save is loaded -
+   met (green) / unmet (grey) / indeterminate (periwinkle), with its own
+   tooltip. Nudged to sit on the text baseline. */
+.other-req-item .group-status {
+    position: relative;
+    top: 1px;
+    margin-right: 2px;
     cursor: help;
 }
 /* Path tail inside a resolved Path:<head> entry (e.g.

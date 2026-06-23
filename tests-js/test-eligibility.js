@@ -212,7 +212,7 @@ describe('renderOrBranchesHtml', () => {
                 BranchRoot: t({}, {}, [
                     { requirements: { RequiredTextLines: ['A1', 'A2'] } },
                     { requirements: { RequiredTextLines: ['B1', 'B2'] } },
-                    { requirements: {}, otherRequirements: { 'PathTrue:GameState.X': {} } },
+                    { requirements: {}, otherRequirements: { 'PathTrue:GameState.X': [{ PathTrue: ['GameState', 'X'] }] } },
                 ]),
                 // A1 has its own prerequisite so its branch node is expandable.
                 A1: t({ RequiredTextLines: ['A1dep'] }), A1dep: t({}),
@@ -235,10 +235,13 @@ describe('renderOrBranchesHtml', () => {
         for (const ref of ['A1', 'A2', 'B1', 'B2']) {
             assert.ok(html.includes(`>${ref}<`), `expected branch ref ${ref} as a tree node`);
         }
-        // The non-textline-only branch (3) has no save-trackable lines but is
-        // trivially satisfied.
-        assert.match(html, /Option 3 of 3 \u00b7 satisfied/);
-        assert.match(html, /No save-trackable prerequisites/);
+        // Branch 3 is gated only on a non-dialogue GameState condition. With no
+        // save loaded it can't be resolved, so it reads indeterminate and the
+        // condition is listed (a dot + the path) rather than hidden.
+        assert.match(html, /Option 3 of 3 \u00b7 can\u2019t determine/);
+        assert.match(html, /Conditions:/);
+        assert.match(html, /group-status group-status-unknown/);
+        assert.match(html, /GameState\.X/);
     });
 
     test('a branch line with its own prerequisites is expandable (chevron + nested)', () => {

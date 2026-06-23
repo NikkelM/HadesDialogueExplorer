@@ -16,7 +16,8 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherRequirementsSectionHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml } from './info-panel.js';
+import { evaluateOtherRequirements } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -539,30 +540,57 @@ export function renderBlockingGatesHtml(rootName, ctx = getSaveContext()) {
     return html;
 }
 
-// Surface the target's non-textline requirements - the static game-state /
-// run-modifier / unlock conditions stored in ``otherRequirements`` that
-// aren't references to other dialogues (e.g. "all weapons unlocked",
-// "cleared the last run"). They never appear in the prerequisite chain or
-// tree, so the tracer would otherwise hide them. Reuses the info panel's
-// renderer (compact mode) wrapped in the tracer's section frame. Keys that
-// are also textline-requirement types are skipped: those are already
-// represented by the chain and the situational gates above. Informational
-// only - most gate on live GameState a save doesn't carry, so the tracer
-// shows the dialogue's declared conditions rather than evaluating them.
+// Surface the target's non-textline requirements - the GameState / run-modifier
+// / unlock conditions stored in ``otherRequirements`` that aren't references to
+// other dialogues. With a loaded save these are evaluated against the persisted
+// GameState slice: each gets a met / unmet / indeterminate verdict (the last
+// with a reason - e.g. it reads live run state a save can't provide). Keys that
+// are also textline-requirement types are skipped (already represented by the
+// chain and the situational gates above). Without a save, the conditions are
+// listed unevaluated (the prior informational behaviour).
 export function renderOtherConditionsHtml(rootName) {
     const tl = textlines[rootName];
     if (!tl) return '';
     const reqs = tl.requirements || {};
     const other = tl.otherRequirements || {};
-    const count = Object.keys(other).filter((k) => !(k in reqs)).length;
-    if (count === 0) return '';
-    const inner = renderOtherRequirementsSectionHtml(reqs, other, { textlineName: rootName });
-    if (!inner) return '';
+    const displayKeys = Object.keys(other).filter((k) => !(k in reqs));
+    if (displayKeys.length === 0) return '';
+
+    const haveSave = !!(getSaveProgress() && saveMatchesActiveGame());
+    const byKey = new Map();
+    let verdict = null;
+    if (haveSave) {
+        const res = evaluateOtherRequirements(other, getSaveContext().gameState);
+        verdict = res.status;
+        for (const c of res.clauses) byKey.set(c.key, c);
+    }
+
+    const header = haveSave
+        ? `Other requirements (${displayKeys.length}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
+        : `Other requirements (${displayKeys.length})`;
+    const hint = haveSave
+        ? 'Non-textline conditions, checked against your save\u2019s GameState. An indeterminate (periwinkle) dot reads live run/room state or a game function a static save can\u2019t provide - hover it for why.'
+        : 'Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. Load a save to check them.';
+
     let html = `<div class="eligibility-tree">`;
-    html += `<h4 class="eligibility-tree-header">Other requirements (${count})</h4>`;
-    html += `<div class="eligibility-tree-hint">Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. They're read from its definition - the tracer can't check them against your save.</div>`;
-    html += `<div class="eligibility-list eligibility-other-reqs">${inner}</div>`;
-    html += `</div>`;
+    html += `<h4 class="eligibility-tree-header">${escapeHtml(header)}</h4>`;
+    html += `<div class="eligibility-tree-hint">${escapeHtml(hint)}</div>`;
+    html += `<div class="eligibility-list eligibility-other-reqs">`;
+    for (const key of displayKeys) {
+        const c = byKey.get(key); // undefined for conditions the evaluator doesn't cover (e.g. non-array / H1)
+        let dot = '';
+        if (c) {
+            const tip = c.status === 'met' ? 'Satisfied by your save.'
+                : c.status === 'unmet' ? 'Not satisfied by your save.'
+                    : (c.reason || 'Can\u2019t be determined from the save.');
+            dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
+        }
+        const body = key.startsWith('NamedRequirements')
+            ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
+            : renderOtherReqEntryHtml(key, other[key]);
+        html += `<div class="other-req-item other-req-evaluated">${dot}${body}</div>`;
+    }
+    html += `</div></div>`;
     return html;
 }
 
@@ -890,8 +918,39 @@ function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
     return html;
 }
 
+// Render a requirement set's non-dialogue conditions (the GameState gates:
+// state paths, function checks, named requirements), each resolved against the
+// loaded save and shown with a met / unmet / indeterminate dot - met ones
+// struck through - so they read the same way dialogue prerequisites do.
+// Returns '' when the set has no such conditions.
+function renderConditionsHtml(otherRequirements) {
+    const other = otherRequirements || {};
+    const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
+    if (gateKeys.length === 0) return '';
+    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState);
+    const byKey = new Map(clauses.map(c => [c.key, c]));
+    let html = `<div class="eligibility-branch-note">Conditions:</div>`;
+    for (const key of gateKeys) {
+        const c = byKey.get(key) || { status: 'unknown' };
+        const met = c.status === 'met';
+        const dotTip = met ? 'Satisfied by your save.'
+            : c.status === 'unmet' ? 'Not satisfied by your save.'
+                : (c.reason || 'Can\u2019t be determined from the save.');
+        const body = key.startsWith('NamedRequirements')
+            ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
+            : renderOtherReqEntryHtml(key, other[key]);
+        html += `<div class="tree-node ${met ? 'tree-played' : 'tree-unplayed'}">`
+            + `<div class="tree-node-row eligibility-condition-row">`
+            + `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`
+            + `<span class="tree-name eligibility-condition-text">${body}</span>`
+            + `</div></div>`;
+    }
+    return html;
+}
+
 // Render a branch's positive textline prerequisites as expandable tree
-// nodes, grouped by semantics (all / any / at-least-N).
+// nodes, grouped by semantics (all / any / at-least-N), plus its non-dialogue
+// conditions (now resolved against the save).
 function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
     const reqs = (branch && branch.requirements) || {};
     let html = '';
@@ -905,14 +964,17 @@ function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
         } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
             html += `<div class="eligibility-branch-note">At least ${requiredCount(branch, reqType)} of:</div>`;
         } else if (!AND_REQ_TYPES.has(reqType)) {
-            // Negative / run-count / non-textline gates aren't shown as
-            // prerequisites (they still drive the satisfied/unmet status).
+            // Negative / run-count gates aren't shown as prerequisites (they
+            // still drive the satisfied/unmet status).
             continue;
         }
         for (const ref of others) html += renderRefAsTreeNode(ref, reqType, isPlayed);
     }
+    // Non-dialogue conditions (state paths, function checks, ...) - now
+    // resolvable against the save rather than an opaque "other conditions".
+    html += renderConditionsHtml(branch && branch.otherRequirements);
     if (!html) {
-        html += `<div class="eligibility-branch-note">No save-trackable prerequisites (gated by other conditions).</div>`;
+        html += `<div class="eligibility-branch-note">No requirements - always available.</div>`;
     }
     return html;
 }

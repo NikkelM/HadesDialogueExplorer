@@ -24,19 +24,40 @@ import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './sav
 
 // Human-readable tooltips for each save-derived dialogue status, shared by
 // every surface that renders a status dot/pill so the wording stays in
-// lockstep. ``indeterminate`` covers dialogues that gate on a run-scoped
-// record this save doesn't carry (the Hades II textline queue, or the
-// current-run / current-room records when no run is active).
+// lockstep. A dialogue's status now reflects all of its gates - textline
+// requirements AND non-textline game-state conditions. ``indeterminate``
+// covers anything the save can't resolve: a run-scoped textline record (the
+// Hades II queue or current-run state) or a live game-state condition.
 export const SAVE_STATUS_TOOLTIPS = {
     played: 'Played in loaded save',
-    eligible: 'Eligible to play (all requirements met)',
-    blocked: 'Blocked (missing requirements)',
+    eligible: 'Eligible to play (every requirement and condition is met)',
+    blocked: 'Blocked (a requirement or condition is not met)',
     unobtainable: 'Unobtainable - a required choice, mutually-exclusive line, count-max gate, or play-once run-count gate is permanently locked',
-    indeterminate: 'Indeterminate - gates on a run-scoped record this save doesn\u2019t include (the Hades II textline queue, or a current-run record when no run is active), so eligibility can\u2019t be determined',
+    indeterminate: 'Indeterminate - gates on something this save can\u2019t resolve: a run-scoped textline record (the Hades II queue or current-run state) or a live game-state condition (run / room / session state, or a game function), so eligibility can\u2019t be determined',
 };
 
 export function saveStatusTooltip(status) {
     return SAVE_STATUS_TOOLTIPS[status] || '';
+}
+
+// Tooltip for a requirement-group / OR-option / "other requirements" dot.
+// Generalised over BOTH dialogue-line requirements and non-textline game-state
+// conditions, since a group dot can now reflect either (or a mix). Shared by
+// the dependency tree (``makeGroupStatusBadge``) and the detail panel so the
+// wording stays in lockstep.
+export function groupStatusTooltip(status) {
+    switch (status) {
+    case 'met':
+        return 'Satisfied by your save: every condition here holds (required lines played, forbidden lines not played, and any game-state checks met).';
+    case 'unmet':
+        return 'Not satisfied by your save: at least one condition here isn\u2019t met yet.';
+    case 'unobtainable':
+        return 'Permanently locked: this can never be satisfied again in this save (e.g. a one-time line already played or now past its run-count window, a count cap exceeded, or a required line that is itself unobtainable).';
+    case 'unknown':
+        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve - a run-scoped textline record (the Hades II queue or current-run state) or a live game-state condition (run / room / session state, or a game function).';
+    default:
+        return '';
+    }
 }
 
 // Coloured save-status dot for one dialogue, read from the loaded save.
@@ -435,7 +456,11 @@ export function renderReqItem(ref, selfName) {
     // data and the latter is a known cooldown/PlayOnce idiom.
     const refTl = (cat === null && !isSelf) ? textlines[ref] : null;
     const tierBadge = refTl ? renderPrimaryPriorityBadgeHtml(refTl) : '';
-    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${escapeHtml(ref)}${selfBadge}${tierBadge}</div>`;
+    // Save-status dot for the referenced dialogue (played / eligible / blocked /
+    // indeterminate / unobtainable), matching the dependency-tree rows. Empty
+    // when no matching save is loaded or the ref is unresolved.
+    const saveBadge = refTl ? renderSaveBadgeHtml(ref, refTl) : '';
+    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${saveBadge}${escapeHtml(ref)}${selfBadge}${tierBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.

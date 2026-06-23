@@ -1,5 +1,17 @@
 /* Eligibility tracer view styles */
 
+/* Per-gate "Other requirements" rows: a status dot (reusing the tree's
+   group-status colour language) before the condition text, the dot's tooltip
+   explaining met / unmet / why-indeterminate. */
+.other-req-evaluated .group-status {
+    position: relative;
+    top: 0.05em;
+    margin-right: 0.15rem;
+}
+.other-req-evaluated .other-req-named {
+    color: var(--text-muted);
+}
+
 .eligibility-view {
     padding: 0.5rem 0;
 }
@@ -542,4 +554,26 @@
 
 .tree-unplayed .tree-name {
     color: var(--text-color);
+}
+
+/* Non-dialogue condition row in an OR branch (a resolved GameState gate):
+   a status dot + the condition text, sharing the tree row's met/strikethrough
+   styling. The text is monospace like the detail panel's other-req rows. */
+.eligibility-condition-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+.eligibility-condition-row .group-status {
+    flex-shrink: 0;
+    position: relative;
+    top: 0.1em;
+    cursor: help;
+}
+.eligibility-condition-text {
+    font-family: 'Consolas', monospace;
+    font-size: var(--fs-sm);
+}
+.eligibility-condition-text .other-req-named {
+    font-family: inherit;
 }

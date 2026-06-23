@@ -26,9 +26,25 @@ import {
     renderChoiceNameHtml,
     reqTypeOrderIndex,
     saveStatusTooltip,
+    groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
-import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
+import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
+import { evaluateOtherRequirements } from './gamestate-eval.js';
+import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict } from './unobtainable.js';
+
+// Whether to render save-eligibility dots (a matching save is loaded).
+function _saveDotsActive() {
+    return !!(getSaveProgress() && saveMatchesActiveGame());
+}
+
+// A met / unmet / indeterminate / unobtainable status dot (same colour
+// language as the dependency tree's group dots), or '' for an unknown status
+// value. The trailing space lets callers interpolate it before a label.
+function statusDot(status, tooltip) {
+    if (!['met', 'unmet', 'unknown', 'unobtainable'].includes(status)) return '';
+    return `<span class="group-status group-status-${status}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
+}
 
 // Render an ``otherRequirements`` key. H2 synthesises compound keys
 // like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
@@ -531,7 +547,7 @@ export function renderOtherReqTooltip(key, val) {
 //     ``Name >= Count`` and lists into comma-separated chips.
 //   - Anything else -> the existing raw fallback (``Key = JSON``).
 // Returns the inner HTML to wrap in a ``<div class="other-req-item">``.
-function renderOtherReqEntryHtml(key, val) {
+export function renderOtherReqEntryHtml(key, val) {
     for (const opKey of _PATH_OP_FRIENDLY_KEYS) {
         if (key.startsWith(opKey + ':')) {
             const result = _renderPathOpEntry(opKey, key, val);
@@ -925,14 +941,28 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
     if (branches.length === 0) return '';
     const total = branches.length;
     const groupLabel = `At least one of these ${total} branch${total === 1 ? '' : 'es'}`;
+    const showDots = _saveDotsActive();
+    const ctx = showDots ? getSaveContext() : null;
+    // Overall "alternates" verdict: met if any option's requirements hold.
+    let groupDot = '';
+    if (showDots) {
+        const gv = orGroupVerdict(branches, ctx, textlineName);
+        groupDot = statusDot(gv, groupStatusTooltip(gv));
+    }
     let html = `<div class="req-section req-type-or-group">`
-             + `<h4><span class="toggle">\u25BC</span>${escapeHtml(groupLabel)}</h4>`
+             + `<h4><span class="toggle">\u25BC</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
              + `<div class="req-section-children expanded">`;
     for (let bi = 0; bi < branches.length; bi++) {
         const branch = branches[bi] || {};
+        // Per-option verdict: this branch's combined requirement + GameState dot.
+        let branchDot = '';
+        if (showDots) {
+            const bv = orBranchVerdict(branch, ctx, textlineName);
+            branchDot = statusDot(bv, groupStatusTooltip(bv));
+        }
         html += `<div class="or-branch">`
               + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
-              + `Option ${bi + 1} of ${total}</h5>`
+              + `${branchDot}Option ${bi + 1} of ${total}</h5>`
               + `<div class="or-branch-children expanded">`;
         html += renderRequirementsAndOtherHtml(
             branch.requirements || {},
@@ -1056,6 +1086,8 @@ function renderRequirementsAndOtherHtml(requirements, otherRequirements, options
 function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
     const { textlineName, sourcesByType } = options;
     let html = '';
+    const showDots = _saveDotsActive();
+    const ctx = showDots ? getSaveContext() : null;
 
     // Sort requirement sections by the canonical per-game display
     // order so the panel reads with the same ALL -> ANY -> NONE ->
@@ -1077,8 +1109,16 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         if (meta && typeof meta === 'object' && 'Count' in meta) {
             countSuffix = `: ${escapeHtml(String(meta.Count))}`;
         }
+        // Group verdict dot (met / unmet / indeterminate / unobtainable),
+        // shared with the dependency tree's group dots.
+        let groupDot = '';
+        if (showDots) {
+            const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
+            const v = requirementGroupVerdict(type, refs, ctx, cnt, textlineName);
+            groupDot = statusDot(v, groupStatusTooltip(v));
+        }
         html += `<div class="req-section req-type-${type}">`
-              + `<h4><span class="toggle">\u25BC</span>${renderReqTypeHtml(type)}${countSuffix}</h4>`
+              + `<h4><span class="toggle">\u25BC</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
               + `<div class="req-section-children expanded">`;
         const sources = (sourcesByType && sourcesByType[type]) || [];
         let i = 0;
@@ -1124,6 +1164,27 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     const { textlineName, otherHeaderLabel } = options;
     if (Object.keys(otherRequirements).length === 0) return '';
 
+    // With a matching save loaded, evaluate each non-textline gate against the
+    // persisted GameState slice and prefix it with a met / unmet / indeterminate
+    // dot (same colour language as the dependency tree + tracer). ``dotFor``
+    // returns '' when there's no save or the key isn't an evaluable gate.
+    const showDots = !!(getSaveProgress() && saveMatchesActiveGame());
+    let overallVerdict = null;
+    let gateByKey = null;
+    if (showDots) {
+        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState);
+        overallVerdict = res.status;
+        gateByKey = new Map(res.clauses.map(c => [c.key, c]));
+    }
+    const dotFor = (key) => {
+        const c = gateByKey && gateByKey.get(key);
+        if (!c) return '';
+        const tip = c.status === 'met' ? 'Satisfied by your save.'
+            : c.status === 'unmet' ? 'Not satisfied by your save.'
+                : (c.reason || 'Can\u2019t be determined from the save.');
+        return `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
+    };
+
     let otherHtml = '';
     // Sort otherRequirements by the canonical per-game display
     // order too. Compound keys (``Path:<head>``, ``FunctionName:
@@ -1161,19 +1222,20 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
             const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
             if (expandedHtml !== null) {
-                otherHtml += expandedHtml;
+                otherHtml += dotFor(key) + expandedHtml;
                 continue;
             }
         }
         const tooltip = renderOtherReqTooltip(key, val);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        otherHtml += `<div class="other-req-item"${tipAttr}>${renderOtherReqEntryHtml(key, val)}</div>`;
+        otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}${renderOtherReqEntryHtml(key, val)}</div>`;
     }
 
     if (!otherHtml) return '';
     if (otherHeaderLabel) {
+        const headerDot = showDots ? statusDot(overallVerdict, groupStatusTooltip(overallVerdict)) : '';
         return `<div class="req-section req-type-other">`
-              + `<h4><span class="toggle">\u25BC</span>${escapeHtml(otherHeaderLabel)}</h4>`
+              + `<h4><span class="toggle">\u25BC</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
               + `<div class="req-section-children expanded">${otherHtml}</div>`
               + `</div>`;
     }
