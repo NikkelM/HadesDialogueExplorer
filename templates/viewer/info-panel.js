@@ -294,13 +294,13 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
     let subjectHtml = headHtml;
     if ('UseLength' in rec) {
         consumed.add('UseLength');
-        subjectHtml = `number of entries in ${headHtml}`;
+        subjectHtml = `Number of entries in ${headHtml}`;
     } else if ('CountPathTrue' in rec) {
         consumed.add('CountPathTrue');
-        subjectHtml = `number of true entries in ${headHtml}`;
+        subjectHtml = `Number of true entries in ${headHtml}`;
     } else if ('SumOf' in rec) {
         consumed.add('SumOf');
-        subjectHtml = `sum of ${_renderOperandList(rec.SumOf)} in ${headHtml}`;
+        subjectHtml = `Sum of ${_renderOperandList(rec.SumOf)} in ${headHtml}`;
     }
 
     if (!_allConsumed(keys, consumed)) return null;
@@ -1172,7 +1172,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     let overallVerdict = null;
     let gateByKey = null;
     if (showDots) {
-        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState);
+        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState, getSaveContext().runs);
         overallVerdict = res.status;
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
     }

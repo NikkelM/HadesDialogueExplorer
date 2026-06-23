@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip } from './info-panel.js';
 import { evaluateOtherRequirements } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -560,7 +560,7 @@ export function renderOtherConditionsHtml(rootName) {
     const byKey = new Map();
     let verdict = null;
     if (haveSave) {
-        const res = evaluateOtherRequirements(other, getSaveContext().gameState);
+        const res = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs);
         verdict = res.status;
         for (const c of res.clauses) byKey.set(c.key, c);
     }
@@ -588,7 +588,9 @@ export function renderOtherConditionsHtml(rootName) {
         const body = key.startsWith('NamedRequirements')
             ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
             : renderOtherReqEntryHtml(key, other[key]);
-        html += `<div class="other-req-item other-req-evaluated">${dot}${body}</div>`;
+        const tooltip = renderOtherReqTooltip(key, other[key]);
+        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+        html += `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}${body}</div>`;
     }
     html += `</div></div>`;
     return html;
@@ -927,7 +929,7 @@ function renderConditionsHtml(otherRequirements) {
     const other = otherRequirements || {};
     const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
     if (gateKeys.length === 0) return '';
-    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState);
+    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs);
     const byKey = new Map(clauses.map(c => [c.key, c]));
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {
@@ -939,10 +941,12 @@ function renderConditionsHtml(otherRequirements) {
         const body = key.startsWith('NamedRequirements')
             ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
             : renderOtherReqEntryHtml(key, other[key]);
+        const tooltip = renderOtherReqTooltip(key, other[key]);
+        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
         html += `<div class="tree-node ${met ? 'tree-played' : 'tree-unplayed'}">`
             + `<div class="tree-node-row eligibility-condition-row">`
             + `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`
-            + `<span class="tree-name eligibility-condition-text">${body}</span>`
+            + `<span class="tree-name eligibility-condition-text"${tipAttr}>${body}</span>`
             + `</div></div>`;
     }
     return html;

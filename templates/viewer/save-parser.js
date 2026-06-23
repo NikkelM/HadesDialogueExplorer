@@ -10,7 +10,7 @@
  */
 
 import { getActiveGame, games } from './data.js';
-import { collectGameStatePaths, pruneGameState } from './gamestate-eval.js';
+import { collectGameStatePaths, pruneGameState, collectRunPaths } from './gamestate-eval.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -379,7 +379,11 @@ function extractSaveContext(parsed) {
     }
   }
 
-  return { played, thisRun, thisRoom, queued, lastRun, runsAgo, gameState: extractGameStateSlice(gameId, gs) };
+  return {
+    played, thisRun, thisRoom, queued, lastRun, runsAgo,
+    gameState: extractGameStateSlice(gameId, gs),
+    runs: extractRunsSlice(gameId, luaState),
+  };
 }
 
 // Memoised mask of the GameState paths the H2 dialogue requirements reference
@@ -399,6 +403,19 @@ function _h2GameStateMask() {
   return _gsMaskCache;
 }
 
+// Memoised run-relative mask + look-back depth for the SumPrevRuns clauses.
+let _runMaskCache = null;
+let _runMaskFor = null;
+function _h2RunMask() {
+  const h2 = games && games.hades2;
+  if (!h2) return null;
+  if (_runMaskFor !== h2) {
+    _runMaskFor = h2;
+    _runMaskCache = collectRunPaths(h2.textlines || {}, h2.namedRequirements || {});
+  }
+  return _runMaskCache;
+}
+
 // Build the minimal persisted GameState slice for an H2 save - just the paths
 // the dialogue requirements actually read. Returns null for non-H2 saves (H1
 // uses a different requirement model, not yet resolved against the save).
@@ -407,6 +424,31 @@ function extractGameStateSlice(gameId, gs) {
   const mask = _h2GameStateMask();
   if (!mask) return null;
   return pruneGameState(gs, mask);
+}
+
+// Build the per-run slice for SumPrevRuns: the current run plus the most recent
+// ``maxRuns`` RunHistory entries (newest first), each pruned to the referenced
+// run-relative leaves. Returns null for non-H2 saves or when nothing uses
+// SumPrevRuns. ``runs[0]`` is the current run; ``runs[1..]`` are history.
+function extractRunsSlice(gameId, luaState) {
+  if (gameId !== 'hades2') return null;
+  const spec = _h2RunMask();
+  if (!spec || spec.maxRuns <= 0) return null;
+  const { mask, maxRuns } = spec;
+  const gs = luaState.GameState || {};
+  const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
+  const rh = gs.RunHistory;
+  // RunHistory is a 1-based Lua array (luabins yields an object with numeric
+  // string keys); the highest index is the most recent completed run.
+  const history = [];
+  if (rh && typeof rh === 'object') {
+    const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
+    for (const i of indices.slice(0, maxRuns)) {
+      const entry = rh[i];
+      if (entry && typeof entry === 'object') history.push(pruneGameState(entry, mask));
+    }
+  }
+  return [pruneGameState(cr, mask), ...history];
 }
 
 // --- Public API ---
@@ -427,6 +469,9 @@ let _saveRunsAgo = null;
 // Minimal persisted GameState slice for resolving non-textline (GameState)
 // requirements; null for non-H2 saves or when none is loaded.
 let _saveGameState = null;
+// Per-run slice (current run + recent RunHistory, newest first) for resolving
+// SumPrevRuns requirements; null for non-H2 saves or when none is loaded.
+let _saveRunsSlice = null;
 
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
@@ -445,6 +490,7 @@ export function getSaveContext() {
     lastRun: _saveLastRun,
     runsAgo: _saveRunsAgo,
     gameState: _saveGameState,
+    runs: _saveRunsSlice,
   };
 }
 
@@ -458,6 +504,7 @@ export function clearSaveProgress() {
   _saveQueued = null;
   _saveLastRun = null;
   _saveGameState = null;
+  _saveRunsSlice = null;
   _saveRunsAgo = null;
 }
 
@@ -477,10 +524,11 @@ export function clearSaveProgress() {
 // client-side (it never reaches a server).
 const SAVE_STORAGE_KEY = 'hde.save';
 // v2 added the run-scoped records (thisRun / thisRoom / queued); v3 added the
-// persisted GameState slice (for resolving non-textline requirements). An older
-// cache lacks these, so the bump forces a re-parse rather than silently leaving
-// them unavailable.
-const SAVE_STORAGE_SCHEMA = 3;
+// persisted GameState slice (for resolving non-textline requirements); v4 added
+// the per-run slice (for resolving SumPrevRuns requirements). An older cache
+// lacks these, so the bump forces a re-parse rather than silently leaving them
+// unavailable.
+const SAVE_STORAGE_SCHEMA = 4;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -518,6 +566,7 @@ export function persistSaveProgress(filename) {
       lastRun: arr(_saveLastRun),
       runsAgo: _saveRunsAgo || null,
       gameState: _saveGameState || null,
+      runs2: _saveRunsSlice || null,
     }));
     return true;
   } catch {
@@ -565,6 +614,7 @@ export function restoreSaveProgress() {
   _saveLastRun = set(data.lastRun);
   _saveRunsAgo = (data.runsAgo && typeof data.runsAgo === 'object') ? data.runsAgo : null;
   _saveGameState = (data.gameState && typeof data.gameState === 'object') ? data.gameState : null;
+  _saveRunsSlice = Array.isArray(data.runs2) ? data.runs2 : null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -589,6 +639,7 @@ export function parseSaveFile(arrayBuffer) {
   _saveLastRun = ctx.lastRun;
   _saveRunsAgo = ctx.runsAgo;
   _saveGameState = ctx.gameState;
+  _saveRunsSlice = ctx.runs;
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   _saveHasBiomesMod = !!parsed.hasBiomesMod;

@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -200,4 +200,68 @@ test('collectGameStatePaths + pruneGameState capture only referenced leaves', ()
     // The slice still evaluates correctly: ReachedTrueEnding is true, so the
     // NamedRequirementsFalse(TrueEndingReached) gate is violated -> unmet.
     assert.equal(evaluateOtherRequirements(textlines.T1.otherRequirements, slice).status, 'unmet');
+});
+
+// --- SumPrevRuns: aggregation across the current run + recent RunHistory ---
+
+// Evaluate a SumPrevRuns clause; ``runs`` is the persisted runs slice
+// ([currentRun, ...history], each pruned to the referenced run-relative leaves).
+const evalRuns = (rec, runs) => evaluateOtherRequirements(clause(rec), {}, runs).status;
+
+test('SumPrevRuns numericSum: totals a run-relative path over N runs', () => {
+    const rec = { Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 5 };
+    const runs = [{ EnemyKills: { Hydra: 2 } }, { EnemyKills: { Hydra: 2 } }, { EnemyKills: { Hydra: 1 } }, { EnemyKills: { Hydra: 9 } }];
+    assert.equal(evalRuns(rec, runs), 'met');   // 2+2+1 = 5 (4th run outside window)
+    assert.equal(evalRuns({ ...rec, Value: 6 }, runs), 'unmet');
+});
+
+test('SumPrevRuns IgnoreCurrentRun skips runs[0]', () => {
+    const rec = { Path: ['RoomsEntered', 'N_Opening01'], SumPrevRuns: 2, Comparison: '>=', Value: 2, IgnoreCurrentRun: true };
+    const runs = [{ RoomsEntered: { N_Opening01: 99 } }, { RoomsEntered: { N_Opening01: 1 } }, { RoomsEntered: { N_Opening01: 1 } }];
+    assert.equal(evalRuns(rec, runs), 'met');   // skips current (99), sums next two: 1+1
+    assert.equal(evalRuns({ ...rec, Value: 3 }, runs), 'unmet');
+});
+
+test('SumPrevRuns CountPathTrue: counts runs where the path is non-nil', () => {
+    const rec = { Path: ['TextLinesRecord', 'HecateWithArachne01'], SumPrevRuns: 3, Comparison: '>=', Value: 2, CountPathTrue: true };
+    const runs = [{ TextLinesRecord: { HecateWithArachne01: true } }, { TextLinesRecord: {} }, { TextLinesRecord: { HecateWithArachne01: 1 } }];
+    assert.equal(evalRuns(rec, runs), 'met');   // 2 of 3 runs have it
+    assert.equal(evalRuns({ ...rec, Value: 3 }, runs), 'unmet');
+});
+
+test('SumPrevRuns TableValuesToCount: counts listed keys present per run', () => {
+    const rec = { Path: ['RoomsEntered'], SumPrevRuns: 2, Comparison: '>=', Value: 3, TableValuesToCount: ['Q_Boss01', 'Q_Boss02'] };
+    const runs = [{ RoomsEntered: { Q_Boss01: 1, Q_Boss02: 1 } }, { RoomsEntered: { Q_Boss01: 1 } }, { RoomsEntered: { Q_Boss01: 1, Q_Boss02: 1 } }];
+    assert.equal(evalRuns(rec, runs), 'met');   // run0: 2, run1: 1 -> 3
+    assert.equal(evalRuns({ ...rec, Value: 4 }, runs), 'unmet');
+});
+
+test('SumPrevRuns ValuesToCount: counts runs whose scalar value matches', () => {
+    const rec = { Path: ['IsDreamRun'], SumPrevRuns: 3, Comparison: '>=', Value: 2, ValuesToCount: [true] };
+    const runs = [{ IsDreamRun: true }, { IsDreamRun: false }, { IsDreamRun: true }];
+    assert.equal(evalRuns(rec, runs), 'met');
+    assert.equal(evalRuns({ ...rec, Value: 3 }, runs), 'unmet');
+});
+
+test('SumPrevRuns with no runs slice -> unknown', () => {
+    const rec = { Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 1 };
+    assert.equal(evalRuns(rec, null), 'unknown');
+});
+
+test('collectRunPaths: run-relative mask + max look-back depth', () => {
+    const textlines = {
+        T1: {
+            otherRequirements: {
+                'A': [{ Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 1 }],
+                'B': [{ Path: ['RoomsEntered'], SumPrevRuns: 6, Comparison: '>=', Value: 1, TableValuesToCount: ['Q_Boss01', 'Q_Boss02'] }],
+                'C': [{ Path: ['GameState', 'EnemyKills', 'Hecate'], Comparison: '>=', Value: 1 }], // not SumPrevRuns -> ignored
+            },
+        },
+    };
+    const { mask, maxRuns } = collectRunPaths(textlines, {});
+    assert.equal(maxRuns, 6);
+    assert.deepEqual(mask, {
+        EnemyKills: { Hydra: true },
+        RoomsEntered: { Q_Boss01: true, Q_Boss02: true },
+    });
 });

@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 3, gameId: getActiveGame(), runs: 1, played: [],
+        v: 4, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -369,7 +369,7 @@ function fixtureWithOtherRequirements() {
 test('otherRequirements: with a matching save, gates show met/indeterminate eligibility dots', () => {
     loadData(fixtureWithOtherRequirements());
     _saveStore.set('hde.save', JSON.stringify({
-        v: 3, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+        v: 4, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
     }));
     restoreSaveProgress();
     renderInfo('OrpheusOtherReqDemo');
@@ -663,32 +663,32 @@ test('Path TableValuesToCount renders a count-of-items threshold with a run clau
 });
 
 
-test('Path UseLength renders "number of entries in <head>"', () => {
+test('Path UseLength renders "Number of entries in <head>"', () => {
     loadData(fixtureWithModifierRecords());
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /number of entries in <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> &gt;= <code>3<\/code>/
+        /Number of entries in <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> &gt;= <code>3<\/code>/
     );
 });
 
 
-test('Path CountPathTrue renders "number of true entries in <head>" with a run clause', () => {
+test('Path CountPathTrue renders "Number of true entries in <head>" with a run clause', () => {
     loadData(fixtureWithModifierRecords());
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /number of true entries in <code class="other-req-path">SpeechRecord<\/code> &lt;= <code>0<\/code> <span class="other-req-mod">\(over the last 4 runs\)<\/span>/
+        /Number of true entries in <code class="other-req-path">SpeechRecord<\/code> &lt;= <code>0<\/code> <span class="other-req-mod">\(over the last 4 runs\)<\/span>/
     );
 });
 
 
-test('Path SumOf renders "sum of <items> in <head>"', () => {
+test('Path SumOf renders "Sum of <items> in <head>"', () => {
     loadData(fixtureWithModifierRecords());
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /sum of <code>N_Boss01<\/code>, <code>N_Boss02<\/code> in <code class="other-req-path">GameState\.RoomsEntered<\/code> &gt;= <code>3<\/code>/
+        /Sum of <code>N_Boss01<\/code>, <code>N_Boss02<\/code> in <code class="other-req-path">GameState\.RoomsEntered<\/code> &gt;= <code>3<\/code>/
     );
 });
 

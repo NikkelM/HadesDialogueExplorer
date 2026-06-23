@@ -79,9 +79,44 @@ function compare(left, op, right) {
 
 const _MET = (status, reason) => ({ status, reason });
 
+// Evaluate a ``SumPrevRuns`` clause: aggregate the run-relative ``Path`` over
+// the last N runs (the current run plus recent ``RunHistory``, newest first),
+// then compare. ``root._runs`` is the persisted runs slice (``[currentRun,
+// ...history]``, each pruned to the referenced leaves). Modes mirror the
+// engine: ``CountPathTrue`` counts runs where the path exists, ``TableValues
+// ToCount`` counts listed keys present per run, ``ValuesToCount`` counts runs
+// whose value matches, otherwise a numeric sum. ``IgnoreCurrentRun`` skips the
+// current run. Returns 'unknown' when the save carries no runs slice.
+function evalSumPrevRuns(rec, root) {
+    const runs = root._runs;
+    if (!Array.isArray(runs)) {
+        return _MET('unknown', 'Aggregates across previous runs (RunHistory), which this save didn\u2019t carry.');
+    }
+    if (!Array.isArray(rec.Path) || !rec.Comparison) {
+        return _MET('unknown', 'Unrecognised previous-runs aggregation.');
+    }
+    const n = rec.SumPrevRuns;
+    const list = rec.IgnoreCurrentRun ? runs.slice(1, 1 + n) : runs.slice(0, n);
+    let sum = 0;
+    for (const run of list) {
+        const v = walkPath(run, rec.Path);
+        if (rec.CountPathTrue) {
+            sum += (v !== undefined && v !== null) ? 1 : 0;
+        } else if (Array.isArray(rec.TableValuesToCount)) {
+            sum += rec.TableValuesToCount.filter(k => luaTruthy(v && v[k])).length;
+        } else if (Array.isArray(rec.ValuesToCount)) {
+            sum += rec.ValuesToCount.some(x => v === x) ? 1 : 0;
+        } else {
+            sum += (typeof v === 'number' ? v : 0);
+        }
+    }
+    return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
-// object exposing ``GameState``). Returns { status, reason? }. ``status`` is
-// 'met' | 'unmet' | 'unknown'; 'unknown' always carries a human reason.
+// object exposing ``GameState`` and the runs slice ``_runs``). Returns
+// { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
+// always carries a human reason.
 function evalClause(rec, root) {
     if (!rec || typeof rec !== 'object') {
         return _MET('unknown', 'Unrecognised condition shape.');
@@ -93,7 +128,7 @@ function evalClause(rec, root) {
         return _MET('unknown', 'Read from the live speaker / call context, which a save file doesn\u2019t store.');
     }
     if (rec.SumPrevRuns !== undefined) {
-        return _MET('unknown', 'Aggregates a value across previous runs (RunHistory) - not resolved in this pass.');
+        return evalSumPrevRuns(rec, root);
     }
     if (rec.SumPrevRooms !== undefined) {
         return _MET('unknown', 'Aggregates across rooms in the current run - only meaningful during an active run.');
@@ -229,8 +264,9 @@ function evalSet(otherRequirements, root, stack) {
 // pruned ``GameState`` slice. Returns { status, clauses } where ``status`` is
 // 'met' | 'unmet' | 'unknown' and ``clauses`` lists each gate's verdict (with a
 // reason for every 'unknown'). ``gameStateSlice`` is the persisted GameState
-// (or null when no save is loaded -> everything 'unknown').
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice) {
+// (or null when no save is loaded -> everything 'unknown'); ``runs`` is the
+// persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns.
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
     }
@@ -240,7 +276,7 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice) {
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    return evalSet(otherRequirements, { GameState: gameStateSlice }, new Set());
+    return evalSet(otherRequirements, { GameState: gameStateSlice, _runs: runs }, new Set());
 }
 
 // A nested "mask" of the exact GameState paths any clause in ``textlines``
@@ -354,4 +390,62 @@ export function pruneGameState(gs, mask) {
         }
     }
     return out;
+}
+
+// Collect the run-relative leaf paths the ``SumPrevRuns`` clauses read, plus
+// the maximum run count any of them looks back. Returns ``{ mask, maxRuns }``;
+// the save parser prunes the current run + that many recent ``RunHistory``
+// entries to ``mask``. ``SumPrevRuns`` paths are relative to each run object
+// (e.g. ``["RoomsEntered","N_Boss01"]`` is ``run.RoomsEntered.N_Boss01``), not
+// ``GameState``. ``TableValuesToCount`` members are appended as leaf paths.
+export function collectRunPaths(textlines, namedReqs) {
+    const mask = {};
+    let maxRuns = 0;
+    const seenNamed = new Set();
+    const markLeaf = (pathArr) => {
+        if (!Array.isArray(pathArr) || pathArr.length === 0) return;
+        let node = mask;
+        for (let i = 0; i < pathArr.length - 1; i++) {
+            const k = pathArr[i];
+            if (typeof k !== 'string') return;
+            if (node[k] === true) return;
+            if (typeof node[k] !== 'object' || node[k] === null) node[k] = {};
+            node = node[k];
+        }
+        const last = pathArr[pathArr.length - 1];
+        if (typeof last !== 'string') return;
+        if (node[last] !== true && (typeof node[last] !== 'object' || node[last] === null)) node[last] = true;
+        else if (typeof node[last] === 'object') node[last] = true; // a deeper leaf subsumes
+    };
+    const scanRec = (rec) => {
+        if (!rec || typeof rec !== 'object' || rec.SumPrevRuns === undefined) return;
+        if (!Array.isArray(rec.Path)) return;
+        if (typeof rec.SumPrevRuns === 'number') maxRuns = Math.max(maxRuns, rec.SumPrevRuns);
+        if (Array.isArray(rec.TableValuesToCount)) {
+            for (const m of rec.TableValuesToCount) markLeaf([...rec.Path, m]);
+        } else {
+            markLeaf(rec.Path);
+        }
+    };
+    const scanSet = (other) => {
+        for (const [key, val] of Object.entries(other || {})) {
+            if (key === 'NamedRequirements' || key === 'NamedRequirementsFalse') {
+                for (const name of (Array.isArray(val) ? val : [])) {
+                    if (seenNamed.has(name)) continue;
+                    seenNamed.add(name);
+                    const def = (namedReqs || {})[name];
+                    if (def) scanSet(def.otherRequirements || {});
+                }
+                continue;
+            }
+            if (Array.isArray(val)) for (const rec of val) scanRec(rec);
+        }
+    };
+    for (const name in textlines) {
+        const t = textlines[name];
+        if (!t) continue;
+        scanSet(t.otherRequirements);
+        if (Array.isArray(t.orBranches)) for (const b of t.orBranches) scanSet(b.otherRequirements);
+    }
+    return { mask, maxRuns };
 }
