@@ -362,9 +362,16 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         html += `<div class="eligibility-detail">Eligibility can\u2019t be determined: this dialogue is gated by requirements the save doesn\u2019t include (such as queued textlines). Its resolvable prerequisites are satisfied.${rankInline}</div>`;
         html += chainNote;
     } else if (total === 0) {
-        // Blocked, but gated entirely by alternative branches (no flat chain).
+        // Blocked with no flat prerequisite chain: the block comes from either
+        // alternative ``orBranches`` or non-textline gates (other requirements,
+        // negative / run-count conditions) listed in the sections below. Word
+        // the detail to match which actually applies.
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
-        html += `<div class="eligibility-detail">Blocked - satisfy one of the alternative requirement branches below.${rankInline}</div>`;
+        const hasOrBranches = Array.isArray(rootTl && rootTl.orBranches) && rootTl.orBranches.length > 0;
+        const detail = hasOrBranches
+            ? 'Blocked - satisfy one of the alternative requirement branches below.'
+            : 'Blocked - one or more requirements below are not satisfied.';
+        html += `<div class="eligibility-detail">${detail}${rankInline}</div>`;
     } else {
         html += `<div class="eligibility-status eligibility-blocked">\u2022 Blocked</div>`;
         html += `<div class="eligibility-detail">${stillNeeded} of ${total} prerequisite${total === 1 ? '' : 's'} still needed.${rankInline}</div>`;
