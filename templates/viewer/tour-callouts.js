@@ -17,7 +17,7 @@ export function maybeStartSaveCallout() {
         steps.push({
             target: () => document.querySelector('#info-content .save-progress-pill'),
             title: 'Save progress',
-            body: 'This dialogue now shows its own status - played, eligible, blocked, or not obtainable in this save.',
+            body: 'This dialogue now shows its own status - played, eligible, blocked, or no longer obtainable in this save.',
         });
     }
     // The same status as a small dot on every row of the prerequisite /
@@ -31,7 +31,7 @@ export function maybeStartSaveCallout() {
             target: '#' + dotContent + ' .tree-node.root',
             emphasize: '#' + dotContent + ' .save-badge, #' + dotContent + ' .group-status',
             title: 'Status at every step',
-            body: 'Each prerequisite and dependent carries the same status dot, so you can see which lines are done and which still block this one. Hover a dot for detail, or expand a row to look deeper.',
+            body: 'Each prerequisite and dependent carries a status dot, so you can see which lines have played and which still block this one. Hover a dot for detail, or expand a row to look deeper.',
             interactive: true,
             blockNavigation: true,
         });
