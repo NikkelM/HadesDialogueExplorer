@@ -615,7 +615,7 @@ function renderSaveProgressPillHtml(name, tl) {
     const label = labels[status] || status;
     // Every status opens the eligibility tracer for this dialogue: blocked
     // shows what's still missing, eligible/played show the satisfied chain.
-    const tip = `${saveStatusTooltip(status)} \u00B7 click to open the eligibility tracer`;
+    const tip = `${saveStatusTooltip(status)}. Click to open the eligibility tracer`;
     return ` <a class="save-progress-pill ${status} clickable" onclick="navigateToEligibility(${jsAttr(name)})" data-tooltip="${escapeHtml(tip)}">${label}</a>`;
 }
 
