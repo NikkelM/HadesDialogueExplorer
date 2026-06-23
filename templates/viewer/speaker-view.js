@@ -503,10 +503,16 @@ export function renderAdjacencyDetailRows(linkMap) {
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([dependent, requiredSet]) => {
             const required = [...requiredSet].sort()
-                .map(r => `<a class="textline-link" onclick="event.stopPropagation(); navigateTo(${jsAttr(r)})">${escapeHtml(r)}</a>`)
+                .map(r => `<span class="speaker-adjacency-ref">`
+                    + renderSaveBadgeHtml(r, textlines[r])
+                    + `<a class="textline-link" onclick="event.stopPropagation(); navigateTo(${jsAttr(r)})">${escapeHtml(r)}</a>`
+                    + `</span>`)
                 .join('<span class="speaker-adjacency-sep">, </span>');
             return `<li class="speaker-adjacency-detail-row">`
+                + `<span class="speaker-adjacency-dep-line">`
+                + renderSaveBadgeHtml(dependent, textlines[dependent])
                 + `<a class="textline-link speaker-adjacency-dep" onclick="event.stopPropagation(); navigateTo(${jsAttr(dependent)})">${escapeHtml(dependent)}</a>`
+                + `</span>`
                 + `<div class="speaker-adjacency-reqs"><span class="speaker-adjacency-req-label">requires</span> ${required}</div>`
                 + `</li>`;
         }).join('');

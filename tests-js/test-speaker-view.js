@@ -824,7 +824,7 @@ function loadEligibilityFixtureWithSave() {
     // frozen, so this shape is stable). Seed the backing store directly;
     // ``restoreSaveProgress`` reads it through the stub above.
     _localStore.set('hde.save', JSON.stringify({
-        v: 4, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
+        v: 5, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
     }));
     restoreSaveProgress();
 }
@@ -994,4 +994,13 @@ test('renderAdjacencyDetailRows renders clickable dependent -> required rows', (
 test('renderAdjacencyDetailRows handles an edge with no individual links', () => {
     assert.match(renderAdjacencyDetailRows(new Map()), /speaker-adjacency-detail-empty/);
     assert.match(renderAdjacencyDetailRows(undefined), /speaker-adjacency-detail-empty/);
+});
+
+test('renderAdjacencyDetailRows shows save badges for dependent and required names with a save', () => {
+    loadEligibilityFixtureWithSave();
+    // Dependent TestBlocked01 (blocked) requires TestPlayed01 (played); both
+    // names should carry their save-status dot, matching the owned list.
+    const html = renderAdjacencyDetailRows(new Map([['TestBlocked01', new Set(['TestPlayed01'])]]));
+    assert.match(html, /save-badge blocked/);
+    assert.match(html, /save-badge played/);
 });

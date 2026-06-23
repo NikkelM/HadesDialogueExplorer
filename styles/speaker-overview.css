@@ -361,6 +361,26 @@ body.layout-speaker #panel-info {
     border-bottom: 1px solid #0f346066;
 }
 .speaker-adjacency-detail-row:last-child { border-bottom: none; }
+/* Centre each save-status dot with its name. The dots are inline-block, so
+   baseline alignment leaves them sitting visibly low next to the text; an
+   inline-flex wrapper per (badge + name) centres them, the same way the
+   owned-dialogue list does with its flex row. */
+.speaker-adjacency-dep-line,
+.speaker-adjacency-ref {
+    display: inline-flex;
+    align-items: center;
+}
+/* Optical alignment: flex centring places the dot on the text *line box*,
+   whose centre sits ~1px above the glyphs' visual centre, so the dot reads a
+   touch high next to a name. Nudge it down to the glyph centre. Applied to the
+   owner view's name dots (the owned-dialogue list and both adjacency lines) so
+   they all align consistently. */
+.speaker-textline-row > .save-badge,
+.speaker-adjacency-dep-line .save-badge,
+.speaker-adjacency-ref .save-badge {
+    position: relative;
+    top: 1px;
+}
 .speaker-adjacency-dep {
     display: inline-block;
     font-weight: 600;

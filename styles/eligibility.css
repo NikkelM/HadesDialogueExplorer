@@ -541,6 +541,15 @@
     flex-shrink: 0;
 }
 
+/* Optical alignment: flex centring sits the dot on the text line box, whose
+   centre is ~1px above the glyphs' visual centre, so it reads a touch high
+   next to a name. Nudge it down to the glyph centre (matches the owner view's
+   name dots). */
+.tree-node-row > .save-badge {
+    position: relative;
+    top: 1px;
+}
+
 .eligibility-tree-container .npc-tag {
     opacity: 0.7;
     font-style: italic;
