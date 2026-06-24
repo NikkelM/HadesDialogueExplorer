@@ -226,8 +226,10 @@ export function orBranchVerdict(branch, context, name) {
     // Resolve CurrentRun.* gates only when this dialogue's owner matches the
     // loaded save type (the branch belongs to the dialogue ``name``).
     const owner = (name && textlines[name]) ? textlines[name].owner : undefined;
-    const cr = currentRunResolvable(owner, ctx.saveInRun) ? ctx.currentRun : null;
-    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo, cr).status;
+    const resolveRun = currentRunResolvable(owner, ctx.saveInRun);
+    const cr = resolveRun ? ctx.currentRun : null;
+    const rooms = resolveRun ? ctx.rooms : null;
+    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo, cr, rooms).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
     return 'met';

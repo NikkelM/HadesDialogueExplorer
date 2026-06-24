@@ -522,13 +522,15 @@ export function directSatisfaction(textlineData, context, name) {
     const gs = ctx.gameState;
     const runs = ctx.runs;
     const runsAgo = ctx.runsAgo;
-    // CurrentRun.* gates resolve only when this dialogue's owner-context matches
-    // the loaded save type (hub save vs in-run _Temp save); otherwise pass null
-    // so they stay indeterminate.
-    const cr = currentRunResolvable(textlineData.owner, ctx.saveInRun) ? ctx.currentRun : null;
+    // CurrentRun.* / SumPrevRooms gates resolve only when this dialogue's
+    // owner-context matches the loaded save type (hub save vs in-run _Temp save);
+    // otherwise pass null so they stay indeterminate.
+    const resolveRun = currentRunResolvable(textlineData.owner, ctx.saveInRun);
+    const cr = resolveRun ? ctx.currentRun : null;
+    const rooms = resolveRun ? ctx.rooms : null;
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo, cr).status);
+        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo, cr, rooms).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -538,7 +540,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo, cr).status);
+                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo, cr, rooms).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

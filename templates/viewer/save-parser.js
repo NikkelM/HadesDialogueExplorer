@@ -10,7 +10,7 @@
  */
 
 import { getActiveGame, games } from './data.js';
-import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths } from './gamestate-eval.js';
+import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths } from './gamestate-eval.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -384,6 +384,7 @@ function extractSaveContext(parsed) {
     gameState: extractGameStateSlice(gameId, gs),
     runs: extractRunsSlice(gameId, luaState),
     currentRun: extractCurrentRunSlice(gameId, luaState),
+    rooms: extractRoomsSlice(gameId, luaState),
   };
 }
 
@@ -415,6 +416,19 @@ function _h2RunMask() {
     _runMaskCache = collectRunPaths(h2.textlines || {}, h2.namedRequirements || {});
   }
   return _runMaskCache;
+}
+
+// Memoised room-relative mask + look-back depth for the SumPrevRooms clauses.
+let _roomMaskCache = null;
+let _roomMaskFor = null;
+function _h2RoomMask() {
+  const h2 = games && games.hades2;
+  if (!h2) return null;
+  if (_roomMaskFor !== h2) {
+    _roomMaskFor = h2;
+    _roomMaskCache = collectRoomPaths(h2.textlines || {}, h2.namedRequirements || {});
+  }
+  return _roomMaskCache;
 }
 
 // Memoised CurrentRun mask for resolving ``CurrentRun.*`` direct gates.
@@ -478,7 +492,35 @@ function extractRunsSlice(gameId, luaState) {
   return [pruneGameState(cr, mask), ...history];
 }
 
-// --- Public API ---
+// Build the per-room slice for SumPrevRooms: the current room plus the most
+// recent ``maxRooms`` CurrentRun.RoomHistory entries (newest first), each pruned
+// to the referenced room-relative leaves. Returns null for non-H2 saves or when
+// nothing uses SumPrevRooms. ``rooms[0]`` is the current room; ``rooms[1..]`` are
+// history. The fields the requirements actually read (``UseRecord.*``,
+// ``Encounter.*``, ``EncountersOccurredCache``) are in the engine's room save
+// whitelist, so they survive on every persisted history room - which is exactly
+// the data the game itself evaluates SumPrevRooms against after loading the save.
+function extractRoomsSlice(gameId, luaState) {
+  if (gameId !== 'hades2') return null;
+  const spec = _h2RoomMask();
+  if (!spec || spec.maxRooms <= 0) return null;
+  const { mask, maxRooms } = spec;
+  const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
+  const currentRoom = (cr.CurrentRoom && typeof cr.CurrentRoom === 'object') ? cr.CurrentRoom : {};
+  const rh = cr.RoomHistory;
+  // RoomHistory is a 1-based Lua array; the highest index is the room most
+  // recently left. The window covers the current room + up to maxRooms-1 history
+  // rooms, newest first.
+  const history = [];
+  if (rh && typeof rh === 'object') {
+    const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
+    for (const i of indices.slice(0, maxRooms - 1)) {
+      const entry = rh[i];
+      if (entry && typeof entry === 'object') history.push(pruneGameState(entry, mask));
+    }
+  }
+  return [pruneGameState(currentRoom, mask), ...history];
+}
 
 let _saveProgress = null;
 let _saveGameId = null;
@@ -499,6 +541,9 @@ let _saveGameState = null;
 // Per-run slice (current run + recent RunHistory, newest first) for resolving
 // SumPrevRuns requirements; null for non-H2 saves or when none is loaded.
 let _saveRunsSlice = null;
+// Per-room slice (current room + recent RoomHistory, newest first) for resolving
+// SumPrevRooms requirements; null for non-H2 saves or when none is loaded.
+let _saveRoomsSlice = null;
 // Minimal persisted CurrentRun slice for resolving ``CurrentRun.*`` direct
 // gates; null for non-H2 saves or when none is loaded.
 let _saveCurrentRun = null;
@@ -526,6 +571,7 @@ export function getSaveContext() {
     gameState: _saveGameState,
     runs: _saveRunsSlice,
     currentRun: _saveCurrentRun,
+    rooms: _saveRoomsSlice,
     saveInRun: _saveInRun,
   };
 }
@@ -542,6 +588,7 @@ export function clearSaveProgress() {
   _saveGameState = null;
   _saveRunsSlice = null;
   _saveCurrentRun = null;
+  _saveRoomsSlice = null;
   _saveInRun = null;
   _saveRunsAgo = null;
 }
@@ -565,10 +612,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // persisted GameState slice (for resolving non-textline requirements); v4 added
 // the per-run slice (for resolving SumPrevRuns requirements); v5 widened the
 // GameState slice to include QuestStatus (for RequireQuestCount); v6 added the
-// CurrentRun slice + in-run flag (for resolving CurrentRun.* gates). An older
-// cache lacks these, so the bump forces a re-parse rather than silently leaving
-// them unavailable.
-const SAVE_STORAGE_SCHEMA = 6;
+// CurrentRun slice + in-run flag (for resolving CurrentRun.* gates); v7 added the
+// per-room slice (for resolving SumPrevRooms gates). An older cache lacks these,
+// so the bump forces a re-parse rather than silently leaving them unavailable.
+const SAVE_STORAGE_SCHEMA = 7;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -608,6 +655,7 @@ export function persistSaveProgress(filename) {
       gameState: _saveGameState || null,
       runs2: _saveRunsSlice || null,
       currentRun: _saveCurrentRun || null,
+      rooms: _saveRoomsSlice || null,
       inRun: _saveInRun,
     }));
     return true;
@@ -658,6 +706,7 @@ export function restoreSaveProgress() {
   _saveGameState = (data.gameState && typeof data.gameState === 'object') ? data.gameState : null;
   _saveRunsSlice = Array.isArray(data.runs2) ? data.runs2 : null;
   _saveCurrentRun = (data.currentRun && typeof data.currentRun === 'object') ? data.currentRun : null;
+  _saveRoomsSlice = Array.isArray(data.rooms) ? data.rooms : null;
   _saveInRun = (typeof data.inRun === 'boolean') ? data.inRun : null;
   return {
     gameId: _saveGameId,
@@ -685,6 +734,7 @@ export function parseSaveFile(arrayBuffer, filename = null) {
   _saveGameState = ctx.gameState;
   _saveRunsSlice = ctx.runs;
   _saveCurrentRun = ctx.currentRun;
+  _saveRoomsSlice = ctx.rooms;
   // An in-run autosave is named ProfileX_Temp.sav; the hub save is ProfileX.sav.
   // The flag decides which owners' CurrentRun.* gates resolve. Unknown filename
   // (e.g. tests) leaves it null -> CurrentRun.* stays indeterminate.

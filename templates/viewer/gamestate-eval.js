@@ -113,6 +113,40 @@ function evalSumPrevRuns(rec, root) {
     return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
 }
 
+// Evaluate a ``SumPrevRooms`` clause: aggregate the room-relative ``Path`` over
+// the last N rooms of the current run (the current room plus recent
+// ``RoomHistory``, newest first), then compare. ``root._rooms`` is the persisted
+// room slice (``[currentRoom, ...history]``, each pruned to the referenced
+// leaves). Unlike SumPrevRuns there is no ``IgnoreCurrentRoom`` - the engine
+// always includes the current room (roomsBack starts at 0). Modes mirror the
+// engine (CountPathTrue / TableValuesToCount / ValuesToCount / numeric sum).
+// Returns 'unknown' when the save carries no room slice (e.g. a hub save, or a
+// dialogue whose owner-context doesn't match the loaded save type).
+function evalSumPrevRooms(rec, root) {
+    const rooms = root._rooms;
+    if (!Array.isArray(rooms)) {
+        return _MET('unknown', 'Aggregates across rooms of the current run - load the matching in-run \u201C_Temp\u201D save to resolve it.');
+    }
+    if (!Array.isArray(rec.Path) || !rec.Comparison) {
+        return _MET('unknown', 'Unrecognised previous-rooms aggregation.');
+    }
+    const list = rooms.slice(0, rec.SumPrevRooms);
+    let sum = 0;
+    for (const room of list) {
+        const v = walkPath(room, rec.Path);
+        if (rec.CountPathTrue) {
+            sum += (v !== undefined && v !== null) ? 1 : 0;
+        } else if (Array.isArray(rec.TableValuesToCount)) {
+            sum += rec.TableValuesToCount.filter(k => luaTruthy(v && v[k])).length;
+        } else if (Array.isArray(rec.ValuesToCount)) {
+            sum += rec.ValuesToCount.some(x => v === x) ? 1 : 0;
+        } else {
+            sum += (typeof v === 'number' ? v : 0);
+        }
+    }
+    return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
+}
+
 // Resolve a ``RequireRunsSinceTextLines`` / list operand to an array of textline
 // names: a literal array, a ``<ref:GameData.X>`` indirection, or a single bare
 // name string. Returns null when a referenced list isn't in this build's data.
@@ -192,7 +226,7 @@ function evalClause(rec, root) {
         return evalSumPrevRuns(rec, root);
     }
     if (rec.SumPrevRooms !== undefined) {
-        return _MET('unknown', 'Aggregates across rooms in the current run - only meaningful during an active run.');
+        return evalSumPrevRooms(rec, root);
     }
 
     const path = rec.Path || rec.PathTrue || rec.PathFalse || rec.PathEmpty || rec.PathNotEmpty;
@@ -337,8 +371,10 @@ function evalSet(otherRequirements, root, stack) {
 // 'met' | 'unmet' | 'unknown' and ``clauses`` lists each gate's verdict (with a
 // reason for every 'unknown'). ``gameStateSlice`` is the persisted GameState
 // (or null when no save is loaded -> everything 'unknown'); ``runs`` is the
-// persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns.
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null, currentRunSlice = null) {
+// persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns;
+// ``rooms`` is the persisted room slice (``[currentRoom, ...recentHistory]``)
+// for SumPrevRooms.
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null, currentRunSlice = null, rooms = null) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
     }
@@ -348,7 +384,7 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, run
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRunSlice, _runs: runs, _runsAgo: runsAgo }, new Set());
+    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRunSlice, _runs: runs, _runsAgo: runsAgo, _rooms: rooms }, new Set());
 }
 
 // Dialogue-trigger context per owner, used to decide whether a dialogue's
@@ -528,15 +564,15 @@ export function pruneGameState(gs, mask) {
     return out;
 }
 
-// Collect the run-relative leaf paths the ``SumPrevRuns`` clauses read, plus
-// the maximum run count any of them looks back. Returns ``{ mask, maxRuns }``;
-// the save parser prunes the current run + that many recent ``RunHistory``
-// entries to ``mask``. ``SumPrevRuns`` paths are relative to each run object
-// (e.g. ``["RoomsEntered","N_Boss01"]`` is ``run.RoomsEntered.N_Boss01``), not
+// Collect the run/room-relative leaf paths an aggregate clause (``SumPrevRuns``
+// or ``SumPrevRooms``, selected by ``sumKey``) reads, plus the maximum look-back
+// count. Returns ``{ mask, max }``; the save parser prunes that many recent
+// run/room objects to ``mask``. The Path is relative to each run/room object
+// (e.g. ``["UseRecord","ZeusUpgrade"]`` is ``room.UseRecord.ZeusUpgrade``), not
 // ``GameState``. ``TableValuesToCount`` members are appended as leaf paths.
-export function collectRunPaths(textlines, namedReqs) {
+function collectAggregatePaths(textlines, namedReqs, sumKey) {
     const mask = {};
-    let maxRuns = 0;
+    let max = 0;
     const seenNamed = new Set();
     const markLeaf = (pathArr) => {
         if (!Array.isArray(pathArr) || pathArr.length === 0) return;
@@ -554,9 +590,9 @@ export function collectRunPaths(textlines, namedReqs) {
         else if (typeof node[last] === 'object') node[last] = true; // a deeper leaf subsumes
     };
     const scanRec = (rec) => {
-        if (!rec || typeof rec !== 'object' || rec.SumPrevRuns === undefined) return;
+        if (!rec || typeof rec !== 'object' || rec[sumKey] === undefined) return;
         if (!Array.isArray(rec.Path)) return;
-        if (typeof rec.SumPrevRuns === 'number') maxRuns = Math.max(maxRuns, rec.SumPrevRuns);
+        if (typeof rec[sumKey] === 'number') max = Math.max(max, rec[sumKey]);
         if (Array.isArray(rec.TableValuesToCount)) {
             for (const m of rec.TableValuesToCount) markLeaf([...rec.Path, m]);
         } else {
@@ -583,5 +619,19 @@ export function collectRunPaths(textlines, namedReqs) {
         scanSet(t.otherRequirements);
         if (Array.isArray(t.orBranches)) for (const b of t.orBranches) scanSet(b.otherRequirements);
     }
-    return { mask, maxRuns };
+    return { mask, max };
+}
+
+// The run-relative mask + max look-back for ``SumPrevRuns``. Returns
+// ``{ mask, maxRuns }``.
+export function collectRunPaths(textlines, namedReqs) {
+    const { mask, max } = collectAggregatePaths(textlines, namedReqs, 'SumPrevRuns');
+    return { mask, maxRuns: max };
+}
+
+// The room-relative mask + max look-back for ``SumPrevRooms``. Returns
+// ``{ mask, maxRooms }``.
+export function collectRoomPaths(textlines, namedReqs) {
+    const { mask, max } = collectAggregatePaths(textlines, namedReqs, 'SumPrevRooms');
+    return { mask, maxRooms: max };
 }

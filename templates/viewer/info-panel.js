@@ -1171,8 +1171,10 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     if (showDots) {
         const sctx = getSaveContext();
         const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
-        const cr = currentRunResolvable(owner, sctx.saveInRun) ? sctx.currentRun : null;
-        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, sctx.runs, sctx.runsAgo, cr);
+        const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
+        const cr = resolveRun ? sctx.currentRun : null;
+        const rooms = resolveRun ? sctx.rooms : null;
+        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, sctx.runs, sctx.runsAgo, cr, rooms);
         overallVerdict = res.status;
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
     }

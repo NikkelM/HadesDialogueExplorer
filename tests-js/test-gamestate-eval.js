@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -264,6 +264,59 @@ test('collectRunPaths: run-relative mask + max look-back depth', () => {
         EnemyKills: { Hydra: true },
         RoomsEntered: { Q_Boss01: true, Q_Boss02: true },
     });
+});
+
+// --- SumPrevRooms: aggregation across the current room + recent RoomHistory ---
+
+// Evaluate a SumPrevRooms clause; ``rooms`` is the persisted room slice
+// ([currentRoom, ...history], each pruned to the referenced room-relative
+// leaves). Passed as the 6th evaluateOtherRequirements arg.
+const evalRooms = (rec, rooms) => evaluateOtherRequirements(clause(rec), {}, null, null, null, rooms).status;
+
+test('SumPrevRooms numericSum: totals a room-relative path over N rooms (incl current)', () => {
+    const rec = { Path: ['UseRecord', 'InspectPoint'], SumPrevRooms: 3, Comparison: '>=', Value: 2 };
+    const rooms = [{ UseRecord: { InspectPoint: 1 } }, { UseRecord: { InspectPoint: 1 } }, { UseRecord: {} }, { UseRecord: { InspectPoint: 5 } }];
+    assert.equal(evalRooms(rec, rooms), 'met');   // 1+1+0 = 2 (4th room outside window)
+    assert.equal(evalRooms({ ...rec, Value: 3 }, rooms), 'unmet');
+});
+
+test('SumPrevRooms always includes the current room (no IgnoreCurrentRoom)', () => {
+    // "<= 0 boon picks across the last 6 rooms" - the boon-god gate shape.
+    const rec = { Path: ['UseRecord', 'ZeusUpgrade'], SumPrevRooms: 6, Comparison: '<=', Value: 0 };
+    assert.equal(evalRooms(rec, [{ UseRecord: {} }, { UseRecord: {} }]), 'met');
+    assert.equal(evalRooms(rec, [{ UseRecord: { ZeusUpgrade: 1 } }, { UseRecord: {} }]), 'unmet'); // current room counts
+});
+
+test('SumPrevRooms ValuesToCount / TableValuesToCount / CountPathTrue modes', () => {
+    const vc = { Path: ['Encounter', 'NemesisShopping'], SumPrevRooms: 12, Comparison: '<=', Value: 0, ValuesToCount: [true] };
+    assert.equal(evalRooms(vc, [{ Encounter: {} }, { Encounter: { NemesisShopping: false } }]), 'met');
+    assert.equal(evalRooms(vc, [{ Encounter: { NemesisShopping: true } }]), 'unmet');
+    const tc = { Path: ['UseRecord'], SumPrevRooms: 2, Comparison: '>=', Value: 2, TableValuesToCount: ['A', 'B'] };
+    assert.equal(evalRooms(tc, [{ UseRecord: { A: 1, B: 1 } }, { UseRecord: {} }]), 'met'); // 2 in current room
+    const cp = { Path: ['EncountersOccurredCache'], SumPrevRooms: 3, Comparison: '>=', Value: 2, CountPathTrue: true };
+    assert.equal(evalRooms(cp, [{ EncountersOccurredCache: {} }, {}, { EncountersOccurredCache: {} }]), 'met'); // 2 rooms have the table
+});
+
+test('SumPrevRooms with no room slice -> unknown', () => {
+    const rec = { Path: ['UseRecord', 'InspectPoint'], SumPrevRooms: 3, Comparison: '>=', Value: 1 };
+    const r = evaluateOtherRequirements(clause(rec), {}, null, null, null, null);
+    assert.equal(r.status, 'unknown');
+    assert.match(r.clauses[0].reason, /rooms of the current run/i);
+});
+
+test('collectRoomPaths: room-relative mask + max look-back depth', () => {
+    const textlines = {
+        T1: {
+            otherRequirements: {
+                'A': [{ Path: ['UseRecord', 'ZeusUpgrade'], SumPrevRooms: 6, Comparison: '<=', Value: 0 }],
+                'B': [{ Path: ['UseRecord'], SumPrevRooms: 99, Comparison: '>=', Value: 1, TableValuesToCount: ['InspectPoint'] }],
+                'C': [{ Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 1 }], // SumPrevRuns -> ignored
+            },
+        },
+    };
+    const { mask, maxRooms } = collectRoomPaths(textlines, {});
+    assert.equal(maxRooms, 99);
+    assert.deepEqual(mask, { UseRecord: { ZeusUpgrade: true, InspectPoint: true } });
 });
 
 // --- FunctionName gates: RequireRunsSinceTextLines + RequireQuestCount ---
