@@ -227,9 +227,14 @@ export function orBranchVerdict(branch, context, name) {
     // loaded save type (the branch belongs to the dialogue ``name``).
     const owner = (name && textlines[name]) ? textlines[name].owner : undefined;
     const resolveRun = currentRunResolvable(owner, ctx.saveInRun);
-    const cr = resolveRun ? ctx.currentRun : null;
-    const rooms = resolveRun ? ctx.rooms : null;
-    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo, cr, rooms).status;
+    const slices = {
+        runs: ctx.runs,
+        runsAgo: ctx.runsAgo,
+        prevRun: ctx.prevRun,
+        currentRun: resolveRun ? ctx.currentRun : null,
+        rooms: resolveRun ? ctx.rooms : null,
+    };
+    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, slices).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
     return 'met';

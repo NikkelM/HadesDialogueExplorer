@@ -20,7 +20,7 @@ globalThis.localStorage = {
 
 function seedSave(played) {
     _store.set('hde.save', JSON.stringify({
-        v: 7, gameId: getActiveGame(), runs: 1, played,
+        v: 8, gameId: getActiveGame(), runs: 1, played,
     }));
     restoreSaveProgress();
     return getSaveContext();

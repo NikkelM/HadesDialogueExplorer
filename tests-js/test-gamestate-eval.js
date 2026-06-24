@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -206,7 +206,7 @@ test('collectGameStatePaths + pruneGameState capture only referenced leaves', ()
 
 // Evaluate a SumPrevRuns clause; ``runs`` is the persisted runs slice
 // ([currentRun, ...history], each pruned to the referenced run-relative leaves).
-const evalRuns = (rec, runs) => evaluateOtherRequirements(clause(rec), {}, runs).status;
+const evalRuns = (rec, runs) => evaluateOtherRequirements(clause(rec), {}, { runs }).status;
 
 test('SumPrevRuns numericSum: totals a run-relative path over N runs', () => {
     const rec = { Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 5 };
@@ -271,7 +271,7 @@ test('collectRunPaths: run-relative mask + max look-back depth', () => {
 // Evaluate a SumPrevRooms clause; ``rooms`` is the persisted room slice
 // ([currentRoom, ...history], each pruned to the referenced room-relative
 // leaves). Passed as the 6th evaluateOtherRequirements arg.
-const evalRooms = (rec, rooms) => evaluateOtherRequirements(clause(rec), {}, null, null, null, rooms).status;
+const evalRooms = (rec, rooms) => evaluateOtherRequirements(clause(rec), {}, { rooms }).status;
 
 test('SumPrevRooms numericSum: totals a room-relative path over N rooms (incl current)', () => {
     const rec = { Path: ['UseRecord', 'InspectPoint'], SumPrevRooms: 3, Comparison: '>=', Value: 2 };
@@ -299,7 +299,7 @@ test('SumPrevRooms ValuesToCount / TableValuesToCount / CountPathTrue modes', ()
 
 test('SumPrevRooms with no room slice -> unknown', () => {
     const rec = { Path: ['UseRecord', 'InspectPoint'], SumPrevRooms: 3, Comparison: '>=', Value: 1 };
-    const r = evaluateOtherRequirements(clause(rec), {}, null, null, null, null);
+    const r = evaluateOtherRequirements(clause(rec), {}, {});
     assert.equal(r.status, 'unknown');
     assert.match(r.clauses[0].reason, /rooms of the current run/i);
 });
@@ -323,7 +323,7 @@ test('collectRoomPaths: room-relative mask + max look-back depth', () => {
 
 // Evaluate a FunctionName clause. ``gs`` is the GameState slice (must be
 // truthy for the evaluator to run), ``runsAgo`` the textline -> runs-ago map.
-const evalFn = (rec, gs, runsAgo) => evaluateOtherRequirements(clause(rec), gs || {}, null, runsAgo).status;
+const evalFn = (rec, gs, runsAgo) => evaluateOtherRequirements(clause(rec), gs || {}, { runsAgo }).status;
 
 test('RequireRunsSinceTextLines Min only: played recently enough, never-played passes', () => {
     const rec = { FunctionName: 'RequireRunsSinceTextLines', FunctionArgs: { Min: 3, TextLines: ['L1'] } };
@@ -385,7 +385,7 @@ test('collectGameStatePaths captures QuestStatus for RequireQuestCount', () => {
 // Evaluate a clause that reads CurrentRun.*; ``cr`` is the CurrentRun slice
 // (null = not resolvable for this dialogue -> indeterminate). A non-null
 // GameState slice ({}) is passed so the evaluator runs (no-save short-circuit).
-const evalCr = (rec, cr) => evaluateOtherRequirements(clause(rec), {}, null, null, cr).status;
+const evalCr = (rec, cr) => evaluateOtherRequirements(clause(rec), {}, { currentRun: cr }).status;
 
 test('CurrentRun.* resolves from the slice when provided', () => {
     const rec = { Path: ['CurrentRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 };
@@ -397,7 +397,7 @@ test('CurrentRun.* resolves from the slice when provided', () => {
 
 test('CurrentRun.* is indeterminate when no slice is supplied (owner/save mismatch)', () => {
     const rec = { Path: ['CurrentRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 };
-    const r = evaluateOtherRequirements(clause(rec), {}, null, null, null);
+    const r = evaluateOtherRequirements(clause(rec), {}, {});
     assert.equal(r.status, 'unknown');
     assert.match(r.clauses[0].reason, /current-run state/i);
 });
@@ -447,4 +447,46 @@ test('currentRunResolvable: hub/run/both/unlisted policy vs save type', () => {
     assert.equal(vals.filter(v => v === 'hub').length, 11);
     assert.equal(vals.filter(v => v === 'run').length, 38);
     assert.equal(vals.filter(v => v === 'both').length, 4);
+});
+
+// --- PrevRun.* (last completed run = RunHistory[#RunHistory], ungated) ---
+
+// Evaluate a clause reading PrevRun.*; ``pr`` is the persisted PrevRun slice.
+const evalPr = (rec, pr) => evaluateOtherRequirements(clause(rec), {}, { prevRun: pr }).status;
+
+test('PrevRun.* resolves from the slice (Comparison / PathTrue / PathFalse / membership)', () => {
+    assert.equal(evalPr({ Path: ['PrevRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 }, { RoomsEntered: { I_Boss01: 1 } }), 'met');
+    assert.equal(evalPr({ Path: ['PrevRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 }, { RoomsEntered: {} }), 'unmet');
+    assert.equal(evalPr({ PathTrue: ['PrevRun', 'Cleared'] }, { Cleared: true }), 'met');
+    assert.equal(evalPr({ PathFalse: ['PrevRun', 'Cleared'] }, { Cleared: true }), 'unmet');
+    const hasAny = { Path: ['PrevRun', 'BiomesReached'], HasAny: ['F', 'N'] };
+    assert.equal(evalPr(hasAny, { BiomesReached: { F: true } }), 'met');
+    assert.equal(evalPr(hasAny, { BiomesReached: { Tartarus: true } }), 'unmet');
+});
+
+test('PrevRun.* with no completed run (empty/null slice) coerces to nil/0/false', () => {
+    // An empty PrevRun slice (first run, never completed) is still resolved - not
+    // indeterminate: missing path -> 0 / false, matching the engine's nil PrevRun.
+    assert.equal(evalPr({ PathTrue: ['PrevRun', 'Cleared'] }, {}), 'unmet');     // nil -> not true
+    assert.equal(evalPr({ PathFalse: ['PrevRun', 'Cleared'] }, {}), 'met');      // nil -> false-ish
+    assert.equal(evalPr({ Path: ['PrevRun', 'RoomCountCache'], Comparison: '>=', Value: 1 }, null), 'unmet'); // null slice -> 0
+});
+
+test('collectPrevRunPaths captures PrevRun leaves only', () => {
+    const textlines = {
+        T1: {
+            otherRequirements: {
+                'A': [{ PathTrue: ['PrevRun', 'Cleared'] }],
+                'B': [{ Path: ['PrevRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 }],
+                'C': [{ Path: ['PrevRun', 'BiomesReached'], HasAny: ['F', 'N'] }],
+                'D': [{ Path: ['CurrentRun', 'Cleared'], PathTrue: ['CurrentRun', 'Cleared'] }], // CurrentRun -> ignored
+            },
+        },
+    };
+    const mask = collectPrevRunPaths(textlines, {});
+    assert.deepEqual(mask, {
+        Cleared: true,
+        RoomsEntered: { I_Boss01: true },
+        BiomesReached: { F: true, N: true },
+    });
 });

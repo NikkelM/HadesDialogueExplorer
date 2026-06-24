@@ -520,17 +520,21 @@ export function directSatisfaction(textlineData, context, name) {
     if (!context) return 'unknown';
     const ctx = _asContext(context);
     const gs = ctx.gameState;
-    const runs = ctx.runs;
-    const runsAgo = ctx.runsAgo;
     // CurrentRun.* / SumPrevRooms gates resolve only when this dialogue's
-    // owner-context matches the loaded save type (hub save vs in-run _Temp save);
-    // otherwise pass null so they stay indeterminate.
+    // owner-context matches the loaded save type (hub save vs in-run _Temp save).
+    // PrevRun.* (last completed run) and the run-count / runs-since records are
+    // always available. ``slices`` bundles them for evaluateOtherRequirements.
     const resolveRun = currentRunResolvable(textlineData.owner, ctx.saveInRun);
-    const cr = resolveRun ? ctx.currentRun : null;
-    const rooms = resolveRun ? ctx.rooms : null;
+    const slices = {
+        runs: ctx.runs,
+        runsAgo: ctx.runsAgo,
+        prevRun: ctx.prevRun,
+        currentRun: resolveRun ? ctx.currentRun : null,
+        rooms: resolveRun ? ctx.rooms : null,
+    };
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo, cr, rooms).status);
+        evaluateOtherRequirements(textlineData.otherRequirements, gs, slices).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -540,7 +544,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo, cr, rooms).status);
+                evaluateOtherRequirements(b.otherRequirements, gs, slices).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

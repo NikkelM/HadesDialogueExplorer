@@ -569,9 +569,12 @@ export function renderOtherConditionsHtml(rootName) {
     if (haveSave) {
         const sctx = getSaveContext();
         const resolveRun = currentRunResolvable(tl.owner, sctx.saveInRun);
-        const cr = resolveRun ? sctx.currentRun : null;
-        const rooms = resolveRun ? sctx.rooms : null;
-        const res = evaluateOtherRequirements(other, sctx.gameState, sctx.runs, sctx.runsAgo, cr, rooms);
+        const slices = {
+            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun,
+            currentRun: resolveRun ? sctx.currentRun : null,
+            rooms: resolveRun ? sctx.rooms : null,
+        };
+        const res = evaluateOtherRequirements(other, sctx.gameState, slices);
         verdict = res.status;
         for (const c of res.clauses) byKey.set(c.key, c);
     }
@@ -942,9 +945,12 @@ function renderConditionsHtml(otherRequirements, owner) {
     if (gateKeys.length === 0) return '';
     const sctx = getSaveContext();
     const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
-    const cr = resolveRun ? sctx.currentRun : null;
-    const rooms = resolveRun ? sctx.rooms : null;
-    const { clauses } = evaluateOtherRequirements(other, sctx.gameState, sctx.runs, sctx.runsAgo, cr, rooms);
+    const slices = {
+        runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun,
+        currentRun: resolveRun ? sctx.currentRun : null,
+        rooms: resolveRun ? sctx.rooms : null,
+    };
+    const { clauses } = evaluateOtherRequirements(other, sctx.gameState, slices);
     const byKey = new Map(clauses.map(c => [c.key, c]));
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {

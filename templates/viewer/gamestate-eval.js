@@ -234,11 +234,13 @@ function evalClause(rec, root) {
         return _MET('unknown', 'Unrecognised condition shape.');
     }
     const base = path[0];
-    if (base !== 'GameState') {
+    if (base !== 'GameState' && base !== 'PrevRun') {
         // CurrentRun.* resolves from the persisted CurrentRun slice, but only
         // when the caller supplied one (the dialogue's owner matches the loaded
         // save type - see ``currentRunResolvable``). Otherwise it stays
-        // indeterminate, like the other live-state roots.
+        // indeterminate, like the other live-state roots. PrevRun.* (the last
+        // completed run) always resolves from its slice when a save is loaded -
+        // it isn't owner/save-type gated.
         if (base === 'CurrentRun' && root.CurrentRun) {
             // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
         } else {
@@ -252,6 +254,9 @@ function evalClause(rec, root) {
                 : `Reads ${base}.* - ${why}, not resolved in this pass.`);
         }
     }
+    // ``PrevRun.*`` reads the persisted last-completed-run slice (null when the
+    // save carries no completed run - walkPath then coerces to nil/0/false, which
+    // matches the engine's nil ``PrevRun``).
     const val = walkPath(root, path);
 
     // Boolean / table-shape terminal operators.
@@ -370,11 +375,14 @@ function evalSet(otherRequirements, root, stack) {
 // pruned ``GameState`` slice. Returns { status, clauses } where ``status`` is
 // 'met' | 'unmet' | 'unknown' and ``clauses`` lists each gate's verdict (with a
 // reason for every 'unknown'). ``gameStateSlice`` is the persisted GameState
-// (or null when no save is loaded -> everything 'unknown'); ``runs`` is the
-// persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns;
-// ``rooms`` is the persisted room slice (``[currentRoom, ...recentHistory]``)
-// for SumPrevRooms.
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null, currentRunSlice = null, rooms = null) {
+// (or null when no save is loaded -> everything 'unknown'). ``slices`` bundles
+// the optional run/room-scoped slices used by the aggregate / non-GameState
+// roots: ``{ runs, runsAgo, currentRun, rooms, prevRun }`` (each null when the
+// save doesn't carry it or the dialogue's owner-context doesn't match the save
+// type). ``runs`` -> SumPrevRuns; ``rooms`` -> SumPrevRooms; ``runsAgo`` ->
+// RequireRunsSinceTextLines; ``currentRun`` -> CurrentRun.*; ``prevRun`` ->
+// PrevRun.* (the last completed run).
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, slices = {}) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
     }
@@ -384,7 +392,8 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, run
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRunSlice, _runs: runs, _runsAgo: runsAgo, _rooms: rooms }, new Set());
+    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null } = slices || {};
+    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, _runs: runs, _runsAgo: runsAgo, _rooms: rooms }, new Set());
 }
 
 // Dialogue-trigger context per owner, used to decide whether a dialogue's
@@ -543,6 +552,13 @@ export function collectGameStatePaths(textlines, namedReqs) {
 // ``collectRunPaths``) and SumPrevRooms (room-relative, deferred) are excluded.
 export function collectCurrentRunPaths(textlines, namedReqs) {
     return collectRootedPaths(textlines, namedReqs, 'CurrentRun');
+}
+
+// The PrevRun leaf/sub-table mask for resolving ``PrevRun.*`` gates (the last
+// completed run, e.g. ``PrevRun.Cleared`` / ``PrevRun.RoomsEntered.I_Boss01``).
+// Sourced at save time from ``GameState.RunHistory[#RunHistory]``.
+export function collectPrevRunPaths(textlines, namedReqs) {
+    return collectRootedPaths(textlines, namedReqs, 'PrevRun');
 }
 
 // Build the minimal GameState slice from a full ``gs`` table and a ``mask`` (see

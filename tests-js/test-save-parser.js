@@ -548,7 +548,7 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
     const store = installMockLocalStorage();
     try {
         store.setItem('hde.save', JSON.stringify({
-            v: 7, gameId: 'hades3', runs: 1, played: ['Old01'],
+            v: 8, gameId: 'hades3', runs: 1, played: ['Old01'],
         }));
         assert.equal(restoreSaveProgress(), null);
         // The invalid entry is purged so restore fails closed.
