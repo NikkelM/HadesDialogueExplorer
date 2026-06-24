@@ -201,11 +201,22 @@ function evalClause(rec, root) {
     }
     const base = path[0];
     if (base !== 'GameState') {
-        const why = base === 'CurrentRun' ? 'current-run state (only meaningful during an active run)'
-            : base === 'AudioState' ? 'live audio state'
-                : base === 'MapState' ? 'live room/map state'
-                    : `${base} state`;
-        return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
+        // CurrentRun.* resolves from the persisted CurrentRun slice, but only
+        // when the caller supplied one (the dialogue's owner matches the loaded
+        // save type - see ``currentRunResolvable``). Otherwise it stays
+        // indeterminate, like the other live-state roots.
+        if (base === 'CurrentRun' && root.CurrentRun) {
+            // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
+        } else {
+            const why = base === 'CurrentRun'
+                ? 'current-run state - load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue)'
+                : base === 'AudioState' ? 'live audio state'
+                    : base === 'MapState' ? 'live room/map state'
+                        : `${base} state`;
+            return _MET('unknown', base === 'CurrentRun'
+                ? `Reads ${base}.* - ${why}.`
+                : `Reads ${base}.* - ${why}, not resolved in this pass.`);
+        }
     }
     const val = walkPath(root, path);
 
@@ -327,7 +338,7 @@ function evalSet(otherRequirements, root, stack) {
 // reason for every 'unknown'). ``gameStateSlice`` is the persisted GameState
 // (or null when no save is loaded -> everything 'unknown'); ``runs`` is the
 // persisted runs slice (``[currentRun, ...recentHistory]``) for SumPrevRuns.
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null) {
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, runs = null, runsAgo = null, currentRunSlice = null) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
     }
@@ -337,24 +348,69 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, run
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    return evalSet(otherRequirements, { GameState: gameStateSlice, _runs: runs, _runsAgo: runsAgo }, new Set());
+    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRunSlice, _runs: runs, _runsAgo: runsAgo }, new Set());
 }
 
-// A nested "mask" of the exact GameState paths any clause in ``textlines``
-// reads, so the save parser can persist a minimal slice instead of whole
-// (often huge) GameState sub-tables. A mask node is either ``true`` (capture
-// the value at this leaf), ``'*'`` (capture this whole sub-table - needed by
-// UseLength / PathEmpty / PathNotEmpty, which count keys), or a nested object.
-// SumPrevRuns/Rooms, FunctionName, CurrentRun/Audio/Map and PathFromSource are
-// skipped - they aren't resolved in this pass. Recurses NamedRequirements*.
-export function collectGameStatePaths(textlines, namedReqs) {
+// Dialogue-trigger context per owner, used to decide whether a dialogue's
+// ``CurrentRun.*`` gates can be resolved from a loaded save. A hub save
+// (ProfileX.sav) carries a hub-meaningful CurrentRun; an in-run (_Temp) save
+// carries a run-meaningful one. ``both`` owners speak in either context, so
+// their CurrentRun gates resolve from whichever save is loaded. Owners absent
+// from this map don't gate on CurrentRun.* today; their gates stay
+// indeterminate. Classification reviewed against the game (see the
+// hades2-knowledge breakdown of Crossroads vs in-biome spawns).
+export const OWNER_RUN_CONTEXT = {
+    // hub (12): Crossroads / House / flashback speakers
+    NPC_Arachne_Home_01: 'hub', NPC_Artemis_01: 'hub', NPC_Dora_01: 'hub',
+    NPC_Hecate_01: 'hub', NPC_Moros_01: 'hub', NPC_Nyx_01: 'hub',
+    NPC_Selene_01: 'hub', NPC_Skelly_01: 'hub', NPC_Hecate_Story_01: 'hub',
+    NPC_Eris_01: 'hub', NPC_Odysseus_01: 'hub',
+    // run (38): boon gods, biome NPCs, story scenes, bosses
+    AphroditeUpgrade: 'run', ApolloUpgrade: 'run', AresUpgrade: 'run',
+    DemeterUpgrade: 'run', HephaestusUpgrade: 'run', HeraUpgrade: 'run',
+    HermesUpgrade: 'run', HestiaUpgrade: 'run', PoseidonUpgrade: 'run',
+    ZeusUpgrade: 'run', TrialUpgrade: 'run', SpellDrop: 'run',
+    NPC_Artemis_Field_01: 'run', NPC_Hades_Field_01: 'run',
+    NPC_Apollo_Story_01: 'run', NPC_Chronos_Story_01: 'run', NPC_Nyx_Story_01: 'run',
+    NPC_Arachne_01: 'run', NPC_Athena_01: 'run', NPC_Chronos_01: 'run',
+    NPC_Chronos_02: 'run', NPC_Circe_01: 'run', NPC_Dionysus_01: 'run',
+    NPC_Echo_01: 'run', NPC_Hermes_01: 'run', NPC_Hypnos_DreamRun: 'run',
+    NPC_Medea_01: 'run', NPC_Narcissus_01: 'run', NPC_Zagreus_Past_01: 'run',
+    NPC_Charon_01: 'run', NPC_Heracles_01: 'run',
+    Chronos: 'run', Eris: 'run', Hecate: 'run', Polyphemus: 'run',
+    Prometheus: 'run', Scylla: 'run', Zagreus: 'run',
+    // both (4): single owner that speaks in hub AND run
+    NPC_Nemesis_01: 'both', NPC_Icarus_01: 'both', PlayerUnit: 'both', Speaker_Homer: 'both',
+};
+
+// Whether a dialogue owned by ``owner`` can have its ``CurrentRun.*`` gates
+// resolved from a loaded save of the given type. ``saveInRun`` is true for an
+// in-run (_Temp) save, false for a hub save. ``both`` resolves either way;
+// unlisted owners stay indeterminate.
+export function currentRunResolvable(owner, saveInRun) {
+    const ctx = OWNER_RUN_CONTEXT[owner];
+    if (ctx === 'both') return true;
+    if (ctx === 'run') return saveInRun === true;
+    if (ctx === 'hub') return saveInRun === false;
+    return false;
+}
+
+// A nested "mask" of the exact ``rootKey`` (``GameState`` or ``CurrentRun``)
+// paths any clause in ``textlines`` reads, so the save parser can persist a
+// minimal slice instead of whole (often huge) sub-tables. A mask node is either
+// ``true`` (capture the value at this leaf), ``'*'`` (capture this whole
+// sub-table - needed by UseLength / PathEmpty / PathNotEmpty, which count keys),
+// or a nested object. SumPrevRuns/Rooms, FunctionName (except GameState
+// QuestStatus), the non-``rootKey`` roots and PathFromSource are skipped.
+// Recurses NamedRequirements*.
+function collectRootedPaths(textlines, namedReqs, rootKey) {
     const mask = {};
     const seenNamed = new Set();
 
-    // Mark a leaf path (array under GameState, e.g. ['GameState','EnemyKills',
+    // Mark a leaf path (array under ``rootKey``, e.g. ['GameState','EnemyKills',
     // 'Hecate']) for capture. A ``'*'`` ancestor already covers it.
     const markLeaf = (pathArr) => {
-        if (!Array.isArray(pathArr) || pathArr[0] !== 'GameState' || pathArr.length < 2) return;
+        if (!Array.isArray(pathArr) || pathArr[0] !== rootKey || pathArr.length < 2) return;
         let node = mask;
         for (let i = 1; i < pathArr.length - 1; i++) {
             const k = pathArr[i];
@@ -367,9 +423,9 @@ export function collectGameStatePaths(textlines, namedReqs) {
         if (typeof last !== 'string') return;
         if (node[last] !== '*') node[last] = (typeof node[last] === 'object' && node[last] !== null) ? node[last] : true;
     };
-    // Mark a whole sub-table (path array under GameState) for capture.
+    // Mark a whole sub-table (path array under ``rootKey``) for capture.
     const markWhole = (pathArr) => {
-        if (!Array.isArray(pathArr) || pathArr[0] !== 'GameState' || pathArr.length < 2) return;
+        if (!Array.isArray(pathArr) || pathArr[0] !== rootKey || pathArr.length < 2) return;
         let node = mask;
         for (let i = 1; i < pathArr.length - 1; i++) {
             const k = pathArr[i];
@@ -386,8 +442,8 @@ export function collectGameStatePaths(textlines, namedReqs) {
         if (rec.FunctionName) {
             // RequireQuestCount reads the whole GameState.QuestStatus table; the
             // other resolvable function (RequireRunsSinceTextLines) uses the
-            // run-scoped runsAgo map, not the GameState slice.
-            if (rec.FunctionName === 'RequireQuestCount') markWhole(['GameState', 'QuestStatus']);
+            // run-scoped runsAgo map, not a path slice.
+            if (rootKey === 'GameState' && rec.FunctionName === 'RequireQuestCount') markWhole(['GameState', 'QuestStatus']);
             return;
         }
         if (rec.PathFromSource || rec.PathFromArgs) return;
@@ -397,7 +453,7 @@ export function collectGameStatePaths(textlines, namedReqs) {
         if (boolPath) { markLeaf(boolPath); return; }
         if (emptyPath) { markWhole(emptyPath); return; }
         const path = rec.Path;
-        if (!Array.isArray(path) || path[0] !== 'GameState') {
+        if (!Array.isArray(path) || path[0] !== rootKey) {
             if (rec.ValuePath) markLeaf(rec.ValuePath);
             return;
         }
@@ -439,6 +495,18 @@ export function collectGameStatePaths(textlines, namedReqs) {
         if (Array.isArray(t.orBranches)) for (const b of t.orBranches) scanSet(b.otherRequirements);
     }
     return mask;
+}
+
+// The GameState leaf/sub-table mask (see ``collectRootedPaths``).
+export function collectGameStatePaths(textlines, namedReqs) {
+    return collectRootedPaths(textlines, namedReqs, 'GameState');
+}
+
+// The CurrentRun leaf/sub-table mask for resolving ``CurrentRun.*`` direct gates
+// (e.g. ``CurrentRun.RoomsEntered.I_Boss01``). SumPrevRuns (run-relative, see
+// ``collectRunPaths``) and SumPrevRooms (room-relative, deferred) are excluded.
+export function collectCurrentRunPaths(textlines, namedReqs) {
+    return collectRootedPaths(textlines, namedReqs, 'CurrentRun');
 }
 
 // Build the minimal GameState slice from a full ``gs`` table and a ``mask`` (see

@@ -15,7 +15,7 @@
  */
 
 import { textlines } from './data.js';
-import { evaluateOtherRequirements } from './gamestate-eval.js';
+import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 
 // Three-state AND: unmet if either side is unmet; else unknown if either is
 // unknown; else met. Used to fold the GameState (non-textline) verdict into the
@@ -522,9 +522,13 @@ export function directSatisfaction(textlineData, context, name) {
     const gs = ctx.gameState;
     const runs = ctx.runs;
     const runsAgo = ctx.runsAgo;
+    // CurrentRun.* gates resolve only when this dialogue's owner-context matches
+    // the loaded save type (hub save vs in-run _Temp save); otherwise pass null
+    // so they stay indeterminate.
+    const cr = currentRunResolvable(textlineData.owner, ctx.saveInRun) ? ctx.currentRun : null;
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo).status);
+        evaluateOtherRequirements(textlineData.otherRequirements, gs, runs, runsAgo, cr).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -534,7 +538,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo).status);
+                evaluateOtherRequirements(b.otherRequirements, gs, runs, runsAgo, cr).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

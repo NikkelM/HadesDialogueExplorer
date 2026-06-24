@@ -17,7 +17,7 @@ import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES,
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip } from './info-panel.js';
-import { evaluateOtherRequirements } from './gamestate-eval.js';
+import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -567,7 +567,9 @@ export function renderOtherConditionsHtml(rootName) {
     const byKey = new Map();
     let verdict = null;
     if (haveSave) {
-        const res = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
+        const sctx = getSaveContext();
+        const cr = currentRunResolvable(tl.owner, sctx.saveInRun) ? sctx.currentRun : null;
+        const res = evaluateOtherRequirements(other, sctx.gameState, sctx.runs, sctx.runsAgo, cr);
         verdict = res.status;
         for (const c of res.clauses) byKey.set(c.key, c);
     }
@@ -932,11 +934,13 @@ function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
 // loaded save and shown with a met / unmet / indeterminate dot - met ones
 // struck through - so they read the same way dialogue prerequisites do.
 // Returns '' when the set has no such conditions.
-function renderConditionsHtml(otherRequirements) {
+function renderConditionsHtml(otherRequirements, owner) {
     const other = otherRequirements || {};
     const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
     if (gateKeys.length === 0) return '';
-    const { clauses } = evaluateOtherRequirements(other, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
+    const sctx = getSaveContext();
+    const cr = currentRunResolvable(owner, sctx.saveInRun) ? sctx.currentRun : null;
+    const { clauses } = evaluateOtherRequirements(other, sctx.gameState, sctx.runs, sctx.runsAgo, cr);
     const byKey = new Map(clauses.map(c => [c.key, c]));
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {
@@ -983,7 +987,7 @@ function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
     }
     // Non-dialogue conditions (state paths, function checks, ...) - now
     // resolvable against the save rather than an opaque "other conditions".
-    html += renderConditionsHtml(branch && branch.otherRequirements);
+    html += renderConditionsHtml(branch && branch.otherRequirements, textlines[rootName] && textlines[rootName].owner);
     if (!html) {
         html += `<div class="eligibility-branch-note">No requirements - always available.</div>`;
     }

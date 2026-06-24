@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -325,4 +325,73 @@ test('collectGameStatePaths captures QuestStatus for RequireQuestCount', () => {
     };
     const mask = collectGameStatePaths(textlines, {});
     assert.deepEqual(mask, { QuestStatus: '*' });
+});
+
+// --- CurrentRun.* direct gates (5th arg = the persisted CurrentRun slice) ---
+
+// Evaluate a clause that reads CurrentRun.*; ``cr`` is the CurrentRun slice
+// (null = not resolvable for this dialogue -> indeterminate). A non-null
+// GameState slice ({}) is passed so the evaluator runs (no-save short-circuit).
+const evalCr = (rec, cr) => evaluateOtherRequirements(clause(rec), {}, null, null, cr).status;
+
+test('CurrentRun.* resolves from the slice when provided', () => {
+    const rec = { Path: ['CurrentRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 };
+    assert.equal(evalCr(rec, { RoomsEntered: { I_Boss01: 1 } }), 'met');
+    assert.equal(evalCr(rec, { RoomsEntered: { I_Boss01: 0 } }), 'unmet');
+    assert.equal(evalCr(rec, { RoomsEntered: {} }), 'unmet');   // missing -> 0
+    assert.equal(evalCr(rec, {}), 'unmet');                     // missing table -> 0
+});
+
+test('CurrentRun.* is indeterminate when no slice is supplied (owner/save mismatch)', () => {
+    const rec = { Path: ['CurrentRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 };
+    const r = evaluateOtherRequirements(clause(rec), {}, null, null, null);
+    assert.equal(r.status, 'unknown');
+    assert.match(r.clauses[0].reason, /current-run state/i);
+});
+
+test('CurrentRun.* honours PathTrue / PathFalse / membership operators', () => {
+    assert.equal(evalCr({ PathTrue: ['CurrentRun', 'IsDreamRun'] }, { IsDreamRun: true }), 'met');
+    assert.equal(evalCr({ PathTrue: ['CurrentRun', 'IsDreamRun'] }, { IsDreamRun: false }), 'unmet');
+    assert.equal(evalCr({ PathFalse: ['CurrentRun', 'Cleared'] }, {}), 'met');   // nil -> false-ish
+    const hasAny = { Path: ['CurrentRun', 'RoomsEntered'], HasAny: ['O_Boss01', 'O_Boss02'] };
+    assert.equal(evalCr(hasAny, { RoomsEntered: { O_Boss01: 1 } }), 'met');
+    assert.equal(evalCr(hasAny, { RoomsEntered: { X: 1 } }), 'unmet');
+});
+
+test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {
+    const textlines = {
+        T1: {
+            otherRequirements: {
+                'A': [{ Path: ['CurrentRun', 'RoomsEntered', 'I_Boss01'], Comparison: '>=', Value: 1 }],
+                'B': [{ Path: ['CurrentRun', 'RoomsEntered'], HasAny: ['O_Boss01', 'O_Boss02'] }],
+                'C': [{ Path: ['GameState', 'EnemyKills', 'Hecate'], Comparison: '>=', Value: 1 }],   // GameState -> ignored
+                'D': [{ Path: ['EnemyKills', 'Hydra'], SumPrevRuns: 3, Comparison: '>=', Value: 1 }], // SumPrevRuns -> ignored
+            },
+        },
+    };
+    // HasAny without a ref list (literal array) marks member leaves.
+    const mask = collectCurrentRunPaths(textlines, {});
+    assert.deepEqual(mask, {
+        RoomsEntered: { I_Boss01: true, O_Boss01: true, O_Boss02: true },
+    });
+});
+
+test('currentRunResolvable: hub/run/both/unlisted policy vs save type', () => {
+    // hub owner: resolves only in a hub save (saveInRun false).
+    assert.equal(currentRunResolvable('NPC_Hecate_01', false), true);
+    assert.equal(currentRunResolvable('NPC_Hecate_01', true), false);
+    // run owner: resolves only in an in-run (_Temp) save.
+    assert.equal(currentRunResolvable('AphroditeUpgrade', true), true);
+    assert.equal(currentRunResolvable('AphroditeUpgrade', false), false);
+    // both owner: resolves either way.
+    assert.equal(currentRunResolvable('NPC_Nemesis_01', true), true);
+    assert.equal(currentRunResolvable('NPC_Nemesis_01', false), true);
+    // unlisted owner / unknown save type: never resolvable.
+    assert.equal(currentRunResolvable('NPC_DoesNotExist', true), false);
+    assert.equal(currentRunResolvable('NPC_Hecate_01', null), false);
+    // sanity on the map sizes.
+    const vals = Object.values(OWNER_RUN_CONTEXT);
+    assert.equal(vals.filter(v => v === 'hub').length, 11);
+    assert.equal(vals.filter(v => v === 'run').length, 38);
+    assert.equal(vals.filter(v => v === 'both').length, 4);
 });

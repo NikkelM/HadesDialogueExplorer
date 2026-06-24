@@ -45,7 +45,7 @@ export function initSaveUpload() {
 
         try {
             const buffer = await file.arrayBuffer();
-            parseSaveFile(buffer);
+            parseSaveFile(buffer, file.name);
             // Status text + colour are derived from the parsed state, the same
             // as on a game switch, so the message stays in one place.
             refreshSaveStatus();

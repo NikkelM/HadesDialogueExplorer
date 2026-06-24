@@ -10,7 +10,7 @@
  */
 
 import { getActiveGame, games } from './data.js';
-import { collectGameStatePaths, pruneGameState, collectRunPaths } from './gamestate-eval.js';
+import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths } from './gamestate-eval.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -383,6 +383,7 @@ function extractSaveContext(parsed) {
     played, thisRun, thisRoom, queued, lastRun, runsAgo,
     gameState: extractGameStateSlice(gameId, gs),
     runs: extractRunsSlice(gameId, luaState),
+    currentRun: extractCurrentRunSlice(gameId, luaState),
   };
 }
 
@@ -416,6 +417,19 @@ function _h2RunMask() {
   return _runMaskCache;
 }
 
+// Memoised CurrentRun mask for resolving ``CurrentRun.*`` direct gates.
+let _crMaskCache = null;
+let _crMaskFor = null;
+function _h2CurrentRunMask() {
+  const h2 = games && games.hades2;
+  if (!h2) return null;
+  if (_crMaskFor !== h2) {
+    _crMaskFor = h2;
+    _crMaskCache = collectCurrentRunPaths(h2.textlines || {}, h2.namedRequirements || {});
+  }
+  return _crMaskCache;
+}
+
 // Build the minimal persisted GameState slice for an H2 save - just the paths
 // the dialogue requirements actually read. Returns null for non-H2 saves (H1
 // uses a different requirement model, not yet resolved against the save).
@@ -424,6 +438,19 @@ function extractGameStateSlice(gameId, gs) {
   const mask = _h2GameStateMask();
   if (!mask) return null;
   return pruneGameState(gs, mask);
+}
+
+// Build the minimal persisted ``CurrentRun`` slice (the live-run snapshot in the
+// save), pruned to the ``CurrentRun.*`` leaves the dialogue requirements read.
+// Whether these resolve for a given dialogue depends on its owner's context vs
+// the save type (see ``currentRunResolvable``); the slice itself is captured
+// regardless. Returns null for non-H2 saves or when nothing uses CurrentRun.*.
+function extractCurrentRunSlice(gameId, luaState) {
+  if (gameId !== 'hades2') return null;
+  const mask = _h2CurrentRunMask();
+  if (!mask || Object.keys(mask).length === 0) return null;
+  const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
+  return pruneGameState(cr, mask);
 }
 
 // Build the per-run slice for SumPrevRuns: the current run plus the most recent
@@ -472,6 +499,13 @@ let _saveGameState = null;
 // Per-run slice (current run + recent RunHistory, newest first) for resolving
 // SumPrevRuns requirements; null for non-H2 saves or when none is loaded.
 let _saveRunsSlice = null;
+// Minimal persisted CurrentRun slice for resolving ``CurrentRun.*`` direct
+// gates; null for non-H2 saves or when none is loaded.
+let _saveCurrentRun = null;
+// Whether the loaded save is an in-run (_Temp) save (true) or a hub save
+// (false). Decides which owners' CurrentRun.* gates resolve (see
+// ``currentRunResolvable``). null when no save is loaded.
+let _saveInRun = null;
 
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
@@ -491,6 +525,8 @@ export function getSaveContext() {
     runsAgo: _saveRunsAgo,
     gameState: _saveGameState,
     runs: _saveRunsSlice,
+    currentRun: _saveCurrentRun,
+    saveInRun: _saveInRun,
   };
 }
 
@@ -505,6 +541,8 @@ export function clearSaveProgress() {
   _saveLastRun = null;
   _saveGameState = null;
   _saveRunsSlice = null;
+  _saveCurrentRun = null;
+  _saveInRun = null;
   _saveRunsAgo = null;
 }
 
@@ -526,10 +564,11 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // v2 added the run-scoped records (thisRun / thisRoom / queued); v3 added the
 // persisted GameState slice (for resolving non-textline requirements); v4 added
 // the per-run slice (for resolving SumPrevRuns requirements); v5 widened the
-// GameState slice to include QuestStatus (for RequireQuestCount). An older cache
-// lacks these, so the bump forces a re-parse rather than silently leaving them
-// unavailable.
-const SAVE_STORAGE_SCHEMA = 5;
+// GameState slice to include QuestStatus (for RequireQuestCount); v6 added the
+// CurrentRun slice + in-run flag (for resolving CurrentRun.* gates). An older
+// cache lacks these, so the bump forces a re-parse rather than silently leaving
+// them unavailable.
+const SAVE_STORAGE_SCHEMA = 6;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -568,6 +607,8 @@ export function persistSaveProgress(filename) {
       runsAgo: _saveRunsAgo || null,
       gameState: _saveGameState || null,
       runs2: _saveRunsSlice || null,
+      currentRun: _saveCurrentRun || null,
+      inRun: _saveInRun,
     }));
     return true;
   } catch {
@@ -616,6 +657,8 @@ export function restoreSaveProgress() {
   _saveRunsAgo = (data.runsAgo && typeof data.runsAgo === 'object') ? data.runsAgo : null;
   _saveGameState = (data.gameState && typeof data.gameState === 'object') ? data.gameState : null;
   _saveRunsSlice = Array.isArray(data.runs2) ? data.runs2 : null;
+  _saveCurrentRun = (data.currentRun && typeof data.currentRun === 'object') ? data.currentRun : null;
+  _saveInRun = (typeof data.inRun === 'boolean') ? data.inRun : null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -630,7 +673,7 @@ export function clearPersistedSave() {
   if (store) _removePersistedSave(store);
 }
 
-export function parseSaveFile(arrayBuffer) {
+export function parseSaveFile(arrayBuffer, filename = null) {
   const parsed = parseSGB1(arrayBuffer);
   const ctx = extractSaveContext(parsed);
   _saveProgress = ctx.played;
@@ -641,6 +684,11 @@ export function parseSaveFile(arrayBuffer) {
   _saveRunsAgo = ctx.runsAgo;
   _saveGameState = ctx.gameState;
   _saveRunsSlice = ctx.runs;
+  _saveCurrentRun = ctx.currentRun;
+  // An in-run autosave is named ProfileX_Temp.sav; the hub save is ProfileX.sav.
+  // The flag decides which owners' CurrentRun.* gates resolve. Unknown filename
+  // (e.g. tests) leaves it null -> CurrentRun.* stays indeterminate.
+  _saveInRun = (typeof filename === 'string') ? /_Temp\.sav$/i.test(filename) : null;
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   _saveHasBiomesMod = !!parsed.hasBiomesMod;

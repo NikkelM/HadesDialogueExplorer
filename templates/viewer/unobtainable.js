@@ -29,7 +29,7 @@
 
 import { textlines } from './data.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus } from './requirements.js';
-import { evaluateOtherRequirements } from './gamestate-eval.js';
+import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 
 let _unobtainablePlayedSet = null;
 let _unobtainableTextlines = null;
@@ -223,7 +223,11 @@ export function orBranchVerdict(branch, context, name) {
         return 'unobtainable';
     }
     const textlineSt = requirementSetStatus(branch && branch.requirements, branch && branch.otherRequirements, ctx, name);
-    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo).status;
+    // Resolve CurrentRun.* gates only when this dialogue's owner matches the
+    // loaded save type (the branch belongs to the dialogue ``name``).
+    const owner = (name && textlines[name]) ? textlines[name].owner : undefined;
+    const cr = currentRunResolvable(owner, ctx.saveInRun) ? ctx.currentRun : null;
+    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, ctx.runs, ctx.runsAgo, cr).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
     return 'met';

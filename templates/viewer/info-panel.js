@@ -30,7 +30,7 @@ import {
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements } from './gamestate-eval.js';
+import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -1169,7 +1169,10 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     let overallVerdict = null;
     let gateByKey = null;
     if (showDots) {
-        const res = evaluateOtherRequirements(otherRequirements, getSaveContext().gameState, getSaveContext().runs, getSaveContext().runsAgo);
+        const sctx = getSaveContext();
+        const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
+        const cr = currentRunResolvable(owner, sctx.saveInRun) ? sctx.currentRun : null;
+        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, sctx.runs, sctx.runsAgo, cr);
         overallVerdict = res.status;
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
     }
