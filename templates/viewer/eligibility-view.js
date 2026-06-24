@@ -10,14 +10,14 @@
  * Only functional when a save file is loaded.
  */
 
-import { textlines, speakers, alternates } from './data.js';
+import { textlines, speakers, alternates, getActiveGame } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip } from './info-panel.js';
-import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -583,14 +583,21 @@ export function renderOtherConditionsHtml(rootName) {
         ? `Other requirements (${displayKeys.length}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
         : `Other requirements (${displayKeys.length})`;
     const hint = haveSave
-        ? 'Non-textline conditions, checked against your save\u2019s GameState. An indeterminate (periwinkle) dot reads live run/room state or a game function a static save can\u2019t provide - hover it for why.'
+        ? 'Non-textline conditions, checked against your save\u2019s GameState. Some requirements can only be checked against hub saves, and others only against in-run saves.'
         : 'Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. Load a save to check them.';
 
     let html = `<div class="eligibility-tree">`;
     html += `<h4 class="eligibility-tree-header">${escapeHtml(header)}</h4>`;
     html += `<div class="eligibility-tree-hint">${escapeHtml(hint)}</div>`;
-    html += `<div class="eligibility-list eligibility-other-reqs">`;
-    for (const key of displayKeys) {
+
+    // Split off the gates that are indeterminate ONLY because the other save
+    // type is loaded (a run-context dialogue with a hub save, or vice-versa);
+    // these resolve once the matching save is loaded, so group them under their
+    // own labelled note rather than mixing them with truly-unresolvable gates.
+    const wrongSaveKeys = haveSave ? displayKeys.filter((k) => (byKey.get(k) || {}).kind === 'wrong-save-type') : [];
+    const mainKeys = displayKeys.filter((k) => !wrongSaveKeys.includes(k));
+
+    const renderRow = (key) => {
         const c = byKey.get(key); // undefined for conditions the evaluator doesn't cover (e.g. non-array / H1)
         let dot = '';
         if (c) {
@@ -604,8 +611,41 @@ export function renderOtherConditionsHtml(rootName) {
             : renderOtherReqEntryHtml(key, other[key]);
         const tooltip = renderOtherReqTooltip(key, other[key]);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        html += `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
+        return `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
+    };
+
+    html += `<div class="eligibility-list eligibility-other-reqs">`;
+    for (const key of mainKeys) html += renderRow(key);
+    html += `</div>`;
+
+    if (wrongSaveKeys.length > 0) {
+        html += renderWrongSaveTypeGroup(tl.owner, getSaveContext().saveInRun, wrongSaveKeys, renderRow);
     }
+
+    html += `</div>`;
+    return html;
+}
+
+// Note + grouped rows for conditions that can't be checked because the loaded
+// save is the wrong type for this dialogue's context (run dialogue needs an
+// in-run ``_Temp`` save; hub dialogue needs a hub save). They'd resolve with the
+// matching save, so this distinguishes them from truly-unresolvable gates.
+function renderWrongSaveTypeGroup(owner, saveInRun, keys, renderRow) {
+    const ctx = OWNER_RUN_CONTEXT[owner];
+    const needsInRun = ctx === 'run' || (ctx !== 'hub' && !saveInRun);
+    // The hub goes by a different name per game.
+    const hubName = getActiveGame() === 'hades1' ? 'House of Hades' : 'Crossroads';
+    const label = needsInRun
+        ? 'Needs an in-run save to check'
+        : 'Needs a hub save to check';
+    const note = needsInRun
+        ? 'This dialogue plays during a run, so these conditions read the active run\u2019s state. Load an in-run save (ProfileX_Temp.sav) to check them.'
+        : `This dialogue plays in the ${hubName}, and some requirement checks can only be validated on the correct save type. Load a hub save (ProfileX.sav) to check them.`;
+    let html = `<div class="eligibility-other-save">`;
+    html += `<div class="eligibility-other-save-head">${escapeHtml(label)} (${keys.length})</div>`;
+    html += `<div class="eligibility-other-save-note">${escapeHtml(note)}</div>`;
+    html += `<div class="eligibility-list eligibility-other-reqs">`;
+    for (const key of keys) html += renderRow(key);
     html += `</div></div>`;
     return html;
 }

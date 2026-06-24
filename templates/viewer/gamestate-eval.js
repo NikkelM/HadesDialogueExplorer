@@ -77,7 +77,12 @@ function compare(left, op, right) {
     }
 }
 
-const _MET = (status, reason) => ({ status, reason });
+const _MET = (status, reason, kind) => (kind ? { status, reason, kind } : { status, reason });
+// Unknown verdict for a gate that the save *would* resolve if the other save
+// type were loaded (a CurrentRun / SumPrevRooms / run-context FunctionName gate
+// on a dialogue whose owner-context doesn't match the loaded save). Tagged so
+// the tracer can group these and tell the user which save type to load.
+const _WRONGSAVE = (reason) => ({ status: 'unknown', reason, kind: 'wrong-save-type' });
 
 // Evaluate a ``SumPrevRuns`` clause: aggregate the run-relative ``Path`` over
 // the last N runs (the current run plus recent ``RunHistory``, newest first),
@@ -125,7 +130,7 @@ function evalSumPrevRuns(rec, root) {
 function evalSumPrevRooms(rec, root) {
     const rooms = root._rooms;
     if (!Array.isArray(rooms)) {
-        return _MET('unknown', 'Aggregates across rooms of the current run - load the matching in-run \u201C_Temp\u201D save to resolve it.');
+        return _WRONGSAVE('Aggregates across rooms of the current run - load the matching in-run \u201C_Temp\u201D save to resolve it.');
     }
     if (!Array.isArray(rec.Path) || !rec.Comparison) {
         return _MET('unknown', 'Unrecognised previous-rooms aggregation.');
@@ -230,7 +235,7 @@ const BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP = {
 function evalBossDifficulty(rec, root) {
     const cr = root.CurrentRun;
     const gs = root.GameState;
-    if (!cr) return _MET('unknown', 'Checks the boss-difficulty vow against the current run - load the matching save type to resolve it.');
+    if (!cr) return _WRONGSAVE('Checks the boss-difficulty vow against the current run - load the matching save type to resolve it.');
     const args = rec.FunctionArgs || {};
     const entered = cr.EnteredBiomes || 0;
     const rank = args.UseShrineUpgradesCache
@@ -252,7 +257,7 @@ function evalBossDifficulty(rec, root) {
 // against ``FunctionArgs.{Comparison,Value}``. Save-resolvable from CurrentRun.
 function evalHealthFraction(rec, root) {
     const cr = root.CurrentRun;
-    if (!cr) return _MET('unknown', 'Checks the hero\u2019s current-run health - load the matching save type to resolve it.');
+    if (!cr) return _WRONGSAVE('Checks the hero\u2019s current-run health - load the matching save type to resolve it.');
     const hero = cr.Hero || {};
     const max = hero.MaxHealth;
     if (typeof hero.Health !== 'number' || typeof max !== 'number') {
@@ -261,24 +266,6 @@ function evalHealthFraction(rec, root) {
     const frac = hero.Health / max;
     const args = rec.FunctionArgs || {};
     return _MET(compare(frac, args.Comparison, args.Value) ? 'met' : 'unmet');
-}
-
-// Evaluate ``RequiredNotInStore`` (RequirementsLogic.lua:1161): fails if any
-// option in the current room's store is named ``FunctionArgs.Name``. No store
-// (or no current room) -> passes. Save-resolvable from CurrentRun.CurrentRoom.
-function evalNotInStore(rec, root) {
-    const cr = root.CurrentRun;
-    if (!cr) return _MET('unknown', 'Checks the current room\u2019s store - load the matching save type to resolve it.');
-    const args = rec.FunctionArgs || {};
-    const store = cr.CurrentRoom && cr.CurrentRoom.Store;
-    const options = store && store.StoreOptions;
-    if (options && typeof options === 'object') {
-        for (const k in options) {
-            const opt = options[k];
-            if (opt && opt.Name === args.Name) return _MET('unmet');
-        }
-    }
-    return _MET('met');
 }
 
 // Evaluate a single clause record against ``root`` (the resolution base, an
@@ -294,7 +281,6 @@ function evalClause(rec, root) {
         if (rec.FunctionName === 'RequireQuestCount') return evalQuestCount(rec, root);
         if (rec.FunctionName === 'IsBossDifficultyShrineUpgradeActive') return evalBossDifficulty(rec, root);
         if (rec.FunctionName === 'RequiredHealthFraction') return evalHealthFraction(rec, root);
-        if (rec.FunctionName === 'RequiredNotInStore') return evalNotInStore(rec, root);
         return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
@@ -321,15 +307,13 @@ function evalClause(rec, root) {
         // it isn't owner/save-type gated.
         if (base === 'CurrentRun' && root.CurrentRun) {
             // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
+        } else if (base === 'CurrentRun') {
+            return _WRONGSAVE('Reads CurrentRun.* - current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
         } else {
-            const why = base === 'CurrentRun'
-                ? 'current-run state - load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue)'
-                : base === 'AudioState' ? 'live audio state'
-                    : base === 'MapState' ? 'live room/map state'
-                        : `${base} state`;
-            return _MET('unknown', base === 'CurrentRun'
-                ? `Reads ${base}.* - ${why}.`
-                : `Reads ${base}.* - ${why}, not resolved in this pass.`);
+            const why = base === 'AudioState' ? 'live audio state'
+                : base === 'MapState' ? 'live room/map state'
+                    : `${base} state`;
+            return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
         }
     }
     // ``PrevRun.*`` reads the persisted last-completed-run slice (null when the
@@ -436,14 +420,17 @@ function evalSet(otherRequirements, root, stack) {
         // A keyed entry holds one or more clause records, all of which must hold.
         const recStatuses = [];
         let firstReason = null;
+        let firstKind = null;
         for (const rec of val) {
             const r = evalClause(rec, root);
             recStatuses.push(r.status);
-            if (r.status === 'unknown' && !firstReason) firstReason = r.reason;
+            if (r.status === 'unknown' && !firstReason) { firstReason = r.reason; firstKind = r.kind || null; }
             if (r.status === 'unmet') firstReason = firstReason || null;
         }
         const st = combineAnd(recStatuses);
-        clauses.push({ key, status: st, reason: st === 'unknown' ? firstReason : null });
+        const clause = { key, status: st, reason: st === 'unknown' ? firstReason : null };
+        if (st === 'unknown' && firstKind) clause.kind = firstKind;
+        clauses.push(clause);
         statuses.push(st);
     }
     return { status: combineAnd(statuses), clauses };
@@ -587,7 +574,6 @@ function collectRootedPaths(textlines, namedReqs, rootKey) {
                     markLeaf(['CurrentRun', 'Hero', 'Health']);
                     markLeaf(['CurrentRun', 'Hero', 'MaxHealth']);
                 }
-                if (fn === 'RequiredNotInStore') markWhole(['CurrentRun', 'CurrentRoom', 'Store']);
             }
             return;
         }

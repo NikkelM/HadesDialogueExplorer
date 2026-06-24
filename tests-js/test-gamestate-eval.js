@@ -395,14 +395,6 @@ test('RequiredHealthFraction: compares Hero.Health / MaxHealth', () => {
     assert.equal(evalFnCr(rec, {}, { Hero: {} }), 'unknown');                            // health not carried
 });
 
-test('RequiredNotInStore: fails when a store option matches Name', () => {
-    const rec = { FunctionName: 'RequiredNotInStore', FunctionArgs: { Name: 'HermesUpgrade' } };
-    assert.equal(evalFnCr(rec, {}, { CurrentRoom: { Store: { StoreOptions: { 1: { Name: 'HermesUpgrade' } } } } }), 'unmet');
-    assert.equal(evalFnCr(rec, {}, { CurrentRoom: { Store: { StoreOptions: { 1: { Name: 'ZeusUpgrade' } } } } }), 'met');
-    assert.equal(evalFnCr(rec, {}, { CurrentRoom: {} }), 'met');   // no store -> pass
-    assert.equal(evalFnCr(rec, {}, null), 'unknown');              // no CurrentRun -> indeterminate
-});
-
 test('IsBossDifficultyShrineUpgradeActive: rank vs EnteredBiomes (common path)', () => {
     const rec = { FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: {} };
     const gs = { ShrineUpgrades: { BossDifficultyShrineUpgrade: 3 } };
@@ -434,7 +426,6 @@ test('collectGameStatePaths + collectCurrentRunPaths capture FunctionName-implie
             otherRequirements: {
                 'FunctionName:IsBossDifficultyShrineUpgradeActive': [{ FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: {} }],
                 'FunctionName:RequiredHealthFraction': [{ FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.5 } }],
-                'FunctionName:RequiredNotInStore': [{ FunctionName: 'RequiredNotInStore', FunctionArgs: { Name: 'X' } }],
             },
         },
     };
@@ -449,7 +440,6 @@ test('collectGameStatePaths + collectCurrentRunPaths capture FunctionName-implie
         ShrineUpgradesCache: { BossDifficultyShrineUpgrade: true },
         BiomeVisitOrder: '*',
         Hero: { Health: true, MaxHealth: true },
-        CurrentRoom: { Store: '*' },
     });
 });
 
@@ -473,6 +463,16 @@ test('CurrentRun.* is indeterminate when no slice is supplied (owner/save mismat
     const r = evaluateOtherRequirements(clause(rec), {}, {});
     assert.equal(r.status, 'unknown');
     assert.match(r.clauses[0].reason, /current-run state/i);
+    // Tagged so the tracer can group it as "needs the other save type".
+    assert.equal(r.clauses[0].kind, 'wrong-save-type');
+    // SumPrevRooms + the run-context FunctionNames carry the same tag.
+    const spr = evaluateOtherRequirements(clause({ Path: ['UseRecord', 'X'], SumPrevRooms: 6, Comparison: '<=', Value: 0 }), {}, {});
+    assert.equal(spr.clauses[0].kind, 'wrong-save-type');
+    const hf = evaluateOtherRequirements(clause({ FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.5 } }), {}, {});
+    assert.equal(hf.clauses[0].kind, 'wrong-save-type');
+    // A genuinely-unresolvable gate (live state) is NOT tagged wrong-save-type.
+    const live = evaluateOtherRequirements(clause({ FunctionName: 'RequiredAlive', FunctionArgs: { Ids: [1] } }), {}, {});
+    assert.equal(live.clauses[0].kind, undefined);
 });
 
 test('CurrentRun.* honours PathTrue / PathFalse / membership operators', () => {

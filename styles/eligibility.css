@@ -11,6 +11,28 @@
 .other-req-evaluated .other-req-named {
     color: var(--text-muted);
 }
+/* "Needs the other save type" group: the gates that only stay indeterminate
+   because a run dialogue has a hub save loaded (or vice-versa). Set off with a
+   left accent + its own label/note so the reader knows these resolve once the
+   matching save is loaded - distinct from truly-unresolvable gates above. */
+.eligibility-other-save {
+    margin-top: 0.6rem;
+    padding: 0.5rem 0.6rem;
+    border-left: 3px solid #8b95d6;
+    background: rgba(140, 158, 255, 0.06);
+    border-radius: 0 4px 4px 0;
+}
+.eligibility-other-save-head {
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: #8b95d6;
+    margin-bottom: 0.2rem;
+}
+.eligibility-other-save-note {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
 
 .eligibility-view {
     padding: 0.5rem 0;
