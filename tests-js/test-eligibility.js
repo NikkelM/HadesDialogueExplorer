@@ -686,3 +686,41 @@ describe('renderOtherConditionsHtml (non-textline requirements section)', () => 
     });
 });
 
+
+describe('renderOtherConditionsHtml NamedRequirements expansion', () => {
+    const withReqs = (requirements, otherRequirements) => ({
+        owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements,
+    });
+
+    before(() => {
+        loadData({
+            textlines: {
+                // Host gated on a NamedRequirementsFalse set -> the named
+                // requirement's inner chain must render as an expander.
+                Host: withReqs({}, { NamedRequirementsFalse: ['MyNamed'] }),
+                InnerDep: withReqs({}, {}),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            reqTypeOrder: ['RequiredTextLines'],
+            namedRequirements: {
+                MyNamed: {
+                    requirements: { RequiredTextLines: ['InnerDep'] },
+                    otherRequirements: {}, orBranches: [],
+                },
+            },
+        });
+    });
+
+    test('renders the named requirement as an expander listing its inner requirements', () => {
+        const html = renderOtherConditionsHtml('Host');
+        // No longer the flat "Must not satisfy" chip.
+        assert.doesNotMatch(html, /Must not satisfy/);
+        assert.match(html, /named-req-item/);
+        assert.match(html, /named-req-expand/);
+        assert.match(html, /MyNamed/);
+        assert.match(html, /must NOT pass/);
+        // The inner requirement chain is evaluated and listed.
+        assert.match(html, /InnerDep/);
+    });
+});
+

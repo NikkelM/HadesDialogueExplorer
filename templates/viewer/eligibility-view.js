@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
 import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -606,9 +606,11 @@ export function renderOtherConditionsHtml(rootName) {
                     : (c.reason || 'Can\u2019t be determined from the save.');
             dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
         }
-        const body = key.startsWith('NamedRequirements')
-            ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
-            : renderOtherReqEntryHtml(key, other[key]);
+        if (key.startsWith('NamedRequirements')) {
+            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName, dot);
+            if (expanded !== null) return expanded;
+        }
+        const body = renderOtherReqEntryHtml(key, other[key]);
         const tooltip = renderOtherReqTooltip(key, other[key]);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
         return `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
@@ -979,7 +981,7 @@ function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
 // loaded save and shown with a met / unmet / indeterminate dot - met ones
 // struck through - so they read the same way dialogue prerequisites do.
 // Returns '' when the set has no such conditions.
-function renderConditionsHtml(otherRequirements, owner) {
+function renderConditionsHtml(otherRequirements, owner, rootName) {
     const other = otherRequirements || {};
     const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
     if (gateKeys.length === 0) return '';
@@ -999,14 +1001,17 @@ function renderConditionsHtml(otherRequirements, owner) {
         const dotTip = met ? 'Satisfied by your save.'
             : c.status === 'unmet' ? 'Not satisfied by your save.'
                 : (c.reason || 'Can\u2019t be determined from the save.');
-        const body = key.startsWith('NamedRequirements')
-            ? `<span class="other-req-named">Must not satisfy: ${escapeHtml((Array.isArray(other[key]) ? other[key] : []).join(', '))}</span>`
-            : renderOtherReqEntryHtml(key, other[key]);
+        const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
+        if (key.startsWith('NamedRequirements')) {
+            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName, dot + ' ');
+            if (expanded !== null) { html += expanded; continue; }
+        }
+        const body = renderOtherReqEntryHtml(key, other[key]);
         const tooltip = renderOtherReqTooltip(key, other[key]);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
         html += `<div class="tree-node ${met ? 'tree-played' : 'tree-unplayed'}">`
             + `<div class="tree-node-row eligibility-condition-row">`
-            + `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`
+            + dot
             + `<span class="tree-name eligibility-condition-text"${tipAttr}>${body}</span>`
             + `</div></div>`;
     }
@@ -1037,7 +1042,7 @@ function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
     }
     // Non-dialogue conditions (state paths, function checks, ...) - now
     // resolvable against the save rather than an opaque "other conditions".
-    html += renderConditionsHtml(branch && branch.otherRequirements, textlines[rootName] && textlines[rootName].owner);
+    html += renderConditionsHtml(branch && branch.otherRequirements, textlines[rootName] && textlines[rootName].owner, rootName);
     if (!html) {
         html += `<div class="eligibility-branch-note">No requirements - always available.</div>`;
     }

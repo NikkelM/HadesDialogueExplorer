@@ -1023,7 +1023,7 @@ function _namedReqIsEmpty(resolved) {
 //     requirement set (e.g. all gates inlined elsewhere).
 // Returns ``null`` when ``names`` is not a non-empty array so the
 // caller can fall through to the existing flat-list rendering.
-function renderNamedReqExpansionsHtml(key, names, hostTextlineName, dotHtml = '') {
+export function renderNamedReqExpansionsHtml(key, names, hostTextlineName, dotHtml = '') {
     if (!Array.isArray(names) || names.length === 0) return null;
     const suffix = _NAMED_REQ_SEMANTIC_SUFFIX[key] || '';
     let html = `<div class="other-req-item named-req-item">`
