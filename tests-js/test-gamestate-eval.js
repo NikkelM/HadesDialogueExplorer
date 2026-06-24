@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -443,6 +443,61 @@ test('collectGameStatePaths + collectCurrentRunPaths capture FunctionName-implie
     });
 });
 
+// --- RequiredConsecutiveClearsOfRoom / RequiredConsecutiveDeathsInRoom ---
+
+// Evaluate a consecutive-clears/deaths clause: ``cr`` is the CurrentRun seed
+// slice, ``history`` the recent-runs slice (newest-first).
+const evalConsec = (rec, cr, history) => evaluateOtherRequirements(clause(rec), {}, { currentRun: cr, runHistory: history }).status;
+
+test('RequiredConsecutiveClearsOfRoom: counts consecutive cleared runs (current + history)', () => {
+    const rec = { FunctionName: 'RequiredConsecutiveClearsOfRoom', FunctionArgs: { Count: 3, Names: ['O_Boss01', 'O_Boss02'] } };
+    const cr = { RoomCountCache: { O_Boss01: 1 }, Cleared: true };
+    // current cleared + 2 history runs that entered & cleared the room -> streak 3.
+    const hist = [
+        { RoomsEntered: { O_Boss01: 1 }, EndingRoomName: 'O_Reward01', Cleared: true },
+        { RoomsEntered: { O_Boss02: 1 }, EndingRoomName: 'O_Reward02', Cleared: true },
+        { RoomsEntered: { X: 1 }, EndingRoomName: 'X', Cleared: true }, // didn't enter target -> skipped (transparent)
+    ];
+    assert.equal(evalConsec(rec, cr, hist), 'met');
+    assert.equal(evalConsec({ ...rec, FunctionArgs: { Count: 4, Names: ['O_Boss01', 'O_Boss02'] } }, cr, hist), 'unmet');
+});
+
+test('RequiredConsecutiveClearsOfRoom: dying in the room this run breaks the streak (seed)', () => {
+    const rec = { FunctionName: 'RequiredConsecutiveClearsOfRoom', FunctionArgs: { Count: 1, Names: ['O_Boss01'] } };
+    // entered the room this run, not cleared/bountied, and ended in it -> 0, unmet.
+    const cr = { RoomCountCache: { O_Boss01: 1 }, Cleared: false, EndingRoomName: 'O_Boss01' };
+    assert.equal(evalConsec(rec, cr, []), 'unmet');
+    // no CurrentRun slice -> indeterminate (wrong save type).
+    assert.equal(evaluateOtherRequirements(clause(rec), {}, { runHistory: [] }).clauses[0].kind, 'wrong-save-type');
+});
+
+test('RequiredConsecutiveDeathsInRoom: counts consecutive deaths in the room', () => {
+    const rec = { FunctionName: 'RequiredConsecutiveDeathsInRoom', FunctionArgs: { Count: 2, Name: 'P_Boss01' } };
+    const cr = { RoomCountCache: { P_Boss01: 1 }, Cleared: false, BountyCleared: false, EndingRoomName: 'P_Boss01' };
+    const hist = [{ RoomsEntered: { P_Boss01: 1 }, EndingRoomName: 'P_Boss01', Cleared: false, BountyCleared: false }];
+    assert.equal(evalConsec(rec, cr, hist), 'met');   // died this run + last run = 2
+    // cleared last run -> streak breaks at 1 -> unmet.
+    assert.equal(evalConsec(rec, cr, [{ RoomsEntered: { P_Boss01: 1 }, EndingRoomName: 'P_Reward', Cleared: true }]), 'unmet');
+});
+
+test('collectRunHistoryClearMask: gathers referenced rooms + clear-field mask', () => {
+    const textlines = {
+        T1: { otherRequirements: { 'FunctionName:RequiredConsecutiveClearsOfRoom': [{ FunctionName: 'RequiredConsecutiveClearsOfRoom', FunctionArgs: { Count: 3, Names: ['O_Boss01', 'O_Boss02'] } }] } },
+        T2: { otherRequirements: { 'FunctionName:RequiredConsecutiveDeathsInRoom': [{ FunctionName: 'RequiredConsecutiveDeathsInRoom', FunctionArgs: { Count: 1, Name: 'P_Boss01' } }] } },
+    };
+    const { mask, rooms } = collectRunHistoryClearMask(textlines, {});
+    assert.deepEqual(rooms.sort(), ['O_Boss01', 'O_Boss02', 'P_Boss01']);
+    assert.deepEqual(mask, {
+        RoomsEntered: { O_Boss01: true, O_Boss02: true, P_Boss01: true },
+        EndingRoomName: true, Cleared: true, BountyCleared: true,
+    });
+    // CurrentRun mask also captures the seed fields (RoomCountCache members + flags).
+    assert.deepEqual(collectCurrentRunPaths(textlines, {}), {
+        RoomCountCache: { O_Boss01: true, O_Boss02: true, P_Boss01: true },
+        Cleared: true, BountyCleared: true, EndingRoomName: true,
+    });
+});
+
 // --- CurrentRun.* direct gates (5th arg = the persisted CurrentRun slice) ---
 
 // Evaluate a clause that reads CurrentRun.*; ``cr`` is the CurrentRun slice
@@ -518,7 +573,7 @@ test('currentRunResolvable: hub/run/both/unlisted policy vs save type', () => {
     // sanity on the map sizes.
     const vals = Object.values(OWNER_RUN_CONTEXT);
     assert.equal(vals.filter(v => v === 'hub').length, 11);
-    assert.equal(vals.filter(v => v === 'run').length, 38);
+    assert.equal(vals.filter(v => v === 'run').length, 40);
     assert.equal(vals.filter(v => v === 'both').length, 4);
 });
 

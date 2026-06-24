@@ -570,7 +570,7 @@ export function renderOtherConditionsHtml(rootName) {
         const sctx = getSaveContext();
         const resolveRun = currentRunResolvable(tl.owner, sctx.saveInRun);
         const slices = {
-            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun,
+            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
         };
@@ -986,7 +986,7 @@ function renderConditionsHtml(otherRequirements, owner) {
     const sctx = getSaveContext();
     const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
     const slices = {
-        runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun,
+        runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
         currentRun: resolveRun ? sctx.currentRun : null,
         rooms: resolveRun ? sctx.rooms : null,
     };

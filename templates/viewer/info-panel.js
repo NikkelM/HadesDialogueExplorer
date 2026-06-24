@@ -1173,7 +1173,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
         const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
         const slices = {
-            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun,
+            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
         };

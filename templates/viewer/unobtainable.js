@@ -231,6 +231,7 @@ export function orBranchVerdict(branch, context, name) {
         runs: ctx.runs,
         runsAgo: ctx.runsAgo,
         prevRun: ctx.prevRun,
+        runHistory: ctx.runHistory,
         currentRun: resolveRun ? ctx.currentRun : null,
         rooms: resolveRun ? ctx.rooms : null,
     };

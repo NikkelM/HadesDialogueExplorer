@@ -268,6 +268,69 @@ function evalHealthFraction(rec, root) {
     return _MET(compare(frac, args.Comparison, args.Value) ? 'met' : 'unmet');
 }
 
+// ``Contains(list, value)`` (UtilityLogic.lua:789): true if ``value`` is one of
+// the array's values. Returns a falsy (not strictly false) when value is nil -
+// callers rely on ``!Contains(...)`` being true for a nil EndingRoomName.
+function listContains(list, value) {
+    if (value === undefined || value === null) return false;
+    return Array.isArray(list) && list.includes(value);
+}
+// ``ContainsAnyKey(table, keys)`` (UtilityLogic.lua:431): true if any key is
+// present with a truthy value in the table (a count >= 1 is truthy).
+function containsAnyKey(table, keys) {
+    if (!table || typeof table !== 'object') return false;
+    return keys.some(k => luaTruthy(table[k]));
+}
+
+// Evaluate ``RequiredConsecutiveClearsOfRoom`` (RequirementsLogic.lua:766): the
+// number of consecutive recent runs (current run seed + RunHistory newest-first)
+// that entered one of ``args.Names`` and cleared it must be >= ``args.Count``.
+// Non-visiting runs are skipped (transparent). Ported verbatim incl. the line-786
+// quirk where the history loop uses the *current* run's BountyCleared. Reads
+// CurrentRun (gated) + ``root._runHistory`` (recent runs, newest-first).
+function evalConsecutiveClears(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _WRONGSAVE('Counts consecutive cleared runs of a room - load the matching save type to resolve it.');
+    const args = rec.FunctionArgs || {};
+    const roomNames = Array.isArray(args.Names) ? args.Names : [args.Name];
+    const history = Array.isArray(root._runHistory) ? root._runHistory : [];
+    let streak = 0;
+    if (containsAnyKey(cr.RoomCountCache, roomNames)) {
+        if (luaTruthy(cr.Cleared) || luaTruthy(cr.BountyCleared) || !listContains(roomNames, cr.EndingRoomName)) streak += 1;
+        else return _MET('unmet');
+    }
+    for (const run of history) { // newest-first
+        if (run && run.RoomsEntered != null && run.EndingRoomName != null && containsAnyKey(run.RoomsEntered, roomNames)) {
+            if (luaTruthy(run.Cleared) || luaTruthy(cr.BountyCleared) || !listContains(roomNames, run.EndingRoomName)) streak += 1;
+            else break;
+        }
+    }
+    return _MET(streak >= args.Count ? 'met' : 'unmet');
+}
+
+// Evaluate ``RequiredConsecutiveDeathsInRoom`` (RequirementsLogic.lua:729): the
+// mirror of the clears check - count consecutive recent runs that entered the
+// room and *died in it*. Uses each run's own BountyCleared (no quirk).
+function evalConsecutiveDeaths(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _WRONGSAVE('Counts consecutive deaths in a room - load the matching save type to resolve it.');
+    const args = rec.FunctionArgs || {};
+    const roomNames = Array.isArray(args.Names) ? args.Names : [args.Name];
+    const history = Array.isArray(root._runHistory) ? root._runHistory : [];
+    let streak = 0;
+    if (containsAnyKey(cr.RoomCountCache, roomNames)) {
+        if (!luaTruthy(cr.Cleared) && !luaTruthy(cr.BountyCleared) && listContains(roomNames, cr.EndingRoomName)) streak += 1;
+        else return _MET('unmet');
+    }
+    for (const run of history) { // newest-first
+        if (run && run.RoomsEntered != null && run.EndingRoomName != null && containsAnyKey(run.RoomsEntered, roomNames)) {
+            if (!luaTruthy(run.Cleared) && !luaTruthy(run.BountyCleared) && listContains(roomNames, run.EndingRoomName)) streak += 1;
+            else break;
+        }
+    }
+    return _MET(streak >= args.Count ? 'met' : 'unmet');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -281,6 +344,8 @@ function evalClause(rec, root) {
         if (rec.FunctionName === 'RequireQuestCount') return evalQuestCount(rec, root);
         if (rec.FunctionName === 'IsBossDifficultyShrineUpgradeActive') return evalBossDifficulty(rec, root);
         if (rec.FunctionName === 'RequiredHealthFraction') return evalHealthFraction(rec, root);
+        if (rec.FunctionName === 'RequiredConsecutiveClearsOfRoom') return evalConsecutiveClears(rec, root);
+        if (rec.FunctionName === 'RequiredConsecutiveDeathsInRoom') return evalConsecutiveDeaths(rec, root);
         return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
@@ -446,7 +511,8 @@ function evalSet(otherRequirements, root, stack) {
 // save doesn't carry it or the dialogue's owner-context doesn't match the save
 // type). ``runs`` -> SumPrevRuns; ``rooms`` -> SumPrevRooms; ``runsAgo`` ->
 // RequireRunsSinceTextLines; ``currentRun`` -> CurrentRun.*; ``prevRun`` ->
-// PrevRun.* (the last completed run).
+// PrevRun.* (the last completed run); ``runHistory`` -> the recent-runs slice for
+// RequiredConsecutiveClearsOfRoom / RequiredConsecutiveDeathsInRoom.
 export function evaluateOtherRequirements(otherRequirements, gameStateSlice, slices = {}) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
@@ -457,8 +523,8 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null } = slices || {};
-    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, _runs: runs, _runsAgo: runsAgo, _rooms: rooms }, new Set());
+    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null } = slices || {};
+    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
 }
 
 // Dialogue-trigger context per owner, used to decide whether a dialogue's
@@ -475,7 +541,7 @@ export const OWNER_RUN_CONTEXT = {
     NPC_Hecate_01: 'hub', NPC_Moros_01: 'hub', NPC_Nyx_01: 'hub',
     NPC_Selene_01: 'hub', NPC_Skelly_01: 'hub', NPC_Hecate_Story_01: 'hub',
     NPC_Eris_01: 'hub', NPC_Odysseus_01: 'hub',
-    // run (38): boon gods, biome NPCs, story scenes, bosses
+    // run (39): boon gods, biome NPCs, story scenes, bosses
     AphroditeUpgrade: 'run', ApolloUpgrade: 'run', AresUpgrade: 'run',
     DemeterUpgrade: 'run', HephaestusUpgrade: 'run', HeraUpgrade: 'run',
     HermesUpgrade: 'run', HestiaUpgrade: 'run', PoseidonUpgrade: 'run',
@@ -486,11 +552,11 @@ export const OWNER_RUN_CONTEXT = {
     NPC_Chronos_02: 'run', NPC_Circe_01: 'run', NPC_Dionysus_01: 'run',
     NPC_Echo_01: 'run', NPC_Hermes_01: 'run', NPC_Hypnos_DreamRun: 'run',
     NPC_Medea_01: 'run', NPC_Narcissus_01: 'run', NPC_Zagreus_Past_01: 'run',
-    NPC_Charon_01: 'run', NPC_Heracles_01: 'run',
-    Chronos: 'run', Eris: 'run', Hecate: 'run', Polyphemus: 'run',
-    Prometheus: 'run', Scylla: 'run', Zagreus: 'run',
-    // both (4): single owner that speaks in hub AND run
+    NPC_Heracles_01: 'run', Chronos: 'run', Eris: 'run', Hecate: 'run', Polyphemus: 'run',
+    Prometheus: 'run', Scylla: 'run', Zagreus: 'run', InfestedCerberus: 'run', TyphonHead: 'run',
+    // both (5): single owner that speaks in hub AND run
     NPC_Nemesis_01: 'both', NPC_Icarus_01: 'both', PlayerUnit: 'both', Speaker_Homer: 'both',
+    NPC_Charon_01: 'both', 
 };
 
 // Whether a dialogue owned by ``owner`` can have its ``CurrentRun.*`` gates
@@ -574,6 +640,16 @@ function collectRootedPaths(textlines, namedReqs, rootKey) {
                     markLeaf(['CurrentRun', 'Hero', 'Health']);
                     markLeaf(['CurrentRun', 'Hero', 'MaxHealth']);
                 }
+                if (fn === 'RequiredConsecutiveClearsOfRoom' || fn === 'RequiredConsecutiveDeathsInRoom') {
+                    // Seed reads CurrentRun.{RoomCountCache[room], Cleared,
+                    // BountyCleared, EndingRoomName}.
+                    const args = rec.FunctionArgs || {};
+                    const rooms = Array.isArray(args.Names) ? args.Names : [args.Name];
+                    for (const room of rooms) if (typeof room === 'string') markLeaf(['CurrentRun', 'RoomCountCache', room]);
+                    markLeaf(['CurrentRun', 'Cleared']);
+                    markLeaf(['CurrentRun', 'BountyCleared']);
+                    markLeaf(['CurrentRun', 'EndingRoomName']);
+                }
             }
             return;
         }
@@ -645,6 +721,46 @@ export function collectCurrentRunPaths(textlines, namedReqs) {
 // Sourced at save time from ``GameState.RunHistory[#RunHistory]``.
 export function collectPrevRunPaths(textlines, namedReqs) {
     return collectRootedPaths(textlines, namedReqs, 'PrevRun');
+}
+
+// The per-RunHistory-entry mask + referenced room set for the consecutive
+// clears / deaths checks. Each recent run is pruned to ``RoomsEntered`` (only the
+// referenced room keys) + ``EndingRoomName`` / ``Cleared`` / ``BountyCleared``.
+// Returns ``{ mask, rooms: string[] }`` (``rooms`` so the save parser can also
+// prune CurrentRun.RoomCountCache, though that goes through the CurrentRun mask).
+export function collectRunHistoryClearMask(textlines, namedReqs) {
+    const rooms = new Set();
+    const seenNamed = new Set();
+    const scanRec = (rec) => {
+        if (!rec || typeof rec !== 'object') return;
+        if (rec.FunctionName !== 'RequiredConsecutiveClearsOfRoom' && rec.FunctionName !== 'RequiredConsecutiveDeathsInRoom') return;
+        const args = rec.FunctionArgs || {};
+        for (const r of (Array.isArray(args.Names) ? args.Names : [args.Name])) if (typeof r === 'string') rooms.add(r);
+    };
+    const scanSet = (other) => {
+        for (const [key, val] of Object.entries(other || {})) {
+            if (key === 'NamedRequirements' || key === 'NamedRequirementsFalse') {
+                for (const name of (Array.isArray(val) ? val : [])) {
+                    if (seenNamed.has(name)) continue;
+                    seenNamed.add(name);
+                    const def = (namedReqs || {})[name];
+                    if (def) scanSet(def.otherRequirements || {});
+                }
+                continue;
+            }
+            if (Array.isArray(val)) for (const rec of val) scanRec(rec);
+        }
+    };
+    for (const name in textlines) {
+        const t = textlines[name];
+        if (!t) continue;
+        scanSet(t.otherRequirements);
+        if (Array.isArray(t.orBranches)) for (const b of t.orBranches) scanSet(b.otherRequirements);
+    }
+    if (rooms.size === 0) return { mask: {}, rooms: [] };
+    const roomMask = {};
+    for (const r of rooms) roomMask[r] = true;
+    return { mask: { RoomsEntered: roomMask, EndingRoomName: true, Cleared: true, BountyCleared: true }, rooms: [...rooms] };
 }
 
 // Build the minimal GameState slice from a full ``gs`` table and a ``mask`` (see

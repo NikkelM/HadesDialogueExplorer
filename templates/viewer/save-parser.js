@@ -10,7 +10,7 @@
  */
 
 import { getActiveGame, games } from './data.js';
-import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths } from './gamestate-eval.js';
+import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask } from './gamestate-eval.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -386,6 +386,7 @@ function extractSaveContext(parsed) {
     currentRun: extractCurrentRunSlice(gameId, luaState),
     rooms: extractRoomsSlice(gameId, luaState),
     prevRun: extractPrevRunSlice(gameId, luaState),
+    runHistory: extractRunHistorySlice(gameId, luaState),
   };
 }
 
@@ -456,6 +457,19 @@ function _h2PrevRunMask() {
     _prevRunMaskCache = collectPrevRunPaths(h2.textlines || {}, h2.namedRequirements || {});
   }
   return _prevRunMaskCache;
+}
+
+// Memoised RunHistory clear-fields mask for the consecutive clears/deaths checks.
+let _runHistMaskCache = null;
+let _runHistMaskFor = null;
+function _h2RunHistoryClearMask() {
+  const h2 = games && games.hades2;
+  if (!h2) return null;
+  if (_runHistMaskFor !== h2) {
+    _runHistMaskFor = h2;
+    _runHistMaskCache = collectRunHistoryClearMask(h2.textlines || {}, h2.namedRequirements || {});
+  }
+  return _runHistMaskCache;
 }
 
 // Build the minimal persisted GameState slice for an H2 save - just the paths
@@ -554,6 +568,33 @@ function extractPrevRunSlice(gameId, luaState) {
   return (last && typeof last === 'object') ? pruneGameState(last, mask) : {};
 }
 
+// How many recent RunHistory entries to retain for the consecutive clears /
+// deaths checks. The engine's args.Count is asserted < 10; non-room-visiting
+// runs are skipped, so a streak can look back further - but the save only keeps
+// these fields (RoomsEntered etc.) for the recent runs anyway, so a generous
+// window past the retained depth costs nothing.
+const RUN_HISTORY_CLEAR_DEPTH = 30;
+
+// Build the recent-runs slice for RequiredConsecutiveClears/DeathsInRoom: the
+// most recent RunHistory entries (newest first), each pruned to the referenced
+// room keys + EndingRoomName / Cleared / BountyCleared. Returns null for non-H2
+// saves or when nothing uses those checks.
+function extractRunHistorySlice(gameId, luaState) {
+  if (gameId !== 'hades2') return null;
+  const spec = _h2RunHistoryClearMask();
+  if (!spec || !spec.rooms || spec.rooms.length === 0) return null;
+  const gs = luaState.GameState || {};
+  const rh = gs.RunHistory;
+  if (!rh || typeof rh !== 'object') return [];
+  const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
+  const out = [];
+  for (const i of indices.slice(0, RUN_HISTORY_CLEAR_DEPTH)) {
+    const entry = rh[i];
+    if (entry && typeof entry === 'object') out.push(pruneGameState(entry, spec.mask));
+  }
+  return out;
+}
+
 // --- Public API ---
 
 let _saveProgress = null;
@@ -584,6 +625,9 @@ let _saveCurrentRun = null;
 // Minimal persisted PrevRun slice (last completed run = RunHistory[#RH]) for
 // resolving ``PrevRun.*`` gates; null for non-H2 saves or when none is loaded.
 let _savePrevRun = null;
+// Recent-runs slice (RunHistory newest-first, pruned to the clear fields) for
+// resolving RequiredConsecutiveClears/DeathsInRoom; null when none is loaded.
+let _saveRunHistory = null;
 // Whether the loaded save is an in-run (_Temp) save (true) or a hub save
 // (false). Decides which owners' CurrentRun.* gates resolve (see
 // ``currentRunResolvable``). null when no save is loaded.
@@ -610,6 +654,7 @@ export function getSaveContext() {
     currentRun: _saveCurrentRun,
     rooms: _saveRoomsSlice,
     prevRun: _savePrevRun,
+    runHistory: _saveRunHistory,
     saveInRun: _saveInRun,
   };
 }
@@ -628,6 +673,7 @@ export function clearSaveProgress() {
   _saveCurrentRun = null;
   _saveRoomsSlice = null;
   _savePrevRun = null;
+  _saveRunHistory = null;
   _saveInRun = null;
   _saveRunsAgo = null;
 }
@@ -655,10 +701,11 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // per-room slice (for resolving SumPrevRooms gates); v8 added the PrevRun slice
 // (last completed run, for resolving PrevRun.* gates); v9 widened the GameState +
 // CurrentRun slices with the fields the resolvable FunctionName gates read
-// (ShrineUpgrades / Encounters caches / Hero health / EnteredBiomes / store /
-// ...). An older cache lacks these, so the bump forces a re-parse rather than
-// silently leaving them unavailable.
-const SAVE_STORAGE_SCHEMA = 9;
+// (ShrineUpgrades / Encounters caches / Hero health / EnteredBiomes / ...); v10
+// added the recent-runs slice (for RequiredConsecutiveClears/DeathsInRoom). An
+// older cache lacks these, so the bump forces a re-parse rather than silently
+// leaving them unavailable.
+const SAVE_STORAGE_SCHEMA = 10;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -700,6 +747,7 @@ export function persistSaveProgress(filename) {
       currentRun: _saveCurrentRun || null,
       rooms: _saveRoomsSlice || null,
       prevRun: _savePrevRun || null,
+      runHistory: _saveRunHistory || null,
       inRun: _saveInRun,
     }));
     return true;
@@ -752,6 +800,7 @@ export function restoreSaveProgress() {
   _saveCurrentRun = (data.currentRun && typeof data.currentRun === 'object') ? data.currentRun : null;
   _saveRoomsSlice = Array.isArray(data.rooms) ? data.rooms : null;
   _savePrevRun = (data.prevRun && typeof data.prevRun === 'object') ? data.prevRun : null;
+  _saveRunHistory = Array.isArray(data.runHistory) ? data.runHistory : null;
   _saveInRun = (typeof data.inRun === 'boolean') ? data.inRun : null;
   return {
     gameId: _saveGameId,
@@ -781,6 +830,7 @@ export function parseSaveFile(arrayBuffer, filename = null) {
   _saveCurrentRun = ctx.currentRun;
   _saveRoomsSlice = ctx.rooms;
   _savePrevRun = ctx.prevRun;
+  _saveRunHistory = ctx.runHistory;
   // An in-run autosave is named ProfileX_Temp.sav; the hub save is ProfileX.sav.
   // The flag decides which owners' CurrentRun.* gates resolve. Unknown filename
   // (e.g. tests) leaves it null -> CurrentRun.* stays indeterminate.
