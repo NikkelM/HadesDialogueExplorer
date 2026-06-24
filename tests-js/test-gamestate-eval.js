@@ -380,6 +380,79 @@ test('collectGameStatePaths captures QuestStatus for RequireQuestCount', () => {
     assert.deepEqual(mask, { QuestStatus: '*' });
 });
 
+// --- CurrentRun/GameState-reading FunctionName gates ---
+
+// Evaluate a FunctionName clause that reads CurrentRun (and maybe GameState).
+// ``gs`` is the GameState slice, ``cr`` the CurrentRun slice (null -> the gate
+// is indeterminate, matching an owner/save-type mismatch).
+const evalFnCr = (rec, gs, cr) => evaluateOtherRequirements(clause(rec), gs || {}, { currentRun: cr }).status;
+
+test('RequiredHealthFraction: compares Hero.Health / MaxHealth', () => {
+    const rec = { FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.5 } };
+    assert.equal(evalFnCr(rec, {}, { Hero: { Health: 40, MaxHealth: 100 } }), 'met');   // 0.4 <= 0.5
+    assert.equal(evalFnCr(rec, {}, { Hero: { Health: 80, MaxHealth: 100 } }), 'unmet');  // 0.8 !<= 0.5
+    assert.equal(evalFnCr(rec, {}, null), 'unknown');                                    // no CurrentRun -> indeterminate
+    assert.equal(evalFnCr(rec, {}, { Hero: {} }), 'unknown');                            // health not carried
+});
+
+test('RequiredNotInStore: fails when a store option matches Name', () => {
+    const rec = { FunctionName: 'RequiredNotInStore', FunctionArgs: { Name: 'HermesUpgrade' } };
+    assert.equal(evalFnCr(rec, {}, { CurrentRoom: { Store: { StoreOptions: { 1: { Name: 'HermesUpgrade' } } } } }), 'unmet');
+    assert.equal(evalFnCr(rec, {}, { CurrentRoom: { Store: { StoreOptions: { 1: { Name: 'ZeusUpgrade' } } } } }), 'met');
+    assert.equal(evalFnCr(rec, {}, { CurrentRoom: {} }), 'met');   // no store -> pass
+    assert.equal(evalFnCr(rec, {}, null), 'unknown');              // no CurrentRun -> indeterminate
+});
+
+test('IsBossDifficultyShrineUpgradeActive: rank vs EnteredBiomes (common path)', () => {
+    const rec = { FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: {} };
+    const gs = { ShrineUpgrades: { BossDifficultyShrineUpgrade: 3 } };
+    assert.equal(evalFnCr(rec, gs, { EnteredBiomes: 2 }), 'met');    // rank 3 >= 2
+    assert.equal(evalFnCr(rec, gs, { EnteredBiomes: 4 }), 'unmet');  // rank 3 < 4
+    assert.equal(evalFnCr(rec, { ShrineUpgrades: {} }, { EnteredBiomes: 1 }), 'unmet'); // rank 0 < 1
+    assert.equal(evalFnCr(rec, gs, null), 'unknown');               // no CurrentRun -> indeterminate
+    // UseShrineUpgradesCache reads the run snapshot instead of GameState.
+    const cacheRec = { FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: { UseShrineUpgradesCache: true } };
+    assert.equal(evalFnCr(cacheRec, {}, { EnteredBiomes: 2, ShrineUpgradesCache: { BossDifficultyShrineUpgrade: 2 } }), 'met');
+});
+
+test('IsBossDifficultyShrineUpgradeActive: dream-run branch reads the encounter cache', () => {
+    // Dream run in biome I (Chronos, OnlyRequireSeen) -> EncountersOccurredCache.
+    const rec = { FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: {} };
+    const cr = { EnteredBiomes: 1, IsDreamRun: true, BiomeVisitOrder: ['I'] };
+    const gs = { ShrineUpgrades: { BossDifficultyShrineUpgrade: 1 } };
+    assert.equal(evalFnCr(rec, { ...gs, EncountersOccurredCache: { BossChronos02: 1 } }, cr), 'met');
+    assert.equal(evalFnCr(rec, { ...gs, EncountersOccurredCache: {} }, cr), 'unmet');
+    // Biome F (Hecate, requires completed) -> EncountersCompletedCache.
+    const crF = { EnteredBiomes: 1, IsDreamRun: true, BiomeVisitOrder: ['F'] };
+    assert.equal(evalFnCr(rec, { ...gs, EncountersCompletedCache: { BossHecate02: 2 } }, crF), 'met');
+    assert.equal(evalFnCr(rec, { ...gs, EncountersCompletedCache: {} }, crF), 'unmet');
+});
+
+test('collectGameStatePaths + collectCurrentRunPaths capture FunctionName-implied fields', () => {
+    const textlines = {
+        T1: {
+            otherRequirements: {
+                'FunctionName:IsBossDifficultyShrineUpgradeActive': [{ FunctionName: 'IsBossDifficultyShrineUpgradeActive', FunctionArgs: {} }],
+                'FunctionName:RequiredHealthFraction': [{ FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.5 } }],
+                'FunctionName:RequiredNotInStore': [{ FunctionName: 'RequiredNotInStore', FunctionArgs: { Name: 'X' } }],
+            },
+        },
+    };
+    assert.deepEqual(collectGameStatePaths(textlines, {}), {
+        ShrineUpgrades: { BossDifficultyShrineUpgrade: true },
+        EncountersOccurredCache: '*',
+        EncountersCompletedCache: '*',
+    });
+    assert.deepEqual(collectCurrentRunPaths(textlines, {}), {
+        EnteredBiomes: true,
+        IsDreamRun: true,
+        ShrineUpgradesCache: { BossDifficultyShrineUpgrade: true },
+        BiomeVisitOrder: '*',
+        Hero: { Health: true, MaxHealth: true },
+        CurrentRoom: { Store: '*' },
+    });
+});
+
 // --- CurrentRun.* direct gates (5th arg = the persisted CurrentRun slice) ---
 
 // Evaluate a clause that reads CurrentRun.*; ``cr`` is the CurrentRun slice

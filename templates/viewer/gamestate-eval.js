@@ -206,6 +206,81 @@ function evalQuestCount(rec, root) {
     return _MET('met');
 }
 
+// Static biome -> boss-difficulty encounter map (ShrineData.lua:125). Keyed by
+// biome RoomSetName code; the dream-run branch of IsBossDifficultyShrineUpgrade
+// Active reads the matching encounter's GameState cache.
+const BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP = {
+    F: { Encounter: 'BossHecate02' },
+    G: { Encounter: 'BossScylla02' },
+    H: { Encounter: 'BossInfestedCerberus02' },
+    I: { Encounter: 'BossChronos02', OnlyRequireSeen: true },
+    N: { Encounter: 'BossPolyphemus02' },
+    O: { Encounter: 'BossEris02' },
+    P: { Encounter: 'BossPrometheus02' },
+    Q: { Encounter: 'BossTyphonHead02', OnlyRequireSeen: true },
+};
+
+// Evaluate ``IsBossDifficultyShrineUpgradeActive`` (ShrineLogic.lua:939): the
+// boss-difficulty vow is active while its rank is at least the number of biomes
+// entered this run. Reads ``GameState.ShrineUpgrades.BossDifficultyShrineUpgrade``
+// (or ``CurrentRun.ShrineUpgradesCache.*`` with ``UseShrineUpgradesCache``) vs
+// ``CurrentRun.EnteredBiomes``. The dream-run branch additionally gates on having
+// seen / beaten the current biome's hard boss (GameState.Encounters*Cache). All
+// from saved state; needs CurrentRun (owner/save-type gated).
+function evalBossDifficulty(rec, root) {
+    const cr = root.CurrentRun;
+    const gs = root.GameState;
+    if (!cr) return _MET('unknown', 'Checks the boss-difficulty vow against the current run - load the matching save type to resolve it.');
+    const args = rec.FunctionArgs || {};
+    const entered = cr.EnteredBiomes || 0;
+    const rank = args.UseShrineUpgradesCache
+        ? ((cr.ShrineUpgradesCache && cr.ShrineUpgradesCache.BossDifficultyShrineUpgrade) || 0)
+        : ((gs && gs.ShrineUpgrades && gs.ShrineUpgrades.BossDifficultyShrineUpgrade) || 0);
+    if (rank < entered) return _MET('unmet');
+    if (cr.IsDreamRun && entered > 0) {
+        const biome = Array.isArray(cr.BiomeVisitOrder) ? cr.BiomeVisitOrder[entered - 1] : (cr.BiomeVisitOrder || {})[entered];
+        const map = BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP[biome];
+        if (!map) return _MET('unknown', 'Dream-run boss-difficulty check for an unmapped biome.');
+        const cache = map.OnlyRequireSeen ? (gs && gs.EncountersOccurredCache) : (gs && gs.EncountersCompletedCache);
+        return _MET(luaTruthy(cache && cache[map.Encounter]) ? 'met' : 'unmet');
+    }
+    return _MET('met');
+}
+
+// Evaluate ``RequiredHealthFraction`` (RequirementsLogic.lua:890): compare the
+// hero's current health fraction (``CurrentRun.Hero.Health / .MaxHealth``)
+// against ``FunctionArgs.{Comparison,Value}``. Save-resolvable from CurrentRun.
+function evalHealthFraction(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _MET('unknown', 'Checks the hero\u2019s current-run health - load the matching save type to resolve it.');
+    const hero = cr.Hero || {};
+    const max = hero.MaxHealth;
+    if (typeof hero.Health !== 'number' || typeof max !== 'number') {
+        return _MET('unknown', 'The save didn\u2019t carry the hero\u2019s health for this run.');
+    }
+    const frac = hero.Health / max;
+    const args = rec.FunctionArgs || {};
+    return _MET(compare(frac, args.Comparison, args.Value) ? 'met' : 'unmet');
+}
+
+// Evaluate ``RequiredNotInStore`` (RequirementsLogic.lua:1161): fails if any
+// option in the current room's store is named ``FunctionArgs.Name``. No store
+// (or no current room) -> passes. Save-resolvable from CurrentRun.CurrentRoom.
+function evalNotInStore(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _MET('unknown', 'Checks the current room\u2019s store - load the matching save type to resolve it.');
+    const args = rec.FunctionArgs || {};
+    const store = cr.CurrentRoom && cr.CurrentRoom.Store;
+    const options = store && store.StoreOptions;
+    if (options && typeof options === 'object') {
+        for (const k in options) {
+            const opt = options[k];
+            if (opt && opt.Name === args.Name) return _MET('unmet');
+        }
+    }
+    return _MET('met');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -217,6 +292,9 @@ function evalClause(rec, root) {
     if (rec.FunctionName) {
         if (rec.FunctionName === 'RequireRunsSinceTextLines') return evalRunsSince(rec, root);
         if (rec.FunctionName === 'RequireQuestCount') return evalQuestCount(rec, root);
+        if (rec.FunctionName === 'IsBossDifficultyShrineUpgradeActive') return evalBossDifficulty(rec, root);
+        if (rec.FunctionName === 'RequiredHealthFraction') return evalHealthFraction(rec, root);
+        if (rec.FunctionName === 'RequiredNotInStore') return evalNotInStore(rec, root);
         return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
@@ -485,10 +563,32 @@ function collectRootedPaths(textlines, namedReqs, rootKey) {
     const scanRec = (rec) => {
         if (!rec || typeof rec !== 'object') return;
         if (rec.FunctionName) {
-            // RequireQuestCount reads the whole GameState.QuestStatus table; the
-            // other resolvable function (RequireRunsSinceTextLines) uses the
-            // run-scoped runsAgo map, not a path slice.
-            if (rootKey === 'GameState' && rec.FunctionName === 'RequireQuestCount') markWhole(['GameState', 'QuestStatus']);
+            // The resolvable FunctionName gates read implicit (non-Path) state;
+            // mark the fields each reads so the save parser captures them. Paths
+            // are split by root: GameState fields under the GameState mask,
+            // CurrentRun fields under the CurrentRun mask. RequireRunsSinceText
+            // Lines uses the run-scoped runsAgo map, not a path slice.
+            const fn = rec.FunctionName;
+            if (rootKey === 'GameState') {
+                if (fn === 'RequireQuestCount') markWhole(['GameState', 'QuestStatus']);
+                if (fn === 'IsBossDifficultyShrineUpgradeActive') {
+                    markLeaf(['GameState', 'ShrineUpgrades', 'BossDifficultyShrineUpgrade']);
+                    markWhole(['GameState', 'EncountersOccurredCache']);
+                    markWhole(['GameState', 'EncountersCompletedCache']);
+                }
+            } else if (rootKey === 'CurrentRun') {
+                if (fn === 'IsBossDifficultyShrineUpgradeActive') {
+                    markLeaf(['CurrentRun', 'EnteredBiomes']);
+                    markLeaf(['CurrentRun', 'IsDreamRun']);
+                    markLeaf(['CurrentRun', 'ShrineUpgradesCache', 'BossDifficultyShrineUpgrade']);
+                    markWhole(['CurrentRun', 'BiomeVisitOrder']);
+                }
+                if (fn === 'RequiredHealthFraction') {
+                    markLeaf(['CurrentRun', 'Hero', 'Health']);
+                    markLeaf(['CurrentRun', 'Hero', 'MaxHealth']);
+                }
+                if (fn === 'RequiredNotInStore') markWhole(['CurrentRun', 'CurrentRoom', 'Store']);
+            }
             return;
         }
         if (rec.PathFromSource || rec.PathFromArgs) return;

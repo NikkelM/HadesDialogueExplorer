@@ -653,9 +653,12 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // GameState slice to include QuestStatus (for RequireQuestCount); v6 added the
 // CurrentRun slice + in-run flag (for resolving CurrentRun.* gates); v7 added the
 // per-room slice (for resolving SumPrevRooms gates); v8 added the PrevRun slice
-// (last completed run, for resolving PrevRun.* gates). An older cache lacks these,
-// so the bump forces a re-parse rather than silently leaving them unavailable.
-const SAVE_STORAGE_SCHEMA = 8;
+// (last completed run, for resolving PrevRun.* gates); v9 widened the GameState +
+// CurrentRun slices with the fields the resolvable FunctionName gates read
+// (ShrineUpgrades / Encounters caches / Hero health / EnteredBiomes / store /
+// ...). An older cache lacks these, so the bump forces a re-parse rather than
+// silently leaving them unavailable.
+const SAVE_STORAGE_SCHEMA = 9;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
