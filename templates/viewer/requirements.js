@@ -14,7 +14,7 @@
  * lockstep.
  */
 
-import { textlines } from './data.js';
+import { textlines, namedRequirements } from './data.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 
 // Three-state AND: unmet if either side is unmet; else unknown if either is
@@ -561,4 +561,44 @@ export function directSatisfaction(textlineData, context, name) {
  */
 export function isDirectlySatisfied(textlineData, playedSet, name) {
     return directSatisfaction(textlineData, playedSet, name) === 'met';
+}
+
+// Three-state invert: met <-> unmet, unknown unchanged. Turns a named
+// requirement's own eligibility into its host-gate contribution for the
+// ``NamedRequirementsFalse`` operator (the host is blocked precisely when the
+// named requirement IS eligible).
+function _invert3(s) {
+    return s === 'met' ? 'unmet' : s === 'unmet' ? 'met' : 'unknown';
+}
+
+/**
+ * Host-gate status of one NamedRequirements* reference, evaluated as a full
+ * requirement set (its textline records, GameState gates and OR branches)
+ * against the save ``context`` - not the GameState-only view
+ * ``evaluateOtherRequirements`` produces, which can't read textline records.
+ * ``hostOwner`` supplies the run context (hub vs in-run) the named set's
+ * CurrentRun gates resolve against, since a named requirement has no owner.
+ *   - ``NamedRequirements``      (must pass)     -> the named set's own status
+ *   - ``NamedRequirementsFalse`` (must NOT pass) -> inverted (host blocked when
+ *                                                   the named set is eligible)
+ *   - ``NamedRequirementsCycle`` / unresolved    -> 'unknown'
+ */
+export function namedRequirementHostStatus(key, name, context, hostOwner) {
+    if (key === 'NamedRequirementsCycle') return 'unknown';
+    const def = namedRequirements[name];
+    if (!def) return 'unknown';
+    const s = directSatisfaction({ ...def, owner: hostOwner }, context, null);
+    return key === 'NamedRequirementsFalse' ? _invert3(s) : s;
+}
+
+/**
+ * Combined host-gate status over every name in a NamedRequirements* set (all
+ * must hold), so a group dot reads as the AND of its per-name dots.
+ */
+export function namedRequirementGroupStatus(key, names, context, hostOwner) {
+    const arr = (Array.isArray(names) ? names : []).map(
+        n => namedRequirementHostStatus(key, n, context, hostOwner));
+    if (arr.includes('unmet')) return 'unmet';
+    if (arr.includes('unknown')) return 'unknown';
+    return 'met';
 }

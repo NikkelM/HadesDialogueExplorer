@@ -13,7 +13,7 @@
 import { textlines, speakers, alternates, getActiveGame } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain, namedRequirementGroupStatus } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
@@ -575,8 +575,20 @@ export function renderOtherConditionsHtml(rootName) {
             rooms: resolveRun ? sctx.rooms : null,
         };
         const res = evaluateOtherRequirements(other, sctx.gameState, slices);
-        verdict = res.status;
         for (const c of res.clauses) byKey.set(c.key, c);
+        // Named requirement gates resolve GameState-only in
+        // evaluateOtherRequirements (it can't read textline records). Re-
+        // evaluate them as full requirement sets so dots and the header verdict
+        // reflect whether the named requirement is eligible as a whole.
+        for (const [key, c] of byKey) {
+            if (key.startsWith('NamedRequirements')) {
+                c.status = namedRequirementGroupStatus(key, other[key], sctx, tl.owner);
+                if (c.status !== 'unknown') c.reason = null;
+            }
+        }
+        const statuses = [...byKey.values()].map(c => c.status);
+        verdict = statuses.includes('unmet') ? 'unmet'
+            : statuses.includes('unknown') ? 'unknown' : 'met';
     }
 
     const header = haveSave
@@ -607,7 +619,7 @@ export function renderOtherConditionsHtml(rootName) {
             dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
         }
         if (key.startsWith('NamedRequirements')) {
-            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName, dot);
+            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);
             if (expanded !== null) return expanded;
         }
         const body = renderOtherReqEntryHtml(key, other[key]);
@@ -1003,7 +1015,7 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
                 : (c.reason || 'Can\u2019t be determined from the save.');
         const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
         if (key.startsWith('NamedRequirements')) {
-            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName, dot + ' ');
+            const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);
             if (expanded !== null) { html += expanded; continue; }
         }
         const body = renderOtherReqEntryHtml(key, other[key]);

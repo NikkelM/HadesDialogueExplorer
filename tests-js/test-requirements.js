@@ -21,6 +21,8 @@ import {
     runsSinceExplain,
     runsSinceGroupTooltip,
     runsSinceRefTooltip,
+    namedRequirementHostStatus,
+    namedRequirementGroupStatus,
     REQ_TYPE_SCOPE,
     AND_REQ_TYPES,
     OR_REQ_TYPES,
@@ -607,5 +609,51 @@ describe('run-count tooltips: play-once wording and permanence', () => {
             { played: new Set(['POnce']), runsAgo: { POnce: 5 } }, 3);
         assert.match(rt, /^Played 5 runs ago.*can only play once, so this gate can never be met again\.$/);
         assert.doesNotMatch(rt, /blocks this run-count gate/);
+    });
+});
+
+
+// Named-requirement host status: each named requirement is evaluated as a full
+// requirement set (textline records + gates), then turned into the host's gate
+// contribution - inverted for the "must NOT pass" operator.
+describe('namedRequirement host status', () => {
+    before(() => {
+        loadData({
+            textlines: {},
+            speakers: {},
+            namedRequirements: {
+                // A pure textline-record named requirement (eligible when A has
+                // played and B has not), mirroring real cases like ArachneBrooding.
+                Brooding: {
+                    requirements: { RequiredTextLines: ['A'], RequiredFalseTextLines: ['B'] },
+                    otherRequirements: {}, orBranches: [],
+                },
+                Empty: { requirements: {}, otherRequirements: {}, orBranches: [] },
+            },
+        });
+    });
+
+    test('NamedRequirements (must pass) mirrors the named set\u2019s own eligibility', () => {
+        assert.equal(namedRequirementHostStatus('NamedRequirements', 'Brooding', played('A')), 'met');
+        assert.equal(namedRequirementHostStatus('NamedRequirements', 'Brooding', played()), 'unmet');
+        assert.equal(namedRequirementHostStatus('NamedRequirements', 'Brooding', played('A', 'B')), 'unmet');
+    });
+
+    test('NamedRequirementsFalse (must NOT pass) inverts: host blocked when the named set is eligible', () => {
+        assert.equal(namedRequirementHostStatus('NamedRequirementsFalse', 'Brooding', played('A')), 'unmet');
+        assert.equal(namedRequirementHostStatus('NamedRequirementsFalse', 'Brooding', played()), 'met');
+    });
+
+    test('an unresolved or cyclic name is indeterminate', () => {
+        assert.equal(namedRequirementHostStatus('NamedRequirementsFalse', 'NoSuchName', played()), 'unknown');
+        assert.equal(namedRequirementHostStatus('NamedRequirementsCycle', 'Brooding', played('A')), 'unknown');
+    });
+
+    test('group status ANDs the per-name host statuses', () => {
+        // One eligible (host-blocked) name drags the must-NOT-pass group to unmet.
+        assert.equal(namedRequirementGroupStatus('NamedRequirementsFalse', ['Brooding', 'Empty'], played('A')), 'unmet');
+        // Brooding not eligible -> host ok; Empty always eligible but inverted -> unmet anyway.
+        assert.equal(namedRequirementGroupStatus('NamedRequirementsFalse', ['Empty'], played()), 'unmet');
+        assert.equal(namedRequirementGroupStatus('NamedRequirements', ['Brooding'], played('A')), 'met');
     });
 });

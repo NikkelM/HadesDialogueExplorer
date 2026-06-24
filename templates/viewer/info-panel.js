@@ -32,6 +32,7 @@ import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict } from './unobtainable.js';
+import { namedRequirementHostStatus, namedRequirementGroupStatus } from './requirements.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
 function _saveDotsActive() {
@@ -1023,19 +1024,37 @@ function _namedReqIsEmpty(resolved) {
 //     requirement set (e.g. all gates inlined elsewhere).
 // Returns ``null`` when ``names`` is not a non-empty array so the
 // caller can fall through to the existing flat-list rendering.
-export function renderNamedReqExpansionsHtml(key, names, hostTextlineName, dotHtml = '') {
+export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
     if (!Array.isArray(names) || names.length === 0) return null;
     const suffix = _NAMED_REQ_SEMANTIC_SUFFIX[key] || '';
+    // Per-name + group dots reflect whether each named requirement is eligible
+    // as a whole (textline records + GameState gates + OR branches), in the
+    // host's run context. For NamedRequirementsFalse the status is the host's
+    // gate contribution (inverted), so it reads the same way as the group dot.
+    const showDots = _saveDotsActive();
+    const sctx = showDots ? getSaveContext() : null;
+    const hostOwner = (hostTextlineName && textlines[hostTextlineName])
+        ? textlines[hostTextlineName].owner : undefined;
+    let groupDot = '';
+    if (showDots) {
+        const g = namedRequirementGroupStatus(key, names, sctx, hostOwner);
+        groupDot = statusDot(g, groupStatusTooltip(g));
+    }
     let html = `<div class="other-req-item named-req-item">`
-             + `<div class="named-req-label">${dotHtml}${renderOtherReqKeyHtml(key)}:</div>`
+             + `<div class="named-req-label">${groupDot}${renderOtherReqKeyHtml(key)}:</div>`
              + `<div class="named-req-list">`;
     for (const name of names) {
         const resolved = namedRequirements ? namedRequirements[name] : null;
         const safeName = escapeHtml(name);
         const safeSuffix = suffix ? ` <span class="named-req-suffix">(${escapeHtml(suffix)})</span>` : '';
+        let nameDot = '';
+        if (showDots) {
+            const s = namedRequirementHostStatus(key, name, sctx, hostOwner);
+            nameDot = statusDot(s, groupStatusTooltip(s));
+        }
         if (_namedReqIsEmpty(resolved)) {
             html += `<div class="named-req-flat">`
-                  + `<code class="named-req-name">${safeName}</code>${safeSuffix}`
+                  + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
                   + `</div>`;
             continue;
         }
@@ -1051,7 +1070,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName, dotHt
         html += `<div class="named-req-expand">`
               + `<h5 class="named-req-header">`
               + `<span class="toggle">\u25BC</span>`
-              + `<code class="named-req-name">${safeName}</code>${safeSuffix}`
+              + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
               + `</h5>`
               + `<div class="named-req-children expanded">${inner}</div>`
               + `</div>`;
@@ -1178,8 +1197,20 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             rooms: resolveRun ? sctx.rooms : null,
         };
         const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices);
-        overallVerdict = res.status;
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
+        // Named requirement gates resolve GameState-only in
+        // evaluateOtherRequirements (it can't read textline records). Re-
+        // evaluate them as full requirement sets so the dot - and the section
+        // verdict - reflect whether the named requirement is eligible as a whole.
+        for (const [key, c] of gateByKey) {
+            if (key.startsWith('NamedRequirements')) {
+                c.status = namedRequirementGroupStatus(key, otherRequirements[key], sctx, owner);
+                if (c.status !== 'unknown') c.reason = null;
+            }
+        }
+        const _statuses = [...gateByKey.values()].map(c => c.status);
+        overallVerdict = _statuses.includes('unmet') ? 'unmet'
+            : _statuses.includes('unknown') ? 'unknown' : 'met';
     }
     const dotFor = (key) => {
         const c = gateByKey && gateByKey.get(key);
@@ -1225,7 +1256,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         // rendering below if the helper returns null (empty /
         // non-array value).
         if (_NAMED_REQ_EXPANSION_KEYS.has(key)) {
-            const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName, dotFor(key));
+            const expandedHtml = renderNamedReqExpansionsHtml(key, val, textlineName);
             if (expandedHtml !== null) {
                 otherHtml += expandedHtml;
                 continue;

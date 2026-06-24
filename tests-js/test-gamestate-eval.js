@@ -573,8 +573,8 @@ test('currentRunResolvable: hub/run/both/unlisted policy vs save type', () => {
     // sanity on the map sizes.
     const vals = Object.values(OWNER_RUN_CONTEXT);
     assert.equal(vals.filter(v => v === 'hub').length, 11);
-    assert.equal(vals.filter(v => v === 'run').length, 40);
-    assert.equal(vals.filter(v => v === 'both').length, 4);
+    assert.equal(vals.filter(v => v === 'run').length, 39);
+    assert.equal(vals.filter(v => v === 'both').length, 5);
 });
 
 // --- PrevRun.* (last completed run = RunHistory[#RunHistory], ungated) ---
