@@ -15,14 +15,14 @@
 .eligibility-other-save {
     margin-top: 0.6rem;
     padding: 0.5rem 0.6rem;
-    border-left: 3px solid #8b95d6;
-    background: rgba(140, 158, 255, 0.06);
+    border-left: 3px solid var(--elig-indeterminate);
+    background: rgba(169, 131, 214, 0.08);
     border-radius: 0 4px 4px 0;
 }
 .eligibility-other-save-head {
     font-weight: 600;
     font-size: var(--fs-sm);
-    color: #8b95d6;
+    color: var(--elig-indeterminate);
     margin-bottom: 0.2rem;
 }
 .eligibility-other-save-note {
@@ -71,23 +71,23 @@
 }
 
 .eligibility-status.eligibility-played {
-    color: #6be06b;
+    color: var(--elig-met-text);
 }
 
 .eligibility-status.eligibility-eligible {
-    color: #ffb74d;
+    color: var(--elig-eligible);
 }
 
 .eligibility-status.eligibility-blocked {
-    color: #90a4ae;
+    color: var(--elig-blocked-text);
 }
 
 .eligibility-status.eligibility-unobtainable {
-    color: var(--danger);
+    color: var(--elig-unobtainable);
 }
 
 .eligibility-status.eligibility-indeterminate {
-    color: #aab2e6;
+    color: var(--elig-indeterminate-text);
 }
 
 .eligibility-unobtainable-reasons {
@@ -400,7 +400,7 @@
    a near-miss: it has played, just not where this gate needs it, so it
    doesn't satisfy the gate (which stays blocked). */
 .gate-ref-elsewhere {
-    color: #4db6ac;
+    color: var(--elig-near-miss);
 }
 
 .eligibility-group-title {
@@ -434,7 +434,7 @@
 
 .eligibility-group-option-icon {
     flex-shrink: 0;
-    color: #78909c;
+    color: var(--elig-blocked);
 }
 
 .eligibility-group-option.played {
@@ -442,7 +442,7 @@
 }
 
 .eligibility-group-option.played .eligibility-group-option-icon {
-    color: #6be06b;
+    color: var(--elig-met-text);
 }
 
 /* H2 OR-branch cards: an alternative requirement set in the tracer. */
@@ -451,7 +451,7 @@
 }
 
 .eligibility-branch-satisfied .eligibility-group-option-icon {
-    color: #6be06b;
+    color: var(--elig-met-text);
 }
 
 .eligibility-branch-indeterminate {
@@ -459,7 +459,7 @@
 }
 
 .eligibility-branch-indeterminate .eligibility-group-option-icon {
-    color: #aab2e6;
+    color: var(--elig-indeterminate-text);
 }
 
 .eligibility-branch-note {

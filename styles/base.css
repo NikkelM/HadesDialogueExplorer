@@ -19,6 +19,27 @@
     --text-muted:   #888;      /* muted secondary text */
     --text-dim:     #666;      /* dim secondary text */
     --danger:       #e57373;   /* blocked / warning / error red */
+
+    /* Eligibility status palette. One source of truth for the four verdicts
+       shown as dots (tree), badges/pills (save progress), chips (speaker
+       overview) and status text (tracer). Solid values are for filled dots /
+       badges; the -text variants are lighter tints for pill text and headings.
+       blocked is a neutral slate and indeterminate is violet, kept far apart in
+       hue so the two never read as the same colour. */
+    --elig-met:                #4caf50;   /* requirement satisfied */
+    --elig-met-text:           #6be06b;
+    --elig-eligible:           #ffb74d;   /* eligible but not yet played */
+    --elig-blocked:            #78909c;   /* definitively not satisfied */
+    --elig-blocked-text:       #90a4ae;
+    --elig-indeterminate:      #a983d6;   /* cannot be determined from save */
+    --elig-indeterminate-text: #c7aeec;
+    --elig-unobtainable:       var(--danger); /* can never be satisfied */
+    --elig-near-miss:          #4db6ac;   /* played, but not in the gate's scope */
+
+    /* Shared diameter for the small circular status dots (dependency-tree
+       group dots and per-line save badges) so they never differ in size when
+       shown side by side in the same list. */
+    --dot-size: 9px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {

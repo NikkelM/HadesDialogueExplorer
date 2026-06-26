@@ -247,11 +247,11 @@ body.layout-speaker #panel-info {
     border-radius: 50%;
     margin-right: 5px;
 }
-.eligibility-chip-played::before { background: #4caf50; }
-.eligibility-chip-eligible::before { background: #ffb74d; }
-.eligibility-chip-blocked::before { background: #78909c; }
-.eligibility-chip-indeterminate::before { background: #8b95d6; }
-.eligibility-chip-unobtainable::before { background: var(--danger); }
+.eligibility-chip-played::before { background: var(--elig-met); }
+.eligibility-chip-eligible::before { background: var(--elig-eligible); }
+.eligibility-chip-blocked::before { background: var(--elig-blocked); }
+.eligibility-chip-indeterminate::before { background: var(--elig-indeterminate); }
+.eligibility-chip-unobtainable::before { background: var(--elig-unobtainable); }
 
 /* Save-progress summary cell: the per-status counts list reuses the
    section-list rhythm; each row leads with the same coloured dot. */

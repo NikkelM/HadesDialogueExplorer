@@ -247,15 +247,15 @@
    of the tree. */
 .group-status {
     display: inline-block;
-    width: 9px;
-    height: 9px;
+    width: var(--dot-size);
+    height: var(--dot-size);
     border-radius: 50%;
     flex-shrink: 0;
 }
-.group-status-met { background: #4caf50; }
-.group-status-unmet { background: #78909c; }
-.group-status-unknown { background: #8b95d6; }
-.group-status-unobtainable { background: var(--danger); }
+.group-status-met { background: var(--elig-met); }
+.group-status-unmet { background: var(--elig-blocked); }
+.group-status-unknown { background: var(--elig-indeterminate); }
+.group-status-unobtainable { background: var(--elig-unobtainable); }
 .req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
 .req-type-group-header .toggle {
     width: 12px;

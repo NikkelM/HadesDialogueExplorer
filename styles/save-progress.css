@@ -66,38 +66,38 @@
 
 .save-badge {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: var(--dot-size);
+    height: var(--dot-size);
     border-radius: 50%;
     margin-right: 0.3rem;
     flex-shrink: 0;
 }
 
 .save-badge.played {
-    background: #4caf50;
+    background: var(--elig-met);
 }
 
 .save-badge.eligible {
-    background: #ffb74d;
+    background: var(--elig-eligible);
 }
 
 .save-badge.blocked {
-    background: #78909c;
+    background: var(--elig-blocked);
 }
 
 .save-badge.unobtainable {
-    background: var(--danger);
+    background: var(--elig-unobtainable);
 }
 
 .save-badge.indeterminate {
-    background: #8b95d6;
+    background: var(--elig-indeterminate);
 }
 
 /* A line played in the save that still doesn't satisfy the specific
    run-scoped / run-count requirement it sits under (e.g. played, but not in
    the last run). Matches the eligibility tracer's near-miss highlight. */
 .save-badge.near-miss {
-    background: #4db6ac;
+    background: var(--elig-near-miss);
 }
 
 /* Detail panel save progress indicator */
@@ -116,32 +116,32 @@
 
 .save-progress-pill.played {
     background: #1a3a1a;
-    color: #6be06b;
+    color: var(--elig-met-text);
     border: 1px solid #2a5a2a;
 }
 
 .save-progress-pill.eligible {
     background: #3a2f1a;
-    color: #ffb74d;
+    color: var(--elig-eligible);
     border: 1px solid #5a4a2a;
 }
 
 .save-progress-pill.blocked {
     background: #1e2a30;
-    color: #90a4ae;
+    color: var(--elig-blocked-text);
     border: 1px solid #2a3a40;
 }
 
 .save-progress-pill.unobtainable {
     background: #2e1a1a;
-    color: var(--danger);
+    color: var(--elig-unobtainable);
     border: 1px solid #4a2a2a;
 }
 
 .save-progress-pill.indeterminate {
-    background: #222640;
-    color: #aab2e6;
-    border: 1px solid #3a3f6a;
+    background: #2a2240;
+    color: var(--elig-indeterminate-text);
+    border: 1px solid #4a3f6a;
 }
 
 .save-progress-pill.clickable {
