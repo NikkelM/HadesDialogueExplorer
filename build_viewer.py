@@ -520,11 +520,15 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
             f"{game}: no datasets with a 'textlines' key - cannot build graph data."
         )
 
-    if len(regular) == 1:
-        graph_data = regular[0]
-    else:
+    # Route every game through merge_graph_data, including the single-dataset
+    # case, so they share the same post-processing (split_name_collisions +
+    # dependents/alternates re-index). build_graph_data alone does not split
+    # name collisions, so a one-source game would otherwise diverge from the
+    # merged path. No game hits the single-source case today (H1/H2 both ship
+    # many sources), but a future single-source game would behave consistently.
+    if len(regular) > 1:
         print(f"  Merging {len(regular)} datasets for {game}...")
-        graph_data = merge_graph_data(regular)
+    graph_data = merge_graph_data(regular)
 
     for meta in metadata:
         for key, value in meta.items():

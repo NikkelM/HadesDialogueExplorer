@@ -72,9 +72,10 @@ ws.close();
 // layout viewport OUT to the content width - innerWidth ends up > target.
 const target = +w;
 const fits = r.winW <= target + 1 && r.docW <= target + 1;
+const tapOk = r.smallCount === 0;
 console.log(`\n[${w}x${h} dpr${dpr}] ${url}`);
 console.log(`  fits device width ${target}: innerWidth=${r.winW} scrollWidth=${r.docW} -> ${fits ? 'ok' : 'FAIL'}`);
-console.log(`  undersized tap targets (<44px): ${r.smallCount}`);
+console.log(`  undersized tap targets (<44px): ${r.smallCount} -> ${tapOk ? 'ok' : 'FAIL'}`);
 for (const t of r.small.slice(0, 12)) console.log(`    - <${t.tag}.${t.cls}> ${t.w}x${t.h} "${t.txt}"`);
 if (r.smallCount > 12) console.log(`    ... and ${r.smallCount - 12} more`);
-process.exit(fits ? 0 : 1);
+process.exit(fits && tapOk ? 0 : 1);

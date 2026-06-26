@@ -751,16 +751,30 @@ def _to_string_list(value, game_data_lists: dict = None, sources_out: list = Non
         return [value.name]
     if isinstance(value, LuaTable):
         result: list = []
+
+        def emit_member(v):
+            if isinstance(v, str):
+                emit_str(v)
+            elif isinstance(v, LuaIdentifier):
+                emit_identifier(v)
+            else:
+                # Loud-on-surprise, matching _normalize_value's stance:
+                # silently skipping would drop a dependency edge without it
+                # ever showing up in the unresolved-ref audit. No requirement
+                # field across the H1/H2 sources currently nests a
+                # LuaExpression / table here; add an explicit representation
+                # if a new game/field needs one.
+                raise ValueError(
+                    "_to_string_list: encountered an unsupported member of "
+                    f"type {type(v).__name__} in a requirement-field table. "
+                    "Only str and LuaIdentifier members are handled; add "
+                    f"explicit support if needed. Value repr: {v!r}."
+                )
+
         for v in value.named.values():
-            if isinstance(v, str):
-                emit_str(v)
-            elif isinstance(v, LuaIdentifier):
-                emit_identifier(v)
+            emit_member(v)
         for v in value.array:
-            if isinstance(v, str):
-                emit_str(v)
-            elif isinstance(v, LuaIdentifier):
-                emit_identifier(v)
+            emit_member(v)
         return result
     if isinstance(value, list):
         out = [str(v) for v in value]
