@@ -56,7 +56,7 @@ const ELIGIBILITY_TOUR_STEPS = [
     {
         target: treeByHeader('Other requirements'),
         title: 'Conditions beyond dialogue',
-        body: 'Non-textline gates - game state, unlocks, run modifiers - read from the dialogue\u2019s definition. The tracer lists them but can\u2019t check them against your save.',
+        body: 'Non-textline gates - game state, unlocks, run modifiers - read from the dialogue\u2019s definition. Each is checked against your save where possible and marked with a status dot. Make sure you load an in-run or hub save depending on the dialogue you\u2019re viewing.',
     },
 ];
 
