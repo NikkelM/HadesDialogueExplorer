@@ -1,0 +1,14 @@
+# Normalise line endings. All text files are stored in the repository and
+# checked out with LF on every platform, so the working tree never drifts to
+# CRLF (which otherwise shows the whole tree as modified on Windows).
+* text=auto eol=lf
+
+# Binary assets git must never line-ending-convert.
+*.ico  binary
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.webp binary
+*.woff  binary
+*.woff2 binary
+*.sav  binary
