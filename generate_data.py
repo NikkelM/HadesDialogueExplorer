@@ -40,6 +40,7 @@ from src.extractors.hades2 import (
     HADES2_SPEAKERS,
 )
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
+from src.extractors.hades2.god_traits import extract_god_trait_metadata
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.extractors.hades2.req_extractor import extract_requirements
 from src.extractors.textline_set import (
@@ -361,6 +362,17 @@ def main():
     if gamedata_refs:
         metadata_payload["gameDataRefs"] = gamedata_refs
         print(f"  GameData / ScreenData / QuestOrderData refs: {len(gamedata_refs)} tables")
+    # God-trait + restricted-boon name sets resolve the
+    # RequiredSellableGodTraits / RequireUnrestrictedBoonChoices
+    # FunctionName gates against the hero's equipped traits in a save.
+    god_trait_meta = extract_god_trait_metadata(hades2_scripts)
+    if god_trait_meta.get("godTraitNames"):
+        metadata_payload["godTraitNames"] = god_trait_meta["godTraitNames"]
+        metadata_payload["restrictBoonChoiceTraitNames"] = god_trait_meta["restrictBoonChoiceTraitNames"]
+        print(
+            f"  God traits: {len(god_trait_meta['godTraitNames'])}; "
+            f"restricted-boon traits: {len(god_trait_meta['restrictBoonChoiceTraitNames'])}"
+        )
     if named_req_resolved:
         metadata_payload["namedRequirements"] = named_req_resolved
         print(f"  NamedRequirements (resolved): {len(named_req_resolved)} entries")

@@ -16,6 +16,8 @@ before(() => {
         textlines: {},
         speakers: {},
         gameDataRefs: { 'GameData.Trio': ['A', 'B', 'C'] },
+        godTraitNames: ['ZeusManaBoltBoon', 'AthenaBoon'],
+        restrictBoonChoiceTraitNames: ['ChaosRestrictBoonCurse'],
         namedRequirements: {
             TrueEndingReached: { otherRequirements: { 'PathTrue:GameState.ReachedTrueEnding': [{ PathTrue: ['GameState', 'ReachedTrueEnding'] }] } },
             // a block that reads CurrentRun -> unknown
@@ -393,6 +395,47 @@ test('RequiredHealthFraction: compares Hero.Health / MaxHealth', () => {
     assert.equal(evalFnCr(rec, {}, { Hero: { Health: 80, MaxHealth: 100 } }), 'unmet');  // 0.8 !<= 0.5
     assert.equal(evalFnCr(rec, {}, null), 'unknown');                                    // no CurrentRun -> indeterminate
     assert.equal(evalFnCr(rec, {}, { Hero: {} }), 'unknown');                            // health not carried
+});
+
+// --- Hero equipped-trait gates: RequiredSellableGodTraits + RequireUnrestrictedBoonChoices ---
+
+test('RequiredSellableGodTraits: hero holds a god trait carrying a Rarity', () => {
+    const rec = { FunctionName: 'RequiredSellableGodTraits' };
+    const cr = (traits) => ({ Hero: { Traits: traits } });
+    // god trait with a rarity -> met
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'ZeusManaBoltBoon', Rarity: 'Common' }])), 'met');
+    // god trait without a rarity -> unmet
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'ZeusManaBoltBoon' }])), 'unmet');
+    // non-god trait with a rarity (e.g. a meta upgrade) -> unmet
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'StartingGoldMetaUpgrade', Rarity: 'Epic' }])), 'unmet');
+    // mix: one qualifying god trait is enough -> met
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'StartingGoldMetaUpgrade', Rarity: 'Epic' }, { Name: 'AthenaBoon', Rarity: 'Rare' }])), 'met');
+    // numeric-keyed-object array form (1-based Lua array) -> met
+    assert.equal(evalFnCr(rec, {}, cr({ '1': { Name: 'ZeusManaBoltBoon', Rarity: 'Common' } })), 'met');
+    assert.equal(evalFnCr(rec, {}, cr([])), 'unmet');     // no traits -> unmet
+    assert.equal(evalFnCr(rec, {}, null), 'unknown');     // no CurrentRun -> indeterminate
+});
+
+test('RequireUnrestrictedBoonChoices: restricted iff a trait sets RestrictBoonChoices', () => {
+    const rec = { FunctionName: 'RequireUnrestrictedBoonChoices' };
+    const cr = (traits) => ({ Hero: { Traits: traits } });
+    // no restricting trait -> met (unrestricted)
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'ZeusManaBoltBoon', Rarity: 'Common' }])), 'met');
+    // equipped instance carries RestrictBoonChoices -> unmet (restricted)
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'ChaosRestrictBoonCurse', RestrictBoonChoices: true }])), 'unmet');
+    // by-name fallback when the instance didn't carry the field -> unmet
+    assert.equal(evalFnCr(rec, {}, cr([{ Name: 'ChaosRestrictBoonCurse' }])), 'unmet');
+    assert.equal(evalFnCr(rec, {}, cr([])), 'met');       // no traits -> unrestricted
+    assert.equal(evalFnCr(rec, {}, null), 'unknown');     // no CurrentRun -> indeterminate
+});
+
+test('collectCurrentRunPaths captures Hero.Traits for the equipped-trait gates', () => {
+    const textlines = {
+        T1: { otherRequirements: { 'FunctionName:RequiredSellableGodTraits': [{ FunctionName: 'RequiredSellableGodTraits' }] } },
+        T2: { otherRequirements: { 'FunctionName:RequireUnrestrictedBoonChoices': [{ FunctionName: 'RequireUnrestrictedBoonChoices' }] } },
+    };
+    const mask = collectCurrentRunPaths(textlines, {});
+    assert.equal(mask.Hero.Traits, '*');
 });
 
 test('IsBossDifficultyShrineUpgradeActive: rank vs EnteredBiomes (common path)', () => {

@@ -136,6 +136,9 @@ from .gamedata_refs import (
     HADES2_GAMEDATA_REF_SOURCE_FILES,
     extract_gamedata_refs,
 )
+from .god_traits import (
+    extract_god_trait_metadata,
+)
 from .unresolved_refs import (
     HADES2_KNOWN_UNRESOLVED_REFS,
     HADES2_UNRESOLVED_CATEGORY_LABELS,
@@ -183,6 +186,7 @@ __all__ = [
     "find_unattached_priority_groups",
     "HADES2_GAMEDATA_REF_SOURCE_FILES",
     "extract_gamedata_refs",
+    "extract_god_trait_metadata",
     "HADES2_KNOWN_UNRESOLVED_REFS",
     "HADES2_UNRESOLVED_CATEGORY_LABELS",
     "HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS",

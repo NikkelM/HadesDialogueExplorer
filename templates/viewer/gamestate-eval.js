@@ -19,7 +19,7 @@
 // Returns, for a whole requirement set, a three-state verdict (met / unmet /
 // unknown) plus a per-clause breakdown the tracer renders as status dots.
 
-import { namedRequirements, gameDataRefs } from './data.js';
+import { namedRequirements, gameDataRefs, godTraitNames, restrictBoonChoiceTraitNames } from './data.js';
 
 // Lua truthiness: only nil and false are falsy. 0 and "" are TRUTHY. (The
 // engine's PathTrue additionally rejects 0; that special case is handled at the
@@ -331,6 +331,41 @@ function evalConsecutiveDeaths(rec, root) {
     return _MET(streak >= args.Count ? 'met' : 'unmet');
 }
 
+// Iterate the hero's equipped traits from a CurrentRun slice. The
+// luabins-decoded ``Hero.Traits`` is a 1-based Lua array, surfaced as
+// either a JS array or an object with numeric-string keys; the save
+// parser prunes each entry to ``{Name, Rarity, RestrictBoonChoices}``.
+function heroTraitList(cr) {
+    const traits = cr && cr.Hero && cr.Hero.Traits;
+    if (!traits || typeof traits !== 'object') return [];
+    return Array.isArray(traits) ? traits : Object.values(traits);
+}
+
+// Evaluate ``RequiredSellableGodTraits`` (RequirementsLogic.lua:1187):
+// true iff the hero holds at least one *god* trait (IsGodTrait with
+// ForShop) that also carries a ``Rarity``. ``godTraitNames`` is the
+// pre-computed ForShop IsGodTrait set. Save-resolvable from CurrentRun.
+function evalSellableGodTraits(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _WRONGSAVE('Checks the hero\u2019s current-run boons - load the matching save type to resolve it.');
+    const has = heroTraitList(cr).some(t =>
+        t && godTraitNames.has(t.Name) && t.Rarity !== undefined && t.Rarity !== null && t.Rarity !== false);
+    return _MET(has ? 'met' : 'unmet');
+}
+
+// Evaluate ``RequireUnrestrictedBoonChoices`` (RequirementsLogic.lua:869):
+// false (restricted) iff any equipped trait defines ``RestrictBoonChoices``.
+// The equipped instance carries the field (copied from the static def),
+// with ``restrictBoonChoiceTraitNames`` as a by-name fallback.
+// Save-resolvable from CurrentRun.
+function evalUnrestrictedBoonChoices(rec, root) {
+    const cr = root.CurrentRun;
+    if (!cr) return _WRONGSAVE('Checks the hero\u2019s current-run boons - load the matching save type to resolve it.');
+    const restricted = heroTraitList(cr).some(t =>
+        t && ((t.RestrictBoonChoices !== undefined && t.RestrictBoonChoices !== null) || restrictBoonChoiceTraitNames.has(t.Name)));
+    return _MET(restricted ? 'unmet' : 'met');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -346,6 +381,8 @@ function evalClause(rec, root) {
         if (rec.FunctionName === 'RequiredHealthFraction') return evalHealthFraction(rec, root);
         if (rec.FunctionName === 'RequiredConsecutiveClearsOfRoom') return evalConsecutiveClears(rec, root);
         if (rec.FunctionName === 'RequiredConsecutiveDeathsInRoom') return evalConsecutiveDeaths(rec, root);
+        if (rec.FunctionName === 'RequiredSellableGodTraits') return evalSellableGodTraits(rec, root);
+        if (rec.FunctionName === 'RequireUnrestrictedBoonChoices') return evalUnrestrictedBoonChoices(rec, root);
         return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
@@ -672,6 +709,11 @@ function collectRootedPaths(textlines, namedReqs, rootKey) {
                 if (fn === 'RequiredHealthFraction') {
                     markLeaf(['CurrentRun', 'Hero', 'Health']);
                     markLeaf(['CurrentRun', 'Hero', 'MaxHealth']);
+                }
+                if (fn === 'RequiredSellableGodTraits' || fn === 'RequireUnrestrictedBoonChoices') {
+                    // Capture the equipped-trait array; the save parser
+                    // prunes each entry to Name/Rarity/RestrictBoonChoices.
+                    markWhole(['CurrentRun', 'Hero', 'Traits']);
                 }
                 if (fn === 'RequiredConsecutiveClearsOfRoom' || fn === 'RequiredConsecutiveDeathsInRoom') {
                     // Seed reads CurrentRun.{RoomCountCache[room], Cleared,

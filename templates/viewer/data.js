@@ -53,6 +53,8 @@ export let choiceNames;
 export let metaUpgradeNames;
 export let gameDataRefs;
 export let namedRequirements;
+export let godTraitNames;
+export let restrictBoonChoiceTraitNames;
 export let allNames;
 
 // Pre-built index for O(1) lookups when sorting tree children into
@@ -213,6 +215,8 @@ export function setActiveGame(gameId) {
     metaUpgradeNames = gd.metaUpgradeNames || {};
     gameDataRefs = gd.gameDataRefs || {};
     namedRequirements = gd.namedRequirements || {};
+    godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);
+    restrictBoonChoiceTraitNames = new Set(Array.isArray(gd.restrictBoonChoiceTraitNames) ? gd.restrictBoonChoiceTraitNames : []);
     allNames = Object.keys(textlines).sort();
 
     _reqTypeOrderIndex = {};

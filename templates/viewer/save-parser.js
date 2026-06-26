@@ -492,7 +492,32 @@ function extractCurrentRunSlice(gameId, luaState) {
   const mask = _h2CurrentRunMask();
   if (!mask || Object.keys(mask).length === 0) return null;
   const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
-  return pruneGameState(cr, mask);
+  const slice = pruneGameState(cr, mask);
+  // The hero's equipped-trait array (captured wholesale by the mask for
+  // the god-trait / boon-choice gates) is large - each instance is a
+  // deep copy of its full static trait def. Prune each to just the
+  // fields the evaluators read so the persisted slice stays small.
+  if (slice.Hero && slice.Hero.Traits && typeof slice.Hero.Traits === 'object') {
+    slice.Hero.Traits = pruneHeroTraits(slice.Hero.Traits);
+  }
+  return slice;
+}
+
+// Reduce a hero ``Traits`` table (a 1-based Lua array surfaced as an
+// array or numeric-keyed object) to a compact array of
+// ``{Name, Rarity, RestrictBoonChoices}`` - the only fields the
+// god-trait / unrestricted-boon evaluators inspect.
+function pruneHeroTraits(traits) {
+  const entries = Array.isArray(traits) ? traits : Object.values(traits);
+  const out = [];
+  for (const t of entries) {
+    if (!t || typeof t !== 'object') continue;
+    const pruned = { Name: t.Name };
+    if (t.Rarity !== undefined) pruned.Rarity = t.Rarity;
+    if (t.RestrictBoonChoices !== undefined) pruned.RestrictBoonChoices = t.RestrictBoonChoices;
+    out.push(pruned);
+  }
+  return out;
 }
 
 // Build the per-run slice for SumPrevRuns: the current run plus the most recent
@@ -702,10 +727,11 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // (last completed run, for resolving PrevRun.* gates); v9 widened the GameState +
 // CurrentRun slices with the fields the resolvable FunctionName gates read
 // (ShrineUpgrades / Encounters caches / Hero health / EnteredBiomes / ...); v10
-// added the recent-runs slice (for RequiredConsecutiveClears/DeathsInRoom). An
-// older cache lacks these, so the bump forces a re-parse rather than silently
-// leaving them unavailable.
-const SAVE_STORAGE_SCHEMA = 10;
+// added the recent-runs slice (for RequiredConsecutiveClears/DeathsInRoom); v11
+// added the hero equipped-trait slice (for RequiredSellableGodTraits /
+// RequireUnrestrictedBoonChoices). An older cache lacks these, so the bump
+// forces a re-parse rather than silently leaving them unavailable.
+const SAVE_STORAGE_SCHEMA = 11;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
