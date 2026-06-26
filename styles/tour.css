@@ -1,14 +1,22 @@
 /* Guided onboarding tour: spotlight + coachmark card.
  *
  * Driven by templates/viewer/tour.js (positions are set inline from JS).
- * Three stacked layers above everything else:
+ * Stacked layers above everything else:
  *   .tour-overlay   - transparent full-screen click-blocker (keeps the page
  *                     non-interactive so the user follows the tour)
- *   .tour-spotlight - the dim: a transparent box over the highlighted target
- *                     with a huge spreading box-shadow that darkens the rest
- *                     of the screen, leaving the target visible through the
- *                     cut-out. JS sets its position/size; a 0-size centred
- *                     spotlight dims the whole screen for a no-target step.
+ *   .tour-dim       - the dim: a solid full-screen (position:fixed; inset:0)
+ *                     dark layer with a clip-path hole punched over the
+ *                     highlighted target, so the rest of the screen darkens
+ *                     while the target stays visible. JS sets the clip-path
+ *                     from the spotlight's position; no hole (clip-path:none)
+ *                     dims the whole screen for a no-target step. A
+ *                     full-screen solid layer is used rather than a huge
+ *                     box-shadow on the (small) spotlight because iOS WebKit
+ *                     clips an oversized box-shadow on a composited fixed
+ *                     element to its layer bounds, leaving the top/bottom of
+ *                     the screen undimmed on notched devices.
+ *   .tour-spotlight - the highlight ring around the target (the cut-out is
+ *                     produced by .tour-dim's clip-path, aligned to this box)
  *   .tour-card      - the coachmark (title, body, Back/Next/Skip + opt-out)
  *
  * Self-contained (base + its own mobile @media); no other file styles these.
@@ -26,6 +34,19 @@
     cursor: default;
 }
 
+/* The dim layer. A full-screen solid fill with a clip-path hole over the
+   target (set from JS). Purely visual - pointer-events stay off so the
+   overlay above keeps owning click-blocking. The clip-path transition keeps
+   the hole sliding in step with the spotlight ring between steps. */
+.tour-dim {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    transition: clip-path 0.18s ease;
+}
+
 /* While a tour is open, the hover tooltip must sit above the tour layers so
    interactive steps (hover a badge / the dotted internal-id text) can show it;
    its default z-index is far below the overlay. */
@@ -37,19 +58,17 @@ body.tour-open #custom-tooltip {
     position: fixed;
     z-index: 100001;
     border-radius: 6px;
-    /* The dim. The spread radius is larger than any viewport so the shadow
-       always reaches every edge regardless of where the cut-out sits. */
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-    /* Visual highlight ring around the target. */
+    /* Visual highlight ring around the target. The dim/cut-out is produced by
+       .tour-dim's clip-path (aligned to this box from JS). */
     outline: 2px solid var(--accent-color);
     outline-offset: 2px;
     pointer-events: none;
     transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
 }
 
-/* No-target steps centre a zero-size cut-out: the dim (box-shadow) still
-   covers the screen, but the highlight ring would show as a tiny square, so
-   drop it. */
+/* No-target steps clear the clip-path hole (the dim covers the whole screen)
+   and centre a zero-size spotlight; the highlight ring would show as a tiny
+   square, so drop it. */
 .tour-spotlight-untargeted {
     outline: none;
 }

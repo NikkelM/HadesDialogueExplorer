@@ -30,6 +30,7 @@ let _cb = {};
 let _prevFocus = null;
 // DOM refs for the current run.
 let _overlay = null;
+let _dim = null;
 let _spotlight = null;
 let _card = null;
 let _titleEl = null;
@@ -129,6 +130,9 @@ function _buildDom() {
     _overlay = document.createElement('div');
     _overlay.className = 'tour-overlay';
 
+    _dim = document.createElement('div');
+    _dim.className = 'tour-dim';
+
     _spotlight = document.createElement('div');
     _spotlight.className = 'tour-spotlight';
 
@@ -173,7 +177,19 @@ function _buildDom() {
     disable.addEventListener('click', _disableAll);
 
     _card.append(_titleEl, _textEl, footer, disable);
-    document.body.append(_overlay, _spotlight, _card);
+    document.body.append(_dim, _overlay, _spotlight, _card);
+}
+
+// Build the .tour-dim clip-path: a full-screen fill with a rectangular hole
+// cut out over [left, top]-(left+width, top+height). The path traces the
+// viewport edge, bridges in along the hole's left column, around the hole, and
+// back out - the standard single-polygon "rectangle with a rectangular hole".
+function _holeClip(top, left, width, height) {
+    const r = left + width;
+    const b = top + height;
+    return `polygon(0 0, 0 100%, ${left}px 100%, ${left}px ${top}px, `
+        + `${r}px ${top}px, ${r}px ${b}px, ${left}px ${b}px, ${left}px 100%, `
+        + `100% 100%, 100% 0)`;
 }
 
 // Place the spotlight over the target (or 0-size centred for no-target) and
@@ -200,6 +216,7 @@ function _position() {
         _spotlight.style.left = left + 'px';
         _spotlight.style.width = width + 'px';
         _spotlight.style.height = height + 'px';
+        _dim.style.clipPath = _holeClip(top, left, width, height);
         _placeCard({ top, left, right, bottom, width, height });
     } else {
         // No target: dim everything, centre the card. Drop the highlight ring so
@@ -210,6 +227,7 @@ function _position() {
         _spotlight.style.left = '50%';
         _spotlight.style.width = '0px';
         _spotlight.style.height = '0px';
+        _dim.style.clipPath = 'none';
         _placeCard(null);
     }
 }
@@ -430,10 +448,10 @@ function _end() {
         _resizeObs = null;
     }
     _clearEmphasis();
-    for (const el of [_overlay, _spotlight, _card]) {
+    for (const el of [_dim, _overlay, _spotlight, _card]) {
         if (el && el.parentNode) el.parentNode.removeChild(el);
     }
-    _overlay = _spotlight = _card = null;
+    _overlay = _dim = _spotlight = _card = null;
     _titleEl = _textEl = _stepEl = _backBtn = _nextBtn = null;
     _steps = [];
     _cb = {};
