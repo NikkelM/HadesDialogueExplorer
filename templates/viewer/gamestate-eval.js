@@ -528,13 +528,46 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
 }
 
 // Dialogue-trigger context per owner, used to decide whether a dialogue's
-// ``CurrentRun.*`` gates can be resolved from a loaded save. A hub save
-// (ProfileX.sav) carries a hub-meaningful CurrentRun; an in-run (_Temp) save
-// carries a run-meaningful one. ``both`` owners speak in either context, so
-// their CurrentRun gates resolve from whichever save is loaded. Owners absent
-// from this map don't gate on CurrentRun.* today; their gates stay
-// indeterminate. Classification reviewed against the game (see the
-// hades2-knowledge breakdown of Crossroads vs in-biome spawns).
+// ``CurrentRun.*`` gates can be resolved from a loaded save, and from which save
+// type. A hub save (ProfileX.sav) and an in-run autosave (ProfileX_Temp.sav)
+// both carry a ``CurrentRun`` table, but they mean different things:
+//   * an in-run save's CurrentRun is the run the player is *currently* in;
+//   * a hub save's CurrentRun is the run that *just ended* - the engine never
+//     clears it back to nil on returning to the Crossroads (it is only nilled
+//     transiently inside EndRun, immediately before StartNewRun rebuilds it), so
+//     it persists as a full snapshot of the last descent.
+//
+// We therefore resolve CurrentRun.* gates only when the loaded save type matches
+// the owner's trigger context: 'run' owners (boon gods, biome NPCs, bosses) need
+// an in-run save; 'hub' owners (Crossroads / House speakers) read against a hub
+// save, where "this run" correctly means "the run that just ended" - exactly the
+// semantics Crossroads dialogue intends. 'both' owners resolve from either.
+//
+// Resolving a 'hub' owner's gates against a hub save is faithful, not a guess: the
+// engine evaluates Crossroads dialogue eligibility against the very same persisted
+// CurrentRun the save holds, so we read what the game reads. This is by design -
+// hub lines routinely gate on the just-ended run, e.g. CurrentRun.Hero.IsDead
+// (the Artemis hub songs / Nyx nightmare after a death; SeleneTrueEnding01 gates
+// on NOT IsDead, i.e. a victorious return), CurrentRun.Cleared (Arachne's
+// post-clear hub lines) and CurrentRun.RoomsEntered.<boss> ("you reached X this
+// run"). The death-state values (Hero.IsDead / Health, and the trait tables
+// ClearUpgrades empties on death) are not "stale" here - they are precisely the
+// state the game gates on in the hub, so our verdict matches it.
+//
+// Why not also relax this for 'run' owners and resolve their gates against a hub
+// save? Because a run owner's dialogue triggers *during a future descent*, which
+// the game evaluates against that descent's live CurrentRun - state a hub save (a
+// snapshot of the *previous* run) simply doesn't describe. The gates run dialogue
+// leans on most would all answer about the wrong run: per-run boon pickups
+// (UseRecord.<God>Upgrade), the current room (CurrentRoom.Name/RoomSetName) and
+// biomes reached; and the death-wiped Hero.Traits / LastStands would read "no
+// boon". So for run owners a hub save earns an honest "indeterminate" instead of
+// a confidently-wrong verdict.
+//
+// Owners absent from this map don't gate on CurrentRun.* today; their gates stay
+// indeterminate. Classification reviewed against the game's run lifecycle
+// (RunLogic StartNewRun / EndRun, DeathLoopLogic, RoomLogic ClearUpgrades) and
+// the Crossroads-vs-in-biome spawn split.
 export const OWNER_RUN_CONTEXT = {
     // hub (12): Crossroads / House / flashback speakers
     NPC_Arachne_Home_01: 'hub', NPC_Artemis_01: 'hub', NPC_Dora_01: 'hub',
