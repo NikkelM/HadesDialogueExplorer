@@ -856,7 +856,7 @@ export function getDialogueStatus(name, textlineData) {
   // A permanent structural lock (a required choice was taken differently,
   // or a mutually-exclusive line has played) is definitive, so it wins
   // over an unverifiable verdict.
-  if (isUnobtainable(name, _saveProgress, _saveRunsAgo)) return 'unobtainable';
+  if (isUnobtainable(name, _saveProgress, _saveRunsAgo, getSaveContext())) return 'unobtainable';
   // 'unknown' -> the dialogue gates on a run-scoped record this save doesn't
   // carry (the H2 textline queue, or a current-run record when no run is
   // active), so we can't say whether it's eligible or blocked: surface it as

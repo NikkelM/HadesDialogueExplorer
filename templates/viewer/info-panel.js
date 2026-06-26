@@ -31,8 +31,7 @@ import {
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
-import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict } from './unobtainable.js';
-import { namedRequirementHostStatus, namedRequirementGroupStatus } from './requirements.js';
+import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
 function _saveDotsActive() {
@@ -1037,7 +1036,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         ? textlines[hostTextlineName].owner : undefined;
     let groupDot = '';
     if (showDots) {
-        const g = namedRequirementGroupStatus(key, names, sctx, hostOwner);
+        const g = namedRequirementGroupVerdict(key, names, sctx, hostOwner);
         groupDot = statusDot(g, groupStatusTooltip(g));
     }
     let html = `<div class="other-req-item named-req-item">`
@@ -1049,7 +1048,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         const safeSuffix = suffix ? ` <span class="named-req-suffix">(${escapeHtml(suffix)})</span>` : '';
         let nameDot = '';
         if (showDots) {
-            const s = namedRequirementHostStatus(key, name, sctx, hostOwner);
+            const s = namedRequirementHostVerdict(key, name, sctx, hostOwner);
             nameDot = statusDot(s, groupStatusTooltip(s));
         }
         if (_namedReqIsEmpty(resolved)) {
@@ -1204,13 +1203,14 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         // verdict - reflect whether the named requirement is eligible as a whole.
         for (const [key, c] of gateByKey) {
             if (key.startsWith('NamedRequirements')) {
-                c.status = namedRequirementGroupStatus(key, otherRequirements[key], sctx, owner);
+                c.status = namedRequirementGroupVerdict(key, otherRequirements[key], sctx, owner);
                 if (c.status !== 'unknown') c.reason = null;
             }
         }
         const _statuses = [...gateByKey.values()].map(c => c.status);
-        overallVerdict = _statuses.includes('unmet') ? 'unmet'
-            : _statuses.includes('unknown') ? 'unknown' : 'met';
+        overallVerdict = _statuses.includes('unobtainable') ? 'unobtainable'
+            : _statuses.includes('unmet') ? 'unmet'
+                : _statuses.includes('unknown') ? 'unknown' : 'met';
     }
     const dotFor = (key) => {
         const c = gateByKey && gateByKey.get(key);

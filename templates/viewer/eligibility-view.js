@@ -13,8 +13,8 @@
 import { textlines, speakers, alternates, getActiveGame } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain, namedRequirementGroupStatus } from './requirements.js';
-import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
+import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
 import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT } from './gamestate-eval.js';
@@ -151,7 +151,7 @@ export function findEligibilityExample() {
         const req = tl && tl.requirements;
         if (!req || !Array.isArray(req.RequiredTextLines) || req.RequiredTextLines.length === 0) continue;
         if (isDialoguePlayed(name) === true) continue;
-        if (isUnobtainable(name, getSaveProgress(), runsAgo)) continue;
+        if (isUnobtainable(name, getSaveProgress(), runsAgo, getSaveContext())) continue;
         const { chain, mandatory } = buildPrereqChain(name);
         let unplayed = 0;
         for (const [n, info] of chain) {
@@ -350,7 +350,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
                 ? 'Its prerequisite has been played. This dialogue should be eligible.'
                 : `All ${total} prerequisites have been played. This dialogue should be eligible.`}${rankInline}</div>`;
         html += chainNote;
-    } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo)) {
+    } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo, saveCtx)) {
         // No play-priority here: a permanently-unobtainable dialogue never
         // plays, so its rank is moot, and the detail line introduces the
         // reasons list with a colon.
@@ -582,17 +582,18 @@ export function renderOtherConditionsHtml(rootName) {
         // reflect whether the named requirement is eligible as a whole.
         for (const [key, c] of byKey) {
             if (key.startsWith('NamedRequirements')) {
-                c.status = namedRequirementGroupStatus(key, other[key], sctx, tl.owner);
+                c.status = namedRequirementGroupVerdict(key, other[key], sctx, tl.owner);
                 if (c.status !== 'unknown') c.reason = null;
             }
         }
         const statuses = [...byKey.values()].map(c => c.status);
-        verdict = statuses.includes('unmet') ? 'unmet'
-            : statuses.includes('unknown') ? 'unknown' : 'met';
+        verdict = statuses.includes('unobtainable') ? 'unobtainable'
+            : statuses.includes('unmet') ? 'unmet'
+                : statuses.includes('unknown') ? 'unknown' : 'met';
     }
 
     const header = haveSave
-        ? `Other requirements (${displayKeys.length}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
+        ? `Other requirements (${displayKeys.length}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unobtainable' ? 'permanently locked' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
         : `Other requirements (${displayKeys.length})`;
     const hint = haveSave
         ? 'Non-textline conditions, checked against your save\u2019s GameState. Some requirements can only be checked against hub saves, and others only against in-run saves.'
@@ -1095,7 +1096,7 @@ export function renderEligibility(dialogueName) {
     // but are moot once the dialogue has played or is permanently locked.
     const playedSet = getSaveProgress() || new Set();
     const played = isDialoguePlayed(dialogueName) === true;
-    const unobtainable = isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo);
+    const unobtainable = isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo, getSaveContext());
     if (!played && !unobtainable) {
         html += renderBlockingGatesHtml(dialogueName, getSaveContext());
     }

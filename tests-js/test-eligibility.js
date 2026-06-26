@@ -11,7 +11,7 @@ import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
 import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml, renderOtherConditionsHtml } from '../templates/viewer/eligibility-view.js';
-import { isUnobtainable, unobtainableReasons, isGroupUnobtainable, isRequirementSetUnobtainable } from '../templates/viewer/unobtainable.js';
+import { isUnobtainable, unobtainableReasons, isGroupUnobtainable, isRequirementSetUnobtainable, namedRequirementGroupVerdict } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
     return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
@@ -724,3 +724,96 @@ describe('renderOtherConditionsHtml NamedRequirements expansion', () => {
     });
 });
 
+
+// Permanent ("set-and-forget") gates: a dialogue gated on monotonic GameState -
+// directly, or via a named requirement that can never become ineligible again -
+// is unobtainable, not merely blocked. The canonical case is
+// ``ChronosBossAboutFates01`` gated ``NamedRequirementsFalse: [ReachedEpilogue]``:
+// once a save reaches the true ending (and has played the epilogue line),
+// ReachedEpilogue is permanently satisfied, so the host can never play.
+describe('isUnobtainable: permanent GameState + named-requirement gates', () => {
+    const tl = (requirements, otherRequirements = {}, extra = {}) => ({
+        owner: 'NPC_Test_01', section: 'InteractTextLineSets',
+        requirements, otherRequirements, ...extra,
+    });
+    // A GameState slice carrying the monotonic true-ending flag.
+    const ENDED = { gameState: { ReachedTrueEnding: true } };
+    const FRESH = { gameState: {} };
+
+    before(() => {
+        loadData({
+            textlines: {
+                FatesEpilogue01: tl({}, {}, { playOnce: true }),
+                // "Must NOT pass ReachedEpilogue" (the Chronos pattern).
+                ChronosLike: tl({}, { NamedRequirementsFalse: ['ReachedEpilogue'] }),
+                // Direct monotonic negative gate: must NOT have reached the ending.
+                PreEndingOnly: tl({}, {
+                    'PathFalse:GameState.ReachedTrueEnding': [{ PathFalse: ['GameState', 'ReachedTrueEnding'] }],
+                }),
+                // Negative gate on a NON-monotonic GameState path -> recoverable.
+                LiveGate: tl({}, {
+                    'PathFalse:GameState.ActiveShrineBounty': [{ PathFalse: ['GameState', 'ActiveShrineBounty'] }],
+                }),
+                // Negative gate on a CurrentRun path -> transient, never permanent.
+                CurrentRunGate: tl({}, {
+                    'PathFalse:CurrentRun.Foo': [{ PathFalse: ['CurrentRun', 'Foo'] }],
+                }),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            namedRequirements: {
+                // Needs the epilogue line played AND the (monotonic) true-ending flag.
+                ReachedEpilogue: {
+                    requirements: { RequiredTextLines: ['FatesEpilogue01'] },
+                    otherRequirements: {
+                        'PathTrue:GameState.ReachedTrueEnding': [{ PathTrue: ['GameState', 'ReachedTrueEnding'] }],
+                    },
+                    orBranches: [], flags: {},
+                },
+            },
+        });
+    });
+
+    test('a NamedRequirementsFalse gate on a permanently-met named set is unobtainable', () => {
+        // Epilogue played + ending reached -> ReachedEpilogue permanently met ->
+        // the host can never play again.
+        assert.equal(isUnobtainable('ChronosLike', new Set(['FatesEpilogue01']), {}, ENDED), true);
+    });
+
+    test('the same gate is merely blocked (not unobtainable) before it is permanent', () => {
+        // Nothing reached yet.
+        assert.equal(isUnobtainable('ChronosLike', new Set(), {}, FRESH), false);
+        // Only one of the two conditions holds -> the named set is not yet
+        // permanently met, so the host is still recoverable.
+        assert.equal(isUnobtainable('ChronosLike', new Set(), {}, ENDED), false);
+        assert.equal(isUnobtainable('ChronosLike', new Set(['FatesEpilogue01']), {}, FRESH), false);
+    });
+
+    test('a direct monotonic PathFalse gate flips to unobtainable once the flag is set', () => {
+        assert.equal(isUnobtainable('PreEndingOnly', new Set(), {}, ENDED), true);
+        assert.equal(isUnobtainable('PreEndingOnly', new Set(), {}, FRESH), false);
+    });
+
+    test('a negative gate on a non-monotonic / CurrentRun path is never unobtainable', () => {
+        const live = { gameState: { ActiveShrineBounty: 'something' } };
+        assert.equal(isUnobtainable('LiveGate', new Set(), {}, live), false);
+        assert.equal(isUnobtainable('CurrentRunGate', new Set(), {}, { gameState: { } }), false);
+    });
+
+    test('without a save context (no GameState slice) GameState gates never lock', () => {
+        assert.equal(isUnobtainable('ChronosLike', new Set(['FatesEpilogue01'])), false);
+        assert.equal(isUnobtainable('PreEndingOnly', new Set()), false);
+    });
+
+    test('namedRequirementGroupVerdict upgrades the group dot to unobtainable', () => {
+        const ended = { played: new Set(['FatesEpilogue01']), gameState: { ReachedTrueEnding: true }, runsAgo: {} };
+        assert.equal(
+            namedRequirementGroupVerdict('NamedRequirementsFalse', ['ReachedEpilogue'], ended, 'NPC_Test_01'),
+            'unobtainable');
+        // Before it is permanent the gate reads as currently satisfiable (met):
+        // the host can still play while the epilogue has not been reached.
+        const fresh = { played: new Set(), gameState: {}, runsAgo: {} };
+        assert.equal(
+            namedRequirementGroupVerdict('NamedRequirementsFalse', ['ReachedEpilogue'], fresh, 'NPC_Test_01'),
+            'met');
+    });
+});

@@ -27,25 +27,32 @@
  * ``save-parser.js`` and unit-testable.
  */
 
-import { textlines } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus } from './requirements.js';
+import { textlines, namedRequirements } from './data.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus } from './requirements.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { gameStateClausePermanence } from './permanent-state.js';
 
 let _unobtainablePlayedSet = null;
 let _unobtainableTextlines = null;
 let _unobtainableRunsAgo = null;
+// The save's persistent GameState slice, used to decide whether a non-textline
+// gate reads permanent state (see ``permanent-state.js``). Null when the caller
+// supplied no save context, in which case only textline-record locks apply.
+let _unobtainableGameState = null;
 let _unobtainableCache = null;
 let _playedChoiceByParent = null;
 
 // Rebuild the per-save memo + "which choice variant did the player record
 // for each parent" lookup whenever the played set (or the loaded data, e.g.
-// after a game switch, or the run-count distances) changes.
-function refreshUnobtainableCaches(playedSet, runsAgo) {
+// after a game switch, the run-count distances, or the GameState slice) changes.
+function refreshUnobtainableCaches(playedSet, runsAgo, context = null) {
+    const gameState = (context && context.gameState) || null;
     if (_unobtainablePlayedSet === playedSet && _unobtainableTextlines === textlines
-        && _unobtainableRunsAgo === runsAgo) return;
+        && _unobtainableRunsAgo === runsAgo && _unobtainableGameState === gameState) return;
     _unobtainablePlayedSet = playedSet;
     _unobtainableTextlines = textlines;
     _unobtainableRunsAgo = runsAgo;
+    _unobtainableGameState = gameState;
     _unobtainableCache = new Map();
     _playedChoiceByParent = new Map();
     for (const name of playedSet) {
@@ -70,9 +77,9 @@ function maxRunsPermanentlyOut(ref, n, playedSet) {
     return playedSet.has(ref); // beyond the tracked depth, but played -> out forever
 }
 
-export function isUnobtainable(name, playedSet, runsAgo = null) {
+export function isUnobtainable(name, playedSet, runsAgo = null, context = null) {
     if (!playedSet || !textlines) return false;
-    refreshUnobtainableCaches(playedSet, runsAgo);
+    refreshUnobtainableCaches(playedSet, runsAgo, context);
     return unobtainableRec(name, playedSet, new Set());
 }
 
@@ -98,15 +105,109 @@ function computeUnobtainable(name, playedSet, stack) {
         if (chosen && chosen.size > 0 && !chosen.has(name)) return true;
     }
 
-    if (requirementSetUnobtainable(tl, name, playedSet, stack)) return true;
+    if (setPermanentlyUnmet(tl, name, playedSet, stack, new Set())) return true;
 
     // orBranches: eligibility needs at least one branch satisfiable.
     const branches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
     if (branches.length > 0
-        && branches.every(b => requirementSetUnobtainable(b, name, playedSet, stack))) {
+        && branches.every(b => setPermanentlyUnmet(b, name, playedSet, stack, new Set()))) {
         return true;
     }
     return false;
+}
+
+// True if a whole requirement set (a textline or one orBranch - both carry
+// ``requirements`` + ``otherRequirements`` + ``orBranches``) can never be
+// satisfied as the save grows: its textline-record requirements are permanently
+// unmet (``requirementSetUnobtainable``), OR one of its non-textline gates reads
+// permanent state that can never satisfy it (a monotonic GameState gate already
+// past the point of no return, or a named requirement that can never hold the
+// way the host needs). ``namedStack`` guards named-requirement recursion.
+function setPermanentlyUnmet(reqHost, hostName, playedSet, stack, namedStack) {
+    if (requirementSetUnobtainable(reqHost, hostName, playedSet, stack)) return true;
+    const other = (reqHost && reqHost.otherRequirements) || {};
+    for (const [key, val] of Object.entries(other)) {
+        if (key === 'NamedRequirements') {
+            // Must pass -> permanently unmet if any named set can never be met.
+            if ((Array.isArray(val) ? val : []).some(n => namedSetPermanentlyUnmet(n, playedSet, namedStack))) return true;
+        } else if (key === 'NamedRequirementsFalse') {
+            // Must NOT pass -> permanently unmet if any named set is permanently
+            // met (it can never become ineligible again).
+            if ((Array.isArray(val) ? val : []).some(n => namedSetPermanentlyMet(n, playedSet, namedStack))) return true;
+        } else if (Array.isArray(val)) {
+            for (const rec of val) {
+                if (gameStateClausePermanence(rec, _unobtainableGameState) === 'unmet') return true;
+            }
+        }
+    }
+    return false;
+}
+
+// True when a whole requirement set is satisfied now and can never become
+// unsatisfied as the save grows: every textline-record requirement is a
+// 'played'-scope positive already met (the played set only grows), every
+// non-textline gate reads permanent state that is already satisfied, and - if
+// the set carries orBranches - at least one branch is itself permanently met.
+// Run / room / queued-scoped, negative, count-max and run-count fields, and any
+// gate on live / resettable state, are never "permanently met" (they can change
+// across runs), so a set carrying one is conservatively not permanent.
+function setPermanentlyMet(reqHost, playedSet, namedStack) {
+    if (!reqHost) return true; // an empty set is trivially (and permanently) met
+    const requirements = reqHost.requirements || {};
+    for (const [reqType, refs] of Object.entries(requirements)) {
+        if (!Array.isArray(refs)) continue;
+        const others = refs.filter(r => typeof r === 'string');
+        if (others.length === 0) continue;
+        if (REQ_TYPE_SCOPE[reqType] !== 'played') return false;
+        if (AND_REQ_TYPES.has(reqType)) {
+            if (!others.every(r => playedSet.has(r))) return false;
+        } else if (OR_REQ_TYPES.has(reqType)) {
+            if (!others.some(r => playedSet.has(r))) return false;
+        } else if (COUNT_MIN_REQ_TYPES.has(reqType)) {
+            if (others.filter(r => playedSet.has(r)).length < requiredCount(reqHost, reqType)) return false;
+        } else {
+            return false; // negative / count-max played gates aren't permanent-met
+        }
+    }
+    const other = reqHost.otherRequirements || {};
+    for (const [key, val] of Object.entries(other)) {
+        if (key === 'NamedRequirements') {
+            if (!(Array.isArray(val) ? val : []).every(n => namedSetPermanentlyMet(n, playedSet, namedStack))) return false;
+        } else if (key === 'NamedRequirementsFalse') {
+            if (!(Array.isArray(val) ? val : []).every(n => namedSetPermanentlyUnmet(n, playedSet, namedStack))) return false;
+        } else if (key === 'NamedRequirementsCycle') {
+            return false;
+        } else if (Array.isArray(val)) {
+            for (const rec of val) {
+                if (gameStateClausePermanence(rec, _unobtainableGameState) !== 'met') return false;
+            }
+        }
+    }
+    const branches = Array.isArray(reqHost.orBranches) ? reqHost.orBranches : [];
+    if (branches.length > 0 && !branches.some(b => setPermanentlyMet(b, playedSet, namedStack))) return false;
+    return true;
+}
+
+// Named-requirement permanence wrappers, with a recursion guard against cyclic
+// named references. An unresolved or cyclic name can't be confirmed permanent,
+// so both return false (the conservative answer - no false unobtainability).
+function namedSetPermanentlyMet(name, playedSet, namedStack) {
+    if (namedStack.has(name)) return false;
+    const def = namedRequirements[name];
+    if (!def) return false;
+    namedStack.add(name);
+    const r = setPermanentlyMet(def, playedSet, namedStack);
+    namedStack.delete(name);
+    return r;
+}
+function namedSetPermanentlyUnmet(name, playedSet, namedStack) {
+    if (namedStack.has(name)) return false;
+    const def = namedRequirements[name];
+    if (!def) return false;
+    namedStack.add(name);
+    const r = setPermanentlyUnmet(def, null, playedSet, new Set(), namedStack);
+    namedStack.delete(name);
+    return r;
 }
 
 // True if a single requirement set (a textline, or one orBranch - both carry
@@ -254,6 +355,37 @@ export function orGroupVerdict(branches, context, name) {
         if (st !== 'unmet' && st !== 'unobtainable') anyUnknown = true;
     }
     return allUnobtainable ? 'unobtainable' : (anyUnknown ? 'unknown' : 'unmet');
+}
+
+// Host-gate verdict for one NamedRequirements* reference, upgrading the plain
+// met / unmet / unknown status (``namedRequirementHostStatus``) to
+// 'unobtainable' when the host's gate on this name is permanently unsatisfiable:
+//   - NamedRequirementsFalse (must NOT pass) when the named set is permanently
+//     met (it can never become ineligible again), or
+//   - NamedRequirements (must pass) when the named set is permanently unmet.
+// Shared by the detail view and the tracer so the per-name dot reads the same.
+export function namedRequirementHostVerdict(key, name, context, hostOwner) {
+    const base = namedRequirementHostStatus(key, name, context, hostOwner);
+    const played = (context instanceof Set) ? context : (context && context.played) || null;
+    if (!played || !textlines) return base;
+    const runsAgo = (context && context.runsAgo) || null;
+    refreshUnobtainableCaches(played, runsAgo, context);
+    if (key === 'NamedRequirementsFalse' && namedSetPermanentlyMet(name, played, new Set())) return 'unobtainable';
+    if (key === 'NamedRequirements' && namedSetPermanentlyUnmet(name, played, new Set())) return 'unobtainable';
+    return base;
+}
+
+// Combined host-gate verdict over every name in a NamedRequirements* set: the
+// AND of the per-name verdicts, with 'unobtainable' (a permanent block) winning
+// over a merely-current 'unmet'. The single source the detail view and tracer
+// render as the group dot.
+export function namedRequirementGroupVerdict(key, names, context, hostOwner) {
+    const arr = (Array.isArray(names) ? names : []).map(
+        n => namedRequirementHostVerdict(key, n, context, hostOwner));
+    if (arr.includes('unobtainable')) return 'unobtainable';
+    if (arr.includes('unmet')) return 'unmet';
+    if (arr.includes('unknown')) return 'unknown';
+    return 'met';
 }
 
 // Collect the *specific* locks that make ``rootName`` unobtainable, for the
