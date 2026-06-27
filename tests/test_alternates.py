@@ -9,7 +9,9 @@ that never name each other directly: complementary choice branches (Accept vs
 Decline of one choice), HasAny-vs-HasNone over the same referenced set, and a
 complementary fixed-per-save flag gate (one sibling needs flag F true, the other
 false, where F never changes within a save - only ``HardMode``).
-Sharing a stem alone is not enough.
+Sharing a stem alone is not enough. Confirming references are gathered from a
+textline's top-level ``requirements`` as well as from each ``orBranches`` clause,
+so a gate expressed only inside an OR branch still confirms.
 """
 
 from src.graph import build_alternates
@@ -209,3 +211,44 @@ class TestBuildAlternates:
             "Talk_B": {"requirements": {}, "otherRequirements": {"RequiredFalseFlags": ["ShrineUnlocked"]}},
         }
         assert build_alternates(tls) == {}
+
+    def test_complementary_choice_in_or_branches_confirms(self):
+        # The mutually-exclusive choice gate lives inside ``orBranches`` (the
+        # top-level requirements are empty) - e.g. MorosAboutRelationship03 needs
+        # the Accept branch of the one-time MorosBecomingCloser01 choice and its
+        # ``_B`` sibling the Decline branch. Branch refs must be gathered for the
+        # complementary-choice confirmation to see them.
+        tls = {
+            "MorosAboutRelationship03": {
+                "requirements": {},
+                "orBranches": [
+                    {"requirements": {"RequiredAnyTextLines": ["MorosBecomingCloser01Choice_MorosAccept"]}},
+                    {"requirements": {"RequiredAnyTextLines": ["MorosBecomingCloser01_BChoice_MorosAccept"]}},
+                ],
+            },
+            "MorosAboutRelationship03_B": {
+                "requirements": {},
+                "orBranches": [
+                    {"requirements": {"RequiredAnyTextLines": ["MorosBecomingCloser01Choice_MorosDecline"]}},
+                    {"requirements": {"RequiredAnyTextLines": ["MorosBecomingCloser01_BChoice_MorosDecline"]}},
+                ],
+            },
+        }
+        assert build_alternates(tls) == {
+            "MorosAboutRelationship03": ["MorosAboutRelationship03_B"],
+            "MorosAboutRelationship03_B": ["MorosAboutRelationship03"],
+        }
+
+    def test_direct_cross_reference_in_or_branch_confirms(self):
+        # A sibling cross-reference inside an OR branch confirms just like a
+        # top-level one.
+        tls = {
+            "Chat_A": {"requirements": {}, "orBranches": [
+                {"requirements": {"RequiredFalseTextLines": ["Chat_B"]}},
+            ]},
+            "Chat_B": {"requirements": {}},
+        }
+        assert build_alternates(tls) == {
+            "Chat_A": ["Chat_B"],
+            "Chat_B": ["Chat_A"],
+        }

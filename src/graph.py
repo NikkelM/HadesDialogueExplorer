@@ -743,6 +743,30 @@ def _choice_complement(ref: str):
     return None
 
 
+def _confirming_refs(textline: dict, types: set) -> set:
+    """Collect a textline's confirming references of the given requirement
+    ``types``, looking both at its top-level ``requirements`` and inside each
+    ``orBranches`` clause.
+
+    Some alternates carry their mutually-exclusive gate inside an OR branch
+    rather than at the top level - e.g. MorosAboutRelationship03 requires the
+    *Accept* branch of the one-time MorosBecomingCloser01 choice and its ``_B``
+    sibling the *Decline* branch, each expressed as a ``RequiredAnyTextLines``
+    inside an ``orBranches`` clause while the top-level ``requirements`` is
+    empty. Gathering branch refs lets the complementary-choice / cross-reference
+    confirmation see them.
+    """
+    refs = set()
+    hosts = [textline.get("requirements") or {}]
+    for branch in textline.get("orBranches") or []:
+        hosts.append(branch.get("requirements") or {})
+    for reqs in hosts:
+        for t, rs in reqs.items():
+            if t in types:
+                refs.update(rs)
+    return refs
+
+
 def build_alternates(textlines: dict) -> dict:
     """Detect mutually exclusive alternate dialogues using two-step confirmation.
 
@@ -753,6 +777,9 @@ def build_alternates(textlines: dict) -> dict:
     recognised: complementary choice branches (Accept vs Decline of the same
     choice), HasAny-vs-HasNone over the same referenced set, and a complementary
     fixed-per-save flag gate (one sibling needs flag F true, the other false).
+    Confirming references are read from each textline's top-level ``requirements``
+    and from every ``orBranches`` clause, so a gate that lives only inside an OR
+    branch (as the Moros relationship choice does) still confirms.
 
     Returns a dict mapping textline name -> list of sibling alternate names
     (excluding self). Only textlines with confirmed alternates are included.
@@ -795,9 +822,8 @@ def build_alternates(textlines: dict) -> dict:
         true_flags = {}
         false_flags = {}
         for name in candidates:
-            reqs = textlines[name].get("requirements", {})
-            any_refs[name] = {r for t, rs in reqs.items() if t in _ANY_TYPES for r in rs}
-            false_refs[name] = {r for t, rs in reqs.items() if t in _FALSE_TYPES for r in rs}
+            any_refs[name] = _confirming_refs(textlines[name], _ANY_TYPES)
+            false_refs[name] = _confirming_refs(textlines[name], _FALSE_TYPES)
             other = textlines[name].get("otherRequirements", {})
             true_flags[name] = set(other.get("RequiredTrueFlags") or [])
             false_flags[name] = set(other.get("RequiredFalseFlags") or [])
