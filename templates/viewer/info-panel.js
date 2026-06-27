@@ -31,8 +31,7 @@ import {
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
-import { h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
+import { evaluateOtherRequirements, currentRunResolvable, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -1257,10 +1256,12 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             if (key.startsWith('NamedRequirements')) {
                 c.status = namedRequirementGroupVerdict(key, otherRequirements[key], sctx, owner);
                 if (c.status !== 'unknown') c.reason = null;
-            } else if (c.status === 'unmet' && gameId === 'hades1'
-                && h1FieldPermanentlyUnmet(key, otherRequirements[key], sctx.gameState, otherRequirements)) {
-                // An H1 monotonic "max" gate already surpassed can never recover
-                // (its counter only grows) -> permanently locked, not just unmet.
+            } else if (c.status === 'unmet'
+                && gateClausePermanentlyUnmet(key, otherRequirements, sctx.gameState, gameId)) {
+                // A gate over monotonic save progress already past what it allows
+                // can never recover (its counter only grows, or the forbidden
+                // event is on record for good) -> permanently locked, not just
+                // unmet.
                 c.status = 'unobtainable';
                 c.reason = null;
             }
@@ -1275,7 +1276,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         if (!c) return '';
         const tip = c.status === 'met' ? 'Satisfied by your save.'
             : c.status === 'unmet' ? 'Not satisfied by your save.'
-                : c.status === 'unobtainable' ? 'Permanently locked: this save value only ever grows, so it can never satisfy this cap again.'
+                : c.status === 'unobtainable' ? 'Permanently locked: this reads save progress that only ever advances, and your save has already passed what this gate allows - so it can never be satisfied again.'
                     : (c.reason || 'Can\u2019t be determined from the save.');
         return `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
     };

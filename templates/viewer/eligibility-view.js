@@ -17,8 +17,13 @@ import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES,
 import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
-import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT } from './gamestate-eval.js';
-import { h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
+import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
+
+// Shared tooltip for a gate that is permanently unobtainable because it reads
+// monotonic save progress (a one-way counter past its cap, or a write-once
+// "must NOT have happened" record that already has) - it can never be satisfied
+// again. Wording covers both the max-counter and require-absence families.
+const PERMANENT_GATE_TOOLTIP = 'Permanently locked: this reads save progress that only ever advances, and your save has already passed what this gate allows - so it can never be satisfied again.';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -291,8 +296,14 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo, context = n
             items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
                 + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
         } else if (r.kind === 'gamestate') {
-            items.push(`<li><strong>${escapeHtml(formatReqType(r.field, 'upstream'))}</strong> is already past its cap, `
-                + `and this save value only ever grows - so this gate can never be satisfied again.</li>`);
+            // Name the gate using each game's own renderer (H1 has friendly
+            // labels for its named fields; H2 keys render as "Must be false: ..."
+            // etc.), then explain the permanence in family-neutral terms.
+            const label = getActiveGame() === 'hades1'
+                ? `<strong>${escapeHtml(formatReqType(r.field, 'upstream'))}</strong>`
+                : renderOtherReqEntryHtml(r.field, r.value);
+            items.push(`<li>${label} reads save progress that only ever advances, `
+                + `and your save has already passed what this gate allows - so it can never be satisfied again.</li>`);
         }
     }
     let html = altBoxes.join('');
@@ -602,12 +613,13 @@ export function renderOtherConditionsHtml(rootName) {
             if (key.startsWith('NamedRequirements')) {
                 c.status = namedRequirementGroupVerdict(key, other[key], sctx, tl.owner);
                 if (c.status !== 'unknown') c.reason = null;
-            } else if (c.status === 'unmet' && gameId === 'hades1'
-                && h1FieldPermanentlyUnmet(key, other[key], sctx.gameState, other)) {
-                // An H1 monotonic "max" gate that is already surpassed can never
-                // recover (its counter only grows) -> permanently locked, not
-                // merely unsatisfied. Upgrade the dot so it matches the
-                // dialogue's overall unobtainable verdict.
+            } else if (c.status === 'unmet'
+                && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
+                // A gate that reads monotonic save progress already past the
+                // point it allows can never recover (the underlying counter only
+                // grows, or the forbidden event is on record for good) ->
+                // permanently locked, not merely unsatisfied. Upgrade the dot so
+                // it matches the dialogue's overall unobtainable verdict.
                 c.status = 'unobtainable';
                 c.reason = null;
             }
@@ -642,7 +654,7 @@ export function renderOtherConditionsHtml(rootName) {
         if (c) {
             const tip = c.status === 'met' ? 'Satisfied by your save.'
                 : c.status === 'unmet' ? 'Not satisfied by your save.'
-                    : c.status === 'unobtainable' ? 'Permanently locked: this save value only ever grows, so it can never satisfy this cap again.'
+                    : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
                         : (c.reason || 'Can\u2019t be determined from the save.');
             dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
         }
@@ -1043,10 +1055,18 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {
         const c = byKey.get(key) || { status: 'unknown' };
+        if (c.status === 'unmet' && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
+            // Monotonic save progress already past what this gate allows -> can
+            // never recover. Mirror the dialogue's unobtainable verdict on the
+            // per-condition dot.
+            c.status = 'unobtainable';
+            c.reason = null;
+        }
         const met = c.status === 'met';
         const dotTip = met ? 'Satisfied by your save.'
             : c.status === 'unmet' ? 'Not satisfied by your save.'
-                : (c.reason || 'Can\u2019t be determined from the save.');
+                : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
+                    : (c.reason || 'Can\u2019t be determined from the save.');
         const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
         if (key.startsWith('NamedRequirements')) {
             const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);

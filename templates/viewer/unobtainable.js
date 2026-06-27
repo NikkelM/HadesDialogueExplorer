@@ -432,9 +432,14 @@ export function namedRequirementGroupVerdict(key, names, context, hostOwner) {
 //                                                        more than ``count`` lines played
 //   { kind: 'runcount', blocker, count, ago }          - a MaxRunsSince gate on a
 //                                                        play-once line now out of range
-//   { kind: 'gamestate', field, value }                - an H1 monotonic "max"
-//                                                        GameState gate already
-//                                                        surpassed (can never recover)
+//   { kind: 'gamestate', field, value }                - a GameState gate over
+//                                                        monotonic save progress
+//                                                        already past the point
+//                                                        it allows (H1 "max" or
+//                                                        require-absence gate, or
+//                                                        H2 PathFalse on a
+//                                                        monotonic table) - can
+//                                                        never recover
 //   { kind: 'choice', parent, requiredChoice, taken }  - a required choice the
 //                                                        player took differently
 // Recurses through AND / OR / count / orBranch gates to the leaf cause, so a
@@ -521,13 +526,18 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
             }
         }
     }
-    // H1 monotonic "max" GameState gates already surpassed (one-way counters
-    // that can never come back down) - the leaf cause for an H1 dialogue locked
-    // purely by such a gate.
+    // GameState gates that read monotonic save progress already past the point
+    // this dialogue needs - a one-way counter surpassed (H1 "max" gates) or a
+    // write-once "must NOT have happened" record that already has (H1
+    // RequiredFalse* / H2 PathFalse on a monotonic table). These can never
+    // recover, so they're a leaf cause of an unobtainable dialogue.
     if (_unobtainableGameState) {
         const other = (reqHost && reqHost.otherRequirements) || {};
         for (const [field, val] of Object.entries(other)) {
             if (h1FieldPermanentlyUnmet(field, val, _unobtainableGameState, other)) {
+                reasons.push({ kind: 'gamestate', field, value: val });
+            } else if (Array.isArray(val)
+                && val.some(rec => gameStateClausePermanence(rec, _unobtainableGameState) === 'unmet')) {
                 reasons.push({ kind: 'gamestate', field, value: val });
             }
         }

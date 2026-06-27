@@ -20,7 +20,8 @@
 // unknown) plus a per-clause breakdown the tracer renders as status dots.
 
 import { namedRequirements, gameDataRefs, godTraitNames, restrictBoonChoiceTraitNames } from './data.js';
-import { evaluateH1OtherRequirements, H1_OWNER_RUN_CONTEXT } from './gamestate-eval-h1.js';
+import { evaluateH1OtherRequirements, H1_OWNER_RUN_CONTEXT, h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
+import { gameStateClausePermanence } from './permanent-state.js';
 
 // Lua truthiness: only nil and false are falsy. 0 and "" are TRUTHY. (The
 // engine's PathTrue additionally rejects 0; that special case is handled at the
@@ -581,6 +582,23 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
     }
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null } = slices || {};
     return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
+}
+
+// Whether a single resolved gate (one ``otherRequirements`` key) is
+// *permanently* unmet against the loaded save: it reads persistent save
+// progress that only ever advances (a monotonic counter past its cap, or a
+// write-once "must NOT have happened" record that already has), so it can never
+// be satisfied again. Dispatches by game - H1 named-field gates via
+// ``h1FieldPermanentlyUnmet``, H2 clause-array gates via
+// ``gameStateClausePermanence`` (permanently unmet if ANY AND-clause is). The
+// detail / eligibility / tracer views call this to upgrade a gate's dot from
+// "blocked" to "unobtainable", matching the dialogue's overall verdict.
+export function gateClausePermanentlyUnmet(key, otherRequirements, gameStateSlice, gameId) {
+    if (!gameStateSlice || !otherRequirements) return false;
+    const val = otherRequirements[key];
+    if (val == null) return false;
+    if (gameId === 'hades1') return h1FieldPermanentlyUnmet(key, val, gameStateSlice, otherRequirements);
+    return Array.isArray(val) && val.some(rec => gameStateClausePermanence(rec, gameStateSlice) === 'unmet');
 }
 
 // Dialogue-trigger context per owner, used to decide whether a dialogue's

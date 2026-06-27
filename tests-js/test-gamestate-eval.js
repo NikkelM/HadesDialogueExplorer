@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -663,4 +663,31 @@ test('collectPrevRunPaths captures PrevRun leaves only', () => {
         RoomsEntered: { I_Boss01: true },
         BiomesReached: { F: true, N: true },
     });
+});
+
+test('gateClausePermanentlyUnmet: H2 PathFalse on a monotonic table already set -> permanently unmet', () => {
+    // The user's example: a "must NOT have entered room X" gate over RoomsEntered
+    // (write-once) can never recover once X is on record, so the per-gate dot
+    // should upgrade from blocked to unobtainable.
+    const other = { 'PathFalse:GameState.RoomsEntered.Q_Intro': [{ PathFalse: ['GameState', 'RoomsEntered', 'Q_Intro'] }] };
+    const key = 'PathFalse:GameState.RoomsEntered.Q_Intro';
+    assert.equal(gateClausePermanentlyUnmet(key, other, { RoomsEntered: { Q_Intro: true } }, 'hades2'), true);
+    assert.equal(gateClausePermanentlyUnmet(key, other, { RoomsEntered: {} }, 'hades2'), false); // not yet entered -> still recoverable
+});
+
+test('gateClausePermanentlyUnmet: H2 PathFalse on a WorldUpgrades unlock already set -> permanently unmet', () => {
+    const other = { 'PathFalse:GameState.WorldUpgrades.WorldUpgradeForcedChaosGate': [{ PathFalse: ['GameState', 'WorldUpgrades', 'WorldUpgradeForcedChaosGate'] }] };
+    const key = 'PathFalse:GameState.WorldUpgrades.WorldUpgradeForcedChaosGate';
+    assert.equal(gateClausePermanentlyUnmet(key, other, { WorldUpgrades: { WorldUpgradeForcedChaosGate: true } }, 'hades2'), true);
+    assert.equal(gateClausePermanentlyUnmet(key, other, { WorldUpgrades: {} }, 'hades2'), false);
+});
+
+test('gateClausePermanentlyUnmet: resettable / live H2 paths are never permanent', () => {
+    // A PathFalse over a non-monotonic table (e.g. a per-run flag) can flip back,
+    // so it stays blocked - never unobtainable.
+    const other = { 'PathTrue:CurrentRun.Cleared': [{ PathTrue: ['CurrentRun', 'Cleared'] }] };
+    assert.equal(gateClausePermanentlyUnmet('PathTrue:CurrentRun.Cleared', other, { Cleared: true }, 'hades2'), false);
+    // No save / no value -> not permanent.
+    assert.equal(gateClausePermanentlyUnmet('K', { K: [{ PathFalse: ['GameState', 'RoomsEntered', 'X'] }] }, null, 'hades2'), false);
+    assert.equal(gateClausePermanentlyUnmet('Missing', other, { Cleared: true }, 'hades2'), false);
 });
