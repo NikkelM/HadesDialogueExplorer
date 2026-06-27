@@ -1,153 +1,103 @@
 # Hades Dialogue Explorer
 
-Interactive browser-based tool for exploring NPC dialogue dependency graphs from Supergiant's Hades games.
+A browser-based tool for exploring the NPC dialogue dependency graphs from Supergiant's Hades and Hades II.
 
-## Features
+Almost every line an NPC speaks sits behind a set of prerequisites - other dialogues you need to have had, boss encounters you have seen, or any other type of situation that has occurred before.
+This tool visualizes those requirements and lets you walk the graph: what unlocks a line, what that line unlocks in turn, and - once you load your save - exactly what's still standing between you and hearing it.
 
-- Browse NPC dialogue from Hades 1 and Hades II with full prerequisite chains
-- Visualise upstream prerequisites and downstream dependents as interactive trees
-- Read dialogue text with speaker attribution
-- Upload save files to see dialogue progress (played/eligible/blocked)
-- Eligibility tracer showing what's blocking a specific dialogue
-- Detect and display mutually exclusive alternate dialogues (e.g. `_A`/`_B` variants)
-- Cross-game duplicate detection for dialogues sharing names across both games
-- Speaker overview with per-character stats and dialogue counts
-- Switch between games from the header toggle
-- Use the hosted viewer online, or download a single self-contained HTML file for offline use
+You can use the hosted viewer at [https://nikkelm.dev/HadesDialogueExplorer](https://nikkelm.dev/HadesDialogueExplorer/), or download a single self-contained HTML file from the releases for offline use.
+
+## What it does
+
+- Browse NPC dialogue from both Hades and Hades II, with full prerequisite chains.
+- Walk upstream prerequisites and downstream dependents as interactive trees.
+- Read all dialogue texts across both games.
+- Load a save file to see your progress, then trace exactly what's blocking any given dialogue.
+- Spot mutually exclusive alternates - where only one can ever play in a save - and what differentiates them.
+- View dialogues that share an internal name across both games, and check out how they differ.
+- Get a per-speaker overview with dialogue counts, cross-references and save state statistics.
 
 ## Using the viewer
 
-- **Search** - type a textline name or dialogue text in the search bar.
-  Use Up / Down + Enter to pick a result, or click it.
-- **Click** a tree row - selects it (shows details in the side panel) and expands its children.
+- **Search** - type a textline name or some dialogue text in the search bar to find matching dialogues in either game.
+- **Click** a tree row - selects it (details show in the side panel) and expands its children.
 - **Click** the row's chevron (▶ / ▼) - toggles expand / collapse without changing the selection.
-- **Double-click** a tree row - re-roots the panels on that textline.
-- **Details panel** - shows dialogue text, requirements, and metadata.
+- **Double-click** a tree row - re-roots the panels on that textline, so you can explore outward from anywhere.
+- **Details panel** - shows the dialogue text, requirements, and metadata (owner, play priority and more).
 
 ### Save file upload
 
-Upload a Hades or Hades II save file (`Profile1.sav` through `Profile4.sav`) to see dialogue progress directly in the viewer.
-Once loaded, each dialogue gets a status badge:
+Upload a Hades or Hades II save file (`ProfileX.sav` for a hub save or `ProfileX_Temp.sav` for an in-run save) to see your progress directly in the viewer.
+Each dialogue then gets a status badge:
 
-- **Played** - already in the save's TextLinesRecord
-- **Eligible** - all direct prerequisites are satisfied
-- **Blocked** - one or more prerequisites are still unplayed (click the badge to open the eligibility tracer)
+- **Played** - already played in your save.
+- **Eligible** - everything it needs is satisfied, so it can play.
+- **Blocked** - at least one requirement isn't met yet (click the badge to open the tracer).
+- **Unobtainable** - permanently locked in this save; for example because an alternate dialogue or a dialogue that must not have played have played already.
+- **Indeterminate** - the tool does not have enough information to determine eligibility - this dialogue may or may not be eligible at the moment.
 
-Hades II saves also validate against Hades 1 dialogues (for the [Zagreus' Journey](https://github.com/NikkelM/Hades-II-HadesBiomes) mod).
+Hades II saves also validate against Hades dialogues if you've played the [Zagreus' Journey](https://thunderstore.io/c/hades-ii/p/NikkelM/Zagreus_Journey/) mod with the save.
 
-A loaded save is cached in your browser's local storage, so it is restored automatically when you reload the page.
-The save is never uploaded anywhere; parsing happens entirely in-browser, and clearing the save (the × button) also removes the cache.
+Your save is parsed entirely in your browser and never uploaded anywhere.
 
 ### Eligibility tracer
 
-The eligibility tracer (accessible via the "Blocked" badge or the nav link when a save is loaded) shows what's preventing a dialogue from becoming eligible.
-It displays a summary, a flat list of unplayed prerequisites sorted by play order, and a collapsible prerequisite tree.
+The tracer - reachable from an eligibility badge, or the button in the page header once a save is loaded - shows what's keeping a dialogue from becoming eligible.
+You get a summary, a flat list of the unplayed prerequisites in suggested play order, a collapsible prerequisite tree, and any non-dialogue conditions checked against your save.
 
-The tracer respects the game's actual requirement semantics:
+Beyond the textline chain, the tracer also resolves any non-dialogue gates a line carries - game-state flags, unlocks, run modifiers, and more - against your save wherever the save holds the answer.
+Some conditions can only be settled from the right kind of save: a few depend on within-run state and need an in-run save, while others read hub progress and need a save in the House of Hades (Hades) or the Crossroads (Hades II).
 
-- **AND requirements** (`RequiredTextLines`, etc.) - all must be played
-- **OR requirements** (`RequiredAnyTextLines`, etc.) - any one suffices
-- **Count requirements** (`RequiredMinAnyTextLines`) - at least N of the listed lines must be played
-- **Negative requirements** (`RequiredFalseTextLines`, etc.) - skipped (blocking conditions, not prerequisites)
-
-## Development Setup
+## Development setup
 
 1. Copy `config.example.toml` to `config.toml` in the repo root.
-2. Edit `config.toml` so `paths.hades1_scripts` and `paths.hades2_scripts` both point at the `Scripts` directory inside the respective game's install.
-   Both keys are required; the generator validates that each path exists before parsing.
+2. Point `paths.hades1_scripts` and `paths.hades2_scripts` at the `Scripts` directory inside each game's install.
+   Both keys are required, and the generator checks each path exists before it parses anything.
    `config.toml` is git-ignored.
-3. Install dependencies:
+3. Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
+The only runtime dependency is `tomli`, in case your Python is older than 3.11 - on 3.11+ nothing is installed.
+
 ## Building locally
 
+The build is two steps: parse the Lua into JSON, then turn that JSON into the viewer.
+
 ```bash
-python generate_data.py            # parse Lua sources -> outputs/*.json
-python build_viewer.py             # build viewer -> dist/ (split + bundle)
+python generate_data.py
+python build_viewer.py
 ```
 
-Useful build flags:
+`build_viewer.py` takes a flag if you only want one flavour:
 
-- `python build_viewer.py --split` - split build only (GH Pages / local HTTP)
-- `python build_viewer.py --bundle` - single-file bundle only (release artefact)
+- `python build_viewer.py --split` - the split build only, for (local) HTTP.
+- `python build_viewer.py --bundle` - the single-file bundle only.
+
+If no flag is provided, both are built.
 
 Outputs in `dist/`:
 
-| File                     | Mode   | Purpose                                   |
-| ------------------------ | ------ | ----------------------------------------- |
-| `index.html`             | split  | HTML shell                                |
-| `viewer.js`              | split  | Viewer code (loads `data.json` via fetch) |
-| `viewer.css`             | split  | Concatenated styles                       |
-| `data.json`              | split  | Merged graph data                         |
-| `dialogue_explorer.html` | bundle | Self-contained file (no server needed)    |
+| File                       | Build  | Purpose                                               |
+| -------------------------- | ------ | ----------------------------------------------------- |
+| `index.html`               | split  | HTML shell                                            |
+| `viewer.js`                | split  | Viewer code                                           |
+| `viewer.css`               | split  | Concatenated styles                                   |
+| `data.json`                | split  | Shared metadata and index                             |
+| `data-hades1.json`         | split  | Hades graph data, fetched when the game is active     |
+| `data-hades2.json`         | split  | Hades II graph data, fetched when the game is active  |
+| `dialogue_explorer.html`   | bundle | Self-contained single file, no server needed          |
 
 ### Viewing the split build locally
 
 Browsers block `fetch()` from `file://`, so the split build needs a static HTTP server.
-The bundled file does not.
-Use this command to start a local server:
+The bundled file doesn't - you can open it straight from disk.
 
 ```bash
 python -m http.server 8000 --directory dist
-# then open http://localhost:8000/
 ```
-
-## Contributing
-
-### Adding a new data source
-
-The pipeline reads its inputs from the `HADES1_SOURCES` list in `generate_data.py`.
-Each entry is `(output_json_name, source_label, lua_filename, extractor_function)`.
-To add a new Lua source:
-
-1. Write `src/extractors/hades1/<name>_data.py` with an `extract_<name>(parsed, source_label, source_file, game_data_lists)` function.
-   It returns `{owner_name: {"source": label, ...sections}}`.
-   Use the shared `extract_textline_sections` helper for the textline parts so audits and `GameData.X` reference resolution work uniformly.
-2. Re-export the function from `src/extractors/hades1/__init__.py`.
-3. Add the entry to `HADES1_SOURCES` in `generate_data.py`.
-4. If the source uses new textline-bearing section keys, add them to `HADES1_TEXTLINE_SECTION_KEYS` in `section_keys.py`.
-   The generator surfaces unknown section-shaped keys as warnings; missing allowlist entries are caught the same way.
-5. Add a fixture-based test under `tests/hades1/` mirroring an existing extractor test.
-   Drop a minimal Lua fixture in `tests/hades1/fixtures/`.
-
-### Conventions
-
-- Python: small modules with module docstrings explaining intent and any non-obvious invariants.
-  Public functions get docstrings; private helpers get comments where the why isn't obvious from the code.
-- JavaScript: same docstring discipline.
-  The viewer source lives as ES modules under `templates/viewer/*.js`; `build_viewer.py` strips imports/exports and concatenates them into a single classic `dist/viewer.js`.
-  ESLint (`no-undef` + `no-unused-vars`) checks both the viewer modules and the JS tests - run `npm run lint` before pushing viewer changes.
-- Audits over silent skips: extractors / loaders should warn loudly when the game data shape diverges from the allowlists rather than dropping data on the floor.
-- Tests: run `python -m pytest` (Python: extractors, parser, graph) and `npm test` (JS: viewer helpers, search ranking, render utilities) before pushing.
-  New extractors need at least one fixture-driven Python test; new viewer helpers with non-trivial logic should get a JS test under `tests-js/`.
-
-### Running tests
-
-```bash
-pip install -r requirements-dev.txt
-python -m pytest
-```
-
-The Python suite covers the tokenizer, parser, semantic extractors, graph builder, merge, audits, and an end-to-end integration test against a synthetic fixture.
-
-```bash
-npm install        # one-time, installs ESLint into node_modules/ (git-ignored)
-npm test
-```
-
-The JavaScript suite runs under `node --test` (built into Node 18+, no extra dependencies) and covers the pure helpers in `templates/viewer/`: HTML render utilities, label formatters, name-based search ranking (per-token tiers + query-order-dominant sort), and text-content search (word-boundary matching, contiguous-phrase boost, partial-match fallback). Fixtures live in `tests-js/fixtures.js`.
-
-### Linting the viewer JavaScript
-
-```bash
-npm install        # one-time, installs ESLint into node_modules/ (git-ignored)
-npm run lint
-```
-
-Node.js + npm are needed for the linter and the JS test runner; the viewer itself ships as plain JavaScript (concatenated by `build_viewer.py`) with no separate JS build step.
 
 ## Disclaimer
 
