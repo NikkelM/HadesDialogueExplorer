@@ -21,6 +21,13 @@ export let nameIdf;
 // tokens present on each candidate, rather than guessing.
 let nameTokens;
 
+// Per-candidate name-only PascalCase segments (no owner tokens),
+// keyed by textline name. Used for the gappy token-subsequence
+// fallback so a query that skips a middle segment
+// (``hadesaboutrenovations`` -> ``HadesAboutUnderworldRenovations01``)
+// still finds the dialogue, anchored to the start of the name.
+let nameSegments;
+
 // Split a textline name (PascalCase identifier) into its constituent
 // segments. Boundaries are:
 //   - Non-word -> word transition (e.g. ``_`` between segments).
@@ -88,10 +95,12 @@ export function tokeniseOwnerDisplay(display) {
 export function buildNameIndex() {
     const docs = [];
     nameTokens = new Map();
+    nameSegments = new Map();
     for (const name of allNames) {
         const tl = textlines[name];
         if (!tl) continue;
         const tokens = tokeniseTextlineName(name);
+        nameSegments.set(name, tokens.slice());
         const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
         if (ownerDisplay) {
             for (const t of tokeniseOwnerDisplay(ownerDisplay)) tokens.push(t);
@@ -100,6 +109,44 @@ export function buildNameIndex() {
         docs.push(tokens);
     }
     nameIdf = computeIdf(docs, (d) => d);
+}
+
+// Whether ``query`` can be formed from the candidate's name
+// ``segments``: the query must begin with the first segment (so a
+// match always shares the dialogue's leading word, keeping this loose
+// fallback precise), after which the remaining segments may be matched
+// in ANY order, each consumed whole, with the final query fragment
+// allowed to be a prefix of an unused segment (mid-typing). Unused
+// segments may be skipped entirely. e.g. for
+// ``['hades','about','underworld','renovations','01']`` it matches
+// both ``hadesaboutrenovations`` (in order, ``underworld`` skipped)
+// and ``hadesrenovationsabout`` (``renovations`` and ``about``
+// reordered).
+export function gappyTokenSubsequence(query, segments) {
+    if (!query || !segments || segments.length === 0) return false;
+    const first = segments[0];
+    if (!query.startsWith(first)) return false;
+    return matchSegmentsAnyOrder(query.slice(first.length), segments.slice(1));
+}
+
+// Recursive helper for :func:`gappyTokenSubsequence`. True when ``rem``
+// can be consumed by concatenating whole segments from ``segs`` in any
+// order, or when it is a (non-empty) prefix of an as-yet-unused
+// segment. Segment counts per name are tiny so the backtracking cost
+// is negligible.
+function matchSegmentsAnyOrder(rem, segs) {
+    if (rem.length === 0) return true;
+    for (let i = 0; i < segs.length; i++) {
+        const seg = segs[i];
+        if (!seg) continue;
+        if (rem.startsWith(seg)) {
+            const next = segs.slice(0, i).concat(segs.slice(i + 1));
+            if (matchSegmentsAnyOrder(rem.slice(seg.length), next)) return true;
+        } else if (seg.startsWith(rem)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Rank a single search token against one candidate textline. Lower is
@@ -112,11 +159,15 @@ export function buildNameIndex() {
 //       (e.g. ``Eurydice`` inside ``OrpheusWithEurydice01``)
 //   3 = token anywhere else in the textline name (mid-segment)
 //   4 = token anywhere in the owner display name or internal id
+//   5 = gappy start-anchored token-subsequence over the name's
+//       segments, skipping a middle segment (only when ``nameSegs``
+//       is supplied - i.e. single-token queries). A pure recall
+//       fallback, ranked below every contiguous match.
 //
 // Kept pure (tier only, no IDF weighting) so per-token tier logic
 // stays unit-testable in isolation. Weighting happens in
 // :func:`searchNameMatches`.
-export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower) {
+export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower, nameSegs) {
     if (nameLower.startsWith(token)) return 0;
     if (ownerIdLower.startsWith(token)) return 1;
     if (ownerDisplayLower && ownerDisplayLower.startsWith(token)) return 1;
@@ -134,6 +185,7 @@ export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ow
     if (nameLower.includes(token)) return 3;
     if (ownerIdLower.includes(token)) return 4;
     if (ownerDisplayLower && ownerDisplayLower.includes(token)) return 4;
+    if (nameSegs && gappyTokenSubsequence(token, nameSegs)) return 5;
     return -1;
 }
 
@@ -219,11 +271,18 @@ export function searchNameMatches(query, limit) {
         if (negHit) continue;
 
         const candidateTokens = (nameTokens && nameTokens.get(n)) || [];
+        // Gappy subsequence recall only applies to single-token queries
+        // (a concatenated string like ``hadesaboutrenovations``); multi
+        // token queries already bridge gaps via per-token PascalCase
+        // boundary matching, so leaving segments unset keeps them strict.
+        const nameSegs = positive.length === 1
+            ? (nameSegments && nameSegments.get(n)) || null
+            : null;
 
         const weightedTiers = [];
         let allMatched = true;
         for (let i = 0; i < positive.length; i++) {
-            const r = rankSearchToken(positive[i], n, nameLower, ownerIdLower, ownerDisplayLower);
+            const r = rankSearchToken(positive[i], n, nameLower, ownerIdLower, ownerDisplayLower, nameSegs);
             if (r < 0) { allMatched = false; break; }
             const w = useIdf
                 ? candidateTokenWeight(nameIdf, candidateTokens, positive[i])

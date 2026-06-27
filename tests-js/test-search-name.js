@@ -11,6 +11,7 @@ import {
     searchNameMatches,
     tokeniseTextlineName,
     tokeniseOwnerDisplay,
+    gappyTokenSubsequence,
     buildNameIndex,
     nameIdf,
 } from '../templates/viewer/search-name.js';
@@ -82,6 +83,65 @@ test('rankSearchToken: returns -1 when the token appears nowhere', () => {
         rankSearchToken('xyzzy', 'ZeusWithAphrodite01', 'zeuswithaphrodite01', 'npc_zeus_01', 'zeus'),
         -1,
     );
+});
+
+// ---- Gappy token-subsequence fallback (tier 5) ----
+
+test('gappyTokenSubsequence: matches when a middle segment is skipped', () => {
+    const segs = ['hades', 'about', 'underworld', 'renovations', '01'];
+    assert.equal(gappyTokenSubsequence('hadesaboutrenovations', segs), true);
+});
+
+test('gappyTokenSubsequence: allows a mid-typed prefix as the final fragment', () => {
+    const segs = ['hades', 'about', 'underworld', 'renovations', '01'];
+    assert.equal(gappyTokenSubsequence('hadesren', segs), true);
+});
+
+test('gappyTokenSubsequence: must be anchored at the first segment', () => {
+    const segs = ['hades', 'about', 'underworld', 'renovations', '01'];
+    // Skipping the leading ``hades`` segment is not allowed.
+    assert.equal(gappyTokenSubsequence('aboutrenovations', segs), false);
+});
+
+test('gappyTokenSubsequence: matches segments given out of order', () => {
+    const segs = ['hades', 'about', 'underworld', 'renovations', '01'];
+    // ``renovations`` and ``about`` are reordered, ``underworld`` skipped.
+    assert.equal(gappyTokenSubsequence('hadesrenovationsabout', segs), true);
+});
+
+test('gappyTokenSubsequence: rejects a chunk that is not a whole segment', () => {
+    const segs = ['hades', 'about', 'underworld', 'renovations', '01'];
+    // ``xyz`` is neither a segment nor a prefix of one.
+    assert.equal(gappyTokenSubsequence('hadesxyz', segs), false);
+});
+
+test('rankSearchToken: tier 5 (gappy subsequence) only when segments supplied', () => {
+    const segs = tokeniseTextlineName('BecameCloseWithMegaera01');
+    // No contiguous match for the gap-spanning token, but with segments
+    // it resolves as a start-anchored subsequence (``with`` skipped).
+    assert.equal(
+        rankSearchToken('becameclosemegaera', 'BecameCloseWithMegaera01', 'becameclosewithmegaera01', 'npc_furysister_01', 'megaera', segs),
+        5,
+    );
+    // Without segments (multi-token query path) it stays a non-match.
+    assert.equal(
+        rankSearchToken('becameclosemegaera', 'BecameCloseWithMegaera01', 'becameclosewithmegaera01', 'npc_furysister_01', 'megaera'),
+        -1,
+    );
+});
+
+test('searchNameMatches: a gap-skipping single token still finds the dialogue', () => {
+    // ``zeusaphrodite`` skips the middle ``With`` segment of
+    // ZeusWithAphrodite01 - a contiguous search would miss it.
+    const matches = searchNameMatches(_q(['zeusaphrodite']), 50);
+    assert.ok(matches.some((m) => m.name === 'ZeusWithAphrodite01'));
+});
+
+test('searchNameMatches: a reordered single token still finds the dialogue', () => {
+    // ``becamemegaeraclose`` reorders ``megaera`` ahead of ``close`` and
+    // skips ``with`` - still resolves to BecameCloseWithMegaera01.
+    const matches = searchNameMatches(_q(['becamemegaeraclose']), 50);
+    assert.ok(matches.some((m) => m.name === 'BecameCloseWithMegaera01'));
 });
 
 test('searchNameMatches: AND across tokens (every token must match)', () => {
