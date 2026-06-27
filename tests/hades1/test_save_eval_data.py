@@ -14,7 +14,7 @@ from src.extractors.hades1.save_eval_data import (
     extract_meta_upgrade_order_length,
     extract_shrine_upgrade_order,
     extract_strike_through_change_value,
-    extract_weapon_upgrade_starts_unlocked,
+    extract_weapon_upgrade_slots,
 )
 
 
@@ -59,9 +59,9 @@ WeaponUpgradeData =
     },
     SwordWeapon =
     {
-        { MaxUpgradeLevel = 5, StartsUnlocked = true, },
-        { MaxUpgradeLevel = 5, TraitName = "SwordRushTrait", },
-        { MaxUpgradeLevel = 5, TraitName = "SwordConsecrationTrait", },
+        { MaxUpgradeLevel = 5, StartsUnlocked = true, RequiredInvestmentTraitName = "SwordBaseUpgradeTrait", Costs = { 1, 1, 1, 1, 1 }, },
+        { MaxUpgradeLevel = 5, TraitName = "SwordRushTrait", Costs = { 1, 1, 2, 2, 3 }, },
+        { MaxUpgradeLevel = 5, TraitName = "SwordConsecrationTrait", Costs = { 3, 3, 3, 3, 3 }, },
     },
     SpearWeapon =
     {
@@ -91,13 +91,20 @@ def test_strike_through_change_value():
     assert extract_strike_through_change_value(parsed) == -3
 
 
-def test_weapon_starts_unlocked_only_lists_base_aspect_indices():
+def test_weapon_upgrade_slots_capture_the_per_slot_fields():
     parsed = parse(WEAPON_LUA)
-    # The base aspect (index 1) of each weapon is StartsUnlocked; the
-    # non-weapon DefaultGameStateRequirement sibling is skipped.
-    assert extract_weapon_upgrade_starts_unlocked(parsed) == {
-        "SwordWeapon": [1],
-        "SpearWeapon": [1],
+    # 1-based index keys; the non-weapon DefaultGameStateRequirement sibling
+    # is skipped; absent fields are omitted.
+    assert extract_weapon_upgrade_slots(parsed) == {
+        "SwordWeapon": {
+            "1": {"reqTrait": "SwordBaseUpgradeTrait", "max": 5, "costs": [1, 1, 1, 1, 1], "startsUnlocked": True},
+            "2": {"trait": "SwordRushTrait", "max": 5, "costs": [1, 1, 2, 2, 3]},
+            "3": {"trait": "SwordConsecrationTrait", "max": 5, "costs": [3, 3, 3, 3, 3]},
+        },
+        "SpearWeapon": {
+            "1": {"max": 5, "startsUnlocked": True},
+            "2": {"trait": "SpearWaveTrait", "max": 5},
+        },
     }
 
 
@@ -111,7 +118,17 @@ def test_extract_save_eval_static_bundles_every_table():
             "BiomeSpeedShrineUpgrade",
         ],
         "strikeThroughChangeValue": -3,
-        "weaponUpgradeStartsUnlocked": {"SwordWeapon": [1], "SpearWeapon": [1]},
+        "weaponUpgradeSlots": {
+            "SwordWeapon": {
+                "1": {"reqTrait": "SwordBaseUpgradeTrait", "max": 5, "costs": [1, 1, 1, 1, 1], "startsUnlocked": True},
+                "2": {"trait": "SwordRushTrait", "max": 5, "costs": [1, 1, 2, 2, 3]},
+                "3": {"trait": "SwordConsecrationTrait", "max": 5, "costs": [3, 3, 3, 3, 3]},
+            },
+            "SpearWeapon": {
+                "1": {"max": 5, "startsUnlocked": True},
+                "2": {"trait": "SpearWaveTrait", "max": 5},
+            },
+        },
         "cosmeticVisibleValue": "visible",
     }
 
@@ -121,4 +138,4 @@ def test_missing_tables_degrade_gracefully():
     assert extract_meta_upgrade_order_length(empty) == 0
     assert extract_shrine_upgrade_order(empty) == []
     assert extract_strike_through_change_value(empty) == 0
-    assert extract_weapon_upgrade_starts_unlocked(empty) == {}
+    assert extract_weapon_upgrade_slots(empty) == {}

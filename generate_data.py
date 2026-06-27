@@ -345,7 +345,7 @@ def main():
         print(
             f"  Save-eval static: {save_eval_static['metaUpgradeOrderLength']} Mirror rows, "
             f"{len(save_eval_static['shrineUpgradeOrder'])} shrine upgrades, "
-            f"{len(save_eval_static['weaponUpgradeStartsUnlocked'])} weapons"
+            f"{len(save_eval_static['weaponUpgradeSlots'])} weapons"
         )
         print(f"  Written to: {meta_out}")
     else:

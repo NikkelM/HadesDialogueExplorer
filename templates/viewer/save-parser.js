@@ -542,7 +542,8 @@ function countCodexUnlocked(cs) {
 
 // Hades 1 GameState slice: copy the top-level keys the H1 evaluator reads
 // (H1_GAMESTATE_SLICE_KEYS) wholesale, plus a RunHistory pruned to the per-run
-// fields the run-count aggregates need ({Cleared, WeaponsCache}). Missing keys
+// fields the run-count aggregates and best-clear-time gate need ({Cleared,
+// WeaponsCache, GameplayTime, RunDepthCache, EasyModeLevel}). Missing keys
 // stay absent and the evaluator coerces them to nil/0/false as the engine does.
 // ``luaState`` (the whole save root) is optional; when given, the top-level
 // globals the requirements read (SpeechRecord / CodexStatus) are captured too,
@@ -562,6 +563,9 @@ export function extractH1GameStateSlice(gs, luaState) {
       const e = {};
       if (run.Cleared !== undefined) e.Cleared = run.Cleared;
       if (run.WeaponsCache !== undefined) e.WeaponsCache = run.WeaponsCache;
+      if (run.GameplayTime !== undefined) e.GameplayTime = run.GameplayTime;
+      if (run.RunDepthCache !== undefined) e.RunDepthCache = run.RunDepthCache;
+      if (run.EasyModeLevel !== undefined) e.EasyModeLevel = run.EasyModeLevel;
       pruned[k] = e;
     }
     slice.RunHistory = pruned;
@@ -906,8 +910,11 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // MetaUpgradesSelected + EncountersOccurredCache to the H1 slices (for the
 // active-Mirror-upgrade and RequiredEncounterThisRun gates). An older cache
 // lacks these, so the bump forces a re-parse rather than silently leaving them
-// unavailable.
-const SAVE_STORAGE_SCHEMA = 14;
+// unavailable. v14 added the SpeechRecord / Codex globals + Resources /
+// SpentMetaPointsCache / LastInteractedWeaponUpgrade to the H1 slice (codex /
+// speech / meta-point / weapon-aspect gates). v15 widened the H1 RunHistory
+// prune with GameplayTime / RunDepthCache / EasyModeLevel (best-clear-time gate).
+const SAVE_STORAGE_SCHEMA = 15;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

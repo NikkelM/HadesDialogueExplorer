@@ -15,11 +15,16 @@ doesn't carry:
     upgrades), the number of Mirror rows (``#MetaUpgradeOrder``), and the
     strike-through upgrade's ``ChangeValue``.
 
-  - The weapon-enchantment count gates
-    (``RequiredMin/MaxUnlockedWeaponEnchantments``) run through
-    ``GetNumUnlockedWeaponUpgrades`` (WeaponUpgradeScripts.lua), which
-    counts unlocked weapon-upgrade slots *excluding* the base aspect of
-    each weapon (the per-(weapon, index) ``StartsUnlocked`` slots).
+  - The weapon-aspect gates run through ``WeaponUpgradeData``
+    (WeaponUpgradeScripts.lua): the enchantment-count gates
+    (``RequiredMin/MaxUnlockedWeaponEnchantments``) exclude each weapon's
+    base aspect (the ``StartsUnlocked`` slot); ``RequiredLastInteractedWeaponUpgrade``
+    maps a ``{WeaponName, ItemIndex}`` pointer to a slot's ``TraitName`` /
+    ``RequiredInvestmentTraitName``; ``RequiredLastInteractedWeaponUpgradeMaxed``
+    compares the bought level against ``MaxUpgradeLevel``; and
+    ``RequiredMinSuperLockKeysSpentOnWeapon`` sums the per-level ``Costs``
+    (Titan Blood) across a weapon's slots. The per-(weapon, index) slot
+    table carries all of these.
 
   - ``RequiredCosmeticItemVisible`` compares a cosmetic's state against
     the literal ``UIData.Constants.VISIBLE`` ("visible"), not mere
@@ -28,8 +33,8 @@ doesn't carry:
 This extractor parses those tables out of the game's Lua so the viewer
 can ship them in ``data-hades1.json`` and resolve the gates client-side.
 The shapes returned are intentionally minimal (orders, a length, a
-number, a per-weapon index map, one constant) - everything else the
-engine reads for these gates is in the persistent save slice.
+number, a per-(weapon, index) slot map, one constant) - everything else
+the engine reads for these gates is in the persistent save slice.
 """
 
 from ...lua_parser import LuaTable
@@ -92,14 +97,19 @@ def extract_strike_through_change_value(parsed: dict) -> int:
     return 0
 
 
-def extract_weapon_upgrade_starts_unlocked(parsed: dict) -> dict:
-    """``{ WeaponName: [1-based indices that StartsUnlocked] }``.
+def extract_weapon_upgrade_slots(parsed: dict) -> dict:
+    """``{ WeaponName: { index: slot } }`` keyed by 1-based slot index.
 
-    ``GetNumUnlockedWeaponUpgrades`` excludes these base-aspect slots
-    from the unlocked-enchantment count. Parsed from
-    ``WeaponUpgradeData`` (WeaponUpgradeData.lua); the
-    ``DefaultGameStateRequirement`` sibling key (not a weapon) is skipped
-    because its value is not an array-of-upgrade-slots table.
+    Each slot carries the fields the H1 save evaluator reads for the
+    weapon-aspect gates: ``trait`` (TraitName), ``reqTrait``
+    (RequiredInvestmentTraitName, the base-aspect investment trait),
+    ``max`` (MaxUpgradeLevel), ``costs`` (the per-level Titan Blood cost
+    array) and ``startsUnlocked`` (the base aspect, excluded from the
+    enchantment count). Parsed from ``WeaponUpgradeData``
+    (WeaponUpgradeData.lua); the ``DefaultGameStateRequirement`` sibling
+    key (not a weapon) is skipped because its value is not an
+    array-of-upgrade-slots table. Fields absent in the Lua are omitted so
+    the shipped JSON stays compact.
     """
     data = parsed.get("WeaponUpgradeData")
     result: dict = {}
@@ -108,12 +118,29 @@ def extract_weapon_upgrade_starts_unlocked(parsed: dict) -> dict:
     for weapon_name, weapon_table in data.items():
         if not isinstance(weapon_table, LuaTable) or not weapon_table.array:
             continue
-        indices = []
+        slots: dict = {}
         for slot_index, slot in enumerate(weapon_table.array, start=1):
-            if isinstance(slot, LuaTable) and slot.get("StartsUnlocked") is True:
-                indices.append(slot_index)
-        if indices:
-            result[weapon_name] = indices
+            if not isinstance(slot, LuaTable):
+                continue
+            entry: dict = {}
+            trait = slot.get("TraitName")
+            if isinstance(trait, str):
+                entry["trait"] = trait
+            req_trait = slot.get("RequiredInvestmentTraitName")
+            if isinstance(req_trait, str):
+                entry["reqTrait"] = req_trait
+            max_level = _as_int(slot.get("MaxUpgradeLevel"))
+            if max_level is not None:
+                entry["max"] = max_level
+            costs = slot.get("Costs")
+            if isinstance(costs, LuaTable):
+                entry["costs"] = [_as_int(c, default=0) for c in costs.array]
+            if slot.get("StartsUnlocked") is True:
+                entry["startsUnlocked"] = True
+            if entry:
+                slots[str(slot_index)] = entry
+        if slots:
+            result[weapon_name] = slots
     return result
 
 
@@ -130,6 +157,6 @@ def extract_save_eval_static(meta_parsed: dict, weapon_parsed: dict) -> dict:
         "metaUpgradeOrderLength": extract_meta_upgrade_order_length(meta_parsed),
         "shrineUpgradeOrder": extract_shrine_upgrade_order(meta_parsed),
         "strikeThroughChangeValue": extract_strike_through_change_value(meta_parsed),
-        "weaponUpgradeStartsUnlocked": extract_weapon_upgrade_starts_unlocked(weapon_parsed),
+        "weaponUpgradeSlots": extract_weapon_upgrade_slots(weapon_parsed),
         "cosmeticVisibleValue": _COSMETIC_VISIBLE_VALUE,
     }

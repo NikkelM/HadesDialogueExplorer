@@ -53,7 +53,7 @@ export const H1_GAMESTATE_SLICE_KEYS = [
     'NPCInteractions', 'ItemInteractions', 'ScreensViewed', 'LifetimeResourcesGained',
     'LifetimeResourcesSpent', 'QuestStatus', 'TotalCaughtFish', 'CaughtFish',
     'SpentShrinePointsCache', 'ConsecutiveClears', 'LastAwardTrait', 'LastAssistTrait',
-    'RecordLastClearedShrineReward',
+    'RecordLastClearedShrineReward', 'Resources', 'SpentMetaPointsCache', 'LastInteractedWeaponUpgrade',
 ];
 
 // Hades 1 persists every global not in Main.lua's SaveIgnores, so a few tables
@@ -259,22 +259,30 @@ const H1_FIELD_EVALS = {
     },
     RequiresCodexFullyUnlocked: () => H1_NEEDS_STATIC('Needs the full static codex chapter/entry layout (to know every entry that must be unlocked) not shipped in this build.'),
 
+    // ===== PERSISTENT: meta-point totals (Darkness) =====
+    // GetTotalAccumulatedMetaPoints = Resources.MetaPoints (unspent) + total spent.
+    // The engine keeps SpentMetaPointsCache equal to its GetTotalSpentMetaPoints
+    // sum over the selected Mirror talents, so both gates resolve from the save
+    // caches directly - no static cost tables needed.
+    RequiredAccumulatedMetaPoints: (v, ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); if (sp == null) return H1_LIVE(_META_POINTS_REASON); const r = h1Gs(ctx, 'Resources') || {}; return _h1bool(h1Num(r.MetaPoints) + h1Num(sp) >= v); },
+    RequiredActiveMetaPointsMin: (v, ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); return sp == null ? H1_LIVE(_META_POINTS_REASON) : _h1bool(h1Num(sp) >= v); },
+    RequiredActiveMetaPointsMax: (v, ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); return sp == null ? H1_LIVE(_META_POINTS_REASON) : _h1bool(h1Num(sp) <= v); },
+
+    // ===== PERSISTENT: weapon-aspect upgrades (h1SaveEvalStatic.weaponUpgradeSlots) =====
+    RequiredMinSuperLockKeysSpentOnWeapon: (v, ctx) => h1WeaponStaticReady() ? _h1bool(h1WeaponKeysSpent(ctx, v && v.Name) >= (v && v.Count)) : H1_NEEDS_STATIC(_WEAPON_STATIC_REASON),
+    RequiredLastInteractedWeaponUpgrade: (v, ctx) => { if (!h1WeaponStaticReady()) return H1_NEEDS_STATIC(_WEAPON_STATIC_REASON); const li = h1Gs(ctx, 'LastInteractedWeaponUpgrade'); if (li == null) return H1_UNMET; return _h1bool(h1WeaponUpgradeTrait(ctx, li.WeaponName, li.ItemIndex) === v); },
+    RequiredLastInteractedWeaponUpgradeMaxed: (v, ctx) => { if (!h1WeaponStaticReady()) return H1_NEEDS_STATIC(_WEAPON_STATIC_REASON); const li = h1Gs(ctx, 'LastInteractedWeaponUpgrade'); if (li == null) return H1_UNMET; const slot = h1WeaponSlot(li.WeaponName, li.ItemIndex); if (!slot || slot.max == null) return H1_UNMET; return _h1bool(h1WeaponUpgradeLevel(ctx, li.WeaponName, li.ItemIndex) >= slot.max); },
+
     // ===== PERSISTENT but needs static game-data tables this build omits =====
-    RequiredAccumulatedMetaPoints: () => H1_NEEDS_STATIC('Needs the meta-upgrade cost tables (total accumulated Darkness) not shipped in this build.'),
-    RequiredActiveMetaPointsMin: () => H1_NEEDS_STATIC('Needs the meta-upgrade cost tables (spent Darkness) not shipped in this build.'),
-    RequiredActiveMetaPointsMax: () => H1_NEEDS_STATIC('Needs the meta-upgrade cost tables (spent Darkness) not shipped in this build.'),
     RequiredAllMetaUpgradesMaxed: () => H1_NEEDS_STATIC('Needs the meta-upgrade order / max-level tables not shipped in this build.'),
     RequiresMaxKeepsake: () => H1_NEEDS_STATIC('Needs the keepsake chamber-threshold tables not shipped in this build.'),
-    RequiredMinSuperLockKeysSpentOnWeapon: () => H1_NEEDS_STATIC('Needs the weapon-upgrade cost tables not shipped in this build.'),
-    RequiredLastInteractedWeaponUpgrade: () => H1_NEEDS_STATIC('Needs the weapon-upgrade trait tables not shipped in this build.'),
-    RequiredLastInteractedWeaponUpgradeMaxed: () => H1_NEEDS_STATIC('Needs the weapon-upgrade tables not shipped in this build.'),
     RequiredMinShrinePointThresholdClear: () => H1_NEEDS_STATIC('Needs the per-weapon boss-room shrine-clear records cross-referenced with static room data.'),
     RequiredCosmeticPurchaseable: () => H1_NEEDS_STATIC('Needs the conditional-item purchase definitions not shipped in this build.'),
 
     // ===== PREV RUN (GameState.RunHistory[#]) =====
     RequiresLastRunCleared: (v, ctx) => _h1bool(h1Truthy(ctx.prevRun && ctx.prevRun.Cleared)),
     RequiresLastRunNotCleared: (v, ctx) => _h1bool(!h1Truthy(ctx.prevRun && ctx.prevRun.Cleared)),
-    RequiresBestClearTimeLastRun: () => H1_NEEDS_STATIC('Compares the last run\u2019s clear time against the run-history best, which this slice doesn\u2019t fully carry.'),
+    RequiresBestClearTimeLastRun: (v, ctx) => h1BestClearTimeLastRun(ctx),
     RequiredRoomLastRun: (v, ctx) => { const rc = (ctx.prevRun && ctx.prevRun.RoomCountCache) || {}; return _h1bool(h1Num(rc[v]) > 0); },
     RequiredAnyRoomsLastRun: (v, ctx) => { const rc = (ctx.prevRun && ctx.prevRun.RoomCountCache) || {}; return _h1bool(h1Arr(v).some(r => h1Num(rc[r]) > 0)); },
     RequiredFalseRoomLastRun: (v, ctx) => { const rc = (ctx.prevRun && ctx.prevRun.RoomCountCache) || {}; return _h1bool(!(h1Num(rc[v]) > 0)); },
@@ -440,27 +448,104 @@ function h1MetaUpgradeLevel(ctx, name) {
 
 // GetNumUnlockedWeaponUpgrades port (WeaponUpgradeScripts.lua:490): count the
 // player's unlocked weapon-upgrade slots, EXCLUDING each weapon's
-// StartsUnlocked base-aspect slot (h1SaveEvalStatic.weaponUpgradeStartsUnlocked).
-// ``maxed`` keeps the legacy "count maxed (==5) slots" variant; both honour the
+// StartsUnlocked base-aspect slot (h1SaveEvalStatic.weaponUpgradeSlots[*].startsUnlocked).
+// ``maxed`` keeps the legacy "count maxed (==max) slots" variant; both honour the
 // base-aspect exclusion.
 function h1CountWeaponUnlocks(ctx, maxed) {
     const w = h1Gs(ctx, 'WeaponUnlocks') || {};
-    const startsUnlocked = (h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeStartsUnlocked) || {};
+    const slots = (h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeSlots) || {};
     let n = 0;
     for (const [weaponName, weapon] of Object.entries(w)) {
         if (!weapon || typeof weapon !== 'object') continue;
-        const skip = startsUnlocked[weaponName] || [];
+        const wSlots = slots[weaponName] || {};
         for (const [idx, lvl] of Object.entries(weapon)) {
-            if (skip.includes(Number(idx))) continue;
-            if (maxed ? lvl === 5 : (lvl != null && lvl !== 0)) n += 1;
+            if (wSlots[idx] && wSlots[idx].startsUnlocked) continue;
+            const max = (wSlots[idx] && wSlots[idx].max) || 5;
+            if (maxed ? lvl === max : (lvl != null && lvl !== 0)) n += 1;
         }
     }
     return n;
 }
 function h1WeaponStaticReady() {
-    return !!(h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeStartsUnlocked);
+    return !!(h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeSlots);
 }
-const _WEAPON_STATIC_REASON = 'Needs the weapon base-aspect (StartsUnlocked) table - not loaded.';
+const _WEAPON_STATIC_REASON = 'Needs the weapon-upgrade slot table - not loaded.';
+
+// GetWeaponUpgradeLevel port (WeaponUpgradeScripts.lua:395): the level the player
+// has bought for a weapon aspect = GameState.WeaponUnlocks[weapon][index] (0 if
+// none). The engine also returns 0 when the slot is buy/upgrade-disabled (a
+// static DisableBuy flag - unused in vanilla - or unmet aspect-unlock
+// GameStateRequirements); we omit that precondition, matching h1MaxWeaponUpgrade
+// (the affected dialogues gate on aspects the player has demonstrably invested in).
+function h1WeaponUpgradeLevel(ctx, weapon, index) {
+    const w = h1Gs(ctx, 'WeaponUnlocks') || {};
+    return h1Num(w[weapon] && w[weapon][index]);
+}
+
+// Resolve a {weapon, index} pointer to its static slot record from
+// h1SaveEvalStatic.weaponUpgradeSlots ({trait?, reqTrait?, max?, costs?,
+// startsUnlocked?}), or null when the table or slot is missing.
+function h1WeaponSlot(weapon, index) {
+    const slots = (h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeSlots) || {};
+    return (slots[weapon] && slots[weapon][index]) || null;
+}
+
+// GetWeaponUpgradeTrait port (WeaponUpgradeScripts.lua:770): resolve a
+// {weapon, index} slot pointer to its trait name. Aspect slots carry a static
+// ``trait`` (TraitName); the base slot carries ``reqTrait``
+// (RequiredInvestmentTraitName) but only counts once its level > 0.
+function h1WeaponUpgradeTrait(ctx, weapon, index) {
+    const slot = h1WeaponSlot(weapon, index);
+    if (!slot) return null;
+    if (slot.trait) return slot.trait;
+    if (slot.reqTrait && h1WeaponUpgradeLevel(ctx, weapon, index) > 0) return slot.reqTrait;
+    return null;
+}
+
+// GetSuperLockKeysSpentOnWeapon port (WeaponUpgradeScripts.lua): total upgrade
+// keys spent across every aspect of ``weapon`` = sum of each slot's per-level
+// Costs[1..GetWeaponUpgradeLevel].
+function h1WeaponKeysSpent(ctx, weapon) {
+    const slots = (h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeSlots) || {};
+    const wSlots = slots[weapon] || {};
+    let total = 0;
+    for (const idx of Object.keys(wSlots)) {
+        const lvl = h1WeaponUpgradeLevel(ctx, weapon, idx);
+        const costs = wSlots[idx].costs || [];
+        for (let i = 0; i < lvl; i++) total += h1Num(costs[i]);
+    }
+    return total;
+}
+const _META_POINTS_REASON = 'Needs the save\u2019s spent-Darkness cache (SpentMetaPointsCache) - not in this slice.';
+
+// RequiresBestClearTimeLastRun port (RunManager.lua:3525): the last run must be a
+// new (or tied) best clear time. prevRun = RunHistory[#] (highest key). If there
+// is no last run or it wasn't cleared the gate is a no-op (met). Otherwise the
+// record is the fastest GameplayTime over all same-mode (God Mode on/off must
+// match prevRun), past-the-final-boss (RunDepthCache > 44), cleared runs that
+// carry a GameplayTime; prevRun itself is one such candidate, so the gate passes
+// iff prevRun's time is no slower than that record.
+function h1BestClearTimeLastRun(ctx) {
+    const hist = h1Gs(ctx, 'RunHistory');
+    if (!hist || typeof hist !== 'object') return H1_OK;
+    let prev = null, prevKey = -Infinity;
+    for (const [k, r] of Object.entries(hist)) {
+        const n = Number(k);
+        if (Number.isFinite(n) && n > prevKey) { prevKey = n; prev = r; }
+    }
+    if (!prev || !h1Truthy(prev.Cleared)) return H1_OK;
+    if (prev.GameplayTime == null) return H1_LIVE(_BEST_CLEAR_REASON);
+    const godMode = !!prev.EasyModeLevel;
+    let record = Infinity;
+    for (const r of Object.values(hist)) {
+        if (!r || !h1Truthy(r.Cleared) || r.GameplayTime == null) continue;
+        if (h1Num(r.RunDepthCache) <= 44) continue;
+        if (!!r.EasyModeLevel !== godMode) continue;
+        if (r.GameplayTime < record) record = r.GameplayTime;
+    }
+    return _h1bool(h1Num(prev.GameplayTime) <= record);
+}
+const _BEST_CLEAR_REASON = 'Needs the last run\u2019s clear time (GameplayTime) - not in this slice.';
 
 // RequiredMaxWeaponUpgrade(+Index): IsWeaponUpgradeMaxed(weapon, index) - the
 // given weapon aspect (``index``) is fully levelled, i.e. WeaponUnlocks[weapon]

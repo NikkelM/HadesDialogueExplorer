@@ -32,7 +32,7 @@ function loadStatic(extra = {}) {
         metaUpgradeOrderLength: 12,
         shrineUpgradeOrder: ['BossDifficultyShrineUpgrade'],
         strikeThroughChangeValue: -3,
-        weaponUpgradeStartsUnlocked: { SwordWeapon: [1] },
+        weaponUpgradeSlots: { SwordWeapon: { 1: { startsUnlocked: true, reqTrait: 'SwordBaseUpgradeTrait', max: 5, costs: [1, 1, 1, 1, 1] }, 2: { trait: 'SwordRushTrait', max: 5, costs: [1, 1, 2, 2, 3] }, 3: { trait: 'SwordConsecrationTrait', max: 5, costs: [3, 3, 3, 3, 3] } } },
         cosmeticVisibleValue: 'visible',
         ...extra,
     };
@@ -207,10 +207,10 @@ test('H1: textline-record fields are skipped (owned by requirementSetStatus)', (
 // --- needs-static-data fields ------------------------------------------------
 
 test('H1: fields needing static game tables stay unknown with a reason', () => {
-    const r = evaluateH1OtherRequirements({ RequiredAccumulatedMetaPoints: 100 }, ctx({ gs: {} }));
+    const r = evaluateH1OtherRequirements({ RequiresMaxKeepsake: { Name: 'X', Count: 1 } }, ctx({ gs: {} }));
     assert.equal(r.status, 'unknown');
     assert.equal(r.clauses[0].kind, undefined);
-    assert.match(r.clauses[0].reason, /cost tables/i);
+    assert.match(r.clauses[0].reason, /keepsake .*tables/i);
 });
 
 // --- codex (resolved from the persisted top-level CodexStatus global) --------
@@ -322,6 +322,100 @@ test('H1: unlocked-weapon-enchantment count excludes the StartsUnlocked base asp
     assert.equal(evaluateH1OtherRequirements({ RequiredMinUnlockedWeaponEnchantments: 2 }, c).status, 'met');
     assert.equal(evaluateH1OtherRequirements({ RequiredMinUnlockedWeaponEnchantments: 3 }, c).status, 'unmet');
     assert.equal(evaluateH1OtherRequirements({ RequiredMaxUnlockedWeaponEnchantments: 2 }, c).status, 'met');
+});
+
+// --- meta-point totals (Darkness) --------------------------------------------
+
+test('H1: RequiredAccumulatedMetaPoints sums unspent + spent Darkness', () => {
+    const c = ctx({ gs: { Resources: { MetaPoints: 1739 }, SpentMetaPointsCache: 17300 } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredAccumulatedMetaPoints: 19000 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredAccumulatedMetaPoints: 19040 }, c).status, 'unmet');
+    // Missing spent-Darkness cache -> can't resolve (unknown).
+    const noCache = ctx({ gs: { Resources: { MetaPoints: 1739 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredAccumulatedMetaPoints: 1 }, noCache).status, 'unknown');
+});
+
+test('H1: RequiredActiveMetaPoints Min/Max compare spent Darkness', () => {
+    const c = ctx({ gs: { SpentMetaPointsCache: 17300 } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredActiveMetaPointsMin: 1000 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredActiveMetaPointsMin: 20000 }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredActiveMetaPointsMax: 20000 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredActiveMetaPointsMax: 1000 }, c).status, 'unmet');
+});
+
+// --- best clear time last run ------------------------------------------------
+
+test('H1: RequiresBestClearTimeLastRun passes when the last run set a new record', () => {
+    // RunHistory keyed 1..n; the last (key 3) is the newest, with the fastest time.
+    const hist = {
+        1: { Cleared: true, GameplayTime: 1800, RunDepthCache: 60 },
+        2: { Cleared: true, GameplayTime: 1500, RunDepthCache: 60 },
+        3: { Cleared: true, GameplayTime: 1200, RunDepthCache: 60 },
+    };
+    assert.equal(evaluateH1OtherRequirements({ RequiresBestClearTimeLastRun: true }, ctx({ gs: { RunHistory: hist } })).status, 'met');
+});
+
+test('H1: RequiresBestClearTimeLastRun fails when an earlier run was faster', () => {
+    const hist = {
+        1: { Cleared: true, GameplayTime: 1000, RunDepthCache: 60 },
+        2: { Cleared: true, GameplayTime: 1500, RunDepthCache: 60 },
+    };
+    assert.equal(evaluateH1OtherRequirements({ RequiresBestClearTimeLastRun: true }, ctx({ gs: { RunHistory: hist } })).status, 'unmet');
+});
+
+test('H1: RequiresBestClearTimeLastRun is a no-op when the last run was not cleared', () => {
+    const hist = { 1: { Cleared: true, GameplayTime: 1000, RunDepthCache: 60 }, 2: { Cleared: false } };
+    assert.equal(evaluateH1OtherRequirements({ RequiresBestClearTimeLastRun: true }, ctx({ gs: { RunHistory: hist } })).status, 'met');
+});
+
+test('H1: RequiresBestClearTimeLastRun only competes against runs in the same God Mode state', () => {
+    // The last run (God Mode on) ignores the faster non-God-Mode run.
+    const hist = {
+        1: { Cleared: true, GameplayTime: 800, RunDepthCache: 60 },
+        2: { Cleared: true, GameplayTime: 1200, RunDepthCache: 60, EasyModeLevel: 5 },
+    };
+    assert.equal(evaluateH1OtherRequirements({ RequiresBestClearTimeLastRun: true }, ctx({ gs: { RunHistory: hist } })).status, 'met');
+});
+
+// --- weapon-aspect gates -----------------------------------------------------
+
+test('H1: RequiredLastInteractedWeaponUpgrade matches the pointed-at slot trait', () => {
+    loadStatic();
+    // Last interacted = SwordWeapon slot 2 (SwordRushTrait).
+    const c = ctx({ gs: { LastInteractedWeaponUpgrade: { WeaponName: 'SwordWeapon', ItemIndex: 2 }, WeaponUnlocks: { SwordWeapon: { 2: 3 } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordRushTrait' }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordConsecrationTrait' }, c).status, 'unmet');
+    // No last-interacted record -> unmet.
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordRushTrait' }, ctx({ gs: {} })).status, 'unmet');
+    // Without the slot table -> unknown.
+    loadStatic(null);
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordRushTrait' }, c).status, 'unknown');
+});
+
+test('H1: RequiredLastInteractedWeaponUpgrade resolves the base aspect only when invested', () => {
+    loadStatic();
+    // The base aspect (slot 1) carries reqTrait, but only resolves once level > 0.
+    const invested = ctx({ gs: { LastInteractedWeaponUpgrade: { WeaponName: 'SwordWeapon', ItemIndex: 1 }, WeaponUnlocks: { SwordWeapon: { 1: 2 } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordBaseUpgradeTrait' }, invested).status, 'met');
+    const uninvested = ctx({ gs: { LastInteractedWeaponUpgrade: { WeaponName: 'SwordWeapon', ItemIndex: 1 }, WeaponUnlocks: {} } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgrade: 'SwordBaseUpgradeTrait' }, uninvested).status, 'unmet');
+});
+
+test('H1: RequiredLastInteractedWeaponUpgradeMaxed checks the bought level vs the slot max', () => {
+    loadStatic();
+    const maxed = ctx({ gs: { LastInteractedWeaponUpgrade: { WeaponName: 'SwordWeapon', ItemIndex: 2 }, WeaponUnlocks: { SwordWeapon: { 2: 5 } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgradeMaxed: true }, maxed).status, 'met');
+    const partial = ctx({ gs: { LastInteractedWeaponUpgrade: { WeaponName: 'SwordWeapon', ItemIndex: 2 }, WeaponUnlocks: { SwordWeapon: { 2: 4 } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastInteractedWeaponUpgradeMaxed: true }, partial).status, 'unmet');
+});
+
+test('H1: RequiredMinSuperLockKeysSpentOnWeapon sums per-level costs across the weapon slots', () => {
+    loadStatic();
+    // Slot 2 (costs 1,1,2,2,3) at level 3 -> 1+1+2 = 4; slot 3 (costs 3,3,3,3,3)
+    // at level 1 -> 3. Total = 7.
+    const c = ctx({ gs: { WeaponUnlocks: { SwordWeapon: { 2: 3, 3: 1 } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinSuperLockKeysSpentOnWeapon: { Name: 'SwordWeapon', Count: 7 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinSuperLockKeysSpentOnWeapon: { Name: 'SwordWeapon', Count: 8 } }, c).status, 'unmet');
 });
 
 // --- cosmetic visible constant -----------------------------------------------

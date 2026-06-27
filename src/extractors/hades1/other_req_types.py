@@ -198,14 +198,14 @@ HADES1_OTHER_REQ_LABELS = {
 
     # ----- Resources / counters -----
     "RequiredAccumulatedMetaPoints":            "Minimum lifetime collected Darkness",
-    "RequiredActiveMetaPointsMin":              "Minimum current Darkness in Mirror",
-    "RequiredActiveMetaPointsMax":              "Maximum current Darkness in Mirror",
-    "RequiredActiveMetaPointMax":               "Maximum current Darkness in Mirror",
-    "RequiredActiveShrinePointsMin":            "Minimum current Heat",
-    "RequiredLifetimeResourcesGainedMin":       "Minimum lifetime resource gained",
-    "RequiredLifetimeResourcesGainedMax":       "Maximum lifetime resource gained",
-    "RequiredLifetimeResourcesSpentMin":        "Minimum lifetime resource spent",
-    "RequiredLifetimeResourcesSpentMax":        "Maximum lifetime resource spent",
+    "RequiredActiveMetaPointsMin":              "Minimum Darkness invested in the Mirror of Night",
+    "RequiredActiveMetaPointsMax":              "Maximum Darkness invested in the Mirror of Night",
+    "RequiredActiveMetaPointMax":               "Maximum Darkness invested in the Mirror of Night",
+    "RequiredActiveShrinePointsMin":            "Minimum currently active Heat",
+    "RequiredLifetimeResourcesGainedMin":       "Minimum lifetime resources gained",
+    "RequiredLifetimeResourcesGainedMax":       "Maximum lifetime resources gained",
+    "RequiredLifetimeResourcesSpentMin":        "Minimum lifetime resources spent",
+    "RequiredLifetimeResourcesSpentMax":        "Maximum lifetime resources spent",
     "RequiredResourcesMin":                     "Minimum current resources",
 
     # ----- Meta progression (Mirror of Night / Pact of Punishment) -----

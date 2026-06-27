@@ -57,7 +57,7 @@ export let godTraitNames;
 export let restrictBoonChoiceTraitNames;
 // Hades 1 static save-eval tables (see src/extractors/hades1/save_eval_data.py):
 // { metaUpgradeOrderLength, shrineUpgradeOrder, strikeThroughChangeValue,
-//   weaponUpgradeStartsUnlocked, cosmeticVisibleValue }. Empty {} for H2.
+//   weaponUpgradeSlots, cosmeticVisibleValue }. Empty {} for H2.
 export let h1SaveEvalStatic;
 export let allNames;
 

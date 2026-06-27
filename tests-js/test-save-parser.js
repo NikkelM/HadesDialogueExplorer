@@ -585,7 +585,7 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
     const store = installMockLocalStorage();
     try {
         store.setItem('hde.save', JSON.stringify({
-            v: 14, gameId: 'hades3', runs: 1, played: ['Old01'],
+            v: 15, gameId: 'hades3', runs: 1, played: ['Old01'],
         }));
         assert.equal(restoreSaveProgress(), null);
         // The invalid entry is purged so restore fails closed.
@@ -608,7 +608,7 @@ test('extractH1GameStateSlice copies referenced keys and prunes RunHistory', () 
         Flags: { SeenIntro: true },
         SomeIrrelevantHugeTable: { a: 1, b: 2 },
         RunHistory: {
-            1: { Cleared: true, WeaponsCache: { Sword: true }, Junk: 'drop-me' },
+            1: { Cleared: true, WeaponsCache: { Sword: true }, GameplayTime: 1200, RunDepthCache: 60, EasyModeLevel: 3, Junk: 'drop-me' },
             2: { Cleared: false, WeaponsCache: {} },
         },
     });
@@ -616,8 +616,8 @@ test('extractH1GameStateSlice copies referenced keys and prunes RunHistory', () 
     assert.deepEqual(slice.Flags, { SeenIntro: true });
     // Unreferenced top-level keys are dropped.
     assert.equal('SomeIrrelevantHugeTable' in slice, false);
-    // RunHistory is pruned to {Cleared, WeaponsCache} per run.
-    assert.deepEqual(slice.RunHistory['1'], { Cleared: true, WeaponsCache: { Sword: true } });
+    // RunHistory is pruned to the run-count + best-clear-time fields.
+    assert.deepEqual(slice.RunHistory['1'], { Cleared: true, WeaponsCache: { Sword: true }, GameplayTime: 1200, RunDepthCache: 60, EasyModeLevel: 3 });
     assert.deepEqual(slice.RunHistory['2'], { Cleared: false, WeaponsCache: {} });
 });
 
