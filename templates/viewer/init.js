@@ -17,7 +17,7 @@ import { startHomeTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { startEligibilityTourReplay } from './tour-eligibility.js';
-import { maybeStartSaveCallout } from './tour-callouts.js';
+import { maybeStartSaveCallout, startSaveCalloutReplay } from './tour-callouts.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -73,7 +73,12 @@ function init(data) {
         if (view === 'speaker') startSpeakerTourReplay();
         else if (view === 'duplicates') startDuplicatesTourReplay();
         else if (view === 'eligibility') startEligibilityTourReplay();
-        else startHomeTourReplay();
+        // Dialogue view: when a save is loaded, its status badges / tree dots /
+        // tracer entry are what's actually on screen, so replay the save callout
+        // in preference to the generic walkthrough. startSaveCalloutReplay returns
+        // false when there's nothing save-specific to show (no save loaded), in
+        // which case fall back to the home tour.
+        else if (!startSaveCalloutReplay()) startHomeTourReplay();
     });
 }
 
