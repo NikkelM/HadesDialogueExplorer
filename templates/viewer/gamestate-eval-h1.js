@@ -54,6 +54,7 @@ export const H1_GAMESTATE_SLICE_KEYS = [
     'LifetimeResourcesSpent', 'QuestStatus', 'TotalCaughtFish', 'CaughtFish',
     'SpentShrinePointsCache', 'ConsecutiveClears', 'LastAwardTrait', 'LastAssistTrait',
     'RecordLastClearedShrineReward', 'Resources', 'SpentMetaPointsCache', 'LastInteractedWeaponUpgrade',
+    'KeepsakeChambers',
 ];
 
 // Hades 1 persists every global not in Main.lua's SaveIgnores, so a few tables
@@ -303,7 +304,17 @@ const H1_FIELD_EVALS = {
 
     // ===== PERSISTENT but needs static game-data tables this build omits =====
     RequiredAllMetaUpgradesMaxed: () => H1_NEEDS_STATIC('Needs the meta-upgrade order / max-level tables not shipped in this build.'),
-    RequiresMaxKeepsake: () => H1_NEEDS_STATIC('Needs the keepsake chamber-threshold tables not shipped in this build.'),
+    RequiresMaxKeepsake: (v, ctx) => {
+        if (!h1KeepsakeStaticReady()) return H1_NEEDS_STATIC(_KEEPSAKE_STATIC_REASON);
+        // Engine quirk (RunManager.lua:3152): the gate only fails when a keepsake
+        // is equipped AND not mastered, so no equipped keepsake passes vacuously.
+        const last = h1Gs(ctx, 'LastAwardTrait');
+        if (last == null) return H1_OK;
+        const max = h1SaveEvalStatic.keepsakeMaxChambers[last];
+        if (max == null) return H1_NEEDS_STATIC(_KEEPSAKE_RARITY_REASON);
+        const chambers = (h1Gs(ctx, 'KeepsakeChambers') || {})[last];
+        return _h1bool(typeof chambers === 'number' && chambers >= max);
+    },
     RequiredMinShrinePointThresholdClear: () => H1_NEEDS_STATIC('Needs the per-weapon boss-room shrine-clear records cross-referenced with static room data.'),
     RequiredCosmeticPurchaseable: () => H1_NEEDS_STATIC('Needs the conditional-item purchase definitions not shipped in this build.'),
 
@@ -506,6 +517,15 @@ function h1GodLootStaticReady() {
         && Array.isArray(h1SaveEvalStatic.godTraitNamesForShop));
 }
 const _GODLOOT_STATIC_REASON = 'Needs the per-god LootData trait index - not loaded.';
+
+// Whether the keepsake chamber-threshold table (h1SaveEvalStatic.keepsakeMaxChambers)
+// is present, so RequiresMaxKeepsake can resolve. False only in a build / test
+// that didn't load it.
+function h1KeepsakeStaticReady() {
+    return !!(h1SaveEvalStatic && h1SaveEvalStatic.keepsakeMaxChambers);
+}
+const _KEEPSAKE_STATIC_REASON = 'Needs the keepsake chamber-threshold table - not loaded.';
+const _KEEPSAKE_RARITY_REASON = 'Companion-keepsake mastery is gated by assist-NPC upgrade levels, which this save slice does not carry.';
 
 // GetWeaponUpgradeLevel port (WeaponUpgradeScripts.lua:395): the level the player
 // has bought for a weapon aspect = GameState.WeaponUnlocks[weapon][index] (0 if

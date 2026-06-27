@@ -344,7 +344,12 @@ def main():
         if loot_lua.exists():
             print(f"Parsing Hades 1: {loot_lua}")
             loot_parsed = parse_lua_file(str(loot_lua))
-        save_eval_static = extract_save_eval_static(meta_parsed, weapon_parsed, loot_parsed)
+        trait_lua = hades1_scripts / "TraitData.lua"
+        trait_parsed = {}
+        if trait_lua.exists():
+            print(f"Parsing Hades 1: {trait_lua}")
+            trait_parsed = parse_lua_file(str(trait_lua))
+        save_eval_static = extract_save_eval_static(meta_parsed, weapon_parsed, loot_parsed, trait_parsed)
         h1_metadata = {"h1SaveEvalStatic": save_eval_static}
         meta_out = OUTPUT_DIR / "hades1_metadata.json"
         with open(meta_out, "w", encoding="utf-8") as f:
@@ -354,7 +359,8 @@ def main():
             f"  Save-eval static: {save_eval_static['metaUpgradeOrderLength']} Mirror rows, "
             f"{len(save_eval_static['shrineUpgradeOrder'])} shrine upgrades, "
             f"{len(save_eval_static['weaponUpgradeSlots'])} weapons, "
-            f"{len(save_eval_static['godLootTraitIndex'])} god-loot owners"
+            f"{len(save_eval_static['godLootTraitIndex'])} god-loot owners, "
+            f"{len(save_eval_static['keepsakeMaxChambers'])} keepsakes"
         )
         print(f"  Written to: {meta_out}")
     else:

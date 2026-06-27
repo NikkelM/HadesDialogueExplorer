@@ -99,13 +99,13 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredAnyEncountersThisRun":             "Must have seen encounter (ANY, this run)",
 
     # ----- Loadout: boons (engine name: Traits) -----
-    "RequiredTrait":                            "Must have boon equipped",
-    "RequiredOneOfTraits":                      "Must have boon equipped (ANY)",
-    "RequiredFalseTraits":                      "Must NOT have boon equipped (ANY)",
+    "RequiredTrait":                            "Must have trait (boon or other upgrade) equipped",
+    "RequiredOneOfTraits":                      "Must have trait (boon or other upgrade) equipped (ANY)",
+    "RequiredFalseTraits":                      "Must NOT have trait (boon or other upgrade) equipped (ANY)",
     "RequiredCountOfTraits":                    "Boon candidate set",
-    "RequiredCountOfTraitsCount":               "Minimum matching boons from set",
-    "RequiredTraitsTaken":                      "Must have taken boon (ALL, across save)",
-    "RequiredRunHasOneOfTraits":                "Must have taken boon (ANY, this run)",
+    "RequiredCountOfTraitsCount":               "Minimum matching traits (boons or other upgrades) from set",
+    "RequiredTraitsTaken":                      "Must have taken trait (boon or other upgrade) (ALL, across save)",
+    "RequiredRunHasOneOfTraits":                "Must have taken trait (boon or other upgrade) (ANY, this run)",
 
     # ----- Loadout: god boons (engine name: GodLoot) -----
     "RequiredGodLoot":                          "Must have boon from god",

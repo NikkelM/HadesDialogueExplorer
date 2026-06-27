@@ -935,7 +935,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // SpentMetaPointsCache / LastInteractedWeaponUpgrade to the H1 slice (codex /
 // speech / meta-point / weapon-aspect gates). v15 widened the H1 RunHistory
 // prune with GameplayTime / RunDepthCache / EasyModeLevel (best-clear-time gate).
-const SAVE_STORAGE_SCHEMA = 16;
+// v16 added the H1 CurrentRun RoomHistory prune ({Name, Kills, UsedAssist}) for
+// the used-assist-in-room gate. v17 added KeepsakeChambers to the H1 GameState
+// slice (for the RequiresMaxKeepsake keepsake-mastery gate).
+const SAVE_STORAGE_SCHEMA = 17;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

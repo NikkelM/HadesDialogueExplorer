@@ -36,6 +36,7 @@ function loadStatic(extra = {}) {
         cosmeticVisibleValue: 'visible',
         godLootTraitIndex: { ZeusUpgrade: ['ZeusWeaponTrait', 'LightningRodTrait'], HermesUpgrade: ['RushSpeedBoostTrait'] },
         godTraitNamesForShop: ['ZeusWeaponTrait', 'LightningRodTrait', 'RushSpeedBoostTrait'],
+        keepsakeMaxChambers: { MaxHealthKeepsakeTrait: 75, ReincarnationTrait: 75 },
         ...extra,
     };
     loadData({ textlines: {}, speakers: {}, h1SaveEvalStatic });
@@ -250,10 +251,10 @@ test('H1: textline-record fields are skipped (owned by requirementSetStatus)', (
 // --- needs-static-data fields ------------------------------------------------
 
 test('H1: fields needing static game tables stay unknown with a reason', () => {
-    const r = evaluateH1OtherRequirements({ RequiresMaxKeepsake: { Name: 'X', Count: 1 } }, ctx({ gs: {} }));
+    const r = evaluateH1OtherRequirements({ RequiresCodexFullyUnlocked: true }, ctx({ gs: {} }));
     assert.equal(r.status, 'unknown');
     assert.equal(r.clauses[0].kind, undefined);
-    assert.match(r.clauses[0].reason, /keepsake .*tables/i);
+    assert.match(r.clauses[0].reason, /codex/i);
 });
 
 // --- codex (resolved from the persisted top-level CodexStatus global) --------
@@ -387,6 +388,51 @@ test('H1: RequiredNoGodBoons fails when any equipped trait is a god boon', () =>
     assert.equal(evaluateH1OtherRequirements({ RequiredNoGodBoons: true }, withBoon).status, 'unmet');
     // Wrong save type -> unknown.
     assert.equal(evaluateH1OtherRequirements({ RequiredNoGodBoons: true }, ctx()).status, 'unknown');
+});
+
+
+// --- keepsake mastery (h1SaveEvalStatic.keepsakeMaxChambers) ------------------
+
+test('H1: RequiresMaxKeepsake is met when the equipped keepsake is mastered', () => {
+    loadStatic();
+    // KeepsakeChambers reaches the 75-chamber mastery threshold.
+    const c = ctx({ gs: { LastAwardTrait: 'ReincarnationTrait', KeepsakeChambers: { ReincarnationTrait: 80 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c).status, 'met');
+});
+
+test('H1: RequiresMaxKeepsake is unmet when the equipped keepsake is not yet mastered', () => {
+    loadStatic();
+    const c = ctx({ gs: { LastAwardTrait: 'ReincarnationTrait', KeepsakeChambers: { ReincarnationTrait: 37 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c).status, 'unmet');
+});
+
+test('H1: RequiresMaxKeepsake passes vacuously when no keepsake is equipped', () => {
+    loadStatic();
+    // Engine quirk: the gate only fails when a keepsake is equipped and unmastered.
+    const c = ctx({ gs: {} });
+    assert.equal(evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c).status, 'met');
+});
+
+test('H1: RequiresMaxKeepsake is unmet when the keepsake has no recorded chambers', () => {
+    loadStatic();
+    const c = ctx({ gs: { LastAwardTrait: 'ReincarnationTrait' } });
+    assert.equal(evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c).status, 'unmet');
+});
+
+test('H1: RequiresMaxKeepsake is unknown for a companion keepsake (not in the table)', () => {
+    loadStatic();
+    // Companion keepsakes use the assist-NPC upgrade path, absent from the slice.
+    const c = ctx({ gs: { LastAwardTrait: 'FuryAssistTrait', KeepsakeChambers: { FuryAssistTrait: 80 } } });
+    const r = evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c);
+    assert.equal(r.status, 'unknown');
+    assert.match(r.clauses[0].reason, /companion/i);
+});
+
+test('H1: RequiresMaxKeepsake is unknown when the static table is absent', () => {
+    loadStatic(null);
+    const c = ctx({ gs: { LastAwardTrait: 'ReincarnationTrait', KeepsakeChambers: { ReincarnationTrait: 80 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiresMaxKeepsake: true }, c).status, 'unknown');
+    loadStatic();
 });
 
 

@@ -307,13 +307,86 @@ def extract_god_loot_data(loot_parsed: dict) -> dict:
     }
 
 
-def extract_save_eval_static(meta_parsed: dict, weapon_parsed: dict, loot_parsed: Optional[dict] = None) -> dict:
+def _trait_store(trait_parsed: dict) -> Dict[str, LuaTable]:
+    """Map ``{trait_name: LuaTable}`` from the flat ``TraitData`` table.
+
+    Doubles as the ``InheritFrom`` resolution scope so a keepsake can see the
+    ``GiftTrait`` / ``AssistTrait`` base it inherits ``ChamberThresholds`` from.
+    """
+    store: Dict[str, LuaTable] = {}
+    data = trait_parsed.get("TraitData")
+    if isinstance(data, LuaTable):
+        for name, table in data.named.items():
+            if isinstance(table, LuaTable):
+                store[name] = table
+    return store
+
+
+def _inherited_number_list(
+    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
+) -> List[float]:
+    """Resolve an inheritable numeric-list field (owner's own list wins, else
+    the first non-empty inherited list). Cycle-guarded."""
+    _seen = _seen if _seen is not None else set()
+    if owner_id in _seen:
+        return []
+    _seen.add(owner_id)
+    table = store.get(owner_id)
+    if table is None:
+        return []
+    val = table.named.get(key)
+    if isinstance(val, LuaTable):
+        return [x for x in val.array if isinstance(x, (int, float))]
+    if key in table.named:
+        return []
+    inherit = table.named.get("InheritFrom")
+    if isinstance(inherit, LuaTable):
+        for parent in inherit.array:
+            if isinstance(parent, str):
+                lst = _inherited_number_list(parent, store, key, _seen)
+                if lst:
+                    return lst
+    return []
+
+
+def extract_keepsake_max_chambers(trait_parsed: dict) -> Dict[str, int]:
+    """Map each threshold-based keepsake trait to the chamber count at which it
+    is mastered (``IsKeepsakeMaxed``, KeepsakeScripts.lua).
+
+    ``RequiresMaxKeepsake`` (RunManager.lua:3152) passes unless the currently
+    equipped keepsake (``GameState.LastAwardTrait``) is mastered. A keepsake is
+    mastered once its ``GameState.KeepsakeChambers`` count reaches the sum of its
+    ``ChamberThresholds`` (every keepsake inherits ``{25, 50}`` from the
+    ``GiftTrait`` / ``AssistTrait`` base, so the threshold is 75). The companion
+    keepsakes (the ``AssistTrait`` inheritors with
+    ``KeepsakeRarityGameStateRequirements``) are mastered via the assist-NPC
+    upgrade levels instead, which the save slice doesn't carry, so they're left
+    out of this map and stay indeterminate.
+    """
+    store = _trait_store(trait_parsed)
+    out: Dict[str, int] = {}
+    for name in store:
+        if _inherited_flag(name, store, "KeepsakeRarityGameStateRequirements"):
+            continue
+        thresholds = _inherited_number_list(name, store, "ChamberThresholds")
+        if thresholds:
+            out[name] = int(sum(thresholds))
+    return out
+
+
+def extract_save_eval_static(
+    meta_parsed: dict,
+    weapon_parsed: dict,
+    loot_parsed: Optional[dict] = None,
+    trait_parsed: Optional[dict] = None,
+) -> dict:
     """Bundle every static table the H1 save evaluator needs.
 
     ``meta_parsed`` is the parsed ``MetaUpgradeData.lua`` (carries
     ``MetaUpgradeOrder`` / ``ShrineUpgradeOrder`` / ``MetaUpgradeData``);
     ``weapon_parsed`` is the parsed ``WeaponUpgradeData.lua``;
-    ``loot_parsed`` is the parsed ``LootData.lua`` (per-god boon owners).
+    ``loot_parsed`` is the parsed ``LootData.lua`` (per-god boon owners);
+    ``trait_parsed`` is the parsed ``TraitData.lua`` (keepsake thresholds).
     Returns the single ``h1SaveEvalStatic`` payload the build attaches to
     the H1 graph data and ``data.js`` exposes to ``gamestate-eval-h1.js``.
     """
@@ -326,4 +399,5 @@ def extract_save_eval_static(meta_parsed: dict, weapon_parsed: dict, loot_parsed
         "cosmeticVisibleValue": _COSMETIC_VISIBLE_VALUE,
         "godLootTraitIndex": god_loot["godLootTraitIndex"],
         "godTraitNamesForShop": god_loot["godTraitNamesForShop"],
+        "keepsakeMaxChambers": extract_keepsake_max_chambers(trait_parsed or {}),
     }

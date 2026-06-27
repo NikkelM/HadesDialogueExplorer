@@ -16,6 +16,7 @@ from src.extractors.hades1.save_eval_data import (
     extract_strike_through_change_value,
     extract_weapon_upgrade_slots,
     extract_god_loot_data,
+    extract_keepsake_max_chambers,
 )
 
 
@@ -116,6 +117,39 @@ LootData =
 """
 
 
+TRAIT_LUA = """
+TraitData =
+{
+    GiftTrait =
+    {
+        Slot = "Keepsake",
+        ChamberThresholds = { 25, 50 },
+    },
+    AssistTrait =
+    {
+        Slot = "Assist",
+        ChamberThresholds = { 25, 50 },
+    },
+    MaxHealthKeepsakeTrait =
+    {
+        InheritFrom = { "GiftTrait" },
+    },
+    FuryAssistTrait =
+    {
+        InheritFrom = { "AssistTrait" },
+        KeepsakeRarityGameStateRequirements =
+        {
+            { AssistUpgradeLevel = { Name = "FuryAssistTrait", Level = 0 } },
+        },
+    },
+    LightningRodTrait =
+    {
+        Slot = "Minor",
+    },
+}
+"""
+
+
 def test_meta_upgrade_order_length_counts_mirror_rows():
     parsed = parse(META_LUA)
     assert extract_meta_upgrade_order_length(parsed) == 3
@@ -153,7 +187,9 @@ def test_weapon_upgrade_slots_capture_the_per_slot_fields():
 
 
 def test_extract_save_eval_static_bundles_every_table():
-    bundle = extract_save_eval_static(parse(META_LUA), parse(WEAPON_LUA), parse(LOOT_LUA))
+    bundle = extract_save_eval_static(
+        parse(META_LUA), parse(WEAPON_LUA), parse(LOOT_LUA), parse(TRAIT_LUA)
+    )
     assert bundle == {
         "metaUpgradeOrderLength": 3,
         "shrineUpgradeOrder": [
@@ -185,6 +221,11 @@ def test_extract_save_eval_static_bundles_every_table():
             "ZeusBonusBounceTrait",
             "ZeusWeaponTrait",
         ],
+        "keepsakeMaxChambers": {
+            "GiftTrait": 75,
+            "AssistTrait": 75,
+            "MaxHealthKeepsakeTrait": 75,
+        },
     }
 
 
@@ -217,6 +258,31 @@ def test_shop_set_uses_inherited_godloot_and_treat_as_god_loot():
 def test_god_loot_missing_table_degrades_gracefully():
     empty = extract_god_loot_data(parse("SomethingElse = { 1, 2 }"))
     assert empty == {"godLootTraitIndex": {}, "godTraitNamesForShop": []}
+
+
+def test_keepsake_max_chambers_sum_inherited_thresholds():
+    data = extract_keepsake_max_chambers(parse(TRAIT_LUA))
+    # A keepsake inherits ChamberThresholds { 25, 50 } from GiftTrait -> mastered
+    # at the 75-chamber sum.
+    assert data["MaxHealthKeepsakeTrait"] == 75
+
+
+def test_keepsake_max_chambers_excludes_companion_keepsakes():
+    data = extract_keepsake_max_chambers(parse(TRAIT_LUA))
+    # The companion keepsakes use KeepsakeRarityGameStateRequirements (assist-NPC
+    # upgrade levels), not chamber thresholds, so they're left out and stay
+    # indeterminate in the viewer.
+    assert "FuryAssistTrait" not in data
+
+
+def test_keepsake_max_chambers_excludes_non_keepsake_traits():
+    data = extract_keepsake_max_chambers(parse(TRAIT_LUA))
+    # A boon trait has no ChamberThresholds and isn't a keepsake.
+    assert "LightningRodTrait" not in data
+
+
+def test_keepsake_max_chambers_missing_table_degrades_gracefully():
+    assert extract_keepsake_max_chambers(parse("SomethingElse = { 1, 2 }")) == {}
 
 
 def test_missing_tables_degrade_gracefully():
