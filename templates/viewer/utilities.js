@@ -361,10 +361,16 @@ export function renderTierBadgeHtml(tl) {
     } else {
         strongest = 'normal';
         label = 'Normal';
-        icon = '\u25CF';
+        // Rendered as a CSS-drawn dot (see renderTierBadgeHtml return / .priority-icon-dot):
+        // the filled-circle glyph (U+25CF) sits low within its em box in the font,
+        // so a drawn circle is used instead to centre cleanly against the label.
+        icon = null;
         tip = 'Normal dialogues are played only when no super-priority or priority dialogue from the same context is eligible. Within a set, a random dialogue from all eligible dialogues is picked.';
     }
-    return `<span class="priority-badge priority-${strongest}" data-tooltip="${escapeHtml(tip)}">${icon} ${escapeHtml(label)}</span>`;
+    const iconHtml = (icon === null)
+        ? '<span class="priority-icon priority-icon-dot"></span>'
+        : `<span class="priority-icon">${icon}</span>`;
+    return `<span class="priority-badge priority-${strongest}" data-tooltip="${escapeHtml(tip)}">${iconHtml}${escapeHtml(label)}</span>`;
 }
 
 export function renderSetLevelBadgeHtml(tl) {

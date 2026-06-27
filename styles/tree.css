@@ -99,11 +99,32 @@
    below then zeros out the npc-tag's own auto margin (which only kicks
    in when no badge is present). */
 .priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
     font-size: var(--fs-2xs);
     padding: 1px 5px;
     border-radius: 2px;
     flex-shrink: 0;
     font-weight: 500;
+}
+/* The leading priority glyph (stars / dot / arrow) as its own flex item, so it
+   centres against the label rather than sitting on the text baseline - the
+   filled-circle "Normal" glyph in particular renders low otherwise. */
+.priority-icon {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+/* "Normal" tier dot, drawn in CSS rather than the U+25CF glyph (which sits low
+   in the font). em-sized so it tracks the badge font, and centred by the
+   .priority-icon flex rules above. */
+.priority-icon-dot {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
 }
 .tree-label .priority-badge { margin-left: auto; }
 .tree-label .priority-badge ~ .npc-tag { margin-left: 8px; }
