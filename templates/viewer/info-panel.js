@@ -31,6 +31,7 @@ import {
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -374,26 +375,75 @@ function _renderPathOpEntry(opKey, key, val) {
 // Compact friendly summary of a bare-key value. Works for any bare
 // key, including ones without a ``reqTypeLabels`` entry - the caller
 // drives the label rendering separately.
-function _renderBareKeyValueHtml(val) {
+function _renderBareKeyValueHtml(val, key) {
     if (val === null || val === undefined) return escapeHtml(String(val));
     if (Array.isArray(val)) {
         if (val.length === 0) return '<code>(empty)</code>';
         return val.map(v => `<code>${escapeHtml(_formatScalar(v))}</code>`).join(', ');
     }
     if (typeof val === 'object') {
-        const entries = Object.entries(val);
-        if (entries.length === 1 && entries[0][0] === 'Count') {
-            return `<code>${escapeHtml(_formatScalar(entries[0][1]))}</code>`;
+        const kind = _reqGateKind(key);
+        const op = _GATE_OP_SYMBOL[kind];
+        const objKeys = Object.keys(val);
+        // ``{Count}`` only -> just the count (the label carries the min/max sense).
+        if (objKeys.length === 1 && objKeys[0] === 'Count') {
+            return `<code>${escapeHtml(_formatScalar(val.Count))}</code>`;
         }
-        if (entries.length === 2 && 'Count' in val && 'Name' in val) {
-            return `<code>${escapeHtml(_formatScalar(val.Name))}</code> &gt;= <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
+        // ``{Name, Count}`` threshold pair -> ``Name op Count``.
+        if (objKeys.length === 2 && 'Count' in val && 'Name' in val) {
+            return `<code>${escapeHtml(_formatScalar(val.Name))}</code> ${op} <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
         }
-        return entries
-            .map(([k, v]) => `<code>${escapeHtml(k)}</code> &gt;= <code>${escapeHtml(_formatScalar(v))}</code>`)
+        // Codex entry ``{EntryName, EntryIndex}`` -> the entry name plus how far
+        // it must be unlocked. EntryIndex is a cumulative threshold: the gate
+        // requires the first N entries of that codex subject to be unlocked
+        // (HasCodexEntryBeenFound checks indices 1..N), so it conveys "how much
+        // about this subject the player has revealed", not a positional id.
+        if ('EntryName' in val) {
+            const idx = Number(val.EntryIndex) || 1;
+            const name = `<code>${escapeHtml(_formatScalar(val.EntryName))}</code>`;
+            const detail = idx === 1 ? 'first entry' : `first <code>${idx}</code> entries`;
+            return `${name} (${detail})`;
+        }
+        // "N of a set" gates: one array-valued key plus a ``Count`` (e.g.
+        // RequiredMinAnyCosmetics ``{Cosmetics: [...], Count}``,
+        // RequiredConsumablesThisRun ``{Names: [...], Count}``) -> ``<at least|at
+        // most> N of: items`` rather than dumping the array against an operator.
+        const listKey = objKeys.find(k => Array.isArray(val[k]));
+        if (listKey && 'Count' in val && objKeys.length === 2) {
+            return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}`;
+        }
+        // Scalar value map -> ``key op value`` per entry. ``op`` reflects the
+        // gate's real comparison: ``=`` for RequiredValues (must equal), ``!=``
+        // for RequiredFalseValues (must not equal), ``<=`` for max thresholds,
+        // ``>=`` otherwise.
+        return Object.entries(val)
+            .map(([k, v]) => `<code>${escapeHtml(k)}</code> ${op} <code>${escapeHtml(_formatScalar(v))}</code>`)
             .join(', ');
     }
     return `<code>${escapeHtml(_formatScalar(val))}</code>`;
 }
+
+// Comparison sense of a bare-key gate, derived from the requirement key:
+//   'eq'  - RequiredValues: the field must EQUAL the value.
+//   'neq' - RequiredFalseValues: the field must NOT equal the value.
+//   'max' - a "Max" threshold: the value must be AT MOST the target.
+//   'min' - everything else: an "at least" threshold.
+// Without this, equality / negation / max gates render with ">=", stating the
+// opposite of what they check (e.g. RequiredFalseValues "must NOT equal X"
+// rendered as "field >= X", or RequiredLifetimeResourcesSpentMax as "Gems >= N").
+// "Max" is matched only as a word (followed by an uppercase letter or the end
+// of the key) so "...Min..." keys and unrelated substrings never trip it.
+function _reqGateKind(key) {
+    if (key === 'RequiredFalseValues') return 'neq';
+    if (key === 'RequiredValues') return 'eq';
+    if (/Max([A-Z]|$)/.test(key)) return 'max';
+    return 'min';
+}
+
+// Operator symbol shown between a gate's field/name and its value, per kind.
+const _GATE_OP_SYMBOL = { min: '&gt;=', max: '&lt;=', eq: '=', neq: '&ne;' };
+// Quantifier phrase for the "N of a set" gates, per kind.
+const _GATE_OF_PHRASE = { min: 'at least', max: 'at most', eq: 'exactly', neq: 'not exactly' };
 
 // Format a bare-key entry as ``Label: summary``. Labelled keys
 // surface the friendly pill via ``renderReqTypeHtml``; unlabelled keys
@@ -402,7 +452,7 @@ function _renderBareKeyValueHtml(val) {
 // with comma+space spacing and map values use the ``Name >= Count``
 // idiom rather than the raw JSON fallback.
 function _renderBareKeyEntry(key, val) {
-    return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val)}`;
+    return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
 }
 
 // Lua identifier check for the tooltip formatter: bare keys reproduce
@@ -1206,6 +1256,12 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             if (key.startsWith('NamedRequirements')) {
                 c.status = namedRequirementGroupVerdict(key, otherRequirements[key], sctx, owner);
                 if (c.status !== 'unknown') c.reason = null;
+            } else if (c.status === 'unmet' && gameId === 'hades1'
+                && h1FieldPermanentlyUnmet(key, otherRequirements[key], sctx.gameState, otherRequirements)) {
+                // An H1 monotonic "max" gate already surpassed can never recover
+                // (its counter only grows) -> permanently locked, not just unmet.
+                c.status = 'unobtainable';
+                c.reason = null;
             }
         }
         const _statuses = [...gateByKey.values()].map(c => c.status);
@@ -1218,7 +1274,8 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         if (!c) return '';
         const tip = c.status === 'met' ? 'Satisfied by your save.'
             : c.status === 'unmet' ? 'Not satisfied by your save.'
-                : (c.reason || 'Can\u2019t be determined from the save.');
+                : c.status === 'unobtainable' ? 'Permanently locked: this save value only ever grows, so it can never satisfy this cap again.'
+                    : (c.reason || 'Can\u2019t be determined from the save.');
         return `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
     };
 

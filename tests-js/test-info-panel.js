@@ -1076,6 +1076,11 @@ function fixtureWithSimplifiedOtherReqs() {
         RequiredMinActiveMetaUpgradeLevel: 'Required min active meta upgrade level',
         RequiredKills:                     'Required kills',
         RequiredMinNPCInteractions:        'Required min NPC interactions',
+        RequiredLifetimeResourcesSpentMax: 'Maximum lifetime resource spent',
+        RequiredValues:                    'GameState field must equal',
+        RequiredFalseValues:               'GameState field must NOT equal',
+        RequiredMinAnyCosmetics:           'Minimum cosmetics owned (from set)',
+        RequiredCodexEntry:                'Codex entry must be unlocked',
     };
     data.textlines.SimplifiedOtherReqDemo = {
         owner: 'NPC_Orpheus_01',
@@ -1149,6 +1154,11 @@ function fixtureWithSimplifiedOtherReqs() {
             RequiredMinActiveMetaUpgradeLevel: { Count: 1, Name: 'BossDifficultyShrineUpgrade' },
             RequiredKills:               { Harpy: 2 },
             RequiredMinNPCInteractions:  { 'NPC_Hades_01': 5 },
+            RequiredLifetimeResourcesSpentMax: { Gems: 5000 },
+            RequiredValues:              { CurrentEmployeeOfTheMonth: 'Dusa' },
+            RequiredFalseValues:         { CurrentEmployeeOfTheMonth: 'Achilles' },
+            RequiredMinAnyCosmetics:     { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 2 },
+            RequiredCodexEntry:          { EntryIndex: 3, EntryName: 'RoomRewardConsolationPrize' },
         },
     };
     return data;
@@ -1288,6 +1298,43 @@ test('bare-key map objects render as "k >= v, k >= v"', () => {
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required kills<\/span>: <code>Harpy<\/code> &gt;= <code>2<\/code>/);
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min NPC interactions<\/span>: <code>NPC_Hades_01<\/code> &gt;= <code>5<\/code>/);
+});
+
+test('a "Max" bare-key gate renders with <= (at most), not >=', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // RequiredLifetimeResourcesSpentMax gates on "spent at most N", so the
+    // operator must be <= - rendering >= would state the opposite.
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Maximum lifetime resource spent<\/span>: <code>Gems<\/code> &lt;= <code>5000<\/code>/);
+    assert.doesNotMatch(lastHtml, /Maximum lifetime resource spent<\/span>: <code>Gems<\/code> &gt;=/);
+});
+
+test('equality / negation gates render with = / != , not >=', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // RequiredValues is an equality check (field === value); RequiredFalseValues
+    // is its negation. Rendering either with >= states the opposite.
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>GameState field must equal<\/span>: <code>CurrentEmployeeOfTheMonth<\/code> = <code>Dusa<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>GameState field must NOT equal<\/span>: <code>CurrentEmployeeOfTheMonth<\/code> &ne; <code>Achilles<\/code>/);
+});
+
+test('"N of a set" gates render as "at least N of: items", not an array dump', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // RequiredMinAnyCosmetics {Cosmetics:[...], Count} -> "at least N of: list".
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Minimum cosmetics owned \(from set\)<\/span>: at least <code>2<\/code> of: <code>Cosmetic_A<\/code>, <code>Cosmetic_B<\/code>/);
+});
+
+test('a structured Codex gate renders the entry name and unlock depth, not raw index/operator', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // EntryIndex is a cumulative threshold (first N entries unlocked), so it is
+    // surfaced as readable detail alongside the entry name.
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Codex entry must be unlocked<\/span>: <code>RoomRewardConsolationPrize<\/code> \(first <code>3<\/code> entries\)/);
+    // The old garbage render dumped "EntryIndex >= 3, EntryName >= ..." as the
+    // visible value; the raw value still appears in the row's data-tooltip, so
+    // only assert the broken visible form is gone.
+    assert.doesNotMatch(lastHtml, /EntryIndex<\/code>/);
 });
 
 
