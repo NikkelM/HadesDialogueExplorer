@@ -4,11 +4,10 @@ dialogues (the ``_A`` / ``_B`` and ``_Alt`` variant patterns).
 Two-step algorithm: (1) group textlines by name stem (strip a trailing
 ``_?[A-Z]`` suffix or an explicit ``_Alt`` marker), (2) confirm a group only
 when its members are mutually exclusive. Confirmation accepts a direct
-``RequiredFalse*`` / ``RequiredAny*`` cross-reference, and three indirect
-patterns that never name each other directly: complementary choice branches
-(Accept vs Decline of one choice), HasAny-vs-HasNone over the same referenced
-set, and a typo'd cross-reference (a word-order variant of a sibling that is not
-itself a real textline). Sharing a stem alone is not enough.
+``RequiredFalse*`` / ``RequiredAny*`` cross-reference, and two indirect patterns
+that never name each other directly: complementary choice branches (Accept vs
+Decline of one choice) and HasAny-vs-HasNone over the same referenced set.
+Sharing a stem alone is not enough.
 """
 
 from src.graph import build_alternates
@@ -167,31 +166,5 @@ class TestBuildAlternates:
         tls = {
             "Talk_A": _tl({"RequiredFalseTextLines": ["LineX"]}),
             "Talk_B": _tl({"RequiredAnyTextLines": ["LineY"]}),
-        }
-        assert build_alternates(tls) == {}
-
-    def test_typo_transposed_cross_reference_confirms(self):
-        # Members reference a word-order typo of each other (a cut name that is
-        # not a real textline), so the intended cross-reference is recognised.
-        tls = {
-            "ChronosBossOutroPreTrueEnding01": _tl(
-                {"RequiredFalseTextLines": ["ChronosBossPreTrueEndingOutro01_B"]}
-            ),
-            "ChronosBossOutroPreTrueEnding01_B": _tl(
-                {"RequiredFalseTextLines": ["ChronosBossPreTrueEndingOutro01"]}
-            ),
-        }
-        assert build_alternates(tls) == {
-            "ChronosBossOutroPreTrueEnding01": ["ChronosBossOutroPreTrueEnding01_B"],
-            "ChronosBossOutroPreTrueEnding01_B": ["ChronosBossOutroPreTrueEnding01"],
-        }
-
-    def test_transposed_reference_to_real_textline_does_not_confirm(self):
-        # If the referenced word-order variant *is* a real textline, it is a
-        # genuine (different) line, not a typo - do not infer an alternate.
-        tls = {
-            "FooBarBaz01": _tl({"RequiredFalseTextLines": ["FooBazBar01_B"]}),
-            "FooBarBaz01_B": _tl(),
-            "FooBazBar01_B": _tl(),
         }
         assert build_alternates(tls) == {}

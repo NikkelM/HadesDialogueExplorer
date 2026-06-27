@@ -21,6 +21,13 @@ explanation):
       satisfied) or in positive ``HasAll`` / ``HasAny`` requirements
       (the referencing textline can therefore never play).
 
+  typo-or-bug
+      The reference is a clear typo, convention drift, or game-data bug
+      (e.g. transposed words in the name). The intended textline usually
+      exists under a slightly different name; the game still ships the
+      broken reference, so the tool surfaces it as unresolved rather than
+      silently "correcting" it.
+
   extractor-deferred
       The referenced textline IS defined in the H2 source, but inside
       a container that the current extractor set does not walk yet.
@@ -34,19 +41,7 @@ explanation):
 """
 
 HADES2_KNOWN_UNRESOLVED_REFS = {
-    # --- cut-content (9) ---
-    "ChronosBossPreTrueEndingOutro01": {
-        "category": "cut-content",
-        "reason": "Cut textline; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Chronos.lua "
-                  "(trivially satisfied).",
-    },
-    "ChronosBossPreTrueEndingOutro01_B": {
-        "category": "cut-content",
-        "reason": "Cut _B variant; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Chronos.lua "
-                  "(trivially satisfied).",
-    },
+    # --- cut-content (7) ---
     "ChronosBossSuit01": {
         "category": "cut-content",
         "reason": "Cut textline; referenced only as a defensive PathFalse "
@@ -94,6 +89,26 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
                   "WorldUpgradeData.lua; cut, so the HasAny falls back to "
                   "the surviving option only.",
     },
+
+    # --- typo-or-bug (2) ---
+    "ChronosBossPreTrueEndingOutro01": {
+        "category": "typo-or-bug",
+        "reason": "Transposed-word typo for ChronosBossOutroPreTrueEnding01 "
+                  "(which is defined). Referenced as a PathFalse check in "
+                  "EnemyData_Chronos.lua that was meant to make the two lines "
+                  "forbid each other; because of the typo the check targets a "
+                  "non-existent line and is trivially satisfied, so the "
+                  "intended mutual-exclusion never takes effect.",
+    },
+    "ChronosBossPreTrueEndingOutro01_B": {
+        "category": "typo-or-bug",
+        "reason": "Transposed-word typo for ChronosBossOutroPreTrueEnding01_B "
+                  "(which is defined). Referenced as a PathFalse check in "
+                  "EnemyData_Chronos.lua that was meant to make the two lines "
+                  "forbid each other; because of the typo the check targets a "
+                  "non-existent line and is trivially satisfied, so the "
+                  "intended mutual-exclusion never takes effect.",
+    },
 }
 
 
@@ -105,6 +120,7 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
 # are populated as the union of both games' categories at import time.
 HADES2_UNRESOLVED_CATEGORY_LABELS = {
     "cut-content":        "Cut content",
+    "typo-or-bug":        "Typo / bug",
     "extractor-deferred": "Extractor coverage gap",
 }
 
@@ -114,6 +130,10 @@ HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS = {
         "final game data. Whether this breaks anything depends on how "
         "it is referenced (a null-check is harmless; a positive requirement "
         "blocks the referencing textline).",
+    "typo-or-bug":
+        "The reference looks like a typo, convention drift, or game-data "
+        "bug. The intended textline may exist under a slightly different "
+        "name, or no such textline is actually needed at all.",
     "extractor-deferred":
         "The referenced textline IS defined in the H2 source, but inside "
         "a container that the current extractor set does not walk yet "

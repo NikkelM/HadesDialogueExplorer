@@ -65,7 +65,10 @@ def count_distinct_speakers(owner_ids, speakers_map: dict | None = None) -> int:
     return len(chars)
 
 
-def build_graph_data(owners: dict, speakers: dict | None = None) -> dict:
+def build_graph_data(
+    owners: dict,
+    speakers: dict | None = None,
+) -> dict:
     """
     Build the final data structure for the viewer from per-source extractor
     output.
@@ -688,28 +691,15 @@ def _choice_complement(ref: str):
     return None
 
 
-def _name_token_signature(name: str) -> tuple:
-    """Order-independent multiset of a name's camelCase / underscore tokens.
-
-    Lets us spot developer typos where a referenced name has the same words in
-    a different order (e.g. ChronosBossPreTrueEndingOutro01 is a transposition
-    of the real ChronosBossOutroPreTrueEnding01), so the intended cross-
-    reference can still be recognised.
-    """
-    parts = re.findall(r"[A-Z]+(?![a-z])|[A-Z][a-z]*|[a-z]+|[0-9]+", name.replace("_", ""))
-    return tuple(sorted(p.lower() for p in parts))
-
-
 def build_alternates(textlines: dict) -> dict:
     """Detect mutually exclusive alternate dialogues using two-step confirmation.
 
     Step 1: Group textlines by name stem (regex strips a trailing _Alt or
     _?[A-Z]).
     Step 2: Confirm that members are mutually exclusive. Beyond a direct
-    RequiredFalse/RequiredAny cross-reference, three indirect patterns are
-    recognised: a typo'd cross-reference (a word-order variant of a sibling that
-    is not a real textline), complementary choice branches (Accept vs Decline of
-    the same choice), and HasAny-vs-HasNone over the same referenced set.
+    RequiredFalse/RequiredAny cross-reference, two indirect patterns are
+    recognised: complementary choice branches (Accept vs Decline of the same
+    choice) and HasAny-vs-HasNone over the same referenced set.
 
     Returns a dict mapping textline name -> list of sibling alternate names
     (excluding self). Only textlines with confirmed alternates are included.
@@ -757,18 +747,11 @@ def build_alternates(textlines: dict) -> dict:
         confirmed = set()
         names = sorted(candidates)
 
-        # Direct or typo'd cross-reference to a sibling.
+        # Direct cross-reference to a sibling.
         for name in names:
             refs = any_refs[name] | false_refs[name]
             for sib in candidates.intersection(refs):
                 confirmed.update((name, sib))
-            for ref in refs:
-                if ref in textlines or ref in candidates:
-                    continue
-                sig = _name_token_signature(ref)
-                for sib in candidates:
-                    if sib != name and _name_token_signature(sib) == sig:
-                        confirmed.update((name, sib))
 
         # Complementary gates that never name each other directly.
         for a, b in itertools.combinations(names, 2):

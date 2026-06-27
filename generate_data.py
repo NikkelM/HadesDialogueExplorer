@@ -242,7 +242,10 @@ def generate_hades2_source(
     if attached:
         print(f"  Narrative priorities attached: {attached}")
 
-    graph_data = build_graph_data(owners, speakers=HADES2_SPEAKERS)
+    graph_data = build_graph_data(
+        owners,
+        speakers=HADES2_SPEAKERS,
+    )
 
     stats = graph_data["stats"]
     print(f"  Textlines: {stats['totalTextlines']}")
