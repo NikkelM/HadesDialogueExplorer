@@ -30,6 +30,7 @@
 import { textlines, namedRequirements, getActiveGame } from './data.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { evaluateH1OtherReqPermanence } from './gamestate-eval-h1.js';
 import { gameStateClausePermanence } from './permanent-state.js';
 
 let _unobtainablePlayedSet = null;
@@ -136,6 +137,12 @@ function computeUnobtainable(name, playedSet, stack) {
 function setPermanentlyUnmet(reqHost, hostName, playedSet, stack, namedStack) {
     if (requirementSetUnobtainable(reqHost, hostName, playedSet, stack)) return true;
     const other = (reqHost && reqHost.otherRequirements) || {};
+    // Hades 1 flat "max" gates over monotonic counters (run counts, lifetime
+    // resources, one-way weapon-aspect unlocks, cumulative interactions, ...)
+    // become permanently unmet once their one-way counter is surpassed. A no-op
+    // for H2, whose otherRequirements use array clauses / NamedRequirements
+    // (handled by the loop below).
+    if (evaluateH1OtherReqPermanence(other, _unobtainableGameState) === 'unmet') return true;
     for (const [key, val] of Object.entries(other)) {
         if (key === 'NamedRequirements') {
             // Must pass -> permanently unmet if any named set can never be met.

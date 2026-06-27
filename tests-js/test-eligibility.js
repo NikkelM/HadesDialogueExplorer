@@ -844,3 +844,41 @@ describe('isUnobtainable: permanent GameState + named-requirement gates', () => 
             'met');
     });
 });
+
+// Hades 1 flat "max" gates over monotonic counters: surpassing the cap is a
+// permanent lock (the counter only grows), so the dialogue is unobtainable, not
+// merely blocked. The fixtures are loaded as the default (hades1) game.
+describe('isUnobtainable: Hades 1 monotonic max gates', () => {
+    const tl = (otherRequirements = {}) => ({
+        owner: 'NPC_Test_01', section: 'InteractTextLineSets',
+        requirements: {}, otherRequirements,
+    });
+    before(() => {
+        loadData({
+            textlines: {
+                MaxRunsLine: tl({ RequiredMaxCompletedRuns: 2 }),
+                MaxSpentLine: tl({ RequiredLifetimeResourcesSpentMax: { Gems: 100 } }),
+                PerRunLine: tl({ RequiredMaxDepth: 1 }),
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+        });
+    });
+
+    test('a surpassed run-count cap makes the dialogue unobtainable', () => {
+        const over = { gameState: { RunHistory: [{}, {}, {}] } };   // 3 > 2
+        assert.equal(isUnobtainable('MaxRunsLine', new Set(), null, over), true);
+        const under = { gameState: { RunHistory: [{}, {}] } };      // 2 <= 2
+        assert.equal(isUnobtainable('MaxRunsLine', new Set(), null, under), false);
+    });
+
+    test('a surpassed lifetime-resource cap is unobtainable, but a per-run cap is not', () => {
+        const over = { gameState: { LifetimeResourcesSpent: { Gems: 250 } } };
+        assert.equal(isUnobtainable('MaxSpentLine', new Set(), null, over), true);
+        // RequiredMaxDepth is per-run (resets each run) -> never permanent.
+        assert.equal(isUnobtainable('PerRunLine', new Set(), null, { gameState: { RunHistory: [{}, {}, {}] } }), false);
+    });
+
+    test('without a GameState slice the max gate never locks', () => {
+        assert.equal(isUnobtainable('MaxRunsLine', new Set()), false);
+    });
+});

@@ -602,6 +602,57 @@ function h1CombineAnd(statuses) {
     return 'met';
 }
 
+// ---- permanence (blocked vs unobtainable) ------------------------------------
+//
+// A handful of H1 ``otherRequirements`` "max" gates read a monotonic-up
+// persistent counter that only ever grows over the profile's lifetime in normal
+// play (run counts, lifetime resources, one-way weapon-aspect unlocks/upgrades,
+// cumulative NPC / room interaction counts, cashed-out quests). Once such a
+// counter passes the gate's cap it can never come back down, so the gate is not
+// merely *unmet now* but *permanently unmet* - the dialogue is unobtainable, not
+// just blocked. (Story-reset wipes these, the same documented caveat as the H2
+// permanent-state allowlist; permanence here describes normal play.)
+//
+// Each entry returns true when the gate is permanently unmet given the current
+// GameState. Conservative: only the already-surpassed case is permanent. Gates
+// over resettable / per-run / respec-able / removable state (depth, last stands,
+// health, meta-upgrade levels, Heat, cosmetics, support AI) are intentionally
+// absent and stay "blocked".
+const H1_PERMANENT_UNMET_EVALS = {
+    RequiredMaxCompletedRuns: (v, ctx) => h1Len(h1Gs(ctx, 'RunHistory')) > v,
+    RequiredMaxRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
+    RequiredMaxRunsWithWeapons: (v, ctx) => Object.entries(v || {}).some(([w, c]) => h1RunsWithWeapon(ctx, w) > c),
+    RequiredMaxUnlockedWeaponEnchantments: (v, ctx) => h1WeaponStaticReady() && h1CountWeaponUnlocks(ctx, false) > v,
+    RequiredMaxNPCInteractions: (v, ctx) => { const n = h1Gs(ctx, 'NPCInteractions') || {}; return Object.entries(v || {}).some(([k, c]) => n[k] != null && h1Num(n[k]) > c); },
+    RequiredMaxTimesSeenRoom: (v, ctx) => { const rc = h1Gs(ctx, 'RoomCountCache') || {}; return Object.entries(v || {}).some(([r, c]) => rc[r] != null && h1Num(rc[r]) > c); },
+    RequiredMaxQuestsComplete: (v, ctx) => h1CountCashedOutQuests(ctx) > v,
+    RequiredLifetimeResourcesGainedMax: (v, ctx) => { const r = h1Gs(ctx, 'LifetimeResourcesGained') || {}; return Object.entries(v || {}).some(([k, a]) => h1Num(r[k]) > a); },
+    RequiredLifetimeResourcesSpentMax: (v, ctx) => { const r = h1Gs(ctx, 'LifetimeResourcesSpent') || {}; return Object.entries(v || {}).some(([k, a]) => h1Num(r[k]) > a); },
+    // Aspect upgrades are one-way; an already-maxed aspect (==5) can never
+    // un-max, so a "must NOT be maxed" gate is permanently unmet once maxed.
+    RequiredFalseMaxWeaponUpgrade: (weapon, ctx, all) => {
+        const idx = all && all.RequiredFalseMaxWeaponUpgradeIndex;
+        if (weapon == null || idx == null) return false;
+        const w = h1Gs(ctx, 'WeaponUnlocks') || {};
+        return !!(w[weapon] && w[weapon][idx] === 5);
+    },
+};
+
+// Whether a Hades 1 textline's flat ``otherRequirements`` map is *permanently*
+// unmet against the persistent GameState slice (one of its monotonic "max"
+// gates is already surpassed and can never recover). Returns 'unmet' or null.
+// ``gameStateSlice`` is the persisted H1 GameState slice; the monotonic gates
+// read only GameState tables, so a minimal ``ctx`` (no current/prev run) is used.
+export function evaluateH1OtherReqPermanence(otherRequirements, gameStateSlice) {
+    if (!otherRequirements || !gameStateSlice) return null;
+    const ctx = { gs: gameStateSlice, currentRun: null, prevRun: null, runHistory: null };
+    for (const [field, value] of Object.entries(otherRequirements)) {
+        const evalFn = H1_PERMANENT_UNMET_EVALS[field];
+        if (evalFn && evalFn(value, ctx, otherRequirements)) return 'unmet';
+    }
+    return null;
+}
+
 // Dialogue-trigger context per Hades 1 owner, deciding whether a dialogue's
 // ``CurrentRun.*`` gates resolve from a loaded save and against which save type
 // (see ``currentRunResolvable`` in gamestate-eval.js for the full rationale):

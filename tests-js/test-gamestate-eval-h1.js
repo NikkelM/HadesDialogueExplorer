@@ -11,6 +11,7 @@ import { strict as assert } from 'node:assert';
 import { loadData } from '../templates/viewer/data.js';
 import {
     evaluateH1OtherRequirements,
+    evaluateH1OtherReqPermanence,
     H1_OWNER_RUN_CONTEXT,
     H1_GAMESTATE_SLICE_KEYS,
     H1_CURRENTRUN_SLICE_KEYS,
@@ -289,6 +290,47 @@ test('H1: RequiredCosmeticItemVisible matches the VISIBLE constant, not mere tru
     // "pending" is truthy but not the VISIBLE state -> ineligible.
     const pending = ctx({ gs: { Cosmetics: { LoungeBanner: 'pending' } } });
     assert.equal(evaluateH1OtherRequirements({ RequiredCosmeticItemVisible: 'LoungeBanner' }, pending).status, 'unmet');
+});
+
+// --- permanence: monotonic "max" gates (blocked vs unobtainable) -------------
+
+test('H1: surpassed monotonic max gates are permanently unmet (unobtainable)', () => {
+    // Run-count caps over append-only counters: once past the cap, never recover.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 2 }, { RunHistory: [{}, {}, {}] }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 3 }, { RunHistory: [{}, {}, {}] }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxRunsCleared: 1 }, { RunHistory: [{ Cleared: true }, { Cleared: true }] }), 'unmet');
+    // Lifetime resources (monotonic) over a per-resource cap.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredLifetimeResourcesSpentMax: { Gems: 100 } }, { LifetimeResourcesSpent: { Gems: 150 } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredLifetimeResourcesSpentMax: { Gems: 100 } }, { LifetimeResourcesSpent: { Gems: 50 } }), null);
+    // Cumulative interaction / room counts: only the surpassed case is permanent.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxNPCInteractions: { NPC_Orpheus_01: 2 } }, { NPCInteractions: { NPC_Orpheus_01: 5 } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxTimesSeenRoom: { A_Combat01: 1 } }, { RoomCountCache: { A_Combat01: 3 } }), 'unmet');
+    // Cashed-out quests (terminal/monotonic).
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxQuestsComplete: 1 }, { QuestStatus: { Q1: 'CashedOut', Q2: 'CashedOut' } }), 'unmet');
+});
+
+test('H1: an already-maxed weapon aspect makes "must NOT be maxed" permanent', () => {
+    assert.equal(
+        evaluateH1OtherReqPermanence(
+            { RequiredFalseMaxWeaponUpgrade: 'SwordWeapon', RequiredFalseMaxWeaponUpgradeIndex: 1 },
+            { WeaponUnlocks: { SwordWeapon: { 1: 5 } } }),
+        'unmet');
+    // Not yet maxed -> can still be upgraded, not permanent.
+    assert.equal(
+        evaluateH1OtherReqPermanence(
+            { RequiredFalseMaxWeaponUpgrade: 'SwordWeapon', RequiredFalseMaxWeaponUpgradeIndex: 1 },
+            { WeaponUnlocks: { SwordWeapon: { 1: 3 } } }),
+        null);
+});
+
+test('H1: resettable / per-run max gates are never permanent', () => {
+    // These read per-run / respec-able / removable state, so a surpassed value
+    // can come back down - they stay "blocked", not "unobtainable".
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxActiveMetaUpgradeLevel: { Name: 'X', Count: 1 } }, { MetaUpgrades: { X: 5 } }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxAnyCosmetics: { Cosmetics: ['A', 'B'], Count: 0 } }, { Cosmetics: { A: true, B: true } }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxDepth: 1 }, { RunHistory: [] }), null);
+    // No save slice -> null.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 0 }, null), null);
 });
 
 // --- unrecognised field ------------------------------------------------------
