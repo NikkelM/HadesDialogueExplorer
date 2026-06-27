@@ -11,6 +11,12 @@ import { isTourActive } from './tour.js';
 import { textlines, defaultGame, defaultDialogue } from './data.js';
 import { navigateToState } from './navigation.js';
 import { parseUrlState } from './url.js';
+import { buildSaveCalloutSteps } from './tour-callouts.js';
+
+// The "load your save" call to action is dropped from the chained replay once a
+// save is already loaded (its status indicators replace it); kept as a constant
+// so the step and that filter can't drift apart.
+const SAVE_UPLOAD_TARGET = '.save-upload-btn';
 
 const HOME_TOUR_STEPS = [
     {
@@ -38,7 +44,7 @@ const HOME_TOUR_STEPS = [
         blockNavigation: true,
     },
     {
-        target: '.save-upload-btn',
+        target: SAVE_UPLOAD_TARGET,
         title: 'Load your save',
         body: 'Upload a save file to see which dialogues you have already triggered, and to unlock the Eligibility tracer, which works out exactly what a line still needs in order to play.',
     },
@@ -86,12 +92,21 @@ export function maybeStartHomeTour() {
     return false;
 }
 
-// Replay entry point: run the tour on whatever dialogue is currently open.
+// Dialogue-view replay: when a save is loaded its status indicators are on
+// screen too, so chain the generic walkthrough and the save callout into one
+// continuous tour (a single step sequence, so the footer counter sums both).
+// The "load your save" step is dropped in that case - the save is already
+// loaded, so its status indicators replace that call to action. With no save
+// loaded - or nothing save-specific on screen - this is just the home tour.
 // When nothing usable is open (the empty home state, or a dialogue not in this
-// game) land on the featured dialogue first, then force-start regardless of the
-// seen / disabled flags. Registered as the replay dispatcher so the floating
-// "?" control re-runs this walkthrough.
-export function startHomeTourReplay() {
+// game) land on the featured dialogue first. Force-starts regardless of the
+// seen / disabled flags. Registered as the dialogue-view replay so the floating
+// "?" control re-runs the combined walkthrough.
+export function startDialogueTourReplay() {
     if (!activeDialogueExists()) swapToFeaturedDialogue();
-    forceStartTour('home', HOME_TOUR_STEPS);
+    const saveSteps = buildSaveCalloutSteps();
+    const steps = saveSteps.length
+        ? HOME_TOUR_STEPS.filter(s => s.target !== SAVE_UPLOAD_TARGET).concat(saveSteps)
+        : HOME_TOUR_STEPS;
+    forceStartTour('home', steps);
 }

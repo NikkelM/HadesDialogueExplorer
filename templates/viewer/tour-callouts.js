@@ -4,13 +4,13 @@
 // stacks on another tour (maybeStartTour no-ops while one is already on screen)
 // and respects the global opt-out.
 
-import { maybeStartTour, forceStartTour } from './tours.js';
+import { maybeStartTour } from './tours.js';
 
 // Build the save-callout steps for whatever is currently on screen. Each step
 // is conditional on its target existing, and those targets (the detail status
 // pill, the tree status dots, the tracer entry button) are only rendered when a
 // save is loaded - so an empty list doubles as "no save-specific content here".
-function buildSaveCalloutSteps() {
+export function buildSaveCalloutSteps() {
     const steps = [];
     // The traced dialogue's own status badge in the detail panel.
     if (document.querySelector('#info-content .save-progress-pill')) {
@@ -52,14 +52,4 @@ function buildSaveCalloutSteps() {
 // badges). No-ops (with whatever is relevant) when there's nothing to show.
 export function maybeStartSaveCallout() {
     return maybeStartTour('callout-save', buildSaveCalloutSteps());
-}
-
-// Replay entry point: force-start the save callout regardless of the seen /
-// disabled flags. Returns false when there's nothing save-specific on screen
-// (no save loaded, so none of the targets exist), letting the replay dispatcher
-// fall back to the generic dialogue tour.
-export function startSaveCalloutReplay() {
-    const steps = buildSaveCalloutSteps();
-    if (steps.length === 0) return false;
-    return forceStartTour('callout-save', steps);
 }
