@@ -30,7 +30,7 @@
 import { textlines, namedRequirements, getActiveGame } from './data.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
-import { evaluateH1OtherReqPermanence } from './gamestate-eval-h1.js';
+import { evaluateH1OtherReqPermanence, h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 import { gameStateClausePermanence } from './permanent-state.js';
 
 let _unobtainablePlayedSet = null;
@@ -432,14 +432,18 @@ export function namedRequirementGroupVerdict(key, names, context, hostOwner) {
 //                                                        more than ``count`` lines played
 //   { kind: 'runcount', blocker, count, ago }          - a MaxRunsSince gate on a
 //                                                        play-once line now out of range
+//   { kind: 'gamestate', field, value }                - an H1 monotonic "max"
+//                                                        GameState gate already
+//                                                        surpassed (can never recover)
 //   { kind: 'choice', parent, requiredChoice, taken }  - a required choice the
 //                                                        player took differently
 // Recurses through AND / OR / count / orBranch gates to the leaf cause, so a
 // dialogue blocked via an unobtainable prerequisite reports the prerequisite's
-// own lock rather than just "a prerequisite is locked".
-export function unobtainableReasons(rootName, playedSet, runsAgo = null) {
+// own lock rather than just "a prerequisite is locked". ``context`` carries the
+// save's GameState slice so the monotonic-GameState gate locks can be explained.
+export function unobtainableReasons(rootName, playedSet, runsAgo = null, context = null) {
     if (!playedSet || !textlines) return [];
-    refreshUnobtainableCaches(playedSet, runsAgo);
+    refreshUnobtainableCaches(playedSet, runsAgo, context);
     const reasons = [];
     gatherReasons(rootName, playedSet, reasons, new Set());
     const seen = new Set();
@@ -514,6 +518,17 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
             const quota = COUNT_MIN_REQ_TYPES.has(reqType) ? requiredCount(reqHost, reqType) : 1;
             if (others.length - locked.length < quota) {
                 for (const r of locked) gatherReasons(r, playedSet, reasons, visited);
+            }
+        }
+    }
+    // H1 monotonic "max" GameState gates already surpassed (one-way counters
+    // that can never come back down) - the leaf cause for an H1 dialogue locked
+    // purely by such a gate.
+    if (_unobtainableGameState) {
+        const other = (reqHost && reqHost.otherRequirements) || {};
+        for (const [field, val] of Object.entries(other)) {
+            if (h1FieldPermanentlyUnmet(field, val, _unobtainableGameState, other)) {
+                reasons.push({ kind: 'gamestate', field, value: val });
             }
         }
     }

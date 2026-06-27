@@ -645,12 +645,24 @@ const H1_PERMANENT_UNMET_EVALS = {
 // read only GameState tables, so a minimal ``ctx`` (no current/prev run) is used.
 export function evaluateH1OtherReqPermanence(otherRequirements, gameStateSlice) {
     if (!otherRequirements || !gameStateSlice) return null;
-    const ctx = { gs: gameStateSlice, currentRun: null, prevRun: null, runHistory: null };
     for (const [field, value] of Object.entries(otherRequirements)) {
-        const evalFn = H1_PERMANENT_UNMET_EVALS[field];
-        if (evalFn && evalFn(value, ctx, otherRequirements)) return 'unmet';
+        if (h1FieldPermanentlyUnmet(field, value, gameStateSlice, otherRequirements)) return 'unmet';
     }
     return null;
+}
+
+// Whether a single H1 ``otherRequirements`` field is a permanently-unmet
+// monotonic "max" gate given the GameState slice - its one-way counter is
+// already past the cap and can never come back down. ``allFields`` supplies
+// sibling fields a gate may pair with (e.g. the weapon-aspect index). Returns a
+// boolean; used by the tracer / detail view to upgrade the gate's dot to
+// "unobtainable" and to explain the lock.
+export function h1FieldPermanentlyUnmet(field, value, gameStateSlice, allFields = {}) {
+    if (!gameStateSlice) return false;
+    const evalFn = H1_PERMANENT_UNMET_EVALS[field];
+    if (!evalFn) return false;
+    const ctx = { gs: gameStateSlice, currentRun: null, prevRun: null, runHistory: null };
+    return !!evalFn(value, ctx, allFields);
 }
 
 // Dialogue-trigger context per Hades 1 owner, deciding whether a dialogue's

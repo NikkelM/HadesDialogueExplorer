@@ -881,4 +881,13 @@ describe('isUnobtainable: Hades 1 monotonic max gates', () => {
     test('without a GameState slice the max gate never locks', () => {
         assert.equal(isUnobtainable('MaxRunsLine', new Set()), false);
     });
+
+    test('unobtainableReasons explains a surpassed H1 max gate', () => {
+        const over = { gameState: { RunHistory: [{}, {}, {}] }, runsAgo: {} };
+        const reasons = unobtainableReasons('MaxRunsLine', new Set(), over.runsAgo, over);
+        assert.deepEqual(reasons, [{ kind: 'gamestate', field: 'RequiredMaxCompletedRuns', value: 2 }]);
+        // Under the cap -> not unobtainable -> no reasons.
+        const under = { gameState: { RunHistory: [{}] }, runsAgo: {} };
+        assert.deepEqual(unobtainableReasons('MaxRunsLine', new Set(), under.runsAgo, under), []);
+    });
 });

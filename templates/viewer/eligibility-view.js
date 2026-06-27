@@ -18,6 +18,7 @@ import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } fro
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
 import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT } from './gamestate-eval.js';
+import { h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -252,8 +253,8 @@ export function summarizePrereqs(chain, groups, mandatory, rootName, isPlayed = 
 // played line is the gate host's declared alternate), count-max gates that have
 // overflowed, play-once run-count gates now out of range, and choices the
 // player took differently - each linking to the dialogue involved.
-function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo) {
-    const reasons = unobtainableReasons(rootName, playedSet, runsAgo);
+function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo, context = null) {
+    const reasons = unobtainableReasons(rootName, playedSet, runsAgo, context);
     if (reasons.length === 0) return '';
     const ref = (name) => `<a class="eligibility-ref" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`;
     const runs = (n) => `${n} run${n === 1 ? '' : 's'}`;
@@ -289,6 +290,9 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo) {
             const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
             items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
                 + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
+        } else if (r.kind === 'gamestate') {
+            items.push(`<li><strong>${escapeHtml(formatReqType(r.field, 'upstream'))}</strong> is already past its cap, `
+                + `and this save value only ever grows - so this gate can never be satisfied again.</li>`);
         }
     }
     let html = altBoxes.join('');
@@ -355,7 +359,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         // detail line introduces the reasons list with a colon.
         html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
-        html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
+        html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo, saveCtx);
     } else if (directlyEligible) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
         html += `<div class="eligibility-detail">${total === 0
@@ -598,6 +602,14 @@ export function renderOtherConditionsHtml(rootName) {
             if (key.startsWith('NamedRequirements')) {
                 c.status = namedRequirementGroupVerdict(key, other[key], sctx, tl.owner);
                 if (c.status !== 'unknown') c.reason = null;
+            } else if (c.status === 'unmet' && gameId === 'hades1'
+                && h1FieldPermanentlyUnmet(key, other[key], sctx.gameState, other)) {
+                // An H1 monotonic "max" gate that is already surpassed can never
+                // recover (its counter only grows) -> permanently locked, not
+                // merely unsatisfied. Upgrade the dot so it matches the
+                // dialogue's overall unobtainable verdict.
+                c.status = 'unobtainable';
+                c.reason = null;
             }
         }
         const statuses = [...byKey.values()].map(c => c.status);
@@ -630,7 +642,8 @@ export function renderOtherConditionsHtml(rootName) {
         if (c) {
             const tip = c.status === 'met' ? 'Satisfied by your save.'
                 : c.status === 'unmet' ? 'Not satisfied by your save.'
-                    : (c.reason || 'Can\u2019t be determined from the save.');
+                    : c.status === 'unobtainable' ? 'Permanently locked: this save value only ever grows, so it can never satisfy this cap again.'
+                        : (c.reason || 'Can\u2019t be determined from the save.');
             dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
         }
         if (key.startsWith('NamedRequirements')) {
