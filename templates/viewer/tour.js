@@ -22,6 +22,9 @@ const _VIEW_MARGIN = 4;
 // clears the spotlight ring (which already extends ~_PAD beyond the target)
 // and leaves a comfortable visible gap below / above the highlight.
 const _CARD_GAP = 24;
+// Vertical offset from a side-placed card's target top edge (cardSide steps), so
+// the card sits a little below the panel top rather than flush against it.
+const _SIDE_CARD_TOP_OFFSET = 40;
 
 let _active = false;
 let _steps = [];
@@ -246,6 +249,22 @@ function _placeCard(targetRect) {
     if (!targetRect) {
         _card.style.top = Math.max(_GAP, (vh - c.height) / 2) + 'px';
         _card.style.left = Math.max(_GAP, (vw - c.width) / 2) + 'px';
+        return;
+    }
+    // Side placement (cardSide steps): for very tall targets - e.g. the
+    // full-height details / tree panels - a below/above card would be pushed to
+    // the page bottom. Instead sit the card beside the highlight (over the
+    // neighbouring, dimmed panel), anchored a little below the panel top.
+    const step = _steps[_index] || {};
+    if (step.cardSide === 'left' || step.cardSide === 'right') {
+        let top = targetRect.top + _SIDE_CARD_TOP_OFFSET;
+        top = Math.max(_GAP, Math.min(top, vh - c.height - _GAP));
+        let left = step.cardSide === 'right'
+            ? targetRect.right + _CARD_GAP
+            : targetRect.left - c.width - _CARD_GAP;
+        left = Math.max(_GAP, Math.min(left, vw - c.width - _GAP));
+        _card.style.top = top + 'px';
+        _card.style.left = left + 'px';
         return;
     }
     // Prefer below the target; flip above if it would overflow the bottom.

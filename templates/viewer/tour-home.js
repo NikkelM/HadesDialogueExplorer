@@ -35,6 +35,7 @@ const HOME_TOUR_STEPS = [
         body: 'The selected line in full: its text, speaker, dialogue context, narrative-priority and play-once/repeat badges, and the requirements that gate it. Hover badges or dotted text for detail; click a requirement name to open that dialogue.',
         interactive: true,
         blockNavigation: true,
+        cardSide: 'right',
     },
     {
         target: ['#panel-upstream', '#panel-downstream'],
@@ -42,6 +43,7 @@ const HOME_TOUR_STEPS = [
         body: 'Two dependency trees: prerequisites (what this line needs to play) and dependents (what becomes reachable once it plays). Expand any row to reveal its own requirements.',
         interactive: true,
         blockNavigation: true,
+        cardSide: 'left',
     },
     {
         target: SAVE_UPLOAD_TARGET,
