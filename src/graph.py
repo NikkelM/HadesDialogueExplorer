@@ -719,6 +719,16 @@ _ALTERNATE_SUFFIX_RE = re.compile(r"^(.+?)(?:_Alt|_?[A-Z])$")
 # _B sibling needs ..._ErisDecline), so they never name each other directly.
 _CHOICE_OUTCOMES = ("Accept", "Decline")
 
+# Hades 1 ``GameState.Flags`` gates (RequiredTrueFlags / RequiredFalseFlags) whose
+# value is fixed for the whole life of a save, so a "must be F" sibling and a
+# "must NOT be F" sibling can never both become eligible - a genuine alternate
+# partition. Only ``HardMode`` qualifies: Hell Mode is read once at save creation
+# (RunManager.lua StartNewGame) and never reassigned. The one-way unlocks
+# (ShrineUnlocked / AspectsUnlocked) deliberately do NOT qualify: they flip
+# false -> true once, so the "false" sibling is eligible before the unlock and
+# the "true" sibling after, letting both play across a save's lifetime.
+_FIXED_PER_SAVE_FLAGS = frozenset({"HardMode"})
+
 
 def _choice_complement(ref: str):
     """Return ``(prefix, outcome)`` if ``ref`` is a choice Accept/Decline line.
@@ -739,9 +749,10 @@ def build_alternates(textlines: dict) -> dict:
     Step 1: Group textlines by name stem (regex strips a trailing _Alt or
     _?[A-Z]).
     Step 2: Confirm that members are mutually exclusive. Beyond a direct
-    RequiredFalse/RequiredAny cross-reference, two indirect patterns are
+    RequiredFalse/RequiredAny cross-reference, three indirect patterns are
     recognised: complementary choice branches (Accept vs Decline of the same
-    choice) and HasAny-vs-HasNone over the same referenced set.
+    choice), HasAny-vs-HasNone over the same referenced set, and a complementary
+    fixed-per-save flag gate (one sibling needs flag F true, the other false).
 
     Returns a dict mapping textline name -> list of sibling alternate names
     (excluding self). Only textlines with confirmed alternates are included.
@@ -781,10 +792,15 @@ def build_alternates(textlines: dict) -> dict:
         # Per-candidate "needs one of" and "needs none of" reference sets.
         any_refs = {}
         false_refs = {}
+        true_flags = {}
+        false_flags = {}
         for name in candidates:
             reqs = textlines[name].get("requirements", {})
             any_refs[name] = {r for t, rs in reqs.items() if t in _ANY_TYPES for r in rs}
             false_refs[name] = {r for t, rs in reqs.items() if t in _FALSE_TYPES for r in rs}
+            other = textlines[name].get("otherRequirements", {})
+            true_flags[name] = set(other.get("RequiredTrueFlags") or [])
+            false_flags[name] = set(other.get("RequiredFalseFlags") or [])
 
         confirmed = set()
         names = sorted(candidates)
@@ -804,6 +820,11 @@ def build_alternates(textlines: dict) -> dict:
             if any_refs[a] and any_refs[a] == false_refs[b]:
                 confirmed.update((a, b))
             if any_refs[b] and any_refs[b] == false_refs[a]:
+                confirmed.update((a, b))
+            # Complementary fixed-per-save flag gate: one sibling needs flag F
+            # true, the other needs it false, and F never changes within a save.
+            if (true_flags[a] & false_flags[b] & _FIXED_PER_SAVE_FLAGS) \
+                    or (true_flags[b] & false_flags[a] & _FIXED_PER_SAVE_FLAGS):
                 confirmed.update((a, b))
 
         if len(confirmed) >= 2:

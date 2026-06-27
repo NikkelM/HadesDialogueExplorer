@@ -4,9 +4,11 @@ dialogues (the ``_A`` / ``_B`` and ``_Alt`` variant patterns).
 Two-step algorithm: (1) group textlines by name stem (strip a trailing
 ``_?[A-Z]`` suffix or an explicit ``_Alt`` marker), (2) confirm a group only
 when its members are mutually exclusive. Confirmation accepts a direct
-``RequiredFalse*`` / ``RequiredAny*`` cross-reference, and two indirect patterns
+``RequiredFalse*`` / ``RequiredAny*`` cross-reference, and three indirect patterns
 that never name each other directly: complementary choice branches (Accept vs
-Decline of one choice) and HasAny-vs-HasNone over the same referenced set.
+Decline of one choice), HasAny-vs-HasNone over the same referenced set, and a
+complementary fixed-per-save flag gate (one sibling needs flag F true, the other
+false, where F never changes within a save - only ``HardMode``).
 Sharing a stem alone is not enough.
 """
 
@@ -166,5 +168,44 @@ class TestBuildAlternates:
         tls = {
             "Talk_A": _tl({"RequiredFalseTextLines": ["LineX"]}),
             "Talk_B": _tl({"RequiredAnyTextLines": ["LineY"]}),
+        }
+        assert build_alternates(tls) == {}
+
+    def test_complementary_fixed_per_save_flag_confirms(self):
+        # One sibling needs HardMode true, the other false. HardMode is fixed at
+        # save creation and never changes, so exactly one can ever play - they
+        # confirm without naming each other.
+        tls = {
+            "FuryPactReaction01": {
+                "requirements": {"RequiredTextLines": ["FuryFirstAppearance"]},
+                "otherRequirements": {"RequiredFalseFlags": ["HardMode"]},
+            },
+            "FuryPactReaction01_B": {
+                "requirements": {"RequiredTextLines": ["FuryFirstAppearance"]},
+                "otherRequirements": {"RequiredTrueFlags": ["HardMode"]},
+            },
+        }
+        assert build_alternates(tls) == {
+            "FuryPactReaction01": ["FuryPactReaction01_B"],
+            "FuryPactReaction01_B": ["FuryPactReaction01"],
+        }
+
+    def test_complementary_toggle_flag_does_not_confirm(self):
+        # PersephoneAway flips true/false repeatedly over a save (a ~7-run
+        # cycle), so a "must be away" and "must NOT be away" sibling can both
+        # play at different times - not a genuine alternate partition.
+        tls = {
+            "Talk_A": {"requirements": {}, "otherRequirements": {"RequiredTrueFlags": ["PersephoneAway"]}},
+            "Talk_B": {"requirements": {}, "otherRequirements": {"RequiredFalseFlags": ["PersephoneAway"]}},
+        }
+        assert build_alternates(tls) == {}
+
+    def test_complementary_one_way_unlock_flag_does_not_confirm(self):
+        # ShrineUnlocked only ever flips false -> true once, so the "false"
+        # sibling plays before the unlock and the "true" sibling after - both
+        # can play across a save's lifetime, so they are not alternates.
+        tls = {
+            "Talk_A": {"requirements": {}, "otherRequirements": {"RequiredTrueFlags": ["ShrineUnlocked"]}},
+            "Talk_B": {"requirements": {}, "otherRequirements": {"RequiredFalseFlags": ["ShrineUnlocked"]}},
         }
         assert build_alternates(tls) == {}
