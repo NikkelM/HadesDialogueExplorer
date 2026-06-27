@@ -207,10 +207,53 @@ test('H1: textline-record fields are skipped (owned by requirementSetStatus)', (
 // --- needs-static-data fields ------------------------------------------------
 
 test('H1: fields needing static game tables stay unknown with a reason', () => {
-    const r = evaluateH1OtherRequirements({ RequiredCodexEntry: { A: 1 } }, ctx({ gs: {} }));
+    const r = evaluateH1OtherRequirements({ RequiredAccumulatedMetaPoints: 100 }, ctx({ gs: {} }));
     assert.equal(r.status, 'unknown');
     assert.equal(r.clauses[0].kind, undefined);
+    assert.match(r.clauses[0].reason, /cost tables/i);
+});
+
+// --- codex (resolved from the persisted top-level CodexStatus global) --------
+
+test('H1: RequiredCodexEntry passes when the entry is unlocked deep enough and viewed', () => {
+    const c = ctx({ gs: { Codex: { NPC_Achilles_01: { u: 4, viewed: true } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Achilles_01', EntryIndex: 3 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Achilles_01', EntryIndex: 4 } }, c).status, 'met');
+});
+
+test('H1: RequiredCodexEntry fails when not unlocked far enough, unviewed, or absent', () => {
+    const shallow = ctx({ gs: { Codex: { RoomRewardConsolationPrize: { u: 2, viewed: true } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'RoomRewardConsolationPrize', EntryIndex: 3 } }, shallow).status, 'unmet');
+    const unviewed = ctx({ gs: { Codex: { NPC_Patroclus_01: { u: 4, viewed: false } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Patroclus_01', EntryIndex: 1 } }, unviewed).status, 'unmet');
+    const absent = ctx({ gs: { Codex: {} } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Skelly_01', EntryIndex: 1 } }, absent).status, 'unmet');
+});
+
+test('H1: RequiredCodexEntry defaults a missing EntryIndex to 1', () => {
+    const c = ctx({ gs: { Codex: { NPC_Thanatos_01: { u: 1, viewed: true } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Thanatos_01' } }, c).status, 'met');
+});
+
+test('H1: RequiredCodexEntry is unknown when no codex slice is present', () => {
+    const r = evaluateH1OtherRequirements({ RequiredCodexEntry: { EntryName: 'NPC_Achilles_01', EntryIndex: 1 } }, ctx({ gs: {} }));
+    assert.equal(r.status, 'unknown');
     assert.match(r.clauses[0].reason, /codex/i);
+});
+
+test('H1: RequiredCodexEntriesMin compares the total unlocked count', () => {
+    const c = ctx({ gs: { CodexUnlockedTotal: 165 } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntriesMin: 50 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntriesMin: 200 }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredCodexEntriesMin: 50 }, ctx({ gs: {} })).status, 'unknown');
+});
+
+test('H1: RequiredPlayed / RequiredFalsePlayed resolve against the global SpeechRecord', () => {
+    const c = ctx({ gs: { SpeechRecord: { CueA: true } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredPlayed: 'CueA' }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredPlayed: 'CueB' }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredFalsePlayed: 'CueB' }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredFalsePlayed: 'CueA' }, c).status, 'unmet');
 });
 
 // --- active Mirror-of-Night gates (h1SaveEvalStatic-backed) -------------------

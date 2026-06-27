@@ -28,8 +28,10 @@
 //                   The Mirror "active" gates, the weapon-enchantment count and
 //                   the cosmetic-visible constant ship as h1SaveEvalStatic (see
 //                   src/extractors/hades1/save_eval_data.py) and resolve here;
-//                   the remainder (meta/keepsake/weapon-upgrade COST tables, codex
-//                   layout) still aren't shipped and report 'unknown' with a reason.
+//                   the remainder (meta/keepsake/weapon-upgrade COST tables) still
+//                   aren't shipped and report 'unknown' with a reason. The codex
+//                   gates need no static tables - they read the persisted
+//                   top-level CodexStatus global directly (see collectH1GlobalRefs).
 //
 // Returns, for a whole requirement set, { status, clauses } where ``status`` is
 // 'met' | 'unmet' | 'unknown' and ``clauses`` lists each field's verdict (with a
@@ -51,8 +53,35 @@ export const H1_GAMESTATE_SLICE_KEYS = [
     'NPCInteractions', 'ItemInteractions', 'ScreensViewed', 'LifetimeResourcesGained',
     'LifetimeResourcesSpent', 'QuestStatus', 'TotalCaughtFish', 'CaughtFish',
     'SpentShrinePointsCache', 'ConsecutiveClears', 'LastAwardTrait', 'LastAssistTrait',
-    'RecordLastClearedShrineReward', 'SpeechRecord',
+    'RecordLastClearedShrineReward',
 ];
+
+// Hades 1 persists every global not in Main.lua's SaveIgnores, so a few tables
+// the dialogue requirements read live at the TOP LEVEL of the save (siblings of
+// GameState), not under it: the global voiceline ``SpeechRecord`` (cue -> true,
+// read by RequiredPlayed / RequiredFalsePlayed) and ``CodexStatus``
+// (chapter -> entry -> per-page Unlocked flags, read by the codex gates). The
+// save-slice captures these under synthetic ``SpeechRecord`` / ``Codex`` /
+// ``CodexUnlockedTotal`` keys (see save-parser.js), pruned to just the cues /
+// entries the data references, because the raw globals are large (SpeechRecord
+// alone is ~11k cues). Collect those referenced names from the dialogue data.
+export function collectH1GlobalRefs(textlines) {
+    const codexEntries = new Set();
+    const speechCues = new Set();
+    let needsCodexTotal = false;
+    for (const tl of Object.values(textlines || {})) {
+        const o = tl && tl.otherRequirements;
+        if (!o) continue;
+        if (o.RequiredCodexEntry && o.RequiredCodexEntry.EntryName) codexEntries.add(o.RequiredCodexEntry.EntryName);
+        if (o.RequiredCodexEntriesMin != null) needsCodexTotal = true;
+        for (const field of ['RequiredPlayed', 'RequiredFalsePlayed']) {
+            const v = o[field];
+            if (v == null) continue;
+            for (const cue of (Array.isArray(v) ? v : [v])) speechCues.add(cue);
+        }
+    }
+    return { codexEntries, speechCues, needsCodexTotal };
+}
 
 // Top-level CurrentRun keys the evaluator reads (captured for an in-run / hub
 // CurrentRun snapshot). Hero is pruned to the read fields; RoomHistory is pruned
@@ -212,6 +241,24 @@ const H1_FIELD_EVALS = {
     RequiredPlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(h1Arr(v).every(k => h1Truthy(s[k]))); },
     RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(!h1Arr(v).some(k => h1Truthy(s[k]))); },
 
+    // ===== PERSISTENT: codex (top-level CodexStatus global) =====
+    RequiredCodexEntry: (v, ctx) => {
+        const codex = ctx.gs && ctx.gs.Codex;
+        if (!codex) return H1_LIVE('Reads the persistent codex unlock status (not stored in this save slice).');
+        const e = codex[v && v.EntryName];
+        const idx = (v && v.EntryIndex) || 1;
+        // HasCodexEntryBeenFound (RunManager.lua:5657): the entry's first ``idx``
+        // pages must all be unlocked AND the entry must have been viewed (not New).
+        if (!e) return H1_UNMET;
+        return _h1bool(e.u >= idx && e.viewed);
+    },
+    RequiredCodexEntriesMin: (v, ctx) => {
+        const total = ctx.gs && ctx.gs.CodexUnlockedTotal;
+        if (total == null) return H1_LIVE('Reads the total codex entries unlocked (not stored in this save slice).');
+        return _h1bool(total >= v);
+    },
+    RequiresCodexFullyUnlocked: () => H1_NEEDS_STATIC('Needs the full static codex chapter/entry layout (to know every entry that must be unlocked) not shipped in this build.'),
+
     // ===== PERSISTENT but needs static game-data tables this build omits =====
     RequiredAccumulatedMetaPoints: () => H1_NEEDS_STATIC('Needs the meta-upgrade cost tables (total accumulated Darkness) not shipped in this build.'),
     RequiredActiveMetaPointsMin: () => H1_NEEDS_STATIC('Needs the meta-upgrade cost tables (spent Darkness) not shipped in this build.'),
@@ -219,9 +266,6 @@ const H1_FIELD_EVALS = {
     RequiredAllMetaUpgradesMaxed: () => H1_NEEDS_STATIC('Needs the meta-upgrade order / max-level tables not shipped in this build.'),
     RequiresMaxKeepsake: () => H1_NEEDS_STATIC('Needs the keepsake chamber-threshold tables not shipped in this build.'),
     RequiredMinSuperLockKeysSpentOnWeapon: () => H1_NEEDS_STATIC('Needs the weapon-upgrade cost tables not shipped in this build.'),
-    RequiredCodexEntry: () => H1_NEEDS_STATIC('Needs the codex chapter/entry layout not shipped in this build.'),
-    RequiredCodexEntriesMin: () => H1_NEEDS_STATIC('Needs the codex chapter/entry layout not shipped in this build.'),
-    RequiresCodexFullyUnlocked: () => H1_NEEDS_STATIC('Needs the codex chapter/entry layout not shipped in this build.'),
     RequiredLastInteractedWeaponUpgrade: () => H1_NEEDS_STATIC('Needs the weapon-upgrade trait tables not shipped in this build.'),
     RequiredLastInteractedWeaponUpgradeMaxed: () => H1_NEEDS_STATIC('Needs the weapon-upgrade tables not shipped in this build.'),
     RequiredMinShrinePointThresholdClear: () => H1_NEEDS_STATIC('Needs the per-weapon boss-room shrine-clear records cross-referenced with static room data.'),

@@ -11,7 +11,7 @@
 
 import { getActiveGame, games } from './data.js';
 import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask } from './gamestate-eval.js';
-import { H1_GAMESTATE_SLICE_KEYS, H1_CURRENTRUN_SLICE_KEYS } from './gamestate-eval-h1.js';
+import { H1_GAMESTATE_SLICE_KEYS, H1_CURRENTRUN_SLICE_KEYS, collectH1GlobalRefs } from './gamestate-eval-h1.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -382,7 +382,7 @@ function extractSaveContext(parsed) {
 
   return {
     played, thisRun, thisRoom, queued, lastRun, runsAgo,
-    gameState: extractGameStateSlice(gameId, gs),
+    gameState: extractGameStateSlice(gameId, gs, luaState),
     runs: extractRunsSlice(gameId, luaState),
     currentRun: extractCurrentRunSlice(gameId, luaState),
     rooms: extractRoomsSlice(gameId, luaState),
@@ -476,19 +476,78 @@ function _h2RunHistoryClearMask() {
 // Build the minimal persisted GameState slice for an H2 save - just the paths
 // the dialogue requirements actually read. Returns null for non-H2 saves (H1
 // uses a different requirement model, not yet resolved against the save).
-function extractGameStateSlice(gameId, gs) {
-  if (gameId === 'hades1') return extractH1GameStateSlice(gs);
+function extractGameStateSlice(gameId, gs, luaState) {
+  if (gameId === 'hades1') return extractH1GameStateSlice(gs, luaState);
   if (gameId !== 'hades2') return null;
   const mask = _h2GameStateMask();
   if (!mask) return null;
   return pruneGameState(gs, mask);
 }
 
+// Memoised set of the top-level Hades 1 globals (codex entries / speech cues)
+// the dialogue requirements reference, so the H1 slice can prune them. Keyed on
+// the H1 data object so it rebuilds after a data swap.
+let _h1RefsCache = null;
+let _h1RefsFor = null;
+function _h1GlobalRefs() {
+  const h1 = games && games.hades1;
+  if (!h1) return null;
+  if (_h1RefsFor !== h1) {
+    _h1RefsFor = h1;
+    _h1RefsCache = collectH1GlobalRefs(h1.textlines || {});
+  }
+  return _h1RefsCache;
+}
+
+// Max consecutive unlocked page index (from page 1) of a CodexStatus entry node
+// ``{1:{Unlocked},2:{Unlocked},...,New,Amount}``. The codex gate needs pages
+// 1..N all unlocked, so the consecutive depth is what it compares against.
+function _codexEntryDepth(entry) {
+  let u = 0;
+  while (entry[u + 1] && entry[u + 1].Unlocked) u += 1;
+  return u;
+}
+
+// Prune the top-level ``CodexStatus`` global to just the referenced entry names,
+// flattened to ``{ entryName: { u: unlockedDepth, viewed: !New } }``. The entry
+// name is matched across all chapters (the engine's HasCodexEntryBeenFound does
+// the same), so the dialogue data needn't know which chapter an entry lives in.
+function pruneCodexStatus(cs, entryNames) {
+  const out = {};
+  for (const chapter of Object.values(cs)) {
+    if (!chapter || typeof chapter !== 'object') continue;
+    for (const name of entryNames) {
+      if (name in out) continue;
+      const e = chapter[name];
+      if (e && typeof e === 'object') out[name] = { u: _codexEntryDepth(e), viewed: !e.New };
+    }
+  }
+  return out;
+}
+
+// CalcNumCodexEntriesUnlocked port (CodexScripts.lua:1115): count entries whose
+// first page is unlocked, across every chapter. The engine drives this off the
+// static ``Codex`` layout; iterating ``CodexStatus`` gives the same count in
+// practice (it is only ever populated for valid entries during play).
+function countCodexUnlocked(cs) {
+  let n = 0;
+  for (const chapter of Object.values(cs)) {
+    if (!chapter || typeof chapter !== 'object') continue;
+    for (const e of Object.values(chapter)) {
+      if (e && typeof e === 'object' && e[1] && e[1].Unlocked) n += 1;
+    }
+  }
+  return n;
+}
+
 // Hades 1 GameState slice: copy the top-level keys the H1 evaluator reads
 // (H1_GAMESTATE_SLICE_KEYS) wholesale, plus a RunHistory pruned to the per-run
 // fields the run-count aggregates need ({Cleared, WeaponsCache}). Missing keys
 // stay absent and the evaluator coerces them to nil/0/false as the engine does.
-export function extractH1GameStateSlice(gs) {
+// ``luaState`` (the whole save root) is optional; when given, the top-level
+// globals the requirements read (SpeechRecord / CodexStatus) are captured too,
+// pruned to the referenced cues / entries (see _h1GlobalRefs).
+export function extractH1GameStateSlice(gs, luaState) {
   if (!gs || typeof gs !== 'object') return null;
   const slice = {};
   for (const key of H1_GAMESTATE_SLICE_KEYS) {
@@ -506,6 +565,21 @@ export function extractH1GameStateSlice(gs) {
       pruned[k] = e;
     }
     slice.RunHistory = pruned;
+  }
+  // Top-level globals (siblings of GameState, not under it) the requirements read.
+  const refs = (luaState && typeof luaState === 'object') ? _h1GlobalRefs() : null;
+  if (refs) {
+    const sr = luaState.SpeechRecord;
+    if (sr && typeof sr === 'object') {
+      const cues = {};
+      for (const cue of refs.speechCues) if (sr[cue]) cues[cue] = true;
+      slice.SpeechRecord = cues;
+    }
+    const cs = luaState.CodexStatus;
+    if (cs && typeof cs === 'object') {
+      slice.Codex = pruneCodexStatus(cs, refs.codexEntries);
+      if (refs.needsCodexTotal) slice.CodexUnlockedTotal = countCodexUnlocked(cs);
+    }
   }
   return slice;
 }
@@ -833,7 +907,7 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // active-Mirror-upgrade and RequiredEncounterThisRun gates). An older cache
 // lacks these, so the bump forces a re-parse rather than silently leaving them
 // unavailable.
-const SAVE_STORAGE_SCHEMA = 13;
+const SAVE_STORAGE_SCHEMA = 14;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

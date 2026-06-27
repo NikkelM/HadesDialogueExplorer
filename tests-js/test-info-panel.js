@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 13, gameId: getActiveGame(), runs: 1, played: [],
+        v: 14, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -376,7 +376,7 @@ test('otherRequirements: with a matching save, gates show met/indeterminate elig
         gameLabels: { hades2: 'Hades II' }, defaultGame: 'hades2',
     });
     _saveStore.set('hde.save', JSON.stringify({
-        v: 13, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+        v: 14, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
     }));
     restoreSaveProgress();
     renderInfo('OrpheusOtherReqDemo');

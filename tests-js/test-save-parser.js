@@ -585,7 +585,7 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
     const store = installMockLocalStorage();
     try {
         store.setItem('hde.save', JSON.stringify({
-            v: 13, gameId: 'hades3', runs: 1, played: ['Old01'],
+            v: 14, gameId: 'hades3', runs: 1, played: ['Old01'],
         }));
         assert.equal(restoreSaveProgress(), null);
         // The invalid entry is purged so restore fails closed.
@@ -624,6 +624,44 @@ test('extractH1GameStateSlice copies referenced keys and prunes RunHistory', () 
 test('extractH1GameStateSlice returns null for a non-object GameState', () => {
     assert.equal(extractH1GameStateSlice(null), null);
     assert.equal(extractH1GameStateSlice(undefined), null);
+});
+
+test('extractH1GameStateSlice captures top-level SpeechRecord / CodexStatus pruned to referenced names', () => {
+    // The H1 codex / speech gates read top-level globals (siblings of GameState,
+    // not under it). Loading data whose textlines reference specific codex
+    // entries, speech cues, and RequiredCodexEntriesMin builds the prune mask.
+    loadData({
+        textlines: {
+            Codex01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: { RequiredCodexEntry: { EntryName: 'NPC_Achilles_01', EntryIndex: 3 } } },
+            Min01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: { RequiredCodexEntriesMin: 50 } },
+            Played01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: { RequiredPlayed: 'CueA' } },
+            FalsePlayed01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: { RequiredFalsePlayed: ['CueB', 'CueC'] } },
+        },
+    });
+    const luaState = {
+        SpeechRecord: { CueA: true, CueB: true, Unreferenced: true },
+        CodexStatus: {
+            Chapter1: {
+                NPC_Achilles_01: { 1: { Unlocked: true }, 2: { Unlocked: true }, 3: { Unlocked: true }, New: false },
+                NPC_Other: { 1: { Unlocked: true } },
+            },
+        },
+    };
+    const slice = extractH1GameStateSlice({ EnemyKills: { Harpy: 1 } }, luaState);
+    // Only referenced + truthy cues are kept.
+    assert.deepEqual(slice.SpeechRecord, { CueA: true, CueB: true });
+    // Codex pruned to the referenced entry, flattened to {u, viewed}.
+    assert.deepEqual(slice.Codex, { NPC_Achilles_01: { u: 3, viewed: true } });
+    // RequiredCodexEntriesMin was referenced, so the total is counted.
+    assert.equal(slice.CodexUnlockedTotal, 2);
+    clearSaveProgress();
+});
+
+test('extractH1GameStateSlice omits the global captures when no luaState is given', () => {
+    const slice = extractH1GameStateSlice({ EnemyKills: { Harpy: 1 } });
+    assert.equal('SpeechRecord' in slice, false);
+    assert.equal('Codex' in slice, false);
+    assert.equal('CodexUnlockedTotal' in slice, false);
 });
 
 test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {
