@@ -10,6 +10,7 @@ from src.graph import (
     build_dependents,
     build_alternates,
     collect_referenced_textlines,
+    resolve_skip_replacements,
 )
 
 
@@ -84,6 +85,11 @@ def merge_graph_data(datasets: list[dict]) -> dict:
     # entry gets its own correct reverse-edges. See
     # :func:`src.graph.split_name_collisions` for the rationale.
     split_name_collisions(merged_textlines)
+
+    # Resolve retired (`skip`) lines to their live replacement now that the
+    # full merged textline set is known (sibling/base names may originate
+    # from different source files).
+    resolve_skip_replacements(merged_textlines)
 
     # Reverse-index over the merged textline set rather than unioning
     # per-source dependents maps, since per-source maps can include

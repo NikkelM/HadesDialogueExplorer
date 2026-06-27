@@ -594,6 +594,19 @@ export function renderOtherReqTooltip(key, val) {
 //     ``Name >= Count`` and lists into comma-separated chips.
 //   - Anything else -> the existing raw fallback (``Key = JSON``).
 // Returns the inner HTML to wrap in a ``<div class="other-req-item">``.
+// Shared retired-line banner (`Skip = true`). Rendered identically in the
+// detail panel and the eligibility tracer so the two views match. `replacement`
+// is the superseding textline name, or falsy when none is known.
+export function renderRetiredBannerHtml(replacement) {
+    const repl = replacement
+        ? ` Superseded by <a class="blocked-ref" onclick="navigateTo(${jsAttr(replacement)})">${escapeHtml(replacement)}</a>.`
+        : '';
+    return `<div class="meta blocked-banner">`
+        + `<div class="blocked-banner-header">\u2298 Retired dialogue - can never play</div>`
+        + `<div class="blocked-banner-list">This line is flagged <code>Skip</code> in the game data, so the engine permanently skips it.${repl}</div>`
+        + `</div>`;
+}
+
 export function renderOtherReqEntryHtml(key, val) {
     for (const opKey of _PATH_OP_FRIENDLY_KEYS) {
         if (key.startsWith(opKey + ':')) {
@@ -781,6 +794,15 @@ export function renderInfo(name) {
             html += renderBlockingReason(reason);
         }
         html += `</div>`;
+    }
+
+    // Retired banner: `Skip = true` in the game data permanently disables
+    // this line (the engine rejects it before any eligibility check). Shown
+    // regardless of save state; links to the replacement when known. Shares
+    // markup with the eligibility tracer via renderRetiredBannerHtml so the
+    // two views look identical.
+    if (tl.skip) {
+        html += renderRetiredBannerHtml(tl.skipReplacement);
     }
 
     // Choice-variant banner: this textline is a synthetic child of a

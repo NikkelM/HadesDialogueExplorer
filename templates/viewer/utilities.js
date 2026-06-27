@@ -32,8 +32,8 @@ export const SAVE_STATUS_TOOLTIPS = {
     played: 'Played in loaded save',
     eligible: 'Eligible to play (every requirement and condition is met)',
     blocked: 'Blocked (a requirement or condition is not met)',
-    unobtainable: 'Unobtainable - a required choice, mutually-exclusive line, count-max gate, or play-once run-count gate is permanently locked',
-    indeterminate: 'Indeterminate - gates on something this save can\u2019t resolve: a run-scoped textline record (the Hades II queue or current-run state) or a live game-state condition (run / room / session state, or a game function), so eligibility can\u2019t be determined',
+    unobtainable: 'Unobtainable - a required choice, mutually-exclusive line, count-max gate, or other requirement is permanently locked and prevents this dialogue from ever playing in the future',
+    indeterminate: 'Indeterminate - depends on something this save can\u2019t resolve, such as state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined',
 };
 
 export function saveStatusTooltip(status) {
@@ -48,13 +48,13 @@ export function saveStatusTooltip(status) {
 export function groupStatusTooltip(status) {
     switch (status) {
     case 'met':
-        return 'Satisfied by your save: every condition here holds (required lines played, forbidden lines not played, and any game-state checks met).';
+        return 'Satisfied by your save: every requirement here is met (required lines played, forbidden lines not played, and any game-state checks met).';
     case 'unmet':
-        return 'Not satisfied by your save: at least one condition here isn\u2019t met yet.';
+        return 'Not satisfied by your save: at least one requirement here isn\u2019t met yet.';
     case 'unobtainable':
-        return 'Permanently locked: this can never be satisfied again in this save (e.g. a one-time line already played or now past its run-count window, a count cap exceeded, or a required line that is itself unobtainable).';
+        return 'Permanently locked: this can never be satisfied in this save (e.g. a one-time line already played or now past its run-count window, a max-count cap exceeded, or a required line that is itself unobtainable).';
     case 'unknown':
-        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve - a run-scoped textline record (the Hades II queue or current-run state) or a live game-state condition (run / room / session state, or a game function).';
+        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve - depends on something this save can\u2019t resolve, such as state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined.';
     default:
         return '';
     }

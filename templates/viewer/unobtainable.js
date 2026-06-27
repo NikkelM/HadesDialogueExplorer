@@ -109,6 +109,11 @@ function computeUnobtainable(name, playedSet, stack) {
     const tl = textlines[name];
     if (!tl) return false; // unresolved ref - don't claim unobtainable
 
+    // Retired line: `Skip = true` in the game data makes it permanently
+    // unplayable - IsGameStateEligible rejects it before every other check
+    // (even debug force-play), independent of save state.
+    if (tl.skip) return true;
+
     // Choice-lock: a choice variant whose parent already recorded a
     // different option can never be obtained.
     if (tl.isSynthetic && tl.parentTextline) {
@@ -465,6 +470,13 @@ function gatherReasons(name, playedSet, reasons, visited) {
     visited.add(name);
     const tl = textlines[name];
     if (!tl) return;
+
+    // This node is a retired (`Skip = true`) line - permanently unplayable
+    // regardless of save state. The lock is structural, so report it and stop.
+    if (tl.skip) {
+        reasons.push({ kind: 'skip', replacement: tl.skipReplacement || null });
+        return;
+    }
 
     // This node is itself a locked choice variant.
     if (tl.isSynthetic && tl.parentTextline) {

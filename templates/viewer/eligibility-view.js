@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml } from './info-panel.js';
 import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 
 // Shared tooltip for a gate that is permanently unobtainable because it reads
@@ -295,6 +295,10 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo, context = n
             const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
             items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
                 + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
+        } else if (r.kind === 'skip') {
+            // Same banner as the detail panel (renderRetiredBannerHtml) so
+            // the retired-line treatment is identical across both views.
+            altBoxes.push(renderRetiredBannerHtml(r.replacement));
         } else if (r.kind === 'gamestate') {
             // Name the gate using each game's own renderer (H1 has friendly
             // labels for its named fields; H2 keys render as "Must be false: ..."

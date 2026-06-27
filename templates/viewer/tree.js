@@ -272,6 +272,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             blockedBadge.dataset.tooltip = `Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing: ${blocks.join(', ')}`;
             label.appendChild(blockedBadge);
         }
+    } else if (tl.skip) {
+        const skipBadge = document.createElement('span');
+        skipBadge.className = 'tree-skip-badge';
+        skipBadge.textContent = 'retired';
+        skipBadge.dataset.tooltip = tl.skipReplacement
+            ? `Retired line (flagged Skip) - can never play. Superseded by ${tl.skipReplacement}.`
+            : 'Retired line (flagged Skip) - can never play.';
+        label.appendChild(skipBadge);
     } else if (tl.blocked) {
         const blockedBadge = document.createElement('span');
         blockedBadge.className = 'tree-blocked-badge';

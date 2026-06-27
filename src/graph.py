@@ -169,6 +169,10 @@ def build_graph_data(
                 # panel only.
                 if tl_data.get("playOnce"):
                     new_entry["playOnce"] = True
+                # `Skip = true` retired line - permanently unplayable (see
+                # extract_textline). Surfaced so the viewer can flag it.
+                if tl_data.get("skip"):
+                    new_entry["skip"] = True
                 # `Partner = "NPC_..."` on xWithY partner dialogues. Names
                 # the second NPC; the same textline name also exists as
                 # an empty `Skip = true` stub under that partner NPC.
@@ -208,6 +212,7 @@ def build_graph_data(
                 else:
                     textlines[tl_name] = new_entry
 
+    resolve_skip_replacements(textlines)
     dependents = build_dependents(textlines)
     alternates = build_alternates(textlines)
 
@@ -230,6 +235,43 @@ def build_graph_data(
         "speakers": _filter_speakers(speakers),
         "stats": stats,
     }
+
+
+# Suffix priority for locating the live replacement of a retired
+# (`Skip = true`) textline. A retired line and its replacement share a
+# base name; the replacement is the canonical live sibling (`_A`/`_Alt`)
+# or the un-suffixed base. `_B`/`_C` siblings are deliberately excluded:
+# they are alternates of the replacement (or distinct lines in the same
+# retired set), not the primary replacement. Verified against H1
+# NPCData: gift chains (XGiftNN -> XGiftNN_A), DusaGift05 ->
+# DusaGift05_Alt, HadesRevealsBadgeSeller01_B -> HadesRevealsBadgeSeller01.
+# Retired lines with no canonical live sibling/base (early-access
+# HadesRunCleared*, PersephoneChat12) get no link.
+_SKIP_REPLACEMENT_SUFFIXES = ("_A", "_Alt")
+
+
+def resolve_skip_replacements(textlines: dict) -> None:
+    """Annotate each retired (``skip``) textline with ``skipReplacement``:
+    the name of the live line that superseded it, when derivable from the
+    shared base name. Mutates ``textlines`` in place; leaves the field
+    absent when no live replacement exists."""
+    def is_live(name: str) -> bool:
+        entry = textlines.get(name)
+        return entry is not None and not entry.get("skip")
+
+    for name, entry in textlines.items():
+        if not entry.get("skip"):
+            continue
+        replacement = next(
+            (name + suf for suf in _SKIP_REPLACEMENT_SUFFIXES if is_live(name + suf)),
+            None,
+        )
+        if replacement is None and "_" in name:
+            base = name.rsplit("_", 1)[0]
+            if is_live(base):
+                replacement = base
+        if replacement is not None:
+            entry["skipReplacement"] = replacement
 
 
 def _filter_speakers(speakers: dict | None) -> dict:

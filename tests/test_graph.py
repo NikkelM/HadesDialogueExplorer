@@ -9,12 +9,15 @@ def make_npc(name, section, textlines):
     return {name: {"source": "Test", section: textlines}}
 
 
-def make_textline(requirements=None, other=None, dialogue=None):
-    return {
+def make_textline(requirements=None, other=None, dialogue=None, skip=False):
+    tl = {
         "requirements": requirements or {},
         "otherRequirements": other or {},
         "dialogueLines": dialogue or [],
     }
+    if skip:
+        tl["skip"] = True
+    return tl
 
 
 class TestBasicGraph:
@@ -505,3 +508,72 @@ class TestOrBranches:
         })
         result = build_graph_data(npcs)
         assert "DoesNotExist" in result["stats"]["unresolvedRefs"]
+
+
+class TestSkipRetiredLines:
+    """`Skip = true` lines are retired/permanently unplayable; the builder
+    propagates the flag and links each to its live replacement when the
+    shared base name makes it derivable."""
+
+    def _build(self, lines):
+        npcs = make_npc("NPC_X_01", "GiftTextLineSets", lines)
+        return build_graph_data(npcs)["textlines"]
+
+    def test_skip_flag_propagates(self):
+        tl = self._build({
+            "XGift04": make_textline(dialogue=[{"speaker": "NPC_X_01", "text": "a"}], skip=True),
+            "XGift04_A": make_textline(dialogue=[{"speaker": "NPC_X_01", "text": "b"}]),
+        })
+        assert tl["XGift04"]["skip"] is True
+        assert "skip" not in tl["XGift04_A"]
+
+    def test_replacement_links_to_a_sibling(self):
+        tl = self._build({
+            "XGift04": make_textline(skip=True),
+            "XGift04_A": make_textline(),
+        })
+        assert tl["XGift04"]["skipReplacement"] == "XGift04_A"
+
+    def test_replacement_prefers_a_over_b(self):
+        tl = self._build({
+            "XGift05": make_textline(skip=True),
+            "XGift05_A": make_textline(),
+            "XGift05_B": make_textline(),
+        })
+        assert tl["XGift05"]["skipReplacement"] == "XGift05_A"
+
+    def test_replacement_alt_sibling(self):
+        tl = self._build({
+            "DusaGift05": make_textline(skip=True),
+            "DusaGift05_Alt": make_textline(),
+        })
+        assert tl["DusaGift05"]["skipReplacement"] == "DusaGift05_Alt"
+
+    def test_replacement_strips_suffix_to_live_base(self):
+        tl = self._build({
+            "BadgeSeller01_B": make_textline(skip=True),
+            "BadgeSeller01": make_textline(),
+        })
+        assert tl["BadgeSeller01_B"]["skipReplacement"] == "BadgeSeller01"
+
+    def test_no_replacement_when_only_b_sibling(self):
+        # `_B` siblings are alternates/distinct lines, never the primary
+        # replacement (cf. HadesRunCleared03 with a live _B variant).
+        tl = self._build({
+            "RunCleared03": make_textline(skip=True),
+            "RunCleared03_B": make_textline(),
+        })
+        assert "skipReplacement" not in tl["RunCleared03"]
+
+    def test_no_replacement_when_base_also_skip(self):
+        tl = self._build({
+            "RunCleared03": make_textline(skip=True),
+            "RunCleared03_C": make_textline(skip=True),
+        })
+        assert "skipReplacement" not in tl["RunCleared03_C"]
+
+    def test_no_replacement_when_no_sibling(self):
+        tl = self._build({
+            "PersephoneChat12": make_textline(skip=True),
+        })
+        assert "skipReplacement" not in tl["PersephoneChat12"]

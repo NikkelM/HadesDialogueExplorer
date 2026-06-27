@@ -466,6 +466,20 @@ def extract_textline(
     if tl_table.get("PlayOnce") is True:
         data["playOnce"] = True
 
+    # `Skip = true` retires a dialogue revision without deleting it: the
+    # engine's eligibility gate (`IsGameStateEligible` in RunManager.lua)
+    # short-circuits to ineligible on `Skip` before it even evaluates
+    # `Force`, so a skipped line can never play through any normal or
+    # debug code path. Supergiant leave the dead version in place so its
+    # name stays valid in other lines' Required*TextLines checks and in
+    # old saves' TextLinesRecord. We surface the flag so the viewer can
+    # mark these lines permanently unplayable rather than showing them as
+    # normal dialogue. (Empty `Skip = true` xWithY partner stubs also
+    # carry this, but they lose to their cue-bearing canonical side in
+    # `resolve_duplicate`, so the flag never reaches the final entry.)
+    if tl_table.get("Skip") is True:
+        data["skip"] = True
+
     # `Partner = "NPC_<other>_01"` on the full entry of an `xWithY`
     # partner dialogue names the second NPC involved. The same dialogue
     # is also queued under that partner NPC's textline-set as an empty
