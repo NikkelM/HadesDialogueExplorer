@@ -733,20 +733,29 @@ function h1CombineAnd(statuses) {
 
 // ---- permanence (blocked vs unobtainable) ------------------------------------
 //
-// A handful of H1 ``otherRequirements`` "max" gates read a monotonic-up
-// persistent counter that only ever grows over the profile's lifetime in normal
-// play (run counts, lifetime resources, one-way weapon-aspect unlocks/upgrades,
-// cumulative NPC / room interaction counts, cashed-out quests). Once such a
-// counter passes the gate's cap it can never come back down, so the gate is not
-// merely *unmet now* but *permanently unmet* - the dialogue is unobtainable, not
-// just blocked. (Story-reset wipes these, the same documented caveat as the H2
-// permanent-state allowlist; permanence here describes normal play.)
+// Two families of H1 ``otherRequirements`` gate are not merely *unmet now* but
+// *permanently unmet*, so the dialogue is unobtainable rather than just blocked:
+//
+//  1. "max" gates that read a monotonic-up persistent counter only ever growing
+//     over the profile's lifetime in normal play (run counts, lifetime
+//     resources, one-way weapon-aspect unlocks/upgrades, cumulative NPC / room
+//     interaction counts, cashed-out quests). Once the counter passes the cap it
+//     can never come back down.
+//  2. "require-absence" gates that forbid a monotonic, append-only persistent
+//     event having happened (a played voiceline, an enemy kill, a seen room, a
+//     weapon unlock, a viewed screen). The engine only ever sets / increments
+//     these records and never clears them in normal play, so once the forbidden
+//     event is on record the gate can never become met again.
+//
+// (Story-reset wipes both, the same documented caveat as the H2 permanent-state
+// allowlist; permanence here describes normal play.)
 //
 // Each entry returns true when the gate is permanently unmet given the current
-// GameState. Conservative: only the already-surpassed case is permanent. Gates
-// over resettable / per-run / respec-able / removable state (depth, last stands,
-// health, meta-upgrade levels, Heat, cosmetics, support AI) are intentionally
-// absent and stay "blocked".
+// GameState. Conservative: only the already-surpassed / already-happened case is
+// permanent. Gates over resettable / per-run / respec-able / removable state
+// (depth, last stands, health, meta-upgrade levels, Heat, support AI) and over
+// removable cosmetics (RequiredFalseCosmetics, whose decor entries toggle back
+// off) are intentionally absent and stay "blocked".
 const H1_PERMANENT_UNMET_EVALS = {
     RequiredMaxCompletedRuns: (v, ctx) => h1Len(h1Gs(ctx, 'RunHistory')) > v,
     RequiredMaxRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
@@ -765,6 +774,21 @@ const H1_PERMANENT_UNMET_EVALS = {
         const w = h1Gs(ctx, 'WeaponUnlocks') || {};
         return !!(w[weapon] && w[weapon][idx] === 5);
     },
+
+    // ===== require-absence of a monotonic, append-only persistent event =====
+    // "Must NOT have played voiceline cue X" - the global SpeechRecord is only
+    // ever set true (AudioScripts / UtilityScripts) and never cleared in normal
+    // play, so a recorded cue can never be un-played.
+    RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord') || {}; return h1Arr(v).some(k => h1Truthy(s[k])); },
+    // "Must NOT have killed enemy X" - GameState.EnemyKills counts only increment.
+    RequiredFalseKills: (v, ctx) => { const k = h1Gs(ctx, 'EnemyKills') || {}; return h1Arr(v).some(e => h1Num(k[e]) > 0); },
+    // "Must NOT have seen room X" - the persistent RoomCountCache only increments
+    // (h1HasSeenRoom reads it; the null currentRun here ignores the per-run copy).
+    RequiredFalseSeenRooms: (v, ctx) => h1Arr(v).some(r => h1HasSeenRoom(ctx, r)),
+    // "Must NOT have weapon X unlocked" - WeaponsUnlocked is a one-way unlock flag.
+    RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return h1Arr(v).some(k => h1Truthy(w[k])); },
+    // "Must NOT have viewed screen X" - ScreensViewed is a write-once view record.
+    RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return h1Truthy(s[v]); },
 };
 
 // Whether a Hades 1 textline's flat ``otherRequirements`` map is *permanently*

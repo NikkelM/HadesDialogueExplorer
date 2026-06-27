@@ -470,6 +470,33 @@ test('H1: resettable / per-run max gates are never permanent', () => {
     assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 0 }, null), null);
 });
 
+// --- permanence: require-absence of a monotonic event (blocked vs unobtainable)
+
+test('H1: forbidding a monotonic event that already happened is permanently unmet', () => {
+    // A played voiceline can never be un-played (the global SpeechRecord is
+    // append-only), so a "must NOT have played" gate over a recorded cue is
+    // permanently unmet -> unobtainable, not merely blocked.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalsePlayed: ['/VO/A_1', '/VO/A_2'] }, { SpeechRecord: { '/VO/A_2': true } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalsePlayed: ['/VO/A_1'] }, { SpeechRecord: {} }), null);
+    // EnemyKills counts only increment.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseKills: ['Harpy'] }, { EnemyKills: { Harpy: 3 } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseKills: ['Harpy'] }, { EnemyKills: {} }), null);
+    // The persistent RoomCountCache only increments (per-run copy is ignored).
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseSeenRooms: ['C_Intro'] }, { RoomCountCache: { C_Intro: 1 } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseSeenRooms: ['C_Intro'] }, { RoomCountCache: {} }), null);
+    // Weapon unlocks and screen views are one-way records.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseWeaponsUnlocked: ['GunWeapon'] }, { WeaponsUnlocked: { GunWeapon: true } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseWeaponsUnlocked: ['GunWeapon'] }, { WeaponsUnlocked: {} }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredScreenViewedFalse: 'WeaponUpgradeScreen' }, { ScreensViewed: { WeaponUpgradeScreen: true } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredScreenViewedFalse: 'WeaponUpgradeScreen' }, { ScreensViewed: {} }), null);
+});
+
+test('H1: removable-state absence gates stay blocked, not unobtainable', () => {
+    // Cosmetics can be removed / swapped (decor toggles back off), so a
+    // "must NOT have cosmetic X" gate is not provably permanent.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseCosmetics: ['Cosmetic_NorthHallSundial'] }, { Cosmetics: { Cosmetic_NorthHallSundial: true } }), null);
+});
+
 // --- unrecognised field ------------------------------------------------------
 
 test('H1: an unmapped field is unknown rather than crashing', () => {
