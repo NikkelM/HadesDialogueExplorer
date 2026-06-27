@@ -12,3 +12,8 @@ __pycache__/
 
 # node
 node_modules/
+
+# Local scratch / probe files (never committed)
+tmp-*
+*.tmp
+templates/viewer/_*.js

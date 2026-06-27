@@ -173,6 +173,18 @@ _JS_LEFTOVER_MODULE_KEYWORD_RE = re.compile(
     re.MULTILINE,
 )
 
+# Column-0 (top-level) declarations in a stripped viewer module. After
+# ``_strip_module_syntax`` removes the ``export `` prefix, a top-level
+# ``export function foo`` becomes a column-0 ``function foo``; anything nested
+# inside a block is indented, so anchoring at the start of the line isolates the
+# bundle's shared-scope top level. One capture group per declaration kind.
+_JS_TOP_LEVEL_DECL_RE = re.compile(
+    r"^(?:async\s+)?function\s+(\w+)"
+    r"|^(?:const|let|var)\s+(\w+)"
+    r"|^class\s+(\w+)",
+    re.MULTILINE,
+)
+
 
 def _strip_module_syntax(js_text: str, source_name: str = "<viewer module>") -> str:
     """Strip ES module ``import``/``export`` syntax so the file can be
@@ -208,6 +220,41 @@ def _strip_module_syntax(js_text: str, source_name: str = "<viewer module>") -> 
             f"new shape, or rewrite the module to use a supported one."
         )
     return js_text
+
+
+def _assert_unique_top_level_names(file_texts: list) -> None:
+    """Fail the build if any top-level declaration name appears in more than
+    one viewer module.
+
+    ``build_js`` concatenates every ``templates/viewer/*.js`` module into one
+    classic (sloppy-mode) script, so all module top levels share a single
+    scope. A duplicate top-level ``function`` is legal in sloppy mode and
+    silently collapses to the last-concatenated definition, shipping a wrong
+    bundle that the unit tests (which import the ES modules in separate scopes)
+    and the boot smoke test (which only trips on duplicate ``const`` / ``let``
+    / ``class``) cannot see. This guard turns that silent-wrong-bundle class
+    into a build-time error naming both modules.
+
+    ``file_texts`` is a list of ``(source_name, stripped_js)`` pairs - the
+    already-stripped text is what actually lands in the bundle.
+    """
+    seen = {}
+    for source_name, text in file_texts:
+        for match in _JS_TOP_LEVEL_DECL_RE.finditer(text):
+            name = match.group(1) or match.group(2) or match.group(3)
+            line_no = text.count("\n", 0, match.start()) + 1
+            where = f"{source_name}:{line_no}"
+            if name in seen:
+                raise RuntimeError(
+                    f"Duplicate top-level name {name!r} in the concatenated "
+                    f"viewer bundle: first at {seen[name]}, again at {where}. "
+                    f"Every top-level function/const/let/var/class name must be "
+                    f"globally unique across templates/viewer/*.js because the "
+                    f"build concatenates them into one classic-script scope - a "
+                    f"duplicate silently shadows (last-declared wins). Rename "
+                    f"one of the declarations."
+                )
+            seen[name] = where
 
 
 def build_js() -> str:
@@ -247,15 +294,29 @@ def build_js() -> str:
     other_files = [f for f in js_files if f.name != "init.js"]
     ordered = other_files + init_files
 
-    parts = []
+    stripped = []
     for js_file in ordered:
-        parts.append(f"// --- {js_file.name} ---")
-        parts.append(
-            _strip_module_syntax(
-                js_file.read_text(encoding="utf-8"),
-                source_name=str(js_file.relative_to(PROJECT_DIR)) if js_file.is_relative_to(PROJECT_DIR) else js_file.name,
-            ).strip()
+        source_name = (
+            str(js_file.relative_to(PROJECT_DIR))
+            if js_file.is_relative_to(PROJECT_DIR)
+            else js_file.name
         )
+        stripped.append(
+            (
+                source_name,
+                _strip_module_syntax(
+                    js_file.read_text(encoding="utf-8"),
+                    source_name=source_name,
+                ).strip(),
+            )
+        )
+
+    _assert_unique_top_level_names(stripped)
+
+    parts = []
+    for (source_name, text), js_file in zip(stripped, ordered):
+        parts.append(f"// --- {js_file.name} ---")
+        parts.append(text)
     return "\n\n".join(parts) + "\n"
 
 
