@@ -9,6 +9,7 @@ import {
     getSaveGameId,
     getSaveRuns,
     getSaveHasBiomesMod,
+    getSaveInRun,
     saveMatchesActiveGame,
     validateSaveFilename,
     persistSaveProgress,
@@ -102,6 +103,12 @@ export function refreshSaveStatus() {
     const count = getSaveProgress().size;
     const runs = getSaveRuns();
     const moddedH2 = gameId === 'hades2' && getSaveHasBiomesMod();
+    // Hub vs in-run (_Temp) save: changes which CurrentRun.* gates can resolve,
+    // so surface it. The hub is named per game (House of Hades / Crossroads);
+    // null (unknown save type) shows neither.
+    const inRun = getSaveInRun();
+    const hubName = gameId === 'hades1' ? 'House of Hades' : 'Crossroads';
+    const kind = inRun === true ? ', run save' : (inRun === false ? `, ${hubName} save` : '');
     if (!saveMatchesActiveGame()) {
         // The save is for the other game (a vanilla H2 save carries no Hades 1
         // progress, so it doesn't apply under Hades 1).
@@ -113,8 +120,8 @@ export function refreshSaveStatus() {
         // show them identically in either view rather than silently dropping
         // runs on a game switch. Non-breaking spaces keep each "N unit" pair
         // together when the pill wraps.
-        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
+        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues, ${runs}\u00A0runs${kind}`);
     } else {
-        showStatus('loaded', `${label}: ${count}\u00A0dialogues, ${runs}\u00A0runs`);
+        showStatus('loaded', `${label}: ${count}\u00A0dialogues, ${runs}\u00A0runs${kind}`);
     }
 }

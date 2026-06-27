@@ -838,6 +838,8 @@ export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
 export function getSaveRuns() { return _saveRuns; }
 export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
+// true = in-run (_Temp) save, false = hub save, null = unknown / none loaded.
+export function getSaveInRun() { return _saveInRun; }
 
 // The full save context for requirement evaluation: the global played set
 // plus the run-scoped records (each ``null`` when the save doesn't carry
