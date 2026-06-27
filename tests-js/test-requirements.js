@@ -597,6 +597,36 @@ describe('run-count tooltips: play-once wording and permanence', () => {
             { played: new Set(['POnce']), runsAgo: { POnce: 1 } }, 3), false);
     });
 
+    test('reqGroupLocked: a positive queued gate whose play-once operand has played is locked', () => {
+        // RequiredQueuedTextLines (AND): the engine needs the operand queued to
+        // play next, which requires it still be eligible. A play-once operand
+        // that already played can never be queued again -> permanent lock.
+        assert.equal(reqGroupLocked('RequiredQueuedTextLines', ['POnce'], played('POnce')), true);
+        // Not yet played -> could still be queued -> not locked.
+        assert.equal(reqGroupLocked('RequiredQueuedTextLines', ['POnce'], played()), false);
+        // A repeatable operand can be re-queued even after playing -> not locked.
+        assert.equal(reqGroupLocked('RequiredQueuedTextLines', ['Rep'], played('Rep')), false);
+        // RequiredAnyQueuedTextLines (OR): locked only when EVERY operand can
+        // never be queued again.
+        assert.equal(reqGroupLocked('RequiredAnyQueuedTextLines', ['POnce', 'Rep'], played('POnce', 'Rep')), false);
+        assert.equal(reqGroupLocked('RequiredAnyQueuedTextLines', ['POnce'], played('POnce')), true);
+        // No save context -> not locked (can't resolve).
+        assert.equal(reqGroupLocked('RequiredQueuedTextLines', ['POnce'], null), false);
+    });
+
+    test('scopedGateExplain: a played play-once queued operand is a permanent block, not a near-miss', () => {
+        const ctx = { played: new Set(['POnce', 'Rep']), queued: new Set() };
+        const exP = scopedGateExplain('RequiredQueuedTextLines', ['POnce'], ctx);
+        assert.equal(exP.status, 'unmet');
+        assert.equal(exP.blockers[0].permanent, true);
+        assert.equal(exP.blockers[0].playedInSave, undefined);
+        assert.match(exP.blockers[0].tooltip, /can never be queued/i);
+        // A repeatable operand played but not queued stays a recoverable near-miss.
+        const exR = scopedGateExplain('RequiredQueuedTextLines', ['Rep'], ctx);
+        assert.equal(exR.blockers[0].permanent, undefined);
+        assert.equal(exR.blockers[0].playedInSave, true);
+    });
+
     test('runsSinceGroupTooltip flags a permanent play-once lock in the head', () => {
         const tip = runsSinceGroupTooltip('MaxRunsSinceAnyTextLines', ['POnce'],
             { played: new Set(['POnce']), runsAgo: { POnce: 5 } }, 3);

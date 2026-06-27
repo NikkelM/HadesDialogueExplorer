@@ -226,9 +226,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                 // Run-scoped positive gate (this-run / this-room / last-run /
                 // queued): a ref played in the save but not in the gate's scope
                 // is a near-miss - it has played, just not where this gate needs.
+                // A queued ref that is play-once and already played is instead a
+                // permanent block: it can never be queued to play next again.
                 const ex = scopedGateExplain(edgeType, [name], getSaveContext());
                 const blocker = ex && ex.blockers[0];
-                if (blocker && blocker.playedInSave) {
+                if (blocker && blocker.permanent) {
+                    status = 'unobtainable';
+                    tip = blocker.tooltip;
+                } else if (blocker && blocker.playedInSave) {
                     status = 'near-miss';
                     tip = blocker.tooltip;
                 }

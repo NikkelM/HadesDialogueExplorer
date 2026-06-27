@@ -454,6 +454,33 @@ describe('isUnobtainable', () => {
         assert.equal(isGroupUnobtainable('RequiredFalseTextLines', ['Blocker'], new Set(['Blocker']), null, 1), false);
     });
 
+    test('isGroupUnobtainable: a positive queued gate is locked once its operand can never be queued again', () => {
+        // A play-once operand that already played can never be set as an NPC's
+        // next line again -> the queued gate is permanently unsatisfiable.
+        assert.equal(isGroupUnobtainable('RequiredQueuedTextLines', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
+        // Not yet played -> can still be queued -> not locked.
+        assert.equal(isGroupUnobtainable('RequiredQueuedTextLines', ['PlayOnceFoe'], new Set(), null, 1), false);
+        // Repeatable operand can be re-queued even after playing -> not locked.
+        assert.equal(isGroupUnobtainable('RequiredQueuedTextLines', ['RepFoe'], new Set(['RepFoe']), null, 1), false);
+        // A transitively-unobtainable operand can never play, so never be queued.
+        assert.equal(isGroupUnobtainable('RequiredQueuedTextLines', ['Locked'], new Set(['Blocker']), null, 1), true);
+        // OR queued: locked only when EVERY operand can never be queued again.
+        assert.equal(isGroupUnobtainable('RequiredAnyQueuedTextLines', ['PlayOnceFoe', 'RepFoe'], new Set(['PlayOnceFoe', 'RepFoe']), null, 1), false);
+        assert.equal(isGroupUnobtainable('RequiredAnyQueuedTextLines', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
+    });
+
+    test('isRequirementSetUnobtainable: a host gated on a played-out queued line is unobtainable', () => {
+        assert.equal(
+            isRequirementSetUnobtainable({ requirements: { RequiredQueuedTextLines: ['PlayOnceFoe'] } }, null, new Set(['PlayOnceFoe']), null),
+            true,
+        );
+        // Operand not yet played -> still satisfiable in a future room.
+        assert.equal(
+            isRequirementSetUnobtainable({ requirements: { RequiredQueuedTextLines: ['PlayOnceFoe'] } }, null, new Set(), null),
+            false,
+        );
+    });
+
     test('isRequirementSetUnobtainable: a branch requiring an unobtainable line is locked', () => {
         const played = new Set(['Blocker']);
         assert.equal(

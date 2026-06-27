@@ -515,7 +515,13 @@ export function renderBlockingGatesHtml(rootName, ctx = getSaveContext()) {
         } else {
             const ex = scopedGateExplain(reqType, refs, ctx, rootName);
             if (!ex || ex.status !== 'unmet') continue;
-            gates.push({ reqType, count: null, scopeLabel: ex.scopeLabel, blockers: ex.blockers });
+            // Permanent blockers (a play-once queued ref that has already
+            // played) aren't situational - they're a permanent lock surfaced
+            // via the dialogue's unobtainable treatment. Drop them here; skip
+            // the gate entirely if nothing situational remains.
+            const situational = ex.blockers.filter(b => !b.permanent);
+            if (situational.length === 0) continue;
+            gates.push({ reqType, count: null, scopeLabel: ex.scopeLabel, blockers: situational });
         }
     }
     if (gates.length === 0) return '';

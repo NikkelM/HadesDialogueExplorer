@@ -28,7 +28,7 @@
  */
 
 import { textlines, namedRequirements, getActiveGame } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus } from './requirements.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 import { gameStateClausePermanence } from './permanent-state.js';
 
@@ -75,6 +75,16 @@ function maxRunsPermanentlyOut(ref, n, playedSet) {
     const ago = _unobtainableRunsAgo[ref];
     if (typeof ago === 'number') return ago > n;
     return playedSet.has(ref); // beyond the tracked depth, but played -> out forever
+}
+
+// Whether a positive-queued operand could still be queued to play next at some
+// future point: it must still be able to play at all (not a play-once line that
+// already played, and not itself transitively unobtainable). A repeatable line
+// can be re-queued even after playing; a play-once line that has played, or any
+// line that can never play, can never be queued again.
+function canStillBeQueued(ref, playedSet, stack) {
+    if (isPlayOnceRef(ref) && playedSet.has(ref)) return false;
+    return !unobtainableRec(ref, playedSet, stack);
 }
 
 export function isUnobtainable(name, playedSet, runsAgo = null, context = null) {
@@ -236,6 +246,15 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
             // whole gate is permanently unsatisfiable.
             const n = requiredCount(reqHost, reqType);
             if (others.some(r => maxRunsPermanentlyOut(r, n, playedSet))) return true;
+        } else if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
+            // Positive queued AND: every ref must be queued to play next. A ref
+            // that can never be queued again (play-once + already played, or
+            // itself unobtainable) locks the whole gate.
+            if (others.some(r => !canStillBeQueued(r, playedSet, stack))) return true;
+        } else if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
+            // Positive queued OR: at least one ref must be queueable; locked only
+            // when none of them can ever be queued again.
+            if (others.length > 0 && others.every(r => !canStillBeQueued(r, playedSet, stack))) return true;
         } else if (AND_REQ_TYPES.has(reqType)) {
             if (others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack))) return true;
         } else if (OR_REQ_TYPES.has(reqType)) {
@@ -257,18 +276,26 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
 // permanently unsatisfiable because the refs themselves can never be
 // obtained - the transitive sibling of ``reqGroupLocked`` (which covers
 // only the *direct* permanent-lock cases). An AND group whose required line
-// is itself unobtainable, an OR group whose every option is unobtainable, or
-// a count-min group with too few still-obtainable options, can never be
-// satisfied as the played set grows. Returns ``false`` for field types where
-// transitive obtainability doesn't apply (negatives, count-max, run-count -
-// those are handled by ``reqGroupLocked``). ``count`` is the group's
-// threshold; ``selfName`` ignores the host's self-references.
+// is itself unobtainable, an OR group whose every option is unobtainable, a
+// count-min group with too few still-obtainable options, or a positive queued
+// group whose operand(s) can never be queued again (a play-once line that
+// already played, or an unobtainable line), can never be satisfied as the
+// played set grows. Returns ``false`` for field types where transitive
+// obtainability doesn't apply (negatives, count-max, run-count - those are
+// handled by ``reqGroupLocked``). ``count`` is the group's threshold;
+// ``selfName`` ignores the host's self-references.
 export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1, selfName = null) {
     if (!playedSet || !textlines) return false;
     refreshUnobtainableCaches(playedSet, runsAgo);
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     const stack = new Set();
+    if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
+        return others.some(r => !canStillBeQueued(r, playedSet, stack));
+    }
+    if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
+        return others.length > 0 && others.every(r => !canStillBeQueued(r, playedSet, stack));
+    }
     if (AND_REQ_TYPES.has(reqType)) {
         return others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack));
     }

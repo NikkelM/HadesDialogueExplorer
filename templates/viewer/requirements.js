@@ -199,8 +199,19 @@ function runsLabel(n) {
 // across the whole save). Tolerates an unloaded ``textlines`` binding (unit
 // tests that exercise the verdict logic without a dataset) by treating
 // unknown lines as repeatable.
-function isPlayOnceRef(name) {
+export function isPlayOnceRef(name) {
     return !!(textlines && textlines[name] && textlines[name].playOnce);
+}
+
+// A positive queued gate (``RequiredQueuedTextLines`` / ``RequiredAnyQueuedTextLines``)
+// is satisfied only while the referenced line is *queued to play next* - the
+// engine checks an active NPC's ``NextInteractLines.Name == ref``, which
+// requires ``ref`` to still be eligible to play. A play-once ref that has
+// already played can therefore NEVER be queued again, so an already-played
+// play-once operand is a *permanent lock* here - the opposite of a
+// "must have played" prerequisite, where a played operand satisfies the gate.
+function queuedRefPermanentlyUnqueueable(ref, playedSet) {
+    return isPlayOnceRef(ref) && playedSet instanceof Set && playedSet.has(ref);
 }
 
 /**
@@ -378,6 +389,9 @@ export function reqGroupStatus(reqType, refs, context, count = 1, selfName = nul
  * badge can never disagree:
  *   - ``MaxRunsSinceAnyTextLines`` with a play-once ref now past the window
  *     (it can never replay to re-enter range);
+ *   - a positive queued gate (``RequiredQueuedTextLines`` /
+ *     ``RequiredAnyQueuedTextLines``) whose play-once operand has already
+ *     played (it can never be queued to play next again);
  *   - ``RequiredMaxAnyTextLines`` whose played count already exceeds the cap
  *     (the cumulative played set only grows); and
  *   - a global negative (``RequiredFalseTextLines``) on a line that has
@@ -393,6 +407,16 @@ export function reqGroupLocked(reqType, refs, context, count = 1, selfName = nul
     }
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
+    // Positive queued gate with a play-once operand that has already played: it
+    // can never be queued again. AND ("all must be queued") is locked if ANY
+    // operand is permanently unqueueable; OR ("any queued") is locked only if
+    // EVERY operand is. Resolves against the cumulative played set.
+    if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
+        return others.some(r => queuedRefPermanentlyUnqueueable(r, ctx.played));
+    }
+    if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
+        return others.length > 0 && others.every(r => queuedRefPermanentlyUnqueueable(r, ctx.played));
+    }
     if (COUNT_MAX_REQ_TYPES.has(reqType)) {
         const record = _recordFor(ctx, reqType);
         return !!record && others.filter(r => record.has(r)).length > (count || 1);
@@ -429,7 +453,10 @@ const SCOPE_PHRASES = {
  * are the refs currently failing the gate, each ``{ name, reason }`` plus,
  * for a *positive* gate ref that has played somewhere in the save but not in
  * this scope, ``playedInSave: true`` and a ``tooltip`` - a near-miss the
- * tracer flags distinctly (it has played, just not where this gate needs).
+ * tracer flags distinctly (it has played, just not where this gate needs). A
+ * *queued* gate ref that is play-once and has already played is instead marked
+ * ``permanent: true`` (with its own tooltip): it can never be queued again, so
+ * the gate is permanently unsatisfiable rather than a recoverable near-miss.
  * ``status`` matches ``reqGroupStatus`` for the same field.
  */
 export function scopedGateExplain(reqType, refs, context, selfName = null) {
@@ -443,9 +470,19 @@ export function scopedGateExplain(reqType, refs, context, selfName = null) {
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     // A positive-gate ref missing from the scope record: distinguish "played
-    // in the save but not this scope" (a near-miss) from "never played".
+    // in the save but not this scope" (a near-miss) from "never played". For a
+    // *queued* gate the near-miss is permanent when the ref is play-once: a
+    // play-once line that already played can never be queued to play next again.
     const positiveBlocker = (r) => {
         if (playedSet && playedSet.has(r)) {
+            if (scope === 'queued' && isPlayOnceRef(r)) {
+                return {
+                    name: r,
+                    reason: 'played - can never be queued again',
+                    permanent: true,
+                    tooltip: `${r} is a play-once line that has already played, so it can never be queued to play next again. This requirement can no longer be satisfied.`,
+                };
+            }
             return {
                 name: r,
                 reason: phrases.elsewhere,
