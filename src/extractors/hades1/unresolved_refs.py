@@ -34,116 +34,118 @@ HADES1_KNOWN_UNRESOLVED_REFS = {
     # --- back-compatibility (3) ---
     "Fury3SisterUnionWithMeg02": {
         "category": "back-compatibility",
-        "reason": "Event was originally named Fury3 then renamed to Fury2; "
-                  "the old name is still checked (see explicit comment in "
-                  "EnemyData.lua).",
+        "reason": "An old dialogue that was renamed or removed in a later "
+                  "update. The leftover reference is kept only so existing "
+                  "saves keep working and has no effect on play.",
     },
     "FuryFirstAppearanceFirstRun": {
         "category": "back-compatibility",
-        "reason": "Definition was removed when the QuestLog system was added "
-                  "(per block-comment dated 2019-11-23 in EnemyData.lua); "
-                  "the ref is retained.",
+        "reason": "An old dialogue that was renamed or removed in a later "
+                  "update. The leftover reference is kept only so existing "
+                  "saves keep working and has no effect on play.",
     },
     "PatroclusAboutAchilles01C": {
         "category": "back-compatibility",
-        "reason": "Older textline that no longer exists - superseded by the "
-                  "sibling variants PatroclusAboutAchilles01C_01 and _02. "
-                  "Source comments call it out as kept for compatibility.",
+        "reason": "An old dialogue that was renamed or removed in a later "
+                  "update. The leftover reference is kept only so existing "
+                  "saves keep working and has no effect on play.",
     },
 
     # --- typo-or-bug (5) ---
     "DemeterUpgrade": {
         "category": "typo-or-bug",
-        "reason": "Should be DemeterFirstPickUp (which is defined) to match "
-                  "the other entries in HadesPostFlashback01's "
-                  "RequiredMinAnyTextLines list - the other gods use "
-                  "<God>FirstPickUp textline names.",
+        "reason": "Looks like a typo for DemeterFirstPickUp, which does exist.",
     },
     "HermesUpgrade": {
         "category": "typo-or-bug",
-        "reason": "Should be HermesFirstPickUp (which is defined) to match "
-                  "the other entries in HadesPostFlashback01's "
-                  "RequiredMinAnyTextLines list - the other gods use "
-                  "<God>FirstPickUp textline names.",
+        "reason": "Looks like a typo for HermesFirstPickUp, which does exist.",
     },
     "ThanatosGift010": {
         "category": "typo-or-bug",
-        "reason": "Almost certainly a typo for ThanatosGift10 (extra zero).",
+        "reason": "Looks like a typo for ThanatosGift10, which does exist.",
     },
     "LordHadesEncounter01B": {
         "category": "typo-or-bug",
-        "reason": "Almost certainly a typo for LordHadesEncounter01_B "
-                  "(missing underscore).",
+        "reason": "Looks like a typo for LordHadesEncounter01_B, which does exist.",
     },
     "Athena_07": {
         "category": "typo-or-bug",
-        "reason": "Required by AthenaMaxRelationship01's RequiredTextLines "
-                  "but no matching definition exists - doesn't follow the "
-                  "AthenaGift<N> or AthenaMaxRelationship<N> patterns, so "
-                  "AthenaMaxRelationship01 can never play.",
+        "reason": "Required by AthenaMaxRelationship01, but no dialogue with "
+                  "this name exists, so AthenaMaxRelationship01 can never play.",
     },
 
     # --- cut-content (13) ---
     "LordHadesFirstDefeat": {
         "category": "cut-content",
-        "reason": "Cut event; referenced only in RequiredFalseTextLines as a "
-                  "defensive null check (always satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "TheseusFirstAppearance_MetMinotaur": {
         "category": "cut-content",
-        "reason": "Cut event; referenced only in RequiredFalseTextLines as a "
-                  "defensive null check.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "InspectPointLoungeClosed01": {
         "category": "cut-content",
-        "reason": "Cut content; referenced as an alternative in "
-                  "RequiredAnyTextLines for CerberusLoungeClosed01.",
+        "reason": "A dialogue that was never added to the game. It was "
+                  "one option among alternatives for CerberusLoungeClosed01, "
+                  "which can still play via its remaining options.",
     },
     "NyxAboutAres01_B": {
         "category": "cut-content",
-        "reason": "Cut _B variant; paired with the existing NyxAboutAres01 "
-                  "in OR-style requirements as a defensive fallback.",
+        "reason": "An alternate version that was never added to the game. It "
+                  "was paired with the existing NyxAboutAres01 as a fallback, "
+                  "so nothing is affected.",
     },
     "NyxAboutAres02_B": {
         "category": "cut-content",
-        "reason": "Cut _B variant; paired with the existing NyxAboutAres02 "
-                  "in OR-style requirements as a defensive fallback.",
+        "reason": "An alternate version that was never added to the game. It "
+                  "was paired with the existing NyxAboutAres02 as a fallback, "
+                  "so nothing is affected.",
     },
     "NyxAboutAres05_B": {
         "category": "cut-content",
-        "reason": "Cut _B variant; paired with NyxAboutAres05 in OR-style "
-                  "and false-check requirements.",
+        "reason": "An alternate version that was never added to the game. It "
+                  "was paired with the existing NyxAboutAres05 as a fallback, "
+                  "so nothing is affected.",
     },
     "AchillesGift08": {
         "category": "cut-content",
-        "reason": "Required by AchillesAboutMyrmidonReunionQuest03_A's "
-                  "RequiredAnyTextLines; cut, so one branch can never "
-                  "activate via this path.",
+        "reason": "A dialogue that was never added to the game. It was "
+                  "one option among alternatives for "
+                  "AchillesAboutMyrmidonReunionQuest03_A, which can still play "
+                  "via its remaining options.",
     },
     "AthenaGift05": {
         "category": "cut-content",
-        "reason": "Required by AthenaPostGiftPickup05's RequiredTextLines; "
-                  "cut, so AthenaPostGiftPickup05 can never play.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "required by AthenaPostGiftPickup05, which can therefore "
+                  "never play.",
     },
     "PersephoneMeeting05": {
         "category": "cut-content",
-        "reason": "Used in DusaVsNyx04's MinRunsSinceAnyTextLines list; cut, "
-                  "contributes a no-op to the count.",
+        "reason": "A dialogue that was never added to the game. It "
+                  "only feeds into a counter, so nothing is affected.",
     },
     "HermesAboutWhippedFrenzy03": {
         "category": "cut-content",
-        "reason": "Required by HermesAboutBiomeSpeedCondition02; cut, so the "
-                  "follow-up can never play.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "required by HermesAboutBiomeSpeedCondition02, which can "
+                  "therefore never play.",
     },
     "ZeusRevealsLuciferAspect02": {
         "category": "cut-content",
-        "reason": "Used in ZeusAboutLuciferAspect01's RequiredFalseTextLines; "
-                  "cut, requirement trivially satisfied.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "DusaMiscMeeting01": {
         "category": "cut-content",
-        "reason": "Used in DusaChat26's RequiredFalseTextLines; cut, "
-                  "requirement trivially satisfied.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
 }
 

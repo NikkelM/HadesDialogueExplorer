@@ -44,70 +44,55 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
     # --- cut-content (7) ---
     "ChronosBossSuit01": {
         "category": "cut-content",
-        "reason": "Cut textline; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Chronos.lua "
-                  "(trivially satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "ErisAboutShrine01": {
         "category": "cut-content",
-        "reason": "Cut textline; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Eris.lua "
-                  "(trivially satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "ErisAboutShrine02": {
         "category": "cut-content",
-        "reason": "Cut textline; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Eris.lua "
-                  "(trivially satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "ErisAboutShrine03": {
         "category": "cut-content",
-        "reason": "Cut textline; referenced only as a defensive PathFalse "
-                  "check on GameState.TextLinesRecord in EnemyData_Eris.lua "
-                  "(trivially satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "MedeaHubMeeting01": {
         "category": "cut-content",
-        "reason": "Required by MedeaHubMeeting02's GameStateRequirements "
-                  "(HasAll on GameState.TextLinesRecord alongside MedeaGift04 "
-                  "and ZeusPalacePostTrueEnding01); cut, so MedeaHubMeeting02 "
-                  "can never play.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "required by MedeaHubMeeting02, which can therefore never "
+                  "play.",
     },
     "NemesisWithMoros03": {
         "category": "cut-content",
-        "reason": "Cut textline; surfaced via the FunctionName: "
-                  "RequiredQueuedTextLine routing. Listed in an IsNone "
-                  "queued-textlines check on InspectNemesis01 in "
-                  "DeathLoopData.lua alongside the surviving "
-                  "NemesisWithMoros01 / 02 (trivially satisfied).",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
     "TyphonHeadAltFight01": {
         "category": "cut-content",
-        "reason": "Referenced as a defensive PathFalse check in "
-                  "EnemyData_TyphonHead.lua and as one option in a HasAny "
-                  "(alongside ChronosBossAboutAltFight01) in "
-                  "WorldUpgradeData.lua; cut, so the HasAny falls back to "
-                  "the surviving option only.",
+        "reason": "A dialogue that was never added to the game. It was "
+                  "one option among alternatives, which can still resolve via "
+                  "the surviving option ChronosBossAboutAltFight01.",
     },
 
     # --- typo-or-bug (2) ---
     "ChronosBossPreTrueEndingOutro01": {
         "category": "typo-or-bug",
-        "reason": "Typo for ChronosBossOutroPreTrueEnding01 "
-                  "(which is defined). Referenced as a PathFalse check in "
-                  "EnemyData_Chronos.lua that was meant to make the two lines "
-                  "forbid each other; because of the typo the check targets a "
-                  "non-existent line and is trivially satisfied, so the "
-                  "intended mutual-exclusion never takes effect.",
+        "reason": "Looks like a typo for ChronosBossOutroPreTrueEnding01, which does exist.",
     },
     "ChronosBossPreTrueEndingOutro01_B": {
         "category": "typo-or-bug",
-        "reason": "Transposed-word typo for ChronosBossOutroPreTrueEnding01_B "
-                  "(which is defined). Referenced as a PathFalse check in "
-                  "EnemyData_Chronos.lua that was meant to make the two lines "
-                  "forbid each other; because of the typo the check targets a "
-                  "non-existent line and is trivially satisfied, so the "
-                  "intended mutual-exclusion never takes effect.",
+        "reason": "Looks like a typo for ChronosBossOutroPreTrueEnding01_B, which does exist.",
     },
 }
 
