@@ -13,11 +13,11 @@ import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
-import { startHomeTourReplay } from './tour-home.js';
+import { startDialogueTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { startEligibilityTourReplay } from './tour-eligibility.js';
-import { maybeStartSaveCallout, startSaveCalloutReplay } from './tour-callouts.js';
+import { maybeStartSaveCallout } from './tour-callouts.js';
 import { parseUrlState } from './url.js';
 
 function init(data) {
@@ -73,12 +73,11 @@ function init(data) {
         if (view === 'speaker') startSpeakerTourReplay();
         else if (view === 'duplicates') startDuplicatesTourReplay();
         else if (view === 'eligibility') startEligibilityTourReplay();
-        // Dialogue view: when a save is loaded, its status badges / tree dots /
-        // tracer entry are what's actually on screen, so replay the save callout
-        // in preference to the generic walkthrough. startSaveCalloutReplay returns
-        // false when there's nothing save-specific to show (no save loaded), in
-        // which case fall back to the home tour.
-        else if (!startSaveCalloutReplay()) startHomeTourReplay();
+        // Dialogue view: chain the generic walkthrough with the save callout
+        // (its status badges / tree dots / tracer entry) into one continuous
+        // tour when a save is loaded, so the counter sums both; with no save it
+        // is just the generic walkthrough.
+        else startDialogueTourReplay();
     });
 }
 
@@ -117,7 +116,9 @@ async function boot() {
     try {
         const inline = document.getElementById('viewer-data');
         if (inline) {
-            init(JSON.parse(inline.textContent));
+            const data = JSON.parse(inline.textContent);
+            await holdSkeleton();
+            init(data);
             return;
         }
         // Match the cache-busting version on the asset URLs (set by
@@ -159,6 +160,9 @@ async function boot() {
         // (a deep link to the non-default game warmed the wrong file).
         const warmedBlob = (pre && pre.game === initialGame) ? pre.blob : null;
         const initialBlob = await fetchJson(_gameFile(initialGame), warmedBlob);
+        // Keep the skeleton up for its minimum visible time before the first
+        // render swaps in the real content.
+        await holdSkeleton();
         init({
             games: { [initialGame]: initialBlob },
             gameIds: meta.gameIds,
@@ -189,6 +193,20 @@ async function boot() {
 // Per-game data file name in the split build (paired with the meta data.json).
 function _gameFile(gameId) {
     return 'data-' + gameId + '.json';
+}
+
+// Minimum time the loading skeleton stays visible once painted. On a fast load
+// the data can arrive within a frame or two, so without this the skeleton would
+// flash and snap to content - reading as a glitch rather than a load. Only
+// applies when a skeleton was actually painted (a content URL; the bare home
+// has none), and only pads the remaining time, so genuinely slow loads are
+// never made slower.
+const MIN_SKELETON_MS = 350;
+async function holdSkeleton() {
+    const at = window.__hdeSkeletonAt;
+    if (typeof at !== 'number') return;
+    const remaining = MIN_SKELETON_MS - (performance.now() - at);
+    if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
 }
 
 boot();

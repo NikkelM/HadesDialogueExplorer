@@ -173,15 +173,19 @@
         var el = document.getElementById(id);
         if (el) el.innerHTML = SK;
     };
+    // Record when the skeleton is painted so boot() (init.js) can hold it for a
+    // minimum visible time, avoiding a one-frame flash on fast loads.
+    var mark = function() { window.__hdeSkeletonAt = performance.now(); };
     if (single) {
         var hasContent = (view === 'speaker' && speaker)
             || (view === 'eligibility' && dialogue)
             || view === 'duplicates';
-        if (hasContent) fill('info-content');
+        if (hasContent) { fill('info-content'); mark(); }
     } else if (dialogue) {
         fill('info-content');
         fill('upstream-content');
         fill('downstream-content');
+        mark();
     }
 })();
 </script>
