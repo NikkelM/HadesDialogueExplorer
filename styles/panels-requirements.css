@@ -112,39 +112,59 @@
 .req-item:hover { background: var(--border); }
 .req-item.resolved { color: #a8dadc; }
 .req-item.unresolved { color: var(--text-muted); font-style: italic; }
-.req-item.unresolved::after { content: " \26A0  external"; font-size: var(--fs-2xs); color: var(--text-dim); }
+.req-item.unresolved::after {
+    content: "\26A0\00A0 external";
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    margin-left: 8px;
+    padding: 3px 8px;
+    border-radius: 9px;
+    font-size: var(--fs-xs);
+    font-style: normal;
+    letter-spacing: 0.01em;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+}
 
 /* Category-specific colors for unresolved refs - overrides the generic
    .unresolved color so the user can visually distinguish intentional
    (back-compat), buggy (typo-or-bug), missing (cut-content), and
-   not-yet-triaged (uncategorized) references at a glance. */
+   not-yet-triaged (uncategorized) references at a glance. The marker is
+   rendered as a small upright pill (see the shared ::after rule above)
+   so it stays legible against the italic red reference name. */
 .req-item.unresolved.unresolved-cat-back-compatibility {
     color: #c9a96e;
 }
 .req-item.unresolved.unresolved-cat-back-compatibility::after {
-    content: " \1F501  back-compat";
+    content: "\1F501\00A0 back-compat";
     color: #c9a96e;
+    background: rgba(201, 169, 110, 0.14);
 }
 .req-item.unresolved.unresolved-cat-typo-or-bug {
     color: var(--danger);
 }
 .req-item.unresolved.unresolved-cat-typo-or-bug::after {
-    content: " \26A0  typo/bug";
+    content: "\26A0\00A0 typo/bug";
     color: var(--danger);
+    background: rgba(224, 123, 123, 0.14);
 }
 .req-item.unresolved.unresolved-cat-cut-content {
     color: var(--text-muted);
 }
 .req-item.unresolved.unresolved-cat-cut-content::after {
-    content: " \2702  cut";
+    content: "\2702\00A0 cut";
     color: var(--text-muted);
+    background: rgba(136, 136, 136, 0.16);
 }
 .req-item.unresolved.unresolved-cat-uncategorized {
     color: var(--danger);
 }
 .req-item.unresolved.unresolved-cat-uncategorized::after {
-    content: " \26A0  uncategorized";
+    content: "\26A0\00A0 uncategorized";
     color: var(--danger);
+    background: rgba(217, 122, 122, 0.16);
 }
 
 /* "Other requirements" list - non-textline gating fields rendered as
