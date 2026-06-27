@@ -240,7 +240,7 @@
 
 /* Requirement-type group boxes wrap contiguous tree children that all
    share the same requirement type (RequiredTextLines, RequiredAnyTextLines,
-   etc.). Mirrors the per-type coloured boxes in the info panel — the
+   etc.). Mirrors the per-type coloured boxes in the info panel - the
    actual border-left colour and tinted background come from the global
    `.req-type-*` classes defined in panels.css, so both views stay in
    sync. Collapsible via header click. */

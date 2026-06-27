@@ -265,7 +265,7 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo) {
     for (const r of reasons) {
         if (r.kind === 'choice') {
             items.push(`<li>Needs the "<strong>${escapeHtml(r.requiredChoice)}</strong>" choice in ${ref(r.parent)}`
-                + ` \u2014 you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`);
+                + ` - you chose "${escapeHtml(r.taken.join('" / "'))}".</li>`);
         } else if (r.kind === 'negative') {
             const sibs = (r.host && alternates[r.host]) || [];
             const isAlt = sibs.includes(r.blocker);
