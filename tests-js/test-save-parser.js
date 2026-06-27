@@ -306,6 +306,40 @@ test('folds H2 TextLinesChoiceRecord into the played set as synthetic variants',
     );
 });
 
+test('getDialogueStatus reports a chosen-differently choice variant as unobtainable, not eligible', () => {
+    clearSaveProgress();
+    // The player reached choice dialogue P and recorded Choice_B. The sibling
+    // variant PChoice_A can never be obtained, even though its only requirement
+    // (parent P played) is satisfied - so directSatisfaction reads 'met'. The
+    // structural lock must win over that 'eligible' verdict.
+    const variantA = {
+        owner: 'NPC_Test_01',
+        requirements: { RequiredTextLines: ['P'] },
+        isSynthetic: true, parentTextline: 'P', choiceText: 'Choice_A',
+    };
+    loadData({
+        textlines: {
+            P: { owner: 'NPC_Test_01', requirements: {} },
+            PChoice_A: variantA,
+            PChoice_B: {
+                owner: 'NPC_Test_01', requirements: { RequiredTextLines: ['P'] },
+                isSynthetic: true, parentTextline: 'P', choiceText: 'Choice_B',
+            },
+        },
+    });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: {
+            GameState: {
+                TextLinesRecord: { P: true },
+                TextLinesChoiceRecord: { P: 'Choice_B' },
+            },
+        },
+    }));
+    assert.equal(getDialogueStatus('PChoice_A', variantA), 'unobtainable');
+    clearSaveProgress();
+});
+
 test('clearSaveProgress resets the parsed state', () => {
     parseSaveFile(buildSGB1({
         gameVersion: GAME_VERSION_HADES1,

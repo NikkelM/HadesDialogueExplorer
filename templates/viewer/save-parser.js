@@ -977,14 +977,18 @@ export function isDialoguePlayed(name) {
 export function getDialogueStatus(name, textlineData) {
   if (!_saveProgress) return null;
   if (_saveProgress.has(name)) return 'played';
+  // A permanent structural lock (a required choice was taken differently, or a
+  // mutually-exclusive line has played) is definitive, so it is checked first.
+  // It must come BEFORE the 'eligible' verdict: a choice variant whose sibling
+  // was chosen can still have its inherited requirements satisfied (so
+  // directSatisfaction reads 'met') yet can never be obtained - checking
+  // eligibility first would mislabel it 'eligible'. This keeps the badge in
+  // lockstep with the eligibility tracer, which reports the same lock.
+  if (isUnobtainable(name, _saveProgress, _saveRunsAgo, getSaveContext())) return 'unobtainable';
   // Respect per-type requirement semantics (AND / OR / negative) and the
   // record each field is scoped to (global / this-run / this-room / queued).
   const sat = directSatisfaction(textlineData, getSaveContext(), name);
   if (sat === 'met') return 'eligible';
-  // A permanent structural lock (a required choice was taken differently,
-  // or a mutually-exclusive line has played) is definitive, so it wins
-  // over an unverifiable verdict.
-  if (isUnobtainable(name, _saveProgress, _saveRunsAgo, getSaveContext())) return 'unobtainable';
   // 'unknown' -> the dialogue gates on a run-scoped record this save doesn't
   // carry (the H2 textline queue, or a current-run record when no run is
   // active), so we can't say whether it's eligible or blocked: surface it as

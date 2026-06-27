@@ -315,6 +315,11 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     const rootSat = rootPlayed ? null : directSatisfaction(rootTl, saveCtx, rootName);
     const directlyEligible = rootSat === 'met';
     const indeterminate = rootSat === 'unknown';
+    // A permanent structural lock is checked before the 'eligible' verdict: a
+    // choice variant whose sibling was chosen still has its inherited
+    // requirements satisfied (so directlyEligible is true), yet can never be
+    // obtained. Mirrors getDialogueStatus so the badge and this summary agree.
+    const unobtainable = rootPlayed ? false : isUnobtainable(rootName, playedSet, saveCtx.runsAgo, saveCtx);
 
     // The total isn't a simple node count of the tree below: it spans the
     // whole chain (so it can exceed the requirements listed directly on the
@@ -342,6 +347,15 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     if (rootPlayed) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
         html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.${rankInline}</div>`;
+    } else if (unobtainable) {
+        // Checked before "eligible": a structurally-locked dialogue (e.g. a
+        // choice variant whose sibling was chosen) can still have its
+        // requirements satisfied. No play-priority here - a permanently-
+        // unobtainable dialogue never plays, so its rank is moot, and the
+        // detail line introduces the reasons list with a colon.
+        html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
+        html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
+        html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
     } else if (directlyEligible) {
         html += `<div class="eligibility-status eligibility-eligible">\u25CB Eligible to play</div>`;
         html += `<div class="eligibility-detail">${total === 0
@@ -350,13 +364,6 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
                 ? 'Its prerequisite has been played. This dialogue should be eligible.'
                 : `All ${total} prerequisites have been played. This dialogue should be eligible.`}${rankInline}</div>`;
         html += chainNote;
-    } else if (isUnobtainable(rootName, playedSet, saveCtx.runsAgo, saveCtx)) {
-        // No play-priority here: a permanently-unobtainable dialogue never
-        // plays, so its rank is moot, and the detail line introduces the
-        // reasons list with a colon.
-        html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
-        html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
-        html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo);
     } else if (indeterminate) {
         html += `<div class="eligibility-status eligibility-indeterminate">? Indeterminate</div>`;
         html += `<div class="eligibility-detail">Eligibility can\u2019t be determined: this dialogue is gated by requirements the save doesn\u2019t include (such as queued textlines). Its resolvable prerequisites are satisfied.${rankInline}</div>`;
