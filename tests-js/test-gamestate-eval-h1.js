@@ -620,6 +620,41 @@ test('H1: removable-state absence gates stay blocked, not unobtainable', () => {
     assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseCosmetics: ['Cosmetic_NorthHallSundial'] }, { Cosmetics: { Cosmetic_NorthHallSundial: true } }), null);
 });
 
+// --- permanence: set-and-forget GameState flags ------------------------------
+
+test('H1: HardMode is fixed per save, so both flag directions are permanent', () => {
+    // Hell Mode is baked into GameState.Flags at save creation and never
+    // reassigned, so a save is permanently Hell or permanently not.
+    // "must NOT be HardMode" on a Hell save can never become met.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['HardMode'] }, { Flags: { HardMode: true } }), 'unmet');
+    // "must be HardMode" on a non-Hell save can never become met.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredTrueFlags: ['HardMode'] }, { Flags: {} }), 'unmet');
+    // Matching state is satisfiable, not permanently unmet.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['HardMode'] }, { Flags: {} }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredTrueFlags: ['HardMode'] }, { Flags: { HardMode: true } }), null);
+});
+
+test('H1: one-way unlock flags are permanent only in the already-true direction', () => {
+    // ShrineUnlocked / AspectsUnlocked are one-way unlocks (only ever set true).
+    // "must NOT have unlocked" on an already-unlocked save can never become met.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['ShrineUnlocked'] }, { Flags: { ShrineUnlocked: true } }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['AspectsUnlocked'] }, { Flags: { AspectsUnlocked: true } }), 'unmet');
+    // "must have unlocked" while still locked can unlock later -> blocked, not permanent.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredTrueFlags: ['ShrineUnlocked'] }, { Flags: {} }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredTrueFlags: ['AspectsUnlocked'] }, { Flags: {} }), null);
+});
+
+test('H1: toggleable story flags stay blocked, never permanently unmet', () => {
+    // Persephone* (~7-run cycle), Dusa* (rehire), InFlashback (transient scene),
+    // NyxChaosReunionInProgress all flip back and forth in normal play.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['PersephoneAway'] }, { Flags: { PersephoneAway: true } }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['DusaNotYetReHired'] }, { Flags: { DusaNotYetReHired: true } }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['InFlashback'] }, { Flags: { InFlashback: true } }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredTrueFlags: ['PersephoneAway'] }, { Flags: {} }), null);
+    // A permanent flag in a multi-flag gate still dooms it.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredFalseFlags: ['PersephoneAway', 'HardMode'] }, { Flags: { HardMode: true } }), 'unmet');
+});
+
 // --- unrecognised field ------------------------------------------------------
 
 test('H1: an unmapped field is unknown rather than crashing', () => {

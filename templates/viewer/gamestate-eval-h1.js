@@ -812,6 +812,22 @@ function h1CombineAnd(statuses) {
 // (depth, last stands, health, meta-upgrade levels, Heat, support AI) and over
 // removable cosmetics (RequiredFalseCosmetics, whose decor entries toggle back
 // off) are intentionally absent and stay "blocked".
+// GameState.Flags entries whose value, once observed in a save, can never change
+// in the direction that would satisfy a currently-unmet flag gate:
+//  - FIXED-PER-SAVE: ``HardMode`` (Hell Mode) is read from the config exactly
+//    once and baked into GameState.Flags at save creation (RunManager.lua
+//    StartNewGame); it is never reassigned, so a save is permanently Hell or
+//    permanently not. Both directions are permanent.
+//  - MONOTONIC-TRUE: ``ShrineUnlocked`` (MetaUpgrades.lua) and ``AspectsUnlocked``
+//    (RoomManager.lua) are one-way unlocks only ever set true. A currently-true
+//    unlock can never go false; a currently-false one can still unlock later, so
+//    only the "already true" direction is permanent.
+// Every other dialogue flag (InFlashback / AllowFlashback transient scene state,
+// NyxChaosReunionInProgress, the Persephone* ~7-run cycle, the Dusa* rehire
+// story state) toggles during normal play and stays merely blocked.
+const H1_FIXED_PER_SAVE_FLAGS = new Set(['HardMode']);
+const H1_MONOTONIC_TRUE_FLAGS = new Set(['ShrineUnlocked', 'AspectsUnlocked']);
+
 const H1_PERMANENT_UNMET_EVALS = {
     RequiredMaxCompletedRuns: (v, ctx) => h1Len(h1Gs(ctx, 'RunHistory')) > v,
     RequiredMaxRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
@@ -845,6 +861,21 @@ const H1_PERMANENT_UNMET_EVALS = {
     RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return h1Arr(v).some(k => h1Truthy(w[k])); },
     // "Must NOT have viewed screen X" - ScreensViewed is a write-once view record.
     RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return h1Truthy(s[v]); },
+    // "Must NOT have flag F" - permanently unmet once a fixed-per-save (HardMode)
+    // or one-way unlock (ShrineUnlocked / AspectsUnlocked) flag is already true,
+    // as it can never return to false. Toggleable story flags are excluded.
+    RequiredFalseFlags: (v, ctx) => {
+        const f = h1Gs(ctx, 'Flags') || {};
+        return h1Arr(v).some(k => h1Truthy(f[k]) && (H1_FIXED_PER_SAVE_FLAGS.has(k) || H1_MONOTONIC_TRUE_FLAGS.has(k)));
+    },
+    // "Must have flag F" - permanently unmet only for a fixed-per-save flag
+    // (HardMode) that is already false, since it can never become true. One-way
+    // unlock flags can still flip true through normal progression, so a
+    // currently-false unlock stays blocked, not unobtainable.
+    RequiredTrueFlags: (v, ctx) => {
+        const f = h1Gs(ctx, 'Flags') || {};
+        return h1Arr(v).some(k => H1_FIXED_PER_SAVE_FLAGS.has(k) && !h1Truthy(f[k]));
+    },
 };
 
 // Whether a Hades 1 textline's flat ``otherRequirements`` map is *permanently*
