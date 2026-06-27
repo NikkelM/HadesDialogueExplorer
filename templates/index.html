@@ -27,8 +27,34 @@
     <h1>Hades Dialogue Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game">
         <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" data-label="Hades" aria-selected="false" data-tooltip="Show dialogue from Hades">Hades</button>
-        <button type="button" class="game-toggle-btn" role="tab" data-game="hades2" data-label="Hades II" aria-selected="false" data-tooltip="Show dialogue from Hades II">Hades II</button>
+        <button type="button" class="game-toggle-btn active" role="tab" data-game="hades2" data-label="Hades II" aria-selected="true" data-tooltip="Show dialogue from Hades II">Hades II</button>
     </div>
+    <script>
+    // Inline pre-paint script: highlight the game-toggle button matching the
+    // URL's game= so the active game shows from the first paint instead of
+    // popping in after the data fetch completes. The default game's button is
+    // pre-marked active in the static markup above; this only moves the
+    // highlight when a deep link names the other game. Duplicates a tiny slice
+    // of the URL parser (just the game= extraction), like the view= script.
+    (function() {
+        var m = location.hash.replace(/^#/, '').match(/(?:^|&)game=([^&]*)/);
+        if (!m) return;
+        var want = decodeURIComponent(m[1]);
+        var toggle = document.getElementById('game-toggle');
+        if (!toggle) return;
+        var btns = toggle.querySelectorAll('.game-toggle-btn');
+        var target = null;
+        for (var i = 0; i < btns.length; i++) {
+            if (btns[i].getAttribute('data-game') === want) target = btns[i];
+        }
+        if (!target) return;
+        for (var j = 0; j < btns.length; j++) {
+            var on = btns[j] === target;
+            btns[j].classList.toggle('active', on);
+            btns[j].setAttribute('aria-selected', on ? 'true' : 'false');
+        }
+    })();
+    </script>
     <div class="search-container">
         <input type="text" id="search" placeholder="Search textline names or dialogue text..." autocomplete="off"
                role="combobox" aria-autocomplete="list" aria-expanded="false"
