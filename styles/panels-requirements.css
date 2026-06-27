@@ -12,19 +12,23 @@
    indeterminate / unobtainable), matching the dependency tree's group dots. */
 .req-section h4 .group-status {
     position: relative;
-    top: 1px;
+    top: -1px;
+    vertical-align: middle;
     margin-right: 3px;
     cursor: help;
 }
-/* Per-ref save-status dot prefixing a requirement item row. */
+/* Per-ref save-status dot prefixing a requirement item row. Centred on the
+   name text (middle, not baseline, which read a touch low next to the larger
+   ref-name font). */
 .req-item .save-badge {
     margin-right: 4px;
-    vertical-align: baseline;
+    vertical-align: middle;
 }
 /* Group dot in an OR-branch (alternates) option header. */
 .or-branch-header .group-status {
     position: relative;
-    top: 1px;
+    top: -1px;
+    vertical-align: middle;
     margin-right: 3px;
     cursor: help;
 }
@@ -285,6 +289,12 @@
     font-weight: 600;
     color: #c9d1d9;
     margin-bottom: 8px;
+}
+/* The label's verdict dot sits inside the block label (not a flex row), so
+   centre it on the text rather than the baseline, which read a touch high. */
+.named-req-item .named-req-label .group-status {
+    top: 0;
+    vertical-align: middle;
 }
 .named-req-list {
     margin-left: 8px;
