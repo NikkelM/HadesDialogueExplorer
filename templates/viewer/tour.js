@@ -176,10 +176,14 @@ function _buildDom() {
     const disable = document.createElement('button');
     disable.className = 'tour-disable';
     disable.type = 'button';
-    disable.textContent = "Don't show tutorials again";
+    disable.textContent = "Skip all future tutorials";
     disable.addEventListener('click', _disableAll);
 
-    _card.append(_titleEl, _textEl, footer, disable);
+    // The opt-out is offered on the first-run tours only. Replays (the floating
+    // "?" control) deliberately drop it - re-running a tour shouldn't tempt you
+    // into disabling the rest.
+    _card.append(_titleEl, _textEl, footer);
+    if (!_cb.hideDisable) _card.append(disable);
     document.body.append(_dim, _overlay, _spotlight, _card);
 }
 

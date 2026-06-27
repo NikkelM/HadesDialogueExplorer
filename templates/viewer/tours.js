@@ -100,7 +100,9 @@ export function maybeStartTour(id, steps, opts = {}) {
 export function forceStartTour(id, steps, opts = {}) {
     if (!id || !Array.isArray(steps) || steps.length === 0 || isTourActive()) return false;
     if (opts.onBeforeStart) opts.onBeforeStart();
-    return startTour(steps, _wrapCallbacks(id, opts));
+    const cb = _wrapCallbacks(id, opts);
+    cb.hideDisable = true;
+    return startTour(steps, cb);
 }
 
 // The wiring registers a dispatcher that knows which tour fits the current
