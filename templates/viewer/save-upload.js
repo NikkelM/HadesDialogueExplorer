@@ -87,6 +87,17 @@ export function restoreSavedSave() {
     return true;
 }
 
+// Render the cached save pill as early as possible during boot - before the
+// large game-data blob is fetched - so a returning user sees their save status
+// while the data streams. Reads only ``localStorage`` (the played set, run
+// count, game id), so it needs no loaded game data. The resolved initial game
+// and the display-label map are passed in because the game data isn't loaded
+// yet, so ``getActiveGame()`` is null and ``gameLabels`` is still undefined.
+export function earlyRenderSaveStatus(activeGameId, labels) {
+    if (!restoreSaveProgress()) return;
+    refreshSaveStatus(activeGameId, labels);
+}
+
 function showStatus(type, text) {
     const status = document.getElementById('save-status');
     if (!status) return;
@@ -95,11 +106,15 @@ function showStatus(type, text) {
     status.className = 'save-status save-' + type;
 }
 
-// Called by navigation when game switches to update mismatch state
-export function refreshSaveStatus() {
+// Called by navigation when game switches to update mismatch state.
+// ``activeGameId`` and ``labels`` let the early boot save pill (rendered before
+// the game data registers, so ``getActiveGame()`` is null and ``gameLabels`` is
+// still undefined) pass the resolved initial game and the meta label map;
+// navigation's later calls omit both and fall back to the loaded data.
+export function refreshSaveStatus(activeGameId, labels) {
     if (!getSaveProgress()) return;
     const gameId = getSaveGameId();
-    const label = gameLabels[gameId] || gameId;
+    const label = ((labels || gameLabels) || {})[gameId] || gameId;
     const count = getSaveProgress().size;
     const runs = getSaveRuns();
     const moddedH2 = gameId === 'hades2' && getSaveHasBiomesMod();
@@ -109,7 +124,7 @@ export function refreshSaveStatus() {
     const inRun = getSaveInRun();
     const hubName = gameId === 'hades1' ? 'House of Hades' : 'Crossroads';
     const kind = inRun === true ? ', run save' : (inRun === false ? `, ${hubName} save` : '');
-    if (!saveMatchesActiveGame()) {
+    if (!saveMatchesActiveGame(activeGameId)) {
         // The save is for the other game (a vanilla H2 save carries no Hades 1
         // progress, so it doesn't apply under Hades 1).
         showStatus('mismatch', `${label} save - switch game to see progress`);

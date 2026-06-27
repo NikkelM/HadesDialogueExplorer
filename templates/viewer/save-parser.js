@@ -1137,11 +1137,15 @@ export function validateSaveFilename(filename) {
   return /^Profile[1-4](_Temp)?\.sav$/i.test(filename);
 }
 
-export function saveMatchesActiveGame() {
+// ``activeGameId`` defaults to the loaded active game, but callers that run
+// before the game data is registered (the early boot save pill) pass the
+// game id explicitly, since ``getActiveGame()`` is still null then.
+export function saveMatchesActiveGame(activeGameId) {
   if (!_saveGameId) return false;
-  if (_saveGameId === getActiveGame()) return true;
+  const active = activeGameId || getActiveGame();
+  if (_saveGameId === active) return true;
   // A Hades II save only covers Hades 1 when the Zagreus' Journey mod (Hades
   // Biomes) ported Hades 1 content into it; a vanilla H2 save does not.
-  if (_saveGameId === 'hades2' && getActiveGame() === 'hades1') return _saveHasBiomesMod;
+  if (_saveGameId === 'hades2' && active === 'hades1') return _saveHasBiomesMod;
   return false;
 }

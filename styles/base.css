@@ -219,6 +219,31 @@ main {
     padding: 40px;
 }
 
+/* Loading skeleton shown in the panels by the pre-paint script in
+   index.html while the (multi-MB) data blob streams in the split build, so
+   a deep-linked page reads as loading rather than empty. viewer.js replaces
+   the panel contents once it renders. Tones blend with the dark navy
+   surface; the sweep is the only motion. */
+.panel-skeleton {
+    padding: 24px 16px;
+}
+.skeleton-line {
+    height: 14px;
+    margin: 0 0 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #1f2742 25%, #2a3556 37%, #1f2742 63%);
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
+}
+.skeleton-line.short { width: 55%; }
+@keyframes skeleton-shimmer {
+    0%   { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .skeleton-line { animation: none; }
+}
+
 /* Failure banner rendered by viewer.js when data load (fetch or
    JSON.parse) fails. Hidden until populated; styled to be unmissable
    without clobbering the page chrome (search bar, panel headers). */

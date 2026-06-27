@@ -9,7 +9,7 @@ import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
-import { initSaveUpload, restoreSavedSave } from './save-upload.js';
+import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-upload.js';
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
@@ -125,8 +125,15 @@ async function boot() {
         // are never served after a rebuild.
         const verMeta = document.querySelector('meta[name="viewer-version"]');
         const v = verMeta && verMeta.content ? '?v=' + encodeURIComponent(verMeta.content) : '';
-        const fetchJson = async (file) => {
-            const r = await fetch(file + v);
+        // The inline pre-paint script in index.html warms the meta + initial
+        // game-blob fetches before viewer.js downloads, so the large blob streams
+        // in parallel with the script instead of serially after it. Reuse those
+        // in-flight responses here (matching ``?v=`` so the URLs are identical);
+        // fall back to a fresh fetch when the warm-up was skipped (e.g. the
+        // offline single-file build, which never reaches this branch anyway).
+        const pre = window.__hdePreload || null;
+        const fetchJson = async (file, warmed) => {
+            const r = await (warmed || fetch(file + v));
             if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + file);
             return r.json();
         };
@@ -135,14 +142,23 @@ async function boot() {
         // go through the same fetch + cache-busting.
         setGameLoader((gid) => fetchJson(_gameFile(gid)).then((blob) => registerGameData(gid, blob)));
 
-        const meta = await fetchJson('data.json');
+        const meta = await fetchJson('data.json', pre && pre.meta);
         // Decide which game to load first from the URL (shared deep links land
         // in the right game), else the build-time default.
         const want = parseUrlState(window.location.hash).game;
         const ids = Array.isArray(meta.gameIds) ? meta.gameIds : [];
         const initialGame = (want && ids.includes(want)) ? want : meta.defaultGame;
 
-        const initialBlob = await fetchJson(_gameFile(initialGame));
+        // Paint a cached save's status pill now, before the blob fetch - it
+        // needs only localStorage, so a returning user sees it without waiting
+        // on the multi-MB download. Pass the meta's label map since the game
+        // data (and ``gameLabels``) isn't loaded yet.
+        earlyRenderSaveStatus(initialGame, meta.gameLabels);
+
+        // Reuse the warmed blob only when it's for the game we actually need
+        // (a deep link to the non-default game warmed the wrong file).
+        const warmedBlob = (pre && pre.game === initialGame) ? pre.blob : null;
+        const initialBlob = await fetchJson(_gameFile(initialGame), warmedBlob);
         init({
             games: { [initialGame]: initialBlob },
             gameIds: meta.gameIds,

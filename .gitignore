@@ -1,3 +1,6 @@
+# Custom
+development/
+
 # Generated output
 dist/
 outputs/*.json

@@ -7,6 +7,27 @@
 <meta name="viewer-version" content="">
 <link rel="icon" id="favicon" type="image/x-icon" href="hades2.ico" data-hades1="hades.ico" data-hades2="hades2.ico">
 <link rel="stylesheet" href="viewer.css">
+<script>
+// Inline pre-fetch (split build): warm the meta + initial game-blob fetches
+// before viewer.js downloads, so the multi-MB blob streams in parallel with
+// the script instead of serially after it. boot() (init.js) reuses these
+// in-flight responses via window.__hdePreload. Reads the viewer-version meta
+// so the warmed URLs match boot()'s cache-busted fetches exactly (one request,
+// not two). Skipped on file:// - the offline single-file build inlines its data
+// and never fetches, so there is nothing to warm.
+(function() {
+    if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+    var verMeta = document.querySelector('meta[name="viewer-version"]');
+    var v = verMeta && verMeta.content ? '?v=' + encodeURIComponent(verMeta.content) : '';
+    var m = location.hash.replace(/^#/, '').match(/(?:^|&)game=([^&]*)/);
+    var game = m ? decodeURIComponent(m[1]) : 'hades2'; // build-time default game
+    window.__hdePreload = {
+        meta: fetch('data.json' + v),
+        game: game,
+        blob: fetch('data-' + game + '.json' + v),
+    };
+})();
+</script>
 </head>
 <body>
 <script>
@@ -110,23 +131,58 @@
      packed, responsive layout. -->
 <button id="tour-help" class="tour-help-btn" type="button" aria-label="Replay tutorials" data-tooltip="Replay the onboarding tutorials">?</button>
 <script>
-// Second pre-paint fixup: now that the panel DOM exists, patch the
-// heading and empty-state text for single-panel views so "Textline
-// Details" never flashes for speaker/duplicates/eligibility URLs.
+// Pre-paint fixup: now that the panel + search DOM exists, mirror what
+// applyState/applyLayoutMode (navigation.js) will render so a deep link shows
+// the right heading, a populated search box and a loading skeleton before
+// viewer.js fetches the data blob and renders for real.
 (function() {
-    var cls = document.body.className;
-    if (cls !== 'layout-speaker') return;
     var h = location.hash.replace(/^#/, '');
-    var m = h.match(/(?:^|&)view=([^&]*)/);
-    var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
+    var pick = function(k) {
+        var m = h.match(new RegExp('(?:^|&)' + k + '=([^&]*)'));
+        return m ? decodeURIComponent(m[1]) : '';
+    };
+    var view = pick('view').toLowerCase();
+    var dialogue = pick('dialogue');
+    var speaker = pick('speaker');
+    var single = document.body.className === 'layout-speaker';
+
+    // Single-panel heading (mirrors applyLayoutMode) so "Textline Details"
+    // never flashes for speaker/duplicates/eligibility URLs.
     var hdr = document.getElementById('panel-info-heading');
-    if (hdr) {
-        if (v === 'speaker') hdr.textContent = 'Speaker Overview';
-        else if (v === 'duplicates') hdr.textContent = 'Cross-game Duplicates';
-        else if (v === 'eligibility') hdr.textContent = 'Eligibility Tracer';
+    if (hdr && single) {
+        if (view === 'speaker') hdr.textContent = 'Speaker Overview';
+        else if (view === 'duplicates') hdr.textContent = 'Cross-game Duplicates';
+        else if (view === 'eligibility') hdr.textContent = 'Eligibility Tracer';
     }
-    var empty = document.querySelector('#info-content .empty-state');
-    if (empty) empty.textContent = '';
+
+    // Search box value (mirrors applyState). The speaker view shows the raw
+    // id here; viewer.js upgrades it to the friendly name once data loads.
+    var search = document.getElementById('search');
+    if (search) {
+        if (view === 'speaker') search.value = speaker;
+        else if (view === 'duplicates') search.value = '';
+        else search.value = dialogue;
+    }
+
+    // Loading skeleton in whichever panels will render content, so the wait on
+    // the data blob reads as loading rather than an empty/stale page.
+    var SK = '<div class="panel-skeleton" aria-hidden="true">'
+        + '<div class="skeleton-line"></div><div class="skeleton-line"></div>'
+        + '<div class="skeleton-line short"></div></div>';
+    var fill = function(id) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = SK;
+    };
+    if (single) {
+        var hasContent = (view === 'speaker' && speaker)
+            || (view === 'eligibility' && dialogue)
+            || view === 'duplicates';
+        if (hasContent) fill('info-content');
+    } else if (dialogue) {
+        fill('info-content');
+        fill('upstream-content');
+        fill('downstream-content');
+    }
 })();
 </script>
 <!-- Script kept at end of body so the DOM is fully parsed before
