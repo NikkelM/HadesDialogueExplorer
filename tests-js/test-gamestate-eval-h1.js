@@ -34,6 +34,8 @@ function loadStatic(extra = {}) {
         strikeThroughChangeValue: -3,
         weaponUpgradeSlots: { SwordWeapon: { 1: { startsUnlocked: true, reqTrait: 'SwordBaseUpgradeTrait', max: 5, costs: [1, 1, 1, 1, 1] }, 2: { trait: 'SwordRushTrait', max: 5, costs: [1, 1, 2, 2, 3] }, 3: { trait: 'SwordConsecrationTrait', max: 5, costs: [3, 3, 3, 3, 3] } } },
         cosmeticVisibleValue: 'visible',
+        godLootTraitIndex: { ZeusUpgrade: ['ZeusWeaponTrait', 'LightningRodTrait'], HermesUpgrade: ['RushSpeedBoostTrait'] },
+        godTraitNamesForShop: ['ZeusWeaponTrait', 'LightningRodTrait', 'RushSpeedBoostTrait'],
         ...extra,
     };
     loadData({ textlines: {}, speakers: {}, h1SaveEvalStatic });
@@ -353,7 +355,41 @@ test('H1: active-Mirror gates are unknown when the static tables are absent', ()
     loadStatic(); // restore for any later tests
 });
 
-// --- weapon-enchantment count (excludes base aspects) ------------------------
+// --- god loot / no god boons (h1SaveEvalStatic.godLootTraitIndex) -------------
+
+test('H1: RequiredGodLoot is met when the hero holds a boon from that god', () => {
+    loadStatic();
+    const c = ctx({ currentRun: { Hero: { Traits: [{ Name: 'LightningRodTrait' }, { Name: 'RushSpeedBoostTrait' }] } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredGodLoot: 'ZeusUpgrade' }, c).status, 'met');
+    // Hero has no Hermes boon equipped -> unmet.
+    const c2 = ctx({ currentRun: { Hero: { Traits: [{ Name: 'LightningRodTrait' }] } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredGodLoot: 'HermesUpgrade' }, c2).status, 'unmet');
+    // Unknown god (not in LootData) -> unmet, regardless of save.
+    assert.equal(evaluateH1OtherRequirements({ RequiredGodLoot: 'NotAGod' }, c).status, 'unmet');
+    // Wrong save type (no current-run slice) -> unknown.
+    assert.equal(evaluateH1OtherRequirements({ RequiredGodLoot: 'ZeusUpgrade' }, ctx()).status, 'unknown');
+});
+
+test('H1: RequiredGodLoot is unknown when the static index is absent', () => {
+    loadStatic(null);
+    const c = ctx({ currentRun: { Hero: { Traits: [{ Name: 'LightningRodTrait' }] } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredGodLoot: 'ZeusUpgrade' }, c).status, 'unknown');
+    loadStatic();
+});
+
+test('H1: RequiredNoGodBoons fails when any equipped trait is a god boon', () => {
+    loadStatic();
+    // A non-boon build (only a keepsake-style trait) passes.
+    const clean = ctx({ currentRun: { Hero: { Traits: [{ Name: 'SomeKeepsakeTrait' }] } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredNoGodBoons: true }, clean).status, 'met');
+    // Holding a god boon (Zeus) fails the gate.
+    const withBoon = ctx({ currentRun: { Hero: { Traits: [{ Name: 'ZeusWeaponTrait' }] } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredNoGodBoons: true }, withBoon).status, 'unmet');
+    // Wrong save type -> unknown.
+    assert.equal(evaluateH1OtherRequirements({ RequiredNoGodBoons: true }, ctx()).status, 'unknown');
+});
+
+
 
 test('H1: unlocked-weapon-enchantment count excludes the StartsUnlocked base aspect', () => {
     loadStatic();

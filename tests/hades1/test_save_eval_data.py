@@ -15,6 +15,7 @@ from src.extractors.hades1.save_eval_data import (
     extract_shrine_upgrade_order,
     extract_strike_through_change_value,
     extract_weapon_upgrade_slots,
+    extract_god_loot_data,
 )
 
 
@@ -71,6 +72,49 @@ WeaponUpgradeData =
 }
 """
 
+# Mirrors LootData.lua's shape: a DebugOnly BaseLoot template carrying the
+# inheritable GodLoot flag; a god inheriting it (its TraitIndex unions the
+# trait lists plus LinkedUpgrades keys); a shop-only god (GodLoot = false,
+# TreatAsGodLootByShops = true, e.g. Hermes); and a non-god boon owner
+# (GodLoot = false, no shop flag, e.g. the Chaos TrialUpgrade).
+LOOT_LUA = """
+LootData =
+{
+    BaseSoundPackage =
+    {
+        DebugOnly = true,
+    },
+    BaseLoot =
+    {
+        GodLoot = true,
+        DebugOnly = true,
+    },
+    ZeusUpgrade =
+    {
+        InheritFrom = { "BaseLoot", "BaseSoundPackage" },
+        WeaponUpgrades = { "ZeusWeaponTrait" },
+        Traits = { "LightningRodTrait" },
+        LinkedUpgrades =
+        {
+            ZeusBonusBounceTrait = { OneOf = { "ZeusWeaponTrait" } },
+        },
+    },
+    HermesUpgrade =
+    {
+        InheritFrom = { "BaseLoot" },
+        GodLoot = false,
+        TreatAsGodLootByShops = true,
+        Traits = { "RushSpeedBoostTrait" },
+    },
+    TrialUpgrade =
+    {
+        InheritFrom = { "BaseLoot" },
+        GodLoot = false,
+        Traits = { "ChaosBlessingHealthTrait" },
+    },
+}
+"""
+
 
 def test_meta_upgrade_order_length_counts_mirror_rows():
     parsed = parse(META_LUA)
@@ -109,7 +153,7 @@ def test_weapon_upgrade_slots_capture_the_per_slot_fields():
 
 
 def test_extract_save_eval_static_bundles_every_table():
-    bundle = extract_save_eval_static(parse(META_LUA), parse(WEAPON_LUA))
+    bundle = extract_save_eval_static(parse(META_LUA), parse(WEAPON_LUA), parse(LOOT_LUA))
     assert bundle == {
         "metaUpgradeOrderLength": 3,
         "shrineUpgradeOrder": [
@@ -130,7 +174,49 @@ def test_extract_save_eval_static_bundles_every_table():
             },
         },
         "cosmeticVisibleValue": "visible",
+        "godLootTraitIndex": {
+            "ZeusUpgrade": ["LightningRodTrait", "ZeusBonusBounceTrait", "ZeusWeaponTrait"],
+            "HermesUpgrade": ["RushSpeedBoostTrait"],
+            "TrialUpgrade": ["ChaosBlessingHealthTrait"],
+        },
+        "godTraitNamesForShop": [
+            "LightningRodTrait",
+            "RushSpeedBoostTrait",
+            "ZeusBonusBounceTrait",
+            "ZeusWeaponTrait",
+        ],
     }
+
+
+def test_god_loot_trait_index_unions_lists_and_linked_keys():
+    data = extract_god_loot_data(parse(LOOT_LUA))
+    # Zeus's TraitIndex unions WeaponUpgrades + Traits + LinkedUpgrades keys.
+    assert data["godLootTraitIndex"]["ZeusUpgrade"] == [
+        "LightningRodTrait",
+        "ZeusBonusBounceTrait",
+        "ZeusWeaponTrait",
+    ]
+    # A non-god boon owner (Chaos) still ships its index - RequiredGodLoot
+    # reads LootData[god] for any god value, not just GodLoot ones.
+    assert data["godLootTraitIndex"]["TrialUpgrade"] == ["ChaosBlessingHealthTrait"]
+    # The DebugOnly BaseLoot template (no trait lists) is not indexed.
+    assert "BaseLoot" not in data["godLootTraitIndex"]
+
+
+def test_shop_set_uses_inherited_godloot_and_treat_as_god_loot():
+    data = extract_god_loot_data(parse(LOOT_LUA))
+    shop = set(data["godTraitNamesForShop"])
+    # Zeus inherits GodLoot = true -> its traits are god traits for shops.
+    assert {"ZeusWeaponTrait", "LightningRodTrait", "ZeusBonusBounceTrait"} <= shop
+    # Hermes is GodLoot = false but TreatAsGodLootByShops -> still in the set.
+    assert "RushSpeedBoostTrait" in shop
+    # Chaos (GodLoot = false, no shop flag) is not a god boon for the shop test.
+    assert "ChaosBlessingHealthTrait" not in shop
+
+
+def test_god_loot_missing_table_degrades_gracefully():
+    empty = extract_god_loot_data(parse("SomethingElse = { 1, 2 }"))
+    assert empty == {"godLootTraitIndex": {}, "godTraitNamesForShop": []}
 
 
 def test_missing_tables_degrade_gracefully():

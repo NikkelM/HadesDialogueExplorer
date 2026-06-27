@@ -139,6 +139,21 @@ function h1HeroHasTrait(cr, name) {
     return false;
 }
 
+// Names of every trait the hero holds, from the pruned ``Traits`` array (or the
+// raw ``TraitDictionary`` keys), for the god-loot / no-god-boons set tests.
+function h1HeroTraitNames(cr) {
+    const hero = cr && cr.Hero;
+    if (!hero) return [];
+    const traits = hero.Traits;
+    if (traits && typeof traits === 'object') {
+        return Object.values(traits).map(t => t && t.Name).filter(Boolean);
+    }
+    if (hero.TraitDictionary && typeof hero.TraitDictionary === 'object') {
+        return Object.keys(hero.TraitDictionary);
+    }
+    return [];
+}
+
 // HasResource(name, amount) (RoomManager.lua:3450): amount 0 is always met;
 // otherwise GameState.Resources[name] must exist and be >= amount.
 function h1HasResource(resources, name, amount) {
@@ -326,11 +341,11 @@ const H1_FIELD_EVALS = {
     RequiredFalseDeathEncounters: (v, ctx) => h1CrDeathEncounter(ctx, enc => !h1Arr(v).includes(enc)),
 
     // ===== CURRENT RUN: loot / traits / weapon =====
-    RequiredGodLoot: () => H1_NEEDS_STATIC('Needs the per-god LootData trait index to test the hero\u2019s boons against a god.'),
+    RequiredGodLoot: (v, ctx) => { if (!h1GodLootStaticReady()) return H1_NEEDS_STATIC(_GODLOOT_STATIC_REASON); const index = h1SaveEvalStatic.godLootTraitIndex[v]; if (!index) return H1_UNMET; const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const set = new Set(index); return _h1bool(h1HeroTraitNames(cr).some(n => set.has(n))); },
     RequiredLootThisRun: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => h1Truthy(t[v])),
     RequiredFalseGodLoot: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !h1Truthy(t[v]), true),
     RequiredFalseGodLoots: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !h1Arr(v).some(k => h1Truthy(t[k])), true),
-    RequiredNoGodBoons: () => H1_NEEDS_STATIC('Needs the IsGodTrait classification to test whether any equipped trait is a god boon.'),
+    RequiredNoGodBoons: (v, ctx) => { if (!h1GodLootStaticReady()) return H1_NEEDS_STATIC(_GODLOOT_STATIC_REASON); const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const set = new Set(h1SaveEvalStatic.godTraitNamesForShop); return _h1bool(!h1HeroTraitNames(cr).some(n => set.has(n))); },
     RequiredWeapon: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1Truthy(cr.Hero && cr.Hero.Weapons && cr.Hero.Weapons[v])); },
     RequiredTrait: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1HeroHasTrait(cr, v)); },
     RequiredFalseTraits: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(!h1Arr(v).some(t => h1HeroHasTrait(cr, t))); },
@@ -482,6 +497,15 @@ function h1WeaponStaticReady() {
     return !!(h1SaveEvalStatic && h1SaveEvalStatic.weaponUpgradeSlots);
 }
 const _WEAPON_STATIC_REASON = 'Needs the weapon-upgrade slot table - not loaded.';
+
+// Whether the per-god LootData trait index (h1SaveEvalStatic.godLootTraitIndex /
+// godTraitNamesForShop) is present, so RequiredGodLoot / RequiredNoGodBoons can
+// resolve. False only in a build / test that didn't load it.
+function h1GodLootStaticReady() {
+    return !!(h1SaveEvalStatic && h1SaveEvalStatic.godLootTraitIndex
+        && Array.isArray(h1SaveEvalStatic.godTraitNamesForShop));
+}
+const _GODLOOT_STATIC_REASON = 'Needs the per-god LootData trait index - not loaded.';
 
 // GetWeaponUpgradeLevel port (WeaponUpgradeScripts.lua:395): the level the player
 // has bought for a weapon aspect = GameState.WeaponUnlocks[weapon][index] (0 if

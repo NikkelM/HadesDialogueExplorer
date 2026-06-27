@@ -37,6 +37,8 @@ number, a per-(weapon, index) slot map, one constant) - everything else
 the engine reads for these gates is in the persistent save slice.
 """
 
+from typing import Dict, List, Optional, Set
+
 from ...lua_parser import LuaTable
 
 # ``UIData.Constants.VISIBLE`` (UIData.lua). Vendored as a constant rather
@@ -144,19 +146,184 @@ def extract_weapon_upgrade_slots(parsed: dict) -> dict:
     return result
 
 
-def extract_save_eval_static(meta_parsed: dict, weapon_parsed: dict) -> dict:
+# ---- god-loot trait index (RequiredGodLoot / RequiredNoGodBoons) -------------
+#
+# The H1 engine builds a per-god ``TraitIndex`` at load (RunData.lua, the
+# ``ProcessDataStore( LootData )`` loop): the union of each loot owner's
+# ``WeaponUpgrades`` / ``Traits`` / ``PermanentTraits`` / ``TemporaryTraits``
+# lists plus its ``LinkedUpgrades`` keys. Two ``otherRequirements`` gates read
+# it against the hero's equipped traits (``CurrentRun.Hero.Traits``):
+#
+#   - ``RequiredGodLoot`` (RunManager.lua:2826): met iff the hero holds any
+#     trait in ``LootData[god].TraitIndex`` (a boon from that god equipped).
+#   - ``RequiredNoGodBoons`` (RunManager.lua:2864): met iff the hero holds no
+#     trait that ``IsGodTrait( name, { ForShop = true } )`` (TraitScripts.lua) -
+#     i.e. no trait from any non-``DebugOnly`` owner flagged ``GodLoot`` or
+#     (for the shop test) ``TreatAsGodLootByShops``.
+#
+# A static save can't run these loops, so the union sets are pre-computed and
+# shipped in ``h1SaveEvalStatic``. ``GodLoot`` / ``TreatAsGodLootByShops`` are
+# inheritable (``InheritFrom`` - the per-god owners inherit ``GodLoot = true``
+# from the ``BaseLoot`` template), while ``DebugOnly`` is read from the owner's
+# own value only (it sits in the engine's inheritance-ignores set, so the
+# ``DebugOnly`` ``BaseLoot`` template doesn't taint its inheritors).
+
+# Trait-list fields whose union (plus LinkedUpgrades keys) forms a god's
+# runtime TraitIndex.
+_GOD_TRAIT_LIST_KEYS = ("WeaponUpgrades", "Traits", "PermanentTraits", "TemporaryTraits")
+
+
+def _loot_store(loot_parsed: dict) -> Dict[str, LuaTable]:
+    """Map ``{owner_id: LuaTable}`` from the flat ``LootData`` table.
+
+    Doubles as the ``InheritFrom`` resolution scope so a per-god owner can
+    see the ``BaseLoot`` template it inherits ``GodLoot`` from.
+    """
+    store: Dict[str, LuaTable] = {}
+    loot = loot_parsed.get("LootData")
+    if isinstance(loot, LuaTable):
+        for owner_id, table in loot.named.items():
+            if isinstance(table, LuaTable):
+                store[owner_id] = table
+    return store
+
+
+def _inherited_flag(
+    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
+) -> Optional[bool]:
+    """Resolve an inheritable boolean flag (owner's own value wins, including
+    an explicit ``false`` overriding a parent's ``true``; else the
+    ``InheritFrom`` parents in order). ``None`` when unset. Cycle-guarded."""
+    _seen = _seen if _seen is not None else set()
+    if owner_id in _seen:
+        return None
+    _seen.add(owner_id)
+    table = store.get(owner_id)
+    if table is None:
+        return None
+    if key in table.named:
+        return bool(table.named.get(key))
+    inherit = table.named.get("InheritFrom")
+    if isinstance(inherit, LuaTable):
+        for parent in inherit.array:
+            if isinstance(parent, str):
+                val = _inherited_flag(parent, store, key, _seen)
+                if val is not None:
+                    return val
+    return None
+
+
+def _inherited_list(
+    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
+) -> List[str]:
+    """Resolve an inheritable string-list field (owner's own list wins, else
+    the first non-empty inherited list). Cycle-guarded."""
+    _seen = _seen if _seen is not None else set()
+    if owner_id in _seen:
+        return []
+    _seen.add(owner_id)
+    table = store.get(owner_id)
+    if table is None:
+        return []
+    val = table.named.get(key)
+    if isinstance(val, LuaTable):
+        return [x for x in val.array if isinstance(x, str)]
+    if key in table.named:
+        return []
+    inherit = table.named.get("InheritFrom")
+    if isinstance(inherit, LuaTable):
+        for parent in inherit.array:
+            if isinstance(parent, str):
+                lst = _inherited_list(parent, store, key, _seen)
+                if lst:
+                    return lst
+    return []
+
+
+def _linked_upgrade_keys(
+    owner_id: str, store: Dict[str, LuaTable], _seen: Optional[Set[str]] = None
+) -> List[str]:
+    """The ``LinkedUpgrades`` keys (a named table, not a list) that also feed a
+    god's TraitIndex. Resolved with the same own-wins / inherit fallback."""
+    _seen = _seen if _seen is not None else set()
+    if owner_id in _seen:
+        return []
+    _seen.add(owner_id)
+    table = store.get(owner_id)
+    if table is None:
+        return []
+    val = table.named.get("LinkedUpgrades")
+    if isinstance(val, LuaTable):
+        return [k for k in val.named.keys() if isinstance(k, str)]
+    if "LinkedUpgrades" in table.named:
+        return []
+    inherit = table.named.get("InheritFrom")
+    if isinstance(inherit, LuaTable):
+        for parent in inherit.array:
+            if isinstance(parent, str):
+                keys = _linked_upgrade_keys(parent, store, _seen)
+                if keys:
+                    return keys
+    return []
+
+
+def _trait_index(owner_id: str, store: Dict[str, LuaTable]) -> Set[str]:
+    """Union of an owner's resolved trait-list fields and LinkedUpgrades keys."""
+    names: Set[str] = set()
+    for key in _GOD_TRAIT_LIST_KEYS:
+        names.update(_inherited_list(owner_id, store, key))
+    names.update(_linked_upgrade_keys(owner_id, store))
+    return names
+
+
+def extract_god_loot_data(loot_parsed: dict) -> dict:
+    """Return ``{"godLootTraitIndex": {...}, "godTraitNamesForShop": [...]}``.
+
+    ``godLootTraitIndex`` maps every loot owner with a non-empty TraitIndex to
+    its sorted trait-name list - ``RequiredGodLoot`` reads ``LootData[god]``
+    for any god value (even ``GodLoot = false`` ones like ``TrialUpgrade`` /
+    ``HermesUpgrade``), so the index isn't restricted to god-loot owners.
+    ``godTraitNamesForShop`` is the flat ``IsGodTrait( ForShop )`` set used by
+    ``RequiredNoGodBoons``: the union of every non-``DebugOnly`` owner flagged
+    ``GodLoot`` or ``TreatAsGodLootByShops``. Missing ``LootData`` yields empty
+    tables (the two gates then stay indeterminate, as before this hook).
+    """
+    store = _loot_store(loot_parsed)
+    per_god: Dict[str, List[str]] = {}
+    shop_traits: Set[str] = set()
+    for owner_id, table in store.items():
+        index = _trait_index(owner_id, store)
+        if index:
+            per_god[owner_id] = sorted(index)
+        if bool(table.named.get("DebugOnly")):
+            continue
+        if _inherited_flag(owner_id, store, "GodLoot") or _inherited_flag(
+            owner_id, store, "TreatAsGodLootByShops"
+        ):
+            shop_traits.update(index)
+    return {
+        "godLootTraitIndex": per_god,
+        "godTraitNamesForShop": sorted(shop_traits),
+    }
+
+
+def extract_save_eval_static(meta_parsed: dict, weapon_parsed: dict, loot_parsed: Optional[dict] = None) -> dict:
     """Bundle every static table the H1 save evaluator needs.
 
     ``meta_parsed`` is the parsed ``MetaUpgradeData.lua`` (carries
     ``MetaUpgradeOrder`` / ``ShrineUpgradeOrder`` / ``MetaUpgradeData``);
-    ``weapon_parsed`` is the parsed ``WeaponUpgradeData.lua``. Returns the
-    single ``h1SaveEvalStatic`` payload the build attaches to the H1 graph
-    data and ``data.js`` exposes to ``gamestate-eval-h1.js``.
+    ``weapon_parsed`` is the parsed ``WeaponUpgradeData.lua``;
+    ``loot_parsed`` is the parsed ``LootData.lua`` (per-god boon owners).
+    Returns the single ``h1SaveEvalStatic`` payload the build attaches to
+    the H1 graph data and ``data.js`` exposes to ``gamestate-eval-h1.js``.
     """
+    god_loot = extract_god_loot_data(loot_parsed or {})
     return {
         "metaUpgradeOrderLength": extract_meta_upgrade_order_length(meta_parsed),
         "shrineUpgradeOrder": extract_shrine_upgrade_order(meta_parsed),
         "strikeThroughChangeValue": extract_strike_through_change_value(meta_parsed),
         "weaponUpgradeSlots": extract_weapon_upgrade_slots(weapon_parsed),
         "cosmeticVisibleValue": _COSMETIC_VISIBLE_VALUE,
+        "godLootTraitIndex": god_loot["godLootTraitIndex"],
+        "godTraitNamesForShop": god_loot["godTraitNamesForShop"],
     }

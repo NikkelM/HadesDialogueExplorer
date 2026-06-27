@@ -93,7 +93,7 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
     # --- typo-or-bug (2) ---
     "ChronosBossPreTrueEndingOutro01": {
         "category": "typo-or-bug",
-        "reason": "Transposed-word typo for ChronosBossOutroPreTrueEnding01 "
+        "reason": "Typo for ChronosBossOutroPreTrueEnding01 "
                   "(which is defined). Referenced as a PathFalse check in "
                   "EnemyData_Chronos.lua that was meant to make the two lines "
                   "forbid each other; because of the typo the check targets a "
