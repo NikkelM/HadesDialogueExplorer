@@ -96,7 +96,7 @@ function truthy(v) {
 }
 
 // pairs-style key count (the engine's TableLength), nil -> 0.
-function tableLen(v) {
+function permTableLen(v) {
     return (v && typeof v === 'object') ? Object.keys(v).length : 0;
 }
 
@@ -148,7 +148,7 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
         const right = rec.Value;
         if (typeof right !== 'number') return null;
         let left = walk(gameStateSlice, rec.Path);
-        if (rec.UseLength) left = tableLen(left);
+        if (rec.UseLength) left = permTableLen(left);
         else left = (left === undefined || left === null) ? 0 : left;
         if (typeof left !== 'number' || Number.isNaN(left)) return null;
         const now = compareNum(left, rec.Comparison, right);
