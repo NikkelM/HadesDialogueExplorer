@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
-import { restoreSaveProgress, getSaveContext } from '../templates/viewer/save-parser.js';
+import { restoreSaveProgress, getSaveContext, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { computePlayAhead, playRank } from '../templates/viewer/play-order.js';
 
 // localStorage stub so the save-restore path works under Node.
@@ -20,7 +20,7 @@ globalThis.localStorage = {
 
 function seedSave(played) {
     _store.set('hde.save', JSON.stringify({
-        v: 15, gameId: getActiveGame(), runs: 1, played,
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played,
     }));
     restoreSaveProgress();
     return getSaveContext();

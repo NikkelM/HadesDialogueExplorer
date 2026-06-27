@@ -152,6 +152,25 @@ test('unresolvable clauses report unknown with a reason', () => {
     }
 });
 
+test('AudioState: resolves to eligible or blocked from the saved track snapshot', () => {
+    const rec = { Path: ['AudioState', 'AmbientTrackName'], IsAny: ['/Music/ArtemisSong_MC', '/Music/IrisEndThemeCrossroads_MC'] };
+    const evalAS = (audioState) => evaluateOtherRequirements(clause(rec), {}, { audioState }).clauses[0];
+    // Saved snapshot matches one of the gating tracks -> met.
+    assert.equal(evalAS({ AmbientTrackName: '/Music/ArtemisSong_MC' }).status, 'met');
+    // Saved snapshot is a different track -> blocked (unmet): the track keeps
+    // playing until the player acts, so the snapshot is the live track.
+    assert.equal(evalAS({ AmbientTrackName: '/Music/SomethingElse_MC' }).status, 'unmet');
+    // IsNone (must NOT be playing one of these) inverts the verdict.
+    const recNone = { Path: ['AudioState', 'MusicName'], IsNone: ['/Music/Scylla_MC'] };
+    const evalNone = (audioState) => evaluateOtherRequirements(clause(recNone), {}, { audioState }).clauses[0];
+    assert.equal(evalNone({ MusicName: '/Music/Scylla_MC' }).status, 'unmet');
+    assert.equal(evalNone({ MusicName: '/Music/Other_MC' }).status, 'met');
+    // No AudioState carried by the save -> indeterminate with a reason.
+    const none = evaluateOtherRequirements(clause(rec), {}).clauses[0];
+    assert.equal(none.status, 'unknown');
+    assert.ok(none.reason && none.reason.length > 0);
+});
+
 test('empty set -> met; no save -> unknown', () => {
     assert.equal(evaluateOtherRequirements({}, {}).status, 'met');
     assert.equal(evaluateOtherRequirements(null, {}).status, 'met');

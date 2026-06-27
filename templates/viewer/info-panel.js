@@ -1267,6 +1267,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
+            audioState: sctx.audioState,
         };
         const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));

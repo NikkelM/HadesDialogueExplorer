@@ -375,6 +375,7 @@ export function orBranchVerdict(branch, context, name) {
         runHistory: ctx.runHistory,
         currentRun: resolveRun ? ctx.currentRun : null,
         rooms: resolveRun ? ctx.rooms : null,
+        audioState: ctx.audioState,
     };
     const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, slices, gameId).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';

@@ -393,8 +393,8 @@ const H1_FIELD_EVALS = {
     RequiresFishingPointInRoom: () => H1_LIVE('Reads whether the current room has a live fishing point.'),
 
     // ===== LIVE ONLY: combat / audio / active enemies / UI =====
-    RequiredLastKilledByUnits: () => H1_LIVE('Reads the live "last killed by" unit, set transiently on death.'),
-    RequiredLastKilledByWeaponNames: () => H1_LIVE('Reads the live "last killed by" weapon, set transiently on death.'),
+    RequiredLastKilledByUnits: (v, ctx) => _h1bool(h1Arr(v).includes(h1Gs(ctx, 'LastKilledByUnitName'))),
+    RequiredLastKilledByWeaponNames: (v, ctx) => _h1bool(h1Arr(v).includes(h1Gs(ctx, 'LastKilledByWeaponName'))),
     RequiredMaxSupportAINames: () => H1_LIVE('Counts live active support-AI enemies in the room.'),
     RequiredUnitAlive: () => H1_LIVE('Queries whether a unit is alive in the live room.'),
     RequiredUnitNotAlive: () => H1_LIVE('Queries whether a unit is alive in the live room.'),

@@ -373,6 +373,22 @@ function evalUnrestrictedBoonChoices(rec, root) {
     return _MET(restricted ? 'unmet' : 'met');
 }
 
+// AudioState.* (AmbientTrackName / MusicName) is the live audio snapshot the H2
+// save persists at the top level. The track keeps playing until the player acts
+// (audio does not fade out on its own), so the snapshot is the live track and an
+// IsAny / IsNone membership test resolves to 'met' or 'unmet'. Only the absence
+// of any AudioState slice (or an unrecognised shape) stays indeterminate.
+function evalAudioState(rec, path, root) {
+    if (!root.AudioState) return _MET('unknown', 'Reads AudioState.* - live audio state this save didn\u2019t carry.');
+    // The saved ambient / music track keeps playing until the player acts (audio
+    // does not fade out on its own), so the snapshot is the live track: a
+    // membership test resolves to eligible or blocked, never indeterminate.
+    const val = walkPath(root, path);
+    if (rec.IsNone) return _MET((Array.isArray(rec.IsNone) ? rec.IsNone : []).some(v => val === v) ? 'unmet' : 'met');
+    if (rec.IsAny) return _MET((Array.isArray(rec.IsAny) ? rec.IsAny : []).some(v => val === v) ? 'met' : 'unmet');
+    return _MET('unknown', 'Unrecognised AudioState condition shape.');
+}
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -407,6 +423,7 @@ function evalClause(rec, root) {
         return _MET('unknown', 'Unrecognised condition shape.');
     }
     const base = path[0];
+    if (base === 'AudioState') return evalAudioState(rec, path, root);
     if (base !== 'GameState' && base !== 'PrevRun') {
         // CurrentRun.* resolves from the persisted CurrentRun slice, but only
         // when the caller supplied one (the dialogue's owner matches the loaded
@@ -419,9 +436,7 @@ function evalClause(rec, root) {
         } else if (base === 'CurrentRun') {
             return _WRONGSAVE('Reads CurrentRun.* - current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
         } else {
-            const why = base === 'AudioState' ? 'live audio state'
-                : base === 'MapState' ? 'live room/map state'
-                    : `${base} state`;
+            const why = base === 'MapState' ? 'live room/map state' : `${base} state`;
             return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
         }
     }
@@ -580,8 +595,8 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
             .map(key => ({ key, status: 'unknown', reason: 'No save loaded.' }));
         return { status: clauses.length ? 'unknown' : 'met', clauses };
     }
-    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null } = slices || {};
-    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
+    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
+    return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
 }
 
 // Whether a single resolved gate (one ``otherRequirements`` key) is

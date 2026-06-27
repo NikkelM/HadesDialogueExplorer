@@ -57,6 +57,20 @@ test('H1: empty otherRequirements -> met with no clauses', () => {
     assert.deepEqual(evaluateH1OtherRequirements(null, ctx()), { status: 'met', clauses: [] });
 });
 
+test('H1: RequiredLastKilledByUnits/WeaponNames resolve from the death globals', () => {
+    // Present in hub saves (set at death). Met iff the killer/weapon is in the list.
+    const c = ctx({ gs: { LastKilledByUnitName: 'Minotaur', LastKilledByWeaponName: 'MinotaurWeapon' } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByUnits: ['Minotaur', 'Minotaur2'] }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByUnits: ['Theseus'] }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByWeaponNames: ['MinotaurWeapon'] }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByWeaponNames: ['BiomeTimer'] }, c).status, 'unmet');
+    // Single-string operand (engine's non-table branch) is accepted.
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByUnits: 'Minotaur' }, c).status, 'met');
+    // Absent global (in-run save before any death) -> nil -> unmet, matching the
+    // engine's Contains(list, nil) = false.
+    assert.equal(evaluateH1OtherRequirements({ RequiredLastKilledByUnits: ['Minotaur'] }, ctx({ gs: {} })).status, 'unmet');
+});
+
 // --- persistent GameState aggregates -----------------------------------------
 
 test('H1: RequiredMinCompletedRuns counts RunHistory length', () => {

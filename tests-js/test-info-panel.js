@@ -10,7 +10,7 @@ import { strict as assert } from 'node:assert';
 
 import { renderInfo } from '../templates/viewer/info-panel.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
-import { restoreSaveProgress, clearSaveProgress } from '../templates/viewer/save-parser.js';
+import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
 // Captured innerHTML from the most recent renderInfo call.
@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 15, gameId: getActiveGame(), runs: 1, played: [],
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -376,7 +376,7 @@ test('otherRequirements: with a matching save, gates show met/indeterminate elig
         gameLabels: { hades2: 'Hades II' }, defaultGame: 'hades2',
     });
     _saveStore.set('hde.save', JSON.stringify({
-        v: 15, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
     }));
     restoreSaveProgress();
     renderInfo('OrpheusOtherReqDemo');

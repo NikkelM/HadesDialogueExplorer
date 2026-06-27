@@ -606,6 +606,7 @@ export function renderOtherConditionsHtml(rootName) {
             runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
+            audioState: sctx.audioState,
         };
         const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
         for (const c of res.clauses) byKey.set(c.key, c);
@@ -1047,6 +1048,7 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
         runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
         currentRun: resolveRun ? sctx.currentRun : null,
         rooms: resolveRun ? sctx.rooms : null,
+        audioState: sctx.audioState,
     };
     const { clauses } = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
     const byKey = new Map(clauses.map(c => [c.key, c]));

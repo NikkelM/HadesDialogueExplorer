@@ -570,6 +570,7 @@ export function directSatisfaction(textlineData, context, name) {
         runHistory: ctx.runHistory,
         currentRun: resolveRun ? ctx.currentRun : null,
         rooms: resolveRun ? ctx.rooms : null,
+        audioState: ctx.audioState,
     };
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),

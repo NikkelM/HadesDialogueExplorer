@@ -24,7 +24,7 @@ import {
 } from '../templates/viewer/speaker-view.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
-import { restoreSaveProgress, clearSaveProgress } from '../templates/viewer/save-parser.js';
+import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { buildFixtureData, loadFixtureData } from './fixtures.js';
 
 let lastHtml = '';
@@ -824,7 +824,7 @@ function loadEligibilityFixtureWithSave() {
     // frozen, so this shape is stable). Seed the backing store directly;
     // ``restoreSaveProgress`` reads it through the stub above.
     _localStore.set('hde.save', JSON.stringify({
-        v: 15, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played: ['TestPlayed01'],
     }));
     restoreSaveProgress();
 }

@@ -388,6 +388,7 @@ function extractSaveContext(parsed) {
     rooms: extractRoomsSlice(gameId, luaState),
     prevRun: extractPrevRunSlice(gameId, luaState),
     runHistory: extractRunHistorySlice(gameId, luaState),
+    audioState: extractAudioStateSlice(gameId, luaState),
   };
 }
 
@@ -585,7 +586,28 @@ export function extractH1GameStateSlice(gs, luaState) {
       if (refs.needsCodexTotal) slice.CodexUnlockedTotal = countCodexUnlocked(cs);
     }
   }
+  // Death-context globals (set at death in DeathLoop.lua; siblings of GameState,
+  // present in hub saves), read by RequiredLastKilledByUnits /
+  // RequiredLastKilledByWeaponNames for death-quip / NPC death-reaction lines.
+  if (luaState && typeof luaState === 'object') {
+    if (typeof luaState.LastKilledByUnitName === 'string') slice.LastKilledByUnitName = luaState.LastKilledByUnitName;
+    if (typeof luaState.LastKilledByWeaponName === 'string') slice.LastKilledByWeaponName = luaState.LastKilledByWeaponName;
+  }
   return slice;
+}
+
+// The top-level ``AudioState`` table is the live audio snapshot the H2 save
+// persists. Only two scalar leaves are read by dialogue gates
+// (AudioState.AmbientTrackName / AudioState.MusicName); capture just those.
+// H2 only; null when the save carries neither.
+function extractAudioStateSlice(gameId, luaState) {
+  if (gameId !== 'hades2') return null;
+  const as = luaState && luaState.AudioState;
+  if (!as || typeof as !== 'object') return null;
+  const slice = {};
+  if (typeof as.AmbientTrackName === 'string') slice.AmbientTrackName = as.AmbientTrackName;
+  if (typeof as.MusicName === 'string') slice.MusicName = as.MusicName;
+  return Object.keys(slice).length ? slice : null;
 }
 
 // Build the minimal persisted ``CurrentRun`` slice (the live-run snapshot in the
@@ -852,6 +874,9 @@ let _saveRunHistory = null;
 // (false). Decides which owners' CurrentRun.* gates resolve (see
 // ``currentRunResolvable``). null when no save is loaded.
 let _saveInRun = null;
+// Minimal persisted AudioState slice (AmbientTrackName / MusicName) for resolving
+// H2 AudioState.* gates; null for non-H2 saves or when none is loaded.
+let _saveAudioState = null;
 
 export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
@@ -878,6 +903,7 @@ export function getSaveContext() {
     prevRun: _savePrevRun,
     runHistory: _saveRunHistory,
     saveInRun: _saveInRun,
+    audioState: _saveAudioState,
   };
 }
 
@@ -898,6 +924,7 @@ export function clearSaveProgress() {
   _saveRunHistory = null;
   _saveInRun = null;
   _saveRunsAgo = null;
+  _saveAudioState = null;
 }
 
 // --- Local persistence ---
@@ -937,8 +964,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // prune with GameplayTime / RunDepthCache / EasyModeLevel (best-clear-time gate).
 // v16 added the H1 CurrentRun RoomHistory prune ({Name, Kills, UsedAssist}) for
 // the used-assist-in-room gate. v17 added KeepsakeChambers to the H1 GameState
-// slice (for the RequiresMaxKeepsake keepsake-mastery gate).
-const SAVE_STORAGE_SCHEMA = 17;
+// slice (for the RequiresMaxKeepsake keepsake-mastery gate). v18 added the H1
+// LastKilledByUnitName / LastKilledByWeaponName death globals to the H1 GameState
+// slice and the H2 top-level AudioState slice (AmbientTrackName / MusicName).
+export const SAVE_STORAGE_SCHEMA = 18;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -982,6 +1011,7 @@ export function persistSaveProgress(filename) {
       prevRun: _savePrevRun || null,
       runHistory: _saveRunHistory || null,
       inRun: _saveInRun,
+      audioState: _saveAudioState || null,
     }));
     return true;
   } catch {
@@ -1035,6 +1065,7 @@ export function restoreSaveProgress() {
   _savePrevRun = (data.prevRun && typeof data.prevRun === 'object') ? data.prevRun : null;
   _saveRunHistory = Array.isArray(data.runHistory) ? data.runHistory : null;
   _saveInRun = (typeof data.inRun === 'boolean') ? data.inRun : null;
+  _saveAudioState = (data.audioState && typeof data.audioState === 'object') ? data.audioState : null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -1064,6 +1095,7 @@ export function parseSaveFile(arrayBuffer, filename = null) {
   _saveRoomsSlice = ctx.rooms;
   _savePrevRun = ctx.prevRun;
   _saveRunHistory = ctx.runHistory;
+  _saveAudioState = ctx.audioState;
   // An in-run autosave is named ProfileX_Temp.sav; the hub save is ProfileX.sav.
   // The flag decides which owners' CurrentRun.* gates resolve. Unknown filename
   // (e.g. tests) leaves it null -> CurrentRun.* stays indeterminate.

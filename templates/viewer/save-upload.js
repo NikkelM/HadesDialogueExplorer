@@ -120,8 +120,8 @@ export function refreshSaveStatus() {
         // show them identically in either view rather than silently dropping
         // runs on a game switch. Non-breaking spaces keep each "N unit" pair
         // together when the pill wraps.
-        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues, ${runs}\u00A0runs${kind}`);
+        showStatus('loaded', `Hades II with Zagreus\u2019 Journey: ${count}\u00A0dialogues played, ${runs}\u00A0runs${kind}`);
     } else {
-        showStatus('loaded', `${label}: ${count}\u00A0dialogues, ${runs}\u00A0runs${kind}`);
+        showStatus('loaded', `${label}: ${count}\u00A0dialogues played, ${runs}\u00A0runs${kind}`);
     }
 }
