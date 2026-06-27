@@ -57,7 +57,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
 
     // Load a save matching the active game (schema v1; games are frozen).
     _saveStore.set('hde.save', JSON.stringify({
-        v: 11, gameId: getActiveGame(), runs: 1, played: [],
+        v: 13, gameId: getActiveGame(), runs: 1, played: [],
     }));
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
@@ -367,9 +367,16 @@ function fixtureWithOtherRequirements() {
 
 
 test('otherRequirements: with a matching save, gates show met/indeterminate eligibility dots', () => {
-    loadData(fixtureWithOtherRequirements());
+    // This fixture's gates use the H2 structured model (PathTrue / FunctionName /
+    // NamedRequirements), so it must load under the Hades II game id for the H2
+    // evaluator (not the flat-named-field H1 one) to resolve them.
+    const fix = fixtureWithOtherRequirements();
+    loadData({
+        games: { hades2: fix }, gameIds: ['hades2'],
+        gameLabels: { hades2: 'Hades II' }, defaultGame: 'hades2',
+    });
     _saveStore.set('hde.save', JSON.stringify({
-        v: 11, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
+        v: 13, gameId: getActiveGame(), runs: 1, played: [], gameState: { ReachedTrueEnding: true },
     }));
     restoreSaveProgress();
     renderInfo('OrpheusOtherReqDemo');

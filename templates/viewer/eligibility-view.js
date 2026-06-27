@@ -568,13 +568,14 @@ export function renderOtherConditionsHtml(rootName) {
     let verdict = null;
     if (haveSave) {
         const sctx = getSaveContext();
-        const resolveRun = currentRunResolvable(tl.owner, sctx.saveInRun);
+        const gameId = getActiveGame();
+        const resolveRun = currentRunResolvable(tl.owner, sctx.saveInRun, gameId);
         const slices = {
             runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
         };
-        const res = evaluateOtherRequirements(other, sctx.gameState, slices);
+        const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
         for (const c of res.clauses) byKey.set(c.key, c);
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-
@@ -996,17 +997,23 @@ function renderBranchHtml(branch, index, total, rootName, playedSet, isPlayed) {
 // Returns '' when the set has no such conditions.
 function renderConditionsHtml(otherRequirements, owner, rootName) {
     const other = otherRequirements || {};
-    const gateKeys = Object.keys(other).filter(k => Array.isArray(other[k]) || k.startsWith('NamedRequirements'));
-    if (gateKeys.length === 0) return '';
+    if (Object.keys(other).length === 0) return '';
     const sctx = getSaveContext();
-    const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
+    const gameId = getActiveGame();
+    const resolveRun = currentRunResolvable(owner, sctx.saveInRun, gameId);
     const slices = {
         runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
         currentRun: resolveRun ? sctx.currentRun : null,
         rooms: resolveRun ? sctx.rooms : null,
     };
-    const { clauses } = evaluateOtherRequirements(other, sctx.gameState, slices);
+    const { clauses } = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
     const byKey = new Map(clauses.map(c => [c.key, c]));
+    // Gate keys to render (with dots): exactly the keys the evaluator produced a
+    // clause for. For H2 that's the Path / FunctionName / NamedRequirements
+    // entries; for H1 the named-field gates (textline-record fields are shown as
+    // prerequisites elsewhere, never as conditions).
+    const gateKeys = Object.keys(other).filter(k => byKey.has(k));
+    if (gateKeys.length === 0) return '';
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {
         const c = byKey.get(key) || { status: 'unknown' };

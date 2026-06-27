@@ -53,19 +53,19 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredTrueFlags":                        "Must have flag (ALL)",
 
     # ----- GameState.Values / config options -----
-    "RequiredValues":                           "GameState.Values must equal",
-    "RequiredFalseValues":                      "GameState.Values must NOT equal",
-    "RequiredMinValues":                        "Min. GameState.Values",
-    "RequiredTrueConfigOptions":                "Config option must be enabled (ALL)",
-    "RequiredFalseConfigOptions":               "Config option must be disabled (ALL)",
+    "RequiredValues":                           "GameState field must equal",
+    "RequiredFalseValues":                      "GameState field must NOT equal",
+    "RequiredMinValues":                        "Min. GameState field value",
+    "RequiredTrueConfigOptions":                "Game setting must be enabled (ALL)",
+    "RequiredFalseConfigOptions":               "Game setting must be disabled (ALL)",
 
     # ----- NPC / item / interaction counts -----
     "RequiredMinNPCInteractions":               "Min. NPC interactions",
     "RequiredMaxNPCInteractions":               "Max. NPC interactions",
     "RequiredMinItemInteractions":              "Min. item interactions",
-    "RequiredFalseInteractionThisRun":          "Must NOT have triggered interaction (this run)",
-    "RequiredNotActivatedThisRun":              "Interaction id must NOT have activated (this run)",
-    "RequiredIdsNotActivatedThisRun":           "Interaction id must NOT have activated (ANY, this run)",
+    "RequiredFalseInteractionThisRun":          "Must NOT have interacted with (this run)",
+    "RequiredNotActivatedThisRun":              "Interactable must NOT have activated (this run)",
+    "RequiredIdsNotActivatedThisRun":           "Interactable must NOT have activated (ANY, this run)",
 
     # ----- Current room / biome -----
     "RequiredRoom":                             "Must be in room",
@@ -76,19 +76,18 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredMaxBiomeDepth":                    "Max. biome depth (this run)",
     "RequiredMinDepth":                         "Min. rooms visited (this run)",
     "RequiredMaxDepth":                         "Max. rooms visited (this run)",
-    "RequiredMinElapsedTime":                   "Min. run duration (seconds)",
 
     # ----- Room history (per-run / lifetime) -----
     "RequiredRoomThisRun":                      "Must have entered room (this run)",
     "RequiredRoomLastRun":                      "Must have entered room (last run)",
     "RequiredAnyRoomsThisRun":                  "Must have entered room (ANY, this run)",
     "RequiredAnyRoomsLastRun":                  "Must have entered room (ANY, last run)",
-    "RequiredRooms":                            "Must have entered room (ALL)",
+    "RequiredRooms":                            "Must be in room (ANY)",
     "RequiredSeenRooms":                        "Must have seen room (ALL)",
     "RequiredFalseSeenRoomThisRun":             "Must NOT have entered room (this run)",
     "RequiredFalseSeenRoomsThisRun":            "Must NOT have entered room (ANY, this run)",
     "RequiredFalseRoomLastRun":                 "Must NOT have entered room (last run)",
-    "RequiredFalseRooms":                       "Must NOT have entered room (ANY)",
+    "RequiredFalseRooms":                       "Must NOT be in room (ANY)",
     "RequiredFalseSeenRooms":                   "Must NOT have entered room (ANY)",
     "RequiredMinTimesSeenRoom":                 "Min. room visits",
     "RequiredMaxTimesSeenRoom":                 "Max. room visits",
@@ -96,8 +95,8 @@ HADES1_OTHER_REQ_LABELS = {
     # ----- Encounters / boss phase -----
     "RequiredBossPhase":                        "Boss phase must equal",
     "RequiredSeenEncounter":                    "Must have seen encounter",
-    "RequiredEncounterThisRun":                 "Must have completed encounter (this run)",
-    "RequiredAnyEncountersThisRun":             "Must have completed encounter (ANY, this run)",
+    "RequiredEncounterThisRun":                 "Must have seen encounter (this run)",
+    "RequiredAnyEncountersThisRun":             "Must have seen encounter (ANY, this run)",
 
     # ----- Loadout: boons (engine name: Traits) -----
     "RequiredTrait":                            "Must have boon equipped",
@@ -105,41 +104,41 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredFalseTraits":                      "Must NOT have boon equipped (ANY)",
     "RequiredCountOfTraits":                    "Boon candidate set",
     "RequiredCountOfTraitsCount":               "Min. matching boons from set",
-    "RequiredTraitsTaken":                      "Must have taken boon (ALL, this run)",
+    "RequiredTraitsTaken":                      "Must have taken boon (ALL, across save)",
     "RequiredRunHasOneOfTraits":                "Must have taken boon (ANY, this run)",
 
     # ----- Loadout: god boons (engine name: GodLoot) -----
-    "RequiredGodLoot":                          "Must have boon from god (this run)",
-    "RequiredFalseGodLoot":                     "Must NOT have boon from god (this run)",
+    "RequiredGodLoot":                          "Must have boon from god",
+    "RequiredFalseGodLoot":                     "Must NOT have boon from god",
     "RequiredFalseGodLoots":                    "Must NOT have boon from god (ANY, this run)",
-    "RequiredNoGodBoons":                       "Must have no god boons (this run)",
-    "RequiredLootThisRun":                      "Must have picked up loot (this run)",
-    "RequiredLootChoices":                      "Min. boon options shown",
+    "RequiredNoGodBoons":                       "Must have no god boons",
+    "RequiredLootThisRun":                      "Must have boon from god",
+    "RequiredLootChoices":                      "Number of shown boon options must equal",
 
     # ----- Loadout: weapons / Aspects / hammer upgrades -----
     "RequiredWeapon":                           "Must have weapon equipped",
     "RequiredWeaponsUnlocked":                  "Must have weapon unlocked (ALL)",
     "RequiredAnyWeaponsUnlocked":               "Must have weapon unlocked (ANY)",
     "RequiredFalseWeaponsUnlocked":             "Must NOT have weapon unlocked (ANY)",
-    "RequiredMaxWeaponUpgrade":                 "Weapon Aspect must be base form",
-    "RequiredFalseMaxWeaponUpgrade":            "Weapon Aspect must NOT be base form",
-    "RequiredMaxWeaponUpgradeIndex":            "Max. weapon Aspect index",
-    "RequiredFalseMaxWeaponUpgradeIndex":       "Weapon Aspect must NOT be at index",
-    "RequiredLastInteractedWeaponUpgrade":      "Last touched weapon-upgrade altar",
-    "RequiredLastInteractedWeaponUpgradeMaxed": "Last touched weapon-upgrade altar at max",
-    "RequiredMinUnlockedWeaponEnchantments":    "Min. weapon Aspects unlocked",
-    "RequiredMaxUnlockedWeaponEnchantments":    "Max. weapon Aspects unlocked",
-    "RequiredMaxWeaponUpgrades":                "Max. hammer upgrades on weapon (this run)",
-    "RequiredMinWeaponUpgrades":                "Min. hammer upgrades on weapon (this run)",
-    "RequiredMinWeaponKills":                   "Min. lifetime kills per weapon",
-    "RequiredMinRunsWithWeapons":               "Min. runs completed per weapon",
-    "RequiredMaxRunsWithWeapons":               "Max. runs completed per weapon",
+    "RequiredMaxWeaponUpgrade":                 "Weapon Aspect must be fully upgraded",
+    "RequiredFalseMaxWeaponUpgrade":            "Weapon Aspect must NOT be fully upgraded",
+    "RequiredMaxWeaponUpgradeIndex":            "Weapon Aspect index to check",
+    "RequiredFalseMaxWeaponUpgradeIndex":       "Weapon Aspect index to check",
+    "RequiredLastInteractedWeaponUpgrade":      "Must have most recently interacted with Aspect",
+    "RequiredLastInteractedWeaponUpgradeMaxed": "Most recently interacted Aspect must be at max level",
+    "RequiredMinUnlockedWeaponEnchantments":    "Min. total weapon Aspects unlocked",
+    "RequiredMaxUnlockedWeaponEnchantments":    "Max. total weapon Aspects unlocked",
+    "RequiredMaxWeaponUpgrades":                "Max. hammer upgrades",
+    "RequiredMinWeaponUpgrades":                "Min. hammer upgrades",
+    "RequiredMinWeaponKills":                   "Min. total kills with weapon",
+    "RequiredMinRunsWithWeapons":               "Min. runs completed with weapon",
+    "RequiredMaxRunsWithWeapons":               "Max. runs completed with weapon",
     "RequiredMinSuperLockKeysSpentOnWeapon":    "Min. Titan Blood spent on weapon",
 
     # ----- Loadout: keepsakes -----
     "RequiredKeepsake":                         "Must have keepsake equipped",
     "RequiresMaxKeepsake":                      "Equipped keepsake must be at max level",
-    "RequiredAssistKeepsake":                   "Must have Call keepsake equipped",
+    "RequiredAssistKeepsake":                   "Must have companion equipped",
 
     # ----- Loadout: cosmetics (House contractor) -----
     "RequiredCosmetics":                        "Must own cosmetic (ALL)",
@@ -147,29 +146,29 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredAnyCosmetics":                     "Must own cosmetic (ANY)",
     "RequiredMinAnyCosmetics":                  "Min. cosmetics owned (from set)",
     "RequiredMaxAnyCosmetics":                  "Max. cosmetics owned (from set)",
-    "RequiredCosmeticItemVisible":              "Cosmetic must be visible in House",
-    "RequiredCosmeticPurchaseable":             "Cosmetic must be on sale",
-    "RequiredSeenCosmeticPurchaseable":         "Must have seen cosmetic on sale",
+    "RequiredCosmeticItemVisible":              "Cosmetic must be visible",
+    "RequiredCosmeticPurchaseable":             "Cosmetic must be purchaseable",
+    "RequiredSeenCosmeticPurchaseable":         "Must have seen cosmetic being purchaseable",
 
     # ----- Loadout: supporting enemies (engine name: SupportAI) -----
-    "RequiredSupportAINames":                   "Must have supporting enemy (ANY)",
-    "RequiredFalseSupportAINames":              "Must NOT have supporting enemy (ANY)",
-    "RequiredMaxSupportAINames":                "Max. supporting enemies equipped",
+    "RequiredSupportAINames":                   "Encounter must have additional Fury Sister (ALL)",
+    "RequiredFalseSupportAINames":              "Encounter must NOT have additional Fury Sister (ANY)",
+    "RequiredMaxSupportAINames":                "Max. number of additional Fury Sisters in encounter",
 
     # ----- Combat / damage state -----
     "RequiredMaxHealthFraction":                "Max. health fraction",
-    "RequiredMaxLastStands":                    "Max. Death Defiance charges used",
-    "RequiredKills":                            "Min. kills per enemy",
-    "RequiredKillsThisRun":                     "Must have killed enemy (this run)",
+    "RequiredMaxLastStands":                    "Max. Death Defiance charges remaining",
+    "RequiredKills":                            "Min. enemy kills",
+    "RequiredKillsThisRun":                     "Must have killed enemy (ALL, this run)",
     "RequiredAnyKillsThisRun":                  "Must have killed enemy (ANY, this run)",
-    "RequiredKillsLastRun":                     "Must have killed enemy (ALL, last run)",
+    "RequiredKillsLastRun":                     "Must have killed enemy (ANY, last run)",
     "RequiredFalseKills":                       "Must NOT have killed enemy (ANY)",
     "RequiredMinTotalKills":                    "Min. lifetime kills",
     "RequiredLastKilledByUnits":                "Last killed by enemy (ANY)",
     "RequiredLastKilledByWeaponNames":          "Last killed by weapon (ANY)",
-    "RequiredUnitNotAlive":                     "Unit must NOT be alive",
-    "RequiredUnitAlive":                        "Unit must be alive",
-    "RequiredUsedAssistInRoomThisRun":          "Must have used Call in room (this run)",
+    "RequiredUnitNotAlive":                     "Character must NOT be alive",
+    "RequiredUnitAlive":                        "Character must be alive",
+    "RequiredUsedAssistInRoomThisRun":          "Must have used companion in room (this run)",
 
     # ----- Death history -----
     "RequiredDeathRoom":                        "Most recent death must be in room",
@@ -179,10 +178,10 @@ HADES1_OTHER_REQ_LABELS = {
 
     # ----- Run status -----
     "RequiresRunCleared":                       "Current run cleared",
-    "RequiresRunNotCleared":                    "Current run not yet cleared",
+    "RequiresRunNotCleared":                    "Current run not cleared",
     "RequiresLastRunCleared":                   "Previous run cleared",
     "RequiresLastRunNotCleared":                "Previous run NOT cleared",
-    "RequiresBestClearTimeLastRun":             "Previous run set new clear-time record",
+    "RequiresBestClearTimeLastRun":             "Previous run matched or beat best clear time",
     "RequiredCompletedRuns":                    "Completed runs must equal",
     "RequiredMinCompletedRuns":                 "Min. completed runs",
     "RequiredMaxCompletedRuns":                 "Max. completed runs",
@@ -190,18 +189,18 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredMinRunsCleared":                   "Min. runs cleared",
     "RequiredMaxRunsCleared":                   "Max. runs cleared",
     "RequiredMinConsecutiveClears":             "Min. consecutive cleared runs",
-    "RequiredMinShrinePointThresholdClear":     "Min. runs cleared at Heat threshold",
+    "RequiredMinShrinePointThresholdClear":     "Min. Heat that has been cleared",
     "RequiredMinBountiesEarned":                "Min. completed bounties",
-    "RequiredMinQuestsComplete":                "Min. completed prophecies",
-    "RequiredMaxQuestsComplete":                "Max. completed prophecies",
-    "RequiredPurchasedWorldItemCountMin":       "Min. House contractor purchases",
-    "RequiredPurchasedWorldItemCountMax":       "Max. House contractor purchases",
+    "RequiredMinQuestsComplete":                "Min. cashed-out prophecies",
+    "RequiredMaxQuestsComplete":                "Max. cashed-out prophecies",
+    "RequiredPurchasedWorldItemCountMin":       "Min. completed store purchases (this room)",
+    "RequiredPurchasedWorldItemCountMax":       "Max. completed store purchases (this room)",
 
     # ----- Resources / counters -----
-    "RequiredAccumulatedMetaPoints":            "Min. lifetime Darkness",
-    "RequiredActiveMetaPointsMin":              "Min. current Darkness",
-    "RequiredActiveMetaPointsMax":              "Max. current Darkness",
-    "RequiredActiveMetaPointMax":               "Max. current Darkness",
+    "RequiredAccumulatedMetaPoints":            "Min. lifetime collected Darkness",
+    "RequiredActiveMetaPointsMin":              "Min. current Darkness in Mirror",
+    "RequiredActiveMetaPointsMax":              "Max. current Darkness in Mirror",
+    "RequiredActiveMetaPointMax":               "Max. current Darkness in Mirror",
     "RequiredActiveShrinePointsMin":            "Min. current Heat",
     "RequiredLifetimeResourcesGainedMin":       "Min. lifetime resource gained",
     "RequiredLifetimeResourcesGainedMax":       "Max. lifetime resource gained",
@@ -215,19 +214,19 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredMaxActiveMetaUpgradeLevel":        "Max. Mirror/Pact upgrade level",
     "RequiredInactiveMetaUpgrade":              "Mirror/Pact upgrade must be inactive",
     "RequiredMetaUpgradeUnlocked":              "Mirror/Pact upgrade must be unlocked",
-    "RequiredAllMetaUpgradesMaxed":             "All Mirror/Pact upgrades must be maxed",
+    "RequiredAllMetaUpgradesMaxed":             "All Mirror upgrades must be maxed",
 
     # ----- Played sound cues / special textline names -----
-    "RequiredPlayed":                           "Sound cue must have played (ALL)",
-    "RequiredAnyPlayedThisRun":                 "Sound cue must have played (ANY, this run)",
-    "RequiredFalsePlayed":                      "Sound cue must NOT have played (ANY)",
-    "RequiredFalsePlayedThisRoom":              "Sound cue must NOT have played (ANY, this room)",
+    "RequiredPlayed":                           "Voiceline must have played (ALL)",
+    "RequiredAnyPlayedThisRun":                 "Voiceline must have played (ANY, this run)",
+    "RequiredFalsePlayed":                      "Voiceline must NOT have played (ANY)",
+    "RequiredFalsePlayedThisRoom":              "Voiceline must NOT have played (ANY, this room)",
 
     # ----- Ambient audio -----
     "RequiredAmbientTrackName":                 "Ambient music track must equal",
     "RequiredAmbientTrackNameMatch":            "Ambient music track must match",
-    "RequiresAmbientMusicId":                   "Some ambient music must be playing",
-    "RequiresNullAmbientMusicId":               "No ambient music must be playing",
+    "RequiresAmbientMusicId":                   "Ambient music must be playing",
+    "RequiresNullAmbientMusicId":               "Ambient music must NOT be playing",
 
     # ----- Codex -----
     "RequiredCodexEntry":                       "Codex entry must be unlocked",
@@ -235,11 +234,11 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiresCodexFullyUnlocked":               "All Codex entries must be unlocked",
 
     # ----- Fishing -----
-    "RequiredHasFish":                          "Must be carrying caught fish",
+    "RequiredHasFish":                          "Must be carrying fish",
     "RequiresFishingPointInRoom":               "Current room must have fishing point",
     "RequiredMinTotalCaughtFish":               "Min. lifetime caught fish",
     "RequiredMinCaughtFishThisRun":             "Min. caught fish (this run)",
-    "RequiredAnyCaughtFishTypes":               "Must have caught fish type (ANY)",
+    "RequiredAnyCaughtFishTypes":               "Must have caught fish (ANY)",
 
     # ----- Pickups / consumables -----
     "RequiredConsumablesThisRun":               "Min. consumables used (this run)",
@@ -247,7 +246,6 @@ HADES1_OTHER_REQ_LABELS = {
     # ----- Screens / structural -----
     "RequiredScreenViewed":                     "Screen must have been opened",
     "RequiredScreenViewedFalse":                "Screen must NOT have been opened",
-    "RequiresLinked":                           "Must play as a follow-up line",
     "RequiredTextLinesThis":                    "Unused engine field (typo)",
 }
 
@@ -256,9 +254,9 @@ HADES1_OTHER_REQ_LABELS = {
 # tooltip on every ``otherRequirements`` row (the internal field name
 # forms the first line, the blurb forms the second). Full coverage:
 # every distinct ``otherRequirements`` key encountered in the merged
-# H1 dataset gets an entry. Best-effort for the long tail - some
-# blurbs are reasoned from the field name + sample values rather
-# than verified against ``RequirementMethods.lua``.
+# H1 dataset gets an entry. The blurbs are verified against the engine's
+# ``IsGameStateEligible`` (RunManager.lua) and its helpers, not inferred
+# from the field name.
 #
 # Wording conventions match HADES1_REQ_TYPE_TOOLTIPS: short
 # (one or two sentences), present tense, no leading "This dialogue
@@ -266,37 +264,37 @@ HADES1_OTHER_REQ_LABELS = {
 HADES1_OTHER_REQ_TOOLTIPS = {
     # ----- Flags -----
     "RequiredFalseFlags":
-        "Every listed flag must be unset (nil or false) on GameState.Flags.",
+        "Every listed flag must be unset on GameState.Flags.",
     "RequiredTrueFlags":
-        "Every listed flag must be set (truthy) on GameState.Flags.",
+        "Every listed flag must be set on GameState.Flags.",
 
     # ----- NPC interactions -----
     "RequiredMinNPCInteractions":
-        "The hero must have interacted with the named NPC at least N times across the save (per-NPC threshold map).",
+        "The player must have interacted with the NPC at least N times in total.",
     "RequiredMaxNPCInteractions":
-        "The hero must have interacted with the named NPC at most N times across the save (per-NPC threshold map).",
+        "The player must have interacted with the NPC at most N times in total.",
 
     # ----- Room / biome / encounter (current) -----
     "RequiredRoom":
-        "The current room name must match. Single value (the engine checks CurrentRun.CurrentRoom.Name).",
+        "The player must be in the named room.",
     "RequiredDeathRoom":
-        "The hero's most recent death must have occurred in the named room.",
+        "The player's most recent run must have ended with a death in the named room.",
     "RequiredFalseDeathRoom":
-        "The hero's most recent death must NOT have occurred in the named room.",
+        "If the current run was not cleared, it must NOT have ended with a death in the named room.",
     "RequiredBiome":
-        "The current room must be in the named biome (Tartarus / Asphodel / Elysium / Styx / Surface).",
+        "The current room must be in the named biome.",
     "RequiredFalseBiome":
         "The current room must NOT be in the named biome.",
     "RequiredMinBiomeDepth":
-        "The current run must have reached at least the Nth room within the current biome.",
+        "The player must have reached at least the Nth room within the current biome.",
     "RequiredMaxBiomeDepth":
-        "The current run must be no deeper than the Nth room within the current biome.",
+        "The player must have reached no more than the Nth room within the current biome.",
     "RequiredMinDepth":
-        "The current run must have visited at least N rooms in total.",
+        "The player must have visited at least N rooms in this run.",
     "RequiredMaxDepth":
-        "The current run must have visited at most N rooms in total.",
+        "The player must have visited fewer than N rooms in this run.",
     "RequiredMinExits":
-        "The current room must offer at least N exit doors.",
+        "The current room must offer at least N exits.",
 
     # ----- Room / biome (history this/last run) -----
     "RequiredRoomThisRun":
@@ -318,91 +316,91 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredAnyRoomsLastRun":
         "At least one of the listed rooms must have been entered during the previous run.",
     "RequiredFalseRooms":
-        "None of the listed rooms may have been entered (at any point).",
+        "The current room must NOT be one of the named rooms.",
     "RequiredRooms":
-        "Every listed room must have been entered.",
+        "The current room must be one of the named rooms.",
     "RequiredMinTimesSeenRoom":
-        "The named room must have been entered at least N times across the save (per-room threshold map).",
+        "The named room must have been entered at least N times across the save.",
     "RequiredMaxTimesSeenRoom":
-        "The named room must have been entered at most N times across the save (per-room threshold map).",
+        "The named room must have been entered at most N times across the save.",
 
     # ----- Encounters -----
     "RequiredSeenEncounter":
         "The named encounter must have been seen at least once in the save.",
     "RequiredEncounterThisRun":
-        "The named encounter must have been completed during the current run.",
+        "The named encounter must have occurred during the current run.",
     "RequiredAnyEncountersThisRun":
         "At least one of the listed encounters must have been completed during the current run.",
     "RequiredAnyDeathEncounters":
-        "The hero's most recent death must have occurred in one of the listed encounters.",
+        "The player's most recent run must have ended with a death during one of the listed encounters.",
     "RequiredFalseDeathEncounters":
-        "The hero's most recent death must NOT have occurred in any of the listed encounters.",
+        "The player's most recent run must NOT have ended with a death during one of the listed encounters.",
 
     # ----- Combat / kills -----
     "RequiredKills":
-        "The hero must have killed at least N of the named enemy type across the save (per-unit threshold map).",
+        "The player must have killed at least N of the named enemy type across the save.",
     "RequiredKillsThisRun":
-        "Every listed enemy type must have been killed at least once during the current run.",
+        "Any of the listed enemy types must have been killed during the current run.",
     "RequiredKillsLastRun":
-        "Every listed enemy type must have been killed at least once during the previous run.",
+        "Any of the listed enemy types must have been killed during the previous run.",
     "RequiredAnyKillsThisRun":
         "At least one of the listed enemy types must have been killed during the current run.",
     "RequiredFalseKills":
-        "None of the listed enemy types may have been killed (no kills of those types).",
+        "None of the listed enemy types may have been killed at any point in the save.",
     "RequiredMinTotalKills":
-        "The hero must have killed at least N enemies in total across the save.",
+        "The player must have killed at least N enemies in total across the save.",
     "RequiredLastKilledByUnits":
-        "The hero's most recent death must have been caused by one of the listed unit types.",
+        "The player's most recent death must have been caused by one of the listed enemy types.",
     "RequiredLastKilledByWeaponNames":
-        "The hero's most recent death must have been caused by damage from one of the listed weapon names.",
+        "The player's most recent death must have been caused by one of the listed sources of damage.",
     "RequiredUnitAlive":
-        "The named unit must currently be alive (present in the active room).",
+        "The named enemy or character must be alive or present.",
     "RequiredUnitNotAlive":
-        "The named unit must NOT currently be alive (absent, dead, or removed).",
+        "The named enemy or character must NOT be alive or present.",
     "RequiredBossPhase":
-        "The current boss encounter must be in the named phase (1, 2, 3, ...).",
+        "The current boss encounter must be in the named phase.",
 
     # ----- Combat / damage / defiance -----
     "RequiredMaxHealthFraction":
-        "The hero's current HP must be at most this fraction of their maximum HP.",
+        "The player's current HP must be at most this fraction of their maximum HP.",
     "RequiredMaxLastStands":
-        "The hero must have consumed at most N Death Defiance charges in the current run.",
+        "The player must have at most N Death Defiance charges remaining in the current run.",
 
     # ----- Loadout / weapons / traits / cosmetics -----
     "RequiredTrait":
-        "The hero must currently have the named trait equipped.",
+        "The player must have the named trait (boon or other upgrade) equipped.",
     "RequiredFalseTraits":
-        "None of the listed traits may currently be equipped on the hero.",
+        "The player must NOT have any of the listed traits (boon or other upgrade) equipped.",
     "RequiredOneOfTraits":
-        "At least one of the listed traits must currently be equipped on the hero.",
+        "The player must have at least one of the listed traits (boon or other upgrade) equipped.",
     "RequiredCountOfTraits":
-        "Companion to RequiredCountOfTraitsCount: a candidate set of traits whose currently-equipped count is compared against the threshold.",
+        "Companion to RequiredCountOfTraitsCount: a candidate set of traits (boon or other upgrade) whose currently-equipped count is compared against the threshold.",
     "RequiredCountOfTraitsCount":
-        "Minimum number of traits from the RequiredCountOfTraits candidate set that must currently be equipped.",
+        "Companion to RequiredCountOfTraits: the minimum number of traits (boon or other upgrade) from the candidate set that must be equipped.",
     "RequiredTraitsTaken":
-        "Every listed trait must have been taken at some point during the current run (whether or not it is still equipped).",
+        "Every listed trait (boon or other upgrade) must have been equipped at some point across the save.",
     "RequiredRunHasOneOfTraits":
-        "At least one of the listed traits must have been taken at some point during the current run.",
+        "At least one of the listed traits (boon or other upgrade) must have been equipped at some point during the current run.",
     "RequiredKeepsake":
-        "The hero must currently have the named keepsake equipped.",
+        "The player must have the named keepsake equipped.",
     "RequiredAssistKeepsake":
-        "The hero must currently have the named Companion (call) keepsake equipped.",
+        "The player must have the named companion equipped.",
     "RequiresMaxKeepsake":
-        "The currently equipped keepsake must be at its maximum level (gold-tier).",
+        "The currently equipped keepsake must be at its maximum level.",
     "RequiredWeapon":
-        "The hero must currently have the named Infernal Arms equipped (e.g. SwordWeapon, BowWeapon).",
+        "The player must have the named weapon equipped.",
     "RequiredGodLoot":
-        "The hero must have received at least one boon from the named god (e.g. ZeusUpgrade) during the current run.",
+        "The player must have at least one boon from the named god equipped.",
     "RequiredFalseGodLoot":
-        "The hero must NOT have received any boons from the named god during the current run.",
+        "The player must NOT have received any boons from the named god during the current run.",
     "RequiredFalseGodLoots":
-        "The hero must NOT have received boons from any of the listed gods during the current run.",
+        "The player must NOT have received boons from any of the listed gods during the current run.",
     "RequiredLootChoices":
-        "Minimum number of loot choices offered for the current pickup (used on multi-option boon screens to gate dialogue on the number of choices the player can see).",
+        "The number of loot choices offered for the current pickup must equal this value.",
     "RequiredLootThisRun":
-        "The named loot type must have been picked up during the current run.",
+        "The player must have at least one boon from the named god equipped.",
     "RequiredNoGodBoons":
-        "The hero must NOT have received any god boons during the current run.",
+        "The player must NOT have any god boons equipped.",
     "RequiredCosmetics":
         "Every listed House cosmetic must be owned by the player.",
     "RequiredAnyCosmetics":
@@ -414,199 +412,195 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredMaxAnyCosmetics":
         "At most N of the listed House cosmetics may be owned by the player.",
     "RequiredCosmeticItemVisible":
-        "The named cosmetic item must currently be visible (placed and unhidden) in the House.",
+        "The named cosmetic must currently be equipped.",
     "RequiredCosmeticPurchaseable":
         "The named cosmetic must currently be available for purchase from the House contractor.",
     "RequiredSeenCosmeticPurchaseable":
-        "The named cosmetic must have been seen (at least once) as an available purchase from the House contractor.",
+        "The named cosmetic must have been seen as an available purchase from the House contractor.",
     "RequiredFalseInteractionThisRun":
-        "The named interaction (NPC dialogue prompt, item interact, etc.) must NOT have happened during the current run.",
+        "The player may NOT have interacted with the named NPC during the current run.",
     "RequiredSupportAINames":
-        "At least one of the listed supporting enemies (Summons) must currently be equipped.",
+        "The listed Fury Sisters must be active in the current fight.",
     "RequiredFalseSupportAINames":
-        "None of the listed supporting enemies (Summons) may currently be equipped.",
+        "None of the listed Fury Sisters may be active in the current fight.",
     "RequiredMaxSupportAINames":
-        "At most N supporting enemies may currently be equipped.",
+        "At most N additional Fury Sisters may be active in the current fight.",
     "RequiredLastInteractedWeaponUpgrade":
-        "The most recently interacted weapon-upgrade altar must have been the named aspect / hammer.",
+        "The most recently interacted with weapon must have been the named Aspect.",
     "RequiredLastInteractedWeaponUpgradeMaxed":
-        "The most recently interacted weapon-upgrade altar must be at its maximum level.",
+        "The most recently interacted with weapon Aspect must be at its maximum level.",
     "RequiredMinUnlockedWeaponEnchantments":
-        "At least N weapon Aspects must currently be unlocked across all Infernal Arms.",
+        "At least N weapon Aspects must be unlocked.",
     "RequiredMaxUnlockedWeaponEnchantments":
-        "At most N weapon Aspects may currently be unlocked across all Infernal Arms.",
+        "At most N weapon Aspects may be unlocked.",
     "RequiredWeaponsUnlocked":
-        "Every listed Infernal Arms must currently be unlocked.",
+        "Every listed weapon must be unlocked.",
     "RequiredFalseWeaponsUnlocked":
-        "None of the listed Infernal Arms may currently be unlocked.",
+        "None of the listed weapons may be unlocked.",
     "RequiredAnyWeaponsUnlocked":
-        "At least one of the listed Infernal Arms must currently be unlocked.",
+        "At least one of the listed weapons must be unlocked.",
     "RequiredMaxWeaponUpgrade":
-        "The named weapon's currently chosen Aspect must be its base / default form.",
+        "Companion to RequiredMaxWeaponUpgradeIndex: the named weapon's Aspect at the paired index must be fully upgraded.",
     "RequiredFalseMaxWeaponUpgrade":
-        "The named weapon's currently chosen Aspect must NOT be its base / default form.",
+        "Companion to RequiredFalseMaxWeaponUpgradeIndex: the named weapon's Aspect at the paired index must NOT be fully upgraded.",
     "RequiredMaxWeaponUpgradeIndex":
-        "The named weapon's currently chosen Aspect must be at most index N within its upgrade table.",
+        "Companion to RequiredMaxWeaponUpgrade: which Aspect slot of the named weapon to test for being fully upgraded.",
     "RequiredFalseMaxWeaponUpgradeIndex":
-        "The named weapon's currently chosen Aspect must NOT be at index N within its upgrade table.",
+        "Companion to RequiredFalseMaxWeaponUpgrade: which Aspect slot of the named weapon to test for NOT being fully upgraded.",
     "RequiredMinWeaponUpgrades":
-        "The hero's current weapon must have received at least N hammer upgrades during the current run.",
+        "The player must have picked up at least N hammer upgrades during the current run.",
     "RequiredMaxWeaponUpgrades":
-        "The hero's current weapon must have received at most N hammer upgrades during the current run.",
+        "The player must have picked up at most N hammer upgrades during the current run.",
     "RequiredMinWeaponKills":
-        "The named Infernal Arms must have at least N lifetime kills attributed to it (per-weapon threshold map).",
+        "The player must have at least N lifetime kills with the named weapon.",
     "RequiredMinRunsWithWeapons":
-        "The named Infernal Arms must have been used in at least N completed runs (per-weapon threshold map).",
+        "The named weapon must have been used in at least N runs.",
     "RequiredMaxRunsWithWeapons":
-        "The named Infernal Arms must have been used in at most N completed runs (per-weapon threshold map).",
+        "The named weapon must have been used in at most N runs.",
     "RequiredMinSuperLockKeysSpentOnWeapon":
-        "The named Infernal Arms must have had at least N Titan Blood spent on its Aspect upgrades (per-weapon threshold map).",
+        "The named weapon must have had at least N Titan Blood spent on its Aspect upgrades.",
 
     # ----- Run status -----
     "RequiresRunCleared":
-        "The current run must have been cleared (boss defeated, escape achieved).",
+        "The current/most recent run must have been cleared.",
     "RequiresRunNotCleared":
-        "The current run must NOT yet have been cleared.",
+        "The current/most recent run must NOT have been cleared.",
     "RequiresLastRunCleared":
         "The previous run must have been cleared.",
     "RequiresLastRunNotCleared":
         "The previous run must NOT have been cleared.",
     "RequiresBestClearTimeLastRun":
-        "The previous run must have set a new personal-best clear time.",
+        "The previous run must have been clared and set a new personal-best clear time.",
     "RequiredMinCompletedRuns":
-        "The save must record at least N completed runs (whether cleared or not).",
+        "The player must have completed at least N runs (whether cleared or not).",
     "RequiredMaxCompletedRuns":
-        "The save must record at most N completed runs.",
+        "The player must have completed at most N runs (whether cleared or not).",
     "RequiredCompletedRuns":
-        "The save's completed-run count must equal N exactly.",
+        "The player must have completed exactly N runs (whether cleared or not).",
     "RequiredMinRunsCleared":
-        "The save must record at least N runs that ended in a clear.",
+        "The player must have cleared at least N runs.",
     "RequiredMaxRunsCleared":
-        "The save must record at most N runs that ended in a clear.",
+        "The player must have cleared at most N runs.",
     "RequiredRunsCleared":
-        "The save's cleared-run count must equal N exactly.",
+        "The player must have cleared exactly N runs.",
     "RequiredMinConsecutiveClears":
-        "The save must record at least N consecutive cleared runs.",
-    "RequiredMinElapsedTime":
-        "The current run must have lasted at least N seconds of in-game time.",
+        "The player must have cleared at least N consecutive runs.",
     "RequiredMinBountiesEarned":
-        "The save must record at least N completed bounties (Fated List).",
+        "The player must have earned at least N Pact of Punishment bounty rewards.",
     "RequiredMinQuestsComplete":
-        "The save must record at least N completed quests (Fated List of Minor Prophecies).",
+        "At least N Fated List prophecies must have been cashed out (completed and redeemed).",
     "RequiredMaxQuestsComplete":
-        "The save must record at most N completed quests.",
+        "At most N Fated List prophecies may have been cashed out (completed and redeemed).",
 
     # ----- Meta progression -----
     "RequiredMinActiveMetaUpgradeLevel":
-        "The named Mirror/Pact upgrade must currently be active at level >= N (record carries Count + Name).",
+        "The named Mirror/Pact upgrade must currently be active at level >= N.",
     "RequiredMaxActiveMetaUpgradeLevel":
-        "The named Mirror/Pact upgrade must currently be active at level <= N (record carries Count + Name).",
+        "The named Mirror/Pact upgrade must currently be active at level <= N.",
     "RequiredActiveMetaUpgrade":
-        "The named Mirror/Pact upgrade must currently be active (any level).",
+        "The named Mirror/Pact upgrade must currently be active.",
     "RequiredInactiveMetaUpgrade":
-        "The named Mirror/Pact upgrade must currently be inactive (other side of its pair is active, or upgrade unowned).",
+        "The named Mirror/Pact upgrade must currently be inactive.",
     "RequiredMetaUpgradeUnlocked":
-        "The named Mirror/Pact upgrade must have been unlocked (purchased at least once).",
+        "The named Mirror/Pact upgrade must be unlocked.",
     "RequiredAllMetaUpgradesMaxed":
-        "Every Mirror/Pact upgrade must be at its maximum level.",
+        "Every Mirror of Night upgrade must be at its maximum level.",
     "RequiredAccumulatedMetaPoints":
         "Lifetime Darkness accumulated must be at least N.",
     "RequiredActiveMetaPointsMin":
-        "Currently-held Darkness must be at least N.",
+        "Darkness currently invested in the Mirror of Night must be at least N.",
     "RequiredActiveMetaPointsMax":
-        "Currently-held Darkness must be at most N.",
+        "Darkness currently invested in the Mirror of Night must be at most N.",
     "RequiredActiveMetaPointMax":
-        "Currently-held Darkness must be at most N (singular form used by a small number of entries).",
+        "Typo of RequiredActiveMetaPointsMax - the game never checks this field.",
 
     # ----- Resources -----
     "RequiredActiveShrinePointsMin":
-        "Currently-held Heat (Pact of Punishment shrine points) must be at least N.",
+        "Currently active Heat must be at least N.",
     "RequiredMinShrinePointThresholdClear":
-        "The save must record at least N runs cleared at or above the named Heat threshold.",
+        "The highest Heat ever cleared must be at least N.",
     "RequiredResourcesMin":
-        "Currently-held resources must meet the listed per-resource minimums (e.g. SuperLockKeys, GiftPoints).",
+        "Currently-held resources must meet the listed per-resource minimums.",
     "RequiredLifetimeResourcesGainedMin":
-        "Lifetime gained amount of the named resource must be at least N (per-resource threshold map).",
+        "Lifetime obtained amount of the named resource must be at least N.",
     "RequiredLifetimeResourcesGainedMax":
-        "Lifetime gained amount of the named resource must be at most N (per-resource threshold map).",
+        "Lifetime obtained amount of the named resource must be at most N.",
     "RequiredLifetimeResourcesSpentMin":
-        "Lifetime spent amount of the named resource must be at least N (per-resource threshold map).",
+        "Lifetime spent amount of the named resource must be at least N.",
     "RequiredLifetimeResourcesSpentMax":
-        "Lifetime spent amount of the named resource must be at most N (per-resource threshold map).",
+        "Lifetime spent amount of the named resource must be at most N.",
     "RequiredPurchasedWorldItemCountMin":
-        "The save must record at least N House contractor purchases.",
+        "At least N items must have been purchased in the current room.",
     "RequiredPurchasedWorldItemCountMax":
-        "The save must record at most N House contractor purchases.",
+        "At most N items must have been purchased in the current room.",
 
     # ----- Flags / Values (generic key-value game state) -----
     "RequiredValues":
-        "Every listed GameState.Values entry must equal the given value (per-key map).",
+        "Every listed key must equal the given value in the save's GameState.",
     "RequiredFalseValues":
-        "Every listed GameState.Values entry must NOT equal the given value (per-key map).",
+        "None of the listed keys may be equal to the given value in the save's GameState.",
     "RequiredMinValues":
-        "Every listed GameState.Values entry must be at least the given threshold (per-key threshold map).",
+        "Every listed key must be at least the given value in the save's GameState.",
     "RequiredNotActivatedThisRun":
-        "The named interaction (by id) must NOT have been activated during the current run.",
+        "The named interactable ID must NOT have been activated during the current run.",
     "RequiredIdsNotActivatedThisRun":
-        "None of the listed interaction ids may have been activated during the current run.",
+        "None of the listed interactable IDs may have been activated during the current run.",
 
     # ----- Played / queued tail (some not in textline-set allowlist) -----
     "RequiredPlayed":
-        "Every listed sound cue (/VO/...) or special textline name must have already played at some point in the save.",
+        "Every listed voiceline must have already played at some point in the save.",
     "RequiredFalsePlayed":
-        "None of the listed sound cues / special textlines may have played at any point in the save.",
+        "None of the listed voicelines may have played at any point in the save.",
     "RequiredAnyPlayedThisRun":
-        "At least one of the listed sound cues must have played during the current run.",
+        "At least one of the listed voicelines must have played during the current run.",
     "RequiredFalsePlayedThisRoom":
-        "None of the listed sound cues may have played during the current room.",
+        "None of the listed voicelines may have played during the current room.",
     "RequiredTextLinesThis":
-        "Looks like a typo of RequiredTextLinesThisRun; treated as a no-op by the engine. Reported here so the next maintainer can decide whether to alias-map it.",
+        "Typo of RequiredTextLinesThisRun - the game never checks this field.",
 
     # ----- Audio / ambient -----
     "RequiredAmbientTrackNameMatch":
-        "The currently playing ambient music track must match the dialogue's expected track name (true if the engine's current AmbientMusicId equals the row's named track).",
+        "The currently playing ambient music track must match a specified track name expected by the dialogue.",
     "RequiredAmbientTrackName":
-        "The currently playing ambient music track must equal the named id (e.g. /Music/OrpheusSong2).",
+        "The currently playing ambient music track must equal the named track.",
     "RequiresAmbientMusicId":
-        "An ambient music track must currently be playing (any non-empty AmbientMusicId).",
+        "Any ambient music track must currently be playing.",
     "RequiresNullAmbientMusicId":
-        "No ambient music track may currently be playing (AmbientMusicId is nil or empty).",
+        "No ambient music track may currently be playing.",
 
     # ----- Linking / screens / misc -----
-    "RequiresLinked":
-        "The dialogue must be playing as a link (immediate follow-up to a previous line), not as a standalone cue.",
     "RequiredScreenViewed":
-        "The named screen (e.g. WeaponUpgradeScreen) must have been opened at least once.",
+        "The named UI screen must have been opened at least once in the save.",
     "RequiredScreenViewedFalse":
-        "The named screen must NOT have been opened.",
+        "The named UI screen must NOT have been opened in the save.",
     "RequiredConsumablesThisRun":
-        "The hero must have used at least N consumables of the listed names during the current run.",
+        "The player must have used at least N consumables of the listed names during the current run.",
     "RequiredCodexEntry":
-        "The named Codex entry must currently be unlocked (record carries EntryName + EntryIndex).",
+        "The named Codex entry must be unlocked.",
     "RequiredCodexEntriesMin":
-        "The save must record at least N unlocked Codex entries.",
+        "At least N Codex entries must be unlocked.",
     "RequiresCodexFullyUnlocked":
-        "Every Codex entry must currently be unlocked.",
+        "All Codex entries must be unlocked.",
     "RequiredFalseConfigOptions":
-        "Every listed config option must currently be disabled (e.g. EasyMode false).",
+        "All listed config options (game settings) must be disabled.",
     "RequiredTrueConfigOptions":
-        "Every listed config option must currently be enabled.",
+        "All listed config options (game settings) must be enabled.",
     "RequiredUsedAssistInRoomThisRun":
-        "The hero must have used a Companion call in the named room during the current run.",
+        "The player must have used a companion in the named room during the current run.",
 
     # ----- Fishing -----
     "RequiredHasFish":
-        "The hero must currently be carrying at least one caught fish.",
+        "The player must be carrying at least one fish.",
     "RequiredMinCaughtFishThisRun":
         "At least N fish must have been caught during the current run.",
     "RequiredMinTotalCaughtFish":
-        "Lifetime total caught fish must be at least N.",
+        "At least N fish in total must have been caught in the save.",
     "RequiredAnyCaughtFishTypes":
         "At least one of the listed fish types must have been caught at some point in the save.",
     "RequiresFishingPointInRoom":
-        "The current room must currently contain an active fishing point.",
+        "The current room must contain a fishing point.",
 
     # ----- Misc -----
     "RequiredMinItemInteractions":
-        "The hero must have interacted with the named item at least N times (per-item threshold map).",
+        "The player must have interacted with the named object at least N times.",
 }

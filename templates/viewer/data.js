@@ -55,6 +55,10 @@ export let gameDataRefs;
 export let namedRequirements;
 export let godTraitNames;
 export let restrictBoonChoiceTraitNames;
+// Hades 1 static save-eval tables (see src/extractors/hades1/save_eval_data.py):
+// { metaUpgradeOrderLength, shrineUpgradeOrder, strikeThroughChangeValue,
+//   weaponUpgradeStartsUnlocked, cosmeticVisibleValue }. Empty {} for H2.
+export let h1SaveEvalStatic;
 export let allNames;
 
 // Pre-built index for O(1) lookups when sorting tree children into
@@ -217,6 +221,7 @@ export function setActiveGame(gameId) {
     namedRequirements = gd.namedRequirements || {};
     godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);
     restrictBoonChoiceTraitNames = new Set(Array.isArray(gd.restrictBoonChoiceTraitNames) ? gd.restrictBoonChoiceTraitNames : []);
+    h1SaveEvalStatic = (gd.h1SaveEvalStatic && typeof gd.h1SaveEvalStatic === 'object') ? gd.h1SaveEvalStatic : {};
     allNames = Object.keys(textlines).sort();
 
     _reqTypeOrderIndex = {};

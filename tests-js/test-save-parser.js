@@ -25,6 +25,9 @@ import {
     persistSaveProgress,
     restoreSaveProgress,
     clearPersistedSave,
+    extractH1GameStateSlice,
+    extractH1CurrentRunSlice,
+    extractH1PrevRunSlice,
 } from '../templates/viewer/save-parser.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -548,7 +551,7 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
     const store = installMockLocalStorage();
     try {
         store.setItem('hde.save', JSON.stringify({
-            v: 11, gameId: 'hades3', runs: 1, played: ['Old01'],
+            v: 13, gameId: 'hades3', runs: 1, played: ['Old01'],
         }));
         assert.equal(restoreSaveProgress(), null);
         // The invalid entry is purged so restore fails closed.
@@ -557,6 +560,92 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
         clearSaveProgress();
         uninstallMockLocalStorage();
     }
+});
+
+// --- Hades 1 save-slice extraction ---
+// The H1 evaluator reads a pruned slice of the raw save. These tests cover the
+// pruning shape: copying referenced top-level GameState keys, reducing
+// RunHistory / RoomHistory to the per-run fields the aggregates need, and the
+// PrevRun = newest-completed-run derivation.
+
+test('extractH1GameStateSlice copies referenced keys and prunes RunHistory', () => {
+    const slice = extractH1GameStateSlice({
+        EnemyKills: { Harpy: 3 },
+        Flags: { SeenIntro: true },
+        SomeIrrelevantHugeTable: { a: 1, b: 2 },
+        RunHistory: {
+            1: { Cleared: true, WeaponsCache: { Sword: true }, Junk: 'drop-me' },
+            2: { Cleared: false, WeaponsCache: {} },
+        },
+    });
+    assert.deepEqual(slice.EnemyKills, { Harpy: 3 });
+    assert.deepEqual(slice.Flags, { SeenIntro: true });
+    // Unreferenced top-level keys are dropped.
+    assert.equal('SomeIrrelevantHugeTable' in slice, false);
+    // RunHistory is pruned to {Cleared, WeaponsCache} per run.
+    assert.deepEqual(slice.RunHistory['1'], { Cleared: true, WeaponsCache: { Sword: true } });
+    assert.deepEqual(slice.RunHistory['2'], { Cleared: false, WeaponsCache: {} });
+});
+
+test('extractH1GameStateSlice returns null for a non-object GameState', () => {
+    assert.equal(extractH1GameStateSlice(null), null);
+    assert.equal(extractH1GameStateSlice(undefined), null);
+});
+
+test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {
+    const slice = extractH1CurrentRunSlice({
+        CurrentRun: {
+            Cleared: true,
+            SpeechRecord: ['LineA'],
+            IgnoredKey: 'drop-me',
+            CurrentRoom: { Name: 'A_Combat01', RoomSetName: 'Tartarus', VoiceLinesPlayed: ['L1'], Junk: 1 },
+            Hero: { Health: 30, MaxHealth: 50, Weapons: { Sword: true }, SecretField: 9 },
+            RoomHistory: {
+                1: { Kills: { Harpy: 2 }, Junk: 'x' },
+                2: { Kills: { Slime: 1 } },
+            },
+        },
+    });
+    assert.equal(slice.Cleared, true);
+    assert.deepEqual(slice.SpeechRecord, ['LineA']);
+    assert.equal('IgnoredKey' in slice, false);
+    // CurrentRoom pruned to the read fields.
+    assert.equal(slice.CurrentRoom.Name, 'A_Combat01');
+    assert.deepEqual(slice.CurrentRoom.VoiceLinesPlayed, ['L1']);
+    assert.equal('Junk' in slice.CurrentRoom, false);
+    // Hero pruned to the read fields.
+    assert.equal(slice.Hero.Health, 30);
+    assert.deepEqual(slice.Hero.Weapons, { Sword: true });
+    assert.equal('SecretField' in slice.Hero, false);
+    // RoomHistory pruned to per-room {Kills}.
+    assert.deepEqual(slice.RoomHistory['1'], { Kills: { Harpy: 2 } });
+    assert.deepEqual(slice.RoomHistory['2'], { Kills: { Slime: 1 } });
+});
+
+test('extractH1CurrentRunSlice returns null when there is no current run', () => {
+    assert.equal(extractH1CurrentRunSlice({}), null);
+    assert.equal(extractH1CurrentRunSlice(null), null);
+});
+
+test('extractH1PrevRunSlice reads the newest RunHistory entry', () => {
+    const slice = extractH1PrevRunSlice({
+        GameState: {
+            RunHistory: {
+                1: { Cleared: false, RoomCountCache: { A: 1 }, RoomHistory: { 1: { Kills: { X: 1 } } } },
+                3: { Cleared: true, RoomCountCache: { B: 2 }, RoomHistory: { 1: { Kills: { Y: 3 }, Junk: 1 } } },
+                2: { Cleared: false },
+            },
+        },
+    });
+    // Highest index (3) is the most recent completed run.
+    assert.equal(slice.Cleared, true);
+    assert.deepEqual(slice.RoomCountCache, { B: 2 });
+    assert.deepEqual(slice.RoomHistory['1'], { Kills: { Y: 3 } });
+});
+
+test('extractH1PrevRunSlice returns an empty object with no completed runs', () => {
+    assert.deepEqual(extractH1PrevRunSlice({ GameState: {} }), {});
+    assert.deepEqual(extractH1PrevRunSlice({}), {});
 });
 
 // --- LZ4 corrupt-input hardening ---

@@ -27,6 +27,7 @@ from src.extractors.hades1 import (
     HADES1_OFFER_TEXT_MAP,
     HADES1_PRESET_CHOICES,
     HADES1_SPEAKERS,
+    extract_save_eval_static,
 )
 from src.extractors.hades2 import (
     extract_npc_data as h2_extract_npc_data,
@@ -320,6 +321,38 @@ def main():
             f.write("\n")
         print(f"  Written to: {out_path}")
     report_unlisted_section_keys("hades1")
+
+    # Standalone H1 metadata payload: the static design-data tables the
+    # viewer's save-eligibility evaluator needs to resolve the Mirror /
+    # weapon-enchantment / cosmetic-visible gates client-side (the engine
+    # reads these from tables the save file doesn't carry). Written as a
+    # separate JSON with no ``textlines`` key so build_viewer routes it as
+    # metadata onto the H1 graph_data (the same channel hades2_metadata.json
+    # uses), rather than treating it as a textline source to merge.
+    meta_lua = hades1_scripts / "MetaUpgradeData.lua"
+    weapon_lua = hades1_scripts / "WeaponUpgradeData.lua"
+    if meta_lua.exists() and weapon_lua.exists():
+        print(f"Parsing Hades 1: {meta_lua}")
+        meta_parsed = parse_lua_file(str(meta_lua))
+        print(f"Parsing Hades 1: {weapon_lua}")
+        weapon_parsed = parse_lua_file(str(weapon_lua))
+        save_eval_static = extract_save_eval_static(meta_parsed, weapon_parsed)
+        h1_metadata = {"h1SaveEvalStatic": save_eval_static}
+        meta_out = OUTPUT_DIR / "hades1_metadata.json"
+        with open(meta_out, "w", encoding="utf-8") as f:
+            json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(
+            f"  Save-eval static: {save_eval_static['metaUpgradeOrderLength']} Mirror rows, "
+            f"{len(save_eval_static['shrineUpgradeOrder'])} shrine upgrades, "
+            f"{len(save_eval_static['weaponUpgradeStartsUnlocked'])} weapons"
+        )
+        print(f"  Written to: {meta_out}")
+    else:
+        print(
+            "SKIP hades1_metadata.json: MetaUpgradeData.lua / WeaponUpgradeData.lua "
+            "not found - save-eval static gates will stay indeterminate."
+        )
 
     # --- Hades 2 ---
     print()

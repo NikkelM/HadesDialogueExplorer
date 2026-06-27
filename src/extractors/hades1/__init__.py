@@ -20,6 +20,7 @@ from .offer_text import HADES1_OFFER_TEXT_MAP
 from .choice_names import HADES1_CHOICE_NAMES
 from .preset_choices import HADES1_PRESET_CHOICES
 from .meta_upgrades import HADES1_META_UPGRADE_NAMES
+from .save_eval_data import extract_save_eval_static
 from .speakers import HADES1_SPEAKERS
 from .section_keys import (
     HADES1_TEXTLINE_SECTION_KEYS,
@@ -56,6 +57,7 @@ __all__ = [
     "HADES1_CHOICE_NAMES",
     "HADES1_PRESET_CHOICES",
     "HADES1_META_UPGRADE_NAMES",
+    "extract_save_eval_static",
     "HADES1_SPEAKERS",
     "HADES1_TEXTLINE_SECTION_KEYS",
     "HADES1_SECTION_KEY_LABELS",

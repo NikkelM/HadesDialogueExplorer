@@ -20,6 +20,7 @@
 // unknown) plus a per-clause breakdown the tracer renders as status dots.
 
 import { namedRequirements, gameDataRefs, godTraitNames, restrictBoonChoiceTraitNames } from './data.js';
+import { evaluateH1OtherRequirements, H1_OWNER_RUN_CONTEXT } from './gamestate-eval-h1.js';
 
 // Lua truthiness: only nil and false are falsy. 0 and "" are TRUTHY. (The
 // engine's PathTrue additionally rejects 0; that special case is handled at the
@@ -65,7 +66,9 @@ function walkPath(base, path) {
 }
 
 function compare(left, op, right) {
-    const l = (left === undefined || left === null) ? 0 : left;
+    // The engine compares ``(valueToCheck or 0)`` - Lua-falsy (nil / false)
+    // coerces to 0; everything else (incl. 0, "") is compared as-is.
+    const l = (left === undefined || left === null || left === false) ? 0 : left;
     switch (op) {
     case '==': case '=': return l === right;
     case '~=': case '!=': return l !== right;
@@ -101,7 +104,10 @@ function evalSumPrevRuns(rec, root) {
         return _MET('unknown', 'Unrecognised previous-runs aggregation.');
     }
     const n = rec.SumPrevRuns;
-    const list = rec.IgnoreCurrentRun ? runs.slice(1, 1 + n) : runs.slice(0, n);
+    // Engine loop: ``for runsBack = (IgnoreCurrentRun and 1 or 0), SumPrevRuns - 1``.
+    // So the current run (index 0) plus history give ``n`` runs, but skipping the
+    // current run yields only ``n - 1`` history runs (runsBack 1..n-1).
+    const list = rec.IgnoreCurrentRun ? runs.slice(1, n) : runs.slice(0, n);
     let sum = 0;
     for (const run of list) {
         const v = walkPath(run, rec.Path);
@@ -550,9 +556,22 @@ function evalSet(otherRequirements, root, stack) {
 // RequireRunsSinceTextLines; ``currentRun`` -> CurrentRun.*; ``prevRun`` ->
 // PrevRun.* (the last completed run); ``runHistory`` -> the recent-runs slice for
 // RequiredConsecutiveClearsOfRoom / RequiredConsecutiveDeathsInRoom.
-export function evaluateOtherRequirements(otherRequirements, gameStateSlice, slices = {}) {
+export function evaluateOtherRequirements(otherRequirements, gameStateSlice, slices = {}, gameId) {
     if (!otherRequirements || Object.keys(otherRequirements).length === 0) {
         return { status: 'met', clauses: [] };
+    }
+    // Hades 1 uses a flat named-field requirement model (RequiredKills,
+    // RequiredRoom, ...), evaluated by its own sibling module. Callers pass the
+    // dialogue's game id; only 'hades1' takes the H1 path (omitted -> H2, the
+    // legacy default used by the H2-shaped unit tests).
+    if (gameId === 'hades1') {
+        const ctx = gameStateSlice ? {
+            gs: gameStateSlice,
+            currentRun: (slices && slices.currentRun) || null,
+            prevRun: (slices && slices.prevRun) || null,
+            runHistory: (slices && slices.runHistory) || null,
+        } : null;
+        return evaluateH1OtherRequirements(otherRequirements, ctx);
     }
     if (!gameStateSlice) {
         const clauses = Object.keys(otherRequirements)
@@ -633,8 +652,9 @@ export const OWNER_RUN_CONTEXT = {
 // resolved from a loaded save of the given type. ``saveInRun`` is true for an
 // in-run (_Temp) save, false for a hub save. ``both`` resolves either way;
 // unlisted owners stay indeterminate.
-export function currentRunResolvable(owner, saveInRun) {
-    const ctx = OWNER_RUN_CONTEXT[owner];
+export function currentRunResolvable(owner, saveInRun, gameId) {
+    const map = (gameId === 'hades1') ? H1_OWNER_RUN_CONTEXT : OWNER_RUN_CONTEXT;
+    const ctx = map[owner];
     if (ctx === 'both') return true;
     if (ctx === 'run') return saveInRun === true;
     if (ctx === 'hub') return saveInRun === false;

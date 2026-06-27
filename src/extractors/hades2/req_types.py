@@ -240,7 +240,7 @@ HADES2_REQ_TYPE_LABELS = {
     # H2-native operators.
     "Skip":                   "Always blocked (Skip)",
     "Force":                  "Always passes (Force)",
-    "ChanceToPlay":           "Probability gate",
+    "ChanceToPlay":           "Chance to occur",
     "NamedRequirements":      "Named requirements must pass",
     "NamedRequirementsFalse": "Named requirements must NOT pass",
     "OrRequirements":         "At least one nested group must pass (OR)",
@@ -254,7 +254,7 @@ HADES2_REQ_TYPE_LABELS = {
     "NotHasAll":              "Must NOT include (ALL)",
     "IsAny":                  "Value must be (ANY)",
     "IsNone":                 "Value must NOT be (ANY)",
-    "Comparison":             "Value comparison",
+    "Comparison":             "Value comparator",
     "FunctionName":           "Custom function check",
 }
 
@@ -320,69 +320,41 @@ HADES2_REQ_TYPE_TOOLTIPS = {
     **{k: HADES1_REQ_TYPE_TOOLTIPS[k] for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS},
     # H2-native operators.
     "Skip":
-        "Set-level escape hatch. When Skip = true sits at the top of a "
-        "RequirementSet, IsGameStateEligible short-circuits to false and the "
-        "dialogue is unconditionally blocked.",
+        "This always evaluates to false.",
     "Force":
-        "Set-level escape hatch. When Force = true sits at the top of a "
-        "RequirementSet, IsGameStateEligible short-circuits to true and the "
-        "dialogue unconditionally passes the requirement check.",
+        "This always evaluates to true.",
     "ChanceToPlay":
-        "Probability gate evaluated independently of the other predicates in "
-        "the set. Even if every other check passes, the engine rolls against "
-        "this probability before queuing the dialogue.",
+        "Chance for the dialogue to play if all other requirements are satisfied.",
     "NamedRequirements":
-        "This dialogue references one or more reusable requirement sets defined "
-        "in NamedRequirementsData (Content/Scripts/RequirementsData.lua). All "
-        "referenced sets must pass.",
+        "All referenced reusable sets of requirements must pass.",
     "NamedRequirementsFalse":
-        "This dialogue references one or more reusable requirement sets defined "
-        "in NamedRequirementsData. None of the referenced sets may pass "
-        "(inverse of NamedRequirements).",
+        "None of the referenced reusable sets of requirements may pass.",
     "OrRequirements":
-        "This dialogue is eligible if AT LEAST ONE of the nested requirement "
-        "groups passes. Used to express OR semantics within an otherwise "
-        "AND-combined RequirementSet.",
+        "At least one sub-group of requirements must pass.",
     "PathTrue":
-        "This dialogue is only eligible if the value at the given GameState "
-        "path is true (non-nil, non-false, non-zero for numbers).",
+        "The value at the end of the given path must be true.",
     "PathFalse":
-        "This dialogue is only eligible if the value at the given GameState "
-        "path is false (nil, false, or zero for numbers).",
+        "The value at the end of the given path must be false.",
     "PathEmpty":
-        "This dialogue is only eligible if the container (table) at the given "
-        "GameState path is empty.",
+        "The value at the end of the given path must NOT exist.",
     "PathNotEmpty":
-        "This dialogue is only eligible if the container (table) at the given "
-        "GameState path has at least one entry.",
+        "The value at the end of the given path must exist.",
     "HasAny":
-        "This dialogue is eligible if the container at the given path includes "
-        "AT LEAST ONE of the listed items.",
+        "The table at the given path must contain at least one of the given values.",
     "HasAll":
-        "This dialogue is only eligible if the container at the given path "
-        "includes EVERY listed item.",
+        "The table at the given path must contain all of the given values.",
     "HasNone":
-        "This dialogue is only eligible if the container at the given path "
-        "includes NONE of the listed items.",
+        "The table at the given path must NOT contain any of the given values.",
     "NotHasAll":
-        "This dialogue is eligible as long as the container at the given path "
-        "is missing AT LEAST ONE of the listed items (i.e. it does NOT include "
-        "all of them).",
+        "The table at the given path must be missing at least one of the given values.",
     "IsAny":
-        "This dialogue is eligible if the scalar value at the given path "
-        "matches ANY of the listed values.",
+        "The value at the given path must be any of the given values.",
     "IsNone":
-        "This dialogue is only eligible if the scalar value at the given path "
-        "matches NONE of the listed values.",
+        "The value at the given path must NOT be any of the given values.",
     "Comparison":
-        "This dialogue is gated on a numeric comparison (==, !=, <, <=, >, >=) "
-        "between the value at the given path (optionally aggregated via CountOf "
-        "/ SumOf / MaxOf / CountPathTrue / SumPrevRuns / SumPrevRooms / "
-        "UseLength / Modulo) and a constant or referenced Value.",
+        "The comparator used to evaluate if this requirement passes or not.",
     "FunctionName":
-        "This dialogue is gated on a custom Lua function (called with "
-        "FunctionArgs as parameters). The function returns true to allow the "
-        "dialogue, false to block.",
+        "The function call must evaluate to true with the given arguments.",
 }
 
 

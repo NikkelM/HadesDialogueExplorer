@@ -56,6 +56,18 @@ TEXTLINE_REQ_FIELDS_COUNT = {
 
 NON_DIALOGUE_REQ_PREFIX = "Require"
 
+# "Require*"-prefixed keys that are NOT dialogue-eligibility gates and must
+# never be surfaced as ``otherRequirements``:
+#   - ``RequiredMinElapsedTime`` - an EndCue timing parameter (minimum seconds
+#     the line must have played before its ``EndCue`` fires), sitting alongside
+#     ``EndCue`` / ``EndWait``.
+#   - ``RequiresLinked`` - a room-selection field (read off ``nextRoomData`` in
+#     IsRoomForced, RunManager.lua:696); it gates whether a *room* appears, not
+#     whether a dialogue is eligible. It leaks onto textlines only because the
+#     room table that owns the dialogue also carries this room-level field.
+# Neither gates whether the dialogue is eligible to play, so both are excluded.
+NON_ELIGIBILITY_REQ_FIELDS = frozenset({"RequiredMinElapsedTime", "RequiresLinked"})
+
 # Per requirement-field semantics for the "is this textline blocked by
 # unresolved refs?" analysis. Values:
 #   "all"        every entry must have played -> any unresolved entry
@@ -431,7 +443,7 @@ def extract_textline(
                 }
                 if meta:
                     data["otherRequirements"][key] = meta
-        elif key.startswith(NON_DIALOGUE_REQ_PREFIX):
+        elif key.startswith(NON_DIALOGUE_REQ_PREFIX) and key not in NON_ELIGIBILITY_REQ_FIELDS:
             data["otherRequirements"][key] = _normalize_value(value, game_data_lists)
 
     # Set-level narrative priority. SuperPriority wins if both are set
@@ -845,7 +857,7 @@ def _is_requirement_field(key) -> bool:
         return False
     if key in TEXTLINE_REQ_FIELDS or key in TEXTLINE_REQ_FIELDS_COUNT:
         return True
-    return key.startswith(NON_DIALOGUE_REQ_PREFIX)
+    return key.startswith(NON_DIALOGUE_REQ_PREFIX) and key not in NON_ELIGIBILITY_REQ_FIELDS
 
 
 def collect_local_requirements(node: LuaTable) -> LuaTable | None:
@@ -927,7 +939,7 @@ def merge_ancestor_requirements(tl: dict, gsr: LuaTable, game_data_lists: dict |
                 }
                 if meta and key not in tl["otherRequirements"]:
                     tl["otherRequirements"][key] = meta
-        elif key.startswith(NON_DIALOGUE_REQ_PREFIX):
+        elif key.startswith(NON_DIALOGUE_REQ_PREFIX) and key not in NON_ELIGIBILITY_REQ_FIELDS:
             if key in tl["otherRequirements"]:
                 continue
             tl["otherRequirements"][key] = _normalize_value(value, game_data_lists)

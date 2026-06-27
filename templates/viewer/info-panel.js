@@ -1189,13 +1189,14 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     if (showDots) {
         const sctx = getSaveContext();
         const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
-        const resolveRun = currentRunResolvable(owner, sctx.saveInRun);
+        const gameId = getActiveGame();
+        const resolveRun = currentRunResolvable(owner, sctx.saveInRun, gameId);
         const slices = {
             runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
             currentRun: resolveRun ? sctx.currentRun : null,
             rooms: resolveRun ? sctx.rooms : null,
         };
-        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices);
+        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-

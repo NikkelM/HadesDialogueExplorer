@@ -217,10 +217,13 @@ test('SumPrevRuns numericSum: totals a run-relative path over N runs', () => {
     assert.equal(evalRuns({ ...rec, Value: 6 }, runs), 'unmet');
 });
 
-test('SumPrevRuns IgnoreCurrentRun skips runs[0]', () => {
-    const rec = { Path: ['RoomsEntered', 'N_Opening01'], SumPrevRuns: 2, Comparison: '>=', Value: 2, IgnoreCurrentRun: true };
-    const runs = [{ RoomsEntered: { N_Opening01: 99 } }, { RoomsEntered: { N_Opening01: 1 } }, { RoomsEntered: { N_Opening01: 1 } }];
-    assert.equal(evalRuns(rec, runs), 'met');   // skips current (99), sums next two: 1+1
+test('SumPrevRuns IgnoreCurrentRun skips runs[0] and spans n-1 history runs', () => {
+    // Engine loops runsBack = 1 .. SumPrevRuns-1, so IgnoreCurrentRun with
+    // SumPrevRuns:3 sums exactly the two newest history runs (runs[1], runs[2]),
+    // skipping the current run (runs[0]) and anything older (runs[3]).
+    const rec = { Path: ['RoomsEntered', 'N_Opening01'], SumPrevRuns: 3, Comparison: '>=', Value: 2, IgnoreCurrentRun: true };
+    const runs = [{ RoomsEntered: { N_Opening01: 99 } }, { RoomsEntered: { N_Opening01: 1 } }, { RoomsEntered: { N_Opening01: 1 } }, { RoomsEntered: { N_Opening01: 99 } }];
+    assert.equal(evalRuns(rec, runs), 'met');   // skips current (99) and runs[3]; sums 1+1
     assert.equal(evalRuns({ ...rec, Value: 3 }, runs), 'unmet');
 });
 

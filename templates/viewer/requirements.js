@@ -14,7 +14,7 @@
  * lockstep.
  */
 
-import { textlines, namedRequirements } from './data.js';
+import { textlines, namedRequirements, getActiveGame } from './data.js';
 import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
 
 // Three-state AND: unmet if either side is unmet; else unknown if either is
@@ -524,7 +524,8 @@ export function directSatisfaction(textlineData, context, name) {
     // owner-context matches the loaded save type (hub save vs in-run _Temp save).
     // PrevRun.* (last completed run) and the run-count / runs-since records are
     // always available. ``slices`` bundles them for evaluateOtherRequirements.
-    const resolveRun = currentRunResolvable(textlineData.owner, ctx.saveInRun);
+    const gameId = getActiveGame();
+    const resolveRun = currentRunResolvable(textlineData.owner, ctx.saveInRun, gameId);
     const slices = {
         runs: ctx.runs,
         runsAgo: ctx.runsAgo,
@@ -535,7 +536,7 @@ export function directSatisfaction(textlineData, context, name) {
     };
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, slices).status);
+        evaluateOtherRequirements(textlineData.otherRequirements, gs, slices, gameId).status);
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -545,7 +546,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, slices).status);
+                evaluateOtherRequirements(b.otherRequirements, gs, slices, gameId).status);
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }

@@ -11,6 +11,7 @@
 
 import { getActiveGame, games } from './data.js';
 import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask } from './gamestate-eval.js';
+import { H1_GAMESTATE_SLICE_KEYS, H1_CURRENTRUN_SLICE_KEYS } from './gamestate-eval-h1.js';
 import { directSatisfaction } from './requirements.js';
 import { isUnobtainable } from './unobtainable.js';
 
@@ -476,10 +477,37 @@ function _h2RunHistoryClearMask() {
 // the dialogue requirements actually read. Returns null for non-H2 saves (H1
 // uses a different requirement model, not yet resolved against the save).
 function extractGameStateSlice(gameId, gs) {
+  if (gameId === 'hades1') return extractH1GameStateSlice(gs);
   if (gameId !== 'hades2') return null;
   const mask = _h2GameStateMask();
   if (!mask) return null;
   return pruneGameState(gs, mask);
+}
+
+// Hades 1 GameState slice: copy the top-level keys the H1 evaluator reads
+// (H1_GAMESTATE_SLICE_KEYS) wholesale, plus a RunHistory pruned to the per-run
+// fields the run-count aggregates need ({Cleared, WeaponsCache}). Missing keys
+// stay absent and the evaluator coerces them to nil/0/false as the engine does.
+export function extractH1GameStateSlice(gs) {
+  if (!gs || typeof gs !== 'object') return null;
+  const slice = {};
+  for (const key of H1_GAMESTATE_SLICE_KEYS) {
+    const v = gs[key];
+    if (v !== undefined) slice[key] = v;
+  }
+  const rh = gs.RunHistory;
+  if (rh && typeof rh === 'object') {
+    const pruned = {};
+    for (const [k, run] of Object.entries(rh)) {
+      if (!/^\d+$/.test(k) || !run || typeof run !== 'object') continue;
+      const e = {};
+      if (run.Cleared !== undefined) e.Cleared = run.Cleared;
+      if (run.WeaponsCache !== undefined) e.WeaponsCache = run.WeaponsCache;
+      pruned[k] = e;
+    }
+    slice.RunHistory = pruned;
+  }
+  return slice;
 }
 
 // Build the minimal persisted ``CurrentRun`` slice (the live-run snapshot in the
@@ -488,6 +516,7 @@ function extractGameStateSlice(gameId, gs) {
 // the save type (see ``currentRunResolvable``); the slice itself is captured
 // regardless. Returns null for non-H2 saves or when nothing uses CurrentRun.*.
 function extractCurrentRunSlice(gameId, luaState) {
+  if (gameId === 'hades1') return extractH1CurrentRunSlice(luaState);
   if (gameId !== 'hades2') return null;
   const mask = _h2CurrentRunMask();
   if (!mask || Object.keys(mask).length === 0) return null;
@@ -501,6 +530,57 @@ function extractCurrentRunSlice(gameId, luaState) {
     slice.Hero.Traits = pruneHeroTraits(slice.Hero.Traits);
   }
   return slice;
+}
+
+// Hades 1 CurrentRun slice: the live-run snapshot the H1 evaluator reads, pruned
+// to the referenced fields (CurrentRoom / Hero / per-run caches), keeping the
+// persisted slice small. Captured regardless of save type; whether a given
+// dialogue's CurrentRun.* gates resolve depends on its owner-context.
+export function extractH1CurrentRunSlice(luaState) {
+  const cr = (luaState && luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : null;
+  if (!cr) return null;
+  const slice = {};
+  for (const key of H1_CURRENTRUN_SLICE_KEYS) {
+    if (cr[key] !== undefined) slice[key] = cr[key];
+  }
+  const room = cr.CurrentRoom;
+  if (room && typeof room === 'object') {
+    slice.CurrentRoom = {
+      Name: room.Name,
+      RoomSetName: room.RoomSetName,
+      NumExits: room.NumExits,
+      VoiceLinesPlayed: room.VoiceLinesPlayed,
+    };
+    if (room.Encounter && typeof room.Encounter === 'object') {
+      slice.CurrentRoom.Encounter = { Name: room.Encounter.Name };
+    }
+  }
+  const hero = cr.Hero;
+  if (hero && typeof hero === 'object') {
+    slice.Hero = {
+      IsDead: hero.IsDead,
+      Health: hero.Health,
+      MaxHealth: hero.MaxHealth,
+      Weapons: hero.Weapons,
+      LastStands: hero.LastStands,
+    };
+    if (hero.Traits && typeof hero.Traits === 'object') slice.Hero.Traits = pruneHeroTraits(hero.Traits);
+  }
+  slice.RoomHistory = _h1PruneRunKills(cr.RoomHistory);
+  return slice;
+}
+
+// Prune a run's RoomHistory to per-room ``{Kills}`` (the only field the H1
+// kills-this-run / kills-last-run aggregates read).
+function _h1PruneRunKills(roomHistory) {
+  const out = {};
+  if (roomHistory && typeof roomHistory === 'object') {
+    for (const [k, room] of Object.entries(roomHistory)) {
+      if (!/^\d+$/.test(k) || !room || typeof room !== 'object') continue;
+      if (room.Kills !== undefined) out[k] = { Kills: room.Kills };
+    }
+  }
+  return out;
 }
 
 // Reduce a hero ``Traits`` table (a 1-based Lua array surfaced as an
@@ -582,6 +662,7 @@ function extractRoomsSlice(gameId, luaState) {
 // the referenced PrevRun.* leaves. Returns null for non-H2 saves or when nothing
 // uses PrevRun.*; an empty object when there is no completed run yet (first run).
 function extractPrevRunSlice(gameId, luaState) {
+  if (gameId === 'hades1') return extractH1PrevRunSlice(luaState);
   if (gameId !== 'hades2') return null;
   const mask = _h2PrevRunMask();
   if (!mask || Object.keys(mask).length === 0) return null;
@@ -591,6 +672,23 @@ function extractPrevRunSlice(gameId, luaState) {
   const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
   const last = indices.length ? rh[indices[0]] : null;
   return (last && typeof last === 'object') ? pruneGameState(last, mask) : {};
+}
+
+// Hades 1 PrevRun slice = the newest RunHistory entry (the last completed run),
+// pruned to the fields the *LastRun gates read ({Cleared, RoomCountCache,
+// RoomHistory[].Kills}). Empty object when there is no completed run yet.
+export function extractH1PrevRunSlice(luaState) {
+  const gs = (luaState && luaState.GameState) || {};
+  const rh = gs.RunHistory;
+  if (!rh || typeof rh !== 'object') return {};
+  const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
+  const last = indices.length ? rh[indices[0]] : null;
+  if (!last || typeof last !== 'object') return {};
+  return {
+    Cleared: last.Cleared,
+    RoomCountCache: last.RoomCountCache,
+    RoomHistory: _h1PruneRunKills(last.RoomHistory),
+  };
 }
 
 // How many recent RunHistory entries to retain for the consecutive clears /
@@ -729,9 +827,13 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // (ShrineUpgrades / Encounters caches / Hero health / EnteredBiomes / ...); v10
 // added the recent-runs slice (for RequiredConsecutiveClears/DeathsInRoom); v11
 // added the hero equipped-trait slice (for RequiredSellableGodTraits /
-// RequireUnrestrictedBoonChoices). An older cache lacks these, so the bump
-// forces a re-parse rather than silently leaving them unavailable.
-const SAVE_STORAGE_SCHEMA = 11;
+// RequireUnrestrictedBoonChoices). v12 added the Hades 1 GameState / CurrentRun /
+// PrevRun slices (for resolving H1 named-field requirements). v13 added
+// MetaUpgradesSelected + EncountersOccurredCache to the H1 slices (for the
+// active-Mirror-upgrade and RequiredEncounterThisRun gates). An older cache
+// lacks these, so the bump forces a re-parse rather than silently leaving them
+// unavailable.
+const SAVE_STORAGE_SCHEMA = 13;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
