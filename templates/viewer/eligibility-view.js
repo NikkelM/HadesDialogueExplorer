@@ -17,7 +17,7 @@ import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES,
 import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
 import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml } from './info-panel.js';
-import { evaluateOtherRequirements, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 
 // Shared tooltip for a gate that is permanently unobtainable because it reads
 // monotonic save progress (a one-way counter past its cap, or a write-once
@@ -601,13 +601,7 @@ export function renderOtherConditionsHtml(rootName) {
     if (haveSave) {
         const sctx = getSaveContext();
         const gameId = getActiveGame();
-        const resolveRun = currentRunResolvable(tl.owner, sctx.saveInRun, gameId);
-        const slices = {
-            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
-            currentRun: resolveRun ? sctx.currentRun : null,
-            rooms: resolveRun ? sctx.rooms : null,
-            audioState: sctx.audioState,
-        };
+        const slices = buildOtherReqSlices(sctx, tl.owner, gameId);
         const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
         for (const c of res.clauses) byKey.set(c.key, c);
         // Named requirement gates resolve GameState-only in
@@ -1043,13 +1037,7 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
     if (Object.keys(other).length === 0) return '';
     const sctx = getSaveContext();
     const gameId = getActiveGame();
-    const resolveRun = currentRunResolvable(owner, sctx.saveInRun, gameId);
-    const slices = {
-        runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
-        currentRun: resolveRun ? sctx.currentRun : null,
-        rooms: resolveRun ? sctx.rooms : null,
-        audioState: sctx.audioState,
-    };
+    const slices = buildOtherReqSlices(sctx, owner, gameId);
     const { clauses } = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
     const byKey = new Map(clauses.map(c => [c.key, c]));
     // Gate keys to render (with dots): exactly the keys the evaluator produced a

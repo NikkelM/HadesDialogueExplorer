@@ -694,6 +694,27 @@ export function currentRunResolvable(owner, saveInRun, gameId) {
     return false;
 }
 
+// Build the run / room / audio slices bundle ``evaluateOtherRequirements``
+// consumes, from a save context (``getSaveContext()``). CurrentRun.* and
+// SumPrevRooms gates resolve only when the dialogue's owner-context matches the
+// loaded save type (hub save vs in-run _Temp save), so currentRun and rooms are
+// gated on ``currentRunResolvable``; the run-count, runs-since, prev-run,
+// run-history and live-audio slices are always available. Single source of truth:
+// a new save-slice field added here reaches every caller at once, so per-clause
+// dots can't silently fall back to indeterminate when one call site is missed.
+export function buildOtherReqSlices(ctx, owner, gameId) {
+    const resolveRun = currentRunResolvable(owner, ctx.saveInRun, gameId);
+    return {
+        runs: ctx.runs,
+        runsAgo: ctx.runsAgo,
+        prevRun: ctx.prevRun,
+        runHistory: ctx.runHistory,
+        currentRun: resolveRun ? ctx.currentRun : null,
+        rooms: resolveRun ? ctx.rooms : null,
+        audioState: ctx.audioState,
+    };
+}
+
 // A nested "mask" of the exact ``rootKey`` (``GameState`` or ``CurrentRun``)
 // paths any clause in ``textlines`` reads, so the save parser can persist a
 // minimal slice instead of whole (often huge) sub-tables. A mask node is either

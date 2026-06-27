@@ -31,7 +31,7 @@ import {
 } from './utilities.js';
 import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements, currentRunResolvable, gateClausePermanentlyUnmet } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -1262,13 +1262,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         const sctx = getSaveContext();
         const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
         const gameId = getActiveGame();
-        const resolveRun = currentRunResolvable(owner, sctx.saveInRun, gameId);
-        const slices = {
-            runs: sctx.runs, runsAgo: sctx.runsAgo, prevRun: sctx.prevRun, runHistory: sctx.runHistory,
-            currentRun: resolveRun ? sctx.currentRun : null,
-            rooms: resolveRun ? sctx.rooms : null,
-            audioState: sctx.audioState,
-        };
+        const slices = buildOtherReqSlices(sctx, owner, gameId);
         const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
         // Named requirement gates resolve GameState-only in

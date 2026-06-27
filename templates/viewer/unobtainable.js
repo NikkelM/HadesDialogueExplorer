@@ -29,7 +29,7 @@
 
 import { textlines, namedRequirements, getActiveGame } from './data.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
-import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices } from './gamestate-eval.js';
 import { evaluateH1OtherReqPermanence, h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 import { gameStateClausePermanence } from './permanent-state.js';
 
@@ -367,16 +367,7 @@ export function orBranchVerdict(branch, context, name) {
     // loaded save type (the branch belongs to the dialogue ``name``).
     const owner = (name && textlines[name]) ? textlines[name].owner : undefined;
     const gameId = getActiveGame();
-    const resolveRun = currentRunResolvable(owner, ctx.saveInRun, gameId);
-    const slices = {
-        runs: ctx.runs,
-        runsAgo: ctx.runsAgo,
-        prevRun: ctx.prevRun,
-        runHistory: ctx.runHistory,
-        currentRun: resolveRun ? ctx.currentRun : null,
-        rooms: resolveRun ? ctx.rooms : null,
-        audioState: ctx.audioState,
-    };
+    const slices = buildOtherReqSlices(ctx, owner, gameId);
     const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, slices, gameId).status;
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';

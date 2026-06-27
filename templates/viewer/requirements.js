@@ -15,7 +15,7 @@
  */
 
 import { textlines, namedRequirements, getActiveGame } from './data.js';
-import { evaluateOtherRequirements, currentRunResolvable } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices } from './gamestate-eval.js';
 
 // Three-state AND: unmet if either side is unmet; else unknown if either is
 // unknown; else met. Used to fold the GameState (non-textline) verdict into the
@@ -558,20 +558,10 @@ export function directSatisfaction(textlineData, context, name) {
     const ctx = _asContext(context);
     const gs = ctx.gameState;
     // CurrentRun.* / SumPrevRooms gates resolve only when this dialogue's
-    // owner-context matches the loaded save type (hub save vs in-run _Temp save).
-    // PrevRun.* (last completed run) and the run-count / runs-since records are
-    // always available. ``slices`` bundles them for evaluateOtherRequirements.
+    // owner-context matches the loaded save type; the rest are always available.
+    // ``buildOtherReqSlices`` bundles them for evaluateOtherRequirements.
     const gameId = getActiveGame();
-    const resolveRun = currentRunResolvable(textlineData.owner, ctx.saveInRun, gameId);
-    const slices = {
-        runs: ctx.runs,
-        runsAgo: ctx.runsAgo,
-        prevRun: ctx.prevRun,
-        runHistory: ctx.runHistory,
-        currentRun: resolveRun ? ctx.currentRun : null,
-        rooms: resolveRun ? ctx.rooms : null,
-        audioState: ctx.audioState,
-    };
+    const slices = buildOtherReqSlices(ctx, textlineData.owner, gameId);
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
         evaluateOtherRequirements(textlineData.otherRequirements, gs, slices, gameId).status);
