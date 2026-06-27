@@ -672,9 +672,11 @@ test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {
             IgnoredKey: 'drop-me',
             CurrentRoom: { Name: 'A_Combat01', RoomSetName: 'Tartarus', VoiceLinesPlayed: ['L1'], Junk: 1 },
             Hero: { Health: 30, MaxHealth: 50, Weapons: { Sword: true }, SecretField: 9 },
+            CaughtFish: { TartarusFish: 1 },
+            ConsumableRecord: { RoomRewardConsolationPrize: 2 },
             RoomHistory: {
-                1: { Kills: { Harpy: 2 }, Junk: 'x' },
-                2: { Kills: { Slime: 1 } },
+                1: { Kills: { Harpy: 2 }, Name: 'A_Combat01', UsedAssist: true, Junk: 'x' },
+                2: { Kills: { Slime: 1 }, Name: 'A_Combat02' },
             },
         },
     });
@@ -689,9 +691,12 @@ test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {
     assert.equal(slice.Hero.Health, 30);
     assert.deepEqual(slice.Hero.Weapons, { Sword: true });
     assert.equal('SecretField' in slice.Hero, false);
-    // RoomHistory pruned to per-room {Kills}.
-    assert.deepEqual(slice.RoomHistory['1'], { Kills: { Harpy: 2 } });
-    assert.deepEqual(slice.RoomHistory['2'], { Kills: { Slime: 1 } });
+    // Per-run record tables carried wholesale.
+    assert.deepEqual(slice.CaughtFish, { TartarusFish: 1 });
+    assert.deepEqual(slice.ConsumableRecord, { RoomRewardConsolationPrize: 2 });
+    // CurrentRun RoomHistory pruned to {Kills, Name, UsedAssist}.
+    assert.deepEqual(slice.RoomHistory['1'], { Kills: { Harpy: 2 }, Name: 'A_Combat01', UsedAssist: true });
+    assert.deepEqual(slice.RoomHistory['2'], { Kills: { Slime: 1 }, Name: 'A_Combat02' });
 });
 
 test('extractH1CurrentRunSlice returns null when there is no current run', () => {

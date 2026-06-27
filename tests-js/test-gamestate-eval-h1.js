@@ -155,6 +155,47 @@ test('H1: RequiredWeapon reads the in-run hero weapon table', () => {
     assert.equal(evaluateH1OtherRequirements({ RequiredWeapon: 'BowWeapon' }, c).status, 'unmet');
 });
 
+// --- resources / run-record gates (group A/B) --------------------------------
+
+test('H1: RequiredResourcesMin reads GameState.Resources (resolves from any save)', () => {
+    const c = ctx({ gs: { Resources: { Gems: 30, MetaPoints: 5 } }, currentRun: null });
+    assert.equal(evaluateH1OtherRequirements({ RequiredResourcesMin: { Gems: 30 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredResourcesMin: { Gems: 31 } }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredResourcesMin: { Gems: 30, MetaPoints: 5 } }, c).status, 'met');
+    // amount 0 is always satisfied (HasResource short-circuit); a missing resource is 0.
+    assert.equal(evaluateH1OtherRequirements({ RequiredResourcesMin: { Diamonds: 0 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredResourcesMin: { Diamonds: 1 } }, c).status, 'unmet');
+});
+
+test('H1: RequiredMinCaughtFishThisRun sums CurrentRun.CaughtFish', () => {
+    const c = ctx({ currentRun: { CaughtFish: { TartarusFish: 1, AsphodelFish: 2 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCaughtFishThisRun: 3 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCaughtFishThisRun: 4 }, c).status, 'unmet');
+    // No fish caught yet -> 0.
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCaughtFishThisRun: 1 }, ctx({ currentRun: {} })).status, 'unmet');
+    // Wrong save type (no current-run slice) -> unknown.
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCaughtFishThisRun: 1 }, ctx()).status, 'unknown');
+});
+
+test('H1: RequiredConsumablesThisRun sums ConsumableRecord across Names', () => {
+    const c = ctx({ currentRun: { ConsumableRecord: { RoomRewardConsolationPrize: 1, RoomRewardMaxHealthDrop: 2 } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredConsumablesThisRun: { Count: 1, Names: ['RoomRewardConsolationPrize'] } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredConsumablesThisRun: { Count: 3, Names: ['RoomRewardConsolationPrize', 'RoomRewardMaxHealthDrop'] } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredConsumablesThisRun: { Count: 2, Names: ['RoomRewardConsolationPrize'] } }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredConsumablesThisRun: { Count: 1, Names: ['RoomRewardConsolationPrize'] } }, ctx()).status, 'unknown');
+});
+
+test('H1: RequiredUsedAssistInRoomThisRun checks per-room UsedAssist in RoomHistory', () => {
+    // The engine fails if any room matching the name lacks UsedAssist.
+    const used = ctx({ currentRun: { RoomHistory: { 1: { Name: 'A_Boss01', UsedAssist: true }, 2: { Name: 'B_Combat01' } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredUsedAssistInRoomThisRun: 'A_Boss01' }, used).status, 'met');
+    const notUsed = ctx({ currentRun: { RoomHistory: { 1: { Name: 'A_Boss01', UsedAssist: false } } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredUsedAssistInRoomThisRun: 'A_Boss01' }, notUsed).status, 'unmet');
+    // Room not visited this run -> no failing room -> met.
+    assert.equal(evaluateH1OtherRequirements({ RequiredUsedAssistInRoomThisRun: 'C_Boss01' }, used).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredUsedAssistInRoomThisRun: 'A_Boss01' }, ctx()).status, 'unknown');
+});
+
 // --- Lua list vs set semantics -----------------------------------------------
 
 test('H1: RequiredFalsePlayedThisRoom treats VoiceLinesPlayed as a value list', () => {

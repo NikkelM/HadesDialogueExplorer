@@ -91,6 +91,7 @@ export const H1_CURRENTRUN_SLICE_KEYS = [
     'RoomCountCache', 'EncountersCompletedCache', 'EncountersOccurredCache',
     'ActivationRecord', 'NPCInteractions',
     'SpeechRecord', 'SupportAINames', 'MetaUpgradeCache',
+    'CaughtFish', 'ConsumableRecord',
 ];
 
 // ---- Lua-coercion helpers ----------------------------------------------------
@@ -136,6 +137,14 @@ function h1HeroHasTrait(cr, name) {
         return h1Truthy(hero.TraitDictionary[name]);
     }
     return false;
+}
+
+// HasResource(name, amount) (RoomManager.lua:3450): amount 0 is always met;
+// otherwise GameState.Resources[name] must exist and be >= amount.
+function h1HasResource(resources, name, amount) {
+    if (amount === 0) return true;
+    const have = resources[name];
+    return have != null && have >= amount;
 }
 
 // ---- per-field handlers ------------------------------------------------------
@@ -268,6 +277,10 @@ const H1_FIELD_EVALS = {
     RequiredActiveMetaPointsMin: (v, ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); return sp == null ? H1_LIVE(_META_POINTS_REASON) : _h1bool(h1Num(sp) >= v); },
     RequiredActiveMetaPointsMax: (v, ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); return sp == null ? H1_LIVE(_META_POINTS_REASON) : _h1bool(h1Num(sp) <= v); },
 
+    // ===== PERSISTENT: resources (Darkness / Gems / ...) =====
+    // HasResource reads GameState.Resources, so this resolves from any save.
+    RequiredResourcesMin: (v, ctx) => { const r = h1Gs(ctx, 'Resources') || {}; return _h1bool(Object.entries(v || {}).every(([name, amount]) => h1HasResource(r, name, amount))); },
+
     // ===== PERSISTENT: weapon-aspect upgrades (h1SaveEvalStatic.weaponUpgradeSlots) =====
     RequiredMinSuperLockKeysSpentOnWeapon: (v, ctx) => h1WeaponStaticReady() ? _h1bool(h1WeaponKeysSpent(ctx, v && v.Name) >= (v && v.Count)) : H1_NEEDS_STATIC(_WEAPON_STATIC_REASON),
     RequiredLastInteractedWeaponUpgrade: (v, ctx) => { if (!h1WeaponStaticReady()) return H1_NEEDS_STATIC(_WEAPON_STATIC_REASON); const li = h1Gs(ctx, 'LastInteractedWeaponUpgrade'); if (li == null) return H1_UNMET; return _h1bool(h1WeaponUpgradeTrait(ctx, li.WeaponName, li.ItemIndex) === v); },
@@ -339,7 +352,7 @@ const H1_FIELD_EVALS = {
     RequiredNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !h1Truthy(t[v]), true),
     RequiredIdsNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !h1Arr(v).some(id => h1Truthy(t[id])), true),
     RequiredFalseInteractionThisRun: (v, ctx) => h1CrTable(ctx, 'NPCInteractions', t => !h1Truthy(t[v]), true),
-    RequiredUsedAssistInRoomThisRun: () => H1_NEEDS_STATIC('Reads per-room assist usage from CurrentRun.RoomHistory, not carried in this slice.'),
+    RequiredUsedAssistInRoomThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const rh = cr.RoomHistory || {}; return _h1bool(!Object.values(rh).some(room => room && room.Name === v && !h1Truthy(room.UsedAssist))); },
     RequiredAnyPlayedThisRun: (v, ctx) => h1CrTable(ctx, 'SpeechRecord', t => h1Arr(v).some(k => h1ListHas(t, k))),
     RequiredFalsePlayedThisRoom: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const list = cr.CurrentRoom && cr.CurrentRoom.VoiceLinesPlayed; return _h1bool(!h1Arr(v).some(k => h1ListHas(list, k))); },
     RequiredSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => h1Arr(v).every(k => h1Truthy(t[k]))),
@@ -347,9 +360,8 @@ const H1_FIELD_EVALS = {
     RequiredLootChoices: () => H1_LIVE('Reads the live number of loot choices being offered, computed during reward generation.'),
     RequiredMinWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),
     RequiredMaxWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),
-    RequiredConsumablesThisRun: () => H1_NEEDS_STATIC('Reads CurrentRun.ConsumableRecord, not carried in this slice.'),
-    RequiredResourcesMin: () => H1_NEEDS_STATIC('Reads live current-run resources (Money / blood etc.), not carried in this slice.'),
-    RequiredMinCaughtFishThisRun: () => H1_NEEDS_STATIC('Reads CurrentRun.CaughtFish, not carried in this slice.'),
+    RequiredConsumablesThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const rec = cr.ConsumableRecord || {}; const count = h1Arr(v && v.Names).reduce((s, n) => s + h1Num(rec[n]), 0); return _h1bool(count >= (v && v.Count)); },
+    RequiredMinCaughtFishThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1SumValues(cr.CaughtFish) >= v); },
     RequiredPurchasedWorldItemCountMin: () => H1_LIVE('Counts purchased (despawned) store items in the current room - live world state.'),
     RequiredPurchasedWorldItemCountMax: () => H1_LIVE('Counts purchased (despawned) store items in the current room - live world state.'),
     RequiresFishingPointInRoom: () => H1_LIVE('Reads whether the current room has a live fishing point.'),

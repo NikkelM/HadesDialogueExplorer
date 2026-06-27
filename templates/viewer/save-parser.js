@@ -644,8 +644,27 @@ export function extractH1CurrentRunSlice(luaState) {
     };
     if (hero.Traits && typeof hero.Traits === 'object') slice.Hero.Traits = pruneHeroTraits(hero.Traits);
   }
-  slice.RoomHistory = _h1PruneRunKills(cr.RoomHistory);
+  slice.RoomHistory = _h1PruneCurrentRunRooms(cr.RoomHistory);
   return slice;
+}
+
+// Prune the live run's RoomHistory to the per-room fields the CurrentRun
+// evaluators read: ``Kills`` (kills-this-run aggregate) plus ``Name`` /
+// ``UsedAssist`` (RequiredUsedAssistInRoomThisRun). Distinct from
+// ``_h1PruneRunKills`` (used for completed runs, which only need Kills).
+function _h1PruneCurrentRunRooms(roomHistory) {
+  const out = {};
+  if (roomHistory && typeof roomHistory === 'object') {
+    for (const [k, room] of Object.entries(roomHistory)) {
+      if (!/^\d+$/.test(k) || !room || typeof room !== 'object') continue;
+      const pruned = {};
+      if (room.Kills !== undefined) pruned.Kills = room.Kills;
+      if (room.Name !== undefined) pruned.Name = room.Name;
+      if (room.UsedAssist !== undefined) pruned.UsedAssist = room.UsedAssist;
+      out[k] = pruned;
+    }
+  }
+  return out;
 }
 
 // Prune a run's RoomHistory to per-room ``{Kills}`` (the only field the H1
@@ -916,7 +935,7 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // SpentMetaPointsCache / LastInteractedWeaponUpgrade to the H1 slice (codex /
 // speech / meta-point / weapon-aspect gates). v15 widened the H1 RunHistory
 // prune with GameplayTime / RunDepthCache / EasyModeLevel (best-clear-time gate).
-const SAVE_STORAGE_SCHEMA = 15;
+const SAVE_STORAGE_SCHEMA = 16;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
