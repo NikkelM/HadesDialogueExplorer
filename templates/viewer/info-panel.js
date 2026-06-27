@@ -25,6 +25,7 @@ import {
     renderReqItem,
     renderChoiceNameHtml,
     reqTypeOrderIndex,
+    renderSaveBadgeHtml,
     saveStatusTooltip,
     groupStatusTooltip,
 } from './utilities.js';
@@ -706,10 +707,10 @@ function renderAlternatesHtml(name) {
 
     for (const sibling of siblings) {
         const tl = textlines[sibling];
-        const ownerLabel = tl ? renderSpeakerHtml(tl.owner) : '';
+        const badge = renderSaveBadgeHtml(sibling, tl);
         html += `<a class="alternates-item" onclick="navigateTo(${jsAttr(sibling)})">`;
+        if (badge) html += badge;
         html += `<span class="alternates-name">${escapeHtml(sibling)}</span>`;
-        if (ownerLabel) html += ` <span class="alternates-owner">${ownerLabel}</span>`;
         html += `</a>`;
     }
 
