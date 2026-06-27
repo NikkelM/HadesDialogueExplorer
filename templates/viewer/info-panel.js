@@ -602,7 +602,7 @@ export function renderRetiredBannerHtml(replacement) {
         ? ` Superseded by <a class="blocked-ref" onclick="navigateTo(${jsAttr(replacement)})">${escapeHtml(replacement)}</a>.`
         : '';
     return `<div class="meta blocked-banner">`
-        + `<div class="blocked-banner-header">\u2298 Retired dialogue - can never play</div>`
+        + `<div class="blocked-banner-header"><span class="status-symbol">\u2298</span> Retired dialogue - can never play</div>`
         + `<div class="blocked-banner-list">This line is flagged <code>Skip</code> in the game data, so the engine permanently skips it.${repl}</div>`
         + `</div>`;
 }
@@ -686,7 +686,7 @@ function renderSaveProgressPillHtml(name, tl) {
         eligible: '\u25CB Eligible',
         blocked: '\u2022 Blocked',
         indeterminate: '? Indeterminate',
-        unobtainable: '\u2298 Unobtainable',
+        unobtainable: '<span class="status-symbol">\u2298</span> Unobtainable',
     };
     const label = labels[status] || status;
     // Every status opens the eligibility tracer for this dialogue: blocked

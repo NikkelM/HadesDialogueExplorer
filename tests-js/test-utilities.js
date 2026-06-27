@@ -419,6 +419,17 @@ test('renderPlayOnceBadgeHtml distinguishes locked vs repeatable variants', () =
     assert.ok(missing.includes('play-once-repeatable'));
 });
 
+test('renderPlayOnceBadgeHtml shows Retired badge for skipped lines, overriding playOnce', () => {
+    const retired = renderPlayOnceBadgeHtml({ skip: true, playOnce: true });
+    assert.ok(retired.includes('play-once-retired'));
+    assert.ok(retired.includes('Retired'));
+    // The glyph is wrapped in its own flex item so it centres vertically.
+    assert.ok(retired.includes('status-symbol'));
+    // The retired state replaces (does not co-render) the play-once badge.
+    assert.ok(!retired.includes('play-once-locked'));
+    assert.ok(!retired.includes('Play-once'));
+});
+
 test('reqTypeOrderIndex reflects fixture reloads in place', () => {
     // Reassign the lets via a fresh DATA blob: existing imports must
     // still see the updated order because of ES module live bindings.

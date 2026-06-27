@@ -29,6 +29,22 @@
     color: #a0d4be;
     border: 1px solid #2c4a3e;
 }
+.play-once-badge.play-once-retired {
+    gap: 4px;
+    background: rgba(149, 165, 166, 0.18);
+    color: #c4cdd1;
+    border: 1px solid rgba(149, 165, 166, 0.40);
+}
+/* The retired / unobtainable status symbol (U+2298) renders with its ink
+   extending below the baseline, so against adjacent capitals its optical
+   centre sits ~0.06em too low. Lift it so it centres on the label. Used
+   anywhere this glyph leads a badge or status line. */
+.status-symbol {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    transform: translateY(-0.06em);
+}
 
 /* Self-reference marker: a textline that lists itself in one of its
    own requirement fields. Always a benign cooldown/PlayOnce idiom,
@@ -100,6 +116,7 @@
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
+    gap: 3px;
     margin-left: 6px;
     padding: 2px 6px;
     line-height: 1;

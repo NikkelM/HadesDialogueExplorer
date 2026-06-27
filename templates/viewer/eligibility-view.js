@@ -372,7 +372,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
         // requirements satisfied. No play-priority here - a permanently-
         // unobtainable dialogue never plays, so its rank is moot, and the
         // detail line introduces the reasons list with a colon.
-        html += `<div class="eligibility-status eligibility-unobtainable">\u2298 Unobtainable</div>`;
+        html += `<div class="eligibility-status eligibility-unobtainable"><span class="status-symbol">\u2298</span> Unobtainable</div>`;
         html += `<div class="eligibility-detail">This dialogue can no longer become eligible in this save:</div>`;
         html += renderUnobtainableReasonsHtml(rootName, playedSet, saveCtx.runsAgo, saveCtx);
     } else if (directlyEligible) {

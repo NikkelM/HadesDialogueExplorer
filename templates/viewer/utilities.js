@@ -419,7 +419,12 @@ export function renderOrdinalBadgeHtml(tl) {
 // by the absence of a badge - a non-PlayOnce dialogue is still
 // eligible to play after it's been heard (subject to other gates),
 // which is easy to miss if the only visual signal is the lock.
+// A retired line (`Skip = true`) can never play at all, so it takes
+// precedence: its Retired badge replaces the play-once / repeatable one.
 export function renderPlayOnceBadgeHtml(tl) {
+    if (tl && tl.skip) {
+        return `<span class="play-once-badge play-once-retired" data-tooltip="Retired (flagged Skip in the game data) - this dialogue can never play."><span class="status-symbol">\u2298</span>Retired</span>`;
+    }
     if (tl && tl.playOnce) {
         return `<span class="play-once-badge play-once-locked" data-tooltip="This dialogue can play at most one time across the entire save.">\u{1F512} Play-once</span>`;
     }

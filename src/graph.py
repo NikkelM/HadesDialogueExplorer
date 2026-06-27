@@ -170,8 +170,11 @@ def build_graph_data(
                 if tl_data.get("playOnce"):
                     new_entry["playOnce"] = True
                 # `Skip = true` retired line - permanently unplayable (see
-                # extract_textline). Surfaced so the viewer can flag it.
-                if tl_data.get("skip"):
+                # extract_textline). Surfaced so the viewer can flag it. H1
+                # sets it top-level; H2 carries it under ``flags.skip`` (no
+                # H2 dialogue currently uses it, but read both so the flag is
+                # honoured wherever it appears).
+                if tl_data.get("skip") or (tl_data.get("flags") or {}).get("skip"):
                     new_entry["skip"] = True
                 # `Partner = "NPC_..."` on xWithY partner dialogues. Names
                 # the second NPC; the same textline name also exists as

@@ -275,7 +275,10 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     } else if (tl.skip) {
         const skipBadge = document.createElement('span');
         skipBadge.className = 'tree-skip-badge';
-        skipBadge.textContent = 'retired';
+        const icon = document.createElement('span');
+        icon.className = 'status-symbol';
+        icon.textContent = '\u2298';
+        skipBadge.append(icon, 'retired');
         skipBadge.dataset.tooltip = tl.skipReplacement
             ? `Retired line (flagged Skip) - can never play. Superseded by ${tl.skipReplacement}.`
             : 'Retired line (flagged Skip) - can never play.';
