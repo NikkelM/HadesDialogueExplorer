@@ -1,10 +1,14 @@
 """Tests for ``build_alternates``: detection of mutually-exclusive alternate
-dialogues (the ``_A`` / ``_B`` variant pattern).
+dialogues (the ``_A`` / ``_B`` and ``_Alt`` variant patterns).
 
 Two-step algorithm: (1) group textlines by name stem (strip a trailing
-``_?[A-Z]`` suffix), (2) confirm a group only when its members reference
-each other via a "confirming" requirement field (``RequiredFalse*`` /
-``RequiredAny*``). Sharing a stem alone is not enough.
+``_?[A-Z]`` suffix or an explicit ``_Alt`` marker), (2) confirm a group only
+when its members are mutually exclusive. Confirmation accepts a direct
+``RequiredFalse*`` / ``RequiredAny*`` cross-reference, and three indirect
+patterns that never name each other directly: complementary choice branches
+(Accept vs Decline of one choice), HasAny-vs-HasNone over the same referenced
+set, and a typo'd cross-reference (a word-order variant of a sibling that is not
+itself a real textline). Sharing a stem alone is not enough.
 """
 
 from src.graph import build_alternates
@@ -73,6 +77,19 @@ class TestBuildAlternates:
             "FooBar_A": ["FooBar"],
         }
 
+    def test_alt_suffix_pairs_with_base(self):
+        # The ``_Alt`` naming convention (a base line and its ``..._Alt``
+        # variant that forbid each other) groups under the shared stem -
+        # the trailing ``_Alt`` is stripped just like a single-letter suffix.
+        tls = {
+            "DusaLoungeRenovationQuest02": _tl({"RequiredFalseTextLines": ["DusaLoungeRenovationQuest02_Alt"]}),
+            "DusaLoungeRenovationQuest02_Alt": _tl({"RequiredFalseTextLines": ["DusaLoungeRenovationQuest02"]}),
+        }
+        assert build_alternates(tls) == {
+            "DusaLoungeRenovationQuest02": ["DusaLoungeRenovationQuest02_Alt"],
+            "DusaLoungeRenovationQuest02_Alt": ["DusaLoungeRenovationQuest02"],
+        }
+
     def test_shared_stem_without_co_occurrence_is_not_confirmed(self):
         # Same stem, but no confirming reference between them -> not alternates.
         tls = {
@@ -107,3 +124,74 @@ class TestBuildAlternates:
             "FooBar_A": ["FooBar_B"],
             "FooBar_B": ["FooBar_A"],
         }
+
+    def test_complementary_choice_branches_confirm(self):
+        # Each member is gated on the opposite branch of a one-time choice
+        # (Accept vs Decline of the same choice node), so exactly one can ever
+        # play - they confirm without naming each other.
+        tls = {
+            "ErisAboutRelationship03": _tl(
+                {"RequiredAnyTextLines": ["ErisBecomingCloser01Choice_ErisAccept"]}
+            ),
+            "ErisAboutRelationship03_B": _tl(
+                {"RequiredAnyTextLines": ["ErisBecomingCloser01Choice_ErisDecline"]}
+            ),
+        }
+        assert build_alternates(tls) == {
+            "ErisAboutRelationship03": ["ErisAboutRelationship03_B"],
+            "ErisAboutRelationship03_B": ["ErisAboutRelationship03"],
+        }
+
+    def test_same_choice_outcome_does_not_confirm(self):
+        # Both gated on the *same* outcome - not mutually exclusive.
+        tls = {
+            "Talk_A": _tl({"RequiredAnyTextLines": ["ChoiceFoo_Accept"]}),
+            "Talk_B": _tl({"RequiredAnyTextLines": ["ChoiceFoo_Accept"]}),
+        }
+        assert build_alternates(tls) == {}
+
+    def test_has_any_vs_has_none_over_same_set_confirms(self):
+        # One member needs at least one of a set, the other needs none of that
+        # same set - strictly complementary.
+        gate = ["BecameCloseWithMegaera01", "BecameCloseWithMegaera01_B"]
+        tls = {
+            "FuryPactReaction02": _tl({"RequiredFalseTextLines": gate}),
+            "FuryPactReaction02_B": _tl({"RequiredAnyTextLines": gate}),
+        }
+        assert build_alternates(tls) == {
+            "FuryPactReaction02": ["FuryPactReaction02_B"],
+            "FuryPactReaction02_B": ["FuryPactReaction02"],
+        }
+
+    def test_has_any_vs_has_none_over_different_sets_not_confirmed(self):
+        tls = {
+            "Talk_A": _tl({"RequiredFalseTextLines": ["LineX"]}),
+            "Talk_B": _tl({"RequiredAnyTextLines": ["LineY"]}),
+        }
+        assert build_alternates(tls) == {}
+
+    def test_typo_transposed_cross_reference_confirms(self):
+        # Members reference a word-order typo of each other (a cut name that is
+        # not a real textline), so the intended cross-reference is recognised.
+        tls = {
+            "ChronosBossOutroPreTrueEnding01": _tl(
+                {"RequiredFalseTextLines": ["ChronosBossPreTrueEndingOutro01_B"]}
+            ),
+            "ChronosBossOutroPreTrueEnding01_B": _tl(
+                {"RequiredFalseTextLines": ["ChronosBossPreTrueEndingOutro01"]}
+            ),
+        }
+        assert build_alternates(tls) == {
+            "ChronosBossOutroPreTrueEnding01": ["ChronosBossOutroPreTrueEnding01_B"],
+            "ChronosBossOutroPreTrueEnding01_B": ["ChronosBossOutroPreTrueEnding01"],
+        }
+
+    def test_transposed_reference_to_real_textline_does_not_confirm(self):
+        # If the referenced word-order variant *is* a real textline, it is a
+        # genuine (different) line, not a typo - do not infer an alternate.
+        tls = {
+            "FooBarBaz01": _tl({"RequiredFalseTextLines": ["FooBazBar01_B"]}),
+            "FooBarBaz01_B": _tl(),
+            "FooBazBar01_B": _tl(),
+        }
+        assert build_alternates(tls) == {}

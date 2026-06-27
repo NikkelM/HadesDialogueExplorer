@@ -17,6 +17,7 @@ Public API:
   merged stats use identical dedup logic.
 """
 
+import itertools
 import re
 from collections import defaultdict
 
@@ -660,17 +661,55 @@ def build_dependents(textlines: dict) -> dict:
     return dict(dependents)
 
 
-# Regex for detecting alternate-suffix names: a stem + optional underscore + single uppercase letter.
-# Also matches bare letter suffixes (e.g. PatroclusAboutBracer01A, 01B).
-_ALTERNATE_SUFFIX_RE = re.compile(r"^(.+?)_?([A-Z])$")
+# Regex for detecting alternate-suffix names. Two naming conventions appear in
+# the game data:
+#   * a stem plus a single trailing uppercase letter, optionally underscore-
+#     separated (e.g. PatroclusAboutBracer01A, 01B; SomeLine_A), and
+#   * a stem plus an explicit ``_Alt`` marker (e.g.
+#     DusaLoungeRenovationQuest02 vs DusaLoungeRenovationQuest02_Alt).
+_ALTERNATE_SUFFIX_RE = re.compile(r"^(.+?)(?:_Alt|_?[A-Z])$")
+
+# Choice-outcome suffixes. Some alternates are gated on opposite branches of a
+# one-time choice (e.g. ErisAboutRelationship03 needs ..._ErisAccept while its
+# _B sibling needs ..._ErisDecline), so they never name each other directly.
+_CHOICE_OUTCOMES = ("Accept", "Decline")
+
+
+def _choice_complement(ref: str):
+    """Return ``(prefix, outcome)`` if ``ref`` is a choice Accept/Decline line.
+
+    Two refs with the same prefix but different outcome are complementary
+    branches of the same one-time choice, so the lines gated on them are
+    mutually exclusive.
+    """
+    for outcome in _CHOICE_OUTCOMES:
+        if ref.endswith(outcome) and len(ref) > len(outcome):
+            return ref[: -len(outcome)], outcome
+    return None
+
+
+def _name_token_signature(name: str) -> tuple:
+    """Order-independent multiset of a name's camelCase / underscore tokens.
+
+    Lets us spot developer typos where a referenced name has the same words in
+    a different order (e.g. ChronosBossPreTrueEndingOutro01 is a transposition
+    of the real ChronosBossOutroPreTrueEnding01), so the intended cross-
+    reference can still be recognised.
+    """
+    parts = re.findall(r"[A-Z]+(?![a-z])|[A-Z][a-z]*|[a-z]+|[0-9]+", name.replace("_", ""))
+    return tuple(sorted(p.lower() for p in parts))
 
 
 def build_alternates(textlines: dict) -> dict:
     """Detect mutually exclusive alternate dialogues using two-step confirmation.
 
-    Step 1: Group textlines by name stem (regex strips trailing _?[A-Z]).
-    Step 2: Confirm alternates co-occur in RequiredFalseTextLines or
-    RequiredAnyTextLines on at least one member of the candidate group.
+    Step 1: Group textlines by name stem (regex strips a trailing _Alt or
+    _?[A-Z]).
+    Step 2: Confirm that members are mutually exclusive. Beyond a direct
+    RequiredFalse/RequiredAny cross-reference, three indirect patterns are
+    recognised: a typo'd cross-reference (a word-order variant of a sibling that
+    is not a real textline), complementary choice branches (Accept vs Decline of
+    the same choice), and HasAny-vs-HasNone over the same referenced set.
 
     Returns a dict mapping textline name -> list of sibling alternate names
     (excluding self). Only textlines with confirmed alternates are included.
@@ -692,8 +731,6 @@ def build_alternates(textlines: dict) -> dict:
     stem_groups = {s: m for s, m in stem_groups.items() if len(m) >= 2}
 
     # Step 2: Confirm via requirement co-occurrence
-    # Build a lookup: for each textline, which other textlines appear with it
-    # in RequiredFalseTextLines or RequiredAnyTextLines?
     _CONFIRMING_TYPES = {
         "RequiredFalseTextLines",
         "RequiredFalseTextLinesLastRun",
@@ -704,24 +741,48 @@ def build_alternates(textlines: dict) -> dict:
         "RequiredAnyQueuedTextLines",
         "RequiredAnyOtherTextLines",
     }
+    _ANY_TYPES = {t for t in _CONFIRMING_TYPES if "Any" in t}
+    _FALSE_TYPES = {t for t in _CONFIRMING_TYPES if "False" in t}
 
     alternates = {}
     for stem, candidates in stem_groups.items():
-        confirmed = set()
+        # Per-candidate "needs one of" and "needs none of" reference sets.
+        any_refs = {}
+        false_refs = {}
         for name in candidates:
-            tl = textlines[name]
-            for req_type, refs in tl.get("requirements", {}).items():
-                if req_type not in _CONFIRMING_TYPES:
+            reqs = textlines[name].get("requirements", {})
+            any_refs[name] = {r for t, rs in reqs.items() if t in _ANY_TYPES for r in rs}
+            false_refs[name] = {r for t, rs in reqs.items() if t in _FALSE_TYPES for r in rs}
+
+        confirmed = set()
+        names = sorted(candidates)
+
+        # Direct or typo'd cross-reference to a sibling.
+        for name in names:
+            refs = any_refs[name] | false_refs[name]
+            for sib in candidates.intersection(refs):
+                confirmed.update((name, sib))
+            for ref in refs:
+                if ref in textlines or ref in candidates:
                     continue
-                # Check if any other candidate appears in this req list
-                co_occurring = candidates.intersection(refs)
-                if co_occurring:
-                    confirmed.add(name)
-                    confirmed.update(co_occurring)
+                sig = _name_token_signature(ref)
+                for sib in candidates:
+                    if sib != name and _name_token_signature(sib) == sig:
+                        confirmed.update((name, sib))
+
+        # Complementary gates that never name each other directly.
+        for a, b in itertools.combinations(names, 2):
+            a_choices = {_choice_complement(r) for r in any_refs[a]} - {None}
+            b_choices = {_choice_complement(r) for r in any_refs[b]} - {None}
+            if any(pa == pb and oa != ob for pa, oa in a_choices for pb, ob in b_choices):
+                confirmed.update((a, b))
+            if any_refs[a] and any_refs[a] == false_refs[b]:
+                confirmed.update((a, b))
+            if any_refs[b] and any_refs[b] == false_refs[a]:
+                confirmed.update((a, b))
 
         if len(confirmed) >= 2:
             for name in confirmed:
-                siblings = sorted(confirmed - {name})
-                alternates[name] = siblings
+                alternates[name] = sorted(confirmed - {name})
 
     return alternates
