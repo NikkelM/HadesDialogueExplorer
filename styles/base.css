@@ -221,28 +221,74 @@ main {
 
 /* Loading skeleton shown in the panels by the pre-paint script in
    index.html while the (multi-MB) data blob streams in the split build, so
-   a deep-linked page reads as loading rather than empty. viewer.js replaces
-   the panel contents once it renders. Tones blend with the dark navy
-   surface; the sweep is the only motion. */
-.panel-skeleton {
-    padding: 24px 16px;
-}
-.skeleton-line {
-    height: 14px;
-    margin: 0 0 14px;
+   a deep-linked page reads as loading rather than empty. Each view paints a
+   shape that roughly mirrors what it will render (a textline detail, a
+   prerequisite/dependent tree, the speaker overview or the duplicates view),
+   so the swap to real content reads as the same layout filling in rather than
+   a jump. viewer.js replaces the panel contents once it renders. Tones blend
+   with the dark navy surface; the sweep is the only motion. */
+.panel-skeleton { padding: 16px; }
+.panel-skeleton .sk {
     border-radius: 4px;
     background: linear-gradient(90deg, #1f2742 25%, #2a3556 37%, #1f2742 63%);
     background-size: 400% 100%;
     animation: skeleton-shimmer 1.4s ease infinite;
 }
-.skeleton-line.short { width: 55%; }
 @keyframes skeleton-shimmer {
     0%   { background-position: 100% 0; }
     100% { background-position: 0 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .skeleton-line { animation: none; }
+    .panel-skeleton .sk { animation: none; }
 }
+
+/* Shared element shapes, composed by the pre-paint script. */
+.sk-line   { height: 12px; margin: 0 0 10px; }
+.sk-line.short { width: 45%; }
+.sk-line.mid   { width: 70%; }
+.sk-line.wide  { width: 90%; }
+.sk-title  { height: 20px; width: 50%; }
+.sk-badge  { height: 16px; width: 48px; border-radius: 8px; }
+.sk-pill   { height: 22px; width: 92px; border-radius: 11px; }
+.sk-btn    { height: 28px; width: 112px; border-radius: 5px; margin: 0 0 16px; }
+.sk-toggle { height: 12px; width: 12px; flex: 0 0 auto; }
+.sk-dot    { height: 10px; width: 10px; border-radius: 50%; flex: 0 0 auto; }
+.sk-grow   { flex: 1; }
+.sk-row    { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+.sk-row.split { justify-content: space-between; }
+.sk-row .sk { margin: 0; }
+.sk-indent { margin-left: 22px; }
+
+/* Bordered card matching the panels the wide single-panel views render in. */
+.sk-card   { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.sk-card > :last-child { margin-bottom: 0; }
+.sk-cols   { display: flex; gap: 16px; }
+.sk-cols > * { flex: 1; }
+/* Logical section spacing for the wide single-panel views, and a readable
+   column width for the tracer (it shouldn't span the full page). */
+.sk-sec    { margin: 0 0 24px; }
+.sk-sec:last-child { margin-bottom: 0; }
+.sk-sec > :last-child { margin-bottom: 0; }
+.sk-narrow { max-width: 760px; }
+
+/* Dialogue detail: speaker/text blocks, then bordered requirement groups. */
+.sk-dlg    { margin: 0 0 16px; }
+.sk-dlg .sk-spk { height: 12px; width: 28%; margin: 0 0 8px; }
+.sk-group  { border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin: 0 0 12px; }
+.sk-group .sk-hdr { height: 14px; width: 55%; margin: 0 0 12px; }
+
+/* Prerequisite / dependent tree: a root bar then nested rows. */
+.sk-treeroot { height: 30px; border-radius: 5px; margin: 0 0 12px; }
+
+/* Speaker overview: summary stat columns. */
+.sk-stat .sk-lbl { height: 10px; width: 70%; margin: 0 0 10px; }
+.sk-stat .sk-val { height: 24px; width: 45%; }
+
+/* Duplicates: speaker list on the left, detail list on the right. */
+.sk-input  { height: 30px; border-radius: 6px; margin: 0 0 14px; }
+.sk-dup    { display: flex; gap: 14px; }
+.sk-dup-left  { flex: 0 0 38%; }
+.sk-dup-right { flex: 1; }
 
 /* Failure banner rendered by viewer.js when data load (fetch or
    JSON.parse) fails. Hidden until populated; styled to be unmissable

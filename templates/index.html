@@ -164,29 +164,91 @@
         else search.value = dialogue;
     }
 
-    // Loading skeleton in whichever panels will render content, so the wait on
-    // the data blob reads as loading rather than an empty/stale page.
-    var SK = '<div class="panel-skeleton" aria-hidden="true">'
-        + '<div class="skeleton-line"></div><div class="skeleton-line"></div>'
-        + '<div class="skeleton-line short"></div></div>';
-    var fill = function(id) {
+    // Loading skeleton in whichever panels will render content. Each view paints
+    // a shape that mirrors its real layout (textline detail, prereq / dependent
+    // tree, speaker overview, eligibility tracer, duplicates) so the swap to real
+    // content reads as the layout filling in rather than a jump. viewer.js
+    // overwrites these panels once it renders.
+    var sk = function(cls) { return '<div class="sk ' + cls + '"></div>'; };
+    var rep = function(html, n) { var s = ''; while (n-- > 0) s += html; return s; };
+    var row = function(inner, cls) { return '<div class="sk-row' + (cls ? ' ' + cls : '') + '">' + inner + '</div>'; };
+    var card = function(inner) { return '<div class="sk-card">' + inner + '</div>'; };
+    var sec = function(inner) { return '<div class="sk-sec">' + inner + '</div>'; };
+    var indent = function(inner) { return '<div class="sk-indent">' + inner + '</div>'; };
+
+    // A nested requirement row: status dot, label, trailing badge.
+    var reqRow = function() { return row(sk('sk-dot') + sk('sk-line sk-grow') + sk('sk-badge')); };
+    // A spoken-line block: short speaker name then a couple of text lines.
+    var dlgLine = function() {
+        return '<div class="sk-dlg">' + sk('sk-spk') + sk('sk-line wide') + sk('sk-line mid') + '</div>';
+    };
+    // A bordered requirement group: header bar then a few rows.
+    var group = function(n) { return '<div class="sk-group">' + sk('sk-hdr') + rep(reqRow(), n) + '</div>'; };
+
+    var DETAIL =
+        row(sk('sk-title') + sk('sk-badge') + sk('sk-badge') + sk('sk-badge'))
+        + sk('sk-line short') + sk('sk-btn') + sk('sk-line short')
+        + rep(dlgLine(), 4) + group(2) + group(1);
+
+    // A tree row: toggle, name, trailing badge (optionally indented).
+    var treeRow = function() { return row(sk('sk-toggle') + sk('sk-line mid') + sk('sk-badge')); };
+    var TREE =
+        sk('sk-treeroot') + treeRow()
+        + '<div class="sk-indent">' + treeRow() + treeRow() + '</div>'
+        + treeRow() + '<div class="sk-indent">' + treeRow() + '</div>';
+
+    // Speaker overview: a summary card (header, subtitle, four stat columns),
+    // two adjacency cards side by side, then a filter / sections card.
+    var stat = function() { return '<div class="sk-stat">' + sk('sk-lbl') + sk('sk-val') + '</div>'; };
+    var adjCard = function(n) {
+        return card(sk('sk-line short') + sk('sk-line mid')
+            + rep(row(sk('sk-line sk-grow') + sk('sk-badge')), n));
+    };
+    var SPEAKER =
+        sec(card(row(sk('sk-title') + sk('sk-pill'), 'split') + sk('sk-line short')
+            + '<div class="sk-cols">' + rep(stat(), 4) + '</div>'))
+        + sec('<div class="sk-cols">' + adjCard(6) + adjCard(2) + '</div>')
+        + sec(card(row(rep(sk('sk-pill'), 3)) + row(rep(sk('sk-pill'), 5))
+            + sk('sk-line mid') + sk('sk-line short')));
+
+    // Eligibility tracer: title / owner, a status banner card, a requirements
+    // heading with a small nested tree, then a save-needed banner card. Kept to
+    // a readable column width rather than the full page, with spaced sections.
+    var ELIGIBILITY =
+        '<div class="sk-narrow">'
+        + sec(sk('sk-title') + sk('sk-line short'))
+        + sec(card(sk('sk-line short') + sk('sk-line mid')))
+        + sec(sk('sk-line mid') + sk('sk-line short')
+            + reqRow() + reqRow() + indent(reqRow() + reqRow()))
+        + sec(card(sk('sk-line short') + sk('sk-line mid') + reqRow()))
+        + '</div>';
+
+    var DUPLICATES =
+        row(sk('sk-title')) + sk('sk-line short') + sk('sk-input')
+        + '<div class="sk-dup">'
+        + '<div class="sk-dup-left">' + rep(sk('sk-line'), 7) + '</div>'
+        + '<div class="sk-dup-right">' + sk('sk-line short') + rep(sk('sk-line'), 5) + '</div>'
+        + '</div>';
+    var set = function(id, inner) {
         var el = document.getElementById(id);
-        if (el) el.innerHTML = SK;
+        if (el) el.innerHTML = '<div class="panel-skeleton" aria-hidden="true">' + inner + '</div>';
     };
     // Record when the skeleton is painted so boot() (init.js) can hold it for a
     // minimum visible time, avoiding a one-frame flash on fast loads.
-    var mark = function() { window.__hdeSkeletonAt = performance.now(); };
-    if (single) {
-        var hasContent = (view === 'speaker' && speaker)
-            || (view === 'eligibility' && dialogue)
-            || view === 'duplicates';
-        if (hasContent) { fill('info-content'); mark(); }
+    var painted = false;
+    if (view === 'speaker') {
+        if (speaker) { set('info-content', SPEAKER); painted = true; }
+    } else if (view === 'duplicates') {
+        set('info-content', DUPLICATES); painted = true;
+    } else if (view === 'eligibility') {
+        if (dialogue) { set('info-content', ELIGIBILITY); painted = true; }
     } else if (dialogue) {
-        fill('info-content');
-        fill('upstream-content');
-        fill('downstream-content');
-        mark();
+        set('info-content', DETAIL);
+        set('upstream-content', TREE);
+        set('downstream-content', TREE);
+        painted = true;
     }
+    if (painted) window.__hdeSkeletonAt = performance.now();
 })();
 </script>
 <!-- Script kept at end of body so the DOM is fully parsed before
