@@ -34,29 +34,29 @@ body.layout-speaker #panel-info {
 }
 /* This view's title bar is a <header>, so it inherits the global page
    ``header`` rule (display:flex; align-items:center) which vertically
-   mis-centres the differently-sized lines. Override to a 3-column grid
-   matching the summary row below: the title block spans the first two
-   columns and the right-hand aside occupies the third, so the aside lines
-   up exactly with the summary's rightmost (Sections) column. */
+   mis-centres the differently-sized lines. Override to a left-aligned
+   vertical stack: the title block, then the "other versions" aside directly
+   below it, both flush to the same left edge - so the aside's position never
+   depends on the summary row below (which gains a fourth column once a save
+   is loaded and used to drag the aside out of alignment). */
 .speaker-overview-header {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 6px 6px 0 0;
 }
 .speaker-overview-header-main {
-    grid-column: 1 / 3;
     min-width: 0;
+    width: 100%;
 }
 .speaker-overview-header-aside {
-    grid-column: 3;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 6px;
 }
 .speaker-overview-header h3 {
@@ -75,9 +75,9 @@ body.layout-speaker #panel-info {
     font-style: italic;
     margin-bottom: 4px;
 }
-/* Similar-speaker pills: sit at the aside's left edge, which aligns with
-   the summary's right column below. Rendered as clickable pill buttons so
-   the navigation affordance is obvious. */
+/* Similar-speaker pills: left-aligned directly under the title block.
+   Rendered as clickable pill buttons so the navigation affordance is
+   obvious. */
 .speaker-similar {
     display: flex;
     flex-wrap: wrap;

@@ -202,16 +202,17 @@
         + '<div class="sk-indent">' + treeRow() + treeRow() + '</div>'
         + treeRow() + '<div class="sk-indent">' + treeRow() + '</div>';
 
-    // Speaker overview: a header card (name + similar pills + description), a
-    // summary card (four stat columns), two adjacency cards side by side, then
-    // a filter / sections card - each a bordered box like the real view.
+    // Speaker overview: a header card (name, description, then the left-aligned
+    // "other versions" pill below), a summary card (four stat columns), two
+    // adjacency cards side by side, then a filter / sections card - each a
+    // bordered box like the real view.
     var stat = function() { return '<div class="sk-stat">' + sk('sk-lbl') + sk('sk-val') + '</div>'; };
     var adjCard = function(n) {
         return card(sk('sk-line short') + sk('sk-line mid')
             + rep(row(sk('sk-line sk-grow') + sk('sk-badge')), n));
     };
     var SPEAKER =
-        sec(card(row(sk('sk-title') + sk('sk-pill'), 'split') + sk('sk-line short')))
+        sec(card(sk('sk-title') + sk('sk-line short') + row(sk('sk-pill'))))
         + sec(card('<div class="sk-cols">' + rep(stat(), 4) + '</div>'))
         + sec('<div class="sk-cols">' + adjCard(6) + adjCard(2) + '</div>')
         + sec(card(row(rep(sk('sk-pill'), 3)) + row(rep(sk('sk-pill'), 5))
