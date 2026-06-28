@@ -28,9 +28,10 @@
     /* Per-game theme colours, used to tint the game toggle's active button and
        the cross-game badges so Hades and Hades II are visually distinct. Hades
        1's UI was a red/crimson theme, Hades II's is blue. */
-    --hades1-color: #b5553a;   /* red-brown: Hades 1 */
-    --hades1-color-rgb: 181, 85, 58;
-    --hades2-color: #3b7fd4;   /* blue: Hades 2 */
+    --hades1-color: #760921;   /* dark crimson: Hades 1 */
+    --hades1-color-rgb: 118, 9, 33;
+    --hades2-color: #72db91;   /* spectral green (Hades II logo): Hades 2 */
+    --hades2-color-rgb: 114, 219, 145;
 
     /* Eligibility status palette. One source of truth for the four verdicts
        shown as dots (tree), badges/pills (save progress), chips (speaker
