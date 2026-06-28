@@ -179,7 +179,7 @@ test('H1: CurrentRun.* gate is wrong-save-type unknown when no currentRun slice'
     const r = evaluateH1OtherRequirements({ RequiresRunCleared: true }, ctx({ gs: {} }));
     assert.equal(r.status, 'unknown');
     assert.equal(r.clauses[0].kind, 'wrong-save-type');
-    assert.match(r.clauses[0].reason, /CurrentRun/);
+    assert.match(r.clauses[0].reason, /different save type/);
 });
 
 test('H1: RequiresRunCleared resolves against a present currentRun slice', () => {
