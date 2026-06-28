@@ -20,6 +20,7 @@ from src.extractors.hades1 import (
     HADES1_OTHER_REQ_TOOLTIPS,
     HADES1_CHOICE_NAMES,
     HADES1_META_UPGRADE_NAMES,
+    HADES1_ENTITY_NAMES,
 )
 from src.extractors.hades2 import (
     HADES2_SECTION_KEY_LABELS,
@@ -30,6 +31,7 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_LABELS_DEPENDENTS,
     HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
     HADES2_CHOICE_NAMES,
+    HADES2_ENTITY_NAMES,
 )
 
 
@@ -69,6 +71,7 @@ _GAME_LABELS = {
         "reqTypeTooltipsDependents": HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES1_CHOICE_NAMES,
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
+        "entityNames": HADES1_ENTITY_NAMES,
     },
     "hades2": {
         "sectionKeyLabels": HADES2_SECTION_KEY_LABELS,
@@ -80,6 +83,7 @@ _GAME_LABELS = {
         "reqTypeTooltipsDependents": HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES2_CHOICE_NAMES,
         "metaUpgradeNames": {},
+        "entityNames": HADES2_ENTITY_NAMES,
     },
 }
 
@@ -119,6 +123,11 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
         Mirror of Night / meta upgrade ids referenced from preset
         choice tables. Empty for games (e.g. H2) that don't reference
         named meta upgrades.
+      - ``entityNames``: ``{InternalId: DisplayName}`` for game entities
+        (boons/traits, keepsakes, companions, weapon aspects, god boons,
+        enemies, items, ...) that appear as ``otherRequirements`` operand
+        values. The viewer renders the friendly name with the internal id
+        in the row tooltip, falling back to the raw id when unmapped.
     """
     if game not in _GAME_LABELS:
         raise ValueError(
@@ -137,3 +146,4 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
     )
     graph_data["choiceNames"] = dict(bundle["choiceNames"])
     graph_data["metaUpgradeNames"] = dict(bundle["metaUpgradeNames"])
+    graph_data["entityNames"] = dict(bundle["entityNames"])

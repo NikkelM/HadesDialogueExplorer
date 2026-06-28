@@ -34,6 +34,7 @@ _DOCUMENTED_KEYS = (
     "sectionKeyLabels",
     "choiceNames",
     "metaUpgradeNames",
+    "entityNames",
 )
 
 
@@ -192,6 +193,20 @@ class TestMetaUpgradeNames:
         # H2 contributes no meta-upgrade refs (only count-based gates),
         # so its dict is intentionally empty.
         assert _annotated("hades2")["metaUpgradeNames"] == {}
+
+    def test_hades1_entityNames_attached(self):
+        from src.extractors.hades1 import HADES1_ENTITY_NAMES
+        annotated = _annotated("hades1")["entityNames"]
+        assert HADES1_ENTITY_NAMES, "H1 entity-name map should be non-empty"
+        for key in HADES1_ENTITY_NAMES:
+            assert key in annotated, key
+
+    def test_hades2_entityNames_attached(self):
+        from src.extractors.hades2 import HADES2_ENTITY_NAMES
+        annotated = _annotated("hades2")["entityNames"]
+        assert HADES2_ENTITY_NAMES, "H2 entity-name map should be non-empty"
+        for key in HADES2_ENTITY_NAMES:
+            assert key in annotated, key
 
 
 class TestUnknownGameId:

@@ -228,6 +228,13 @@
     padding: 0 4px;
     border-radius: 3px;
 }
+/* Friendly DisplayName gloss appended after an internal entity id inside a
+   path pill (e.g. ``...ForceAphroditeBoonKeepsake (Beautiful Mirror)``). Muted
+   + non-mono so the raw path the gate checks still reads as the primary text. */
+.other-req-item .other-req-path .other-req-friendly {
+    color: #8b949e;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 /* AND joiner between multiple comparison/membership records that share
    a Path:<head> key (engine AND-combines them). */
 .other-req-item .other-req-and {

@@ -51,6 +51,7 @@ export let reqTypeLabelsDependents, reqTypeTooltipsDependents;
 export let sectionKeyLabels;
 export let choiceNames;
 export let metaUpgradeNames;
+export let entityNames;
 export let gameDataRefs;
 export let namedRequirements;
 export let godTraitNames;
@@ -217,6 +218,7 @@ export function setActiveGame(gameId) {
     sectionKeyLabels = gd.sectionKeyLabels || {};
     choiceNames = gd.choiceNames || {};
     metaUpgradeNames = gd.metaUpgradeNames || {};
+    entityNames = gd.entityNames || {};
     gameDataRefs = gd.gameDataRefs || {};
     namedRequirements = gd.namedRequirements || {};
     godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);

@@ -29,7 +29,7 @@ import {
     saveStatusTooltip,
     groupStatusTooltip,
 } from './utilities.js';
-import { metaUpgradeNames, gameDataRefs, namedRequirements } from './data.js';
+import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
@@ -64,7 +64,7 @@ function renderOtherReqKeyHtml(key) {
     if (reqTypeLabels[prefix]) {
         const head = renderReqTypeHtml(prefix);
         return tail
-            ? `${head}: <code class="other-req-path">${escapeHtml(tail)}</code>`
+            ? `${head}: ${_renderPathTailHtml(tail)}`
             : head;
     }
     return escapeHtml(key);
@@ -134,6 +134,44 @@ function _formatScalar(v) {
     return typeof v === 'string' ? v : JSON.stringify(v);
 }
 
+// Render a scalar operand value as a ``<code>`` chip, resolving an internal
+// game-entity id (boon/trait, keepsake, companion, weapon aspect, god boon,
+// enemy, item, ...) to its friendly DisplayName via ``entityNames`` and keeping
+// the internal id in the hover tooltip. Non-strings and unmapped ids render the
+// raw value unchanged. ``cls`` adds a CSS class to the chip when given.
+function _valueChip(v, cls) {
+    const klass = cls ? ` class="${cls}"` : '';
+    if (typeof v === 'string') {
+        const friendly = entityNames[v];
+        if (friendly && friendly !== v) {
+            return `<code${klass} data-tooltip="${escapeHtml(v)}">${escapeHtml(friendly)}</code>`;
+        }
+    }
+    return `<code${klass}>${escapeHtml(_formatScalar(v))}</code>`;
+}
+
+// Render a dotted path tail (``CurrentRun.Hero.TraitDictionary.<entity>``,
+// ``CurrentRun.UseRecord.<entity>``, ...) as an ``other-req-path`` chip. When
+// exactly one path segment is a known ``entityNames`` id, the full internal
+// path is kept intact and the entity's friendly DisplayName is appended in
+// parentheses (``...ForceAphroditeBoonKeepsake (Beautiful Mirror)``) so the
+// raw path the gate checks stays visible. When no segment - or more than one -
+// resolves, the raw path renders unchanged.
+function _renderPathTailHtml(path) {
+    const segs = String(path).split('.');
+    const hits = [];
+    for (let i = 0; i < segs.length; i++) {
+        const friendly = entityNames[segs[i]];
+        if (friendly && friendly !== segs[i]) hits.push(i);
+    }
+    if (hits.length !== 1) {
+        return `<code class="other-req-path">${escapeHtml(path)}</code>`;
+    }
+    const friendly = entityNames[segs[hits[0]]];
+    return `<code class="other-req-path">${escapeHtml(path)}`
+        + ` <span class="other-req-friendly">(${escapeHtml(friendly)})</span></code>`;
+}
+
 // Strip a ``<ref:...>`` placeholder back to the bare identifier
 // (e.g. ``<ref:GameData.AllWeaponAspects>`` -> ``GameData.AllWeaponAspects``).
 // Returns ``null`` for non-string or non-ref values.
@@ -201,7 +239,7 @@ function _renderListItemHtml(v) {
     if (refName !== null) {
         return `<code class="other-req-path">${escapeHtml(refName)}</code>`;
     }
-    return `<code>${escapeHtml(_formatScalar(v))}</code>`;
+    return _valueChip(v);
 }
 
 function _renderOperandList(items) {
@@ -246,7 +284,7 @@ function _pathDecoratorSuffix(rec, consumed) {
 function _renderComparisonValue(rec, consumed) {
     if ('Value' in rec) {
         consumed.add('Value');
-        return `<code>${escapeHtml(_formatScalar(rec.Value))}</code>`;
+        return _valueChip(rec.Value);
     }
     if ('ValuePath' in rec) {
         consumed.add('ValuePath');
@@ -311,7 +349,7 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
 function _renderPathRecord(head, rec) {
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
     const keys = new Set(Object.keys(rec));
-    const headHtml = `<code class="other-req-path">${escapeHtml(head)}</code>`;
+    const headHtml = _renderPathTailHtml(head);
 
     // Set-/value-membership predicates carry only the operand list plus
     // optional decorators.
@@ -379,7 +417,7 @@ function _renderBareKeyValueHtml(val, key) {
     if (val === null || val === undefined) return escapeHtml(String(val));
     if (Array.isArray(val)) {
         if (val.length === 0) return '<code>(empty)</code>';
-        return val.map(v => `<code>${escapeHtml(_formatScalar(v))}</code>`).join(', ');
+        return val.map(v => _valueChip(v)).join(', ');
     }
     if (typeof val === 'object') {
         const kind = _reqGateKind(key);
@@ -391,7 +429,7 @@ function _renderBareKeyValueHtml(val, key) {
         }
         // ``{Name, Count}`` threshold pair -> ``Name op Count``.
         if (objKeys.length === 2 && 'Count' in val && 'Name' in val) {
-            return `<code>${escapeHtml(_formatScalar(val.Name))}</code> ${op} <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
+            return `${_valueChip(val.Name)} ${op} <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
         }
         // Codex entry ``{EntryName, EntryIndex}`` -> the entry name plus how far
         // it must be unlocked. EntryIndex is a cumulative threshold: the gate
@@ -400,7 +438,7 @@ function _renderBareKeyValueHtml(val, key) {
         // about this subject the player has revealed", not a positional id.
         if ('EntryName' in val) {
             const idx = Number(val.EntryIndex) || 1;
-            const name = `<code>${escapeHtml(_formatScalar(val.EntryName))}</code>`;
+            const name = _valueChip(val.EntryName);
             const detail = idx === 1 ? 'first entry' : `first <code>${idx}</code> entries`;
             return `${name} (${detail})`;
         }
@@ -417,10 +455,10 @@ function _renderBareKeyValueHtml(val, key) {
         // for RequiredFalseValues (must not equal), ``<=`` for max thresholds,
         // ``>=`` otherwise.
         return Object.entries(val)
-            .map(([k, v]) => `<code>${escapeHtml(k)}</code> ${op} <code>${escapeHtml(_formatScalar(v))}</code>`)
+            .map(([k, v]) => `<code>${escapeHtml(k)}</code> ${op} ${_valueChip(v)}`)
             .join(', ');
     }
-    return `<code>${escapeHtml(_formatScalar(val))}</code>`;
+    return _valueChip(val);
 }
 
 // Comparison sense of a bare-key gate, derived from the requirement key:
@@ -672,7 +710,7 @@ function renderCrossGameBadgeHtml(name) {
     const active = getActiveGame();
     const otherGame = active === 'hades1' ? 'hades2' : 'hades1';
     const otherLabel = (gameLabels && gameLabels[otherGame]) || otherGame;
-    return ` <a class="cross-game-badge" data-tooltip="Also exists in ${escapeHtml(otherLabel)} - click to navigate" `
+    return ` <a class="cross-game-badge cross-game-${otherGame}" data-tooltip="Also exists in ${escapeHtml(otherLabel)} - click to navigate" `
         + `onclick="event.stopPropagation(); navigateToState({game:${jsAttr(otherGame)}, view:'dialogue', dialogue:${jsAttr(name)}})">`
         + `\u21C4 ${escapeHtml(otherLabel)}</a>`;
 }

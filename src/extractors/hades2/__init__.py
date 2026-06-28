@@ -93,6 +93,7 @@ from .req_types import (
     HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 from .choice_names import HADES2_CHOICE_NAMES
+from .entity_names import HADES2_ENTITY_NAMES
 from .offer_text import HADES2_OFFER_TEXT_MAP
 from .owner_overrides import (
     HUB_NARRATOR_SPEAKER,
@@ -160,6 +161,7 @@ __all__ = [
     "HADES2_REQ_TYPE_LABELS_DEPENDENTS",
     "HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS",
     "HADES2_CHOICE_NAMES",
+    "HADES2_ENTITY_NAMES",
     "HADES2_OFFER_TEXT_MAP",
     "HUB_NARRATOR_SPEAKER",
     "TEXTLINE_OWNER_OVERRIDES",
