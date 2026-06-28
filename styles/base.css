@@ -249,7 +249,17 @@ main {
    so the swap to real content reads as the same layout filling in rather than
    a jump. viewer.js replaces the panel contents once it renders. Tones blend
    with the dark navy surface; the sweep is the only motion. */
-.panel-skeleton { padding: 16px; }
+/* The skeleton mounts inside a ``.panel-body`` (``padding: 0 16px 16px``),
+   which already insets it to where the real content sits - so it adds no
+   padding of its own (an extra inset here would double the gap and leave the
+   skeleton sitting too far in from the panel edges). */
+.panel-skeleton { padding: 0; }
+/* The single-panel views (eligibility / duplicates / speaker) wrap their
+   content in a root that adds a small top padding (0.5rem) below the panel
+   header; mirror it so the skeleton's first bar starts where the real text
+   does rather than sitting flush against the header. The 3-panel dialogue
+   layout has no such top padding, so this is scoped to layout-speaker. */
+body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .panel-skeleton .sk {
     border-radius: 4px;
     background: linear-gradient(90deg, #1f2742 25%, #2a3556 37%, #1f2742 63%);
@@ -293,8 +303,15 @@ main {
 .sk-sec > :last-child { margin-bottom: 0; }
 .sk-narrow { max-width: 920px; }
 
-/* Dialogue detail: speaker/text blocks, then bordered requirement groups. */
-.sk-dlg    { margin: 0 0 16px; }
+/* Dialogue detail: speaker/text blocks (each a left-accent line block like a
+   real ``.dialogue-line``), then bordered requirement groups. */
+.sk-dlg {
+    padding: 6px 10px;
+    margin: 4px 0;
+    background: var(--bg);
+    border-left: 3px solid var(--border);
+    border-radius: 0 4px 4px 0;
+}
 .sk-dlg .sk-spk { height: 12px; width: 28%; margin: 0 0 8px; }
 .sk-group  { border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin: 0 0 12px; }
 .sk-group .sk-hdr { height: 14px; width: 55%; margin: 0 0 12px; }
