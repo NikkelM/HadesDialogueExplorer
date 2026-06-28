@@ -41,8 +41,10 @@ Display-name disambiguation convention:
     dropdown, info panel, dialogue attributions, and tree node labels:
       - ``_Story_``    -> "X (Field)" / "X (Ending)"
                           (post-Hub Story content - per-character labeling:
-                          Achilles/Nyx/Orpheus appear in chamber Field rooms,
-                          Hades exclusively in the Ending sequence)
+                          Nyx/Orpheus appear in chamber Field rooms,
+                          Hades exclusively in the Ending sequence;
+                          Achilles' ``_Story_`` variant instead shares the
+                          bare "Achilles" name - see the shared-name list)
       - ``_Field_``    -> "X (Field)"    (in-run chamber encounter variant)
       - ``_Home_``     -> "X (House)"    (House variant of a surface NPC)
       - ``_Unnamed_``  -> "? ? ? (X)"    (mystery character - identity
@@ -61,6 +63,10 @@ Display-name disambiguation convention:
       - lesser Fury bosses (Harpy2/Harpy3) share with their NPC form
         (only Megaera has a substantial House/Boss split)
       - training dummy ``TrainingMelee`` shares with ``NPC_Skelly_01``
+      - ``NPC_Achilles_Story_01`` shares the bare "Achilles" name - it
+        owns no dialogue and only voices three guest lines in Patroclus'
+        Elysium dialogues, so a "(Field)" split would surface an almost
+        empty speaker rather than useful disambiguation
   * Hover tooltip / canonical id remains available via the viewer's
     ``renderSpeakerHtml``, so collisions are disambiguated on
     hover via the underlying internal ID.
@@ -83,7 +89,13 @@ HADES1_SPEAKERS = {
     # the source data except where InheritFrom flips the parent
     # (Persephone_Home_01 -> "Queen of the Underworld").
     "NPC_Achilles_01":          {"name": "Achilles",            "description": "Forgotten Hero"},
-    "NPC_Achilles_Story_01":    {"name": "Achilles (Field)",    "description": "Forgotten Hero"},
+    # Owns no dialogue; only voices three guest lines in Patroclus'
+    # Elysium dialogues (``PatroclusWithAchilles01``-``03``). Shares the
+    # bare "Achilles" name so it collapses into the main Achilles speaker
+    # via the display-name grouping in ``speaker-groups.js`` rather than
+    # surfacing an almost-empty "Achilles (Field)" speaker. Allowlisted
+    # in ``tests/hades1/test_speakers.py`` ALLOWED_NAME_COLLISIONS.
+    "NPC_Achilles_Story_01":    {"name": "Achilles",            "description": "Forgotten Hero"},
     "NPC_Bouldy_01":            {"name": "Bouldy",              "description": None},
     "NPC_Cerberus_01":          {"name": "Cerberus",            "description": "Notorious Watchdog"},
     "NPC_Cerberus_Field_01":    {"name": "Cerberus (Field)",    "description": "Notorious Watchdog"},

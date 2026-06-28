@@ -64,6 +64,11 @@ ALLOWED_NAME_COLLISIONS = {
     # ``SkellyBackstory`` is the flashback speaker tag (different
     # description quip, but same character).
     "Skelly": {"NPC_Skelly_01", "TrainingMelee", "SkellyBackstory"},
+    # ``NPC_Achilles_Story_01`` owns no dialogue and only voices three
+    # guest lines in Patroclus' Elysium dialogues, so it collapses into
+    # the main Achilles speaker rather than surfacing an almost-empty
+    # "Achilles (Field)" entry.
+    "Achilles": {"NPC_Achilles_01", "NPC_Achilles_Story_01"},
     # Protagonist: the canonical ``CharProtag`` speaker plus the
     # ``PlayerUnit`` / ``PlayerUnit_Intro`` cutscene + intro speaker
     # tags - all the same character.
@@ -177,7 +182,6 @@ class TestKnownVariantPairsAreDistinct:
         ("NPC_Thanatos_01", "NPC_Thanatos_Field_01"),
         ("NPC_Cerberus_01", "NPC_Cerberus_Field_01"),
         ("NPC_Orpheus_01", "NPC_Orpheus_Story_01"),
-        ("NPC_Achilles_01", "NPC_Achilles_Story_01"),
         ("NPC_Hades_01", "Hades"),               # NPC vs boss
         ("NPC_Nyx_01", "NPC_Nyx_Story_01"),
         ("NPC_Persephone_01", "NPC_Persephone_Home_01"),

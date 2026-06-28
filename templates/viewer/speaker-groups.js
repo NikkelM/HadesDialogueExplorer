@@ -10,8 +10,8 @@
 // Disambiguator suffixes are preserved because they are part of the
 // friendly name itself: ``"Hecate"`` and ``"Hecate (Boss)"`` are
 // distinct labels and stay in separate groups, as do
-// ``"Zagreus"`` / ``"Zagreus (Boss)"``, ``"Achilles"`` /
-// ``"Achilles (Field)"``, and similar.
+// ``"Zagreus"`` / ``"Zagreus (Boss)"``, ``"Orpheus"`` /
+// ``"Orpheus (Field)"``, and similar.
 //
 // This collapse is DISPLAY-ONLY: the underlying ``textlines`` map
 // keeps its single-owner-id-per-textline shape unchanged, so search,
