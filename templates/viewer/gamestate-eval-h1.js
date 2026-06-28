@@ -171,7 +171,7 @@ function h1HasResource(resources, name, amount) {
 
 // Convenience: require a CurrentRun slice (resolved owner-context), else wrong-save.
 function _h1cr(ctx) { return ctx ? ctx.currentRun : null; }
-const _CR_REASON = 'Reads CurrentRun.* - current-run state; load the matching save type to resolve it (an in-run "_Temp" save for run dialogue, a hub save for hub dialogue).';
+const _CR_REASON = 'This requirement reads data from a different save type. Load a "ProfileX.sav" file for a hub save, or "ProfileX_Temp.sav" for an in-run save.';
 
 const H1_FIELD_EVALS = {
     // ===== PERSISTENT: GameState flags / values =====
