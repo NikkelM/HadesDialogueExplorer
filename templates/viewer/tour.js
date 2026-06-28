@@ -46,6 +46,10 @@ let _nextBtn = null;
 let _resizeObs = null;
 // Elements given the secondary "emphasis" ring for the current step.
 let _emphasized = [];
+// requestAnimationFrame handle for the dim-follow loop, and the last hole
+// clip-path written, so the loop only touches the DOM when it actually moves.
+let _dimRaf = null;
+let _lastHole = '';
 
 // True while a tour is on screen; used by the dispatcher to avoid stacking.
 export function isTourActive() {
@@ -137,7 +141,7 @@ function _buildDom() {
     _dim.className = 'tour-dim';
 
     _spotlight = document.createElement('div');
-    _spotlight.className = 'tour-spotlight';
+    _spotlight.className = 'tour-spotlight tour-anim-off';
 
     _card = document.createElement('div');
     _card.className = 'tour-card';
@@ -223,20 +227,52 @@ function _position() {
         _spotlight.style.left = left + 'px';
         _spotlight.style.width = width + 'px';
         _spotlight.style.height = height + 'px';
-        _dim.style.clipPath = _holeClip(top, left, width, height);
+        // The dim hole is driven from the spotlight's live box by ``_syncDim``
+        // (rAF loop), so it tracks the ring's smooth transition without a
+        // clip-path animation. Nothing to set here.
         _placeCard({ top, left, right, bottom, width, height });
     } else {
         // No target: dim everything, centre the card. Drop the highlight ring so
         // the zero-size cut-out doesn't show as a stray square (visible on phones,
-        // where the card is a bottom sheet and doesn't cover the centre).
+        // where the card is a bottom sheet and doesn't cover the centre). The
+        // dim-follow loop clears the hole (clip-path: none) off this class.
         _spotlight.classList.add('tour-spotlight-untargeted');
         _spotlight.style.top = '50%';
         _spotlight.style.left = '50%';
         _spotlight.style.width = '0px';
         _spotlight.style.height = '0px';
-        _dim.style.clipPath = 'none';
         _placeCard(null);
     }
+}
+
+// Drive the dim's cut-out from the spotlight's live box. Called every frame
+// while a tour is open (see the rAF loop in ``startTour``): the spotlight
+// transitions its position smoothly via reliable ``left/top/width/height``
+// transitions, and rebuilding the hole from its current rect each frame keeps
+// the bright cut-out exactly under the ring - without animating the clip-path
+// itself, which interpolates unreliably and could overshoot on the first step
+// change. Only writes when the hole actually moved.
+function _syncDim() {
+    if (!_dim || !_spotlight) return;
+    let hole;
+    if (_spotlight.classList.contains('tour-spotlight-untargeted')) {
+        hole = 'none';
+    } else {
+        const r = _spotlight.getBoundingClientRect();
+        hole = _holeClip(r.top, r.left, r.width, r.height);
+    }
+    if (hole !== _lastHole) {
+        _dim.style.clipPath = hole;
+        _lastHole = hole;
+    }
+}
+
+function _syncDimLoop() {
+    if (!_active) { _dimRaf = null; return; }
+    _syncDim();
+    _dimRaf = (typeof requestAnimationFrame === 'function')
+        ? requestAnimationFrame(_syncDimLoop)
+        : null;
 }
 
 function _placeCard(targetRect) {
@@ -460,6 +496,11 @@ function _onKeydown(e) {
 function _end() {
     if (!_active) return;
     _active = false;
+    if (_dimRaf !== null && typeof cancelAnimationFrame === 'function') {
+        cancelAnimationFrame(_dimRaf);
+    }
+    _dimRaf = null;
+    _lastHole = '';
     document.body.classList.remove('tour-open');
     document.body.classList.remove('tour-no-nav');
     _card.classList.remove('tour-card-pinned-top');
@@ -501,5 +542,19 @@ export function startTour(steps, opts = {}) {
     window.addEventListener('scroll', _position, true);
     document.addEventListener('keydown', _onKeydown, true);
     _show(0);
+    // Enable the spotlight's movement transition only after the first step is
+    // placed and painted, so its committed position - not the element's initial
+    // ``auto`` baseline - is the starting point for the first real step change.
+    const _enableAnim = () => {
+        if (_spotlight) _spotlight.classList.remove('tour-anim-off');
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(_enableAnim);
+    else _enableAnim();
+    // Drive the dim cut-out from the spotlight every frame while the tour is
+    // open (set it once now so step 1's hole shows immediately, then loop).
+    _syncDim();
+    if (typeof requestAnimationFrame === 'function') {
+        _dimRaf = requestAnimationFrame(_syncDimLoop);
+    }
     return true;
 }

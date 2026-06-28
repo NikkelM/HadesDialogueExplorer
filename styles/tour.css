@@ -35,16 +35,19 @@
 }
 
 /* The dim layer. A full-screen solid fill with a clip-path hole over the
-   target (set from JS). Purely visual - pointer-events stay off so the
-   overlay above keeps owning click-blocking. The clip-path transition keeps
-   the hole sliding in step with the spotlight ring between steps. */
+   target. JS drives the hole every frame from the spotlight's live (animating)
+   position - see ``_syncDim`` in tour.js - rather than transitioning the
+   clip-path itself: animating a polygon clip-path is unreliable and can
+   overshoot on the first step change, separating the bright cut-out from the
+   ring. Reading the spotlight's smooth ``left/top/width/height`` transition and
+   rebuilding the hole from it keeps the cut-out exactly under the ring.
+   Purely visual - pointer-events stay off so the overlay owns click-blocking. */
 .tour-dim {
     position: fixed;
     inset: 0;
     z-index: 100000;
     background: rgba(0, 0, 0, 0.6);
     pointer-events: none;
-    transition: clip-path 0.18s ease;
 }
 
 /* While a tour is open, the hover tooltip must sit above the tour layers so
@@ -64,6 +67,17 @@ body.tour-open #custom-tooltip {
     outline-offset: 2px;
     pointer-events: none;
     transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
+}
+
+/* Applied to the spotlight only for the very first placement of a run, then
+   removed a frame later (see tour.js ``startTour``). The spotlight is created
+   with no position, so without this its first placement could animate in from
+   the element's static ``auto`` baseline (the page corner). Disabling the
+   transition until the first target is placed and painted means every real
+   step change - including the first - animates smoothly from a committed
+   position to the next, never from the corner. */
+.tour-anim-off {
+    transition: none !important;
 }
 
 /* No-target steps clear the clip-path hole (the dim covers the whole screen)
