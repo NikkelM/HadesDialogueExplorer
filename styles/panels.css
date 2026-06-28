@@ -178,3 +178,25 @@
     font-size: var(--fs-base);
     color: var(--text-color);
 }
+
+/* The open dialogue's own row: highlighted and non-clickable, with a small
+   "current" tag, so it's clearly the variant you're looking at among its
+   mutually-exclusive siblings. */
+.alternates-item-current {
+    cursor: default;
+    background: rgba(106, 74, 120, 0.22);
+    box-shadow: inset 2px 0 0 var(--accent-color);
+}
+.alternates-item-current:hover {
+    background: rgba(106, 74, 120, 0.22);
+}
+.alternates-item-current .alternates-name {
+    font-weight: 600;
+}
+.alternates-current-tag {
+    margin-left: auto;
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent-color);
+}

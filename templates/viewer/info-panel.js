@@ -717,6 +717,16 @@ function renderAlternatesHtml(name) {
     html += `<div class="alternates-hint">Only one of these variants can trigger; the others are permanently blocked once one plays.</div>`;
     html += `<div class="alternates-list">`;
 
+    // The open dialogue leads the list, flagged as the current variant so it
+    // reads in context against its siblings rather than being absent from a
+    // list it belongs to. Not a link - it's already on screen.
+    const currentBadge = renderSaveBadgeHtml(name, textlines[name]);
+    html += `<div class="alternates-item alternates-item-current">`;
+    if (currentBadge) html += currentBadge;
+    html += `<span class="alternates-name">${escapeHtml(name)}</span>`;
+    html += `<span class="alternates-current-tag">current</span>`;
+    html += `</div>`;
+
     for (const sibling of siblings) {
         const tl = textlines[sibling];
         const badge = renderSaveBadgeHtml(sibling, tl);
