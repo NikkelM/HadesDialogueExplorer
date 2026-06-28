@@ -10,6 +10,7 @@ import { strict as assert } from 'node:assert';
 
 import {
     canonicalSpeakerId,
+    canonicalIdForSpeakerName,
     speakerGroupMembers,
     listCanonicalSpeakerIds,
     getSpeakerGroupEntry,
@@ -171,6 +172,22 @@ test('canonicalSpeakerId returns unknown ids unchanged (no throw)', () => {
     assert.equal(canonicalSpeakerId('NPC_NotARealSpeaker_99'), 'NPC_NotARealSpeaker_99');
     assert.equal(canonicalSpeakerId(''), '');
     assert.equal(canonicalSpeakerId(null), null);
+});
+
+test('canonicalIdForSpeakerName resolves a friendly name to its canonical id', () => {
+    // The friendly name (as carried in the URL hash) maps to the group's
+    // canonical id - the alphabetically-first member for multi-id groups.
+    assert.equal(canonicalIdForSpeakerName('Hermes'), 'HermesUpgrade');
+    assert.equal(canonicalIdForSpeakerName('Zeus'), 'NPC_Zeus_01');
+    assert.equal(canonicalIdForSpeakerName('Hecate'), 'NPC_Hecate_01');
+    // The "(Boss)" disambiguator is part of the name, so it resolves separately.
+    assert.equal(canonicalIdForSpeakerName('Hecate (Boss)'), 'NPC_HecateBoss_01');
+});
+
+test('canonicalIdForSpeakerName returns null for unknown / empty names', () => {
+    assert.equal(canonicalIdForSpeakerName('Not A Speaker'), null);
+    assert.equal(canonicalIdForSpeakerName(''), null);
+    assert.equal(canonicalIdForSpeakerName(null), null);
 });
 
 test('empty friendly names never group (each stays a singleton)', () => {

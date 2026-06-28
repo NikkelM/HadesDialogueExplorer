@@ -16,7 +16,7 @@ import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { maybeStartDuplicatesTour } from './tour-duplicates.js';
 import { maybeStartEligibilityTour } from './tour-eligibility.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
-import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
+import { renderSpeaker, canonicalisePriority, canonicaliseEligibility, canonicaliseSection } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
@@ -24,7 +24,7 @@ import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
-import { canonicalSpeakerId, resetSpeakerGroups } from './speaker-groups.js';
+import { canonicalSpeakerId, canonicalIdForSpeakerName, resetSpeakerGroups } from './speaker-groups.js';
 import { renderGameToggle, updateFavicon } from './game-toggle.js';
 import { refreshSaveStatus } from './save-upload.js';
 import { getSaveProgress, saveMatchesActiveGame, getSaveGameId } from './save-parser.js';
@@ -66,29 +66,43 @@ export function navigateTo(name) {
 // for both initial drill-in (no opts) and intra-view pivots (filter
 // chip clicks).
 //
-// Member ids are canonicalised to their group's canonical id before
-// writing the URL so two different routes into the same group land on
-// the same shareable URL (e.g. clicking either ``HermesUpgrade`` or
-// ``NPC_Hermes_01`` lands on ``speaker=<canonical Hermes id>``).
+// Member ids are canonicalised to their group's canonical id, then the
+// group's friendly name is written into the URL (e.g. clicking either
+// ``HermesUpgrade`` or ``NPC_Hermes_01`` lands on ``speaker=Hermes``).
+// Friendly names are unique per game, so they identify the group
+// unambiguously while keeping the shared URL human-readable; the value
+// is resolved back to the canonical id in ``applyState``. An unnamed
+// speaker (none today) falls back to its id so the URL still resolves.
 export function navigateToSpeaker(speakerId, opts) {
     const canonical = canonicalSpeakerId(speakerId);
-    const state = { view: 'speaker', speaker: canonical };
+    const name = ((speakers[canonical] || {}).name || '').trim();
+    const state = { view: 'speaker', speaker: name || canonical };
     if (opts && opts.priority) state.priority = opts.priority;
     if (opts && opts.eligibility) state.eligibility = opts.eligibility;
+    if (opts && opts.section) state.section = opts.section;
     navigateToState(state);
 }
 
 // Filter-chip click targets. Each pivots one filter axis while preserving
-// the other (read back off the current URL hash) so the repeatability and
-// eligibility filters compose instead of clobbering each other.
+// the others (read back off the current URL hash) so the repeatability,
+// eligibility and section filters compose instead of clobbering each other.
 export function filterSpeakerPriority(speakerId, priority) {
     const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, { priority, eligibility: state.eligibility });
+    navigateToSpeaker(speakerId, { priority, eligibility: state.eligibility, section: state.section });
 }
 
 export function filterSpeakerEligibility(speakerId, eligibility) {
     const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, { priority: state.priority, eligibility });
+    navigateToSpeaker(speakerId, { priority: state.priority, eligibility, section: state.section });
+}
+
+// Section filter, driven by clicking a section in the summary header.
+// Passing the already-active section clears it (back to 'all'), so the
+// header row doubles as a toggle.
+export function filterSpeakerSection(speakerId, section) {
+    const state = parseUrlState(window.location.hash);
+    const next = state.section === section ? 'all' : section;
+    navigateToSpeaker(speakerId, { priority: state.priority, eligibility: state.eligibility, section: next });
 }
 
 // Navigate to the cross-game duplicates view. Preserves existing
@@ -348,16 +362,21 @@ function applyState(state) {
     const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
     if (view === 'speaker') {
         applyLayoutMode('speaker');
-        const speakerId = state.speaker || null;
+        // The URL carries the friendly speaker name; resolve it back to the
+        // group's canonical id for rendering. An unresolved value (a hand-typed
+        // or since-renamed name) flows through unchanged so renderSpeaker shows
+        // its not-found state rather than a blank panel.
+        const ref = state.speaker || null;
+        const speakerId = ref ? (canonicalIdForSpeakerName(ref) || ref) : null;
         renderSpeaker(speakerId, {
             priority: canonicalisePriority(state.priority),
             eligibility: canonicaliseEligibility(state.eligibility),
+            section: canonicaliseSection(state.section),
         });
         const searchInput = document.getElementById('search');
         if (searchInput) {
             const entry = speakerId ? speakers[speakerId] : null;
-            const friendly = entry && entry.name && entry.name !== speakerId ? entry.name : (speakerId || '');
-            searchInput.value = friendly;
+            searchInput.value = (entry && entry.name) || ref || '';
         }
         // Onboarding: first time a speaker overview actually renders, offer
         // the speaker tour (no-op on later visits / when opted out).

@@ -309,7 +309,7 @@ export function initSearch() {
             const idSuffix = (m.friendly && m.friendly !== m.id)
                 ? `<span class="npc">(${escapeHtml(m.id)})</span>`
                 : '';
-            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(friendly)}${idSuffix}<span class="cross-game-badge">${escapeHtml(result.gameLabel)}</span></div>`);
+            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-speaker-name="${escapeHtml(friendly)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(friendly)}${idSuffix}<span class="cross-game-badge">${escapeHtml(result.gameLabel)}</span></div>`);
         }
         crossSpeakersList.innerHTML = parts.join('');
     }
@@ -405,8 +405,10 @@ export function initSearch() {
         if (!target) return;
         if (target.dataset.speaker && target.dataset.game) {
             // Cross-game speaker: switch to the other game, then open its
-            // speaker overview (re-canonicalised there).
-            navigateToState({ game: target.dataset.game, view: 'speaker', speaker: target.dataset.speaker });
+            // speaker overview. The URL carries the friendly name (unique in
+            // the target game), resolved back to the canonical id after the
+            // game swap by ``applyState``.
+            navigateToState({ game: target.dataset.game, view: 'speaker', speaker: target.dataset.speakerName || target.dataset.speaker });
         } else if (target.dataset.speaker) {
             navigateToSpeaker(target.dataset.speaker);
         } else if (target.dataset.game) {

@@ -18,7 +18,7 @@
 // and ignored by renderers that don't recognise them):
 //
 //   #game=<gameId>&view=<viewName>&dialogue=<TextlineName>
-//   #game=<gameId>&view=<viewName>&speaker=<SpeakerId>
+//   #game=<gameId>&view=<viewName>&speaker=<SpeakerName>
 //   #game=<gameId>&view=<viewName>&dialogue=<TextlineName>&...viewSpecificKeys
 //
 // Defaults / fallback:
@@ -49,7 +49,7 @@
 // stable across renders. ``game`` comes first because it bounds
 // the namespace every other key resolves against (textline names
 // are NOT unique cross-game). Extra keys follow in insertion order.
-const KEY_ORDER = ['game', 'view', 'dialogue', 'speaker', 'priority', 'eligibility', 'sort', 'dup', 'q'];
+const KEY_ORDER = ['game', 'view', 'dialogue', 'speaker', 'priority', 'eligibility', 'section', 'sort', 'dup', 'q'];
 
 // Parse a hash fragment (with or without the leading ``#``) into a
 // plain object. Returns ``{}`` for an empty / missing hash or for a

@@ -33,6 +33,7 @@ import { speakers, textlines, dependents } from './data.js';
 // multi-member group; both are tiny in practice.
 let _idToCanonical = null;          // {memberId -> canonicalId}
 let _canonicalToMembers = null;     // {canonicalId -> [memberId, ...]}
+let _nameToCanonical = null;        // {friendlyName -> canonicalId}
 let _groupEntryCache = null;        // {canonicalId -> aggregated entry}
 
 // Clear the per-game caches. Called by ``navigation.js`` on game
@@ -41,6 +42,7 @@ let _groupEntryCache = null;        // {canonicalId -> aggregated entry}
 export function resetSpeakerGroups() {
     _idToCanonical = null;
     _canonicalToMembers = null;
+    _nameToCanonical = null;
     _groupEntryCache = null;
 }
 
@@ -48,6 +50,7 @@ function _ensureGroups() {
     if (_idToCanonical && _canonicalToMembers) return;
     _idToCanonical = {};
     _canonicalToMembers = {};
+    _nameToCanonical = {};
     _groupEntryCache = {};
 
     // Bucket ids by trimmed friendly name. Empty / missing names go
@@ -67,10 +70,11 @@ function _ensureGroups() {
         byName.get(name).push(sid);
     }
 
-    for (const [, members] of byName) {
+    for (const [name, members] of byName) {
         members.sort();
         const canonical = members[0];
         _canonicalToMembers[canonical] = members;
+        _nameToCanonical[name] = canonical;
         for (const mid of members) {
             _idToCanonical[mid] = canonical;
         }
@@ -85,6 +89,19 @@ export function canonicalSpeakerId(speakerId) {
     if (!speakerId) return speakerId;
     _ensureGroups();
     return _idToCanonical[speakerId] || speakerId;
+}
+
+// Resolve a friendly speaker name (as carried in the URL hash) to its
+// group's canonical id within the active game, or ``null`` when no
+// speaker carries that name. Friendly names are unique per game - the
+// speaker overview buckets every id by friendly name - so the mapping
+// is unambiguous. This is the inverse of writing ``speakers[canonical].name``
+// into the hash: ``navigation.js`` stores the readable name in the URL and
+// resolves it back to the canonical id here when rendering.
+export function canonicalIdForSpeakerName(name) {
+    if (!name) return null;
+    _ensureGroups();
+    return _nameToCanonical[name] || null;
 }
 
 // Returns the sorted list of member ids in the same group as

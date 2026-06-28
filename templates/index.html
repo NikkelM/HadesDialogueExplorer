@@ -155,8 +155,9 @@
         else if (view === 'eligibility') hdr.textContent = 'Eligibility Tracer';
     }
 
-    // Search box value (mirrors applyState). The speaker view shows the raw
-    // id here; viewer.js upgrades it to the friendly name once data loads.
+    // Search box value (mirrors applyState). The speaker hash now carries the
+    // friendly name (unique per game), so the box shows the final value
+    // immediately - no flash of an internal id before the data loads.
     var search = document.getElementById('search');
     if (search) {
         if (view === 'speaker') search.value = speaker;
