@@ -73,11 +73,21 @@ function isInteractiveTap(node) {
     return false;
 }
 
+// Glue bracket / brace / paren delimiters to their adjacent token with a
+// non-breaking space, so a lone ``}`` / ``)`` / ``]`` (or ``{`` / ``(`` /
+// ``[``) can never wrap onto a row of its own in the tooltip. The breakable
+// ``, `` joins inside a list are left untouched, so long lists still wrap.
+export function noOrphanDelims(text) {
+    return text
+        .replace(/([([{]) /g, '$1\u00A0')
+        .replace(/ ([)\]}])/g, '\u00A0$1');
+}
+
 function showFor(target, clientX, clientY) {
     const text = target.getAttribute('data-tooltip');
     if (!text) return;
     currentTarget = target;
-    tooltipEl.textContent = text;
+    tooltipEl.textContent = noOrphanDelims(text);
     tooltipEl.classList.add('visible');
     positionAt(clientX, clientY);
 }
@@ -97,7 +107,7 @@ function showForTouch(target) {
     const text = target.getAttribute('data-tooltip');
     if (!text) return;
     currentTarget = target;
-    tooltipEl.textContent = text;
+    tooltipEl.textContent = noOrphanDelims(text);
     tooltipEl.classList.add('visible');
     positionAboveRect(target.getBoundingClientRect());
     clearTimeout(touchHideTimer);
