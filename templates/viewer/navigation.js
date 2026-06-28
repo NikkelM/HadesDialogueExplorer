@@ -16,7 +16,7 @@ import { maybeStartSpeakerTour } from './tour-speaker.js';
 import { maybeStartDuplicatesTour } from './tour-duplicates.js';
 import { maybeStartEligibilityTour } from './tour-eligibility.js';
 import { renderUpstream, renderDownstream } from './tree-renderers.js';
-import { renderSpeaker, canonicalisePriority, canonicaliseEligibility, canonicaliseSection } from './speaker-view.js';
+import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './speaker-view.js';
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
@@ -79,30 +79,20 @@ export function navigateToSpeaker(speakerId, opts) {
     const state = { view: 'speaker', speaker: name || canonical };
     if (opts && opts.priority) state.priority = opts.priority;
     if (opts && opts.eligibility) state.eligibility = opts.eligibility;
-    if (opts && opts.section) state.section = opts.section;
     navigateToState(state);
 }
 
 // Filter-chip click targets. Each pivots one filter axis while preserving
-// the others (read back off the current URL hash) so the repeatability,
-// eligibility and section filters compose instead of clobbering each other.
+// the other (read back off the current URL hash) so the repeatability and
+// eligibility filters compose instead of clobbering each other.
 export function filterSpeakerPriority(speakerId, priority) {
     const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, { priority, eligibility: state.eligibility, section: state.section });
+    navigateToSpeaker(speakerId, { priority, eligibility: state.eligibility });
 }
 
 export function filterSpeakerEligibility(speakerId, eligibility) {
     const state = parseUrlState(window.location.hash);
-    navigateToSpeaker(speakerId, { priority: state.priority, eligibility, section: state.section });
-}
-
-// Section filter, driven by clicking a section in the summary header.
-// Passing the already-active section clears it (back to 'all'), so the
-// header row doubles as a toggle.
-export function filterSpeakerSection(speakerId, section) {
-    const state = parseUrlState(window.location.hash);
-    const next = state.section === section ? 'all' : section;
-    navigateToSpeaker(speakerId, { priority: state.priority, eligibility: state.eligibility, section: next });
+    navigateToSpeaker(speakerId, { priority: state.priority, eligibility });
 }
 
 // Navigate to the cross-game duplicates view. Preserves existing
@@ -371,7 +361,6 @@ function applyState(state) {
         renderSpeaker(speakerId, {
             priority: canonicalisePriority(state.priority),
             eligibility: canonicaliseEligibility(state.eligibility),
-            section: canonicaliseSection(state.section),
         });
         const searchInput = document.getElementById('search');
         if (searchInput) {

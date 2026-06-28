@@ -103,14 +103,6 @@ export function canonicaliseEligibility(value) {
     return _ELIGIBILITY_BUCKETS.indexOf(value) >= 0 ? value : 'all';
 }
 
-// Section filter canonicaliser. The valid values depend on the speaker
-// (which sections they own), so this only normalises the empty / 'all'
-// case here; ``renderSpeaker`` does the speaker-specific validation
-// (an unknown / stale section collapses to 'all' there).
-export function canonicaliseSection(value) {
-    return value || 'all';
-}
-
 // True when a loaded save applies to the active game, so save-derived UI
 // (the per-row dot, the eligibility chips, the summary counts) is
 // meaningful. Mirrors the guard the other save-aware surfaces use.
@@ -136,14 +128,6 @@ function eligibilityCounts(entry) {
 function eligibilityPasses(o, filter) {
     if (filter === 'all' || !saveActive()) return true;
     return getDialogueStatus(o.name, o.tl) === filter;
-}
-
-// Section filter axis: pass a textline iff its (merged) section matches the
-// selected one. 'all' is a no-op. Driven by clicking a section in the
-// summary header's Sections cell.
-function sectionPasses(tl, sectionFilter) {
-    if (sectionFilter === 'all' || !sectionFilter) return true;
-    return mergedSectionKey((tl && tl.section) || '') === sectionFilter;
 }
 
 function sectionDisplay(sectionKey) {
@@ -309,7 +293,7 @@ function compareWithinSection(a, b, game) {
 // Render the summary cards: owned/guest totals and the per-section
 // breakdown. The priority filter chips live with the textline list they
 // pivot (see ``renderTextlineControls``), not here.
-function renderSummary(entry, speakerId, sectionFilter, eligFilter) {
+function renderSummary(entry) {
     const owned = (entry.ownedTextlines || []).length;
     const asSpeaker = (entry.asSpeakerTextlines || []).length;
     const sectionCounts = entry.sectionCounts || {};
@@ -324,24 +308,16 @@ function renderSummary(entry, speakerId, sectionFilter, eligFilter) {
     }
     const sectionEntries = Object.entries(mergedCounts)
         .sort((a, b) => compareSections(a[0], a[1], b[0], b[1]));
-    // Each section row is a filter toggle: clicking it narrows the list
-    // below to that section (and clicking the active one clears it).
     const sectionsHtml = sectionEntries.length
-        ? sectionEntries.map(([key, count]) => {
-            const isActive = sectionFilter === key;
-            const activeCls = isActive ? ' is-active' : '';
-            const press = isActive ? 'true' : 'false';
-            return `<li><button type="button" class="speaker-section-filter${activeCls}" aria-pressed="${press}" `
-                + `data-tooltip="Filter the dialogues below to this section" `
-                + `onclick="filterSpeakerSection(${jsAttr(speakerId)}, ${jsAttr(key)})">`
-                + `${renderSectionHtml(key)}: <span class="speaker-count">${count}</span></button></li>`;
-        }).join('')
+        ? sectionEntries.map(([key, count]) =>
+            `<li>${renderSectionHtml(key)}: <span class="speaker-count">${count}</span></li>`
+        ).join('')
         : '<li class="muted">none</li>';
 
     // The save-progress cell only renders with a matching save loaded.
     // When present it makes a fourth column, so widen the grid to keep
     // all cells on one aligned row (the CSS default is three columns).
-    const eligibilityCell = renderEligibilitySummaryCell(entry, speakerId, eligFilter);
+    const eligibilityCell = renderEligibilitySummaryCell(entry);
     const rowClass = eligibilityCell
         ? 'speaker-summary-row speaker-summary-row-4'
         : 'speaker-summary-row';
@@ -361,23 +337,12 @@ function renderSummary(entry, speakerId, sectionFilter, eligFilter) {
 // game. Each row carries the same coloured dot as the per-textline badge
 // so the summary and the list read consistently. Returns '' otherwise so
 // the summary keeps its three-cell shape with no save loaded.
-function renderEligibilitySummaryCell(entry, speakerId, eligFilter) {
+function renderEligibilitySummaryCell(entry) {
     if (!saveActive()) return '';
     const counts = eligibilityCounts(entry);
-    // Each status row is a filter toggle into the eligibility axis - the
-    // same axis the chips below the list drive - so the header and the
-    // chip row stay in sync. Clicking the active status clears it.
     const items = _ELIGIBILITY_BUCKETS
         .filter(b => counts[b])
-        .map(b => {
-            const isActive = eligFilter === b;
-            const activeCls = isActive ? ' is-active' : '';
-            const target = isActive ? 'all' : b;
-            return `<li><button type="button" class="speaker-section-filter${activeCls}" aria-pressed="${isActive ? 'true' : 'false'}" `
-                + `data-tooltip="Filter the dialogues below to this save status" `
-                + `onclick="filterSpeakerEligibility(${jsAttr(speakerId)}, ${jsAttr(target)})">`
-                + `<span class="save-badge ${b}"></span>${escapeHtml(_ELIGIBILITY_LABELS[b])}: <span class="speaker-count">${counts[b]}</span></button></li>`;
-        })
+        .map(b => `<li><span class="save-badge ${b}"></span>${escapeHtml(_ELIGIBILITY_LABELS[b])}: <span class="speaker-count">${counts[b]}</span></li>`)
         .join('');
     const body = items || '<li class="muted">none</li>';
     return `<div class="speaker-summary-cell speaker-summary-eligibility"><h4>Save progress</h4><ul class="speaker-section-list">${body}</ul></div>`;
@@ -566,7 +531,7 @@ function displayNameFor(speakerId) {
 // section, rows order by the game's natural play order via
 // ``compareWithinSection``. The controls strip (the repeatability
 // filter) renders above the list.
-function renderTextlineList(entry, speakerId, filter, eligFilter, sectionFilter, game) {
+function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     // Preserve which sections the user expanded across re-renders (filter /
     // eligibility changes) for the SAME speaker; reset for a new speaker.
     if (speakerId !== _expandedSpeaker) {
@@ -577,9 +542,7 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, sectionFilter,
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
     const filtered = owned.filter(o =>
-        filterPassesBucket(priorityBucket(o.tl), filter)
-        && eligibilityPasses(o, eligFilter)
-        && sectionPasses(o.tl, sectionFilter));
+        filterPassesBucket(priorityBucket(o.tl), filter) && eligibilityPasses(o, eligFilter));
 
     const controls = renderTextlineControls(entry, speakerId, filter, eligFilter);
 
@@ -732,7 +695,6 @@ export function renderSpeaker(speakerId, opts) {
     const game = getActiveGame() || '';
     const filter = canonicalisePriority(opts && opts.priority);
     const eligFilter = canonicaliseEligibility(opts && opts.eligibility);
-    const sectionFilter = canonicaliseSpeakerSection(opts && opts.section, entry);
     const friendly = entry.name && entry.name !== canonical ? entry.name : null;
     const description = entry.description || '';
     const members = (entry._members && entry._members.length > 0) ? entry._members : [canonical];
@@ -773,27 +735,8 @@ export function renderSpeaker(speakerId, opts) {
 
     container.innerHTML = `<div class="speaker-overview">`
         + headerHtml
-        + renderSummary(entry, canonical, sectionFilter, eligFilter)
+        + renderSummary(entry)
         + renderAdjacency(entry, canonical)
-        + renderTextlineList(entry, canonical, filter, eligFilter, sectionFilter, game)
+        + renderTextlineList(entry, canonical, filter, eligFilter, game)
         + `</div>`;
-}
-
-// Set of merged section keys a speaker actually owns dialogues in - the
-// universe the section filter can validly select from. Mirrors the
-// breakdown shown in the summary's Sections cell (same merge collapsing).
-function speakerSectionKeys(entry) {
-    const keys = new Set();
-    for (const key of Object.keys(entry.sectionCounts || {})) {
-        keys.add(mergedSectionKey(key));
-    }
-    return keys;
-}
-
-// Validate a URL-supplied section against the speaker's own sections, so a
-// stale / cross-speaker section key collapses to 'all' rather than showing
-// an empty list (mirrors how priority / eligibility reject unknown values).
-function canonicaliseSpeakerSection(value, entry) {
-    if (value === 'all' || !value) return 'all';
-    return speakerSectionKeys(entry).has(value) ? value : 'all';
 }

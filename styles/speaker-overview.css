@@ -491,6 +491,14 @@ body.layout-speaker #panel-info {
     border-bottom: 1px solid #0f346040;
 }
 .speaker-textline-row:last-child { border-bottom: none; }
+/* Rows inside a .speaker-alt-group box are inset on the right by the box's
+   border (1px) + padding (8px), which shifts their trailing badges left.
+   Reserve the same 9px inset on rows rendered directly in the list so the
+   priority / play-once badges line up whether or not a row sits inside an
+   Alternates box. */
+.speaker-textline-list > .speaker-textline-row {
+    padding-right: 9px;
+}
 /* Mutually-exclusive alternate variants, clustered into one labelled box
    within a section (gold accent shared with the dialogue detail view). */
 .speaker-alt-group {
