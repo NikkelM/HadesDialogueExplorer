@@ -1131,32 +1131,36 @@ export function renderEligibility(dialogueName) {
 
     const { chain, groups, mandatory } = buildPrereqChain(dialogueName);
 
+    const playedSet = getSaveProgress() || new Set();
+    const played = isDialoguePlayed(dialogueName) === true;
+    const sctx = getSaveContext();
+    // Timing (run-count) gates block independently of the prerequisite chain,
+    // but are moot once the dialogue has played or is permanently locked.
+    const unobtainable = isUnobtainable(dialogueName, playedSet, sctx.runsAgo, sctx);
+
     let html = `<div class="eligibility-view">`;
+    // Verdict header + status summary on top.
     html += `<div class="eligibility-target">`;
     html += `<h3>Eligibility: <a class="eligibility-target-link" onclick="navigateTo(${jsAttr(dialogueName)})">${escapeHtml(dialogueName)}</a></h3>`;
     html += `<div class="eligibility-target-meta">Owner: ${renderSpeakerHtml(tl.owner)}</div>`;
     html += `</div>`;
-
     html += renderSummaryHtml(dialogueName, chain, groups, mandatory);
-    html += renderOrBranchesHtml(dialogueName);
-    // Timing (run-count) gates block independently of the prerequisite chain,
-    // but are moot once the dialogue has played or is permanently locked.
-    const playedSet = getSaveProgress() || new Set();
-    const played = isDialoguePlayed(dialogueName) === true;
-    const unobtainable = isUnobtainable(dialogueName, playedSet, getSaveContext().runsAgo, getSaveContext());
-    if (!played && !unobtainable) {
-        html += renderBlockingGatesHtml(dialogueName, getSaveContext());
-    }
+
     // The "what to play" list and the prerequisite tree describe a path to
     // eligibility. That path is meaningless once the dialogue is permanently
     // unobtainable (the summary already explains why), so skip both - the
     // permanent lock, not the unplayed prerequisites, is the actionable fact.
     if (!unobtainable) {
+        // Flat play-order list first, then the nested tree below it.
         html += renderUnplayedListHtml(chain, mandatory, dialogueName, groups);
         html += renderTreeHtml(chain, dialogueName, groups);
     }
-    // Non-textline conditions (weapons unlocked, last-run cleared, ...) that
-    // gate the dialogue but never show up in the prerequisite chain.
+    // Other (non-prerequisite) requirements below: alternative branches, the
+    // situational run/room/timing gates, and the non-textline conditions.
+    html += renderOrBranchesHtml(dialogueName);
+    if (!played && !unobtainable) {
+        html += renderBlockingGatesHtml(dialogueName, sctx);
+    }
     html += renderOtherConditionsHtml(dialogueName);
 
     html += `</div>`;

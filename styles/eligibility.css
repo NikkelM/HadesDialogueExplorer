@@ -33,6 +33,10 @@
 
 .eligibility-view {
     padding: 0.5rem 0;
+    /* Trim the horizontal span to a readable column so the verdict banner and
+       the prerequisite / requirement sections don't stretch edge to edge on a
+       wide panel (which marooned each row's trailing owner tag far right). */
+    max-width: 920px;
 }
 
 .eligibility-target h3 {

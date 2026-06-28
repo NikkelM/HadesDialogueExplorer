@@ -212,16 +212,23 @@
         + sec(card(row(rep(sk('sk-pill'), 3)) + row(rep(sk('sk-pill'), 5))
             + sk('sk-line mid') + sk('sk-line short')));
 
-    // Eligibility tracer: title / owner, a status banner card, a requirements
-    // heading with a small nested tree, then a save-needed banner card. Kept to
-    // a readable column width rather than the full page, with spaced sections.
+    // Eligibility tracer: title / owner, a status banner card, the flat
+    // "unplayed prerequisites" list (bordered rows), then the nested
+    // prerequisite tree. Kept to a trimmed column width rather than the full
+    // page, with spaced sections (mirrors the single-column tracer layout).
+    var eligItem = function() {
+        return '<div class="sk-group">'
+            + row(sk('sk-dot') + sk('sk-line mid sk-grow') + sk('sk-badge'))
+            + sk('sk-line short') + '</div>';
+    };
     var ELIGIBILITY =
         '<div class="sk-narrow">'
         + sec(sk('sk-title') + sk('sk-line short'))
-        + sec(card(sk('sk-line short') + sk('sk-line mid')))
+        + sec(card(sk('sk-line short') + sk('sk-line wide') + sk('sk-line short')))
         + sec(sk('sk-line mid') + sk('sk-line short')
-            + reqRow() + reqRow() + indent(reqRow() + reqRow()))
-        + sec(card(sk('sk-line short') + sk('sk-line mid') + reqRow()))
+            + eligItem() + eligItem() + eligItem())
+        + sec(sk('sk-line mid') + sk('sk-line short')
+            + treeRow() + indent(treeRow() + treeRow()) + treeRow())
         + '</div>';
 
     var DUPLICATES =

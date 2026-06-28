@@ -291,7 +291,7 @@ main {
 .sk-sec    { margin: 0 0 24px; }
 .sk-sec:last-child { margin-bottom: 0; }
 .sk-sec > :last-child { margin-bottom: 0; }
-.sk-narrow { max-width: 760px; }
+.sk-narrow { max-width: 920px; }
 
 /* Dialogue detail: speaker/text blocks, then bordered requirement groups. */
 .sk-dlg    { margin: 0 0 16px; }
