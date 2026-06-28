@@ -128,6 +128,19 @@
     border-color: rgba(88, 166, 255, 0.7);
 }
 
+/* The cross-game badge points at the OTHER game's version of this dialogue, so
+   it's tinted by that target game: red-brown when it links to Hades 1, the
+   default blue when it links to Hades II. */
+.cross-game-badge.cross-game-hades1 {
+    color: #eaa183;
+    background: rgba(var(--hades1-color-rgb), 0.14);
+    border-color: rgba(var(--hades1-color-rgb), 0.45);
+}
+.cross-game-badge.cross-game-hades1:hover {
+    background: rgba(var(--hades1-color-rgb), 0.28);
+    border-color: rgba(var(--hades1-color-rgb), 0.7);
+}
+
 /* Banner shown below the meta line when the textline was renamed by
    the tool. Lists the original name and links to the duplicate
    sibling siblings so the user can quickly compare definitions. The

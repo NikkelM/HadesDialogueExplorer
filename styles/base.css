@@ -25,6 +25,13 @@
     --text-dim:     #666;      /* dim secondary text */
     --danger:       #e57373;   /* blocked / warning / error red */
 
+    /* Per-game theme colours, used to tint the game toggle's active button and
+       the cross-game badges so Hades and Hades II are visually distinct. Hades
+       1's UI was a red/crimson theme, Hades II's is blue. */
+    --hades1-color: #b5553a;   /* red-brown: Hades 1 */
+    --hades1-color-rgb: 181, 85, 58;
+    --hades2-color: #3b7fd4;   /* blue: Hades 2 */
+
     /* Eligibility status palette. One source of truth for the four verdicts
        shown as dots (tree), badges/pills (save progress), chips (speaker
        overview) and status text (tracer). Solid values are for filled dots /
@@ -174,6 +181,10 @@ header h1 {
 .search-item-cross .cross-game-badge:hover {
     background: rgba(88, 166, 255, 0.12);
     border-color: rgba(88, 166, 255, 0.4);
+}
+.search-item-cross .cross-game-badge.cross-game-hades1:hover {
+    background: rgba(var(--hades1-color-rgb), 0.14);
+    border-color: rgba(var(--hades1-color-rgb), 0.45);
 }
 .search-item-text .search-item-head { font-size: var(--fs-base); }
 .search-item-text .search-snippet {

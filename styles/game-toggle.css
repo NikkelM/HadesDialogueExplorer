@@ -39,11 +39,14 @@
 }
 .game-toggle-btn:last-child { border-right: none; }
 .game-toggle-btn:hover { background: var(--border); }
+/* Active button is tinted by which game it selects: Hades 1's red-brown theme
+   vs Hades II's blue. White text keeps both readable on the solid fill. */
 .game-toggle-btn.active {
-    background: var(--accent-color);
-    color: var(--bg);
+    color: #fff;
     font-weight: 600;
 }
+.game-toggle-btn[data-game="hades1"].active { background: var(--hades1-color); }
+.game-toggle-btn[data-game="hades2"].active { background: var(--hades2-color); }
 .game-toggle-btn:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: -2px;
