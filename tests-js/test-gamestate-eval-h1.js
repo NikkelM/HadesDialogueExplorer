@@ -79,6 +79,27 @@ test('H1: RequiredMinCompletedRuns counts RunHistory length', () => {
     assert.equal(evaluateH1OtherRequirements({ RequiredMinCompletedRuns: 4 }, c).status, 'unmet');
 });
 
+test('H1: completed/cleared run gates read the Hades Biomes caches on a modded H2 save', () => {
+    // Zagreus' Journey (Hades Biomes) ports H1 runs into an H2 save, where this
+    // save's RunHistory is Melinoe's. The ported H1 completed / cleared counts
+    // live in the mod cache keys, which take precedence over RunHistory.
+    const c = ctx({ gs: {
+        RunHistory: [{}, {}, {}, {}, {}],
+        ModsNikkelMHadesBiomesCompletedRunsCache: 2,
+        ModsNikkelMHadesBiomesClearedRunsCache: 1,
+    } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCompletedRuns: 2 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCompletedRuns: 3 }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredCompletedRuns: 2 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMaxCompletedRuns: 2 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinRunsCleared: 1 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinRunsCleared: 2 }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredRunsCleared: 1 }, c).status, 'met');
+    // A zero cache (mod present, no ported runs yet) still wins over RunHistory.
+    const zero = ctx({ gs: { RunHistory: [{}, {}], ModsNikkelMHadesBiomesCompletedRunsCache: 0, ModsNikkelMHadesBiomesClearedRunsCache: 0 } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredMinCompletedRuns: 1 }, zero).status, 'unmet');
+});
+
 test('H1: RequiredKills compares per-enemy EnemyKills counters', () => {
     const c = ctx({ gs: { EnemyKills: { Harpy: 5 } } });
     assert.equal(evaluateH1OtherRequirements({ RequiredKills: { Harpy: 5 } }, c).status, 'met');
@@ -573,6 +594,11 @@ test('H1: surpassed monotonic max gates are permanently unmet (unobtainable)', (
     assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 2 }, { RunHistory: [{}, {}, {}] }), 'unmet');
     assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 3 }, { RunHistory: [{}, {}, {}] }), null);
     assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxRunsCleared: 1 }, { RunHistory: [{ Cleared: true }, { Cleared: true }] }), 'unmet');
+    // The Hades Biomes ported run-count caches are likewise monotonic, so a
+    // surpassed max gate resolves permanently unmet from a modded H2 save.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 2 }, { ModsNikkelMHadesBiomesCompletedRunsCache: 3 }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxCompletedRuns: 3 }, { ModsNikkelMHadesBiomesCompletedRunsCache: 3 }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxRunsCleared: 1 }, { ModsNikkelMHadesBiomesClearedRunsCache: 2 }), 'unmet');
     // Lifetime resources (monotonic) over a per-resource cap.
     assert.equal(evaluateH1OtherReqPermanence({ RequiredLifetimeResourcesSpentMax: { Gems: 100 } }, { LifetimeResourcesSpent: { Gems: 150 } }), 'unmet');
     assert.equal(evaluateH1OtherReqPermanence({ RequiredLifetimeResourcesSpentMax: { Gems: 100 } }, { LifetimeResourcesSpent: { Gems: 50 } }), null);

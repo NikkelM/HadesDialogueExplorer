@@ -182,9 +182,9 @@ const H1_FIELD_EVALS = {
     RequiredMinValues: (v, ctx) => { const gs = ctx.gs || {}; return _h1bool(Object.entries(v || {}).every(([k, min]) => h1Num(gs[k]) >= min)); },
 
     // ===== PERSISTENT: run counts =====
-    RequiredCompletedRuns: (v, ctx) => _h1bool(h1Len(h1Gs(ctx, 'RunHistory')) === v),
-    RequiredMinCompletedRuns: (v, ctx) => _h1bool(h1Len(h1Gs(ctx, 'RunHistory')) >= v),
-    RequiredMaxCompletedRuns: (v, ctx) => _h1bool(h1Len(h1Gs(ctx, 'RunHistory')) <= v),
+    RequiredCompletedRuns: (v, ctx) => _h1bool(h1CompletedRuns(ctx) === v),
+    RequiredMinCompletedRuns: (v, ctx) => _h1bool(h1CompletedRuns(ctx) >= v),
+    RequiredMaxCompletedRuns: (v, ctx) => _h1bool(h1CompletedRuns(ctx) <= v),
     RequiredRunsCleared: (v, ctx) => _h1bool(h1RunsCleared(ctx) === v),
     RequiredMinRunsCleared: (v, ctx) => _h1bool(h1RunsCleared(ctx) >= v),
     RequiredMaxRunsCleared: (v, ctx) => _h1bool(h1RunsCleared(ctx) <= v),
@@ -419,7 +419,13 @@ const H1_INDEX_SIBLINGS = new Set([
 // ---- shared field helpers ----------------------------------------------------
 
 // Count runs cleared = CurrentRun.Cleared (if resolvable) + RunHistory[i].Cleared.
+// On a Zagreus' Journey (Hades Biomes) modded H2 save the ported Hades 1 runs
+// are not in this save's RunHistory; the mod tracks the cleared-run count in
+// GameState.ModsNikkelMHadesBiomesClearedRunsCache instead, so prefer that when
+// present (a vanilla H1 save never carries it).
 function h1RunsCleared(ctx) {
+    const cache = h1Gs(ctx, 'ModsNikkelMHadesBiomesClearedRunsCache');
+    if (typeof cache === 'number') return cache;
     let n = 0;
     const hist = h1Gs(ctx, 'RunHistory');
     if (hist && typeof hist === 'object') {
@@ -427,6 +433,16 @@ function h1RunsCleared(ctx) {
     }
     if (ctx.currentRun && h1Truthy(ctx.currentRun.Cleared)) n += 1;
     return n;
+}
+
+// Count completed runs = #RunHistory. As with cleared runs above, a Hades Biomes
+// modded H2 save keeps the ported completed-run count in
+// GameState.ModsNikkelMHadesBiomesCompletedRunsCache rather than this save's
+// RunHistory, so prefer that cache when present.
+function h1CompletedRuns(ctx) {
+    const cache = h1Gs(ctx, 'ModsNikkelMHadesBiomesCompletedRunsCache');
+    if (typeof cache === 'number') return cache;
+    return h1Len(h1Gs(ctx, 'RunHistory'));
 }
 
 // HasSeenRoom: persistent RoomCountCache, OR seen in the resolvable current run.
@@ -829,7 +845,7 @@ const H1_FIXED_PER_SAVE_FLAGS = new Set(['HardMode']);
 const H1_MONOTONIC_TRUE_FLAGS = new Set(['ShrineUnlocked', 'AspectsUnlocked']);
 
 const H1_PERMANENT_UNMET_EVALS = {
-    RequiredMaxCompletedRuns: (v, ctx) => h1Len(h1Gs(ctx, 'RunHistory')) > v,
+    RequiredMaxCompletedRuns: (v, ctx) => h1CompletedRuns(ctx) > v,
     RequiredMaxRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
     RequiredMaxRunsWithWeapons: (v, ctx) => Object.entries(v || {}).some(([w, c]) => h1RunsWithWeapon(ctx, w) > c),
     RequiredMaxUnlockedWeaponEnchantments: (v, ctx) => h1WeaponStaticReady() && h1CountWeaponUnlocks(ctx, false) > v,

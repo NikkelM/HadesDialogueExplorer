@@ -482,7 +482,19 @@ function extractGameStateSlice(gameId, gs, luaState) {
   if (gameId !== 'hades2') return null;
   const mask = _h2GameStateMask();
   if (!mask) return null;
-  return pruneGameState(gs, mask);
+  const slice = pruneGameState(gs, mask);
+  // Zagreus' Journey (Hades Biomes) ports Hades 1 content into an H2 save and
+  // tracks the ported Hades 1 completed / cleared run counts in these cache
+  // keys (RunLogic.lua). Carry them through - they sit outside the H2
+  // requirement mask - so inspecting a Hades 1 dialogue against a modded H2
+  // save resolves its completed / cleared run-count gates from the ported
+  // progress rather than this save's (Melinoe's) RunHistory.
+  if (gs && typeof gs === 'object' && slice && typeof slice === 'object') {
+    for (const k of ['ModsNikkelMHadesBiomesCompletedRunsCache', 'ModsNikkelMHadesBiomesClearedRunsCache']) {
+      if (typeof gs[k] === 'number') slice[k] = gs[k];
+    }
+  }
+  return slice;
 }
 
 // Memoised set of the top-level Hades 1 globals (codex entries / speech cues)
@@ -967,7 +979,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // slice (for the RequiresMaxKeepsake keepsake-mastery gate). v18 added the H1
 // LastKilledByUnitName / LastKilledByWeaponName death globals to the H1 GameState
 // slice and the H2 top-level AudioState slice (AmbientTrackName / MusicName).
-export const SAVE_STORAGE_SCHEMA = 18;
+// v19 carried the Zagreus' Journey (Hades Biomes) ported completed / cleared
+// run-count caches into the H2 GameState slice, so H1 run-count gates resolve
+// from a modded H2 save; an older cache lacks them, so the bump forces a re-parse.
+export const SAVE_STORAGE_SCHEMA = 19;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
