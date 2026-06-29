@@ -89,9 +89,10 @@ HADES1_KNOWN_UNRESOLVED_REFS = {
     },
     "InspectPointLoungeClosed01": {
         "category": "cut-content",
-        "reason": "A dialogue that was never added to the game. It was "
-                  "one option among alternatives for CerberusLoungeClosed01, "
-                  "which can still play via its remaining options.",
+        "reason": "A dialogue that was never added to the game. Wherever it is "
+                  "required it is only ever one of several alternative options, "
+                  "so the dialogues that reference it can still play via the "
+                  "others.",
     },
     "NyxAboutAres01_B": {
         "category": "cut-content",
@@ -113,10 +114,10 @@ HADES1_KNOWN_UNRESOLVED_REFS = {
     },
     "AchillesGift08": {
         "category": "cut-content",
-        "reason": "A dialogue that was never added to the game. It was "
-                  "one option among alternatives for "
-                  "AchillesAboutMyrmidonReunionQuest03_A, which can still play "
-                  "via its remaining options.",
+        "reason": "A dialogue that was never added to the game. Wherever it is "
+                  "required it is only ever one of several alternative options, "
+                  "so the dialogues that reference it can still play via the "
+                  "others.",
     },
     "AthenaGift05": {
         "category": "cut-content",

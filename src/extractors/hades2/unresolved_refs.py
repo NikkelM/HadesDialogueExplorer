@@ -80,9 +80,9 @@ HADES2_KNOWN_UNRESOLVED_REFS = {
     },
     "TyphonHeadAltFight01": {
         "category": "cut-content",
-        "reason": "A dialogue that was never added to the game. It was "
-                  "one option among alternatives, which can still resolve via "
-                  "the surviving option ChronosBossAboutAltFight01.",
+        "reason": "A dialogue that was never added to the game. It is "
+                  "only referenced as a harmless check, so nothing is "
+                  "affected.",
     },
 
     # --- typo-or-bug (2) ---
