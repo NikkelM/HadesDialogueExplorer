@@ -53,6 +53,12 @@ HADES2_PATH_FIELD_NAMES = {
     "LifetimeResourcesGained": "gained",
     "LifetimeResourcesSpent": "spent",
     "Resources": "current",
+    # Leaf-subject GameState records: the trailing leaf is the meaningful entity
+    # (a boon / incantation / resource), resolved via entityNames with a colon.
+    "TraitsTaken": "boons/traits taken:",
+    "TraitCache": "boons/traits taken:",
+    "WorldUpgradesRevealed": "incantation/cosmetic revealed:",
+    "ResourcesGained": "gained:",
     "Hero.TraitDictionary": "has equipped",
     "Hero.Weapons": "equipped weapon",
     # ScreensViewed leaf ids are UI-screen names, not game entities (and several
@@ -63,22 +69,19 @@ HADES2_PATH_FIELD_NAMES = {
     # --- terminal flags / scalars (label stands alone) ---
     "ReachedTrueEnding": "reached the credits",
     "TyphonDefeatedWithStormStop":
-        'Defeated Typhon after casting "Disintegration of Monstrosity"',
+        'defeated Typhon after casting "Disintegration of Monstrosity"',
     "CompletedRunsCache": "completed runs",
-    "SpentShrinePointsCache": "Total active Fear",
+    "SpentShrinePointsCache": "total active Fear",
     "ActiveBounty": "Chaos Trial",
-    "ActiveShrineBounty": "Active Testament",
+    "ActiveShrineBounty": "active Testament",
     "EquippedFamiliar": "equipped Animal Familiar",
     "GamePhase": "Moon Phase",
-    "TimePassageOccurred": "Additional time was passed in the Crossroads",
+    "TimePassageOccurred": "additional time was passed in the Crossroads",
     "IsDreamRun": "is a Dream Dive",
     "Cleared": "run cleared",
-    "LastBossHealthBarRecord": "Boss health during previous encounter",
+    "LastBossHealthBarRecord": "boss health during previous encounter",
     "LastBossDifficultyRecord":
-        "Boss in unrivalled form during previous encounter",
-    "Hero": "the player",
-    "Hero.IsDead": "is dead",
-    "Hero.LastStands": "Death Defiances remaining",
+        "boss in unrivalled form during previous encounter",
     "CurrentRoom": "current room",
     "CurrentRoom.Name": "current room",
     "CurrentRoom.RoomSetName": "current biome",
@@ -87,6 +90,32 @@ HADES2_PATH_FIELD_NAMES = {
     "Hero.IsDead": "is dead",
     "Hero.LastStands": "Death Defiances remaining",
     "Hero.MetGods": "gods encountered",
+
+    # --- count / record GameState fields (terminal nouns; the comparison or
+    # operand list carries the specifics) ---
+    "FamiliarsUnlocked": "familiars unlocked",
+    "ClearedRunsCache": "cleared runs",
+    "ClearedUnderworldRunsCache": "Underworld runs cleared",
+    "ClearedSurfaceRunsCache": "Surface runs cleared",
+    "ShrineBountiesCompleted": "Testaments completed",
+    "ObjectivesCompleted": "objectives completed",
+    "ExorcismSuccesses": "shades pacified",
+    "MetaUpgradeUnlockedCountCache": "Arcana unlocked",
+    "MaxMetaUpgradeCostCache": "maximum Grasp unlocked",
+    "CosmeticsPurchasedCountCache": "cosmetics purchased",
+    "GiftPresentation": "keepsakes unlocked",
+    "WeaponsFiredRecord": "weapon/effect used",
+    "EncountersCompletedCache": "encounters completed",
+    "EncounterClearStats": "encounter clear stats",
+    "EncountersOccurredBiomeCache": "encounters seen (current biome)",
+    "BiomeDepthCache": "rooms entered (current biome)",
+    "HighestShrinePointClearUnderworldCache": "highest Fear cleared (Underworld)",
+    "HighestShrinePointClearSurfaceCache": "highest Fear cleared (Surface)",
+    "LastAwardTrait": "keepsake currently equipped",
+    "WasRandomLoot": "was random shop boon",
+    # Live-playback audio snapshot (root with no scope prefix).
+    "AudioState.MusicName": "current music track",
+    "AudioState.AmbientTrackName": "current ambient track",
 }
 
 # Fields whose path carries a trailing entity-id object (a record keyed by an
@@ -107,6 +136,10 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "LifetimeResourcesGained",
     "LifetimeResourcesSpent",
     "Resources",
+    "TraitsTaken",
+    "TraitCache",
+    "WorldUpgradesRevealed",
+    "ResourcesGained",
     "Hero.TraitDictionary",
     "Hero.Weapons",
 })

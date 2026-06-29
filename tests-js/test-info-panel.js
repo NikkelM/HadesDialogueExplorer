@@ -409,11 +409,11 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
         lastHtml,
         /<span class="req-type-name" data-tooltip="Internal name: PathFalse">Must be false<\/span>: <code class="other-req-path">CurrentRun\.Cleared<\/code>/
     );
-    // ``FunctionName:RequiredAlive`` -> ``Function call to `RequiredAlive(Ids=[42])`
-    // must evaluate to `true```.
+    // ``FunctionName:RequiredAlive`` with numeric Ids -> friendly clause that
+    // still surfaces the raw unit id.
     assert.match(
         lastHtml,
-        /Function call to <code class="other-req-func">RequiredAlive\(Ids=\[42\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
+        /<span class="other-req-func-gate">unit <code class="other-req-path">42<\/code> must be alive<\/span>/
     );
     // Bare key ``NamedRequirementsFalse`` (no registry entry for the
     // fixture name ``NoBossActive``) -> friendly pill, value rendered
@@ -783,33 +783,33 @@ function fixtureWithFunctionRecords() {
 }
 
 
-test('otherRequirements: FunctionName records render as a "Function call to ... must evaluate to true" line', () => {
+test('otherRequirements: FunctionName records render as friendly per-function clauses', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
-    // Single-arg function.
+    // Single-arg function (numeric runtime Ids shown as the raw unit id).
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">RequiredAlive\(Ids=\[558096\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><span class="other-req-func-gate">unit <code class="other-req-path">558096<\/code> must be alive<\/span><\/span><\/div>/
     );
-    // Two-arg function with mixed scalar types.
+    // Two-arg health-fraction function: the 0.49 fraction reads as a percentage.
     assert.match(
         lastHtml,
-        /Function call to <code class="other-req-func">RequiredHealthFraction\(Comparison=&lt;=, Value=0\.49\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
+        /<span class="other-req-func-gate">Player health at most 49%<\/span>/
     );
 });
 
 
-test('otherRequirements: FunctionName records with no args render as "Function call to func() ..."', () => {
+test('otherRequirements: FunctionName records with no args render a friendly clause', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">IsBossDifficultyShrineUpgradeActive\(\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><span class="other-req-func-gate">Vow of Rivals is active \(boss fought in its unrivalled form\)<\/span><\/span><\/div>/
     );
 });
 
 
-test('otherRequirements: multiple FunctionName records under one key are AND-joined', () => {
+test('otherRequirements: an unmapped FunctionName falls back to a readable signature, AND-joined', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
     assert.match(
@@ -934,10 +934,10 @@ test('otherRequirements entries render in reqTypeOrderIndex order by prefix, sta
     // appear in insertion order (stable sort) - A before B.
     const pathA = lastHtml.indexOf('GameState.A');
     const pathB = lastHtml.indexOf('GameState.B');
-    const funcAlive = lastHtml.indexOf('RequiredAlive');
+    const funcAlive = lastHtml.indexOf('must be alive');
     assert.notEqual(pathA, -1, 'PathTrue:GameState.A missing');
     assert.notEqual(pathB, -1, 'PathTrue:GameState.B missing');
-    assert.notEqual(funcAlive, -1, 'FunctionName:RequiredAlive missing');
+    assert.notEqual(funcAlive, -1, 'FunctionName:RequiredAlive clause missing');
     assert.ok(pathA < pathB, 'stable sort within same prefix violated (A should precede B)');
     assert.ok(pathB < funcAlive, 'PathTrue entries should precede FunctionName entries');
 });

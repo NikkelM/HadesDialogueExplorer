@@ -545,24 +545,129 @@ function _renderPathRecord(head, rec) {
     return null;
 }
 
-// Format a single ``FunctionName`` record as the prose ``Function call to
-// `funcName(arg1=val1, arg2=val2)` must evaluate to `true```. Returns null if
-// the record shape is unrecognised so the caller can fall back to raw JSON.
+// Friendly rendering of a single ``FunctionName`` requirement record. Each H2
+// custom-function gate (``RequiredAlive``, ``RequiredHealthFraction``, ...) is
+// turned into a plain-English clause; entity arguments (enemy Units, boon Name,
+// room Names, incantation HasAny) resolve through ``_valueChip`` /
+// ``_renderOperandList``. Unknown functions fall back to a readable signature.
+const _FN_CMP_WORDS = {
+    '<=': 'at most', '<': 'below', '>=': 'at least', '>': 'over',
+    '==': 'exactly', '~=': 'not', '!=': 'not',
+};
+const _FN_QUEST_STATUS = {
+    CashedOut: 'cashed-out', Assigned: 'active', Complete: 'completed',
+    Completed: 'completed', Available: 'available',
+};
+
+// Subject of a RequiredAlive gate: named Units resolve to friendly names;
+// numeric runtime Ids are shown as-is (they identify a specific spawned unit).
+function _fnAliveSubject(a) {
+    if (Array.isArray(a.Units) && a.Units.length) return _renderOperandList(a.Units);
+    if (Array.isArray(a.Ids) && a.Ids.length) {
+        const ids = a.Ids.map(id => `<code class="other-req-path">${escapeHtml(String(id))}</code>`).join(', ');
+        return `${a.Ids.length > 1 ? 'units' : 'unit'} ${ids}`;
+    }
+    return 'the target';
+}
+
+// Room operand(s) for the consecutive-clear / death gates (a Names list or a
+// single Name). The Names are alternative room ids that count as the same room
+// (e.g. a boss room's normal + Vow-of-Rivals variants), so a multi-entry list
+// reads as "any of" to make the OR explicit. Rooms resolve to friendly names.
+function _fnRooms(a) {
+    if (Array.isArray(a.Names) && a.Names.length) {
+        const list = _renderOperandList(a.Names);
+        return a.Names.length > 1 ? `any of: ${list}` : list;
+    }
+    if (a.Name != null) return _valueChip(a.Name);
+    return 'a room';
+}
+
+// A ``<ref:GameData.X>`` operand renders as the bare table id; a literal list
+// renders as friendly operand chips.
+function _fnRefOrList(v) {
+    const ref = _strRefName(v);
+    if (ref !== null) return `<code class="other-req-path">${escapeHtml(ref)}</code>`;
+    return _renderOperandList(v);
+}
+
+const _FN_RENDERERS = {
+    RequiredAlive(a) {
+        return `${_fnAliveSubject(a)} must be ${a.Alive === false ? 'dead' : 'alive'}`;
+    },
+    IsBossDifficultyShrineUpgradeActive() {
+        return 'Vow of Rivals is active (boss fought in its unrivalled form)';
+    },
+    RequiredHealthFraction(a) {
+        const pct = Math.round((Number(a.Value) || 0) * 100);
+        const w = _FN_CMP_WORDS[a.Comparison] || escapeHtml(String(a.Comparison));
+        return `Player health ${w} ${pct}%`;
+    },
+    RequiredTraitNameInRoom(a) {
+        return `This room offers the boon ${_valueChip(a.Name)}`;
+    },
+    RequireRunsSinceTextLines(a) {
+        const n = Number(a.Min);
+        return `At least ${escapeHtml(String(a.Min))} run${n === 1 ? '' : 's'} since: ${_fnRefOrList(a.TextLines)}`;
+    },
+    RequiredRarityInRoom(a) {
+        const parts = [];
+        if (a.HasAtLeastRarity) parts.push(`at least one ${escapeHtml(String(a.HasAtLeastRarity))}+ boon`);
+        if (a.AllAtLeastRarity) parts.push(`all boons at least ${escapeHtml(String(a.AllAtLeastRarity))}`);
+        return parts.length ? `This room has ${parts.join(', ')}` : null;
+    },
+    RequiredConsecutiveClearsOfRoom(a) {
+        const n = Number(a.Count);
+        return `Cleared ${_fnRooms(a)} ${escapeHtml(String(a.Count))} time${n === 1 ? '' : 's'} in a row`;
+    },
+    RequiredSellableGodTraits() {
+        return 'Player has god boons that can be sold';
+    },
+    RequireQuestCount(a) {
+        const st = _FN_QUEST_STATUS[a.Status] || escapeHtml(String(a.Status));
+        let range;
+        if (a.Min != null && a.Max != null) range = `between ${escapeHtml(String(a.Min))} and ${escapeHtml(String(a.Max))}`;
+        else if (a.Min != null) range = `at least ${escapeHtml(String(a.Min))}`;
+        else if (a.Max != null) range = `at most ${escapeHtml(String(a.Max))}`;
+        else range = 'some';
+        return `Has ${range} ${st} quest(s)`;
+    },
+    RequiredConsecutiveDeathsInRoom(a) {
+        const n = Number(a.Count);
+        return `Died in ${_fnRooms(a)} ${escapeHtml(String(a.Count))} time${n === 1 ? '' : 's'} in a row`;
+    },
+    RequireUnrestrictedBoonChoices() {
+        return 'Boon choices are unrestricted';
+    },
+    RequiredBossPhase(a) {
+        return `Boss is in phase ${escapeHtml(String(a.Phase))}`;
+    },
+    RequireAffordableGhostAdminItems(a) {
+        const items = Array.isArray(a.HasAny) && a.HasAny.length ? _renderOperandList(a.HasAny) : 'a Cauldron item';
+        return `Can afford a Cauldron item: ${items}`;
+    },
+    RequiredQueuedTextLine(a) {
+        return `No dialogue queued from: ${_fnRefOrList(a.IsNone)}`;
+    },
+};
+
 function _renderFunctionRecord(fnName, rec) {
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
     if (rec.FunctionName !== fnName) return null;
     for (const k of Object.keys(rec)) {
         if (k !== 'FunctionName' && k !== 'FunctionArgs') return null;
     }
-    const args = rec.FunctionArgs;
-    let argsText = '';
-    if (args && typeof args === 'object' && !Array.isArray(args)) {
-        argsText = Object.entries(args).map(([k, v]) => `${k}=${_formatScalar(v)}`).join(', ');
-    } else if (args !== undefined) {
-        return null;
+    const rawArgs = rec.FunctionArgs;
+    if (rawArgs !== undefined && (typeof rawArgs !== 'object' || Array.isArray(rawArgs))) return null;
+    const args = rawArgs || {};
+    const renderer = _FN_RENDERERS[fnName];
+    if (renderer) {
+        const html = renderer(args);
+        if (html) return `<span class="other-req-func-gate">${html}</span>`;
     }
-    const signature = `${fnName}(${argsText})`;
-    return `Function call to <code class="other-req-func">${escapeHtml(signature)}</code> must evaluate to <code class="other-req-func">true</code>`;
+    // Fallback for any unmapped function: a readable signature.
+    const argsText = Object.entries(args).map(([k, v]) => `${k}=${_formatScalar(v)}`).join(', ');
+    return `Function call to <code class="other-req-func">${escapeHtml(`${fnName}(${argsText})`)}</code> must evaluate to <code class="other-req-func">true</code>`;
 }
 
 // Render one of the four "just the path" operator prefixes

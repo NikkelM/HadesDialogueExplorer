@@ -143,7 +143,12 @@ def _collect_value_ids(data_path: Path) -> dict:
                 walk(x, acc)
         elif isinstance(v, dict):
             for k, x in v.items():
-                if k in ("FunctionArgs", "Comparison", "FunctionName"):
+                # Skip operator / function-name keys, but DO descend into
+                # ``FunctionArgs`` so entity arguments (a ``RequiredTraitNameInRoom``
+                # boon ``Name``, ``RequiredAlive`` ``Units``, ...) get collected.
+                # Non-entity arg scalars (numbers, comparators, rarities) are
+                # filtered out later by sjson-DisplayName membership.
+                if k in ("Comparison", "FunctionName"):
                     continue
                 walk(x, acc)
 
