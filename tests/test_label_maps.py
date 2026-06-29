@@ -208,6 +208,26 @@ class TestMetaUpgradeNames:
         for key in HADES2_ENTITY_NAMES:
             assert key in annotated, key
 
+    def test_entityNames_compose_speakers_and_rooms(self):
+        # entityNames merges speaker / NPC names and curated hub-room names on
+        # top of the vendored sjson map, so a gate value like an NPC id or a
+        # hub-room id resolves to a friendly name.
+        h1 = _annotated("hades1")["entityNames"]
+        assert h1.get("NPC_Achilles_01") == "Achilles"
+        assert h1.get("D_Hub") == "Temple of Styx (hub)"
+        h2 = _annotated("hades2")["entityNames"]
+        assert h2.get("NPC_Artemis_01") == "Artemis"
+        assert h2.get("Hub_PreRun") == "The Crossroads (Training Grounds)"
+
+    def test_entityNames_sjson_wins_over_speaker_collision(self):
+        # On the few ids shared by an enemy/boss and its speaker form, the
+        # vendored sjson (in-data entity) name takes priority.
+        from src.extractors.hades1 import HADES1_ENTITY_NAMES
+        h1 = _annotated("hades1")["entityNames"]
+        for sid in ("Harpy", "Theseus", "Minotaur"):
+            if sid in HADES1_ENTITY_NAMES:
+                assert h1[sid] == HADES1_ENTITY_NAMES[sid]
+
 
 class TestUnknownGameId:
     def test_unknown_game_id_raises(self):

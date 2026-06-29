@@ -50,43 +50,81 @@ _STRUCT = {
 }
 
 _IDLIKE = re.compile(r"^[A-Z][A-Za-z0-9_]+$")
+_INHERIT = re.compile(r'^\s*InheritFrom\s*=\s*"((?:[^"\\]|\\.)*)"')
+# A DisplayName that is a single macro reference, e.g. ``{$Keywords.BossDifficulty}``
+# or ``{$TempTextData.Amount}``. The referenced display text lives under the
+# macro's last dotted segment as its own ``Id`` (``BossDifficulty``).
+_SOLE_MACRO = re.compile(r'^\{\$([A-Za-z0-9_.]+)\}$')
 
 
-def _parse_id_displaynames(path: Path) -> dict:
-    """Scan an sjson text file for ``Id`` / ``DisplayName`` pairs. Each entry
-    block lists Id before DisplayName; brace-counting is avoided (Description
-    strings embed ``{#...}`` tags), so the most-recent Id is paired with the
-    next DisplayName. Runtime format tags are stripped; blank names skipped."""
-    out = {}
-    pending = None
+def _parse_raw_entries(path: Path, raw_dn: dict, inherit: dict) -> None:
+    """Scan an sjson text file, recording each entry's *raw* (un-stripped)
+    ``DisplayName`` and ``InheritFrom`` into the shared maps. Entries list
+    ``Id`` first; ``DisplayName`` / ``InheritFrom`` follow within the block, so
+    the most-recent ``Id`` owns them. First file to define an id wins (the
+    canonical item files are scanned first), so later voice-line reuse can't
+    clobber an item name."""
     if not path.exists():
-        return out
+        return
+    pending = None
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         m = _ID.match(line)
         if m:
             pending = m.group(1)
             continue
+        if pending is None:
+            continue
         m = _DN.match(line)
-        if m and pending is not None:
-            name = _TAG.sub("", m.group(1)).strip()
-            if name:
-                out.setdefault(pending, name)
-            pending = None
-    return out
+        if m:
+            raw_dn.setdefault(pending, m.group(1))
+            continue
+        m = _INHERIT.match(line)
+        if m:
+            inherit.setdefault(pending, m.group(1))
+
+
+def _resolve_name(rid, raw_dn, inherit, _seen=None):
+    """Resolve an id to its final display text, following a single-macro
+    ``{$X.Y}`` reference to ``Y``'s own entry and an ``InheritFrom`` parent when
+    the entry itself has no ``DisplayName``. Format tags are stripped last.
+    Returns ``""`` when nothing resolves (so the caller skips it)."""
+    if _seen is None:
+        _seen = set()
+    if rid in _seen:
+        return ""
+    _seen.add(rid)
+    dn = raw_dn.get(rid)
+    if dn is None:
+        parent = inherit.get(rid)
+        return _resolve_name(parent, raw_dn, inherit, _seen) if parent else ""
+    macro = _SOLE_MACRO.match(dn.strip())
+    if macro:
+        target = macro.group(1).split(".")[-1]
+        if target != rid:
+            resolved = _resolve_name(target, raw_dn, inherit, _seen)
+            if resolved:
+                return resolved
+    return _TAG.sub("", dn).strip()
 
 
 def _all_text_names(text_dir: Path) -> dict:
-    """Merge id->DisplayName across every ``*.sjson`` in the text dir. The
-    canonical item files (HelpText / TraitText / MiscText) are read first so
-    their entity names win over any voice-line subtitle reusing the same id."""
-    merged = {}
+    """Build the id -> resolved DisplayName map across every ``*.sjson`` in the
+    text dir. Raw DisplayName / InheritFrom are gathered first (canonical item
+    files - HelpText / TraitText / MiscText - first so their names win over any
+    voice-line subtitle reusing the same id), then each id is resolved through
+    its macro / inheritance chain and tag-stripped."""
+    raw_dn, inherit = {}, {}
     files = sorted(text_dir.glob("*.sjson"))
     pri_names = ("HelpText.en.sjson", "TraitText.en.sjson", "MiscText.en.sjson")
     pri = [f for f in files if f.name in pri_names]
     rest = [f for f in files if f not in pri]
     for f in pri + rest:
-        for k, v in _parse_id_displaynames(f).items():
-            merged.setdefault(k, v)
+        _parse_raw_entries(f, raw_dn, inherit)
+    merged = {}
+    for rid in raw_dn.keys() | inherit.keys():
+        name = _resolve_name(rid, raw_dn, inherit)
+        if name:
+            merged[rid] = name
     return merged
 
 
@@ -111,8 +149,15 @@ def _collect_value_ids(data_path: Path) -> dict:
 
     for t in d["textlines"].values():
         seen = set()
-        for val in (t.get("otherRequirements") or {}).values():
+        for key, val in (t.get("otherRequirements") or {}).items():
             walk(val, seen)
+            # Compound keys (``Path:<dotted>``, ``PathTrue:<dotted>``, ...) carry
+            # the checked entity as a path segment; the viewer resolves the single
+            # entity segment in such tails, so collect those ids too.
+            tail = key.split(":", 1)[1] if ":" in key else key
+            for seg in tail.split("."):
+                if _IDLIKE.match(seg) and seg not in _STRUCT:
+                    seen.add(seg)
         for vid in seen:
             counts[vid] = counts.get(vid, 0) + 1
     return counts

@@ -493,6 +493,8 @@ export function renderBlockingReason(reason) {
         explain = `${fieldHtml} requires at least one of the listed textlines to have played, but all ${reason.totalRefs} are undefined: ${missing}.`;
     } else if (reason.semantics === 'count-min') {
         explain = `${fieldHtml} requires at least ${reason.requiredCount} of the listed textlines to have played, but only ${reason.resolvedCount} are defined (${reason.missingRefs.length} missing: ${missing}).`;
+    } else if (reason.semantics === 'broken-ref') {
+        explain = `Lists ${missing} as a required room, but it is a dialogue, not a room, so this gate can never be satisfied. Looks like a game-data bug - this line can never play.`;
     } else {
         explain = `${fieldHtml}: ${missing}.`;
     }

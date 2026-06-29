@@ -114,6 +114,11 @@ function computeUnobtainable(name, playedSet, stack) {
     // (even debug force-play), independent of save state.
     if (tl.skip) return true;
 
+    // Blocked: a build-time hard block (a requirement that can never be
+    // satisfied, e.g. a seen-room gate listing a non-room token) makes the line
+    // unplayable on every save, so it is always unobtainable.
+    if (tl.blocked) return true;
+
     // Choice-lock: a choice variant whose parent already recorded a
     // different option can never be obtained.
     if (tl.isSynthetic && tl.parentTextline) {

@@ -21,6 +21,7 @@ from src.extractors.hades1 import (
     HADES1_CHOICE_NAMES,
     HADES1_META_UPGRADE_NAMES,
     HADES1_ENTITY_NAMES,
+    HADES1_SPEAKERS,
 )
 from src.extractors.hades2 import (
     HADES2_SECTION_KEY_LABELS,
@@ -32,7 +33,28 @@ from src.extractors.hades2 import (
     HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
     HADES2_CHOICE_NAMES,
     HADES2_ENTITY_NAMES,
+    HADES2_SPEAKERS,
 )
+from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
+from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
+
+
+def _speaker_names(speakers: dict) -> dict:
+    """``{speakerId: friendlyName}`` from a HADES*_SPEAKERS map, so speaker /
+    NPC / boss ids that appear as ``otherRequirements`` values (e.g. a
+    ``Minimum NPC interactions: NPC_Achilles_01`` gate) resolve to the friendly
+    name. Entries without a name are skipped."""
+    return {sid: e["name"] for sid, e in speakers.items() if e.get("name")}
+
+
+def _entity_names(sjson_names: dict, speakers: dict, hub_rooms: dict) -> dict:
+    """Compose the viewer's ``entityNames`` lookup from three sources, lowest
+    priority first: speaker / NPC / boss names, curated hub-room names, then the
+    vendored sjson DisplayName map (boons, keepsakes, weapons, enemies, shrine
+    vows, arcana, ...). The sjson map wins on the few id collisions (e.g. a boss
+    enemy id shared with its speaker form) because it carries the in-data entity
+    name the gate actually refers to."""
+    return {**_speaker_names(speakers), **hub_rooms, **sjson_names}
 
 
 # Per-game vocabulary bundles. Each game has its own row and the build
@@ -71,7 +93,9 @@ _GAME_LABELS = {
         "reqTypeTooltipsDependents": HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES1_CHOICE_NAMES,
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
-        "entityNames": HADES1_ENTITY_NAMES,
+        "entityNames": _entity_names(
+            HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES
+        ),
     },
     "hades2": {
         "sectionKeyLabels": HADES2_SECTION_KEY_LABELS,
@@ -83,7 +107,9 @@ _GAME_LABELS = {
         "reqTypeTooltipsDependents": HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
         "choiceNames": HADES2_CHOICE_NAMES,
         "metaUpgradeNames": {},
-        "entityNames": HADES2_ENTITY_NAMES,
+        "entityNames": _entity_names(
+            HADES2_ENTITY_NAMES, HADES2_SPEAKERS, HADES2_HUB_ROOM_NAMES
+        ),
     },
 }
 

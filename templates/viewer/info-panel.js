@@ -450,12 +450,14 @@ function _renderBareKeyValueHtml(val, key) {
         if (listKey && 'Count' in val && objKeys.length === 2) {
             return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}`;
         }
-        // Scalar value map -> ``key op value`` per entry. ``op`` reflects the
-        // gate's real comparison: ``=`` for RequiredValues (must equal), ``!=``
-        // for RequiredFalseValues (must not equal), ``<=`` for max thresholds,
-        // ``>=`` otherwise.
+        // Scalar value map -> ``key op value`` per entry. The key is the
+        // subject (often an entity id, e.g. ``RequiredMinNPCInteractions:
+        // {NPC_Achilles_01: 1}``), so resolve it through ``entityNames`` too.
+        // ``op`` reflects the gate's real comparison: ``=`` for RequiredValues
+        // (must equal), ``!=`` for RequiredFalseValues, ``<=`` for max
+        // thresholds, ``>=`` otherwise.
         return Object.entries(val)
-            .map(([k, v]) => `<code>${escapeHtml(k)}</code> ${op} ${_valueChip(v)}`)
+            .map(([k, v]) => `${_valueChip(k)} ${op} ${_valueChip(v)}`)
             .join(', ');
     }
     return _valueChip(val);

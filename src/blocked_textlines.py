@@ -13,7 +13,14 @@ from src.extractors.textline_set import REQUIREMENT_BLOCKING_SEMANTICS
 # ``textline_set.REQUIREMENT_BLOCKING_SEMANTICS`` because that map also
 # contains ``"none"`` / ``"count-permissive"`` values that are filtered
 # out before reaching ``blockingReasons``.
-_VIEWER_KNOWN_SEMANTICS = frozenset({"all", "any", "count-min"})
+_VIEWER_KNOWN_SEMANTICS = frozenset({"all", "any", "count-min", "broken-ref"})
+
+# Tokens that show up in a RequiredSeenRooms gate but are not real rooms, so
+# the gate can never be satisfied in any save (seen rooms only ever record real
+# room ids). NyxGift06 is a Nyx gift-conversation textline that was mis-filed
+# into NyxAboutObscurity01's RequiredSeenRooms instead of RequiredTextLines, so
+# that line can never play - a content-author bug, surfaced like cut content.
+_IMPOSSIBLE_SEEN_ROOM_TOKENS = frozenset({"NyxGift06"})
 
 
 def _assert_viewer_knows_semantics(reasons: list, textline_name: str) -> None:
@@ -112,6 +119,19 @@ def annotate_blocked_textlines(graph_data: dict) -> None:
                         "requiredCount": count,
                         "resolvedCount": resolved_count,
                     })
+
+        # A RequiredSeenRooms gate listing a token that is not a real room can
+        # never be satisfied, so the textline can never play. Curated rather
+        # than auto-detected (the token resolves as a textline, just not a room).
+        seen_rooms = (tl.get("otherRequirements") or {}).get("RequiredSeenRooms") or []
+        broken = [r for r in seen_rooms if r in _IMPOSSIBLE_SEEN_ROOM_TOKENS]
+        if broken:
+            reasons.append({
+                "field": "RequiredSeenRooms",
+                "semantics": "broken-ref",
+                "missingRefs": sorted(set(broken)),
+                "totalRefs": len(seen_rooms),
+            })
 
         if reasons:
             _assert_viewer_knows_semantics(reasons, name)
