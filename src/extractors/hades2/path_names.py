@@ -79,9 +79,8 @@ HADES2_PATH_FIELD_NAMES = {
     "TimePassageOccurred": "additional time was passed in the Crossroads",
     "IsDreamRun": "is a Dream Dive",
     "Cleared": "run cleared",
-    "LastBossHealthBarRecord": "boss health during previous encounter",
-    "LastBossDifficultyRecord":
-        "boss in unrivalled form during previous encounter",
+    "LastBossHealthBarRecord": "previous-encounter health of",
+    "LastBossDifficultyRecord": "previous-encounter difficulty of",
     "CurrentRoom": "current room",
     "CurrentRoom.Name": "current room",
     "CurrentRoom.RoomSetName": "current biome",
@@ -142,6 +141,8 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "ResourcesGained",
     "Hero.TraitDictionary",
     "Hero.Weapons",
+    "LastBossHealthBarRecord",
+    "LastBossDifficultyRecord",
 })
 
 # Per-field leaf-name maps: an object-taking field whose trailing leaf is NOT a

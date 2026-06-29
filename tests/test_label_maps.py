@@ -38,6 +38,7 @@ _DOCUMENTED_KEYS = (
     "pathScopeNames",
     "pathFieldNames",
     "pathFieldLeafNames",
+    "brokenPathRefs",
 )
 
 

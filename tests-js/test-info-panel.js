@@ -540,12 +540,12 @@ test('otherRequirements: Path:<head> + membership records render with a verbal o
     // IsAny -> "is one of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code>, <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/span><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">AudioState\.AmbientTrackName<\/code> is one of: <code>\/Music\/ArtemisSong_MC<\/code> \u2022 <code>\/Music\/IrisEndThemeCrossroads_MC<\/code><\/span><\/div>/
     );
     // HasAny -> "contains any of": <items>
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code>, <code>O_Boss02<\/code><\/span><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">CurrentRun\.RoomsEntered<\/code> contains any of: <code>O_Boss01<\/code> \u2022 <code>O_Boss02<\/code><\/span><\/div>/
     );
 });
 
@@ -665,7 +665,7 @@ test('Path TableValuesToCount renders a count-of-items threshold with a run clau
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">EncountersOccurredCache<\/code> has at least <code>1<\/code> of: <code>DevotionTestF<\/code>, <code>DevotionTestG<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+        /<code class="other-req-path">EncountersOccurredCache<\/code> has at least <code>1<\/code> of: <code>DevotionTestF<\/code> \u2022 <code>DevotionTestG<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
     );
 });
 
@@ -695,7 +695,7 @@ test('Path SumOf renders "Sum of <items> in <head>"', () => {
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /Sum of <code>N_Boss01<\/code>, <code>N_Boss02<\/code> in <code class="other-req-path">GameState\.RoomsEntered<\/code> &gt;= <code>3<\/code>/
+        /Sum of <code>N_Boss01<\/code> \u2022 <code>N_Boss02<\/code> in <code class="other-req-path">GameState\.RoomsEntered<\/code> &gt;= <code>3<\/code>/
     );
 });
 
@@ -735,7 +735,7 @@ test('Path CountPathTrue + TableValuesToCount renders as a count-of-items thresh
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">EncountersOccurredCache2<\/code> has at least <code>1<\/code> of: <code>ArtemisCombatN<\/code>, <code>ArtemisCombatN2<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+        /<code class="other-req-path">EncountersOccurredCache2<\/code> has at least <code>1<\/code> of: <code>ArtemisCombatN<\/code> \u2022 <code>ArtemisCombatN2<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
     );
 });
 
@@ -1238,7 +1238,7 @@ test('Path CountOf records render as "head has at least N of: items"', () => {
     // Inline list: each item is a separate ``<code>`` chip.
     assert.match(
         lastHtml,
-        /<code class="other-req-path">CurrentRun\.UseRecord<\/code> has at least <code>2<\/code> of: <code>ZeusUpgrade<\/code>, <code>HeraUpgrade<\/code>, <code>PoseidonUpgrade<\/code>/
+        /<code class="other-req-path">CurrentRun\.UseRecord<\/code> has at least <code>2<\/code> of: <code>ZeusUpgrade<\/code> \u2022 <code>HeraUpgrade<\/code> \u2022 <code>PoseidonUpgrade<\/code>/
     );
 });
 
@@ -1272,7 +1272,7 @@ test('bare-key list values render as comma-separated chips without JSON brackets
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required false flags<\/span>: <code>InFlashback<\/code>/);
-    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required cosmetics<\/span>: <code>QuestLog<\/code>, <code>Cosmetic_X<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required cosmetics<\/span>: <code>QuestLog<\/code> \u2022 <code>Cosmetic_X<\/code>/);
 });
 
 
@@ -1322,7 +1322,7 @@ test('"N of a set" gates render as "at least N of: items", not an array dump', (
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
     // RequiredMinAnyCosmetics {Cosmetics:[...], Count} -> "at least N of: list".
-    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Minimum cosmetics owned \(from set\)<\/span>: at least <code>2<\/code> of: <code>Cosmetic_A<\/code>, <code>Cosmetic_B<\/code>/);
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Minimum cosmetics owned \(from set\)<\/span>: at least <code>2<\/code> of: <code>Cosmetic_A<\/code> \u2022 <code>Cosmetic_B<\/code>/);
 });
 
 test('a structured Codex gate renders the entry name and unlock depth, not raw index/operator', () => {
@@ -1404,7 +1404,7 @@ test('unlabelled bare-key lists render as comma-space chips, not raw JSON', () =
     // encounter is a separate ``<code>`` chip with ``", "`` joiners.
     assert.match(
         lastHtml,
-        /<span class="req-type-name">RequiredAnyEncountersThisRun<\/span>: <code>ThanatosTartarus<\/code>, <code>ThanatosAsphodel<\/code>, <code>ThanatosElysium<\/code>, <code>ThanatosElysiumIntro<\/code>/
+        /<span class="req-type-name">RequiredAnyEncountersThisRun<\/span>: <code>ThanatosTartarus<\/code> \u2022 <code>ThanatosAsphodel<\/code> \u2022 <code>ThanatosElysium<\/code> \u2022 <code>ThanatosElysiumIntro<\/code>/
     );
     // The raw ``["a","b"]`` JSON fallback must NOT appear for this key
     // anywhere in the output.
@@ -1417,7 +1417,7 @@ test('unlabelled bare-key map values render as "k >= v" with the raw key as the 
     renderInfo('UnlabelledOtherReqDemo');
     assert.match(
         lastHtml,
-        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> &gt;= <code>1<\/code>, <code>SuperGiftPoints<\/code> &gt;= <code>1<\/code>/
+        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> &gt;= <code>1<\/code> \u2022 <code>SuperGiftPoints<\/code> &gt;= <code>1<\/code>/
     );
 });
 
@@ -1437,7 +1437,7 @@ test('membership operand list strips <ref:> on each element while keeping plain 
     renderInfo('UnlabelledOtherReqDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.SelectedAspect<\/code> is one of: <code class="other-req-path">GameData\.WeaponAspectA<\/code>, <code>PlainString<\/code>/
+        /<code class="other-req-path">GameState\.SelectedAspect<\/code> is one of: <code class="other-req-path">GameData\.WeaponAspectA<\/code> \u2022 <code>PlainString<\/code>/
     );
 });
 

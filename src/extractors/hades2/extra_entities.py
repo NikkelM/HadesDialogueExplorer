@@ -29,4 +29,19 @@ HADES2_EXTRA_ENTITY_NAMES = {
     "O": "Rift of Thessaly",
     "P": "Olympus",
     "Q": "The Summit",
+    "Chaos": "Chaos",
+
+    # UseRecord interactables (``GameState/CurrentRun.UseRecord.<id>`` leaves) -
+    # Crossroads objects, stations and decorations Melinoe can interact with.
+    "InspectPoint": "Narrative Point",
+    "CrossroadsFamilyPortrait02": "Family Portrait",
+    "GhostAdmin": "Cauldron",
+    "QuestLog": "Fated List of Minor Prophecies",
+    "CrossroadsPet01": "Hecuba",
+    "GameStatsScreen": "Archived Trivia",
+    "MusicPlayerScreen": "Music Player",
+    "RunHistoryScreen": "Past Deeds",
+    "StatueTrap_Hestia": "Olympus Hestia Statue",
+    "CharonPointsDrop": "Obol Points",
+    "HubGardenPlot": "Garden Plot",
 }

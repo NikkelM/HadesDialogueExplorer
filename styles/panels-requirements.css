@@ -235,6 +235,14 @@
     color: #8b949e;
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
+/* "(cut content)" note flagging a path gate whose reference was cut from the
+   game (see brokenPathRefs). Amber + non-mono with the full explanation in the
+   hover tooltip, so a reader knows the gate has no effect. */
+.other-req-item .other-req-broken-ref {
+    color: #d29922;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    cursor: help;
+}
 /* AND joiner between multiple comparison/membership records that share
    a Path:<head> key (engine AND-combines them). */
 .other-req-item .other-req-and {

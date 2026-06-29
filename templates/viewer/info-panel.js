@@ -30,7 +30,7 @@ import {
     groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
-import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames } from './data.js';
+import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, brokenPathRefs } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -252,7 +252,7 @@ function _renderScalarHaveHtml() {
     if (_curScalar == null) return '';
     const cls = _metClass(_curScalarMet);
     const attr = cls ? ` class="${cls}"` : '';
-    return ` (<code${attr}>${escapeHtml(String(_curScalar))}</code>)`;
+    return ` (<code${attr}>${escapeHtml(_formatScalar(_curScalar))}</code>)`;
 }
 
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
@@ -325,22 +325,39 @@ function _pathGloss(segs) {
     return null;
 }
 
+// A "(cut content)" note badge when any segment of a path is a known broken /
+// cut reference (see ``brokenPathRefs``); empty otherwise. The full explanation
+// rides in the hover tooltip. Appended to the rendered path so a reader knows
+// the gate references something that no longer exists and has no effect.
+function _brokenRefNote(segs) {
+    for (const seg of segs) {
+        const note = brokenPathRefs[seg];
+        if (note) {
+            return ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">`
+                + `(cut content)</span>`;
+        }
+    }
+    return '';
+}
+
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
 // ``GameState.ReachedTrueEnding``, ...) as an ``other-req-path`` chip. A fully
 // resolved path renders as just its friendly gloss, with the raw internal path
 // moved to a hover tooltip. A partially resolved path (or a single resolved
 // entity segment) keeps the raw path with the friendly gloss appended in
-// parentheses. An unresolved path renders raw.
+// parentheses. An unresolved path renders raw. A "(cut content)" note is
+// appended when a segment is a known broken reference.
 function _renderPathTailHtml(path) {
     const segs = String(path).split('.');
+    const broken = _brokenRefNote(segs);
     const gloss = _pathGloss(segs);
     if (gloss) {
         if (gloss.full) {
             return `<code class="other-req-path" data-tooltip="${escapeHtml(path)}">`
-                + `${escapeHtml(gloss.text)}</code>`;
+                + `${escapeHtml(gloss.text)}</code>${broken}`;
         }
         return `<code class="other-req-path">${escapeHtml(path)}`
-            + ` <span class="other-req-friendly">(${escapeHtml(gloss.text)})</span></code>`;
+            + ` <span class="other-req-friendly">(${escapeHtml(gloss.text)})</span></code>${broken}`;
     }
     const hits = [];
     for (let i = 0; i < segs.length; i++) {
@@ -348,11 +365,11 @@ function _renderPathTailHtml(path) {
         if (friendly && friendly !== segs[i]) hits.push(i);
     }
     if (hits.length !== 1) {
-        return `<code class="other-req-path">${escapeHtml(path)}</code>`;
+        return `<code class="other-req-path">${escapeHtml(path)}</code>${broken}`;
     }
     const friendly = entityNames[segs[hits[0]]];
     return `<code class="other-req-path">${escapeHtml(path)}`
-        + ` <span class="other-req-friendly">(${escapeHtml(friendly)})</span></code>`;
+        + ` <span class="other-req-friendly">(${escapeHtml(friendly)})</span></code>${broken}`;
 }
 
 // Strip a ``<ref:...>`` placeholder back to the bare identifier
@@ -441,11 +458,17 @@ function _renderListItemHtml(v) {
     return html;
 }
 
+// Separator between items in a rendered operand list. A bullet (not a comma) so
+// friendly names that themselves contain commas (e.g. cosmetics "Columns,
+// Jeweled", some rooms / enemies) stay unambiguous - the comma is part of a name,
+// the bullet divides items.
+const _OPERAND_SEP = ' \u2022 ';
+
 function _renderOperandList(items) {
     if (!Array.isArray(items)) {
         return _renderListItemHtml(items);
     }
-    return items.map(_renderListItemHtml).join(', ');
+    return items.map(_renderListItemHtml).join(_OPERAND_SEP);
 }
 
 // Run/room aggregation + misc decorators that can wrap any Path record.
@@ -721,7 +744,7 @@ function _renderBareKeyValueHtml(val, key) {
     if (val === null || val === undefined) return escapeHtml(String(val));
     if (Array.isArray(val)) {
         if (val.length === 0) return '<code>(empty)</code>';
-        return val.map(_renderListItemHtml).join(', ');
+        return val.map(_renderListItemHtml).join(_OPERAND_SEP);
     }
     if (typeof val === 'object') {
         const kind = _reqGateKind(key);
@@ -765,7 +788,7 @@ function _renderBareKeyValueHtml(val, key) {
         // thresholds, ``>=`` otherwise.
         return Object.entries(val)
             .map(([k, v]) => `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`)
-            .join(', ');
+            .join(_OPERAND_SEP);
     }
     // Plain scalar threshold (number / string / boolean). For the single-scalar
     // numeric gates the loaded save resolves a value, appended as a coloured
