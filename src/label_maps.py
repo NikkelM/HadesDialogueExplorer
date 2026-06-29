@@ -37,6 +37,7 @@ from src.extractors.hades2 import (
 )
 from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
 from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
+from src.extractors.hades1.extra_entities import HADES1_EXTRA_ENTITY_NAMES
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -47,14 +48,15 @@ def _speaker_names(speakers: dict) -> dict:
     return {sid: e["name"] for sid, e in speakers.items() if e.get("name")}
 
 
-def _entity_names(sjson_names: dict, speakers: dict, hub_rooms: dict) -> dict:
-    """Compose the viewer's ``entityNames`` lookup from three sources, lowest
-    priority first: speaker / NPC / boss names, curated hub-room names, then the
-    vendored sjson DisplayName map (boons, keepsakes, weapons, enemies, shrine
+def _entity_names(sjson_names: dict, speakers: dict, hub_rooms: dict, extra: dict | None = None) -> dict:
+    """Compose the viewer's ``entityNames`` lookup from up to four sources, lowest
+    priority first: speaker / NPC / boss names, curated hub-room names, curated
+    extra entities (resources / kill-source / trap ids with no sjson name), then
+    the vendored sjson DisplayName map (boons, keepsakes, weapons, enemies, shrine
     vows, arcana, ...). The sjson map wins on the few id collisions (e.g. a boss
     enemy id shared with its speaker form) because it carries the in-data entity
     name the gate actually refers to."""
-    return {**_speaker_names(speakers), **hub_rooms, **sjson_names}
+    return {**_speaker_names(speakers), **hub_rooms, **(extra or {}), **sjson_names}
 
 
 # Per-game vocabulary bundles. Each game has its own row and the build
@@ -94,7 +96,8 @@ _GAME_LABELS = {
         "choiceNames": HADES1_CHOICE_NAMES,
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
         "entityNames": _entity_names(
-            HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES
+            HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES,
+            HADES1_EXTRA_ENTITY_NAMES,
         ),
     },
     "hades2": {

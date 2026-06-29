@@ -228,6 +228,14 @@ class TestMetaUpgradeNames:
             if sid in HADES1_ENTITY_NAMES:
                 assert h1[sid] == HADES1_ENTITY_NAMES[sid]
 
+    def test_entityNames_include_curated_extra_entities(self):
+        # Curated H1 resource / kill-source / trap ids that have no sjson
+        # DisplayName are merged in so they resolve to a friendly name.
+        h1 = _annotated("hades1")["entityNames"]
+        assert h1.get("Money") == "Charon's Obol"
+        assert h1.get("RatThugElite") == "Gigantic Vermin (Elite)"
+        assert h1.get("SawTrap") == "Saw Trap"
+
 
 class TestUnknownGameId:
     def test_unknown_game_id_raises(self):
