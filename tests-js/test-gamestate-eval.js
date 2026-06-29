@@ -694,11 +694,38 @@ test('h2OperandMarks captures the save value of a plain scalar comparison gate',
     // A settings path (ConfigOptionCache) is skipped - not progress.
     const cfg = [{ Comparison: '>', Path: ['ConfigOptionCache', 'MusicVolume'], Value: 0.1 }];
     assert.equal(h2OperandMarks('Path:ConfigOptionCache.MusicVolume', cfg, { gameState: {} }), null);
-    // A value-to-value comparison (ValuePath) has no single "you have" number.
+    // A value-to-value comparison (ValuePath) now shows the left path's value,
+    // with met computed against the resolved right-hand value.
     const vp = [{ Comparison: '>=', Path: ['GameState', 'A'], ValuePath: ['GameState', 'B'] }];
-    assert.equal(h2OperandMarks('Path:GameState.A', vp, { gameState: { A: 3, B: 1 } }), null);
+    const vpm = h2OperandMarks('Path:GameState.A', vp, { gameState: { A: 3, B: 1 } });
+    assert.equal(vpm.recs[0].scalarValue, 3);
+    assert.equal(vpm.recs[0].scalarMet, true); // 3 >= 1 (value of B)
     // A path that resolves to nil (e.g. wrong save type) -> no value, null.
     assert.equal(h2OperandMarks('Path:GameState.UseRecord.NPC_Dora_01', rec, { gameState: {} }), null);
+});
+
+test('h2OperandMarks counts the entries of a UseLength gate', () => {
+    // UseLength compares a table's key count to the threshold.
+    const rec = [{ Comparison: '>=', UseLength: true, Path: ['GameState', 'GiftPresentation'], Value: 22 }];
+    const m = h2OperandMarks('Path:GameState.GiftPresentation', rec, { gameState: { GiftPresentation: { a: 1, b: 1, c: 1 } } });
+    assert.equal(m.recs[0].scalarValue, 3);
+    assert.equal(m.recs[0].scalarMet, false); // 3 >= 22 is false
+    // An absent GameState table is a real 0 (loaded slice, key just missing).
+    const empty = h2OperandMarks('Path:GameState.GiftPresentation', rec, { gameState: {} });
+    assert.equal(empty.recs[0].scalarValue, 0);
+    // A CurrentRun UseLength on a hub save (no current-run slice) -> indeterminate.
+    const cr = [{ Comparison: '<=', UseLength: true, Path: ['CurrentRun', 'Hero', 'LastStands'], Value: 1 }];
+    assert.equal(h2OperandMarks('Path:CurrentRun.Hero.LastStands', cr, { gameState: {}, currentRun: null }), null);
+});
+
+test('h2OperandMarks sums a SumPrevRooms aggregate over the room slices', () => {
+    const rec = [{ Comparison: '<=', Path: ['UseRecord', 'AphroditeUpgrade'], SumPrevRooms: 3, Value: 0 }];
+    const slices = { gameState: {}, rooms: [{ UseRecord: { AphroditeUpgrade: 1 } }, { UseRecord: {} }, { UseRecord: { AphroditeUpgrade: 2 } }] };
+    const m = h2OperandMarks('Path:UseRecord.AphroditeUpgrade', rec, slices);
+    assert.equal(m.recs[0].scalarValue, 3); // 1 + 0 + 2 across the last 3 rooms
+    assert.equal(m.recs[0].scalarMet, false); // 3 <= 0 is false
+    // No room slice (hub save / wrong owner context) -> indeterminate, no tally.
+    assert.equal(h2OperandMarks('Path:UseRecord.AphroditeUpgrade', rec, { gameState: {}, rooms: null }), null);
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {

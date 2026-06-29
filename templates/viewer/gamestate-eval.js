@@ -58,20 +58,36 @@ function resolveRefList(v) {
 // ``gameDataRefs[Name]`` hit is preferred, but some tables are stored nested
 // under a parent key (e.g. ``ScreenData.Shrine`` holds ``BountyOrder``) with a
 // broken flat self-ref alias shadowing the dotted name. So when the direct value
-// isn't an array, walk the dotted name from the longest resolvable prefix into
-// that parent object. Returns the array, or null when it can't be resolved.
+// isn't an array, walk the dotted name (including ``[N]`` array indices, Lua
+// 1-based) from the longest resolvable prefix into that parent. Returns the
+// array, or null when it can't be resolved.
 function _resolveRefArray(name) {
     const direct = gameDataRefs && gameDataRefs[name];
     if (Array.isArray(direct)) return direct;
-    if (!gameDataRefs || typeof name !== 'string' || name.indexOf('.') < 0) return null;
-    const segs = name.split('.');
+    if (!gameDataRefs || typeof name !== 'string') return null;
+    const segs = [];
+    const partRe = /([A-Za-z_][A-Za-z0-9_]*)|\[(\d+)\]/g;
+    let mm;
+    while ((mm = partRe.exec(name)) !== null) {
+        segs.push(mm[1] !== undefined ? { kind: 'name', value: mm[1] } : { kind: 'index', value: parseInt(mm[2], 10) });
+    }
+    if (segs.length < 2) return null;
     for (let i = segs.length - 1; i > 0; i--) {
-        let cur = gameDataRefs[segs.slice(0, i).join('.')];
-        if (cur == null || typeof cur !== 'object' || Array.isArray(cur)) continue;
+        const headSegs = segs.slice(0, i);
+        if (headSegs.some(s => s.kind !== 'name')) continue;
+        let cur = gameDataRefs[headSegs.map(s => s.value).join('.')];
+        if (cur === undefined) continue;
         let ok = true;
         for (let j = i; j < segs.length; j++) {
-            if (cur && typeof cur === 'object' && !Array.isArray(cur) && segs[j] in cur) cur = cur[segs[j]];
-            else { ok = false; break; }
+            const seg = segs[j];
+            if (cur === null || cur === undefined) { ok = false; break; }
+            if (seg.kind === 'name') {
+                if (typeof cur !== 'object' || Array.isArray(cur)) { ok = false; break; }
+                cur = cur[seg.value];
+            } else {
+                if (!Array.isArray(cur)) { ok = false; break; }
+                cur = cur[seg.value - 1]; // Lua 1-indexed -> JS 0-indexed
+            }
         }
         if (ok && Array.isArray(cur)) return cur;
     }
@@ -120,6 +136,47 @@ const _WRONGSAVE = (reason) => ({ status: 'unknown', reason, kind: 'wrong-save-t
 // ToCount`` counts listed keys present per run, ``ValuesToCount`` counts runs
 // whose value matches, otherwise a numeric sum. ``IgnoreCurrentRun`` skips the
 // current run. Returns 'unknown' when the save carries no runs slice.
+// Sum a room/run-relative ``rec.Path`` over a list of run/room slice objects,
+// in the engine's modes: ``CountPathTrue`` counts non-nil hits, ``TableValues
+// ToCount`` counts matching table keys, ``ValuesToCount`` counts scalar matches,
+// otherwise the numeric values are added. Shared by the SumPrev{Runs,Rooms}
+// evaluator and the operand-mark tally so both compute the identical aggregate.
+function _sumPrevList(list, rec) {
+    let sum = 0;
+    for (const obj of list) {
+        const v = walkPath(obj, rec.Path);
+        if (rec.CountPathTrue) {
+            sum += (v !== undefined && v !== null) ? 1 : 0;
+        } else if (Array.isArray(rec.TableValuesToCount)) {
+            sum += rec.TableValuesToCount.filter(k => luaTruthy(v && v[k])).length;
+        } else if (Array.isArray(rec.ValuesToCount)) {
+            sum += rec.ValuesToCount.some(x => v === x) ? 1 : 0;
+        } else {
+            sum += (typeof v === 'number' ? v : 0);
+        }
+    }
+    return sum;
+}
+
+// The SumPrev{Runs,Rooms} aggregate value for a record, or null when the needed
+// run/room slices aren't loaded (so the gate stays indeterminate rather than a
+// false 0). Mirrors the slice selection in the evaluators below.
+function computeSumPrev(rec, root) {
+    if (!Array.isArray(rec.Path) || !rec.Comparison) return null;
+    if (rec.SumPrevRuns !== undefined) {
+        const runs = root._runs;
+        if (!Array.isArray(runs)) return null;
+        const n = rec.SumPrevRuns;
+        return _sumPrevList(rec.IgnoreCurrentRun ? runs.slice(1, n) : runs.slice(0, n), rec);
+    }
+    if (rec.SumPrevRooms !== undefined) {
+        const rooms = root._rooms;
+        if (!Array.isArray(rooms)) return null;
+        return _sumPrevList(rooms.slice(0, rec.SumPrevRooms), rec);
+    }
+    return null;
+}
+
 function evalSumPrevRuns(rec, root) {
     const runs = root._runs;
     if (!Array.isArray(runs)) {
@@ -133,19 +190,7 @@ function evalSumPrevRuns(rec, root) {
     // So the current run (index 0) plus history give ``n`` runs, but skipping the
     // current run yields only ``n - 1`` history runs (runsBack 1..n-1).
     const list = rec.IgnoreCurrentRun ? runs.slice(1, n) : runs.slice(0, n);
-    let sum = 0;
-    for (const run of list) {
-        const v = walkPath(run, rec.Path);
-        if (rec.CountPathTrue) {
-            sum += (v !== undefined && v !== null) ? 1 : 0;
-        } else if (Array.isArray(rec.TableValuesToCount)) {
-            sum += rec.TableValuesToCount.filter(k => luaTruthy(v && v[k])).length;
-        } else if (Array.isArray(rec.ValuesToCount)) {
-            sum += rec.ValuesToCount.some(x => v === x) ? 1 : 0;
-        } else {
-            sum += (typeof v === 'number' ? v : 0);
-        }
-    }
+    const sum = _sumPrevList(list, rec);
     return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
 }
 
@@ -166,20 +211,7 @@ function evalSumPrevRooms(rec, root) {
     if (!Array.isArray(rec.Path) || !rec.Comparison) {
         return _MET('unknown', 'Unrecognised previous-rooms aggregation.');
     }
-    const list = rooms.slice(0, rec.SumPrevRooms);
-    let sum = 0;
-    for (const room of list) {
-        const v = walkPath(room, rec.Path);
-        if (rec.CountPathTrue) {
-            sum += (v !== undefined && v !== null) ? 1 : 0;
-        } else if (Array.isArray(rec.TableValuesToCount)) {
-            sum += rec.TableValuesToCount.filter(k => luaTruthy(v && v[k])).length;
-        } else if (Array.isArray(rec.ValuesToCount)) {
-            sum += rec.ValuesToCount.some(x => v === x) ? 1 : 0;
-        } else {
-            sum += (typeof v === 'number' ? v : 0);
-        }
-    }
+    const sum = _sumPrevList(rooms.slice(0, rec.SumPrevRooms), rec);
     return _MET(compare(sum, rec.Comparison, rec.Value) ? 'met' : 'unmet');
 }
 
@@ -668,6 +700,20 @@ export function h2OperandMarks(key, val, slices = {}) {
             else if (rec.Comparison === '>' || rec.Comparison === '>=') { memberList = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf; }
         }
         if (memberList == null) {
+            // A SumPrev{Runs,Rooms} aggregate over a run/room-relative path (e.g.
+            // uses of a boon over the last N rooms): show the computed sum, when
+            // the run/room slices are loaded.
+            if (rec.SumPrevRuns !== undefined || rec.SumPrevRooms !== undefined) {
+                if (rec.Value !== undefined) {
+                    const sum = computeSumPrev(rec, root);
+                    if (sum != null) {
+                        entry.scalarValue = sum;
+                        entry.scalarMet = compare(sum, rec.Comparison, rec.Value);
+                        determinable = true;
+                    }
+                }
+                continue;
+            }
             // A plain numeric comparison against a literal value (no list / length
             // / aggregation): capture the save's value at the path so it can show
             // as a "(you have X)" tally beside the threshold. Settings paths
@@ -682,6 +728,39 @@ export function h2OperandMarks(key, val, slices = {}) {
                 entry.scalarValue = resolved;
                 entry.scalarMet = compare(resolved, rec.Comparison, rec.Value);
                 determinable = true;
+            } else if (rec.UseLength && rec.Comparison !== undefined && rec.Value !== undefined
+                && rec.ValuePath === undefined && rec.Modulo === undefined) {
+                // ``UseLength`` compares the entry count of the table at the path
+                // (e.g. how many keepsakes have been gift-presented). Show that
+                // count as the "(X)" tally - but only when the path's root is
+                // actually loaded (a CurrentRun/PrevRun path on the wrong save type
+                // resolves to nothing, so it stays indeterminate, not a false 0).
+                const base = rec.Path[0];
+                const baseLoaded = base === 'GameState' ? root.GameState != null
+                    : (base === 'CurrentRun' || base === 'PrevRun') ? root[base] != null
+                        : false;
+                if (baseLoaded) {
+                    const len = tableLen(resolved);
+                    entry.scalarValue = len;
+                    entry.scalarMet = compare(len, rec.Comparison, rec.Value);
+                    determinable = true;
+                }
+            } else if (rec.ValuePath !== undefined && Array.isArray(rec.ValuePath)
+                && rec.Comparison !== undefined && rec.CountOf === undefined && rec.SumOf === undefined
+                && rec.MaxOf === undefined && rec.UseLength === undefined && rec.CountPathTrue === undefined
+                && rec.ValuesToCount === undefined && rec.TableValuesToCount === undefined
+                && rec.Modulo === undefined && typeof resolved === 'number') {
+                // Compared against another save path's value (e.g. NemesisBet <
+                // CompletedRunsCache). Show the left path's value as the "(X)"
+                // tally, with met computed against the resolved right-hand value.
+                let rv = walkPath(root, rec.ValuePath);
+                rv = (rv === undefined || rv === null) ? 0 : rv;
+                if (rec.ValuePathAddition !== undefined) rv += rec.ValuePathAddition;
+                if (typeof rv === 'number') {
+                    entry.scalarValue = resolved;
+                    entry.scalarMet = compare(resolved, rec.Comparison, rv);
+                    determinable = true;
+                }
             }
             continue;
         }
