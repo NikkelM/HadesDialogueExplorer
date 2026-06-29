@@ -44,8 +44,8 @@ HADES2_PATH_FIELD_NAMES = {
     "RoomCountCache": "entered",
     "BiomesReached": "reached biome",
     "EnemyKills": "killed",
-    "EncountersOccurredCache": "completed encounter",
-    "WeaponsUnlocked": "unlocked weapon",
+    "EncountersOccurredCache": "encounters occurred:",
+    "WeaponsUnlocked": "weapons unlocked:",
     "TextLinesRecord": "played dialogue",
     "SpawnRecord": "spawned",
     "WorldUpgradesAdded": "unlocked incantation/cosmetic:",
@@ -58,7 +58,7 @@ HADES2_PATH_FIELD_NAMES = {
     "TraitsTaken": "boons/traits taken:",
     "TraitCache": "boons/traits taken:",
     "WorldUpgradesRevealed": "incantation/cosmetic revealed:",
-    "ResourcesGained": "gained:",
+    "ResourcesGained": "resources gained:",
     "Hero.TraitDictionary": "has equipped",
     "Hero.Weapons": "equipped weapon",
     # ScreensViewed leaf ids are UI-screen names, not game entities (and several
@@ -85,6 +85,13 @@ HADES2_PATH_FIELD_NAMES = {
     "CurrentRoom.Name": "current room",
     "CurrentRoom.RoomSetName": "current biome",
     "CurrentRoom.UseRecord": "interactions in current room",
+    "CurrentRoom.SpeechRecord": "voiceline played in current room",
+    "CurrentRoom.FishingPointChoices": "current room has a fishing point",
+    "CurrentRoom.FishingPointUsed": "player used a fishing point in current room",
+    "CurrentRoom.Kills": "kills in current room",
+    "CurrentRoom.Encounter.Name": "current room encounter",
+    "CurrentRoom.Encounter.Spawns": "current room spawns",
+    "CurrentRoom.Encounter.PlayerTookDamage": "took damage in current room",
     "Hero": "the player",
     "Hero.IsDead": "is dead",
     "Hero.LastStands": "Death Defiances remaining",
@@ -93,6 +100,7 @@ HADES2_PATH_FIELD_NAMES = {
     # --- count / record GameState fields (terminal nouns; the comparison or
     # operand list carries the specifics) ---
     "FamiliarsUnlocked": "familiars unlocked",
+    "SpeechRecord": "voicelines played",
     "ClearedRunsCache": "cleared runs",
     "ClearedUnderworldRunsCache": "cleared Underworld runs",
     "ClearedSurfaceRunsCache": "cleared Surface runs",
@@ -104,7 +112,7 @@ HADES2_PATH_FIELD_NAMES = {
     "CosmeticsPurchasedCountCache": "cosmetics purchased",
     "GiftPresentation": "keepsakes unlocked",
     "WeaponsFiredRecord": "weapon/effect used",
-    "EncountersCompletedCache": "encounters completed",
+    "EncountersCompletedCache": "encounters completed (all time):",
     "EncounterClearStats": "encounter clear stats",
     "EncountersOccurredBiomeCache": "encounters seen (current biome)",
     "BiomeDepthCache": "rooms entered (current biome)",
@@ -143,6 +151,7 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "Hero.Weapons",
     "LastBossHealthBarRecord",
     "LastBossDifficultyRecord",
+    "EncountersCompletedCache",
 })
 
 # Per-field leaf-name maps: an object-taking field whose trailing leaf is NOT a
