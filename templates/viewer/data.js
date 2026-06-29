@@ -52,6 +52,7 @@ export let sectionKeyLabels;
 export let choiceNames;
 export let metaUpgradeNames;
 export let entityNames;
+export let pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames;
 export let gameDataRefs;
 export let namedRequirements;
 export let godTraitNames;
@@ -219,6 +220,10 @@ export function setActiveGame(gameId) {
     choiceNames = gd.choiceNames || {};
     metaUpgradeNames = gd.metaUpgradeNames || {};
     entityNames = gd.entityNames || {};
+    pathScopeNames = gd.pathScopeNames || {};
+    pathFieldNames = gd.pathFieldNames || {};
+    pathObjectFields = new Set(Array.isArray(gd.pathObjectFields) ? gd.pathObjectFields : []);
+    pathFieldLeafNames = gd.pathFieldLeafNames || {};
     gameDataRefs = gd.gameDataRefs || {};
     namedRequirements = gd.namedRequirements || {};
     godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);

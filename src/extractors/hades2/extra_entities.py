@@ -17,4 +17,16 @@ HADES2_EXTRA_ENTITY_NAMES = {
     "SoulPylon": "Soul Pylon",
     # Eris' rubbish drop (ErisAboutTrash03).
     "TrashPointsDrop": "Dropped Rubbish",
+
+    # Biome codes. These single-letter ids are the biome / region keys used in
+    # ``BiomesReached`` path leaves and ``CurrentRoom.RoomSetName`` comparisons.
+    # They appear nowhere else as values, so resolving them globally is safe.
+    "F": "Erebus",
+    "G": "Oceanus",
+    "H": "Fields of Mourning",
+    "I": "Tartarus",
+    "N": "City of Ephyra",
+    "O": "Rift of Thessaly",
+    "P": "Olympus",
+    "Q": "The Summit",
 }

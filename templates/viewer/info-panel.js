@@ -30,7 +30,7 @@ import {
     groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
-import { pathScopeNames, pathFieldNames, pathObjectFields } from './data.js';
+import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2SatisfiedOperands } from './gamestate-eval.js';
 import { h1SatisfiedOperands } from './gamestate-eval-h1.js';
@@ -203,10 +203,18 @@ function _pathGloss(segs) {
         let gloss = label;
         if (pathObjectFields.has(key)) {
             const objSegs = rest.slice(len);
-            if (objSegs.length) {
-                const leaf = objSegs[objSegs.length - 1];
-                gloss += ' ' + (entityNames[leaf] || leaf);
-            }
+            // An object-taking field with no trailing leaf is a bare container
+            // (a HasAny / UseLength-style aggregation over operands); the verb
+            // label dangles without an object, so leave the path raw - the
+            // operator phrasing and friendly operands carry the meaning.
+            if (!objSegs.length) return null;
+            const leaf = objSegs[objSegs.length - 1];
+            const leafMap = pathFieldLeafNames[key];
+            const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf] || leaf;
+            // The label may carry a trailing ':' separator; keep a single space.
+            gloss += ' ' + friendly;
+        } else if (gloss.endsWith(':')) {
+            gloss = gloss.slice(0, -1);
         }
         if (scope) gloss += ', ' + scope;
         return gloss;

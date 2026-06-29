@@ -39,6 +39,12 @@ from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
 from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
 from src.extractors.hades1.extra_entities import HADES1_EXTRA_ENTITY_NAMES
 from src.extractors.hades2.extra_entities import HADES2_EXTRA_ENTITY_NAMES
+from src.extractors.hades2.path_names import (
+    HADES2_PATH_SCOPE_NAMES,
+    HADES2_PATH_FIELD_NAMES,
+    HADES2_PATH_OBJECT_FIELDS,
+    HADES2_PATH_FIELD_LEAF_NAMES,
+)
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -100,6 +106,12 @@ _GAME_LABELS = {
             HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES,
             HADES1_EXTRA_ENTITY_NAMES,
         ),
+        # H1 uses flat named otherRequirements fields, not dotted save-state
+        # paths, so it has no path vocabulary.
+        "pathScopeNames": {},
+        "pathFieldNames": {},
+        "pathObjectFields": [],
+        "pathFieldLeafNames": {},
     },
     "hades2": {
         "sectionKeyLabels": HADES2_SECTION_KEY_LABELS,
@@ -115,6 +127,10 @@ _GAME_LABELS = {
             HADES2_ENTITY_NAMES, HADES2_SPEAKERS, HADES2_HUB_ROOM_NAMES,
             HADES2_EXTRA_ENTITY_NAMES,
         ),
+        "pathScopeNames": HADES2_PATH_SCOPE_NAMES,
+        "pathFieldNames": HADES2_PATH_FIELD_NAMES,
+        "pathObjectFields": sorted(HADES2_PATH_OBJECT_FIELDS),
+        "pathFieldLeafNames": HADES2_PATH_FIELD_LEAF_NAMES,
     },
 }
 
@@ -178,3 +194,9 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
     graph_data["choiceNames"] = dict(bundle["choiceNames"])
     graph_data["metaUpgradeNames"] = dict(bundle["metaUpgradeNames"])
     graph_data["entityNames"] = dict(bundle["entityNames"])
+    graph_data["pathScopeNames"] = dict(bundle["pathScopeNames"])
+    graph_data["pathFieldNames"] = dict(bundle["pathFieldNames"])
+    graph_data["pathObjectFields"] = list(bundle["pathObjectFields"])
+    graph_data["pathFieldLeafNames"] = {
+        k: dict(v) for k, v in bundle["pathFieldLeafNames"].items()
+    }

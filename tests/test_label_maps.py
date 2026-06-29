@@ -35,6 +35,9 @@ _DOCUMENTED_KEYS = (
     "choiceNames",
     "metaUpgradeNames",
     "entityNames",
+    "pathScopeNames",
+    "pathFieldNames",
+    "pathFieldLeafNames",
 )
 
 
