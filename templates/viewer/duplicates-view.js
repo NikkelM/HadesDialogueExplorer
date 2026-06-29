@@ -87,6 +87,7 @@ export function renderDuplicates(opts) {
 
     const controlsHtml = `<div class="duplicates-controls">`
         + `<input type="text" class="duplicates-search" placeholder="Filter by name or speaker..." `
+        + `spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" `
         + `value="${escapeHtml(query)}" oninput="searchDuplicates(this.value)" />`
         + `</div>`;
 
