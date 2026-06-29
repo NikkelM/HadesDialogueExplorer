@@ -633,6 +633,20 @@ test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () 
     assert.deepEqual([...mv.flat.green], ['NumCerberusPettings']); // present (>0), min field -> green
 });
 
+test('H1: h1OperandMarks colours run-kill array gates', () => {
+    // RequiredKillsThisRun: an enemy killed in the current run -> green.
+    const cr = { RoomHistory: { 1: { Kills: { Harpy: 2 } } } };
+    const m = h1OperandMarks('RequiredKillsThisRun', ['Harpy', 'Hydra'], ctx({ gs: {}, currentRun: cr }));
+    assert.deepEqual([...m.flat.green], ['Harpy']);
+    assert.deepEqual([...m.flat.red], []);
+    // RequiredFalseKills (negative, lifetime EnemyKills): a killed enemy -> red.
+    const f = h1OperandMarks('RequiredFalseKills', ['Harpy', 'Hydra'], ctx({ gs: { EnemyKills: { Harpy: 5 } } }));
+    assert.deepEqual([...f.flat.red], ['Harpy']);
+    assert.deepEqual([...f.flat.green], []);
+    // No current run (hub save) -> indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredKillsThisRun', ['Harpy'], ctx({ gs: {} })), null);
+});
+
 test('H1: h1OperandMarks reads and colours single-scalar numeric gates', () => {
     const c = ctx({ gs: { RunHistory: { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} }, TotalRequiredEnemyKills: 50 } });
     // RequiredMinCompletedRuns: 7 completed runs >= 5 -> met (green).

@@ -829,6 +829,13 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredRunHasOneOfTraits: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.TraitCache || {})[k]) : null; } },
     RequiredSupportAINames: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.SupportAINames || {})[k]) : null; } },
     RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? h1Truthy(s[k]) : null; } },
+    // Run-kill gates: did the save kill this enemy in the current / previous run.
+    // Resolvable only from the matching run slice (else indeterminate -> null).
+    RequiredKillsThisRun: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1RunKills(cr, [k]) > 0 : null; } },
+    RequiredAnyKillsThisRun: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1RunKills(cr, [k]) > 0 : null; } },
+    RequiredKillsLastRun: { pred: (k, ctx) => { const pr = ctx && ctx.prevRun; return pr ? h1RunKills(pr, [k]) > 0 : null; } },
+    // "Must NOT have killed" (lifetime EnemyKills): a killed enemy violates -> red.
+    RequiredFalseKills: { pred: (k, ctx) => { const ek = h1Gs(ctx, 'EnemyKills'); return ek ? h1Num(ek[k]) > 0 : null; }, neg: true },
 };
 
 // H1 "Name op Count" map gates whose value is ``{ operand: threshold }`` and
