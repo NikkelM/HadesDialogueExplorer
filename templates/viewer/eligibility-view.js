@@ -609,8 +609,8 @@ export function renderOtherConditionsHtml(rootName) {
         // satisfies, so the listed items can be highlighted as each row renders.
         operandMarksByKey = new Map();
         for (const [key, val] of Object.entries(other)) {
-            const met = computeOperandMarks(key, val, sctx, slices, gameId);
-            if (met && met.size) operandMarksByKey.set(key, met);
+            const marks = computeOperandMarks(key, val, sctx, slices, gameId);
+            if (marks) operandMarksByKey.set(key, marks);
         }
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-

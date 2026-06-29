@@ -819,7 +819,7 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredCosmetics: { pred: _h1Owned('Cosmetics') },
     RequiredAnyCosmetics: { pred: _h1Owned('Cosmetics') },
     RequiredMinAnyCosmetics: { list: (v) => h1Arr(v && v.Cosmetics), pred: _h1Owned('Cosmetics') },
-    RequiredMaxAnyCosmetics: { list: (v) => h1Arr(v && v.Cosmetics), pred: _h1Owned('Cosmetics') },
+    RequiredMaxAnyCosmetics: { list: (v) => h1Arr(v && v.Cosmetics), pred: _h1Owned('Cosmetics'), neg: true },
     RequiredTraitsTaken: { pred: _h1Owned('TraitsTaken') },
     RequiredWeaponsUnlocked: { pred: _h1Owned('WeaponsUnlocked') },
     RequiredAnyWeaponsUnlocked: { pred: _h1Owned('WeaponsUnlocked') },
@@ -831,24 +831,29 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? h1Truthy(s[k]) : null; } },
 };
 
-// Set of operands in ``val`` that the loaded save individually satisfies, for a
-// positive-membership H1 gate. Returns null for an unsupported field, an empty
-// list, or when no operand can be resolved from the loaded save type (so the
-// caller marks nothing rather than implying "none satisfied").
-export function h1SatisfiedOperands(key, val, ctx) {
+// Operand marks for an H1 membership gate: each listed operand the save has is
+// coloured by the field's sense - green when having it counts toward the gate
+// (the positive "any of / has" fields), red when having it counts against it (a
+// "max" field where surplus members push past the cap). Absent operands are left
+// unmarked. Returns ``{ recs: null, flat: {green,red} }`` (H1 fields render a
+// single operand list, so there are no per-record marks), or null for an
+// unsupported field, an empty list, or when nothing resolves from the loaded
+// save type (so the caller marks nothing rather than implying "none satisfied").
+export function h1OperandMarks(key, val, ctx) {
     const spec = H1_OPERAND_MEMBERSHIP[key];
     if (!spec || !ctx) return null;
     const list = spec.list ? spec.list(val) : h1Arr(val);
     if (!Array.isArray(list) || list.length === 0) return null;
-    const met = new Set();
+    const green = new Set();
+    const red = new Set();
     let determinable = false;
     for (const op of list) {
         const r = spec.pred(op, ctx);
         if (r === null || r === undefined) continue;
         determinable = true;
-        if (r) met.add(op);
+        if (r) (spec.neg ? red : green).add(op);
     }
-    return determinable ? met : null;
+    return determinable ? { recs: null, flat: { green, red } } : null;
 }
 
 

@@ -32,8 +32,8 @@ import {
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2SatisfiedOperands } from './gamestate-eval.js';
-import { h1SatisfiedOperands } from './gamestate-eval-h1.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2OperandMarks } from './gamestate-eval.js';
+import { h1OperandMarks } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -138,15 +138,21 @@ function _formatScalar(v) {
 
 // Operand-satisfaction marking: when a matching save is loaded, the set/any/
 // count gates can show which individual listed operands the save satisfies.
-// ``_operandMarkSet`` holds those operand strings for the gate currently being
-// rendered (set by the save-aware section renderers around each entry, cleared
-// after); ``_renderListItemHtml`` highlights any operand it contains. Module-
-// scoped to avoid threading it through every operand-formatting helper.
-let _operandMarkSet = null;
+// ``_operandMarks`` holds the marks for the gate currently rendering: a
+// ``{ recs, flat }`` where ``flat`` colours operands by value across the whole
+// gate and ``recs`` (when present) colours per record so the same operand can be
+// green under one clause and red under another (e.g. a "3-4 of 5" range).
+// ``_curGreen`` / ``_curRed`` are the operand sets in force for the chip being
+// rendered; the Path record loop swaps them per record, H1 leaves them at flat.
+// Module-scoped to avoid threading them through every operand-formatting helper.
+let _operandMarks = null;
+let _curGreen = null;
+let _curRed = null;
 
-// Compute the satisfied-operand set for one gate, dispatched by game. Returns a
-// Set of operand strings the loaded save satisfies, or null when the gate isn't
-// a markable set/membership gate (or nothing is determinable from the save).
+// Compute the operand marks for one gate, dispatched by game. Returns a
+// ``{ recs, flat }`` mark structure (green = having the operand helps the clause,
+// red = it hurts), or null when the gate isn't a markable set/membership/count
+// gate (or nothing is determinable from the save).
 export function computeOperandMarks(key, val, sctx, slices, gameId) {
     if (!sctx || !sctx.gameState) return null;
     if (gameId === 'hades1') {
@@ -156,14 +162,38 @@ export function computeOperandMarks(key, val, sctx, slices, gameId) {
             prevRun: (slices && slices.prevRun) || null,
             runHistory: (slices && slices.runHistory) || null,
         };
-        return h1SatisfiedOperands(key, val, ctx);
+        return h1OperandMarks(key, val, ctx);
     }
-    return h2SatisfiedOperands(key, val, { ...(slices || {}), gameState: sctx.gameState });
+    return h2OperandMarks(key, val, { ...(slices || {}), gameState: sctx.gameState });
 }
 
-// Set / clear the operand-mark set for the entry about to render. Exported so
-// the eligibility tracer's other-conditions renderer can mark operands too.
-export function setOperandMarks(set) { _operandMarkSet = (set && set.size) ? set : null; }
+// A mark structure carries something to show when either flat set is non-empty.
+function _hasOperandMarks(marks) {
+    return !!(marks && marks.flat && (marks.flat.green.size || marks.flat.red.size));
+}
+
+// Set / clear the operand marks for the entry about to render. Exported so the
+// eligibility tracer's other-conditions renderer can mark operands too. Resets
+// the in-force sets to the gate's flat marks (the default for H1 single-list
+// renders); the Path record loop overrides them per record via _setRecordMarks.
+export function setOperandMarks(marks) {
+    _operandMarks = _hasOperandMarks(marks) ? marks : null;
+    _setFlatMarks();
+}
+function _setFlatMarks() {
+    const flat = _operandMarks && _operandMarks.flat;
+    _curGreen = flat && flat.green.size ? flat.green : null;
+    _curRed = flat && flat.red.size ? flat.red : null;
+}
+// Swap the in-force operand sets to the marks for Path record index ``i`` (used
+// while rendering a multi-clause Path gate). Falls back to no marks for that
+// record when record-indexed marks exist but this record has none.
+function _setRecordMarks(i) {
+    if (!_operandMarks || !_operandMarks.recs) return; // flat-only (H1): leave as-is
+    const rec = _operandMarks.recs[i];
+    _curGreen = rec && rec.green.size ? rec.green : null;
+    _curRed = rec && rec.red.size ? rec.red : null;
+}
 
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
 // game-entity id (boon/trait, keepsake, companion, weapon aspect, god boon,
@@ -315,7 +345,10 @@ function _renderListItemHtml(v) {
     if (refName !== null) {
         return `<code class="other-req-path">${escapeHtml(refName)}</code>`;
     }
-    if (_operandMarkSet && _operandMarkSet.has(v)) {
+    if (_curRed && _curRed.has(v)) {
+        return _valueChip(v, 'other-req-operand-unmet');
+    }
+    if (_curGreen && _curGreen.has(v)) {
         return _valueChip(v, 'other-req-operand-met');
     }
     return _valueChip(v);
@@ -496,7 +529,7 @@ function _renderBareKeyValueHtml(val, key) {
     if (val === null || val === undefined) return escapeHtml(String(val));
     if (Array.isArray(val)) {
         if (val.length === 0) return '<code>(empty)</code>';
-        return val.map(v => _valueChip(v)).join(', ');
+        return val.map(_renderListItemHtml).join(', ');
     }
     if (typeof val === 'object') {
         const kind = _reqGateKind(key);
@@ -737,14 +770,16 @@ export function renderOtherReqEntryHtml(key, val) {
     if (key.startsWith('Path:') && Array.isArray(val) && val.length > 0) {
         const head = key.slice('Path:'.length);
         const parts = [];
-        for (const rec of val) {
-            const formatted = _renderPathRecord(head, rec);
+        for (let i = 0; i < val.length; i++) {
+            _setRecordMarks(i);
+            const formatted = _renderPathRecord(head, val[i]);
             if (formatted === null) {
                 parts.length = 0;
                 break;
             }
             parts.push(formatted);
         }
+        _setFlatMarks();
         if (parts.length) {
             return parts.join(' <span class="other-req-and">AND</span> ');
         }
@@ -1399,8 +1434,8 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         // satisfies, so the list items can be highlighted as the entry renders.
         operandMarksByKey = new Map();
         for (const [key, val] of Object.entries(otherRequirements)) {
-            const met = computeOperandMarks(key, val, sctx, slices, gameId);
-            if (met && met.size) operandMarksByKey.set(key, met);
+            const marks = computeOperandMarks(key, val, sctx, slices, gameId);
+            if (marks) operandMarksByKey.set(key, marks);
         }
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-
@@ -1478,9 +1513,10 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         }
         const tooltip = renderOtherReqTooltip(key, val);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        _operandMarkSet = operandMarksByKey ? (operandMarksByKey.get(key) || null) : null;
+        _operandMarks = operandMarksByKey ? (operandMarksByKey.get(key) || null) : null;
+        _setFlatMarks();
         otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}<span class="other-req-text">${renderOtherReqEntryHtml(key, val)}</span></div>`;
-        _operandMarkSet = null;
+        setOperandMarks(null);
     }
 
     if (!otherHtml) return '';

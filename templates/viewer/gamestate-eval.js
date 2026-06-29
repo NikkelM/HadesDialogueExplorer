@@ -434,7 +434,7 @@ function evalClause(rec, root) {
         if (base === 'CurrentRun' && root.CurrentRun) {
             // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
         } else if (base === 'CurrentRun') {
-            return _WRONGSAVE('Reads CurrentRun.* - current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
+            return _WRONGSAVE('Reads current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
         } else {
             const why = base === 'MapState' ? 'live room/map state' : `${base} state`;
             return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
@@ -599,47 +599,68 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
     return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
 }
 
-// Per-operand satisfaction for the H2 ``Path:<head>`` membership gates, so the
-// detail panel can mark which items in a listed set the loaded save satisfies.
-// Handles the membership records whose operands render as an explicit list:
-// ``HasAny`` / ``HasAll`` (table contains the key), ``IsAny`` (scalar equals an
-// option) and ``CountOf`` (table contains the key). A record whose resolved
-// path is nil contributes nothing (indeterminate); ``<ref:...>`` list operands
-// render as a single collapsed chip rather than individual items, so they fall
-// through unmarked. Returns the union Set of satisfied operands across the
-// gate's records, or null when the gate isn't a markable Path membership.
-export function h2SatisfiedOperands(key, val, slices = {}) {
+// Per-operand marking for the H2 ``Path:<head>`` membership / count gates, so
+// the detail panel and tracer can colour each listed operand by whether the
+// loaded save's possession of it helps (green) or hurts (red) that clause:
+//   - positive membership (``HasAny`` / ``HasAll`` / ``IsAny``) and lower-bound
+//     counts (``CountOf`` / ``SumOf`` with ``>`` / ``>=``): a present member
+//     counts toward the gate -> green.
+//   - negative membership (``HasNone`` / ``IsNone``) and upper-bound counts
+//     (``CountOf`` / ``SumOf`` with ``<`` / ``<=``): a present member pushes
+//     against the gate -> red.
+// Marks are kept per record (aligned to ``val``'s index), because the same
+// operand can appear under several clauses with opposite senses - e.g. a "3-4 of
+// 5" range lists its members once under "at least 3 of" (green) and again under
+// "fewer than 5 of" (red). ``==`` / ``~=`` counts are ambiguous and left
+// unmarked, as are ``<ref:...>`` operand lists (they collapse to a single chip)
+// and records whose resolved path is nil (indeterminate). Returns
+// ``{ recs: [{green,red}], flat: {green,red} }`` (``flat`` = the union, for
+// non-record-indexed renders), or null when nothing is determinable.
+export function h2OperandMarks(key, val, slices = {}) {
     if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
-    // A "present member is good" set only: if any record makes presence work
-    // *against* eligibility (a HasNone exclusion, or a count/sum upper bound the
-    // members push you past, e.g. FamiliarsUnlocked "fewer than 5 of"), marking
-    // the present members green would falsely read as progress, so mark nothing.
-    const presenceIsBad = val.some(rec => rec && typeof rec === 'object'
-        && (rec.HasNone
-            || ((rec.CountOf !== undefined || rec.SumOf !== undefined)
-                && (rec.Comparison === '<' || rec.Comparison === '<='))));
-    if (presenceIsBad) return null;
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
     const root = { GameState: slices.gameState || slices.GameState || null, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory };
-    const met = new Set();
+    const recs = [];
     let determinable = false;
     for (const rec of val) {
+        const entry = { green: new Set(), red: new Set() };
+        recs.push(entry);
         if (!rec || typeof rec !== 'object' || !Array.isArray(rec.Path)) continue;
         const resolved = walkPath(root, rec.Path);
-        const memberList = rec.HasAny || rec.HasAll || (rec.CountOf !== undefined ? rec.CountOf : null);
-        if (memberList != null) {
-            const list = resolveRefList(memberList);
-            if (!Array.isArray(list)) continue; // <ref:...> collapses to one chip
-            if (resolved == null || typeof resolved !== 'object') continue; // nil path: can't tell which are present
+        // Classify the record: its operand list, polarity, and whether it tests
+        // a scalar (Is*) or table membership (Has* / count).
+        let memberList = null;
+        let negative = false;
+        let scalar = false;
+        if (rec.HasAny || rec.HasAll) { memberList = rec.HasAny || rec.HasAll; }
+        else if (rec.HasNone) { memberList = rec.HasNone; negative = true; }
+        else if (Array.isArray(rec.IsAny)) { memberList = rec.IsAny; scalar = true; }
+        else if (Array.isArray(rec.IsNone)) { memberList = rec.IsNone; scalar = true; negative = true; }
+        else if (rec.CountOf !== undefined || rec.SumOf !== undefined) {
+            if (rec.Comparison === '<' || rec.Comparison === '<=') { memberList = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf; negative = true; }
+            else if (rec.Comparison === '>' || rec.Comparison === '>=') { memberList = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf; }
+        }
+        if (memberList == null) continue;
+        const list = resolveRefList(memberList);
+        if (!Array.isArray(list)) continue; // <ref:...> collapses to one chip
+        const target = negative ? entry.red : entry.green;
+        if (scalar) {
+            if (resolved === undefined) continue; // nil path: indeterminate
             determinable = true;
-            for (const k of list) if (luaTruthy(resolved[k])) met.add(k);
-        } else if (Array.isArray(rec.IsAny)) {
-            if (resolved === undefined) continue;
+            for (const v of list) if (resolved === v) target.add(v);
+        } else {
+            if (resolved == null || typeof resolved !== 'object') continue; // nil path
             determinable = true;
-            for (const v of rec.IsAny) if (resolved === v) met.add(v);
+            for (const k of list) if (luaTruthy(resolved[k])) target.add(k);
         }
     }
-    return determinable ? met : null;
+    if (!determinable) return null;
+    const flat = { green: new Set(), red: new Set() };
+    for (const e of recs) {
+        for (const k of e.green) flat.green.add(k);
+        for (const k of e.red) flat.red.add(k);
+    }
+    return { recs, flat };
 }
 
 

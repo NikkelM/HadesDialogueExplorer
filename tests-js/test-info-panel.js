@@ -386,7 +386,7 @@ test('otherRequirements: with a matching save, gates show met/indeterminate elig
         /<span class="group-status group-status-met"[^>]*><\/span> <span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.ReachedTrueEnding<\/code>/,
     );
     // PathFalse:CurrentRun.Cleared reads live run state -> indeterminate, with a reason.
-    assert.match(lastHtml, /class="group-status group-status-unknown" data-tooltip="[^"]*CurrentRun/);
+    assert.match(lastHtml, /class="group-status group-status-unknown" data-tooltip="[^"]*current-run state/);
     clearSaveProgress();
 });
 

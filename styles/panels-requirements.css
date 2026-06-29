@@ -270,6 +270,14 @@
     text-underline-offset: 2px;
 }
 
+.other-req-item .other-req-operand-unmet {
+    color: var(--danger);
+    background: rgba(229, 115, 115, 0.12);
+    text-decoration: underline;
+    text-decoration-color: var(--danger);
+    text-underline-offset: 2px;
+}
+
 /* Alternative Requirement Groups (H2 ``OrRequirements``): a parent
    ``.req-section.req-type-or-group`` wraps one ``.or-branch`` per
    alternative. Distinctive amber accent so the reader can tell at a

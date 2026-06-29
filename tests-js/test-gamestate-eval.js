@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, h2SatisfiedOperands } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, h2OperandMarks } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -604,37 +604,45 @@ test('CurrentRun.* honours PathTrue / PathFalse / membership operators', () => {
     assert.equal(evalCr(hasAny, { RoomsEntered: { X: 1 } }), 'unmet');
 });
 
-test('h2SatisfiedOperands marks the present members of a Path HasAny/IsAny gate', () => {
+test('h2OperandMarks marks the present members of a Path HasAny/IsAny gate green', () => {
     const slices = { gameState: {}, currentRun: { RoomsEntered: { O_Boss01: 1, O_Boss03: 1 } } };
     const hasAny = [{ Path: ['CurrentRun', 'RoomsEntered'], HasAny: ['O_Boss01', 'O_Boss02', 'O_Boss03'] }];
-    const met = h2SatisfiedOperands('Path:CurrentRun.RoomsEntered', hasAny, slices);
-    assert.deepEqual([...met].sort(), ['O_Boss01', 'O_Boss03']);
+    const m = h2OperandMarks('Path:CurrentRun.RoomsEntered', hasAny, slices);
+    assert.deepEqual([...m.flat.green].sort(), ['O_Boss01', 'O_Boss03']);
+    assert.deepEqual([...m.flat.red], []);
     // IsAny: the scalar at the path equals one of the options.
     const isAny = [{ Path: ['CurrentRun', 'CurrentRoom', 'RoomSetName'], IsAny: ['G', 'H'] }];
     const slices2 = { gameState: {}, currentRun: { CurrentRoom: { RoomSetName: 'G' } } };
-    assert.deepEqual([...h2SatisfiedOperands('Path:CurrentRun.CurrentRoom.RoomSetName', isAny, slices2)], ['G']);
+    assert.deepEqual([...h2OperandMarks('Path:CurrentRun.CurrentRoom.RoomSetName', isAny, slices2).flat.green], ['G']);
     // A nil path is indeterminate -> null (so nothing gets marked).
-    assert.equal(h2SatisfiedOperands('Path:CurrentRun.RoomsEntered', hasAny, { gameState: {}, currentRun: null }), null);
+    assert.equal(h2OperandMarks('Path:CurrentRun.RoomsEntered', hasAny, { gameState: {}, currentRun: null }), null);
     // Non-Path keys aren't markable here.
-    assert.equal(h2SatisfiedOperands('NamedRequirements', ['X'], slices), null);
+    assert.equal(h2OperandMarks('NamedRequirements', ['X'], slices), null);
 });
 
-test('h2SatisfiedOperands marks nothing when presence works against the gate', () => {
+test('h2OperandMarks colours present members by clause sense (green helps, red hurts)', () => {
     const list = ['FrogFamiliar', 'RavenFamiliar', 'CatFamiliar', 'HoundFamiliar', 'PolecatFamiliar'];
     const slices = { gameState: { FamiliarsUnlocked: { FrogFamiliar: true, RavenFamiliar: true, CatFamiliar: true, HoundFamiliar: true, PolecatFamiliar: true } } };
-    // A 3-4 range gate (>=3 AND <5): the upper bound makes "having all five"
-    // a violation, so no member should be marked as satisfied.
+    // A 3-4 range gate (>=3 AND <5): each clause renders its own operand list,
+    // so the >= record marks present members green and the < record marks them red.
     const range = [
         { Comparison: '>=', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 3 },
         { Comparison: '<', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 5 },
     ];
-    assert.equal(h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', range, slices), null);
-    // A HasNone exclusion likewise marks nothing (presence is bad).
+    const m = h2OperandMarks('Path:GameState.FamiliarsUnlocked', range, slices);
+    assert.equal(m.recs.length, 2);
+    assert.deepEqual([...m.recs[0].green].sort(), [...list].sort());
+    assert.deepEqual([...m.recs[0].red], []);
+    assert.deepEqual([...m.recs[1].red].sort(), [...list].sort());
+    assert.deepEqual([...m.recs[1].green], []);
+    // A HasNone exclusion marks present members red (presence is bad).
     const none = [{ Path: ['GameState', 'FamiliarsUnlocked'], HasNone: ['FrogFamiliar'] }];
-    assert.equal(h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', none, slices), null);
-    // A pure lower bound still marks the present members.
+    const mn = h2OperandMarks('Path:GameState.FamiliarsUnlocked', none, slices);
+    assert.deepEqual([...mn.flat.red], ['FrogFamiliar']);
+    assert.deepEqual([...mn.flat.green], []);
+    // A pure lower bound marks the present members green.
     const lower = [{ Comparison: '>=', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 3 }];
-    assert.deepEqual([...h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', lower, slices)].sort(), [...list].sort());
+    assert.deepEqual([...h2OperandMarks('Path:GameState.FamiliarsUnlocked', lower, slices).flat.green].sort(), [...list].sort());
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {
