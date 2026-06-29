@@ -38,6 +38,7 @@ from src.extractors.hades2 import (
 from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
 from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
 from src.extractors.hades1.extra_entities import HADES1_EXTRA_ENTITY_NAMES
+from src.extractors.hades2.extra_entities import HADES2_EXTRA_ENTITY_NAMES
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -111,7 +112,8 @@ _GAME_LABELS = {
         "choiceNames": HADES2_CHOICE_NAMES,
         "metaUpgradeNames": {},
         "entityNames": _entity_names(
-            HADES2_ENTITY_NAMES, HADES2_SPEAKERS, HADES2_HUB_ROOM_NAMES
+            HADES2_ENTITY_NAMES, HADES2_SPEAKERS, HADES2_HUB_ROOM_NAMES,
+            HADES2_EXTRA_ENTITY_NAMES,
         ),
     },
 }
