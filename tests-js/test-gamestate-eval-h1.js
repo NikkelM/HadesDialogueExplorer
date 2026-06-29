@@ -594,6 +594,7 @@ test('H1: h1OperandMarks marks owned items in a set/membership gate', () => {
     const m = h1OperandMarks('RequiredMinAnyCosmetics', { Cosmetics: ['A', 'B', 'C'], Count: 2 }, c);
     assert.deepEqual([...m.flat.green].sort(), ['A', 'C']);
     assert.deepEqual([...m.flat.red], []);
+    assert.equal(m.flat.total, 2); // aggregate: 2 of the 3 listed cosmetics owned
     // A "max" set gate colours owned members red (surplus pushes past the cap).
     const mMax = h1OperandMarks('RequiredMaxAnyCosmetics', { Cosmetics: ['A', 'B', 'C'], Count: 2 }, c);
     assert.deepEqual([...mMax.flat.red].sort(), ['A', 'C']);
@@ -602,10 +603,29 @@ test('H1: h1OperandMarks marks owned items in a set/membership gate', () => {
     assert.deepEqual([...h1OperandMarks('RequiredAnyCosmetics', ['A', 'B'], c).flat.green], ['A']);
     // Weapons unlocked.
     assert.deepEqual([...h1OperandMarks('RequiredWeaponsUnlocked', ['BowWeapon', 'GunWeapon'], c).flat.green], ['BowWeapon']);
-    // Unsupported field -> null (nothing marked).
-    assert.equal(h1OperandMarks('RequiredKills', { Harpy: 1 }, c), null);
+    // A genuinely unsupported field -> null (nothing marked).
+    assert.equal(h1OperandMarks('RequiredRoom', 'N_Tartarus', c), null);
     // A current-run gate with no current run slice -> indeterminate -> null.
     assert.equal(h1OperandMarks('RequiredOneOfTraits', ['T1', 'T2'], ctx({ gs: {} })), null);
+});
+
+test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () => {
+    const c = ctx({ gs: { EnemyKills: { Harpy: 3, Hydra: 0 }, NPCInteractions: { NPC_Sisyphus_01: 6 } } });
+    // RequiredKills (min): present counts green, with the save's actual tally;
+    // an absent / zero entry carries a (0) tally but no colour.
+    const k = h1OperandMarks('RequiredKills', { Harpy: 1, Hydra: 2, Skull: 1 }, c);
+    assert.equal(k.flat.counts.get('Harpy'), 3);
+    assert.equal(k.flat.counts.get('Hydra'), 0);
+    assert.equal(k.flat.counts.get('Skull'), 0); // absent table entry -> 0
+    assert.deepEqual([...k.flat.green], ['Harpy']); // only the >0 entry is coloured
+    assert.deepEqual([...k.flat.red], []);
+    // A "max" gate colours present counts red (more pushes past the cap).
+    const n = h1OperandMarks('RequiredMaxNPCInteractions', { NPC_Sisyphus_01: 5 }, c);
+    assert.equal(n.flat.counts.get('NPC_Sisyphus_01'), 6);
+    assert.deepEqual([...n.flat.red], ['NPC_Sisyphus_01']);
+    assert.deepEqual([...n.flat.green], []);
+    // The underlying table absent -> indeterminate -> null (mark nothing).
+    assert.equal(h1OperandMarks('RequiredKills', { Harpy: 1 }, ctx({ gs: {} })), null);
 });
 
 // --- permanence: monotonic "max" gates (blocked vs unobtainable) -------------

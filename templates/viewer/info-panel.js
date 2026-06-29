@@ -148,6 +148,8 @@ function _formatScalar(v) {
 let _operandMarks = null;
 let _curGreen = null;
 let _curRed = null;
+let _curCounts = null;
+let _curTotal = null;
 
 // Compute the operand marks for one gate, dispatched by game. Returns a
 // ``{ recs, flat }`` mark structure (green = having the operand helps the clause,
@@ -167,9 +169,16 @@ export function computeOperandMarks(key, val, sctx, slices, gameId) {
     return h2OperandMarks(key, val, { ...(slices || {}), gameState: sctx.gameState });
 }
 
-// A mark structure carries something to show when either flat set is non-empty.
+// A mark structure carries something to show when a flat / per-record set is
+// non-empty, it has per-operand count tallies, or it has an aggregate "you have
+// X" total to display.
+function _markEntryHasContent(e) {
+    return !!(e && (e.green.size || e.red.size || (e.counts && e.counts.size) || e.total != null));
+}
 function _hasOperandMarks(marks) {
-    return !!(marks && marks.flat && (marks.flat.green.size || marks.flat.red.size));
+    if (!marks) return false;
+    if (_markEntryHasContent(marks.flat)) return true;
+    return !!(marks.recs && marks.recs.some(_markEntryHasContent));
 }
 
 // Set / clear the operand marks for the entry about to render. Exported so the
@@ -184,6 +193,8 @@ function _setFlatMarks() {
     const flat = _operandMarks && _operandMarks.flat;
     _curGreen = flat && flat.green.size ? flat.green : null;
     _curRed = flat && flat.red.size ? flat.red : null;
+    _curCounts = flat && flat.counts && flat.counts.size ? flat.counts : null;
+    _curTotal = flat && flat.total != null ? flat.total : null;
 }
 // Swap the in-force operand sets to the marks for Path record index ``i`` (used
 // while rendering a multi-clause Path gate). Falls back to no marks for that
@@ -193,6 +204,18 @@ function _setRecordMarks(i) {
     const rec = _operandMarks.recs[i];
     _curGreen = rec && rec.green.size ? rec.green : null;
     _curRed = rec && rec.red.size ? rec.red : null;
+    _curCounts = rec && rec.counts && rec.counts.size ? rec.counts : null;
+    _curTotal = rec && rec.total != null ? rec.total : null;
+}
+
+// Aggregate "(you have X)" clause for a count-of-set gate, inserted between the
+// "... of" phrasing and the operand list. Shows how many of the listed set the
+// save has - the quantity the gate's threshold actually compares against - for
+// sets whose members are boolean (so they carry no per-item tally). Empty when
+// there's no aggregate to show for the gate currently rendering.
+function _renderAggregateHtml() {
+    if (_curTotal == null) return '';
+    return ` (you have <code>${escapeHtml(String(_curTotal))}</code>)`;
 }
 
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
@@ -345,13 +368,19 @@ function _renderListItemHtml(v) {
     if (refName !== null) {
         return `<code class="other-req-path">${escapeHtml(refName)}</code>`;
     }
-    if (_curRed && _curRed.has(v)) {
-        return _valueChip(v, 'other-req-operand-unmet');
+    let cls = null;
+    if (_curRed && _curRed.has(v)) cls = 'other-req-operand-unmet';
+    else if (_curGreen && _curGreen.has(v)) cls = 'other-req-operand-met';
+    let html = _valueChip(v, cls);
+    if (_curCounts && _curCounts.has(v)) {
+        // The tally shares its operand's colour treatment (same green / red
+        // backdrop), so the two read as one unit. The separating space lives
+        // inside the tally span so the backdrop / underline runs unbroken from
+        // the name into the tally rather than leaving an uncoloured gap.
+        const tint = cls ? ` ${cls}` : '';
+        html += `<span class="other-req-operand-count${tint}"> (${escapeHtml(String(_curCounts.get(v)))})</span>`;
     }
-    if (_curGreen && _curGreen.has(v)) {
-        return _valueChip(v, 'other-req-operand-met');
-    }
-    return _valueChip(v);
+    return html;
 }
 
 function _renderOperandList(items) {
@@ -437,7 +466,7 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
             if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
             const phrase = _COUNT_OP_PHRASING[rec.Comparison];
             if (!phrase || !_allConsumed(keys, consumed)) return null;
-            return `${headHtml} ${phrase} ${valueHtml} of: ${_renderOperandList(rec[ck])}${suffix}`;
+            return `${headHtml} ${phrase} ${valueHtml} of${_renderAggregateHtml()}: ${_renderOperandList(rec[ck])}${suffix}`;
         }
     }
 
@@ -560,16 +589,19 @@ function _renderBareKeyValueHtml(val, key) {
         // most> N of: items`` rather than dumping the array against an operator.
         const listKey = objKeys.find(k => Array.isArray(val[k]));
         if (listKey && 'Count' in val && objKeys.length === 2) {
-            return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}`;
+            return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of${_renderAggregateHtml()}: ${_renderOperandList(val[listKey])}`;
         }
         // Scalar value map -> ``key op value`` per entry. The key is the
         // subject (often an entity id, e.g. ``RequiredMinNPCInteractions:
         // {NPC_Achilles_01: 1}``), so resolve it through ``entityNames`` too.
+        // ``_renderListItemHtml`` carries any operand colour + "(N)" save tally
+        // for the "Name op Count" numeric gates; the right-hand value is the
+        // gate's threshold, so it stays a plain chip.
         // ``op`` reflects the gate's real comparison: ``=`` for RequiredValues
         // (must equal), ``!=`` for RequiredFalseValues, ``<=`` for max
         // thresholds, ``>=`` otherwise.
         return Object.entries(val)
-            .map(([k, v]) => `${_valueChip(k)} ${op} ${_valueChip(v)}`)
+            .map(([k, v]) => `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`)
             .join(', ');
     }
     return _valueChip(val);

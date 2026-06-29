@@ -633,8 +633,10 @@ test('h2OperandMarks colours present members by clause sense (green helps, red h
     assert.equal(m.recs.length, 2);
     assert.deepEqual([...m.recs[0].green].sort(), [...list].sort());
     assert.deepEqual([...m.recs[0].red], []);
+    assert.equal(m.recs[0].total, 5); // aggregate: 5 of the set are unlocked
     assert.deepEqual([...m.recs[1].red].sort(), [...list].sort());
     assert.deepEqual([...m.recs[1].green], []);
+    assert.equal(m.recs[1].total, 5);
     // A HasNone exclusion marks present members red (presence is bad).
     const none = [{ Path: ['GameState', 'FamiliarsUnlocked'], HasNone: ['FrogFamiliar'] }];
     const mn = h2OperandMarks('Path:GameState.FamiliarsUnlocked', none, slices);
@@ -643,6 +645,24 @@ test('h2OperandMarks colours present members by clause sense (green helps, red h
     // A pure lower bound marks the present members green.
     const lower = [{ Comparison: '>=', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 3 }];
     assert.deepEqual([...h2OperandMarks('Path:GameState.FamiliarsUnlocked', lower, slices).flat.green].sort(), [...list].sort());
+});
+
+test('h2OperandMarks captures per-operand SumOf/CountOf tallies from the save', () => {
+    // SumOf over a numeric counter table: every operand carries its numeric value,
+    // and an absent entry contributes 0.
+    const sum = [{ Comparison: '>=', SumOf: ['N_Boss01', 'N_Boss02', 'N_Boss03'], Path: ['GameState', 'RoomsEntered'], Value: 3 }];
+    const slices = { gameState: { RoomsEntered: { N_Boss01: 2, N_Boss02: 1 } } };
+    const m = h2OperandMarks('Path:GameState.RoomsEntered', sum, slices);
+    assert.equal(m.recs[0].counts.get('N_Boss01'), 2);
+    assert.equal(m.recs[0].counts.get('N_Boss02'), 1);
+    assert.equal(m.recs[0].counts.get('N_Boss03'), 0); // absent -> 0 contribution
+    assert.equal(m.flat.counts.get('N_Boss01'), 2);
+    // CountOf over a boolean unlock table has no meaningful per-entry number ->
+    // no tally (the colour conveys presence).
+    const famList = ['FrogFamiliar', 'RavenFamiliar'];
+    const cnt = [{ Comparison: '>=', CountOf: famList, Path: ['GameState', 'FamiliarsUnlocked'], Value: 1 }];
+    const fam = h2OperandMarks('Path:GameState.FamiliarsUnlocked', cnt, { gameState: { FamiliarsUnlocked: { FrogFamiliar: true } } });
+    assert.equal(fam.recs[0].counts, null);
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {

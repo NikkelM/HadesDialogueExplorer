@@ -831,29 +831,82 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? h1Truthy(s[k]) : null; } },
 };
 
+// H1 "Name op Count" map gates whose value is ``{ operand: threshold }`` and
+// whose operand reads a numeric per-key save table (kills, room visits, NPC /
+// item interactions, lifetime resources, runs-with-weapon). These are the H1
+// equivalents of the H2 CountOf / SumOf gates: each operand has a real numeric
+// save value, so it renders with a "(N)" tally behind the name and is coloured by
+// the gate's direction (a "min" field wants more, so a present count is green; a
+// "max" field wants fewer, so a present count is red). ``count`` returns the
+// save's numeric value for an operand, or null when the table can't be read.
+const _h1TblCount = (slice) => (op, ctx) => { const t = h1Gs(ctx, slice); if (t == null || typeof t !== 'object') return null; const v = t[op]; return typeof v === 'number' ? v : (v == null ? 0 : null); };
+const H1_OPERAND_COUNT_FIELDS = {
+    RequiredKills: { count: _h1TblCount('EnemyKills'), dir: 'min' },
+    RequiredMinWeaponKills: { count: _h1TblCount('WeaponKills'), dir: 'min' },
+    RequiredMinTimesSeenRoom: { count: _h1TblCount('RoomCountCache'), dir: 'min' },
+    RequiredMaxTimesSeenRoom: { count: _h1TblCount('RoomCountCache'), dir: 'max' },
+    RequiredMinNPCInteractions: { count: _h1TblCount('NPCInteractions'), dir: 'min' },
+    RequiredMaxNPCInteractions: { count: _h1TblCount('NPCInteractions'), dir: 'max' },
+    RequiredMinItemInteractions: { count: _h1TblCount('ItemInteractions'), dir: 'min' },
+    RequiredLifetimeResourcesGainedMin: { count: _h1TblCount('LifetimeResourcesGained'), dir: 'min' },
+    RequiredLifetimeResourcesGainedMax: { count: _h1TblCount('LifetimeResourcesGained'), dir: 'max' },
+    RequiredLifetimeResourcesSpentMin: { count: _h1TblCount('LifetimeResourcesSpent'), dir: 'min' },
+    RequiredLifetimeResourcesSpentMax: { count: _h1TblCount('LifetimeResourcesSpent'), dir: 'max' },
+    RequiredResourcesMin: { count: _h1TblCount('Resources'), dir: 'min' },
+    RequiredMinRunsWithWeapons: { count: (op, ctx) => h1RunsWithWeapon(ctx, op), dir: 'min' },
+    RequiredMaxRunsWithWeapons: { count: (op, ctx) => h1RunsWithWeapon(ctx, op), dir: 'max' },
+};
+
 // Operand marks for an H1 membership gate: each listed operand the save has is
 // coloured by the field's sense - green when having it counts toward the gate
 // (the positive "any of / has" fields), red when having it counts against it (a
-// "max" field where surplus members push past the cap). Absent operands are left
-// unmarked. Returns ``{ recs: null, flat: {green,red} }`` (H1 fields render a
-// single operand list, so there are no per-record marks), or null for an
-// unsupported field, an empty list, or when nothing resolves from the loaded
-// save type (so the caller marks nothing rather than implying "none satisfied").
+// "max" field where surplus members push past the cap). The "Name op Count" map
+// gates additionally carry a per-operand ``counts`` map of the save's numeric
+// value, rendered as a "(N)" tally. Absent operands are left unmarked. Returns
+// ``{ recs: null, flat: {green,red,counts} }`` (H1 fields render a single operand
+// list, so there are no per-record marks), or null for an unsupported field, an
+// empty list, or when nothing resolves from the loaded save type (so the caller
+// marks nothing rather than implying "none satisfied").
 export function h1OperandMarks(key, val, ctx) {
+    if (!ctx) return null;
+    const cspec = H1_OPERAND_COUNT_FIELDS[key];
+    if (cspec) {
+        if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+        const ops = Object.keys(val);
+        if (ops.length === 0) return null;
+        const green = new Set();
+        const red = new Set();
+        const counts = new Map();
+        let determinable = false;
+        for (const op of ops) {
+            const n = cspec.count(op, ctx);
+            if (n === null || n === undefined) continue;
+            determinable = true;
+            counts.set(op, n);
+            if (n > 0) (cspec.dir === 'max' ? red : green).add(op);
+        }
+        return determinable ? { recs: null, flat: { green, red, counts: counts.size ? counts : null } } : null;
+    }
     const spec = H1_OPERAND_MEMBERSHIP[key];
-    if (!spec || !ctx) return null;
+    if (!spec) return null;
     const list = spec.list ? spec.list(val) : h1Arr(val);
     if (!Array.isArray(list) || list.length === 0) return null;
     const green = new Set();
     const red = new Set();
     let determinable = false;
+    let owned = 0;
     for (const op of list) {
         const r = spec.pred(op, ctx);
         if (r === null || r === undefined) continue;
         determinable = true;
-        if (r) (spec.neg ? red : green).add(op);
+        if (r) { (spec.neg ? red : green).add(op); owned++; }
     }
-    return determinable ? { recs: null, flat: { green, red } } : null;
+    if (!determinable) return null;
+    // The "N of a set" gates (``RequiredMin/MaxAnyCosmetics``) compare how many of
+    // the listed set the save owns to a threshold, so carry that aggregate ("you
+    // have X") since the members are boolean and have no per-item number.
+    const total = spec.list ? owned : null;
+    return { recs: null, flat: { green, red, total } };
 }
 
 

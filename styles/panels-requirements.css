@@ -278,6 +278,20 @@
     text-underline-offset: 2px;
 }
 
+/* Per-operand save tally shown behind a CountOf / SumOf operand, e.g. the times
+   each room was entered in a "Sum of ... >= N" gate. Muted so it reads as a
+   secondary annotation next to the friendly operand name. */
+/* Per-operand save tally shown behind a CountOf / SumOf operand, e.g. the times
+   each room was entered in a "Sum of ... >= N" gate. Smaller than the operand
+   name; it inherits the operand's green / red backdrop when coloured (so name and
+   tally read as one unit), and falls back to muted when the operand is uncoloured. */
+.other-req-item .other-req-operand-count {
+    font-size: var(--fs-xs);
+}
+.other-req-item .other-req-operand-count:not(.other-req-operand-met):not(.other-req-operand-unmet) {
+    color: var(--text-muted);
+}
+
 /* Alternative Requirement Groups (H2 ``OrRequirements``): a parent
    ``.req-section.req-type-or-group`` wraps one ``.or-branch`` per
    alternative. Distinctive amber accent so the reader can tell at a

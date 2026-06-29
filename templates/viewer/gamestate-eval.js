@@ -613,9 +613,12 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
 // 5" range lists its members once under "at least 3 of" (green) and again under
 // "fewer than 5 of" (red). ``==`` / ``~=`` counts are ambiguous and left
 // unmarked, as are ``<ref:...>`` operand lists (they collapse to a single chip)
-// and records whose resolved path is nil (indeterminate). Returns
-// ``{ recs: [{green,red}], flat: {green,red} }`` (``flat`` = the union, for
-// non-record-indexed renders), or null when nothing is determinable.
+// and records whose resolved path is nil (indeterminate). Aggregation records
+// (CountOf / SumOf) additionally carry a per-operand ``counts`` map of the save's
+// numeric value at each key, so the renderer can show a "(N)" tally behind each
+// operand. Returns ``{ recs: [{green,red,counts}], flat: {green,red,counts} }``
+// (``flat`` = the union, for non-record-indexed renders), or null when nothing
+// is determinable.
 export function h2OperandMarks(key, val, slices = {}) {
     if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
@@ -623,7 +626,7 @@ export function h2OperandMarks(key, val, slices = {}) {
     const recs = [];
     let determinable = false;
     for (const rec of val) {
-        const entry = { green: new Set(), red: new Set() };
+        const entry = { green: new Set(), red: new Set(), counts: null, total: null };
         recs.push(entry);
         if (!rec || typeof rec !== 'object' || !Array.isArray(rec.Path)) continue;
         const resolved = walkPath(root, rec.Path);
@@ -652,14 +655,39 @@ export function h2OperandMarks(key, val, slices = {}) {
             if (resolved == null || typeof resolved !== 'object') continue; // nil path
             determinable = true;
             for (const k of list) if (luaTruthy(resolved[k])) target.add(k);
+            // For an aggregation (CountOf / SumOf) record, capture each operand's
+            // numeric save value so it can render as a "(N)" tally behind the
+            // friendly name (showing where the sum / count comes from). SumOf adds
+            // raw numeric values, so an absent / non-numeric entry contributes 0;
+            // CountOf over a boolean unlock table has no meaningful per-entry
+            // number, so those are left out (the colour already conveys presence).
+            if (rec.CountOf !== undefined || rec.SumOf !== undefined) {
+                const isSum = rec.SumOf !== undefined;
+                const counts = new Map();
+                for (const k of list) {
+                    const v = resolved[k];
+                    if (typeof v === 'number') counts.set(k, v);
+                    else if (isSum) counts.set(k, 0);
+                }
+                if (counts.size) entry.counts = counts;
+                // A CountOf gate compares "how many of the set are present" to its
+                // threshold; surface that aggregate ("you have X") so a set whose
+                // members carry no per-entry number (e.g. unlocks) still shows the
+                // count the gate turns on.
+                if (rec.CountOf !== undefined) {
+                    entry.total = list.reduce((s, k) => s + (luaTruthy(resolved[k]) ? 1 : 0), 0);
+                }
+            }
         }
     }
     if (!determinable) return null;
-    const flat = { green: new Set(), red: new Set() };
+    const flat = { green: new Set(), red: new Set(), counts: new Map(), total: null };
     for (const e of recs) {
         for (const k of e.green) flat.green.add(k);
         for (const k of e.red) flat.red.add(k);
+        if (e.counts) for (const [k, n] of e.counts) flat.counts.set(k, n);
     }
+    if (!flat.counts.size) flat.counts = null;
     return { recs, flat };
 }
 
