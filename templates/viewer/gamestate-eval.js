@@ -59,11 +59,18 @@ function resolveRefList(v) {
 // under a parent key (e.g. ``ScreenData.Shrine`` holds ``BountyOrder``) with a
 // broken flat self-ref alias shadowing the dotted name. So when the direct value
 // isn't an array, walk the dotted name (including ``[N]`` array indices, Lua
-// 1-based) from the longest resolvable prefix into that parent. Returns the
-// array, or null when it can't be resolved.
+// 1-based) from the longest resolvable prefix into that parent. A mixed Lua table
+// (named fields plus an array part, e.g. a GhostAdmin item category) normalises
+// to ``{...named, _array: [...]}``; the engine iterates its array part (``ipairs``)
+// so ``_array`` is the member list. Returns the array, or null when unresolvable.
+function _asRefArray(v) {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object' && Array.isArray(v._array)) return v._array;
+    return null;
+}
 function _resolveRefArray(name) {
-    const direct = gameDataRefs && gameDataRefs[name];
-    if (Array.isArray(direct)) return direct;
+    const directArr = _asRefArray(gameDataRefs && gameDataRefs[name]);
+    if (directArr) return directArr;
     if (!gameDataRefs || typeof name !== 'string') return null;
     const segs = [];
     const partRe = /([A-Za-z_][A-Za-z0-9_]*)|\[(\d+)\]/g;
@@ -89,7 +96,7 @@ function _resolveRefArray(name) {
                 cur = cur[seg.value - 1]; // Lua 1-indexed -> JS 0-indexed
             }
         }
-        if (ok && Array.isArray(cur)) return cur;
+        if (ok) { const arr = _asRefArray(cur); if (arr) return arr; }
     }
     return null;
 }

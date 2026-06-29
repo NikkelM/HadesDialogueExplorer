@@ -21,6 +21,10 @@ before(() => {
             // self-ref alias that shadows it (see ScreenData.Shrine.BountyOrder).
             'ScreenData.Shrine': { BountyOrder: ['BountyA', 'BountyB'] },
             'ScreenData.Shrine.BountyOrder': '<ref:ScreenData.Shrine.BountyOrder>',
+            // A mixed Lua table (named fields + array part normalised to _array),
+            // referenced by index - the engine iterates the array part (a GhostAdmin
+            // item category), so the member list is that ``_array``.
+            'ScreenData.GhostAdmin.ItemCategories': [{ Name: 'Cat1', _array: ['UpgradeA', 'UpgradeB'] }],
         },
         godTraitNames: ['ZeusManaBoltBoon', 'AthenaBoon'],
         restrictBoonChoiceTraitNames: ['ChaosRestrictBoonCurse'],
@@ -57,6 +61,14 @@ test('HasAll over a nested ref alias resolves via the parent table (not indeterm
     const rec = { Path: ['GameState', 'ShrineBountiesCompleted'], HasAll: '<ref:ScreenData.Shrine.BountyOrder>' };
     assert.equal(evalReq(clause(rec), { ShrineBountiesCompleted: { BountyA: true, BountyB: true } }), 'met');
     assert.equal(evalReq(clause(rec), { ShrineBountiesCompleted: { BountyA: true } }), 'unmet');
+});
+
+test('CountOf over a mixed-table ref (ItemCategories[N]) resolves via its _array part', () => {
+    // ``<ref:ScreenData.GhostAdmin.ItemCategories[1]>`` indexes a list whose entry
+    // is a named+array table; the engine counts over its array part.
+    const rec = { Path: ['GameState', 'WorldUpgrades'], Comparison: '>=', CountOf: '<ref:ScreenData.GhostAdmin.ItemCategories[1]>', Value: 1 };
+    assert.equal(evalReq(clause(rec), { WorldUpgrades: { UpgradeA: true } }), 'met'); // 1 of [A,B] >= 1
+    assert.equal(evalReq(clause(rec), { WorldUpgrades: {} }), 'unmet'); // 0 >= 1
 });
 
 test('PathFalse: passes only on nil/false (0 is truthy here, so it fails)', () => {

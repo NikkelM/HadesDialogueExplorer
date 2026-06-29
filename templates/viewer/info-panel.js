@@ -133,6 +133,11 @@ function _pathToString(p) {
 }
 
 function _formatScalar(v) {
+    // Round non-integer numbers to 2 decimals so save-derived fractions (e.g. a
+    // boss health-bar value like 0.8111153846) read cleanly.
+    if (typeof v === 'number' && !Number.isInteger(v)) {
+        return String(Math.round(v * 100) / 100);
+    }
     return typeof v === 'string' ? v : JSON.stringify(v);
 }
 
@@ -271,8 +276,10 @@ function _valueChip(v, cls) {
 // and ``GameState.ReachedTrueEnding`` -> "reached the credits". Composes the
 // root scope (this run / last run; GameState adds no suffix), the state field
 // label, and - for object-taking fields - the trailing entity leaf resolved via
-// ``entityNames``. Returns null when no field matches (caller falls back to the
-// single-entity-leaf behaviour, then to the raw path).
+// ``entityNames``. Returns ``{ text, full }`` (``full`` = every path segment is
+// represented by a friendly name, so the raw path can move to a tooltip) or
+// ``null`` when no field matches (caller falls back to the single-entity-leaf
+// behaviour, then to the raw path).
 function _pathGloss(segs) {
     if (!segs.length) return null;
     const hasScope = Object.prototype.hasOwnProperty.call(pathScopeNames, segs[0]);
@@ -286,6 +293,7 @@ function _pathGloss(segs) {
         const label = pathFieldNames[key];
         if (!label) continue;
         let gloss = label;
+        let full = true;
         if (pathObjectFields.has(key)) {
             const objSegs = rest.slice(len);
             // An object-taking field with no trailing leaf is a bare container
@@ -295,30 +303,44 @@ function _pathGloss(segs) {
             if (!objSegs.length) return null;
             const leaf = objSegs[objSegs.length - 1];
             const leafMap = pathFieldLeafNames[key];
-            const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf] || leaf;
+            const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
             // The label may carry a trailing ':' separator; keep a single space.
-            gloss += ' ' + friendly;
-        } else if (gloss.endsWith(':')) {
-            gloss = gloss.slice(0, -1);
+            gloss += ' ' + (friendly || leaf);
+            // Partial when the leaf is an unresolved id, or there are extra
+            // intermediate segments the gloss doesn't account for.
+            if (!friendly || objSegs.length > 1) full = false;
+        } else {
+            if (gloss.endsWith(':')) gloss = gloss.slice(0, -1);
+            // A terminal field that still carries trailing segments leaves them
+            // unresolved (e.g. WeaponsFiredRecord.WeaponSpellLaser).
+            if (rest.length > len) full = false;
         }
         if (scope) gloss += ', ' + scope;
-        return gloss;
+        // Glosses can render standalone (fully-resolved paths drop the raw path),
+        // so present them sentence-case: capitalise the first letter. The label
+        // maps stay lowercase fragments so they compose cleanly.
+        const text = gloss.charAt(0).toUpperCase() + gloss.slice(1);
+        return { text, full };
     }
     return null;
 }
 
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
-// ``GameState.ReachedTrueEnding``, ...) as an ``other-req-path`` chip. The raw
-// internal path is always kept intact; a friendly gloss is appended in
-// parentheses when the path's state field is known (``_pathGloss``), else when
-// exactly one segment is a known ``entityNames`` id (the entity's DisplayName).
-// When neither resolves, the raw path renders unchanged.
+// ``GameState.ReachedTrueEnding``, ...) as an ``other-req-path`` chip. A fully
+// resolved path renders as just its friendly gloss, with the raw internal path
+// moved to a hover tooltip. A partially resolved path (or a single resolved
+// entity segment) keeps the raw path with the friendly gloss appended in
+// parentheses. An unresolved path renders raw.
 function _renderPathTailHtml(path) {
     const segs = String(path).split('.');
     const gloss = _pathGloss(segs);
     if (gloss) {
+        if (gloss.full) {
+            return `<code class="other-req-path" data-tooltip="${escapeHtml(path)}">`
+                + `${escapeHtml(gloss.text)}</code>`;
+        }
         return `<code class="other-req-path">${escapeHtml(path)}`
-            + ` <span class="other-req-friendly">(${escapeHtml(gloss)})</span></code>`;
+            + ` <span class="other-req-friendly">(${escapeHtml(gloss.text)})</span></code>`;
     }
     const hits = [];
     for (let i = 0; i < segs.length; i++) {
@@ -502,7 +524,7 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
             if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
             const phrase = _COUNT_OP_PHRASING[rec.Comparison];
             if (!phrase || !_allConsumed(keys, consumed)) return null;
-            return `${headHtml} ${phrase} ${valueHtml} of${_renderAggregateHtml()}: ${_renderOperandList(rec[ck])}${suffix}`;
+            return `${headHtml} ${phrase} ${valueHtml} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
         }
     }
 
@@ -730,7 +752,7 @@ function _renderBareKeyValueHtml(val, key) {
         // most> N of: items`` rather than dumping the array against an operator.
         const listKey = objKeys.find(k => Array.isArray(val[k]));
         if (listKey && 'Count' in val && objKeys.length === 2) {
-            return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of${_renderAggregateHtml()}: ${_renderOperandList(val[listKey])}`;
+            return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}${_renderAggregateHtml()}`;
         }
         // Scalar value map -> ``key op value`` per entry. The key is the
         // subject (often an entity id, e.g. ``RequiredMinNPCInteractions:

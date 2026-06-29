@@ -95,8 +95,8 @@ HADES2_PATH_FIELD_NAMES = {
     # operand list carries the specifics) ---
     "FamiliarsUnlocked": "familiars unlocked",
     "ClearedRunsCache": "cleared runs",
-    "ClearedUnderworldRunsCache": "Underworld runs cleared",
-    "ClearedSurfaceRunsCache": "Surface runs cleared",
+    "ClearedUnderworldRunsCache": "cleared Underworld runs",
+    "ClearedSurfaceRunsCache": "cleared Surface runs",
     "ShrineBountiesCompleted": "Testaments completed",
     "ObjectivesCompleted": "objectives completed",
     "ExorcismSuccesses": "shades pacified",

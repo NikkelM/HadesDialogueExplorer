@@ -33,6 +33,7 @@ HADES2_GAMEDATA_REF_SOURCE_FILES = (
     "QuestData.lua",
     "RunData.lua",
     "ShrineData.lua",
+    "GhostAdminData_Items.lua",
 )
 
 
