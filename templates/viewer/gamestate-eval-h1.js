@@ -903,10 +903,13 @@ export function h1OperandMarks(key, val, ctx) {
     }
     if (!determinable) return null;
     // The "N of a set" gates (``RequiredMin/MaxAnyCosmetics``) compare how many of
-    // the listed set the save owns to a threshold, so carry that aggregate ("you
-    // have X") since the members are boolean and have no per-item number.
+    // the listed set the save owns to a threshold, so carry that aggregate (and
+    // whether it satisfies the gate, for colouring) since the members are boolean
+    // and have no per-item number.
+    const threshold = (val && typeof val === 'object' && typeof val.Count === 'number') ? val.Count : null;
     const total = spec.list ? owned : null;
-    return { recs: null, flat: { green, red, total } };
+    const totalMet = (spec.list && threshold != null) ? (spec.neg ? owned <= threshold : owned >= threshold) : null;
+    return { recs: null, flat: { green, red, total, totalMet } };
 }
 
 

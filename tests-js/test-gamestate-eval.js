@@ -634,9 +634,11 @@ test('h2OperandMarks colours present members by clause sense (green helps, red h
     assert.deepEqual([...m.recs[0].green].sort(), [...list].sort());
     assert.deepEqual([...m.recs[0].red], []);
     assert.equal(m.recs[0].total, 5); // aggregate: 5 of the set are unlocked
+    assert.equal(m.recs[0].totalMet, true); // 5 >= 3
     assert.deepEqual([...m.recs[1].red].sort(), [...list].sort());
     assert.deepEqual([...m.recs[1].green], []);
     assert.equal(m.recs[1].total, 5);
+    assert.equal(m.recs[1].totalMet, false); // 5 < 5 is false
     // A HasNone exclusion marks present members red (presence is bad).
     const none = [{ Path: ['GameState', 'FamiliarsUnlocked'], HasNone: ['FrogFamiliar'] }];
     const mn = h2OperandMarks('Path:GameState.FamiliarsUnlocked', none, slices);
@@ -663,6 +665,25 @@ test('h2OperandMarks captures per-operand SumOf/CountOf tallies from the save', 
     const cnt = [{ Comparison: '>=', CountOf: famList, Path: ['GameState', 'FamiliarsUnlocked'], Value: 1 }];
     const fam = h2OperandMarks('Path:GameState.FamiliarsUnlocked', cnt, { gameState: { FamiliarsUnlocked: { FrogFamiliar: true } } });
     assert.equal(fam.recs[0].counts, null);
+});
+
+test('h2OperandMarks captures the save value of a plain scalar comparison gate', () => {
+    // A bare numeric comparison against a literal value -> the path's save value.
+    const rec = [{ Comparison: '>=', Path: ['GameState', 'UseRecord', 'NPC_Dora_01'], Value: 5 }];
+    const m = h2OperandMarks('Path:GameState.UseRecord.NPC_Dora_01', rec, { gameState: { UseRecord: { NPC_Dora_01: 7 } } });
+    assert.equal(m.recs[0].scalarValue, 7);
+    assert.equal(m.recs[0].scalarMet, true); // 7 >= 5
+    // Below the threshold -> not met (renders red).
+    const below = h2OperandMarks('Path:GameState.UseRecord.NPC_Dora_01', rec, { gameState: { UseRecord: { NPC_Dora_01: 3 } } });
+    assert.equal(below.recs[0].scalarMet, false); // 3 >= 5 is false
+    // A settings path (ConfigOptionCache) is skipped - not progress.
+    const cfg = [{ Comparison: '>', Path: ['ConfigOptionCache', 'MusicVolume'], Value: 0.1 }];
+    assert.equal(h2OperandMarks('Path:ConfigOptionCache.MusicVolume', cfg, { gameState: {} }), null);
+    // A value-to-value comparison (ValuePath) has no single "you have" number.
+    const vp = [{ Comparison: '>=', Path: ['GameState', 'A'], ValuePath: ['GameState', 'B'] }];
+    assert.equal(h2OperandMarks('Path:GameState.A', vp, { gameState: { A: 3, B: 1 } }), null);
+    // A path that resolves to nil (e.g. wrong save type) -> no value, null.
+    assert.equal(h2OperandMarks('Path:GameState.UseRecord.NPC_Dora_01', rec, { gameState: {} }), null);
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {

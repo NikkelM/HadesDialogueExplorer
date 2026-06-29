@@ -626,7 +626,7 @@ export function h2OperandMarks(key, val, slices = {}) {
     const recs = [];
     let determinable = false;
     for (const rec of val) {
-        const entry = { green: new Set(), red: new Set(), counts: null, total: null };
+        const entry = { green: new Set(), red: new Set(), counts: null, total: null, totalMet: null, scalarValue: null, scalarMet: null };
         recs.push(entry);
         if (!rec || typeof rec !== 'object' || !Array.isArray(rec.Path)) continue;
         const resolved = walkPath(root, rec.Path);
@@ -643,7 +643,24 @@ export function h2OperandMarks(key, val, slices = {}) {
             if (rec.Comparison === '<' || rec.Comparison === '<=') { memberList = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf; negative = true; }
             else if (rec.Comparison === '>' || rec.Comparison === '>=') { memberList = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf; }
         }
-        if (memberList == null) continue;
+        if (memberList == null) {
+            // A plain numeric comparison against a literal value (no list / length
+            // / aggregation): capture the save's value at the path so it can show
+            // as a "(you have X)" tally beside the threshold. Settings paths
+            // (ConfigOptionCache) and value-to-value comparisons are skipped - the
+            // former isn't progress, the latter has no single "you have" number.
+            if (rec.Comparison !== undefined && rec.Value !== undefined && rec.ValuePath === undefined
+                && rec.CountOf === undefined && rec.SumOf === undefined && rec.MaxOf === undefined
+                && rec.UseLength === undefined && rec.CountPathTrue === undefined
+                && rec.ValuesToCount === undefined && rec.TableValuesToCount === undefined
+                && rec.Modulo === undefined && rec.Path[0] !== 'ConfigOptionCache'
+                && typeof resolved === 'number') {
+                entry.scalarValue = resolved;
+                entry.scalarMet = compare(resolved, rec.Comparison, rec.Value);
+                determinable = true;
+            }
+            continue;
+        }
         const list = resolveRefList(memberList);
         if (!Array.isArray(list)) continue; // <ref:...> collapses to one chip
         const target = negative ? entry.red : entry.green;
@@ -676,12 +693,13 @@ export function h2OperandMarks(key, val, slices = {}) {
                 // count the gate turns on.
                 if (rec.CountOf !== undefined) {
                     entry.total = list.reduce((s, k) => s + (luaTruthy(resolved[k]) ? 1 : 0), 0);
+                    if (rec.Value !== undefined) entry.totalMet = compare(entry.total, rec.Comparison, rec.Value);
                 }
             }
         }
     }
     if (!determinable) return null;
-    const flat = { green: new Set(), red: new Set(), counts: new Map(), total: null };
+    const flat = { green: new Set(), red: new Set(), counts: new Map(), total: null, totalMet: null, scalarValue: null, scalarMet: null };
     for (const e of recs) {
         for (const k of e.green) flat.green.add(k);
         for (const k of e.red) flat.red.add(k);

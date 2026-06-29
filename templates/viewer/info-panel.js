@@ -150,6 +150,9 @@ let _curGreen = null;
 let _curRed = null;
 let _curCounts = null;
 let _curTotal = null;
+let _curTotalMet = null;
+let _curScalar = null;
+let _curScalarMet = null;
 
 // Compute the operand marks for one gate, dispatched by game. Returns a
 // ``{ recs, flat }`` mark structure (green = having the operand helps the clause,
@@ -173,7 +176,8 @@ export function computeOperandMarks(key, val, sctx, slices, gameId) {
 // non-empty, it has per-operand count tallies, or it has an aggregate "you have
 // X" total to display.
 function _markEntryHasContent(e) {
-    return !!(e && (e.green.size || e.red.size || (e.counts && e.counts.size) || e.total != null));
+    return !!(e && (e.green.size || e.red.size || (e.counts && e.counts.size)
+        || e.total != null || e.scalarValue != null));
 }
 function _hasOperandMarks(marks) {
     if (!marks) return false;
@@ -195,6 +199,9 @@ function _setFlatMarks() {
     _curRed = flat && flat.red.size ? flat.red : null;
     _curCounts = flat && flat.counts && flat.counts.size ? flat.counts : null;
     _curTotal = flat && flat.total != null ? flat.total : null;
+    _curTotalMet = flat ? (flat.totalMet ?? null) : null;
+    _curScalar = flat && flat.scalarValue != null ? flat.scalarValue : null;
+    _curScalarMet = flat ? (flat.scalarMet ?? null) : null;
 }
 // Swap the in-force operand sets to the marks for Path record index ``i`` (used
 // while rendering a multi-clause Path gate). Falls back to no marks for that
@@ -206,16 +213,41 @@ function _setRecordMarks(i) {
     _curRed = rec && rec.red.size ? rec.red : null;
     _curCounts = rec && rec.counts && rec.counts.size ? rec.counts : null;
     _curTotal = rec && rec.total != null ? rec.total : null;
+    _curTotalMet = rec ? (rec.totalMet ?? null) : null;
+    _curScalar = rec && rec.scalarValue != null ? rec.scalarValue : null;
+    _curScalarMet = rec ? (rec.scalarMet ?? null) : null;
 }
 
-// Aggregate "(you have X)" clause for a count-of-set gate, inserted between the
-// "... of" phrasing and the operand list. Shows how many of the listed set the
-// save has - the quantity the gate's threshold actually compares against - for
-// sets whose members are boolean (so they carry no per-item tally). Empty when
-// there's no aggregate to show for the gate currently rendering.
+// CSS class colouring a numeric tally by whether its criterion is met: green when
+// the comparison the gate makes is satisfied by the save, red when not. Returns
+// '' (no colour) when the met-state is unknown.
+function _metClass(met) {
+    if (met === true) return 'other-req-operand-met';
+    if (met === false) return 'other-req-operand-unmet';
+    return '';
+}
+
+// Aggregate "(X)" clause for a count-of-set gate, inserted between the "... of"
+// phrasing and the operand list. Shows how many of the listed set the save has -
+// the quantity the gate's threshold actually compares against - for sets whose
+// members are boolean (so they carry no per-item tally). Coloured green / red by
+// whether that count satisfies the gate. Empty when there's no aggregate to show.
 function _renderAggregateHtml() {
     if (_curTotal == null) return '';
-    return ` (you have <code>${escapeHtml(String(_curTotal))}</code>)`;
+    const cls = _metClass(_curTotalMet);
+    const attr = cls ? ` class="${cls}"` : '';
+    return ` (<code${attr}>${escapeHtml(String(_curTotal))}</code>)`;
+}
+
+// "(X)" clause for a plain numeric comparison gate (no list), inserted after the
+// path subject so the save's value sits beside the threshold it's compared
+// against. Coloured green / red by whether the comparison is satisfied. Empty
+// when the gate currently rendering has no scalar value.
+function _renderScalarHaveHtml() {
+    if (_curScalar == null) return '';
+    const cls = _metClass(_curScalarMet);
+    const attr = cls ? ` class="${cls}"` : '';
+    return ` (<code${attr}>${escapeHtml(String(_curScalar))}</code>)`;
 }
 
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
@@ -484,7 +516,7 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
     }
 
     if (!_allConsumed(keys, consumed)) return null;
-    return `${subjectHtml} ${escapeHtml(String(rec.Comparison))} ${valueHtml}${suffix}`;
+    return `${subjectHtml}${_renderScalarHaveHtml()} ${escapeHtml(String(rec.Comparison))} ${valueHtml}${suffix}`;
 }
 
 function _renderPathRecord(head, rec) {

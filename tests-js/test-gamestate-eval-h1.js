@@ -595,6 +595,7 @@ test('H1: h1OperandMarks marks owned items in a set/membership gate', () => {
     assert.deepEqual([...m.flat.green].sort(), ['A', 'C']);
     assert.deepEqual([...m.flat.red], []);
     assert.equal(m.flat.total, 2); // aggregate: 2 of the 3 listed cosmetics owned
+    assert.equal(m.flat.totalMet, true); // min gate, 2 owned >= Count 2
     // A "max" set gate colours owned members red (surplus pushes past the cap).
     const mMax = h1OperandMarks('RequiredMaxAnyCosmetics', { Cosmetics: ['A', 'B', 'C'], Count: 2 }, c);
     assert.deepEqual([...mMax.flat.red].sort(), ['A', 'C']);
