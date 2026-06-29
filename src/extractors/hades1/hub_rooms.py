@@ -42,6 +42,7 @@ HADES1_HUB_ROOM_NAMES = {
     "RoomSecret03": "Chaos (room variant 3)",
     # Regular biome combat/transition rooms gated on by dialogue, named by
     # biome + room function. Numbered only where several of a kind are gated.
+    "RoomOpening": "Tartarus (entrance)",
     "A_MiniBoss01": "Tartarus (mini-boss room)",
     "A_MiniBoss02": "Doomstone's chamber",
     "A_MiniBoss03": "The Wretched Sneak's chamber",
