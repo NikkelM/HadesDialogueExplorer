@@ -12,6 +12,7 @@ import { loadData } from '../templates/viewer/data.js';
 import {
     evaluateH1OtherRequirements,
     evaluateH1OtherReqPermanence,
+    h1SatisfiedOperands,
     H1_OWNER_RUN_CONTEXT,
     H1_GAMESTATE_SLICE_KEYS,
     H1_CURRENTRUN_SLICE_KEYS,
@@ -585,6 +586,21 @@ test('H1: RequiredCosmeticItemVisible matches the VISIBLE constant, not mere tru
     // "pending" is truthy but not the VISIBLE state -> ineligible.
     const pending = ctx({ gs: { Cosmetics: { LoungeBanner: 'pending' } } });
     assert.equal(evaluateH1OtherRequirements({ RequiredCosmeticItemVisible: 'LoungeBanner' }, pending).status, 'unmet');
+});
+
+test('H1: h1SatisfiedOperands marks owned items in a set/membership gate', () => {
+    // RequiredMinAnyCosmetics counts owned cosmetics from a list - mark the owned.
+    const c = ctx({ gs: { Cosmetics: { A: true, C: 'visible' }, WeaponsUnlocked: { BowWeapon: true } } });
+    const met = h1SatisfiedOperands('RequiredMinAnyCosmetics', { Cosmetics: ['A', 'B', 'C'], Count: 2 }, c);
+    assert.deepEqual([...met].sort(), ['A', 'C']);
+    // Flat-array cosmetics field.
+    assert.deepEqual([...h1SatisfiedOperands('RequiredAnyCosmetics', ['A', 'B'], c)], ['A']);
+    // Weapons unlocked.
+    assert.deepEqual([...h1SatisfiedOperands('RequiredWeaponsUnlocked', ['BowWeapon', 'GunWeapon'], c)], ['BowWeapon']);
+    // Unsupported field -> null (nothing marked).
+    assert.equal(h1SatisfiedOperands('RequiredKills', { Harpy: 1 }, c), null);
+    // A current-run gate with no current run slice -> indeterminate -> null.
+    assert.equal(h1SatisfiedOperands('RequiredOneOfTraits', ['T1', 'T2'], ctx({ gs: {} })), null);
 });
 
 // --- permanence: monotonic "max" gates (blocked vs unobtainable) -------------

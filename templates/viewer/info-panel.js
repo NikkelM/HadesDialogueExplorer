@@ -30,8 +30,10 @@ import {
     groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
+import { pathScopeNames, pathFieldNames, pathObjectFields } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2SatisfiedOperands } from './gamestate-eval.js';
+import { h1SatisfiedOperands } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
@@ -134,6 +136,35 @@ function _formatScalar(v) {
     return typeof v === 'string' ? v : JSON.stringify(v);
 }
 
+// Operand-satisfaction marking: when a matching save is loaded, the set/any/
+// count gates can show which individual listed operands the save satisfies.
+// ``_operandMarkSet`` holds those operand strings for the gate currently being
+// rendered (set by the save-aware section renderers around each entry, cleared
+// after); ``_renderListItemHtml`` highlights any operand it contains. Module-
+// scoped to avoid threading it through every operand-formatting helper.
+let _operandMarkSet = null;
+
+// Compute the satisfied-operand set for one gate, dispatched by game. Returns a
+// Set of operand strings the loaded save satisfies, or null when the gate isn't
+// a markable set/membership gate (or nothing is determinable from the save).
+export function computeOperandMarks(key, val, sctx, slices, gameId) {
+    if (!sctx || !sctx.gameState) return null;
+    if (gameId === 'hades1') {
+        const ctx = {
+            gs: sctx.gameState,
+            currentRun: (slices && slices.currentRun) || null,
+            prevRun: (slices && slices.prevRun) || null,
+            runHistory: (slices && slices.runHistory) || null,
+        };
+        return h1SatisfiedOperands(key, val, ctx);
+    }
+    return h2SatisfiedOperands(key, val, { ...(slices || {}), gameState: sctx.gameState });
+}
+
+// Set / clear the operand-mark set for the entry about to render. Exported so
+// the eligibility tracer's other-conditions renderer can mark operands too.
+export function setOperandMarks(set) { _operandMarkSet = (set && set.size) ? set : null; }
+
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
 // game-entity id (boon/trait, keepsake, companion, weapon aspect, god boon,
 // enemy, item, ...) to its friendly DisplayName via ``entityNames`` and keeping
@@ -150,15 +181,52 @@ function _valueChip(v, cls) {
     return `<code${klass}>${escapeHtml(_formatScalar(v))}</code>`;
 }
 
-// Render a dotted path tail (``CurrentRun.Hero.TraitDictionary.<entity>``,
-// ``CurrentRun.UseRecord.<entity>``, ...) as an ``other-req-path`` chip. When
-// exactly one path segment is a known ``entityNames`` id, the full internal
-// path is kept intact and the entity's friendly DisplayName is appended in
-// parentheses (``...ForceAphroditeBoonKeepsake (Beautiful Mirror)``) so the
-// raw path the gate checks stays visible. When no segment - or more than one -
-// resolves, the raw path renders unchanged.
+// Build a friendly gloss for a dotted save-state path, e.g.
+// ``CurrentRun.UseRecord.NPC_Hecate_01`` -> "interacted with Hecate, this run"
+// and ``GameState.ReachedTrueEnding`` -> "reached the credits". Composes the
+// root scope (this run / last run; GameState adds no suffix), the state field
+// label, and - for object-taking fields - the trailing entity leaf resolved via
+// ``entityNames``. Returns null when no field matches (caller falls back to the
+// single-entity-leaf behaviour, then to the raw path).
+function _pathGloss(segs) {
+    if (!segs.length) return null;
+    const hasScope = Object.prototype.hasOwnProperty.call(pathScopeNames, segs[0]);
+    const scope = hasScope ? pathScopeNames[segs[0]] : '';
+    const rest = hasScope ? segs.slice(1) : segs;
+    // Longest field key first (two-segment Hero.* / CurrentRoom.* sub-paths),
+    // then the single leading segment.
+    for (const len of [2, 1]) {
+        if (rest.length < len) continue;
+        const key = rest.slice(0, len).join('.');
+        const label = pathFieldNames[key];
+        if (!label) continue;
+        let gloss = label;
+        if (pathObjectFields.has(key)) {
+            const objSegs = rest.slice(len);
+            if (objSegs.length) {
+                const leaf = objSegs[objSegs.length - 1];
+                gloss += ' ' + (entityNames[leaf] || leaf);
+            }
+        }
+        if (scope) gloss += ', ' + scope;
+        return gloss;
+    }
+    return null;
+}
+
+// Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
+// ``GameState.ReachedTrueEnding``, ...) as an ``other-req-path`` chip. The raw
+// internal path is always kept intact; a friendly gloss is appended in
+// parentheses when the path's state field is known (``_pathGloss``), else when
+// exactly one segment is a known ``entityNames`` id (the entity's DisplayName).
+// When neither resolves, the raw path renders unchanged.
 function _renderPathTailHtml(path) {
     const segs = String(path).split('.');
+    const gloss = _pathGloss(segs);
+    if (gloss) {
+        return `<code class="other-req-path">${escapeHtml(path)}`
+            + ` <span class="other-req-friendly">(${escapeHtml(gloss)})</span></code>`;
+    }
     const hits = [];
     for (let i = 0; i < segs.length; i++) {
         const friendly = entityNames[segs[i]];
@@ -238,6 +306,9 @@ function _renderListItemHtml(v) {
     const refName = _strRefName(v);
     if (refName !== null) {
         return `<code class="other-req-path">${escapeHtml(refName)}</code>`;
+    }
+    if (_operandMarkSet && _operandMarkSet.has(v)) {
+        return _valueChip(v, 'other-req-operand-met');
     }
     return _valueChip(v);
 }
@@ -1308,6 +1379,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     const showDots = !!(getSaveProgress() && saveMatchesActiveGame());
     let overallVerdict = null;
     let gateByKey = null;
+    let operandMarksByKey = null;
     if (showDots) {
         const sctx = getSaveContext();
         const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
@@ -1315,6 +1387,13 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         const slices = buildOtherReqSlices(sctx, owner, gameId);
         const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
+        // Which individual operands of each set/membership gate the save already
+        // satisfies, so the list items can be highlighted as the entry renders.
+        operandMarksByKey = new Map();
+        for (const [key, val] of Object.entries(otherRequirements)) {
+            const met = computeOperandMarks(key, val, sctx, slices, gameId);
+            if (met && met.size) operandMarksByKey.set(key, met);
+        }
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-
         // evaluate them as full requirement sets so the dot - and the section
@@ -1391,7 +1470,9 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
         }
         const tooltip = renderOtherReqTooltip(key, val);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+        _operandMarkSet = operandMarksByKey ? (operandMarksByKey.get(key) || null) : null;
         otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}<span class="other-req-text">${renderOtherReqEntryHtml(key, val)}</span></div>`;
+        _operandMarkSet = null;
     }
 
     if (!otherHtml) return '';

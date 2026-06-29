@@ -7,7 +7,7 @@ import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
-import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from '../templates/viewer/gamestate-eval.js';
+import { evaluateOtherRequirements, collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask, currentRunResolvable, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, h2SatisfiedOperands } from '../templates/viewer/gamestate-eval.js';
 
 // Named-requirement blocks + a GameData list so ref-counting and recursion can
 // be exercised; loaded as the active game's bindings.
@@ -602,6 +602,21 @@ test('CurrentRun.* honours PathTrue / PathFalse / membership operators', () => {
     const hasAny = { Path: ['CurrentRun', 'RoomsEntered'], HasAny: ['O_Boss01', 'O_Boss02'] };
     assert.equal(evalCr(hasAny, { RoomsEntered: { O_Boss01: 1 } }), 'met');
     assert.equal(evalCr(hasAny, { RoomsEntered: { X: 1 } }), 'unmet');
+});
+
+test('h2SatisfiedOperands marks the present members of a Path HasAny/IsAny gate', () => {
+    const slices = { gameState: {}, currentRun: { RoomsEntered: { O_Boss01: 1, O_Boss03: 1 } } };
+    const hasAny = [{ Path: ['CurrentRun', 'RoomsEntered'], HasAny: ['O_Boss01', 'O_Boss02', 'O_Boss03'] }];
+    const met = h2SatisfiedOperands('Path:CurrentRun.RoomsEntered', hasAny, slices);
+    assert.deepEqual([...met].sort(), ['O_Boss01', 'O_Boss03']);
+    // IsAny: the scalar at the path equals one of the options.
+    const isAny = [{ Path: ['CurrentRun', 'CurrentRoom', 'RoomSetName'], IsAny: ['G', 'H'] }];
+    const slices2 = { gameState: {}, currentRun: { CurrentRoom: { RoomSetName: 'G' } } };
+    assert.deepEqual([...h2SatisfiedOperands('Path:CurrentRun.CurrentRoom.RoomSetName', isAny, slices2)], ['G']);
+    // A nil path is indeterminate -> null (so nothing gets marked).
+    assert.equal(h2SatisfiedOperands('Path:CurrentRun.RoomsEntered', hasAny, { gameState: {}, currentRun: null }), null);
+    // Non-Path keys aren't markable here.
+    assert.equal(h2SatisfiedOperands('NamedRequirements', ['X'], slices), null);
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {

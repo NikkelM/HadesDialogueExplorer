@@ -803,6 +803,55 @@ function h1CombineAnd(statuses) {
     return 'met';
 }
 
+// ---- per-operand satisfaction (for marking met items in a listed set) --------
+//
+// The detail panel lists the operands of "any of / count of / has" gates (e.g.
+// the cosmetics a RequiredMinAnyCosmetics gate counts). With a save loaded we
+// can mark which individual operands the save already satisfies. Each entry
+// below maps a positive-membership field to a per-operand predicate that mirrors
+// the field's own handler. ``list`` extracts the operand array for the nested
+// ``{list, Count}`` gates; the rest read the value as a flat array. A predicate
+// returns null when the answer can't be read from the loaded save type (e.g. a
+// current-run gate with a hub save), so the caller marks nothing in that case.
+const _h1Owned = (slice) => (k, ctx) => h1Truthy((h1Gs(ctx, slice) || {})[k]);
+const _h1RunTrait = (k, ctx) => { const cr = _h1cr(ctx); return cr ? !!h1HeroHasTrait(cr, k) : null; };
+const H1_OPERAND_MEMBERSHIP = {
+    RequiredCosmetics: { pred: _h1Owned('Cosmetics') },
+    RequiredAnyCosmetics: { pred: _h1Owned('Cosmetics') },
+    RequiredMinAnyCosmetics: { list: (v) => h1Arr(v && v.Cosmetics), pred: _h1Owned('Cosmetics') },
+    RequiredMaxAnyCosmetics: { list: (v) => h1Arr(v && v.Cosmetics), pred: _h1Owned('Cosmetics') },
+    RequiredTraitsTaken: { pred: _h1Owned('TraitsTaken') },
+    RequiredWeaponsUnlocked: { pred: _h1Owned('WeaponsUnlocked') },
+    RequiredAnyWeaponsUnlocked: { pred: _h1Owned('WeaponsUnlocked') },
+    RequiredSeenRooms: { pred: (k, ctx) => h1HasSeenRoom(ctx, k) },
+    RequiredOneOfTraits: { pred: _h1RunTrait },
+    RequiredCountOfTraits: { pred: _h1RunTrait },
+    RequiredRunHasOneOfTraits: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.TraitCache || {})[k]) : null; } },
+    RequiredSupportAINames: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.SupportAINames || {})[k]) : null; } },
+    RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? h1Truthy(s[k]) : null; } },
+};
+
+// Set of operands in ``val`` that the loaded save individually satisfies, for a
+// positive-membership H1 gate. Returns null for an unsupported field, an empty
+// list, or when no operand can be resolved from the loaded save type (so the
+// caller marks nothing rather than implying "none satisfied").
+export function h1SatisfiedOperands(key, val, ctx) {
+    const spec = H1_OPERAND_MEMBERSHIP[key];
+    if (!spec || !ctx) return null;
+    const list = spec.list ? spec.list(val) : h1Arr(val);
+    if (!Array.isArray(list) || list.length === 0) return null;
+    const met = new Set();
+    let determinable = false;
+    for (const op of list) {
+        const r = spec.pred(op, ctx);
+        if (r === null || r === undefined) continue;
+        determinable = true;
+        if (r) met.add(op);
+    }
+    return determinable ? met : null;
+}
+
+
 // ---- permanence (blocked vs unobtainable) ------------------------------------
 //
 // Two families of H1 ``otherRequirements`` gate are not merely *unmet now* but

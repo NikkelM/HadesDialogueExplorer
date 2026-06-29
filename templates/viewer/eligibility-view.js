@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks } from './info-panel.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
 
 // Shared tooltip for a gate that is permanently unobtainable because it reads
@@ -597,6 +597,7 @@ export function renderOtherConditionsHtml(rootName) {
 
     const haveSave = !!(getSaveProgress() && saveMatchesActiveGame());
     const byKey = new Map();
+    let operandMarksByKey = null;
     let verdict = null;
     if (haveSave) {
         const sctx = getSaveContext();
@@ -604,6 +605,13 @@ export function renderOtherConditionsHtml(rootName) {
         const slices = buildOtherReqSlices(sctx, tl.owner, gameId);
         const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
         for (const c of res.clauses) byKey.set(c.key, c);
+        // Which individual operands of each set/membership gate the save already
+        // satisfies, so the listed items can be highlighted as each row renders.
+        operandMarksByKey = new Map();
+        for (const [key, val] of Object.entries(other)) {
+            const met = computeOperandMarks(key, val, sctx, slices, gameId);
+            if (met && met.size) operandMarksByKey.set(key, met);
+        }
         // Named requirement gates resolve GameState-only in
         // evaluateOtherRequirements (it can't read textline records). Re-
         // evaluate them as full requirement sets so dots and the header verdict
@@ -661,7 +669,9 @@ export function renderOtherConditionsHtml(rootName) {
             const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);
             if (expanded !== null) return expanded;
         }
+        setOperandMarks(operandMarksByKey ? operandMarksByKey.get(key) : null);
         const body = renderOtherReqEntryHtml(key, other[key]);
+        setOperandMarks(null);
         const tooltip = renderOtherReqTooltip(key, other[key]);
         const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
         return `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;

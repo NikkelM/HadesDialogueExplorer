@@ -599,6 +599,41 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
     return evalSet(otherRequirements, { GameState: gameStateSlice, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory }, new Set());
 }
 
+// Per-operand satisfaction for the H2 ``Path:<head>`` membership gates, so the
+// detail panel can mark which items in a listed set the loaded save satisfies.
+// Handles the membership records whose operands render as an explicit list:
+// ``HasAny`` / ``HasAll`` (table contains the key), ``IsAny`` (scalar equals an
+// option) and ``CountOf`` (table contains the key). A record whose resolved
+// path is nil contributes nothing (indeterminate); ``<ref:...>`` list operands
+// render as a single collapsed chip rather than individual items, so they fall
+// through unmarked. Returns the union Set of satisfied operands across the
+// gate's records, or null when the gate isn't a markable Path membership.
+export function h2SatisfiedOperands(key, val, slices = {}) {
+    if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
+    const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
+    const root = { GameState: slices.gameState || slices.GameState || null, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory };
+    const met = new Set();
+    let determinable = false;
+    for (const rec of val) {
+        if (!rec || typeof rec !== 'object' || !Array.isArray(rec.Path)) continue;
+        const resolved = walkPath(root, rec.Path);
+        const memberList = rec.HasAny || rec.HasAll || (rec.CountOf !== undefined ? rec.CountOf : null);
+        if (memberList != null) {
+            const list = resolveRefList(memberList);
+            if (!Array.isArray(list)) continue; // <ref:...> collapses to one chip
+            if (resolved == null || typeof resolved !== 'object') continue; // nil path: can't tell which are present
+            determinable = true;
+            for (const k of list) if (luaTruthy(resolved[k])) met.add(k);
+        } else if (Array.isArray(rec.IsAny)) {
+            if (resolved === undefined) continue;
+            determinable = true;
+            for (const v of rec.IsAny) if (resolved === v) met.add(v);
+        }
+    }
+    return determinable ? met : null;
+}
+
+
 // Whether a single resolved gate (one ``otherRequirements`` key) is
 // *permanently* unmet against the loaded save: it reads persistent save
 // progress that only ever advances (a monotonic counter past its cap, or a

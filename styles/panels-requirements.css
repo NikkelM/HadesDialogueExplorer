@@ -258,6 +258,18 @@
     font-weight: 600;
 }
 
+/* A listed operand the loaded save already satisfies (e.g. a cosmetic the
+   player owns within a "N of these" gate). Green tint + underline so the items
+   that count toward the gate stand out from the ones still missing, using the
+   same met-green as the eligibility status language. */
+.other-req-item .other-req-operand-met {
+    color: var(--elig-met-text);
+    background: rgba(76, 175, 80, 0.12);
+    text-decoration: underline;
+    text-decoration-color: var(--elig-met);
+    text-underline-offset: 2px;
+}
+
 /* Alternative Requirement Groups (H2 ``OrRequirements``): a parent
    ``.req-section.req-type-or-group`` wraps one ``.or-branch`` per
    alternative. Distinctive amber accent so the reader can tell at a
