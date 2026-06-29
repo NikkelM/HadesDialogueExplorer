@@ -139,17 +139,33 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
     }
 
     // Numeric comparison against a constant over a monotonic-up counter
-    // (optionally its table length).
+    // (optionally its table length, or a member count / sum over a table).
     if (rec.Comparison && Array.isArray(rec.Path)) {
         if (rec.ValuePath) return null;            // compared to another live value
         if (rec.Modulo !== undefined) return null; // wraps - not monotonic
-        if (rec.CountOf !== undefined || rec.SumOf !== undefined) return null; // needs GameData list
-        if (!isMonotonicUpPath(rec.Path)) return null;
         const right = rec.Value;
         if (typeof right !== 'number') return null;
-        let left = walk(gameStateSlice, rec.Path);
-        if (rec.UseLength) left = permTableLen(left);
-        else left = (left === undefined || left === null) ? 0 : left;
+        let left;
+        if (rec.CountOf !== undefined || rec.SumOf !== undefined) {
+            // CountOf / SumOf aggregate over listed sub-keys of the table at
+            // Path. Only provably monotonic when (a) the operand list is an
+            // explicit literal array - a ``<ref:GameData.X>`` string can't be
+            // resolved here - and (b) Path is a monotonic-up table whose members
+            // are only ever added / incremented, so the aggregate only grows.
+            const list = rec.CountOf !== undefined ? rec.CountOf : rec.SumOf;
+            if (!Array.isArray(list)) return null;
+            if (!isMonotonicTablePath(rec.Path)) return null;
+            if (rec.Path[1].startsWith('WorldUpgrades') && list.some(k => /^Cosmetic_/.test(k))) return null;
+            const tbl = walk(gameStateSlice, rec.Path);
+            left = rec.CountOf !== undefined
+                ? list.filter(k => truthy(tbl && tbl[k])).length
+                : list.reduce((s, k) => s + (((tbl && tbl[k]) || 0)), 0);
+        } else {
+            if (!isMonotonicUpPath(rec.Path)) return null;
+            left = walk(gameStateSlice, rec.Path);
+            if (rec.UseLength) left = permTableLen(left);
+            else left = (left === undefined || left === null) ? 0 : left;
+        }
         if (typeof left !== 'number' || Number.isNaN(left)) return null;
         const now = compareNum(left, rec.Comparison, right);
         if (rec.Comparison === '>' || rec.Comparison === '>=') return now ? 'met' : null;

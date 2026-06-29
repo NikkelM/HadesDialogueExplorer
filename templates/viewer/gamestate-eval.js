@@ -610,6 +610,15 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
 // gate's records, or null when the gate isn't a markable Path membership.
 export function h2SatisfiedOperands(key, val, slices = {}) {
     if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
+    // A "present member is good" set only: if any record makes presence work
+    // *against* eligibility (a HasNone exclusion, or a count/sum upper bound the
+    // members push you past, e.g. FamiliarsUnlocked "fewer than 5 of"), marking
+    // the present members green would falsely read as progress, so mark nothing.
+    const presenceIsBad = val.some(rec => rec && typeof rec === 'object'
+        && (rec.HasNone
+            || ((rec.CountOf !== undefined || rec.SumOf !== undefined)
+                && (rec.Comparison === '<' || rec.Comparison === '<='))));
+    if (presenceIsBad) return null;
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
     const root = { GameState: slices.gameState || slices.GameState || null, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory };
     const met = new Set();

@@ -619,6 +619,24 @@ test('h2SatisfiedOperands marks the present members of a Path HasAny/IsAny gate'
     assert.equal(h2SatisfiedOperands('NamedRequirements', ['X'], slices), null);
 });
 
+test('h2SatisfiedOperands marks nothing when presence works against the gate', () => {
+    const list = ['FrogFamiliar', 'RavenFamiliar', 'CatFamiliar', 'HoundFamiliar', 'PolecatFamiliar'];
+    const slices = { gameState: { FamiliarsUnlocked: { FrogFamiliar: true, RavenFamiliar: true, CatFamiliar: true, HoundFamiliar: true, PolecatFamiliar: true } } };
+    // A 3-4 range gate (>=3 AND <5): the upper bound makes "having all five"
+    // a violation, so no member should be marked as satisfied.
+    const range = [
+        { Comparison: '>=', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 3 },
+        { Comparison: '<', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 5 },
+    ];
+    assert.equal(h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', range, slices), null);
+    // A HasNone exclusion likewise marks nothing (presence is bad).
+    const none = [{ Path: ['GameState', 'FamiliarsUnlocked'], HasNone: ['FrogFamiliar'] }];
+    assert.equal(h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', none, slices), null);
+    // A pure lower bound still marks the present members.
+    const lower = [{ Comparison: '>=', CountOf: list, Path: ['GameState', 'FamiliarsUnlocked'], Value: 3 }];
+    assert.deepEqual([...h2SatisfiedOperands('Path:GameState.FamiliarsUnlocked', lower, slices)].sort(), [...list].sort());
+});
+
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {
     const textlines = {
         T1: {
