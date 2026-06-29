@@ -627,6 +627,10 @@ test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () 
     assert.deepEqual([...n.flat.green], []);
     // The underlying table absent -> indeterminate -> null (mark nothing).
     assert.equal(h1OperandMarks('RequiredKills', { Harpy: 1 }, ctx({ gs: {} })), null);
+    // RequiredMinValues reads a top-level GameState field directly.
+    const mv = h1OperandMarks('RequiredMinValues', { NumCerberusPettings: 20 }, ctx({ gs: { NumCerberusPettings: 31 } }));
+    assert.equal(mv.flat.counts.get('NumCerberusPettings'), 31);
+    assert.deepEqual([...mv.flat.green], ['NumCerberusPettings']); // present (>0), min field -> green
 });
 
 test('H1: h1OperandMarks reads and colours single-scalar numeric gates', () => {

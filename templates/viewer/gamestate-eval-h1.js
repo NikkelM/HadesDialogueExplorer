@@ -855,6 +855,9 @@ const H1_OPERAND_COUNT_FIELDS = {
     RequiredResourcesMin: { count: _h1TblCount('Resources'), dir: 'min' },
     RequiredMinRunsWithWeapons: { count: (op, ctx) => h1RunsWithWeapon(ctx, op), dir: 'min' },
     RequiredMaxRunsWithWeapons: { count: (op, ctx) => h1RunsWithWeapon(ctx, op), dir: 'max' },
+    // RequiredMinValues reads a top-level GameState field directly (e.g.
+    // {NumCerberusPettings: 20}), not a sub-table, so its operand value is gs[op].
+    RequiredMinValues: { count: (op, ctx) => { const v = h1Gs(ctx, op); return typeof v === 'number' ? v : (v == null ? 0 : null); }, dir: 'min' },
 };
 
 // H1 single-scalar numeric gates: the field value is a bare threshold compared
