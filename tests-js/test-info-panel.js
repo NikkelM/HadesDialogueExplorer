@@ -1081,6 +1081,7 @@ function fixtureWithSimplifiedOtherReqs() {
         RequiredFalseValues:               'GameState field must NOT equal',
         RequiredMinAnyCosmetics:           'Minimum cosmetics owned (from set)',
         RequiredCodexEntry:                'Codex entry must be unlocked',
+        RequiredPlayed:                    'Voiceline must have played (ALL)',
     };
     data.textlines.SimplifiedOtherReqDemo = {
         owner: 'NPC_Orpheus_01',
@@ -1118,6 +1119,16 @@ function fixtureWithSimplifiedOtherReqs() {
             // decorator clause.
             'PathTrue:WasRandomLoot': [
                 { PathTrue: ['WasRandomLoot'], PathFromSource: true },
+            ],
+            // A voiceline-cue path leaf: a single ``SpeechRecord`` cue clause
+            // renders as the friendly "Voiceline must (NOT) have played" label
+            // (the cue scope drives the run / room suffix), with the ``/VO/``
+            // scope stripped from the cue chip but kept in its tooltip.
+            'PathTrue:GameState.SpeechRecord./VO/Artemis_0304': [
+                { PathTrue: ['GameState', 'SpeechRecord', '/VO/Artemis_0304'] },
+            ],
+            'PathFalse:CurrentRun.SpeechRecord./VO/Hecate_0070': [
+                { PathFalse: ['CurrentRun', 'SpeechRecord', '/VO/Hecate_0070'] },
             ],
             // CountOf inline list -> "head has at least N of items"
             'Path:CurrentRun.UseRecord': [
@@ -1159,6 +1170,7 @@ function fixtureWithSimplifiedOtherReqs() {
             RequiredFalseValues:         { CurrentEmployeeOfTheMonth: 'Achilles' },
             RequiredMinAnyCosmetics:     { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 2 },
             RequiredCodexEntry:          { EntryIndex: 3, EntryName: 'RoomRewardConsolationPrize' },
+            RequiredPlayed:              ['/VO/ZagreusHome_0895', '/VO/ZagreusHome_3490'],
         },
     };
     return data;
@@ -1273,6 +1285,39 @@ test('bare-key list values render as comma-separated chips without JSON brackets
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required false flags<\/span>: <code>InFlashback<\/code>/);
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required cosmetics<\/span>: <code>QuestLog<\/code> \u2022 <code>Cosmetic_X<\/code>/);
+});
+
+
+test('voiceline cue operands drop the /VO/ prefix in the label but keep it in the tooltip', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // "/VO/ZagreusHome_0895" -> "ZagreusHome_0895", joined by the operand bullet.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Voiceline must have played \(ALL\)<\/span>: <code data-tooltip="\/VO\/ZagreusHome_0895">ZagreusHome_0895<\/code> \u2022 <code data-tooltip="\/VO\/ZagreusHome_3490">ZagreusHome_3490<\/code>/
+    );
+});
+
+
+test('voiceline cue PathTrue clause renders the friendly "Voiceline must have played" label', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // GameState scope -> no run/room suffix; cue chip drops /VO/, tooltip keeps it.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Voiceline must have played<\/span>: <code data-tooltip="\/VO\/Artemis_0304">Artemis_0304<\/code>/
+    );
+});
+
+
+test('voiceline cue PathFalse clause renders "Voiceline must NOT have played" with run scope', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // CurrentRun scope -> "(this run)" suffix.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Voiceline must NOT have played \(this run\)<\/span>: <code data-tooltip="\/VO\/Hecate_0070">Hecate_0070<\/code>/
+    );
 });
 
 

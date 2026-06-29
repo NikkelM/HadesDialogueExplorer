@@ -59,10 +59,47 @@ function statusDot(status, tooltip) {
 // pre-escaped key so nothing is lost - the goal is additive: no
 // regression for unlabelled keys, friendly labels surface where the
 // per-game label vocabulary covers the prefix.
+// Scope phrases for a ``SpeechRecord`` voiceline clause, keyed by the path
+// segments preceding ``SpeechRecord``. ``GameState`` (or a bare table) is the
+// lifetime record, so it carries no suffix; the run / room records add one.
+const _SPEECH_SCOPE_PHRASES = {
+    '': '',
+    'GameState': '',
+    'CurrentRun': ' (this run)',
+    'CurrentRun.CurrentRoom': ' (this room)',
+};
+
+// A ``PathTrue`` / ``PathFalse`` clause that targets a single voiceline cue in a
+// ``SpeechRecord`` table reads far more naturally as "Voiceline must (NOT) have
+// played" than the raw "Must be true: GameState.SpeechRecord.<cue>" - mirroring
+// the H1 RequiredPlayed / RequiredFalsePlayed wording. Returns the head HTML
+// (friendly pill + trimmed cue chip) or ``null`` when the tail is not such a
+// clause, so the generic operator rendering still applies everywhere else.
+function _voicelineCueHeadHtml(prefix, tail) {
+    if (prefix !== 'PathTrue' && prefix !== 'PathFalse') return null;
+    const segs = String(tail).split('.');
+    const si = segs.indexOf('SpeechRecord');
+    // The cue must be the single segment immediately after ``SpeechRecord``.
+    if (si < 0 || si !== segs.length - 2) return null;
+    const leaf = segs[segs.length - 1];
+    if (!leaf.startsWith('/VO/')) return null;
+    const scopeKey = segs.slice(0, si).join('.');
+    if (!(scopeKey in _SPEECH_SCOPE_PHRASES)) return null;
+    const played = prefix === 'PathTrue';
+    const label = (played ? 'Voiceline must have played' : 'Voiceline must NOT have played')
+        + _SPEECH_SCOPE_PHRASES[scopeKey];
+    const pill = `<span class="req-type-name" data-tooltip="${escapeHtml('Internal name: ' + prefix)}">${escapeHtml(label)}</span>`;
+    return `${pill}: ${_valueChip(leaf)}`;
+}
+
 function renderOtherReqKeyHtml(key) {
     const colonIdx = key.indexOf(':');
     const prefix = colonIdx >= 0 ? key.slice(0, colonIdx) : key;
     const tail = colonIdx >= 0 ? key.slice(colonIdx + 1) : '';
+    if (tail) {
+        const voiceline = _voicelineCueHeadHtml(prefix, tail);
+        if (voiceline !== null) return voiceline;
+    }
     if (reqTypeLabels[prefix]) {
         const head = renderReqTypeHtml(prefix);
         return tail
@@ -139,6 +176,16 @@ function _formatScalar(v) {
         return String(Math.round(v * 100) / 100);
     }
     return typeof v === 'string' ? v : JSON.stringify(v);
+}
+
+// Voiceline cues are stored with a leading ``/VO/`` scope (e.g.
+// ``/VO/ZagreusHome_0895``), and the engine keys ``SpeechRecord`` by that full
+// cue - so the raw value is kept for save matching and tooltips, but the prefix
+// is noise in the displayed label and is stripped for readability. Cues also
+// appear as a path leaf (``GameState.SpeechRecord./VO/Artemis_0304``), so every
+// occurrence is removed, not just a leading one.
+function _trimVoCue(s) {
+    return typeof s === 'string' ? s.replace(/\/VO\//g, '') : s;
 }
 
 // Operand-satisfaction marking: when a matching save is loaded, the set/any/
@@ -268,7 +315,11 @@ function _valueChip(v, cls) {
             return `<code${klass} data-tooltip="${escapeHtml(v)}">${escapeHtml(friendly)}</code>`;
         }
     }
-    return `<code${klass}>${escapeHtml(_formatScalar(v))}</code>`;
+    const raw = _formatScalar(v);
+    const disp = _trimVoCue(raw);
+    // A trimmed ``/VO/`` cue keeps its full form reachable via the tooltip.
+    const tip = disp !== raw ? ` data-tooltip="${escapeHtml(raw)}"` : '';
+    return `<code${klass}${tip}>${escapeHtml(disp)}</code>`;
 }
 
 // Build a friendly gloss for a dotted save-state path, e.g.
@@ -285,9 +336,9 @@ function _pathGloss(segs) {
     const hasScope = Object.prototype.hasOwnProperty.call(pathScopeNames, segs[0]);
     const scope = hasScope ? pathScopeNames[segs[0]] : '';
     const rest = hasScope ? segs.slice(1) : segs;
-    // Longest field key first (two-segment Hero.* / CurrentRoom.* sub-paths),
-    // then the single leading segment.
-    for (const len of [2, 1]) {
+    // Longest field key first (three-segment CurrentRoom.Encounter.* sub-paths,
+    // two-segment Hero.* / CurrentRoom.* sub-paths), then the single segment.
+    for (const len of [3, 2, 1]) {
         if (rest.length < len) continue;
         const key = rest.slice(0, len).join('.');
         const label = pathFieldNames[key];
@@ -296,26 +347,34 @@ function _pathGloss(segs) {
         let full = true;
         if (pathObjectFields.has(key)) {
             const objSegs = rest.slice(len);
-            // An object-taking field with no trailing leaf is a bare container
-            // (a HasAny / UseLength-style aggregation over operands); the verb
-            // label dangles without an object, so leave the path raw - the
-            // operator phrasing and friendly operands carry the meaning.
-            if (!objSegs.length) return null;
-            const leaf = objSegs[objSegs.length - 1];
-            const leafMap = pathFieldLeafNames[key];
-            const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
-            // The label may carry a trailing ':' separator; keep a single space.
-            gloss += ' ' + (friendly || leaf);
-            // Partial when the leaf is an unresolved id, or there are extra
-            // intermediate segments the gloss doesn't account for.
-            if (!friendly || objSegs.length > 1) full = false;
+            if (!objSegs.length) {
+                // Bare aggregation (HasAny / CountOf / UseLength over operands).
+                // A noun-category label (ends with ':') still describes the head,
+                // so gloss it without the trailing ':'. A verb label (no ':')
+                // would dangle before the operator phrasing, so leave the path
+                // raw and let the friendly operands carry the meaning.
+                if (!label.endsWith(':')) return null;
+                gloss = label.slice(0, -1);
+            } else {
+                const leaf = objSegs[objSegs.length - 1];
+                const leafMap = pathFieldLeafNames[key];
+                const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
+                // The label may carry a trailing ':' separator; keep a single space.
+                gloss += ' ' + (friendly || leaf);
+                // Partial when the leaf is an unresolved id, or there are extra
+                // intermediate segments the gloss doesn't account for.
+                if (!friendly || objSegs.length > 1) full = false;
+            }
         } else {
             if (gloss.endsWith(':')) gloss = gloss.slice(0, -1);
             // A terminal field that still carries trailing segments leaves them
             // unresolved (e.g. WeaponsFiredRecord.WeaponSpellLaser).
             if (rest.length > len) full = false;
         }
-        if (scope) gloss += ', ' + scope;
+        // Append the run/last-run scope suffix, except for current-room fields
+        // (a "current room ..." label already implies the current run, so the
+        // ", this run" suffix would be redundant).
+        if (scope && !key.startsWith('CurrentRoom')) gloss += ', ' + scope;
         // Glosses can render standalone (fully-resolved paths drop the raw path),
         // so present them sentence-case: capitalise the first letter. The label
         // maps stay lowercase fragments so they compose cleanly.
@@ -351,13 +410,19 @@ function _renderPathTailHtml(path) {
     const segs = String(path).split('.');
     const broken = _brokenRefNote(segs);
     const gloss = _pathGloss(segs);
+    const dispPath = _trimVoCue(path);
+    // When a ``/VO/`` cue prefix is stripped from the visible path, keep the full
+    // path reachable via a tooltip (branches that already tooltip the raw path
+    // don't need it).
+    const cueTip = dispPath !== path ? ` data-tooltip="${escapeHtml(path)}"` : '';
     if (gloss) {
+        const glossText = _trimVoCue(gloss.text);
         if (gloss.full) {
             return `<code class="other-req-path" data-tooltip="${escapeHtml(path)}">`
-                + `${escapeHtml(gloss.text)}</code>${broken}`;
+                + `${escapeHtml(glossText)}</code>${broken}`;
         }
-        return `<code class="other-req-path">${escapeHtml(path)}`
-            + ` <span class="other-req-friendly">(${escapeHtml(gloss.text)})</span></code>${broken}`;
+        return `<code class="other-req-path"${cueTip}>${escapeHtml(dispPath)}`
+            + ` <span class="other-req-friendly">(${escapeHtml(glossText)})</span></code>${broken}`;
     }
     const hits = [];
     for (let i = 0; i < segs.length; i++) {
@@ -365,10 +430,10 @@ function _renderPathTailHtml(path) {
         if (friendly && friendly !== segs[i]) hits.push(i);
     }
     if (hits.length !== 1) {
-        return `<code class="other-req-path">${escapeHtml(path)}</code>${broken}`;
+        return `<code class="other-req-path"${cueTip}>${escapeHtml(dispPath)}</code>${broken}`;
     }
     const friendly = entityNames[segs[hits[0]]];
-    return `<code class="other-req-path">${escapeHtml(path)}`
+    return `<code class="other-req-path"${cueTip}>${escapeHtml(dispPath)}`
         + ` <span class="other-req-friendly">(${escapeHtml(friendly)})</span></code>${broken}`;
 }
 
