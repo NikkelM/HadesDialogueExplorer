@@ -857,6 +857,55 @@ const H1_OPERAND_COUNT_FIELDS = {
     RequiredMaxRunsWithWeapons: { count: (op, ctx) => h1RunsWithWeapon(ctx, op), dir: 'max' },
 };
 
+// H1 single-scalar numeric gates: the field value is a bare threshold compared
+// against one save scalar (run counts, meta points, lifetime totals, per-run
+// depth, ...). Each entry reads that save scalar (``value`` -> number, or null
+// when it can't be resolved from the loaded save type / a live-only source) and
+// names the comparison the gate makes, so the value can render as a coloured
+// "(X)" tally beside the threshold (green when the comparison holds, red when
+// not). Mirrors the value computations in H1_FIELD_EVALS. Per-run accessors read
+// the current-run slice and yield null on a hub save (no current run).
+function h1Compare(a, op, b) {
+    switch (op) {
+    case '>=': return a >= b;
+    case '<=': return a <= b;
+    case '<': return a < b;
+    case '>': return a > b;
+    case '==': return a === b;
+    default: return false;
+    }
+}
+const _h1ScalarGs = (slice) => (ctx) => h1Num(h1Gs(ctx, slice));
+const _h1MetaSpent = (ctx) => { const sp = h1Gs(ctx, 'SpentMetaPointsCache'); return sp == null ? null : h1Num(sp); };
+const _h1CrScalar = (field) => (ctx) => { const cr = _h1cr(ctx); return cr ? h1Num(cr[field]) : null; };
+const H1_OPERAND_SCALAR_FIELDS = {
+    RequiredMinCompletedRuns: { value: h1CompletedRuns, cmp: '>=' },
+    RequiredMaxCompletedRuns: { value: h1CompletedRuns, cmp: '<=' },
+    RequiredCompletedRuns: { value: h1CompletedRuns, cmp: '==' },
+    RequiredMinRunsCleared: { value: h1RunsCleared, cmp: '>=' },
+    RequiredMaxRunsCleared: { value: h1RunsCleared, cmp: '<=' },
+    RequiredRunsCleared: { value: h1RunsCleared, cmp: '==' },
+    RequiredMinTotalKills: { value: _h1ScalarGs('TotalRequiredEnemyKills'), cmp: '>=' },
+    RequiredActiveShrinePointsMin: { value: _h1ScalarGs('SpentShrinePointsCache'), cmp: '>=' },
+    RequiredMinConsecutiveClears: { value: _h1ScalarGs('ConsecutiveClears'), cmp: '>=' },
+    RequiredMinBountiesEarned: { value: h1CountBounties, cmp: '>=' },
+    RequiredMinQuestsComplete: { value: h1CountCashedOutQuests, cmp: '>=' },
+    RequiredMaxQuestsComplete: { value: h1CountCashedOutQuests, cmp: '<=' },
+    RequiredMinTotalCaughtFish: { value: (ctx) => h1SumValues(h1Gs(ctx, 'TotalCaughtFish') || {}), cmp: '>=' },
+    RequiredCodexEntriesMin: { value: (ctx) => { const t = ctx.gs && ctx.gs.CodexUnlockedTotal; return typeof t === 'number' ? t : null; }, cmp: '>=' },
+    RequiredAccumulatedMetaPoints: { value: (ctx) => { const sp = _h1MetaSpent(ctx); if (sp == null) return null; const r = h1Gs(ctx, 'Resources') || {}; return h1Num(r.MetaPoints) + sp; }, cmp: '>=' },
+    RequiredActiveMetaPointsMin: { value: _h1MetaSpent, cmp: '>=' },
+    RequiredActiveMetaPointsMax: { value: _h1MetaSpent, cmp: '<=' },
+    RequiredMinUnlockedWeaponEnchantments: { value: (ctx) => h1WeaponStaticReady() ? h1CountWeaponUnlocks(ctx, false) : null, cmp: '>=' },
+    RequiredMaxUnlockedWeaponEnchantments: { value: (ctx) => h1WeaponStaticReady() ? h1CountWeaponUnlocks(ctx, false) : null, cmp: '<=' },
+    RequiredMinDepth: { value: _h1CrScalar('RunDepthCache'), cmp: '>=' },
+    RequiredMaxDepth: { value: _h1CrScalar('RunDepthCache'), cmp: '<' },
+    RequiredMinBiomeDepth: { value: _h1CrScalar('BiomeDepthCache'), cmp: '>=' },
+    RequiredMaxBiomeDepth: { value: _h1CrScalar('BiomeDepthCache'), cmp: '<=' },
+    RequiredMaxLastStands: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? h1Len(cr.Hero && cr.Hero.LastStands) : null; }, cmp: '<=' },
+    RequiredMinCaughtFishThisRun: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? h1SumValues(cr.CaughtFish) : null; }, cmp: '>=' },
+};
+
 // Operand marks for an H1 membership gate: each listed operand the save has is
 // coloured by the field's sense - green when having it counts toward the gate
 // (the positive "any of / has" fields), red when having it counts against it (a
@@ -869,6 +918,13 @@ const H1_OPERAND_COUNT_FIELDS = {
 // marks nothing rather than implying "none satisfied").
 export function h1OperandMarks(key, val, ctx) {
     if (!ctx) return null;
+    const sspec = H1_OPERAND_SCALAR_FIELDS[key];
+    if (sspec) {
+        if (typeof val !== 'number') return null;
+        const value = sspec.value(ctx);
+        if (typeof value !== 'number' || Number.isNaN(value)) return null;
+        return { recs: null, flat: { green: new Set(), red: new Set(), scalarValue: value, scalarMet: h1Compare(value, sspec.cmp, val) } };
+    }
     const cspec = H1_OPERAND_COUNT_FIELDS[key];
     if (cspec) {
         if (!val || typeof val !== 'object' || Array.isArray(val)) return null;

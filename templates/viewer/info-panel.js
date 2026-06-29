@@ -355,8 +355,12 @@ function _strRefName(s) {
 // ``ScreenData.Shrine`` dict. Returns the resolved value (list / dict
 // / scalar) or ``null`` when no entry covers the requested path.
 function _resolveGameDataRef(refName) {
-    if (gameDataRefs && gameDataRefs[refName] !== undefined) {
-        return gameDataRefs[refName];
+    const direct = gameDataRefs && gameDataRefs[refName];
+    // A direct hit wins, unless it's the broken self-ref alias (``X -> <ref:X>``)
+    // that shadows a table actually stored nested under a parent key - then fall
+    // through to the dotted-name walk below.
+    if (direct !== undefined && direct !== `<ref:${refName}>`) {
+        return direct;
     }
     if (!gameDataRefs || typeof refName !== 'string') return null;
     const segs = [];
@@ -636,7 +640,10 @@ function _renderBareKeyValueHtml(val, key) {
             .map(([k, v]) => `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`)
             .join(', ');
     }
-    return _valueChip(val);
+    // Plain scalar threshold (number / string / boolean). For the single-scalar
+    // numeric gates the loaded save resolves a value, appended as a coloured
+    // "(X)" tally beside the threshold; other scalars render the value alone.
+    return _valueChip(val) + _renderScalarHaveHtml();
 }
 
 // Comparison sense of a bare-key gate, derived from the requirement key:

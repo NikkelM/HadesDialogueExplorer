@@ -15,7 +15,13 @@ before(() => {
     loadData({
         textlines: {},
         speakers: {},
-        gameDataRefs: { 'GameData.Trio': ['A', 'B', 'C'] },
+        gameDataRefs: {
+            'GameData.Trio': ['A', 'B', 'C'],
+            // A table stored nested under a parent key, with the broken flat
+            // self-ref alias that shadows it (see ScreenData.Shrine.BountyOrder).
+            'ScreenData.Shrine': { BountyOrder: ['BountyA', 'BountyB'] },
+            'ScreenData.Shrine.BountyOrder': '<ref:ScreenData.Shrine.BountyOrder>',
+        },
         godTraitNames: ['ZeusManaBoltBoon', 'AthenaBoon'],
         restrictBoonChoiceTraitNames: ['ChaosRestrictBoonCurse'],
         namedRequirements: {
@@ -42,6 +48,15 @@ test('PathTrue: passes only on a non-nil, non-false, non-zero value', () => {
     assert.equal(evalReq(clause(rec), { ScreensViewed: { Shrine: true } }), 'met');
     assert.equal(evalReq(clause(rec), { ScreensViewed: { Shrine: 0 } }), 'unmet'); // 0 fails PathTrue
     assert.equal(evalReq(clause(rec), { ScreensViewed: {} }), 'unmet');
+});
+
+test('HasAll over a nested ref alias resolves via the parent table (not indeterminate)', () => {
+    // ``<ref:ScreenData.Shrine.BountyOrder>`` has a broken flat self-ref alias, so
+    // the list must be resolved from the nested ``ScreenData.Shrine`` parent. The
+    // gate should evaluate met/unmet rather than 'unknown'.
+    const rec = { Path: ['GameState', 'ShrineBountiesCompleted'], HasAll: '<ref:ScreenData.Shrine.BountyOrder>' };
+    assert.equal(evalReq(clause(rec), { ShrineBountiesCompleted: { BountyA: true, BountyB: true } }), 'met');
+    assert.equal(evalReq(clause(rec), { ShrineBountiesCompleted: { BountyA: true } }), 'unmet');
 });
 
 test('PathFalse: passes only on nil/false (0 is truthy here, so it fails)', () => {

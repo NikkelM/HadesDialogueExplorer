@@ -629,6 +629,27 @@ test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () 
     assert.equal(h1OperandMarks('RequiredKills', { Harpy: 1 }, ctx({ gs: {} })), null);
 });
 
+test('H1: h1OperandMarks reads and colours single-scalar numeric gates', () => {
+    const c = ctx({ gs: { RunHistory: { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} }, TotalRequiredEnemyKills: 50 } });
+    // RequiredMinCompletedRuns: 7 completed runs >= 5 -> met (green).
+    const r = h1OperandMarks('RequiredMinCompletedRuns', 5, c);
+    assert.equal(r.flat.scalarValue, 7);
+    assert.equal(r.flat.scalarMet, true);
+    // RequiredMinTotalKills: 50 >= 100 -> not met (red).
+    const k = h1OperandMarks('RequiredMinTotalKills', 100, c);
+    assert.equal(k.flat.scalarValue, 50);
+    assert.equal(k.flat.scalarMet, false);
+    // RequiredMaxDepth uses strict "<": depth 8 < 12 -> met.
+    const cr = ctx({ gs: {}, currentRun: { RunDepthCache: 8 } });
+    const d = h1OperandMarks('RequiredMaxDepth', 12, cr);
+    assert.equal(d.flat.scalarValue, 8);
+    assert.equal(d.flat.scalarMet, true);
+    // A per-run gate with no current run slice -> indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredMaxDepth', 12, ctx({ gs: {} })), null);
+    // Meta-point gate needs SpentMetaPointsCache; absent -> null.
+    assert.equal(h1OperandMarks('RequiredActiveMetaPointsMin', 100, ctx({ gs: {} })), null);
+});
+
 // --- permanence: monotonic "max" gates (blocked vs unobtainable) -------------
 
 test('H1: surpassed monotonic max gates are permanently unmet (unobtainable)', () => {

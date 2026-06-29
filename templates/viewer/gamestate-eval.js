@@ -49,7 +49,31 @@ function resolveRefList(v) {
     if (Array.isArray(v)) return v;
     if (typeof v === 'string') {
         const m = /^<ref:(.+)>$/.exec(v);
-        if (m) { const r = gameDataRefs[m[1]]; return Array.isArray(r) ? r : null; }
+        if (m) return _resolveRefArray(m[1]);
+    }
+    return null;
+}
+
+// Resolve a ``<ref:Name>`` member list to its array. A direct
+// ``gameDataRefs[Name]`` hit is preferred, but some tables are stored nested
+// under a parent key (e.g. ``ScreenData.Shrine`` holds ``BountyOrder``) with a
+// broken flat self-ref alias shadowing the dotted name. So when the direct value
+// isn't an array, walk the dotted name from the longest resolvable prefix into
+// that parent object. Returns the array, or null when it can't be resolved.
+function _resolveRefArray(name) {
+    const direct = gameDataRefs && gameDataRefs[name];
+    if (Array.isArray(direct)) return direct;
+    if (!gameDataRefs || typeof name !== 'string' || name.indexOf('.') < 0) return null;
+    const segs = name.split('.');
+    for (let i = segs.length - 1; i > 0; i--) {
+        let cur = gameDataRefs[segs.slice(0, i).join('.')];
+        if (cur == null || typeof cur !== 'object' || Array.isArray(cur)) continue;
+        let ok = true;
+        for (let j = i; j < segs.length; j++) {
+            if (cur && typeof cur === 'object' && !Array.isArray(cur) && segs[j] in cur) cur = cur[segs[j]];
+            else { ok = false; break; }
+        }
+        if (ok && Array.isArray(cur)) return cur;
     }
     return null;
 }
