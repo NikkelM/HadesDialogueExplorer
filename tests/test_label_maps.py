@@ -41,7 +41,6 @@ _DOCUMENTED_KEYS = (
     "brokenPathRefs",
 )
 
-
 def _annotated(game: str) -> dict:
     graph_data: dict = {}
     annotate_label_maps(graph_data, game)

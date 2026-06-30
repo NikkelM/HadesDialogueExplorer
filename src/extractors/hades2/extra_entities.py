@@ -78,4 +78,38 @@ HADES2_EXTRA_ENTITY_NAMES = {
     "NemesisCombatH": "Nemesis encounter (Fields of Mourning)",
     "NemesisCombatI": "Nemesis encounter (Tartarus)",
     "OlympusIntro": "Olympus intro",
+
+    # The 8 Hexes of Selene (WeaponsFiredRecord weapon ids).
+    "WeaponSpellPotion": "Moon Water",
+    "WeaponSpellLaser": "Lunar Ray",
+    "WeaponSpellPolymorph": "Twilight Curse",
+    "WeaponSpellSummon": "Night Bloom",
+    "WeaponSpellTimeSlow": "Phase Shift",
+    "WeaponSpellMeteor": "Total Eclipse",
+    "WeaponSpellTransform": "Dark Side",
+    "WeaponSpellLeap": "Wolf Howl",
+    # Generic weapon-attack tracking ids (no standalone item name).
+    "WeaponCast": "Cast",
+    "WeaponCastArm": "Omega Cast",
+    "WeaponStaffBall": "Witch's Staff (Special)",
+    "WeaponStaffSwing5": "Witch's Staff (Omega Attack)",
+
+    # Hidden 5th aspects of the Nocturnal Arms (WeaponsUnlocked unlock records).
+    "SuitHexAspect5": "Aspect of Selene",
+    "SuitMarkCritAspect5": "Aspect of Nyx",
+    "DaggerBlockAspect5": "Aspect of Artemis",
+    "DaggerHomingThrowAspect5": "Aspect of Pan",
+    "AxeArmCastAspect5": "Aspect of Charon",
+    "AxePerfectCriticalAspect5": "Aspect of Thanatos",
+    "StaffClearCastAspect5": "Aspect of Circe",
+    "StaffSelfHitAspect5": "Aspect of Momus",
+    "LobCloseAttackAspect5": "Aspect of Medea",
+    "LobImpulseAspect5": "Aspect of Persephone",
+    "TorchDetonateAspect5": "Aspect of Moros",
+    "TorchSprintRecallAspect5": "Aspect of Eos",
+    # Rank-2 of the Moonstone Axe's base aspect (not a hidden aspect).
+    "AxeRecoveryAspect2": "Moonstone Axe",
+
+    # Objective ids (ObjectivesCompleted leaves).
+    "NemesisBet": "Nemesis' wager",
 }

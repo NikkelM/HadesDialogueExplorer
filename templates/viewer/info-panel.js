@@ -377,15 +377,16 @@ function _pathGloss(segs) {
             // unresolved (e.g. WeaponsFiredRecord.WeaponSpellLaser).
             if (rest.length > len) full = false;
         }
-        // Append the run/last-run scope suffix, except for current-room fields
-        // (a "current room ..." label already implies the current run, so the
-        // ", this run" suffix would be redundant).
-        if (scope && !key.startsWith('CurrentRoom')) gloss += ', ' + scope;
+        // The run/last-run scope is returned separately (not baked into the
+        // gloss text) so a record subject can place it after the comparison /
+        // operand list instead of mid-sentence. Current-room fields carry no
+        // scope (a "current room ..." label already implies the current run).
+        const scopeOut = (scope && !key.startsWith('CurrentRoom')) ? scope : '';
         // Glosses can render standalone (fully-resolved paths drop the raw path),
         // so present them sentence-case: capitalise the first letter. The label
         // maps stay lowercase fragments so they compose cleanly.
         const text = gloss.charAt(0).toUpperCase() + gloss.slice(1);
-        return { text, full };
+        return { text, scope: scopeOut, full };
     }
     return null;
 }
@@ -411,8 +412,10 @@ function _brokenRefNote(segs) {
 // moved to a hover tooltip. A partially resolved path (or a single resolved
 // entity segment) keeps the raw path with the friendly gloss appended in
 // parentheses. An unresolved path renders raw. A "(cut content)" note is
-// appended when a segment is a known broken reference.
-function _renderPathTailHtml(path) {
+// appended when a segment is a known broken reference. ``includeScope`` appends
+// the run/last-run scope to the gloss; record subjects pass ``false`` and place
+// the scope after the comparison / operand list via ``_pathScopeOf``.
+function _renderPathTailHtml(path, includeScope = true) {
     const segs = String(path).split('.');
     const broken = _brokenRefNote(segs);
     const gloss = _pathGloss(segs);
@@ -422,7 +425,8 @@ function _renderPathTailHtml(path) {
     // don't need it).
     const cueTip = dispPath !== path ? ` data-tooltip="${escapeHtml(path)}"` : '';
     if (gloss) {
-        const glossText = _trimVoCue(gloss.text);
+        const scopeText = (includeScope && gloss.scope) ? ', ' + gloss.scope : '';
+        const glossText = _trimVoCue(gloss.text) + scopeText;
         if (gloss.full) {
             return `<code class="other-req-path" data-tooltip="${escapeHtml(path)}">`
                 + `${escapeHtml(glossText)}</code>${broken}`;
@@ -441,6 +445,15 @@ function _renderPathTailHtml(path) {
     const friendly = entityNames[segs[hits[0]]];
     return `<code class="other-req-path"${cueTip}>${escapeHtml(dispPath)}`
         + ` <span class="other-req-friendly">(${escapeHtml(friendly)})</span></code>${broken}`;
+}
+
+// The run/last-run scope phrase for a path (``this run`` / ``last run``), or ''
+// when the path has no scope (GameState, current-room, or no gloss). Used to
+// place the scope at the end of a record clause (after the comparison / operand
+// list) rather than mid-sentence inside the path subject.
+function _pathScopeOf(path) {
+    const gloss = _pathGloss(String(path).split('.'));
+    return gloss ? gloss.scope : '';
 }
 
 // Strip a ``<ref:...>`` placeholder back to the bare identifier
@@ -657,7 +670,12 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
 function _renderPathRecord(head, rec) {
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return null;
     const keys = new Set(Object.keys(rec));
-    const headHtml = _renderPathTailHtml(head);
+    // Render the head without its run/last-run scope, and append the scope at
+    // the very end of the clause (after the comparison / operand list) so it
+    // doesn't land mid-sentence (e.g. "...used: Omega Cast <= 15, this run").
+    const headHtml = _renderPathTailHtml(head, false);
+    const scope = _pathScopeOf(head);
+    const scopeSuffix = scope ? `, ${escapeHtml(scope)}` : '';
 
     // Set-/value-membership predicates carry only the operand list plus
     // optional decorators.
@@ -666,12 +684,13 @@ function _renderPathRecord(head, rec) {
             const consumed = new Set([op, 'Path']);
             const suffix = _pathDecoratorSuffix(rec, consumed);
             if (!_allConsumed(keys, consumed)) return null;
-            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}${suffix}`;
+            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}${suffix}${scopeSuffix}`;
         }
     }
 
     if ('Comparison' in rec) {
-        return _renderComparisonRecord(head, headHtml, rec, keys);
+        const cmp = _renderComparisonRecord(head, headHtml, rec, keys);
+        return cmp === null ? null : `${cmp}${scopeSuffix}`;
     }
     return null;
 }

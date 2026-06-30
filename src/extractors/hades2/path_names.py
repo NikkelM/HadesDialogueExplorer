@@ -46,7 +46,7 @@ HADES2_PATH_FIELD_NAMES = {
     "EnemyKills": "killed",
     "EncountersOccurredCache": "encounters occurred:",
     "WeaponsUnlocked": "weapons unlocked:",
-    "TextLinesRecord": "played dialogue",
+    "TextLinesRecord": "dialogues played:",
     "SpawnRecord": "spawned",
     "WorldUpgradesAdded": "unlocked incantation/cosmetic:",
     "WorldUpgrades": "active incantation/cosmetic:",
@@ -96,6 +96,7 @@ HADES2_PATH_FIELD_NAMES = {
     "Hero.IsDead": "is dead",
     "Hero.LastStands": "Death Defiances remaining",
     "Hero.MetGods": "gods encountered",
+    "Hero.UpgradableHammerCount": "Upgradable Daedalus' Hammers equipped",
 
     # --- count / record GameState fields (terminal nouns; the comparison or
     # operand list carries the specifics) ---
@@ -105,13 +106,13 @@ HADES2_PATH_FIELD_NAMES = {
     "ClearedUnderworldRunsCache": "cleared Underworld runs",
     "ClearedSurfaceRunsCache": "cleared Surface runs",
     "ShrineBountiesCompleted": "Testaments completed",
-    "ObjectivesCompleted": "objectives completed",
+    "ObjectivesCompleted": "objectives completed:",
     "ExorcismSuccesses": "shades pacified",
     "MetaUpgradeUnlockedCountCache": "Arcana unlocked",
     "MaxMetaUpgradeCostCache": "maximum Grasp unlocked",
-    "CosmeticsPurchasedCountCache": "cosmetics purchased",
+    "CosmeticsPurchasedCountCache": "bought cosmetics:",
     "GiftPresentation": "keepsakes unlocked",
-    "WeaponsFiredRecord": "weapon/effect used",
+    "WeaponsFiredRecord": "weapons/effects used:",
     "EncountersCompletedCache": "encounters completed (all time):",
     "EncounterClearStats": "encounter clear stats",
     "EncountersOccurredBiomeCache": "encounters seen (current biome)",
@@ -152,6 +153,9 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "LastBossHealthBarRecord",
     "LastBossDifficultyRecord",
     "EncountersCompletedCache",
+    "WeaponsFiredRecord",
+    "ObjectivesCompleted",
+    "CosmeticsPurchasedCountCache",
 })
 
 # Per-field leaf-name maps: an object-taking field whose trailing leaf is NOT a
@@ -172,4 +176,21 @@ HADES2_PATH_FIELD_LEAF_NAMES = {
         "KeepsakeRack": "Keepsake Display Case",
         "GraspLimitLayout": "Arcana Grasp",
     },
+    # Cosmetics-purchase count categories (the leaf is a location/total bucket,
+    # not a game entity, and the words are generic - keep them in a per-field map
+    # rather than the global entityNames lookup).
+    "CosmeticsPurchasedCountCache": {
+        "Total": "Total",
+        "Tent": "Melinoe's Tent",
+        "PreRun": "Training Grounds",
+    },
 }
+
+# Object-fields whose trailing leaf is itself the meaningful value even though it
+# is not a friendly-named entity (the raw id is what the gate refers to and what
+# the reader wants to see). These render as "<label>: <raw leaf>" and count as
+# fully resolved (the raw dotted path moves to the tooltip). ``TextLinesRecord``
+# leaves are dialogue ids - shown verbatim as the played line.
+HADES2_PATH_LITERAL_LEAF_FIELDS = frozenset({
+    "TextLinesRecord",
+})

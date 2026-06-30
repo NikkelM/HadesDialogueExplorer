@@ -44,6 +44,7 @@ from src.extractors.hades2.path_names import (
     HADES2_PATH_FIELD_NAMES,
     HADES2_PATH_OBJECT_FIELDS,
     HADES2_PATH_FIELD_LEAF_NAMES,
+    HADES2_PATH_LITERAL_LEAF_FIELDS,
 )
 from src.extractors.hades2.broken_path_refs import HADES2_BROKEN_PATH_REFS
 
@@ -113,6 +114,7 @@ _GAME_LABELS = {
         "pathFieldNames": {},
         "pathObjectFields": [],
         "pathFieldLeafNames": {},
+        "pathLiteralLeafFields": [],
         "brokenPathRefs": {},
     },
     "hades2": {
@@ -133,6 +135,7 @@ _GAME_LABELS = {
         "pathFieldNames": HADES2_PATH_FIELD_NAMES,
         "pathObjectFields": sorted(HADES2_PATH_OBJECT_FIELDS),
         "pathFieldLeafNames": HADES2_PATH_FIELD_LEAF_NAMES,
+        "pathLiteralLeafFields": sorted(HADES2_PATH_LITERAL_LEAF_FIELDS),
         "brokenPathRefs": HADES2_BROKEN_PATH_REFS,
     },
 }
@@ -200,6 +203,7 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
     graph_data["pathScopeNames"] = dict(bundle["pathScopeNames"])
     graph_data["pathFieldNames"] = dict(bundle["pathFieldNames"])
     graph_data["pathObjectFields"] = list(bundle["pathObjectFields"])
+    graph_data["pathLiteralLeafFields"] = list(bundle["pathLiteralLeafFields"])
     graph_data["pathFieldLeafNames"] = {
         k: dict(v) for k, v in bundle["pathFieldLeafNames"].items()
     }
