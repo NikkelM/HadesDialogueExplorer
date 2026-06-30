@@ -276,7 +276,7 @@ export function initSearch() {
         const parts = [];
         for (const m of result.matches) {
             const id = optionId('crossname', m.name);
-            parts.push(`<div class="search-item search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span></div>`);
+            parts.push(`<div class="search-item search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}"><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span>${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span></div>`);
         }
         crossNamesList.innerHTML = parts.join('');
     }
@@ -287,7 +287,7 @@ export function initSearch() {
         const parts = [];
         for (const m of result.matches) {
             const id = optionId('crosstext', m.name);
-            parts.push(`<div class="search-item search-item-text search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}"><div class="search-item-head">${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span></div><div class="search-snippet">${m.snippetHtml}</div></div>`);
+            parts.push(`<div class="search-item search-item-text search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-name="${escapeHtml(m.name)}" data-game="${escapeHtml(result.gameId)}"><div class="search-item-head"><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span>${escapeHtml(m.name)}<span class="npc">${escapeHtml(m.ownerLabel)} \u00B7 ${escapeHtml(m.sectionLabel)}</span></div><div class="search-snippet">${m.snippetHtml}</div></div>`);
         }
         crossTextList.innerHTML = parts.join('');
     }
@@ -311,7 +311,7 @@ export function initSearch() {
             const idSuffix = (m.friendly && m.friendly !== m.id)
                 ? `<span class="npc">(${escapeHtml(m.id)})</span>`
                 : '';
-            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-speaker-name="${escapeHtml(friendly)}" data-game="${escapeHtml(result.gameId)}">${escapeHtml(friendly)}${idSuffix}<span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span></div>`);
+            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-speaker-name="${escapeHtml(friendly)}" data-game="${escapeHtml(result.gameId)}"><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span>${escapeHtml(friendly)}${idSuffix}</div>`);
         }
         crossSpeakersList.innerHTML = parts.join('');
     }

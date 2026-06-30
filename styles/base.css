@@ -175,7 +175,9 @@ header h1 {
 #search-results.kbd-mode .search-item:hover { background: transparent; }
 #search-results.kbd-mode .search-item.is-active { background: var(--border); }
 .search-item .npc { color: var(--text-muted); font-size: var(--fs-xs); margin-left: 8px; }
-.search-item-cross .cross-game-badge { margin-left: 8px; vertical-align: middle; }
+/* The badge leads the row (before the result name) so it's immediately clear the
+   row switches to the other game; the space sits after it, before the name. */
+.search-item-cross .cross-game-badge { margin-left: 0; margin-right: 8px; vertical-align: middle; }
 /* In a search row the whole row is the link; the badge is a static
    label, so freeze its hover to the base look (the global
    .cross-game-badge:hover is for the standalone link in the info panel). */
