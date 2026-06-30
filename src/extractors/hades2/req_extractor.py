@@ -530,13 +530,20 @@ def _add_record_as_other(record, result):
     key = _synth_other_key(normalised)
     # Multiple records can share a synthesised key (e.g. several
     # FunctionName="RequiredAlive" gates on the same set). Stack them
-    # under the same key as a list so none are lost.
+    # under the same key as a list so none are lost, but skip a record
+    # identical to one already present: AND-combined gates read X AND X
+    # as X, and the same clause routinely arrives twice - once directly
+    # on the host and once from an inline-expanded NamedRequirements
+    # block - which would otherwise render as a duplicate row. Mirrors
+    # the dedup ``_add_other`` already does for its name lists.
     bucket = result["otherRequirements"].setdefault(key, [])
     if isinstance(bucket, list):
-        bucket.append(normalised)
+        if normalised not in bucket:
+            bucket.append(normalised)
     else:
         # First write put a scalar in - upgrade to list.
-        result["otherRequirements"][key] = [bucket, normalised]
+        if bucket != normalised:
+            result["otherRequirements"][key] = [bucket, normalised]
 
 
 def _synth_other_key(normalised):

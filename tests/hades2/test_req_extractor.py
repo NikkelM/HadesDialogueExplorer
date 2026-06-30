@@ -371,6 +371,27 @@ class TestNamedRequirementsExpansion:
         result = extract_requirements(host, named)
         assert result["flags"].get("skip") is True
 
+    def test_duplicate_non_textline_record_from_named_block_deduped(self):
+        """A non-textline gate present both directly on the host AND inside an
+        inline-expanded NamedRequirements block is an AND of identical clauses
+        (X AND X = X), so it must collapse to a single otherRequirements record
+        rather than surfacing twice as a duplicate row (the bug seen on e.g.
+        AthenaAboutSayingLittle01 / NarcissusAboutWaters04)."""
+        named = {
+            "TrueEnding": _parse_req_set(
+                '{ { PathTrue = { "GameState", "ReachedTrueEnding" } } }'),
+        }
+        host = _parse_req_set('''
+        {
+            { PathTrue = { "GameState", "ReachedTrueEnding" } },
+            NamedRequirements = { "TrueEnding" },
+        }
+        ''')
+        result = extract_requirements(host, named)
+        assert result["otherRequirements"]["PathTrue:GameState.ReachedTrueEnding"] == [
+            {"PathTrue": ["GameState", "ReachedTrueEnding"]}
+        ]
+
 
 class TestNamedRequirementsFalse:
     def test_namedfalse_surfaced_not_inlined(self):
