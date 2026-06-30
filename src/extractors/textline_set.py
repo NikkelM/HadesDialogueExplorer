@@ -643,6 +643,13 @@ def extract_textline(
                     data["otherRequirements"][key] = meta
         elif key.startswith(NON_DIALOGUE_REQ_PREFIX) and key not in NON_ELIGIBILITY_REQ_FIELDS:
             data["otherRequirements"][key] = _normalize_value(value, game_data_lists)
+        elif key in HADES1_NON_PREFIX_ELIGIBILITY_FIELDS:
+            # Hades 1 engine eligibility gates that don't use the ``Require*``
+            # naming the branch above keys off (``ConsecutiveClearsOfRoom``,
+            # ``HasTraitNameInRoom``, ...). Surfaced as otherRequirements so the
+            # gate is visible; the H1 save evaluator resolves the ones it can and
+            # marks the live-only ones indeterminate.
+            data["otherRequirements"][key] = _normalize_value(value, game_data_lists)
 
     # Set-level narrative priority. SuperPriority wins if both are set
     # (matches engine ordering in `PlayRandomRemainingTextLines`).

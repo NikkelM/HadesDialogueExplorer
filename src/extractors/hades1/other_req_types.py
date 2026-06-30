@@ -247,6 +247,21 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredScreenViewed":                     "Screen must have been opened",
     "RequiredScreenViewedFalse":                "Screen must NOT have been opened",
     "RequiredTextLinesThis":                    "Unused engine field (typo)",
+
+    # ----- Non-Require eligibility gates (captured from IsGameStateEligible;
+    #        these engine gates don't use the Require* naming) -----
+    "ConsecutiveClearsOfRoom":                  "Minimum consecutive clears of a room",
+    "ConsecutiveDeathsInRoom":                  "Minimum consecutive deaths in a room",
+    "HasTraitNameInRoom":                       "Boon must be offered in current room",
+    "ValuableUpgradeInRoom":                    "Boon offerings in the room must meet given rarities",
+    "MinRunsSinceSquelchedHermes":              "Minimum runs since Hermes was silenced",
+    "MaxRunsSinceSquelchedHermes":              "Maximum runs since Hermes was silenced",
+    "ReachedShrineSoftCapWithAnyWeaponName":    "Reached Heat cap with any weapon",
+    "ObjectivesCompleted":                      "Minimum objective completions",
+    "ObjectiveCompletedLastOffer":              "Objective was completed the last time it was active",
+    "AreIdsAlive":                              "Specific unit(s) must be alive",
+    "AreIdsNotAlive":                           "Specific unit(s) must NOT be alive",
+    "IsIdAlive":                                "Specific unit must be alive",
 }
 
 
@@ -603,4 +618,39 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     # ----- Misc -----
     "RequiredMinItemInteractions":
         "The player must have interacted with the named object at least N times.",
+
+    # ----- Non-Require eligibility gates (captured from IsGameStateEligible) -----
+    "ConsecutiveClearsOfRoom":
+        "The player must have cleared the named room across at least N "
+        "consecutive recent runs.",
+    "ConsecutiveDeathsInRoom":
+        "The player must have died in the named room across at least N "
+        "consecutive recent runs.",
+    "HasTraitNameInRoom":
+        "The named boon must be offered in the current room. Not part of "
+        "the save file.",
+    "ValuableUpgradeInRoom":
+        "The boons currently offered in this room must meet the listed rarity thresholds. "
+        "Read from the live reward being offered, so a save can't confirm it.",
+    "MinRunsSinceSquelchedHermes":
+        "Hermes must have be silenced at least N runs ago.",
+    "MaxRunsSinceSquelchedHermes":
+        "Hermes must have be silenced within the last N runs.",
+    "ReachedShrineSoftCapWithAnyWeaponName":
+        "With at least one weapon, all available bounties at the Pact of Punishment "
+        "must have been completed.",
+    "ObjectivesCompleted":
+        "The named objective must have been completed at least Min, or at most "
+        "Max, times on record (GameState.ObjectivesCompleted).",
+    "ObjectiveCompletedLastOffer":
+        "The named objective must have been completed the last time it was active.",
+    "AreIdsAlive":
+        "Every listed unit id must currently be alive - live combat state a "
+        "save can't provide.",
+    "AreIdsNotAlive":
+        "None of the listed unit ids may currently be alive - live combat "
+        "state a save can't provide.",
+    "IsIdAlive":
+        "The listed unit id must currently be alive - live combat state a "
+        "save can't provide.",
 }
