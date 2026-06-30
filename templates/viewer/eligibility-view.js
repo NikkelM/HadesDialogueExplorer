@@ -16,14 +16,8 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection, clauseStatusDotHtml } from './info-panel.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, evaluateOtherReqUnit } from './gamestate-eval.js';
-
-// Shared tooltip for a gate that is permanently unobtainable because it reads
-// monotonic save progress (a one-way counter past its cap, or a write-once
-// "must NOT have happened" record that already has) - it can never be satisfied
-// again. Wording covers both the max-counter and require-absence families.
-const PERMANENT_GATE_TOOLTIP = 'Permanently locked: this reads save progress that only ever advances, and your save has already passed what this gate allows - so it can never be satisfied again.';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
 // (the single source of truth shared with the save-progress badge), so the
@@ -635,14 +629,7 @@ export function renderOtherConditionsHtml(rootName) {
             const c = split
                 ? (haveSave ? evaluateOtherReqUnit(key, subVal, sctx.gameState, slices, gameId) : undefined)
                 : byKey.get(key); // undefined for conditions the evaluator doesn't cover (e.g. non-array / H1)
-            let dot = '';
-            if (c) {
-                const tip = c.status === 'met' ? 'Satisfied by your save.'
-                    : c.status === 'unmet' ? 'Not satisfied by your save.'
-                        : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
-                            : (c.reason || 'Can\u2019t be determined from the save.');
-                dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
-            }
+            const dot = clauseStatusDotHtml(c);
             let marks = null;
             if (haveSave) {
                 marks = split ? computeOperandMarks(key, subVal, sctx, slices, gameId)
@@ -1072,11 +1059,7 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
 // per-key and split-per-record render paths so both read identically.
 function conditionRowHtml(key, val, c) {
     const met = c.status === 'met';
-    const dotTip = met ? 'Satisfied by your save.'
-        : c.status === 'unmet' ? 'Not satisfied by your save.'
-            : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
-                : (c.reason || 'Can\u2019t be determined from the save.');
-    const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
+    const dot = clauseStatusDotHtml(c);
     const body = renderOtherReqEntryHtml(key, val);
     const tooltip = renderOtherReqTooltip(key, val);
     const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';

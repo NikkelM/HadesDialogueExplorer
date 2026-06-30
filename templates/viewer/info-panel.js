@@ -49,6 +49,24 @@ function statusDot(status, tooltip) {
     return `<span class="group-status group-status-${status}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
 }
 
+// Hover text for a gate that reads monotonic save progress already past the
+// point it allows: its underlying counter only ever grows (or the forbidden
+// event is permanently on record), so it can never be satisfied again.
+export const PERMANENT_GATE_TOOLTIP = 'Permanently locked: this reads save progress that only ever advances, and your save has already passed what this gate allows - so it can never be satisfied again.';
+
+// Status dot + hover tip for a single evaluated gate clause, in the shared
+// met / unmet / unobtainable / indeterminate colour language. Returns '' for a
+// missing clause (conditions the evaluator doesn't cover). Shared by the detail
+// panel and the tracer so the tip wording stays identical across every view.
+export function clauseStatusDotHtml(c) {
+    if (!c) return '';
+    const tip = c.status === 'met' ? 'Satisfied by your save.'
+        : c.status === 'unmet' ? 'Not satisfied by your save.'
+            : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
+                : (c.reason || 'Can\u2019t be determined from the save.');
+    return statusDot(c.status, tip);
+}
+
 // Render an ``otherRequirements`` key. H2 synthesises compound keys
 // like ``PathTrue:GameState.ReachedTrueEnding`` (operator-prefix, then
 // the path tail) and ``FunctionName:RequiredAlive``; H1 keeps bare
@@ -951,6 +969,15 @@ function _renderBareKeyValueHtml(val, key) {
         // ``{Name, Count}`` threshold pair -> ``Name op Count``.
         if (objKeys.length === 2 && 'Count' in val && 'Name' in val) {
             return `${_valueChip(val.Name)} ${op} <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
+        }
+        // ``{Name, Min}`` / ``{Name, Max}`` threshold pair -> ``Name >= Min`` /
+        // ``Name <= Max`` (e.g. ObjectivesCompleted {Name: "PlayerKills", Min: 8}
+        // -> "PlayerKills >= 8" - the objective must have been completed at least
+        // Min, or at most Max, times). The operator comes from the Min/Max key,
+        // not the gate kind, so a single field key renders both senses correctly.
+        if (objKeys.length === 2 && 'Name' in val && ('Min' in val || 'Max' in val)) {
+            const isMax = 'Max' in val;
+            return `${_valueChip(val.Name)} ${isMax ? '&lt;=' : '&gt;='} <code>${escapeHtml(_formatScalar(isMax ? val.Max : val.Min))}</code>`;
         }
         // Codex entry ``{EntryName, EntryIndex}`` -> the entry name plus how far
         // it must be unlocked. EntryIndex is a cumulative threshold: the gate
@@ -1865,19 +1892,12 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
 
     // With a matching save loaded, evaluate each non-textline gate against the
     // persisted GameState slice and prefix it with a met / unmet / indeterminate
-    // dot (same colour language as the dependency tree + tracer). ``dotFor``
-    // returns '' when there's no save or the key isn't an evaluable gate.
+    // dot (same colour language as the dependency tree + tracer).
+    // ``clauseStatusDotHtml`` returns '' when there's no save or the key isn't an
+    // evaluable gate.
     const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
     const { haveSave: showDots, byKey: gateByKey, operandMarksByKey, verdict: overallVerdict, sctx, slices, gameId }
         = evaluateOtherReqSection(otherRequirements, owner);
-    const dotFor = (c) => {
-        if (!c) return '';
-        const tip = c.status === 'met' ? 'Satisfied by your save.'
-            : c.status === 'unmet' ? 'Not satisfied by your save.'
-                : c.status === 'unobtainable' ? 'Permanently locked: this reads save progress that only ever advances, and your save has already passed what this gate allows - so it can never be satisfied again.'
-                    : (c.reason || 'Can\u2019t be determined from the save.');
-        return `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
-    };
 
     let otherHtml = '';
     // Sort otherRequirements by the canonical per-game display
@@ -1937,7 +1957,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
             _operandMarks = marks || null;
             _setFlatMarks();
-            otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(clause)}<span class="other-req-text">${renderOtherReqEntryHtml(key, subVal)}</span></div>`;
+            otherHtml += `<div class="other-req-item"${tipAttr}>${clauseStatusDotHtml(clause)}<span class="other-req-text">${renderOtherReqEntryHtml(key, subVal)}</span></div>`;
             setOperandMarks(null);
         }
     }

@@ -1089,6 +1089,8 @@ function fixtureWithSimplifiedOtherReqs() {
         MinRunsSinceAnyTextLines:          'Min runs since played (ANY)',
         RequiredMinActiveMetaUpgradeLevel: 'Required min active meta upgrade level',
         RequiredKills:                     'Required kills',
+        ObjectivesCompleted:               'Minimum objective completions',
+        ObjectiveMaxDemo:                  'Objective max demo',
         RequiredMinNPCInteractions:        'Required min NPC interactions',
         RequiredLifetimeResourcesSpentMax: 'Maximum lifetime resource spent',
         RequiredValues:                    'GameState field must equal',
@@ -1178,6 +1180,8 @@ function fixtureWithSimplifiedOtherReqs() {
             MinRunsSinceAnyTextLines: { Count: 8 },
             RequiredMinActiveMetaUpgradeLevel: { Count: 1, Name: 'BossDifficultyShrineUpgrade' },
             RequiredKills:               { Harpy: 2 },
+            ObjectivesCompleted:         { Name: 'PlayerKills', Min: 8 },
+            ObjectiveMaxDemo:            { Name: 'Deaths', Max: 3 },
             RequiredMinNPCInteractions:  { 'NPC_Hades_01': 5 },
             RequiredLifetimeResourcesSpentMax: { Gems: 5000 },
             RequiredValues:              { CurrentEmployeeOfTheMonth: 'Dusa' },
@@ -1410,6 +1414,22 @@ test('bare-key {Count, Name} objects render as "Name >= Count"', () => {
     assert.match(
         lastHtml,
         /<span class="req-type-name"[^>]*>Required min active meta upgrade level<\/span>: <code>BossDifficultyShrineUpgrade<\/code> &gt;= <code>1<\/code>/
+    );
+});
+
+
+test('bare-key {Name, Min} / {Name, Max} objects render as "Name >= Min" / "Name <= Max"', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    renderInfo('SimplifiedOtherReqDemo');
+    // ObjectivesCompleted { Name: "PlayerKills", Min: 8 } -> "PlayerKills >= 8".
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Minimum objective completions<\/span>: <code>PlayerKills<\/code> &gt;= <code>8<\/code>/
+    );
+    // A Max threshold flips the operator to <=.
+    assert.match(
+        lastHtml,
+        /<span class="req-type-name"[^>]*>Objective max demo<\/span>: <code>Deaths<\/code> &lt;= <code>3<\/code>/
     );
 });
 
