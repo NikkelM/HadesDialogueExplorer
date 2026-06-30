@@ -177,6 +177,9 @@ export function buildFixtureData() {
             GiftTextLineSets: 'Gift',
             InteractTextLineSets: 'Interact',
         },
+        brokenReqFields: {
+            RequiredTextLinesThis: 'Misspelled requirement key; the engine never evaluates it, so it has no effect.',
+        },
     };
 }
 

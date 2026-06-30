@@ -1355,6 +1355,18 @@ test('equality gate shows the save actual value coloured beside the required val
 });
 
 
+test('a broken / typo requirement key renders an amber warning and hides the value', () => {
+    loadData(buildFixtureData());
+    // RequiredTextLinesThis is a misspelled key the engine never reads. The row
+    // shows the raw key + a "broken requirement key" warning (with the
+    // explanation in the tooltip) and does NOT surface the operand value.
+    const html = renderOtherReqEntryHtml('RequiredTextLinesThis', ['OlympianReunionQuestComplete']);
+    assert.match(html, /<code class="other-req-path">RequiredTextLinesThis<\/code> <span class="other-req-broken-ref" data-tooltip="[^"]*never evaluates[^"]*">\(broken requirement key - never evaluated, no effect\)<\/span>/);
+    // The operand value is intentionally absent.
+    assert.doesNotMatch(html, /OlympianReunionQuestComplete/);
+});
+
+
 test('bare-key {Count} objects collapse to just the count', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');

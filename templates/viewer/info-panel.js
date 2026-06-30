@@ -30,7 +30,7 @@ import {
     groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
-import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs } from './data.js';
+import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -427,6 +427,18 @@ function _brokenRefNote(segs) {
         }
     }
     return '';
+}
+
+// Render a broken / typo'd requirement KEY: show the raw key name (so it's clear
+// which key is at fault) with an amber warning making explicit that the
+// requirement key - not its value - is broken, so the gate has no effect. The
+// operand value is intentionally not shown (it's meaningless on a key the engine
+// never reads). The full explanation rides in the warning's hover tooltip.
+function _renderBrokenReqFieldHtml(key) {
+    const note = brokenReqFields[key];
+    return `<code class="other-req-path">${escapeHtml(key)}</code>`
+        + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">`
+        + `(broken requirement key - never evaluated, no effect)</span>`;
 }
 
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
@@ -1109,6 +1121,12 @@ export function renderRetiredBannerHtml(replacement) {
 }
 
 export function renderOtherReqEntryHtml(key, val) {
+    // A broken / typo'd requirement KEY: the engine has no such field, so the
+    // gate is never evaluated and has no effect. Flag the key clearly (not the
+    // value, which is meaningless here) with an amber warning + explanation.
+    if (brokenReqFields[key]) {
+        return _renderBrokenReqFieldHtml(key);
+    }
     for (const opKey of _PATH_OP_FRIENDLY_KEYS) {
         if (key.startsWith(opKey + ':')) {
             const result = _renderPathOpEntry(opKey, key, val);

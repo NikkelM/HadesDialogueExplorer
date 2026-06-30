@@ -52,7 +52,7 @@ export let sectionKeyLabels;
 export let choiceNames;
 export let metaUpgradeNames;
 export let entityNames;
-export let pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs;
+export let pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields;
 export let gameDataRefs;
 export let namedRequirements;
 export let godTraitNames;
@@ -226,6 +226,7 @@ export function setActiveGame(gameId) {
     pathFieldLeafNames = gd.pathFieldLeafNames || {};
     pathLiteralLeafFields = new Set(Array.isArray(gd.pathLiteralLeafFields) ? gd.pathLiteralLeafFields : []);
     brokenPathRefs = gd.brokenPathRefs || {};
+    brokenReqFields = gd.brokenReqFields || {};
     gameDataRefs = gd.gameDataRefs || {};
     namedRequirements = gd.namedRequirements || {};
     godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);

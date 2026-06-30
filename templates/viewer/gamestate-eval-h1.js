@@ -404,9 +404,13 @@ const H1_FIELD_EVALS = {
     RequiresAmbientMusicId: () => H1_LIVE('Reads the live ambient music id.'),
     RequiresNullAmbientMusicId: () => H1_LIVE('Reads the live ambient music id.'),
 
-    // ===== DEAD DATA (no engine evaluation) =====
-    RequiredActiveMetaPointMax: () => H1_LIVE('Unimplemented field (engine has no branch for it; likely a typo for RequiredActiveMetaPointsMax).'),
-    RequiredTextLinesThis: () => H1_LIVE('Unimplemented field (engine has no branch for it; likely a truncated RequiredTextLinesThisRun).'),
+    // ===== DEAD DATA (broken / typo'd keys the engine never reads) =====
+    // The engine has no branch for these misspelled keys, so it never evaluates
+    // them - the gate has no effect and is therefore always satisfied. Resolve
+    // them as met (passed) rather than indeterminate. The detail panel separately
+    // flags the key as broken (see brokenReqFields).
+    RequiredActiveMetaPointMax: () => H1_OK,
+    RequiredTextLinesThis: () => H1_OK,
 };
 
 // Index-paired fields whose VALUE is only meaningful with a sibling index field;

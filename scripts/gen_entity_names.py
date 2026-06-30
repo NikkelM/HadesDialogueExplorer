@@ -147,8 +147,11 @@ def _collect_value_ids(data_path: Path) -> dict:
                 # ``FunctionArgs`` so entity arguments (a ``RequiredTraitNameInRoom``
                 # boon ``Name``, ``RequiredAlive`` ``Units``, ...) get collected.
                 # Non-entity arg scalars (numbers, comparators, rarities) are
-                # filtered out later by sjson-DisplayName membership.
-                if k in ("Comparison", "FunctionName"):
+                # filtered out later by sjson-DisplayName membership. ``HintId`` is
+                # a codex-hint decorator the viewer never renders as a friendly
+                # name (it only appears in the raw tooltip), so skip it - otherwise
+                # its id collects a spurious, never-shown entity name.
+                if k in ("Comparison", "FunctionName", "HintId"):
                     continue
                 walk(x, acc)
 

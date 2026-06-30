@@ -39,6 +39,7 @@ _DOCUMENTED_KEYS = (
     "pathFieldNames",
     "pathFieldLeafNames",
     "brokenPathRefs",
+    "brokenReqFields",
 )
 
 def _annotated(game: str) -> dict:

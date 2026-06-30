@@ -286,6 +286,17 @@ test('H1: textline-record fields are skipped (owned by requirementSetStatus)', (
 
 // --- needs-static-data fields ------------------------------------------------
 
+test('H1: broken / typo requirement keys resolve as met (no effect, not unknown)', () => {
+    // The engine has no branch for these misspelled keys, so they never gate
+    // anything; with a save loaded they pass rather than read indeterminate.
+    const a = evaluateH1OtherRequirements({ RequiredTextLinesThis: ['OlympianReunionQuestComplete'] }, ctx());
+    assert.equal(a.status, 'met');
+    assert.equal(a.clauses[0].status, 'met');
+    const b = evaluateH1OtherRequirements({ RequiredActiveMetaPointMax: 5 }, ctx());
+    assert.equal(b.status, 'met');
+    assert.equal(b.clauses[0].status, 'met');
+});
+
 test('H1: fields needing static game tables stay unknown with a reason', () => {
     const r = evaluateH1OtherRequirements({ RequiresCodexFullyUnlocked: true }, ctx({ gs: {} }));
     assert.equal(r.status, 'unknown');

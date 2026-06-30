@@ -47,6 +47,7 @@ from src.extractors.hades2.path_names import (
     HADES2_PATH_LITERAL_LEAF_FIELDS,
 )
 from src.extractors.hades2.broken_path_refs import HADES2_BROKEN_PATH_REFS
+from src.extractors.hades1.broken_req_fields import HADES1_BROKEN_REQ_FIELDS
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -116,6 +117,7 @@ _GAME_LABELS = {
         "pathFieldLeafNames": {},
         "pathLiteralLeafFields": [],
         "brokenPathRefs": {},
+        "brokenReqFields": HADES1_BROKEN_REQ_FIELDS,
     },
     "hades2": {
         "sectionKeyLabels": HADES2_SECTION_KEY_LABELS,
@@ -137,6 +139,7 @@ _GAME_LABELS = {
         "pathFieldLeafNames": HADES2_PATH_FIELD_LEAF_NAMES,
         "pathLiteralLeafFields": sorted(HADES2_PATH_LITERAL_LEAF_FIELDS),
         "brokenPathRefs": HADES2_BROKEN_PATH_REFS,
+        "brokenReqFields": {},
     },
 }
 
@@ -208,3 +211,4 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
         k: dict(v) for k, v in bundle["pathFieldLeafNames"].items()
     }
     graph_data["brokenPathRefs"] = dict(bundle["brokenPathRefs"])
+    graph_data["brokenReqFields"] = dict(bundle["brokenReqFields"])
