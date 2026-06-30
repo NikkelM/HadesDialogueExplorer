@@ -14,9 +14,9 @@ import { textlines, speakers, alternates, getActiveGame } from './data.js';
 import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
-import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
+import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection } from './info-panel.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, evaluateOtherReqUnit } from './gamestate-eval.js';
 
 // Shared tooltip for a gate that is permanently unobtainable because it reads
@@ -595,50 +595,8 @@ export function renderOtherConditionsHtml(rootName) {
     const displayKeys = Object.keys(other).filter((k) => !(k in reqs));
     if (displayKeys.length === 0) return '';
 
-    const haveSave = !!(getSaveProgress() && saveMatchesActiveGame());
-    const byKey = new Map();
-    let operandMarksByKey = null;
-    let verdict = null;
-    let sctx = null;
-    let slices = null;
-    let gameId = null;
-    if (haveSave) {
-        sctx = getSaveContext();
-        gameId = getActiveGame();
-        slices = buildOtherReqSlices(sctx, tl.owner, gameId);
-        const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
-        for (const c of res.clauses) byKey.set(c.key, c);
-        // Which individual operands of each set/membership gate the save already
-        // satisfies, so the listed items can be highlighted as each row renders.
-        operandMarksByKey = new Map();
-        for (const [key, val] of Object.entries(other)) {
-            const marks = computeOperandMarks(key, val, sctx, slices, gameId);
-            if (marks) operandMarksByKey.set(key, marks);
-        }
-        // Named requirement gates resolve GameState-only in
-        // evaluateOtherRequirements (it can't read textline records). Re-
-        // evaluate them as full requirement sets so dots and the header verdict
-        // reflect whether the named requirement is eligible as a whole.
-        for (const [key, c] of byKey) {
-            if (key.startsWith('NamedRequirements')) {
-                c.status = namedRequirementGroupVerdict(key, other[key], sctx, tl.owner);
-                if (c.status !== 'unknown') c.reason = null;
-            } else if (c.status === 'unmet'
-                && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
-                // A gate that reads monotonic save progress already past the
-                // point it allows can never recover (the underlying counter only
-                // grows, or the forbidden event is on record for good) ->
-                // permanently locked, not merely unsatisfied. Upgrade the dot so
-                // it matches the dialogue's overall unobtainable verdict.
-                c.status = 'unobtainable';
-                c.reason = null;
-            }
-        }
-        const statuses = [...byKey.values()].map(c => c.status);
-        verdict = statuses.includes('unobtainable') ? 'unobtainable'
-            : statuses.includes('unmet') ? 'unmet'
-                : statuses.includes('unknown') ? 'unknown' : 'met';
-    }
+    const { haveSave, byKey, operandMarksByKey, verdict, sctx, slices, gameId }
+        = evaluateOtherReqSection(other, tl.owner);
 
     // Each gate renders as one row, except multi-record Path / FunctionName gates
     // which split into one row per AND-clause - count rows, not keys, so the

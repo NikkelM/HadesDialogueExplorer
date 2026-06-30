@@ -248,6 +248,60 @@ export function computeOperandMarks(key, val, sctx, slices, gameId) {
     return h2OperandMarks(key, val, { ...(slices || {}), gameState: sctx.gameState });
 }
 
+// Evaluate a textline's otherRequirements against the loaded save for rendering:
+// per-gate clauses (``byKey``), per-operand marks (``operandMarksByKey``), and the
+// section verdict. Shared by the detail panel and the tracer so the
+// NamedRequirements re-evaluation, the monotonic-progress permanence upgrade and
+// the verdict roll-up stay in lockstep between the two views. Returns everything
+// the row loops need; when no matching save is loaded ``haveSave`` is false and
+// the remaining fields are null/empty.
+export function evaluateOtherReqSection(other, owner) {
+    const haveSave = !!(getSaveProgress() && saveMatchesActiveGame());
+    const byKey = new Map();
+    let operandMarksByKey = null;
+    let verdict = null;
+    let sctx = null;
+    let slices = null;
+    let gameId = null;
+    if (haveSave) {
+        sctx = getSaveContext();
+        gameId = getActiveGame();
+        slices = buildOtherReqSlices(sctx, owner, gameId);
+        const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
+        for (const c of res.clauses) byKey.set(c.key, c);
+        // Which individual operands of each set/membership gate the save already
+        // satisfies, so the listed items can be highlighted as each row renders.
+        operandMarksByKey = new Map();
+        for (const [key, val] of Object.entries(other)) {
+            const marks = computeOperandMarks(key, val, sctx, slices, gameId);
+            if (marks) operandMarksByKey.set(key, marks);
+        }
+        // Named requirement gates resolve GameState-only in
+        // evaluateOtherRequirements (it can't read textline records). Re-evaluate
+        // them as full requirement sets so dots and the header verdict reflect
+        // whether the named requirement is eligible as a whole.
+        for (const [key, c] of byKey) {
+            if (key.startsWith('NamedRequirements')) {
+                c.status = namedRequirementGroupVerdict(key, other[key], sctx, owner);
+                if (c.status !== 'unknown') c.reason = null;
+            } else if (c.status === 'unmet'
+                && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
+                // A gate that reads monotonic save progress already past the point
+                // it allows can never recover (the underlying counter only grows,
+                // or the forbidden event is on record for good) -> permanently
+                // locked, not merely unsatisfied.
+                c.status = 'unobtainable';
+                c.reason = null;
+            }
+        }
+        const statuses = [...byKey.values()].map(c => c.status);
+        verdict = statuses.includes('unobtainable') ? 'unobtainable'
+            : statuses.includes('unmet') ? 'unmet'
+                : statuses.includes('unknown') ? 'unknown' : 'met';
+    }
+    return { haveSave, byKey, operandMarksByKey, verdict, sctx, slices, gameId };
+}
+
 // A mark structure carries something to show when a flat / per-record set is
 // non-empty, it has per-operand count tallies, or it has an aggregate "you have
 // X" total to display.
@@ -1813,50 +1867,9 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     // persisted GameState slice and prefix it with a met / unmet / indeterminate
     // dot (same colour language as the dependency tree + tracer). ``dotFor``
     // returns '' when there's no save or the key isn't an evaluable gate.
-    const showDots = !!(getSaveProgress() && saveMatchesActiveGame());
-    let overallVerdict = null;
-    let gateByKey = null;
-    let operandMarksByKey = null;
-    let sctx = null;
-    let slices = null;
-    let gameId = null;
     const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
-    if (showDots) {
-        sctx = getSaveContext();
-        gameId = getActiveGame();
-        slices = buildOtherReqSlices(sctx, owner, gameId);
-        const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
-        gateByKey = new Map(res.clauses.map(c => [c.key, c]));
-        // Which individual operands of each set/membership gate the save already
-        // satisfies, so the list items can be highlighted as the entry renders.
-        operandMarksByKey = new Map();
-        for (const [key, val] of Object.entries(otherRequirements)) {
-            const marks = computeOperandMarks(key, val, sctx, slices, gameId);
-            if (marks) operandMarksByKey.set(key, marks);
-        }
-        // Named requirement gates resolve GameState-only in
-        // evaluateOtherRequirements (it can't read textline records). Re-
-        // evaluate them as full requirement sets so the dot - and the section
-        // verdict - reflect whether the named requirement is eligible as a whole.
-        for (const [key, c] of gateByKey) {
-            if (key.startsWith('NamedRequirements')) {
-                c.status = namedRequirementGroupVerdict(key, otherRequirements[key], sctx, owner);
-                if (c.status !== 'unknown') c.reason = null;
-            } else if (c.status === 'unmet'
-                && gateClausePermanentlyUnmet(key, otherRequirements, sctx.gameState, gameId)) {
-                // A gate over monotonic save progress already past what it allows
-                // can never recover (its counter only grows, or the forbidden
-                // event is on record for good) -> permanently locked, not just
-                // unmet.
-                c.status = 'unobtainable';
-                c.reason = null;
-            }
-        }
-        const _statuses = [...gateByKey.values()].map(c => c.status);
-        overallVerdict = _statuses.includes('unobtainable') ? 'unobtainable'
-            : _statuses.includes('unmet') ? 'unmet'
-                : _statuses.includes('unknown') ? 'unknown' : 'met';
-    }
+    const { haveSave: showDots, byKey: gateByKey, operandMarksByKey, verdict: overallVerdict, sctx, slices, gameId }
+        = evaluateOtherReqSection(otherRequirements, owner);
     const dotFor = (c) => {
         if (!c) return '';
         const tip = c.status === 'met' ? 'Satisfied by your save.'
