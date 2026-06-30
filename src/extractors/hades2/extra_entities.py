@@ -54,7 +54,7 @@ HADES2_EXTRA_ENTITY_NAMES = {
     "ArtemisCombatG2": "Artemis encounter (Oceanus, variant 2)",
     "ArtemisCombatN": "Artemis encounter (City of Ephyra)",
     "ArtemisCombatN2": "Artemis encounter (City of Ephyra, variant 2)",
-    "BossZagreus01": "Zagreus fight",
+    "BossZagreus01": "Zagreus' boss fight",
     "BridgeNemesisRandomEvent": "Nemesis in Echo's chamber",
     "BridgeShop": "Echo's chamber",
     "GeneratedAnomalyB": "Asphodel",

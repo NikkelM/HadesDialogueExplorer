@@ -2,9 +2,8 @@
 
 Confirms the vendored ``HADES2_CHOICE_NAMES`` map covers every
 ``ChoiceText`` id observed in the H2 NPC source files at the time of
-extraction, and that the friendly labels follow the consistent
-"Accept" / "Decline" convention so the viewer can render them
-side-by-side without per-NPC styling.
+extraction, and that each friendly label mirrors that option's actual
+in-game choice text (Title Case).
 """
 
 from src.extractors.hades2.choice_names import HADES2_CHOICE_NAMES
@@ -46,15 +45,20 @@ class TestCurrentInventory:
         }
         assert set(HADES2_CHOICE_NAMES) == expected
 
-    def test_accept_label_consistent(self):
-        for key in HADES2_CHOICE_NAMES:
-            if key.endswith("Accept"):
-                assert HADES2_CHOICE_NAMES[key] == "Accept"
-
-    def test_decline_label_consistent(self):
-        for key in HADES2_CHOICE_NAMES:
-            if key.endswith("Decline"):
-                assert HADES2_CHOICE_NAMES[key] == "Decline"
+    def test_labels_mirror_ingame_choice_text(self):
+        # Each label mirrors that option's actual in-game choice wording
+        # (Title Case), not a uniform "Accept" / "Decline".
+        expected = {
+            "Choice_ErisAccept":     "Why Not",
+            "Choice_ErisDecline":    "No Thanks",
+            "Choice_IcarusAccept":   "Very Well",
+            "Choice_IcarusDecline":  "Sorry\u2026",
+            "Choice_MorosAccept":    "Agree",
+            "Choice_MorosDecline":   "Refuse",
+            "Choice_NemesisAccept":  "Go to Her",
+            "Choice_NemesisDecline": "Hold Off",
+        }
+        assert HADES2_CHOICE_NAMES == expected
 
 
 class TestModuleExport:

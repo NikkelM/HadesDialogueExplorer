@@ -28,22 +28,23 @@ missing.
 # dependency. Grouped by character for review readability; lookups are
 # flat-dict at runtime so ordering doesn't matter.
 #
-# Romance labels are plain ("Back Off"); boon-vendor labels mirror the
-# in-game ``ChoiceText_*`` MiscText display names verbatim so the
-# tooltip-internal pairing stays useful even though the MiscText
-# values include flavour icon glyphs that we don't render here.
+# Romance / prompt labels mirror the in-game choice wording ("Ease Off",
+# "Comfort Him"); boon-vendor labels mirror the in-game ``ChoiceText_*``
+# MiscText display names verbatim so the tooltip-internal pairing stays useful
+# even though the MiscText values include flavour icon glyphs that we don't
+# render here.
 HADES1_CHOICE_NAMES = {
     # Dusa romance aftermath (return-the-ambrosia choice).
-    "Dusa_Accept":      "Accept",
-    "Dusa_Decline":     "Decline",
+    "Dusa_Accept":      "Politely Accept",
+    "Dusa_Decline":     "Kindly Decline",
     # Megaera romance / bedroom choice.
-    "Meg_BackOff":      "Back Off",
+    "Meg_BackOff":      "Ease Off",
     "Meg_GoToHer":      "Go to Her",
     # Thanatos romance / bedroom choice.
-    "Than_BackOff":     "Back Off",
-    "Than_GoToHim":     "Go to Him",
+    "Than_BackOff":     "Ease Off",
+    "Than_GoToHim":     "Comfort Him",
     # Threesome (Megaera + Thanatos) bedroom choice.
-    "MegThan_BackOff":  "Back Off",
+    "MegThan_BackOff":  "Ease Off",
     "MegThan_GoToThem": "Go to Them",
     # Sisyphus benefit choices (Tartarus boon vendor).
     "ChoiceText_Healing":                "Healing",
@@ -63,7 +64,7 @@ HADES1_CHOICE_NAMES = {
     # -> mute him?") and ``HermesSquelch02/03`` ("currently muted ->
     # bring him back?") variants of the same toggle, with mirrored
     # option ordering.
-    "Squelch_KeepTalking":     "Keep Talking",
+    "Squelch_KeepTalking":     "Keep Talking as Usual",
     "Squelch_BeQuietAWhile":   "Be Quiet a While",
     "Squelch_ResumeTalking":   "Resume Talking",
     "Squelch_KeepQuiet":       "Keep Quiet",

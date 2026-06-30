@@ -27,12 +27,12 @@ total. New families will be added here as the game adds them; the
 """
 
 HADES2_CHOICE_NAMES = {
-    "Choice_ErisAccept":     "Accept",
-    "Choice_ErisDecline":    "Decline",
-    "Choice_IcarusAccept":   "Accept",
-    "Choice_IcarusDecline":  "Decline",
-    "Choice_MorosAccept":    "Accept",
-    "Choice_MorosDecline":   "Decline",
-    "Choice_NemesisAccept":  "Accept",
-    "Choice_NemesisDecline": "Decline",
+    "Choice_ErisAccept":     "Why Not",
+    "Choice_ErisDecline":    "No Thanks",
+    "Choice_IcarusAccept":   "Very Well",
+    "Choice_IcarusDecline":  "Sorry\u2026",
+    "Choice_MorosAccept":    "Agree",
+    "Choice_MorosDecline":   "Refuse",
+    "Choice_NemesisAccept":  "Go to Her",
+    "Choice_NemesisDecline": "Hold Off",
 }

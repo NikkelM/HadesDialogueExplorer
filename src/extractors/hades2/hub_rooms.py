@@ -22,8 +22,8 @@ HADES2_HUB_ROOM_NAMES = {
     # Young Melinoe's memory/dream version of the hub.
     "Flashback_Hub_Main": "The Crossroads (Flashback)",
     # Surface hub - the City of Ephyra.
-    "N_Hub": "Ephyra (town square)",
-    "N_PreHub01": "Ephyra (entrance)",
+    "N_Hub": "City of Ephyra (town square)",
+    "N_PreHub01": "City of Ephyra (entrance)",
     # Biome boss chambers (named by the boss fought there). The "_Boss02"
     # variants are the higher-difficulty (Vow of Rivals / Testament) version of
     # the same fight.
@@ -84,11 +84,11 @@ HADES2_HUB_ROOM_NAMES = {
     "I_PostBoss01": "Tartarus (post-boss room)",
     "I_Story01": "Hades' chamber",
     # --- City of Ephyra / surface (N) ---
-    "N_Opening01": "Ephyra (entrance)",
+    "N_Opening01": "City of Ephyra (entrance)",
     "N_MiniBoss01": "Satyr Champion's chamber",
     "N_MiniBoss02": "Erymanthian Boar's chamber",
-    "N_PreBoss01": "Ephyra (pre-boss shop)",
-    "N_PostBoss01": "Ephyra (post-boss room)",
+    "N_PreBoss01": "City of Ephyra (pre-boss shop)",
+    "N_PostBoss01": "City of Ephyra (post-boss room)",
     "N_Shop01": "City of Ephyra (shop)",
     "N_Story01": "Medea's chamber",
     # --- Rift of Thessaly (O) ---

@@ -43,7 +43,7 @@ HADES1_HUB_ROOM_NAMES = {
     # Regular biome combat/transition rooms gated on by dialogue, named by
     # biome + room function. Numbered only where several of a kind are gated.
     "RoomOpening": "Tartarus (entrance)",
-    "A_MiniBoss01": "Tartarus (mini-boss room)",
+    "A_MiniBoss01": "Inferno-Bomber's chamber",
     "A_MiniBoss02": "Doomstone's chamber",
     "A_MiniBoss03": "The Wretched Sneak's chamber",
     "A_PostBoss01": "Tartarus (post-boss room)",
@@ -56,8 +56,8 @@ HADES1_HUB_ROOM_NAMES = {
     "C_MiniBoss01": "Asterius' chamber",
     "C_PostBoss01": "Elysium (post-boss room)",
     "C_PreBoss01": "Elysium (pre-boss shop)",
-    "D_Intro": "Styx (entrance)",
-    "D_Reprieve01": "Styx (fountain chamber)",
+    "D_Intro": "Temple of Styx (entrance)",
+    "D_Reprieve01": "Temple of Styx (fountain chamber)",
     "RoomSimple01": "Tartarus (introductory combat room)",
     # Named one-off encounter / story rooms.
     "CharonFight01": "Erebus (Charon's boss chamber)",

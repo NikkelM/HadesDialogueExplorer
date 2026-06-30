@@ -118,7 +118,7 @@ HADES1_SPEAKERS = {
     "NPC_Nyx_01":               {"name": "Nyx",                 "description": "Night Incarnate"},
     "NPC_Nyx_Story_01":         {"name": "Nyx (Field)",         "description": "Night Incarnate"},
     "NPC_Orpheus_01":           {"name": "Orpheus",             "description": "Court Musician"},
-    "NPC_Orpheus_Story_01":     {"name": "Orpheus (Field)",     "description": "Court Musician"},
+    "NPC_Orpheus_Story_01":     {"name": "Orpheus (with Eurydice)",     "description": "Court Musician"},
     "NPC_Patroclus_01":         {"name": "Patroclus",           "description": "Fallen Warrior"},
     # Mystery variants intentionally have no quip in the dev view -
     # surfacing the parent's quip in the tooltip would reveal the
