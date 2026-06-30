@@ -32,7 +32,7 @@ import {
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
-import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2OperandMarks } from './gamestate-eval.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
 
@@ -149,6 +149,29 @@ const _COUNT_OP_PHRASING = {
 // drive the row 1-5 rendering: ``Must be true: <head>`` (no value
 // suffix - the path tail is already in the head).
 const _PATH_OP_FRIENDLY_KEYS = new Set(['PathTrue', 'PathFalse', 'PathEmpty', 'PathNotEmpty']);
+
+// Compound-key prefixes whose value is a list of AND-combined clause records.
+// ``renderOtherReqEntryHtml`` would otherwise join several records into one
+// "A AND B AND C" string; the views split such gates into one row per record
+// (see ``splitOtherReqRecords``) so each AND-clause reads on its own line.
+const _SPLITTABLE_OTHER_REQ_PREFIXES = new Set([
+    'Path', 'FunctionName', 'PathTrue', 'PathFalse', 'PathEmpty', 'PathNotEmpty',
+]);
+
+// Split a keyed ``otherRequirements`` value into the per-row values the views
+// render. A multi-record compound gate (e.g. ``Path:GameState.WeaponsUnlocked``
+// holding several Has* records) yields one singleton-record array per record, so
+// each AND-clause becomes its own requirement row instead of a hard-to-read
+// inline "A AND B AND C". Everything else (single records, bare keys, named
+// blocks) passes straight through as a single ``[val]`` unit.
+export function splitOtherReqRecords(key, val) {
+    const colon = key.indexOf(':');
+    const prefix = colon >= 0 ? key.slice(0, colon) : key;
+    if (Array.isArray(val) && val.length > 1 && _SPLITTABLE_OTHER_REQ_PREFIXES.has(prefix)) {
+        return val.map((rec) => [rec]);
+    }
+    return [val];
+}
 
 // Aggregation modifiers that count how many of the listed items occur in
 // the path's table, read most naturally as ``<head> <phrase> N of:
@@ -1749,11 +1772,14 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     let overallVerdict = null;
     let gateByKey = null;
     let operandMarksByKey = null;
+    let sctx = null;
+    let slices = null;
+    let gameId = null;
+    const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
     if (showDots) {
-        const sctx = getSaveContext();
-        const owner = (textlineName && textlines[textlineName]) ? textlines[textlineName].owner : undefined;
-        const gameId = getActiveGame();
-        const slices = buildOtherReqSlices(sctx, owner, gameId);
+        sctx = getSaveContext();
+        gameId = getActiveGame();
+        slices = buildOtherReqSlices(sctx, owner, gameId);
         const res = evaluateOtherRequirements(otherRequirements, sctx.gameState, slices, gameId);
         gateByKey = new Map(res.clauses.map(c => [c.key, c]));
         // Which individual operands of each set/membership gate the save already
@@ -1786,8 +1812,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
             : _statuses.includes('unmet') ? 'unmet'
                 : _statuses.includes('unknown') ? 'unknown' : 'met';
     }
-    const dotFor = (key) => {
-        const c = gateByKey && gateByKey.get(key);
+    const dotFor = (c) => {
         if (!c) return '';
         const tip = c.status === 'met' ? 'Satisfied by your save.'
             : c.status === 'unmet' ? 'Not satisfied by your save.'
@@ -1837,12 +1862,26 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
                 continue;
             }
         }
-        const tooltip = renderOtherReqTooltip(key, val);
-        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        _operandMarks = operandMarksByKey ? (operandMarksByKey.get(key) || null) : null;
-        _setFlatMarks();
-        otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(key)}<span class="other-req-text">${renderOtherReqEntryHtml(key, val)}</span></div>`;
-        setOperandMarks(null);
+        // Multi-record Path / FunctionName gates render one row per AND-clause
+        // (their records are independent requirements). Each split row gets its
+        // own per-record verdict + operand marks; non-split entries keep the
+        // single per-key clause computed above.
+        const subVals = splitOtherReqRecords(key, val);
+        const split = subVals.length > 1;
+        for (const subVal of subVals) {
+            const clause = !showDots ? null
+                : split ? evaluateOtherReqUnit(key, subVal, sctx.gameState, slices, gameId)
+                    : (gateByKey ? gateByKey.get(key) : null);
+            const marks = !showDots ? null
+                : split ? computeOperandMarks(key, subVal, sctx, slices, gameId)
+                    : (operandMarksByKey ? operandMarksByKey.get(key) : null);
+            const tooltip = renderOtherReqTooltip(key, subVal);
+            const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+            _operandMarks = marks || null;
+            _setFlatMarks();
+            otherHtml += `<div class="other-req-item"${tipAttr}>${dotFor(clause)}<span class="other-req-text">${renderOtherReqEntryHtml(key, subVal)}</span></div>`;
+            setOperandMarks(null);
+        }
     }
 
     if (!otherHtml) return '';

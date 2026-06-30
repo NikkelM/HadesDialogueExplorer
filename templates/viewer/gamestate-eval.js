@@ -837,6 +837,21 @@ export function gateClausePermanentlyUnmet(key, otherRequirements, gameStateSlic
     return Array.isArray(val) && val.some(rec => gameStateClausePermanence(rec, gameStateSlice) === 'unmet');
 }
 
+// Verdict for a single display unit of an ``otherRequirements`` entry - the whole
+// keyed value, or one isolated record when a multi-record Path: / FunctionName:
+// gate is split into one row per AND-clause. Wraps ``evaluateOtherRequirements``
+// over just this unit and applies the same permanent-lock upgrade the per-key
+// callers do, so a split row carries its own met / unmet / unobtainable dot.
+export function evaluateOtherReqUnit(key, unitVal, gameStateSlice, slices, gameId) {
+    const sub = { [key]: unitVal };
+    const c = evaluateOtherRequirements(sub, gameStateSlice, slices, gameId).clauses[0]
+        || { key, status: 'unknown', reason: 'No save loaded.' };
+    if (c.status === 'unmet' && gateClausePermanentlyUnmet(key, sub, gameStateSlice, gameId)) {
+        return { ...c, status: 'unobtainable', reason: null };
+    }
+    return c;
+}
+
 // Dialogue-trigger context per owner, used to decide whether a dialogue's
 // ``CurrentRun.*`` gates can be resolved from a loaded save, and from which save
 // type. A hub save (ProfileX.sav) and an in-run autosave (ProfileX_Temp.sav)

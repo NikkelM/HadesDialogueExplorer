@@ -16,8 +16,8 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons, namedRequirementGroupVerdict } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks } from './info-panel.js';
-import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet } from './gamestate-eval.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords } from './info-panel.js';
+import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, evaluateOtherReqUnit } from './gamestate-eval.js';
 
 // Shared tooltip for a gate that is permanently unobtainable because it reads
 // monotonic save progress (a one-way counter past its cap, or a write-once
@@ -599,10 +599,13 @@ export function renderOtherConditionsHtml(rootName) {
     const byKey = new Map();
     let operandMarksByKey = null;
     let verdict = null;
+    let sctx = null;
+    let slices = null;
+    let gameId = null;
     if (haveSave) {
-        const sctx = getSaveContext();
-        const gameId = getActiveGame();
-        const slices = buildOtherReqSlices(sctx, tl.owner, gameId);
+        sctx = getSaveContext();
+        gameId = getActiveGame();
+        slices = buildOtherReqSlices(sctx, tl.owner, gameId);
         const res = evaluateOtherRequirements(other, sctx.gameState, slices, gameId);
         for (const c of res.clauses) byKey.set(c.key, c);
         // Which individual operands of each set/membership gate the save already
@@ -637,9 +640,13 @@ export function renderOtherConditionsHtml(rootName) {
                 : statuses.includes('unknown') ? 'unknown' : 'met';
     }
 
+    // Each gate renders as one row, except multi-record Path / FunctionName gates
+    // which split into one row per AND-clause - count rows, not keys, so the
+    // header tally matches what's listed.
+    const rowCount = displayKeys.reduce((n, k) => n + splitOtherReqRecords(k, other[k]).length, 0);
     const header = haveSave
-        ? `Other requirements (${displayKeys.length}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unobtainable' ? 'permanently locked' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
-        : `Other requirements (${displayKeys.length})`;
+        ? `Other requirements (${rowCount}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unobtainable' ? 'permanently locked' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
+        : `Other requirements (${rowCount})`;
     const hint = haveSave
         ? 'Non-textline conditions, checked against your save\u2019s GameState. Some requirements can only be checked against hub saves, and others only against in-run saves.'
         : 'Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. Load a save to check them.';
@@ -656,25 +663,41 @@ export function renderOtherConditionsHtml(rootName) {
     const mainKeys = displayKeys.filter((k) => !wrongSaveKeys.includes(k));
 
     const renderRow = (key) => {
-        const c = byKey.get(key); // undefined for conditions the evaluator doesn't cover (e.g. non-array / H1)
-        let dot = '';
-        if (c) {
-            const tip = c.status === 'met' ? 'Satisfied by your save.'
-                : c.status === 'unmet' ? 'Not satisfied by your save.'
-                    : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
-                        : (c.reason || 'Can\u2019t be determined from the save.');
-            dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
-        }
         if (key.startsWith('NamedRequirements')) {
             const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);
             if (expanded !== null) return expanded;
         }
-        setOperandMarks(operandMarksByKey ? operandMarksByKey.get(key) : null);
-        const body = renderOtherReqEntryHtml(key, other[key]);
-        setOperandMarks(null);
-        const tooltip = renderOtherReqTooltip(key, other[key]);
-        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        return `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
+        // Split multi-record Path / FunctionName gates into one row per AND-clause
+        // (each an independent requirement); single-record gates keep the per-key
+        // clause + marks computed above.
+        const subVals = splitOtherReqRecords(key, other[key]);
+        const split = subVals.length > 1;
+        let rows = '';
+        for (const subVal of subVals) {
+            const c = split
+                ? (haveSave ? evaluateOtherReqUnit(key, subVal, sctx.gameState, slices, gameId) : undefined)
+                : byKey.get(key); // undefined for conditions the evaluator doesn't cover (e.g. non-array / H1)
+            let dot = '';
+            if (c) {
+                const tip = c.status === 'met' ? 'Satisfied by your save.'
+                    : c.status === 'unmet' ? 'Not satisfied by your save.'
+                        : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
+                            : (c.reason || 'Can\u2019t be determined from the save.');
+                dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(tip)}"></span> `;
+            }
+            let marks = null;
+            if (haveSave) {
+                marks = split ? computeOperandMarks(key, subVal, sctx, slices, gameId)
+                    : (operandMarksByKey ? operandMarksByKey.get(key) : null);
+            }
+            setOperandMarks(marks);
+            const body = renderOtherReqEntryHtml(key, subVal);
+            setOperandMarks(null);
+            const tooltip = renderOtherReqTooltip(key, subVal);
+            const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+            rows += `<div class="other-req-item other-req-evaluated"${tipAttr}>${dot}<span class="other-req-text">${body}</span></div>`;
+        }
+        return rows;
     };
 
     html += `<div class="eligibility-list eligibility-other-reqs">`;
@@ -1058,34 +1081,52 @@ function renderConditionsHtml(otherRequirements, owner, rootName) {
     if (gateKeys.length === 0) return '';
     let html = `<div class="eligibility-branch-note">Conditions:</div>`;
     for (const key of gateKeys) {
-        const c = byKey.get(key) || { status: 'unknown' };
-        if (c.status === 'unmet' && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
-            // Monotonic save progress already past what this gate allows -> can
-            // never recover. Mirror the dialogue's unobtainable verdict on the
-            // per-condition dot.
-            c.status = 'unobtainable';
-            c.reason = null;
-        }
-        const met = c.status === 'met';
-        const dotTip = met ? 'Satisfied by your save.'
-            : c.status === 'unmet' ? 'Not satisfied by your save.'
-                : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
-                    : (c.reason || 'Can\u2019t be determined from the save.');
-        const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
         if (key.startsWith('NamedRequirements')) {
+            const c = byKey.get(key) || { status: 'unknown' };
             const expanded = renderNamedReqExpansionsHtml(key, other[key], rootName);
             if (expanded !== null) { html += expanded; continue; }
+            html += conditionRowHtml(key, other[key], c);
+            continue;
         }
-        const body = renderOtherReqEntryHtml(key, other[key]);
-        const tooltip = renderOtherReqTooltip(key, other[key]);
-        const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
-        html += `<div class="tree-node ${met ? 'tree-played' : 'tree-unplayed'}">`
-            + `<div class="tree-node-row eligibility-condition-row">`
-            + dot
-            + `<span class="tree-name eligibility-condition-text"${tipAttr}>${body}</span>`
-            + `</div></div>`;
+        // Split multi-record Path / FunctionName gates into one row per AND-
+        // clause, each with its own per-record verdict; single-record gates keep
+        // the per-key clause.
+        const subVals = splitOtherReqRecords(key, other[key]);
+        const split = subVals.length > 1;
+        for (const subVal of subVals) {
+            let c = split
+                ? evaluateOtherReqUnit(key, subVal, sctx.gameState, slices, gameId)
+                : (byKey.get(key) || { status: 'unknown' });
+            if (!split && c.status === 'unmet'
+                && gateClausePermanentlyUnmet(key, other, sctx.gameState, gameId)) {
+                // Monotonic save progress already past what this gate allows ->
+                // can never recover. Mirror the dialogue's unobtainable verdict on
+                // the per-condition dot.
+                c = { ...c, status: 'unobtainable', reason: null };
+            }
+            html += conditionRowHtml(key, subVal, c);
+        }
     }
     return html;
+}
+
+// One condition row in the tracer: status dot + friendly gate text. Shared by the
+// per-key and split-per-record render paths so both read identically.
+function conditionRowHtml(key, val, c) {
+    const met = c.status === 'met';
+    const dotTip = met ? 'Satisfied by your save.'
+        : c.status === 'unmet' ? 'Not satisfied by your save.'
+            : c.status === 'unobtainable' ? PERMANENT_GATE_TOOLTIP
+                : (c.reason || 'Can\u2019t be determined from the save.');
+    const dot = `<span class="group-status group-status-${c.status}" data-tooltip="${escapeHtml(dotTip)}"></span>`;
+    const body = renderOtherReqEntryHtml(key, val);
+    const tooltip = renderOtherReqTooltip(key, val);
+    const tipAttr = tooltip ? ` data-tooltip="${escapeHtml(tooltip)}"` : '';
+    return `<div class="tree-node ${met ? 'tree-played' : 'tree-unplayed'}">`
+        + `<div class="tree-node-row eligibility-condition-row">`
+        + dot
+        + `<span class="tree-name eligibility-condition-text"${tipAttr}>${body}</span>`
+        + `</div></div>`;
 }
 
 // Render a branch's positive textline prerequisites as expandable tree

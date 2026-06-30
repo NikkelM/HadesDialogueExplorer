@@ -545,9 +545,15 @@ function gatherReqReasons(reqHost, hostName, playedSet, reasons, visited) {
         for (const [field, val] of Object.entries(other)) {
             if (h1FieldPermanentlyUnmet(field, val, _unobtainableGameState, other)) {
                 reasons.push({ kind: 'gamestate', field, value: val });
-            } else if (Array.isArray(val)
-                && val.some(rec => gameStateClausePermanence(rec, _unobtainableGameState) === 'unmet')) {
-                reasons.push({ kind: 'gamestate', field, value: val });
+            } else if (Array.isArray(val)) {
+                // Report each permanently-unmet record on its own, so the reason
+                // names just the locked AND-clause rather than the whole gate's
+                // records joined together.
+                for (const rec of val) {
+                    if (gameStateClausePermanence(rec, _unobtainableGameState) === 'unmet') {
+                        reasons.push({ kind: 'gamestate', field, value: [rec] });
+                    }
+                }
             }
         }
     }

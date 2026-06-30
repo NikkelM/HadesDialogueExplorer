@@ -483,7 +483,8 @@ function fixtureWithPathRecords() {
                     Path: ['CurrentRun', 'RoomsEntered'],
                 },
             ],
-            // Two records under the same Path:<head> key get AND-joined.
+            // Two records under the same Path:<head> key - independent AND-
+            // clauses, rendered as one requirement row each.
             'Path:GameState.Resources.GiftPointsRare': [
                 {
                     Comparison: '>=',
@@ -550,15 +551,21 @@ test('otherRequirements: Path:<head> + membership records render with a verbal o
 });
 
 
-test('otherRequirements: multiple Path:<head> records under one key are AND-joined', () => {
+test('otherRequirements: multiple Path:<head> records under one key render as separate rows', () => {
     loadData(fixtureWithPathRecords());
     renderInfo('PathRecordDemo');
-    // Two Comparison records on the same path get joined with a
-    // visible AND separator (the engine AND-combines them).
+    // Two Comparison records on the same path are independent AND-clauses; each
+    // renders on its own requirement row rather than joined into one long line.
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &gt;= <code>1<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &lt; <code>5<\/code>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &gt;= <code>1<\/code><\/span><\/div>/
     );
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.Resources\.GiftPointsRare<\/code> &lt; <code>5<\/code><\/span><\/div>/
+    );
+    // The records are no longer concatenated with a visible AND separator.
+    assert.doesNotMatch(lastHtml, /class="other-req-and"/);
 });
 
 
@@ -767,7 +774,8 @@ function fixtureWithFunctionRecords() {
             'FunctionName:RequiredHealthFraction': [
                 { FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.49 } },
             ],
-            // Multiple records under the same key get AND-joined.
+            // Multiple records under the same key - independent AND-clauses,
+            // rendered as one requirement row each.
             'FunctionName:RequiredAliveMulti': [
                 { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [1] } },
                 { FunctionName: 'RequiredAliveMulti', FunctionArgs: { Ids: [2] } },
@@ -809,13 +817,19 @@ test('otherRequirements: FunctionName records with no args render a friendly cla
 });
 
 
-test('otherRequirements: an unmapped FunctionName falls back to a readable signature, AND-joined', () => {
+test('otherRequirements: an unmapped FunctionName with multiple records renders each on its own row', () => {
     loadData(fixtureWithFunctionRecords());
     renderInfo('FunctionRecordDemo');
+    // Each record is an independent AND-clause and renders on its own row.
     assert.match(
         lastHtml,
-        /Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[1\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code> <span class="other-req-and">AND<\/span> Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[2\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[1\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
     );
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><span class="other-req-text">Function call to <code class="other-req-func">RequiredAliveMulti\(Ids=\[2\]\)<\/code> must evaluate to <code class="other-req-func">true<\/code><\/span><\/div>/
+    );
+    assert.doesNotMatch(lastHtml, /class="other-req-and"/);
 });
 
 
@@ -1205,19 +1219,16 @@ test('PathEmpty / PathNotEmpty rows use the consistent "must (not) be empty" wor
 });
 
 
-test('multiple PathTrue records under one key render as friendly key joined by AND', () => {
+test('multiple PathTrue records under one key render as separate rows', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
-    // Two records -> two repeats of the friendly key, joined by AND.
-    // The tooltip lists one record per block; ``escapeHtml`` keeps the
-    // ``\n`` literal so the attribute value contains actual newlines
-    // (matches the existing speaker-name multi-line tooltip convention).
-    // Records are separated by a blank line so multi-field records
-    // stay visually distinct.
-    assert.match(
-        lastHtml,
-        /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}\n\nPathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code> <span class="other-req-and">AND<\/span> <span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code>/
-    );
+    // Two PathTrue records on the same path are independent AND-clauses; each
+    // renders on its own row with its own single-record tooltip, rather than
+    // repeating the friendly key joined by AND on one line.
+    const rowRe = /data-tooltip="PathTrue: \{ &quot;GameState&quot;, &quot;Dup&quot; \}">[^<]*<span class="other-req-text"><span class="req-type-name"[^>]*>Must be true<\/span>: <code class="other-req-path">GameState\.Dup<\/code><\/span><\/div>/g;
+    const matches = lastHtml.match(rowRe);
+    assert.ok(matches && matches.length === 2, 'expected two separate Must-be-true GameState.Dup rows');
+    assert.doesNotMatch(lastHtml, /class="other-req-and"/);
 });
 
 
@@ -1260,10 +1271,15 @@ test('Path CountOf referencing a GameData table renders the ref name in the head
     renderInfo('SimplifiedOtherReqDemo');
     // The ``<ref:GameData.AllWeaponAspects>`` placeholder collapses to
     // the bare ``GameData.AllWeaponAspects`` identifier in display and
-    // in the tooltip. Two records (range check) AND-joined.
+    // in the tooltip. The two records (a range check) are independent AND-
+    // clauses, each rendered on its own row.
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code> <span class="other-req-and">AND<\/span> <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at most <code>8<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code><\/span><\/div>/
+    );
+    assert.match(
+        lastHtml,
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at most <code>8<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code><\/span><\/div>/
     );
     // Tooltip carries the structured form with the bare ref name (not
     // the ``<ref:...>`` wrapper, which would clutter the display).
@@ -1519,16 +1535,22 @@ test('compound-record tooltips use newlines between fields in reading order (Pat
 });
 
 
-test('multi-record compound tooltips separate records with a blank line', () => {
+test('multi-record compound gates split into one row per record, each with its own tooltip', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
-    // The two-record CountOf (range check on WeaponsUnlocked) renders
-    // each record as its own multi-line block separated by a blank
-    // line so they stay visually distinct from a single tall record.
+    // The two-record CountOf (range check on WeaponsUnlocked) splits into one
+    // row per record; each row's tooltip carries just its own record rather
+    // than a blank-line-joined pair.
     assert.match(
         lastHtml,
-        /data-tooltip="Path: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 1\nCountOf: GameData\.AllWeaponAspects\n\nPath: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&lt;=&quot;\nValue: 8\nCountOf: GameData\.AllWeaponAspects"/
+        /data-tooltip="Path: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&gt;=&quot;\nValue: 1\nCountOf: GameData\.AllWeaponAspects"/
     );
+    assert.match(
+        lastHtml,
+        /data-tooltip="Path: \{ &quot;GameState&quot;, &quot;WeaponsUnlocked&quot; \}\nComparison: &quot;&lt;=&quot;\nValue: 8\nCountOf: GameData\.AllWeaponAspects"/
+    );
+    // No blank-line-joined two-record tooltip remains.
+    assert.doesNotMatch(lastHtml, /CountOf: GameData\.AllWeaponAspects\n\nPath:/);
 });
 
 
