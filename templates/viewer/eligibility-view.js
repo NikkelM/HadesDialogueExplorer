@@ -1171,7 +1171,12 @@ export function renderEligibility(dialogueName) {
     if (!played && !unobtainable) {
         html += renderBlockingGatesHtml(dialogueName, sctx);
     }
-    html += renderOtherConditionsHtml(dialogueName);
+    // Once the dialogue has played, its other (non-textline) requirements are
+    // moot too - the line is done - so hide the section, matching the blocking
+    // gates and prerequisite list/tree above.
+    if (!played) {
+        html += renderOtherConditionsHtml(dialogueName);
+    }
 
     html += `</div>`;
     container.innerHTML = html;
