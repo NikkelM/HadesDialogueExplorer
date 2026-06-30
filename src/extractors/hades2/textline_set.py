@@ -76,6 +76,7 @@ from ..textline_set import (
     walk_textline_sections,
     _collect_cue_choices,
     build_end_lines,
+    _FORMAT_TAG_RE,
 )
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
@@ -89,12 +90,6 @@ from .req_extractor import (
 # young-Melinoe flashback variant which must be specified explicitly via
 # ``Speaker = "PlayerUnit_Flashback"`` since it isn't the default).
 PLAYER_SPEAKER_ID = "PlayerUnit"
-
-
-# Pre-compiled format-tag stripper. H2 tags are shorter than H1's
-# (``{#Emph}`` / ``{#Prev}`` vs ``{#DialogueItalicFormat}`` /
-# ``{#PreviousFormat}``) but the regex matches both vocabularies.
-_FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
 
 
 def extract_textline_sections(

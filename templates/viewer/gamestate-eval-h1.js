@@ -39,6 +39,9 @@
 // produces so the tracer / detail view render identical status dots.
 
 import { h1SaveEvalStatic } from './data.js';
+// Lua truthiness (only nil / false are falsy) + pairs-style table length, shared
+// with the H2 and permanence evaluators.
+import { luaTruthy, tableLen } from './lua-utils.js';
 
 // ---- save-slice key lists (single-sourced for save-parser.js) ----------------
 //
@@ -101,12 +104,6 @@ export const H1_CURRENTRUN_SLICE_KEYS = [
 // nil GameState counters as 0.)
 function h1Num(v) { return typeof v === 'number' ? v : 0; }
 
-// Lua truthiness: only nil / false are falsy (0 and "" are truthy).
-function h1Truthy(v) { return v !== undefined && v !== null && v !== false; }
-
-// pairs-style key count (TableLength), nil -> 0.
-function h1Len(v) { return (v && typeof v === 'object') ? Object.keys(v).length : 0; }
-
 // Coerce a field value that may be a single string or an array of strings into
 // an array (the engine's ``type(x) ~= "table"`` single-value branch).
 function h1Arr(v) { return Array.isArray(v) ? v : (v == null ? [] : [v]); }
@@ -135,7 +132,7 @@ function h1HeroHasTrait(cr, name) {
         if (Object.values(traits).some(t => t && t.Name === name)) return true;
     }
     if (hero.TraitDictionary && typeof hero.TraitDictionary === 'object') {
-        return h1Truthy(hero.TraitDictionary[name]);
+        return luaTruthy(hero.TraitDictionary[name]);
     }
     return false;
 }
@@ -175,8 +172,8 @@ const _CR_REASON = 'This requirement reads data from a different save type. Load
 
 const H1_FIELD_EVALS = {
     // ===== PERSISTENT: GameState flags / values =====
-    RequiredTrueFlags: (v, ctx) => { const f = h1Gs(ctx, 'Flags') || {}; return _h1bool(h1Arr(v).every(k => h1Truthy(f[k]))); },
-    RequiredFalseFlags: (v, ctx) => { const f = h1Gs(ctx, 'Flags') || {}; return _h1bool(!h1Arr(v).some(k => h1Truthy(f[k]))); },
+    RequiredTrueFlags: (v, ctx) => { const f = h1Gs(ctx, 'Flags') || {}; return _h1bool(h1Arr(v).every(k => luaTruthy(f[k]))); },
+    RequiredFalseFlags: (v, ctx) => { const f = h1Gs(ctx, 'Flags') || {}; return _h1bool(!h1Arr(v).some(k => luaTruthy(f[k]))); },
     RequiredValues: (v, ctx) => { const gs = ctx.gs || {}; return _h1bool(Object.entries(v || {}).every(([k, val]) => gs[k] === val)); },
     RequiredFalseValues: (v, ctx) => { const gs = ctx.gs || {}; return _h1bool(!Object.entries(v || {}).some(([k, val]) => gs[k] === val)); },
     RequiredMinValues: (v, ctx) => { const gs = ctx.gs || {}; return _h1bool(Object.entries(v || {}).every(([k, min]) => h1Num(gs[k]) >= min)); },
@@ -204,28 +201,28 @@ const H1_FIELD_EVALS = {
     RequiredSeenEncounter: (v, ctx) => { const e = h1Gs(ctx, 'EncountersOccurredCache') || {}; return _h1bool(h1Num(e[v]) > 0); },
 
     // ===== PERSISTENT: cosmetics =====
-    RequiredCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(h1Arr(v).every(k => h1Truthy(c[k]))); },
-    RequiredFalseCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(!h1Arr(v).some(k => h1Truthy(c[k]))); },
-    RequiredAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(h1Arr(v).some(k => h1Truthy(c[k]))); },
-    RequiredMinAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; const list = h1Arr(v && v.Cosmetics); return _h1bool(list.filter(k => h1Truthy(c[k])).length >= (v && v.Count)); },
-    RequiredMaxAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; const list = h1Arr(v && v.Cosmetics); return _h1bool(list.filter(k => h1Truthy(c[k])).length <= (v && v.Count)); },
+    RequiredCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(h1Arr(v).every(k => luaTruthy(c[k]))); },
+    RequiredFalseCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(!h1Arr(v).some(k => luaTruthy(c[k]))); },
+    RequiredAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; return _h1bool(h1Arr(v).some(k => luaTruthy(c[k]))); },
+    RequiredMinAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; const list = h1Arr(v && v.Cosmetics); return _h1bool(list.filter(k => luaTruthy(c[k])).length >= (v && v.Count)); },
+    RequiredMaxAnyCosmetics: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; const list = h1Arr(v && v.Cosmetics); return _h1bool(list.filter(k => luaTruthy(c[k])).length <= (v && v.Count)); },
     RequiredCosmeticItemVisible: (v, ctx) => { const c = h1Gs(ctx, 'Cosmetics') || {}; const vis = (h1SaveEvalStatic && h1SaveEvalStatic.cosmeticVisibleValue) || 'visible'; return _h1bool(c[v] === vis); },
-    RequiredSeenCosmeticPurchaseable: (v, ctx) => { const a = h1Gs(ctx, 'CosmeticsAdded') || {}; const w = h1Gs(ctx, 'CosmeticsViewed') || {}; return _h1bool(h1Truthy(a[v]) || h1Truthy(w[v])); },
+    RequiredSeenCosmeticPurchaseable: (v, ctx) => { const a = h1Gs(ctx, 'CosmeticsAdded') || {}; const w = h1Gs(ctx, 'CosmeticsViewed') || {}; return _h1bool(luaTruthy(a[v]) || luaTruthy(w[v])); },
 
     // ===== PERSISTENT: meta upgrades =====
-    RequiredMetaUpgradeUnlocked: (v, ctx) => { const m = h1Gs(ctx, 'MetaUpgradesUnlocked') || {}; return _h1bool(h1Truthy(m[v])); },
+    RequiredMetaUpgradeUnlocked: (v, ctx) => { const m = h1Gs(ctx, 'MetaUpgradesUnlocked') || {}; return _h1bool(luaTruthy(m[v])); },
     RequiredInactiveMetaUpgrade: (v, ctx) => h1MetaStaticReady() ? _h1bool(h1MetaUpgradeLevel(ctx, v) <= 0) : H1_NEEDS_STATIC(_META_STATIC_REASON),
     RequiredActiveMetaUpgrade: (v, ctx) => h1MetaStaticReady() ? _h1bool(h1MetaUpgradeLevel(ctx, v) >= 1) : H1_NEEDS_STATIC(_META_STATIC_REASON),
     RequiredMinActiveMetaUpgradeLevel: (v, ctx) => h1MetaStaticReady() ? _h1bool(h1MetaUpgradeLevel(ctx, v && v.Name) >= (v && v.Count)) : H1_NEEDS_STATIC(_META_STATIC_REASON),
     RequiredMaxActiveMetaUpgradeLevel: (v, ctx) => h1MetaStaticReady() ? _h1bool(h1MetaUpgradeLevel(ctx, v && v.Name) <= (v && v.Count)) : H1_NEEDS_STATIC(_META_STATIC_REASON),
 
     // ===== PERSISTENT: traits taken =====
-    RequiredTraitsTaken: (v, ctx) => { const t = h1Gs(ctx, 'TraitsTaken') || {}; return _h1bool(h1Arr(v).every(k => h1Truthy(t[k]))); },
+    RequiredTraitsTaken: (v, ctx) => { const t = h1Gs(ctx, 'TraitsTaken') || {}; return _h1bool(h1Arr(v).every(k => luaTruthy(t[k]))); },
 
     // ===== PERSISTENT: weapons unlocked / enchantments =====
-    RequiredWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(h1Arr(v).every(k => h1Truthy(w[k]))); },
-    RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(!h1Arr(v).some(k => h1Truthy(w[k]))); },
-    RequiredAnyWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(h1Arr(v).some(k => h1Truthy(w[k]))); },
+    RequiredWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(h1Arr(v).every(k => luaTruthy(w[k]))); },
+    RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(!h1Arr(v).some(k => luaTruthy(w[k]))); },
+    RequiredAnyWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return _h1bool(h1Arr(v).some(k => luaTruthy(w[k]))); },
     RequiredMinUnlockedWeaponEnchantments: (v, ctx) => h1WeaponStaticReady() ? _h1bool(h1CountWeaponUnlocks(ctx, false) >= v) : H1_NEEDS_STATIC(_WEAPON_STATIC_REASON),
     RequiredMaxUnlockedWeaponEnchantments: (v, ctx) => h1WeaponStaticReady() ? _h1bool(h1CountWeaponUnlocks(ctx, false) <= v) : H1_NEEDS_STATIC(_WEAPON_STATIC_REASON),
     RequiredMaxWeaponUpgrade: (v, ctx, all) => h1MaxWeaponUpgrade(ctx, v, all && all.RequiredMaxWeaponUpgradeIndex, false),
@@ -247,14 +244,14 @@ const H1_FIELD_EVALS = {
     RequiredMaxQuestsComplete: (v, ctx) => _h1bool(h1CountCashedOutQuests(ctx) <= v),
     RequiredMinTotalCaughtFish: (v, ctx) => { const f = h1Gs(ctx, 'TotalCaughtFish') || {}; return _h1bool(h1SumValues(f) >= v); },
     RequiredAnyCaughtFishTypes: (v, ctx) => { const f = h1Gs(ctx, 'TotalCaughtFish') || {}; return _h1bool(h1Arr(v).some(t => h1Num(f[t]) > 0)); },
-    RequiredHasFish: (v, ctx) => _h1bool(h1Len(h1Gs(ctx, 'CaughtFish')) > 0),
+    RequiredHasFish: (v, ctx) => _h1bool(tableLen(h1Gs(ctx, 'CaughtFish')) > 0),
 
     // ===== PERSISTENT: interactions / screens / keepsakes =====
     RequiredMinNPCInteractions: (v, ctx) => { const n = h1Gs(ctx, 'NPCInteractions') || {}; return _h1bool(Object.entries(v || {}).every(([k, c]) => h1Num(n[k]) >= c)); },
     RequiredMaxNPCInteractions: (v, ctx) => { const n = h1Gs(ctx, 'NPCInteractions') || {}; return _h1bool(Object.entries(v || {}).every(([k, c]) => n[k] != null && h1Num(n[k]) <= c)); },
     RequiredMinItemInteractions: (v, ctx) => { const it = h1Gs(ctx, 'ItemInteractions') || {}; return _h1bool(Object.entries(v || {}).every(([k, c]) => h1Num(it[k]) >= c)); },
-    RequiredScreenViewed: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return _h1bool(h1Truthy(s[v])); },
-    RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return _h1bool(!h1Truthy(s[v])); },
+    RequiredScreenViewed: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return _h1bool(luaTruthy(s[v])); },
+    RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return _h1bool(!luaTruthy(s[v])); },
     RequiredKeepsake: (v, ctx) => _h1bool(h1Gs(ctx, 'LastAwardTrait') === v),
     RequiredAssistKeepsake: (v, ctx) => _h1bool(h1Gs(ctx, 'LastAssistTrait') === v),
 
@@ -263,8 +260,8 @@ const H1_FIELD_EVALS = {
     RequiredFalseConfigOptions: () => H1_LIVE('Reads game config options (settings), which a save file doesn\u2019t store.'),
 
     // ===== PERSISTENT: voiceline speech record (global) =====
-    RequiredPlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(h1Arr(v).every(k => h1Truthy(s[k]))); },
-    RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(!h1Arr(v).some(k => h1Truthy(s[k]))); },
+    RequiredPlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(h1Arr(v).every(k => luaTruthy(s[k]))); },
+    RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); if (!s) return H1_LIVE('Reads the global voiceline speech record, not stored in this save slice.'); return _h1bool(!h1Arr(v).some(k => luaTruthy(s[k]))); },
 
     // ===== PERSISTENT: codex (top-level CodexStatus global) =====
     RequiredCodexEntry: (v, ctx) => {
@@ -319,8 +316,8 @@ const H1_FIELD_EVALS = {
     RequiredCosmeticPurchaseable: () => H1_NEEDS_STATIC('Needs the conditional-item purchase definitions not shipped in this build.'),
 
     // ===== PREV RUN (GameState.RunHistory[#]) =====
-    RequiresLastRunCleared: (v, ctx) => _h1bool(h1Truthy(ctx.prevRun && ctx.prevRun.Cleared)),
-    RequiresLastRunNotCleared: (v, ctx) => _h1bool(!h1Truthy(ctx.prevRun && ctx.prevRun.Cleared)),
+    RequiresLastRunCleared: (v, ctx) => _h1bool(luaTruthy(ctx.prevRun && ctx.prevRun.Cleared)),
+    RequiresLastRunNotCleared: (v, ctx) => _h1bool(!luaTruthy(ctx.prevRun && ctx.prevRun.Cleared)),
     RequiresBestClearTimeLastRun: (v, ctx) => h1BestClearTimeLastRun(ctx),
     RequiredRoomLastRun: (v, ctx) => { const rc = (ctx.prevRun && ctx.prevRun.RoomCountCache) || {}; return _h1bool(h1Num(rc[v]) > 0); },
     RequiredAnyRoomsLastRun: (v, ctx) => { const rc = (ctx.prevRun && ctx.prevRun.RoomCountCache) || {}; return _h1bool(h1Arr(v).some(r => h1Num(rc[r]) > 0)); },
@@ -344,8 +341,8 @@ const H1_FIELD_EVALS = {
     RequiredMaxBiomeDepth: (v, ctx) => h1CrNum(ctx, 'BiomeDepthCache', n => n <= v),
 
     // ===== CURRENT RUN: cleared / death =====
-    RequiresRunCleared: (v, ctx) => { const cr = _h1cr(ctx); return cr ? _h1bool(h1Truthy(cr.Cleared)) : H1_WRONGSAVE(_CR_REASON); },
-    RequiresRunNotCleared: (v, ctx) => { const cr = _h1cr(ctx); return cr ? _h1bool(!h1Truthy(cr.Cleared)) : H1_WRONGSAVE(_CR_REASON); },
+    RequiresRunCleared: (v, ctx) => { const cr = _h1cr(ctx); return cr ? _h1bool(luaTruthy(cr.Cleared)) : H1_WRONGSAVE(_CR_REASON); },
+    RequiresRunNotCleared: (v, ctx) => { const cr = _h1cr(ctx); return cr ? _h1bool(!luaTruthy(cr.Cleared)) : H1_WRONGSAVE(_CR_REASON); },
     RequiredDeathRoom: (v, ctx) => h1CrDeath(ctx, name => name === v, H1_UNMET),
     RequiredFalseDeathRoom: (v, ctx) => h1CrDeath(ctx, name => name !== v),
     RequiredAnyDeathEncounters: (v, ctx) => h1CrDeathEncounter(ctx, enc => h1Arr(v).includes(enc)),
@@ -353,17 +350,17 @@ const H1_FIELD_EVALS = {
 
     // ===== CURRENT RUN: loot / traits / weapon =====
     RequiredGodLoot: (v, ctx) => { if (!h1GodLootStaticReady()) return H1_NEEDS_STATIC(_GODLOOT_STATIC_REASON); const index = h1SaveEvalStatic.godLootTraitIndex[v]; if (!index) return H1_UNMET; const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const set = new Set(index); return _h1bool(h1HeroTraitNames(cr).some(n => set.has(n))); },
-    RequiredLootThisRun: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => h1Truthy(t[v])),
-    RequiredFalseGodLoot: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !h1Truthy(t[v]), true),
-    RequiredFalseGodLoots: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !h1Arr(v).some(k => h1Truthy(t[k])), true),
+    RequiredLootThisRun: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => luaTruthy(t[v])),
+    RequiredFalseGodLoot: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !luaTruthy(t[v]), true),
+    RequiredFalseGodLoots: (v, ctx) => h1CrTable(ctx, 'LootTypeHistory', t => !h1Arr(v).some(k => luaTruthy(t[k])), true),
     RequiredNoGodBoons: (v, ctx) => { if (!h1GodLootStaticReady()) return H1_NEEDS_STATIC(_GODLOOT_STATIC_REASON); const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const set = new Set(h1SaveEvalStatic.godTraitNamesForShop); return _h1bool(!h1HeroTraitNames(cr).some(n => set.has(n))); },
-    RequiredWeapon: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1Truthy(cr.Hero && cr.Hero.Weapons && cr.Hero.Weapons[v])); },
+    RequiredWeapon: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(luaTruthy(cr.Hero && cr.Hero.Weapons && cr.Hero.Weapons[v])); },
     RequiredTrait: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1HeroHasTrait(cr, v)); },
     RequiredFalseTraits: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(!h1Arr(v).some(t => h1HeroHasTrait(cr, t))); },
     RequiredOneOfTraits: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1Arr(v).some(t => h1HeroHasTrait(cr, t))); },
     RequiredCountOfTraits: (v, ctx, all) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const need = (all && all.RequiredCountOfTraitsCount) || 1; return _h1bool(h1Arr(v).filter(t => h1HeroHasTrait(cr, t)).length >= need); },
-    RequiredRunHasOneOfTraits: (v, ctx) => h1CrTable(ctx, 'TraitCache', t => h1Arr(v).some(k => h1Truthy(t[k]))),
-    RequiredMaxLastStands: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1Len(cr.Hero && cr.Hero.LastStands) <= v); },
+    RequiredRunHasOneOfTraits: (v, ctx) => h1CrTable(ctx, 'TraitCache', t => h1Arr(v).some(k => luaTruthy(t[k]))),
+    RequiredMaxLastStands: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(tableLen(cr.Hero && cr.Hero.LastStands) <= v); },
     RequiredMaxHealthFraction: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const h = cr.Hero || {}; if (!h.MaxHealth) return H1_WRONGSAVE(_CR_REASON); return _h1bool((h1Num(h.Health) / h.MaxHealth) <= v); },
 
     // ===== CURRENT RUN: rooms / encounters this run =====
@@ -372,17 +369,17 @@ const H1_FIELD_EVALS = {
     RequiredFalseSeenRoomThisRun: (v, ctx) => h1CrSeenRoomInRun(ctx, v, true),
     RequiredFalseSeenRoomsThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(!h1Arr(v).some(r => h1Num((cr.RoomCountCache || {})[r]) > 0 || cr.CurrentRoom && cr.CurrentRoom.Name === r)); },
     RequiredEncounterThisRun: (v, ctx) => h1CrTable(ctx, 'EncountersOccurredCache', t => t[v] != null),
-    RequiredAnyEncountersThisRun: (v, ctx) => h1CrTable(ctx, 'EncountersCompletedCache', t => h1Arr(v).some(e => h1Truthy(t[e]))),
+    RequiredAnyEncountersThisRun: (v, ctx) => h1CrTable(ctx, 'EncountersCompletedCache', t => h1Arr(v).some(e => luaTruthy(t[e]))),
     RequiredKillsThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1RunKills(cr, h1Arr(v)) > 0); },
     RequiredAnyKillsThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); return _h1bool(h1RunKills(cr, h1Arr(v)) > 0); },
-    RequiredNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !h1Truthy(t[v]), true),
-    RequiredIdsNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !h1Arr(v).some(id => h1Truthy(t[id])), true),
-    RequiredFalseInteractionThisRun: (v, ctx) => h1CrTable(ctx, 'NPCInteractions', t => !h1Truthy(t[v]), true),
-    RequiredUsedAssistInRoomThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const rh = cr.RoomHistory || {}; return _h1bool(!Object.values(rh).some(room => room && room.Name === v && !h1Truthy(room.UsedAssist))); },
+    RequiredNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !luaTruthy(t[v]), true),
+    RequiredIdsNotActivatedThisRun: (v, ctx) => h1CrTable(ctx, 'ActivationRecord', t => !h1Arr(v).some(id => luaTruthy(t[id])), true),
+    RequiredFalseInteractionThisRun: (v, ctx) => h1CrTable(ctx, 'NPCInteractions', t => !luaTruthy(t[v]), true),
+    RequiredUsedAssistInRoomThisRun: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const rh = cr.RoomHistory || {}; return _h1bool(!Object.values(rh).some(room => room && room.Name === v && !luaTruthy(room.UsedAssist))); },
     RequiredAnyPlayedThisRun: (v, ctx) => h1CrTable(ctx, 'SpeechRecord', t => h1Arr(v).some(k => h1ListHas(t, k))),
     RequiredFalsePlayedThisRoom: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const list = cr.CurrentRoom && cr.CurrentRoom.VoiceLinesPlayed; return _h1bool(!h1Arr(v).some(k => h1ListHas(list, k))); },
-    RequiredSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => h1Arr(v).every(k => h1Truthy(t[k]))),
-    RequiredFalseSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => !h1Arr(v).some(k => h1Truthy(t[k])), true),
+    RequiredSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => h1Arr(v).every(k => luaTruthy(t[k]))),
+    RequiredFalseSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => !h1Arr(v).some(k => luaTruthy(t[k])), true),
     RequiredLootChoices: () => H1_LIVE('Reads the live number of loot choices being offered, computed during reward generation.'),
     RequiredMinWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),
     RequiredMaxWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),
@@ -433,9 +430,9 @@ function h1RunsCleared(ctx) {
     let n = 0;
     const hist = h1Gs(ctx, 'RunHistory');
     if (hist && typeof hist === 'object') {
-        for (const r of Object.values(hist)) if (r && h1Truthy(r.Cleared)) n += 1;
+        for (const r of Object.values(hist)) if (r && luaTruthy(r.Cleared)) n += 1;
     }
-    if (ctx.currentRun && h1Truthy(ctx.currentRun.Cleared)) n += 1;
+    if (ctx.currentRun && luaTruthy(ctx.currentRun.Cleared)) n += 1;
     return n;
 }
 
@@ -446,7 +443,7 @@ function h1RunsCleared(ctx) {
 function h1CompletedRuns(ctx) {
     const cache = h1Gs(ctx, 'ModsNikkelMHadesBiomesCompletedRunsCache');
     if (typeof cache === 'number') return cache;
-    return h1Len(h1Gs(ctx, 'RunHistory'));
+    return tableLen(h1Gs(ctx, 'RunHistory'));
 }
 
 // HasSeenRoom: persistent RoomCountCache, OR seen in the resolvable current run.
@@ -609,12 +606,12 @@ function h1BestClearTimeLastRun(ctx) {
         const n = Number(k);
         if (Number.isFinite(n) && n > prevKey) { prevKey = n; prev = r; }
     }
-    if (!prev || !h1Truthy(prev.Cleared)) return H1_OK;
+    if (!prev || !luaTruthy(prev.Cleared)) return H1_OK;
     if (prev.GameplayTime == null) return H1_LIVE(_BEST_CLEAR_REASON);
     const godMode = !!prev.EasyModeLevel;
     let record = Infinity;
     for (const r of Object.values(hist)) {
-        if (!r || !h1Truthy(r.Cleared) || r.GameplayTime == null) continue;
+        if (!r || !luaTruthy(r.Cleared) || r.GameplayTime == null) continue;
         if (h1Num(r.RunDepthCache) <= 44) continue;
         if (!!r.EasyModeLevel !== godMode) continue;
         if (r.GameplayTime < record) record = r.GameplayTime;
@@ -697,7 +694,7 @@ function h1RunsWithWeapon(ctx, weapon) {
     if (!hist || typeof hist !== 'object') return 0;
     let n = 0;
     for (const run of Object.values(hist)) {
-        if (run && run.WeaponsCache && h1Truthy(run.WeaponsCache[weapon])) n += 1;
+        if (run && run.WeaponsCache && luaTruthy(run.WeaponsCache[weapon])) n += 1;
     }
     return n;
 }
@@ -746,7 +743,7 @@ function h1CrSeenRoomInRun(ctx, room, negate) {
 function h1CrDeath(ctx, pred, notFailedResult) {
     const cr = _h1cr(ctx);
     if (!cr) return H1_WRONGSAVE(_CR_REASON);
-    const failed = h1Truthy(cr.Hero && cr.Hero.IsDead) && !h1Truthy(cr.Cleared);
+    const failed = luaTruthy(cr.Hero && cr.Hero.IsDead) && !luaTruthy(cr.Cleared);
     if (!failed) return notFailedResult || H1_OK;
     const name = cr.CurrentRoom && cr.CurrentRoom.Name;
     return _h1bool(name != null && pred(name));
@@ -755,7 +752,7 @@ function h1CrDeath(ctx, pred, notFailedResult) {
 function h1CrDeathEncounter(ctx, pred) {
     const cr = _h1cr(ctx);
     if (!cr) return H1_WRONGSAVE(_CR_REASON);
-    if (!h1Truthy(cr.Hero && cr.Hero.IsDead)) return H1_OK;
+    if (!luaTruthy(cr.Hero && cr.Hero.IsDead)) return H1_OK;
     const enc = cr.CurrentRoom && cr.CurrentRoom.Encounter && cr.CurrentRoom.Encounter.Name;
     return _h1bool(enc != null && pred(enc));
 }
@@ -817,7 +814,7 @@ function h1CombineAnd(statuses) {
 // ``{list, Count}`` gates; the rest read the value as a flat array. A predicate
 // returns null when the answer can't be read from the loaded save type (e.g. a
 // current-run gate with a hub save), so the caller marks nothing in that case.
-const _h1Owned = (slice) => (k, ctx) => h1Truthy((h1Gs(ctx, slice) || {})[k]);
+const _h1Owned = (slice) => (k, ctx) => luaTruthy((h1Gs(ctx, slice) || {})[k]);
 const _h1RunTrait = (k, ctx) => { const cr = _h1cr(ctx); return cr ? !!h1HeroHasTrait(cr, k) : null; };
 const H1_OPERAND_MEMBERSHIP = {
     RequiredCosmetics: { pred: _h1Owned('Cosmetics') },
@@ -830,9 +827,9 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredSeenRooms: { pred: (k, ctx) => h1HasSeenRoom(ctx, k) },
     RequiredOneOfTraits: { pred: _h1RunTrait },
     RequiredCountOfTraits: { pred: _h1RunTrait },
-    RequiredRunHasOneOfTraits: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.TraitCache || {})[k]) : null; } },
-    RequiredSupportAINames: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1Truthy((cr.SupportAINames || {})[k]) : null; } },
-    RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? h1Truthy(s[k]) : null; } },
+    RequiredRunHasOneOfTraits: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? luaTruthy((cr.TraitCache || {})[k]) : null; } },
+    RequiredSupportAINames: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? luaTruthy((cr.SupportAINames || {})[k]) : null; } },
+    RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? luaTruthy(s[k]) : null; } },
     // Run-kill gates: did the save kill this enemy in the current / previous run.
     // Resolvable only from the matching run slice (else indeterminate -> null).
     RequiredKillsThisRun: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1RunKills(cr, [k]) > 0 : null; } },
@@ -916,7 +913,7 @@ const H1_OPERAND_SCALAR_FIELDS = {
     RequiredMaxDepth: { value: _h1CrScalar('RunDepthCache'), cmp: '<' },
     RequiredMinBiomeDepth: { value: _h1CrScalar('BiomeDepthCache'), cmp: '>=' },
     RequiredMaxBiomeDepth: { value: _h1CrScalar('BiomeDepthCache'), cmp: '<=' },
-    RequiredMaxLastStands: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? h1Len(cr.Hero && cr.Hero.LastStands) : null; }, cmp: '<=' },
+    RequiredMaxLastStands: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? tableLen(cr.Hero && cr.Hero.LastStands) : null; }, cmp: '<=' },
     RequiredMinCaughtFishThisRun: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? h1SumValues(cr.CaughtFish) : null; }, cmp: '>=' },
 };
 
@@ -1071,22 +1068,22 @@ const H1_PERMANENT_UNMET_EVALS = {
     // "Must NOT have played voiceline cue X" - the global SpeechRecord is only
     // ever set true (AudioScripts / UtilityScripts) and never cleared in normal
     // play, so a recorded cue can never be un-played.
-    RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord') || {}; return h1Arr(v).some(k => h1Truthy(s[k])); },
+    RequiredFalsePlayed: (v, ctx) => { const s = h1Gs(ctx, 'SpeechRecord') || {}; return h1Arr(v).some(k => luaTruthy(s[k])); },
     // "Must NOT have killed enemy X" - GameState.EnemyKills counts only increment.
     RequiredFalseKills: (v, ctx) => { const k = h1Gs(ctx, 'EnemyKills') || {}; return h1Arr(v).some(e => h1Num(k[e]) > 0); },
     // "Must NOT have seen room X" - the persistent RoomCountCache only increments
     // (h1HasSeenRoom reads it; the null currentRun here ignores the per-run copy).
     RequiredFalseSeenRooms: (v, ctx) => h1Arr(v).some(r => h1HasSeenRoom(ctx, r)),
     // "Must NOT have weapon X unlocked" - WeaponsUnlocked is a one-way unlock flag.
-    RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return h1Arr(v).some(k => h1Truthy(w[k])); },
+    RequiredFalseWeaponsUnlocked: (v, ctx) => { const w = h1Gs(ctx, 'WeaponsUnlocked') || {}; return h1Arr(v).some(k => luaTruthy(w[k])); },
     // "Must NOT have viewed screen X" - ScreensViewed is a write-once view record.
-    RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return h1Truthy(s[v]); },
+    RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return luaTruthy(s[v]); },
     // "Must NOT have flag F" - permanently unmet once a fixed-per-save (HardMode)
     // or one-way unlock (ShrineUnlocked / AspectsUnlocked) flag is already true,
     // as it can never return to false. Toggleable story flags are excluded.
     RequiredFalseFlags: (v, ctx) => {
         const f = h1Gs(ctx, 'Flags') || {};
-        return h1Arr(v).some(k => h1Truthy(f[k]) && (H1_FIXED_PER_SAVE_FLAGS.has(k) || H1_MONOTONIC_TRUE_FLAGS.has(k)));
+        return h1Arr(v).some(k => luaTruthy(f[k]) && (H1_FIXED_PER_SAVE_FLAGS.has(k) || H1_MONOTONIC_TRUE_FLAGS.has(k)));
     },
     // "Must have flag F" - permanently unmet only for a fixed-per-save flag
     // (HardMode) that is already false, since it can never become true. One-way
@@ -1094,7 +1091,7 @@ const H1_PERMANENT_UNMET_EVALS = {
     // currently-false unlock stays blocked, not unobtainable.
     RequiredTrueFlags: (v, ctx) => {
         const f = h1Gs(ctx, 'Flags') || {};
-        return h1Arr(v).some(k => H1_FIXED_PER_SAVE_FLAGS.has(k) && !h1Truthy(f[k]));
+        return h1Arr(v).some(k => H1_FIXED_PER_SAVE_FLAGS.has(k) && !luaTruthy(f[k]));
     },
 };
 

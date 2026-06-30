@@ -68,6 +68,39 @@ NON_DIALOGUE_REQ_PREFIX = "Require"
 # Neither gates whether the dialogue is eligible to play, so both are excluded.
 NON_ELIGIBILITY_REQ_FIELDS = frozenset({"RequiredMinElapsedTime", "RequiresLinked"})
 
+# Hades 1 engine eligibility fields that do NOT use the ``Require*`` naming the
+# flat extraction loop keys off, so they slip past it and (historically) dropped
+# silently. Sourced from ``IsGameStateEligible`` (RunManager.lua) - every gate it
+# reads as ``requirements.<X>`` where ``<X>`` neither starts with ``Require`` nor
+# is one of the already-handled ``*RunsSinceAnyTextLines`` count fields. Flags /
+# play-chance keys consumed elsewhere (``Force``, ``Skip``, ``ChanceToPlay``) are
+# excluded - they are not eligibility gates. The unrecognised-key audit below
+# uses this to flag a genuine dropped gate (e.g. ``ConsecutiveClearsOfRoom`` on
+# the Fury win-streak lines) without drowning in H1's many presentation fields
+# (``TeleportToId``, ``StatusAnimation``, ...), which are not eligibility.
+HADES1_NON_PREFIX_ELIGIBILITY_FIELDS = frozenset({
+    "AllQuestsWithStatus", "AnyAffordableGhostAdminItem", "AnyQuestWithStatus",
+    "AreAnyIdsAlive", "AreIdsAlive", "AreIdsNotAlive",
+    "AssistUpgradeLevel",
+    "ConsecutiveClearsOfRoom", "ConsecutiveDeathsInRoom",
+    "CurrentEncounterValueFalse", "CurrentEncounterValueTrue",
+    "CurrentRoomValueFalse", "CurrentRoomValueTrue",
+    "CurrentRunValueFalse", "CurrentRunValueTrue",
+    "EliteShrineUpgradeMinBiomeDepth",
+    "HasAnyTraitNamesInRoom", "HasTraitNameInRoom",
+    "IsElite", "IsIdAlive",
+    "MaxRunsSinceSquelchedHermes", "MinRunsSinceSquelchedHermes",
+    "MaxThanatosSpawnsThisRun", "MaxUnitsByType",
+    "MinRequiredLootPickups", "MinRequiredRunLootPickups",
+    "NotMaxLastStands",
+    "ObjectiveCompletedLastOffer", "ObjectiveFailedLastOffer",
+    "ObjectivesCompleted", "ObjectivesFailed",
+    "PlayerMaxHealthFraction",
+    "ReachedShrineSoftCapWithAllWeapons", "ReachedShrineSoftCapWithAnyWeaponName",
+    "ReachedShrineSoftCapWithWeaponName",
+    "ValuableUpgradeInRoom",
+})
+
 # Per requirement-field semantics for the "is this textline blocked by
 # unresolved refs?" analysis. Values:
 #   "all"        every entry must have played -> any unresolved entry
@@ -292,6 +325,45 @@ def get_unlisted_section_keys() -> list:
     return sorted(
         (owner, key, src)
         for (owner, key), src in _unlisted_section_keys.items()
+    )
+
+
+# --- Dropped-eligibility-gate audit ---------------------------------
+# The section-key audit above catches a whole dropped *section*; this catches a
+# dropped *eligibility field* on a kept textline. ``extract_textline``'s flat
+# requirement loop only recognises ``Require*``-prefixed gates (plus the two
+# count-field sets), so an engine eligibility field using neither convention -
+# H1 has ~35, e.g. ``ConsecutiveClearsOfRoom`` / ``HasTraitNameInRoom`` /
+# ``ValuableUpgradeInRoom`` - slips past it and is dropped with no trace. This
+# records any :data:`HADES1_NON_PREFIX_ELIGIBILITY_FIELDS` member present on a
+# textline but not surfaced, so the gate surfaces as a build warning for triage
+# instead of silently vanishing (the "audits over silent skips" doctrine).
+_unrecognised_textline_keys: dict = {}
+
+
+def reset_unrecognised_textline_key_audit() -> None:
+    """Clear the accumulated dropped-eligibility-gate records. Call once before
+    each game's extraction pass (and in tests for isolation)."""
+    _unrecognised_textline_keys.clear()
+
+
+def _note_unrecognised_textline_keys(tl_name, tl_table, surfaced, source_file) -> None:
+    """Record any known engine eligibility field present on ``tl_table`` that the
+    extractor failed to surface. ``surfaced`` is the set of keys this textline's
+    requirements / otherRequirements already cover."""
+    for key in tl_table.named:
+        if not isinstance(key, str) or key in surfaced:
+            continue
+        if key in HADES1_NON_PREFIX_ELIGIBILITY_FIELDS:
+            _unrecognised_textline_keys.setdefault((tl_name, key), source_file)
+
+
+def get_unrecognised_textline_keys() -> list:
+    """Return the recorded dropped eligibility gates as a sorted
+    ``[(textline, key, source_file), ...]`` list."""
+    return sorted(
+        (tl_name, key, src)
+        for (tl_name, key), src in _unrecognised_textline_keys.items()
     )
 
 
@@ -689,6 +761,16 @@ def extract_textline(
     end_lines = build_end_lines(tl_table, _end_text, _end_speaker, _end_cue_speaker)
     if end_lines:
         data["endLines"] = end_lines
+
+    # Audit: flag any top-level key the flat requirement loop neither surfaced
+    # nor recognised as a known non-requirement field, so a future engine gate
+    # that doesn't follow the ``Require*`` naming can't drop silently.
+    _note_unrecognised_textline_keys(
+        tl_name,
+        tl_table,
+        set(data["requirements"]) | set(data["otherRequirements"]),
+        source_file,
+    )
 
     return data
 

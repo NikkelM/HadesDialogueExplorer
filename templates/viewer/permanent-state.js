@@ -28,6 +28,10 @@
  * allowlists in ``StoryResetData`` / ``StoryResetLogic``.
  */
 
+// Lua truthiness (only nil / false are falsy) + pairs-style table length, shared
+// with the per-game save-state evaluators.
+import { luaTruthy, tableLen } from './lua-utils.js';
+
 // ``GameState`` sub-tables whose child entries (counters, or ``= true`` records)
 // are only ever appended / incremented and never cleared in normal play. A
 // truthy / non-zero child here only moves "up".
@@ -90,16 +94,6 @@ function walk(gs, path) {
     return v;
 }
 
-// Lua truthiness: only nil and false are falsy (0 and "" are truthy).
-function truthy(v) {
-    return v !== undefined && v !== null && v !== false;
-}
-
-// pairs-style key count (the engine's TableLength), nil -> 0.
-function permTableLen(v) {
-    return (v && typeof v === 'object') ? Object.keys(v).length : 0;
-}
-
 /**
  * Permanence of a single ``GameState`` gate clause against the current save:
  *   'met'   - satisfied now and can never become unsatisfied (the path is
@@ -128,14 +122,14 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
         // PathTrue: met iff truthy AND != 0. Once a monotonic-up value crosses
         // into truthy / non-zero it stays there -> permanently met. While still
         // falsy / 0 it may yet rise -> not provably permanent.
-        return (truthy(v) && v !== 0) ? 'met' : null;
+        return (luaTruthy(v) && v !== 0) ? 'met' : null;
     }
     if (rec.PathFalse) {
         if (!isMonotonicUpPath(rec.PathFalse)) return null;
         const v = walk(gameStateSlice, rec.PathFalse);
         // PathFalse: met iff falsy. A monotonic-up value already truthy stays
         // truthy -> the gate is permanently UNMET. While still falsy it may rise.
-        return truthy(v) ? 'unmet' : null;
+        return luaTruthy(v) ? 'unmet' : null;
     }
 
     // Numeric comparison against a constant over a monotonic-up counter
@@ -158,12 +152,12 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
             if (rec.Path[1].startsWith('WorldUpgrades') && list.some(k => /^Cosmetic_/.test(k))) return null;
             const tbl = walk(gameStateSlice, rec.Path);
             left = rec.CountOf !== undefined
-                ? list.filter(k => truthy(tbl && tbl[k])).length
+                ? list.filter(k => luaTruthy(tbl && tbl[k])).length
                 : list.reduce((s, k) => s + (((tbl && tbl[k]) || 0)), 0);
         } else {
             if (!isMonotonicUpPath(rec.Path)) return null;
             left = walk(gameStateSlice, rec.Path);
-            if (rec.UseLength) left = permTableLen(left);
+            if (rec.UseLength) left = tableLen(left);
             else left = (left === undefined || left === null) ? 0 : left;
         }
         if (typeof left !== 'number' || Number.isNaN(left)) return null;
@@ -181,9 +175,9 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
         // Cosmetic membership in the WorldUpgrades* tables can toggle back off,
         // so a Has* over them is not provably permanent.
         if (rec.Path[1].startsWith('WorldUpgrades') && list.some(k => /^Cosmetic_/.test(k))) return null;
-        if (rec.HasAny) return list.some(k => truthy(v && v[k])) ? 'met' : null;
-        if (rec.HasAll) return list.every(k => truthy(v && v[k])) ? 'met' : null;
-        if (rec.HasNone) return list.some(k => truthy(v && v[k])) ? 'unmet' : null;
+        if (rec.HasAny) return list.some(k => luaTruthy(v && v[k])) ? 'met' : null;
+        if (rec.HasAll) return list.every(k => luaTruthy(v && v[k])) ? 'met' : null;
+        if (rec.HasNone) return list.some(k => luaTruthy(v && v[k])) ? 'unmet' : null;
     }
     return null;
 }

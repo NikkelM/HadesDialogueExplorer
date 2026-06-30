@@ -22,18 +22,9 @@
 import { namedRequirements, gameDataRefs, godTraitNames, restrictBoonChoiceTraitNames } from './data.js';
 import { evaluateH1OtherRequirements, H1_OWNER_RUN_CONTEXT, h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 import { gameStateClausePermanence } from './permanent-state.js';
-
-// Lua truthiness: only nil and false are falsy. 0 and "" are TRUTHY. (The
-// engine's PathTrue additionally rejects 0; that special case is handled at the
-// PathTrue branch, not here.)
-function luaTruthy(v) {
-    return v !== undefined && v !== null && v !== false;
-}
-
-// pairs-style key count (game's TableLength), nil -> 0.
-function tableLen(v) {
-    return (v && typeof v === 'object') ? Object.keys(v).length : 0;
-}
+// Lua truthiness (only nil / false are falsy) + pairs-style table length, shared
+// with the H1 and permanence evaluators.
+import { luaTruthy, tableLen } from './lua-utils.js';
 
 // IsEmpty: nil, or a table with zero keys.
 function isEmptyTable(v) {
