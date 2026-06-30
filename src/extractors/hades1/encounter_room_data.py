@@ -38,8 +38,6 @@ lines in ``RoomOpening`` keep ``RoomOpening`` as the owner, but the
 two Storyteller inspect lines in the same room move to ``Storyteller``).
 """
 
-import re
-
 from ...lua_parser import LuaTable
 from ..textline_set import (
     extract_textline_sections,
@@ -50,6 +48,9 @@ from ..textline_set import (
 from ...graph import resolve_duplicate, attach_variant
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 from .deathloop_data import IDMAP_PARENT_OWNER_OVERRIDES
+# Per-cue closing-voiceline speaker recovery, shared with the other H1
+# extractors via :mod:`.cue_speakers`.
+from .cue_speakers import resolve_cue_prefix_speaker
 
 # Per-textline-name owner overrides for synthetic encounter/room owners
 # that aren't well-served by the topmost-named-ancestor rule. Keyed by
@@ -108,12 +109,6 @@ _WALK_OWNERS_MAX_DEPTH = 64
 # etc.). ``EncounterData`` is the only top-level for EncounterData.lua.
 _ENCOUNTER_ROOT = "EncounterData"
 _ROOM_ROOT_PREFIX = "RoomSetData."
-
-# Voice-over cue path prefix -> canonical speaker id, shared with the other H1
-# extractors (closing-voiceline speaker recovery). Re-exported here so existing
-# imports of ``CUE_PATH_SPEAKERS`` / ``_cue_speaker_resolver`` from this module
-# keep working.
-from .cue_speakers import CUE_PATH_SPEAKERS, _CUE_PATH_RE, resolve_cue_prefix_speaker
 
 
 def _cue_speaker_resolver(cue_entry):

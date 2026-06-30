@@ -4,8 +4,8 @@ from src.lua_parser import LuaParser
 from src.extractors.hades1.encounter_room_data import (
     extract_encounter_room_data,
     _cue_speaker_resolver,
-    CUE_PATH_SPEAKERS,
 )
+from src.extractors.hades1.cue_speakers import CUE_PATH_SPEAKERS
 
 
 def extract(lua_text, source="Test", source_file="EncounterData.lua"):

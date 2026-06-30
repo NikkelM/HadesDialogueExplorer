@@ -68,8 +68,6 @@ Format tags ({#Emph}, {#Prev}, {#PrevFormat}, ...) are stripped from
 the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 """
 
-import re
-
 from ...lua_parser import LuaTable
 from ..textline_set import (
     build_synthetic_variants,
