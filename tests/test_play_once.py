@@ -73,3 +73,43 @@ class TestAnnotatePlayOnce:
         assert gd["textlines"]["Flagged"]["playOnce"] is True
         assert "playOnce" not in gd["textlines"]["Repeat"]
         assert gd["stats"]["playOnceFromSelfNegative"] == 1
+
+
+class TestPropagateParentPlayOnce:
+    """A choice variant of a play-once prompt is itself play-once
+    (IsTextLineEligible gates on ``line.PlayOnce or parentLine.PlayOnce``)."""
+
+    def test_variant_inherits_parent_play_once(self, make_graph_data):
+        gd = make_graph_data(textlines={
+            "Prompt": _tl({}, playOnce=True),
+            "PromptOptA": _tl({"RequiredTextLines": ["Prompt"]}, isSynthetic=True, parentTextline="Prompt"),
+        })
+        annotate_play_once(gd)
+        assert gd["textlines"]["PromptOptA"]["playOnce"] is True
+
+    def test_variant_inherits_self_negative_parent(self, make_graph_data):
+        # Parent becomes play-once via the self-negative idiom (folded first),
+        # then the variant inherits it.
+        gd = make_graph_data(textlines={
+            "Prompt": _tl({"RequiredFalseTextLines": ["Prompt"]}),
+            "PromptOptA": _tl({"RequiredTextLines": ["Prompt"]}, isSynthetic=True, parentTextline="Prompt"),
+        })
+        annotate_play_once(gd)
+        assert gd["textlines"]["Prompt"]["playOnce"] is True
+        assert gd["textlines"]["PromptOptA"]["playOnce"] is True
+
+    def test_variant_of_repeatable_parent_stays_repeatable(self, make_graph_data):
+        gd = make_graph_data(textlines={
+            "Prompt": _tl({}),
+            "PromptOptA": _tl({"RequiredTextLines": ["Prompt"]}, isSynthetic=True, parentTextline="Prompt"),
+        })
+        annotate_play_once(gd)
+        assert "playOnce" not in gd["textlines"]["PromptOptA"]
+
+    def test_non_synthetic_line_is_not_affected(self, make_graph_data):
+        gd = make_graph_data(textlines={
+            "Prompt": _tl({}, playOnce=True),
+            "Child": _tl({"RequiredTextLines": ["Prompt"]}),  # not synthetic
+        })
+        annotate_play_once(gd)
+        assert "playOnce" not in gd["textlines"]["Child"]

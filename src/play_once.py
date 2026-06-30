@@ -49,3 +49,24 @@ def annotate_play_once(graph_data: dict) -> None:
             f"INFO: marked {flipped} textline(s) play-once from the "
             f"self-negative RequiredFalseTextLines idiom."
         )
+    # Finally, propagate play-once to choice variants whose parent prompt is
+    # play-once - now that every parent's final ``playOnce`` (explicit flag,
+    # inspect-point force, merged definition, or the self-negative idiom folded
+    # just above) is known.
+    propagate_parent_play_once(textlines)
+
+
+def propagate_parent_play_once(textlines: dict) -> None:
+    """Mark a synthetic choice variant ``playOnce`` when its parent prompt is.
+
+    ``IsTextLineEligible`` (Narrative.lua) gates a line on
+    ``line.PlayOnce or parentLine.PlayOnce``, and a choice variant is reachable
+    only via its parent anyway - so a variant of a play-once prompt is itself
+    play-once even when it doesn't declare the flag. Mutates ``textlines`` in
+    place; run after the parent's final ``playOnce`` is resolved."""
+    for entry in textlines.values():
+        if not entry.get("isSynthetic") or entry.get("playOnce"):
+            continue
+        parent = textlines.get(entry.get("parentTextline"))
+        if parent is not None and parent.get("playOnce"):
+            entry["playOnce"] = True
