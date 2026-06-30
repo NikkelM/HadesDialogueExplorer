@@ -301,9 +301,9 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
 // obtainability doesn't apply (negatives, count-max, run-count - those are
 // handled by ``reqGroupLocked``). ``count`` is the group's threshold;
 // ``selfName`` ignores the host's self-references.
-export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1, selfName = null) {
+export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1, selfName = null, context = null) {
     if (!playedSet || !textlines) return false;
-    refreshUnobtainableCaches(playedSet, runsAgo);
+    refreshUnobtainableCaches(playedSet, runsAgo, context);
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     const stack = new Set();
@@ -341,7 +341,7 @@ export function requirementGroupVerdict(reqType, refs, context, count = 1, selfN
     const played = (context instanceof Set) ? context : ((context && context.played) || null);
     const runsAgo = (context && context.runsAgo) || null;
     if (reqGroupLocked(reqType, refs, context, count, selfName)
-        || isGroupUnobtainable(reqType, refs, played, runsAgo, count, selfName)) {
+        || isGroupUnobtainable(reqType, refs, played, runsAgo, count, selfName, context)) {
         st = 'unobtainable';
     }
     return st;
@@ -349,12 +349,18 @@ export function requirementGroupVerdict(reqType, refs, context, count = 1, selfN
 
 // Whether a whole requirement *set* (a textline or one ``orBranches``
 // alternative - both carry ``requirements`` + ``otherRequirements``) is
-// permanently unobtainable. Exposed wrapper over the internal recursive
-// check so the dependency tree can mark an OR branch unobtainable.
-export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsAgo = null) {
+// permanently unobtainable: its textline-record requirements can never be
+// satisfied, OR one of its non-textline gates reads permanent state that can
+// never satisfy it (a monotonic GameState gate already past the point of no
+// return, or a NamedRequirements set that can never hold). Routes through the
+// same ``setPermanentlyUnmet`` the whole-line path uses, so an OR branch locked
+// by a GameState / named gate reads 'unobtainable' (not merely 'unmet') exactly
+// as the same gate does at the top level. ``context`` carries the save's
+// GameState slice; without it only textline-record locks apply.
+export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsAgo = null, context = null) {
     if (!playedSet || !textlines) return false;
-    refreshUnobtainableCaches(playedSet, runsAgo);
-    return requirementSetUnobtainable(reqHost, hostName, playedSet, new Set());
+    refreshUnobtainableCaches(playedSet, runsAgo, context);
+    return setPermanentlyUnmet(reqHost, hostName, playedSet, new Set(), new Set());
 }
 
 // Combined save verdict for one OR-branch (an ``orBranches`` alternative):
@@ -364,7 +370,7 @@ export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsA
 // dependency tree and the detail panel so per-branch dots agree.
 export function orBranchVerdict(branch, context, name) {
     const ctx = (context instanceof Set) ? { played: context } : (context || {});
-    if (ctx.played && isRequirementSetUnobtainable(branch, name, ctx.played, ctx.runsAgo)) {
+    if (ctx.played && isRequirementSetUnobtainable(branch, name, ctx.played, ctx.runsAgo, ctx)) {
         return 'unobtainable';
     }
     const textlineSt = requirementSetStatus(branch && branch.requirements, branch && branch.otherRequirements, ctx, name);

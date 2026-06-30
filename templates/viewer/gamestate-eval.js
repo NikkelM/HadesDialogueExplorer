@@ -612,7 +612,6 @@ function evalSet(otherRequirements, root, stack) {
             const r = evalClause(rec, root);
             recStatuses.push(r.status);
             if (r.status === 'unknown' && !firstReason) { firstReason = r.reason; firstKind = r.kind || null; }
-            if (r.status === 'unmet') firstReason = firstReason || null;
         }
         const st = combineAnd(recStatuses);
         const clause = { key, status: st, reason: st === 'unknown' ? firstReason : null };
