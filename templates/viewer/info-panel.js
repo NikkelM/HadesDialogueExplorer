@@ -1430,6 +1430,30 @@ function computeChoiceLetters(choices) {
     return labels;
 }
 
+// Render the closing voicelines (``EndCue`` / ``EndVoiceLines``) a textline
+// plays after its main dialogue, as a small sub-section under the main lines.
+// Each entry is speaker-prefixed like the main lines. A ``text`` entry shows its
+// subtitle (like the main lines); a ``cue``-only entry (a non-subtitled audio
+// cue, e.g. a sound effect) shows the trimmed cue id as a muted chip.
+function _renderEndLinesHtml(endLines) {
+    if (!Array.isArray(endLines) || endLines.length === 0) return '';
+    let html = '<div class="end-lines">'
+        + '<div class="end-lines-label" data-tooltip="Voicelines this dialogue plays after its main lines (EndCue / EndVoiceLines).">Closing voicelines</div>';
+    for (const line of endLines) {
+        const speaker = line.speaker
+            ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
+            : '';
+        if (line.text) {
+            html += `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
+        } else if (line.cue) {
+            html += `<div class="dialogue-line end-line">${speaker}`
+                + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
+        }
+    }
+    html += '</div>';
+    return html;
+}
+
 // Render the dialogue lines + textline-typed requirements + other
 // requirements blocks for one source object - either the textline
 // itself (normal case) or a single variant (name-collision case).
@@ -1438,9 +1462,11 @@ function computeChoiceLetters(choices) {
 function renderDialogueAndRequirementsHtml(src, textlineName) {
     let html = '';
 
-    if (src.dialogueLines && src.dialogueLines.length > 0) {
+    const hasDialogue = src.dialogueLines && src.dialogueLines.length > 0;
+    const hasEndLines = Array.isArray(src.endLines) && src.endLines.length > 0;
+    if (hasDialogue || hasEndLines) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
-        for (const line of src.dialogueLines) {
+        for (const line of (src.dialogueLines || [])) {
             if (typeof line === 'object' && line.kind === 'choicePrompt' && Array.isArray(line.choices)
                 && line.choices.length > 0) {
                 // Structured choice-prompt rendering. ``renderChoiceNameHtml``
@@ -1487,6 +1513,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                 html += `<div class="dialogue-line">${escapeHtml(line)}</div>`;
             }
         }
+        html += _renderEndLinesHtml(src.endLines);
         html += `</div>`;
     }
 

@@ -41,6 +41,7 @@ from ..textline_set import (
     is_inspect_point,
 )
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
+from .cue_speakers import resolve_cue_prefix_speaker
 
 # Parametric idmap collapse. Any path passing through an idmap segment
 # whose parent map name is a key here resolves to the mapped owner.
@@ -165,6 +166,7 @@ def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: st
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
             force_play_once=is_inspect,
+            end_cue_speaker_resolver=resolve_cue_prefix_speaker,
         )
         if not any(sections.values()):
             continue

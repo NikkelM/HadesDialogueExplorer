@@ -124,6 +124,128 @@ REQUIREMENT_BLOCKING_SEMANTICS = {
 # Pre-compiled tag stripper for dialogue text.
 _FORMAT_TAG_RE = re.compile(r"\{#\w+\}")
 
+# Leading ``/VO/`` scope on a voiceline cue id (e.g. ``/VO/ZagreusHome_2389``).
+# Stripped for display, matching how cue ids are shown elsewhere in the tool.
+_VO_PREFIX_RE = re.compile(r"^/VO/")
+
+# A cue-only closing-voiceline reference whose subtitle text lives in the dev
+# comment on the line above it. Hades 1 records the spoken line as a ``--``
+# comment over each ``EndCue = "/VO/<id>"`` and each ``{ Cue = "/VO/<id>", ... }``
+# entry that carries no inline ``Text`` (the cue plays as audio). The reference
+# may carry trailing fields on the same line (requirements, function hooks), so
+# this only anchors on the cue itself; the comment-above requirement is what
+# selects the cue-only entries (inline-``Text`` lines never carry a subtitle
+# comment and are skipped via the ``Text =`` guard in the scanner).
+_END_CUE_REF_RE = re.compile(r'(?:EndCue\s*=|\{\s*Cue\s*=)\s*"(/VO/[^"]+)"')
+_LINE_COMMENT_RE = re.compile(r'^\s*--\s?(.*\S)\s*$')
+
+
+def build_cue_comment_map(source_text: str) -> dict:
+    """Recover ``{trimmed_cue_id: subtitle_text}`` from a Lua source file.
+
+    A cue-only closing voiceline (``EndCue`` / a ``{ Cue = ... }`` entry with no
+    inline ``Text``) has no subtitle in the parsed data - the engine plays it as
+    audio - but Hades 1 records the spoken line in a ``--`` comment on the line
+    directly above. We scan the raw source (comments are stripped by the parser)
+    so the viewer can show the actual line instead of the cue id. Lines carrying
+    an inline ``Text =`` are skipped (their subtitle is the inline text, and the
+    comment above such a line is not a subtitle). Format tags are stripped to
+    match the inline-``Text`` treatment.
+    """
+    out = {}
+    lines = source_text.splitlines()
+    for i in range(1, len(lines)):
+        if "Text =" in lines[i] or "Text=" in lines[i]:
+            continue
+        m = _END_CUE_REF_RE.search(lines[i])
+        if not m:
+            continue
+        cm = _LINE_COMMENT_RE.match(lines[i - 1])
+        if not cm:
+            continue
+        cue = _VO_PREFIX_RE.sub("", m.group(1))
+        text = _FORMAT_TAG_RE.sub("", cm.group(1)).strip()
+        if text:
+            out.setdefault(cue, text)
+    return out
+
+
+def apply_cue_comment_texts(textlines: dict, comment_map: dict) -> None:
+    """Fill in the subtitle ``text`` of cue-only closing voicelines from
+    ``comment_map`` (built by :func:`build_cue_comment_map`), in place.
+
+    Walks each textline's ``endLines`` and any per-variant ``endLines``; a
+    cue-only entry whose cue id has a recovered comment gains a ``text`` field
+    (the ``cue`` id is kept for provenance). Entries that already have ``text``
+    or whose cue isn't in the map are left untouched.
+    """
+    if not comment_map:
+        return
+
+    def _fill(end_lines):
+        for entry in end_lines or []:
+            if "text" in entry:
+                continue
+            text = comment_map.get(entry.get("cue"))
+            if text:
+                entry["text"] = text
+
+    for tl in textlines.values():
+        if not isinstance(tl, dict):
+            continue
+        _fill(tl.get("endLines"))
+        for variant in tl.get("variants") or []:
+            if isinstance(variant, dict):
+                _fill(variant.get("endLines"))
+
+
+def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker):
+    """Build a textline's ``endLines`` - the closing voicelines it plays after
+    its main dialogue.
+
+    Captures two fields:
+      * ``EndCue`` (H1 only) - a single bare ``/VO/<id>`` cue string. These have
+        no subtitle text in the game data (audio-only, no in-game caption), so
+        the entry carries only the trimmed cue id.
+      * ``EndVoiceLines`` (both games) - a table whose array holds cue entries
+        (``{ Cue, Text?, Speaker? }``). Entries with inline ``Text`` resolve to a
+        subtitle like the main lines; bare ``{ Cue }`` entries (no Text) fall
+        back to the trimmed cue id.
+
+    Each result entry is ``{speaker, text}`` when a subtitle is available, else
+    ``{speaker, cue}`` (trimmed ``/VO/`` id). Returns ``[]`` when the textline
+    has no closing voicelines.
+
+    Callbacks (provided per game so text / speaker resolution matches the main
+    line extraction):
+      * ``resolve_text(entry)`` -> subtitle ``str`` or ``None``.
+      * ``resolve_speaker(entry, table)`` -> speaker id (``table`` is the
+        ``EndVoiceLines`` table, so a table-level ``UsePlayerSource`` /
+        ``Speaker`` can override the per-entry resolution).
+      * ``end_cue_speaker(cue_str)`` -> speaker id for a bare ``EndCue``.
+    """
+    end_lines = []
+    end_cue = tl_table.get("EndCue")
+    if isinstance(end_cue, str) and end_cue:
+        end_lines.append({
+            "speaker": end_cue_speaker(end_cue),
+            "cue": _VO_PREFIX_RE.sub("", end_cue),
+        })
+    end_voice = tl_table.get("EndVoiceLines")
+    if isinstance(end_voice, LuaTable):
+        for entry in end_voice.array:
+            if not isinstance(entry, LuaTable):
+                continue
+            text = resolve_text(entry)
+            speaker = resolve_speaker(entry, end_voice)
+            if isinstance(text, str) and text:
+                end_lines.append({"speaker": speaker, "text": text})
+                continue
+            cue = entry.get("Cue")
+            if isinstance(cue, str) and cue:
+                end_lines.append({"speaker": speaker, "cue": _VO_PREFIX_RE.sub("", cue)})
+    return end_lines
+
 
 # --- Section-key audit (see generate_data.py) ------------------------
 # Owner-level keys whose name follows the textline-set convention
@@ -308,6 +430,7 @@ def extract_textline_sections(
     offer_text_map: dict = None,
     preset_choices: dict = None,
     force_play_once: bool = False,
+    end_cue_speaker_resolver=None,
 ) -> dict:
     """Extract every textline-set section from a single owner table.
 
@@ -382,6 +505,7 @@ def extract_textline_sections(
             cue_speaker_resolver=cue_speaker_resolver,
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
+            end_cue_speaker_resolver=end_cue_speaker_resolver,
         )
 
     def extract_variants(tl_name, tl_table):
@@ -391,6 +515,7 @@ def extract_textline_sections(
             cue_speaker_resolver=cue_speaker_resolver,
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
+            end_cue_speaker_resolver=end_cue_speaker_resolver,
         )
 
     return walk_textline_sections(
@@ -412,6 +537,7 @@ def extract_textline(
     cue_speaker_resolver=None,
     offer_text_map: dict = None,
     preset_choices: dict = None,
+    end_cue_speaker_resolver=None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single textline table."""
     data = {
@@ -526,6 +652,43 @@ def extract_textline(
             line["kind"] = "choicePrompt"
             line["choices"] = choices
         data["dialogueLines"].append(line)
+
+    # Closing voicelines (EndCue / EndVoiceLines) the textline plays after its
+    # main dialogue. These are typically cross-speaker reactions (e.g. a Zagreus
+    # quip closing an NPC's dialogue), so the speaker is recovered from the cue
+    # id prefix (``end_cue_speaker_resolver``) before the owner fallback - an
+    # explicit per-entry ``Speaker`` still wins.
+    def _end_text(entry):
+        t = entry.get("Text")
+        if not isinstance(t, str):
+            return None
+        if offer_text_map is not None:
+            t = offer_text_map.get(t, t)
+        return _FORMAT_TAG_RE.sub("", t)
+
+    def _end_speaker(entry, _table):
+        sp = entry.get("Speaker")
+        if isinstance(sp, str):
+            return sp
+        cue = entry.get("Cue")
+        if end_cue_speaker_resolver is not None and isinstance(cue, str):
+            resolved = end_cue_speaker_resolver(cue)
+            if resolved:
+                return resolved
+        derived = cue_speaker_resolver(entry) if cue_speaker_resolver is not None else None
+        return derived or fallback_speaker
+
+    def _end_cue_speaker(cue_str):
+        if end_cue_speaker_resolver is not None:
+            resolved = end_cue_speaker_resolver(cue_str)
+            if resolved:
+                return resolved
+        derived = cue_speaker_resolver({"Cue": cue_str}) if cue_speaker_resolver is not None else None
+        return derived or fallback_speaker
+
+    end_lines = build_end_lines(tl_table, _end_text, _end_speaker, _end_cue_speaker)
+    if end_lines:
+        data["endLines"] = end_lines
 
     return data
 
@@ -677,6 +840,7 @@ def _extract_choice_variants(
     cue_speaker_resolver=None,
     offer_text_map: dict = None,
     preset_choices: dict = None,
+    end_cue_speaker_resolver=None,
 ) -> dict:
     """Find every ``Choices = {...}`` array nested in the parent's cues and
     materialise each choice as a synthetic child textline.
@@ -706,6 +870,7 @@ def _extract_choice_variants(
             cue_speaker_resolver=cue_speaker_resolver,
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
+            end_cue_speaker_resolver=end_cue_speaker_resolver,
         )
 
     return build_synthetic_variants(parent_name, tl_table, build_child)

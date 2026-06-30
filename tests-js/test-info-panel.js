@@ -1367,6 +1367,36 @@ test('a broken / typo requirement key renders an amber warning and hides the val
 });
 
 
+test('closing voicelines (endLines) render speaker-prefixed after the main dialogue', () => {
+    const data = buildFixtureData();
+    data.textlines.EndLineDemo = {
+        owner: 'NPC_Orpheus_01',
+        section: 'InteractTextLineSets',
+        sourceFile: 'X.lua',
+        sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'A main line.' }],
+        endLines: [
+            // Resolved-from-comment: subtitle text plus the cue id for provenance.
+            { speaker: 'CharProtag', cue: 'ZagreusHome_2389', text: 'The job\u2019s number one perk... no thanks.' },
+            // Non-subtitled audio cue (no text) -> muted cue chip.
+            { speaker: 'NPC_Cerberus_01', cue: 'CerberusWhineSad' },
+        ],
+        requirements: {},
+        otherRequirements: {},
+    };
+    loadData(data);
+    renderInfo('EndLineDemo');
+    // A distinct "Closing voicelines" sub-section after the main dialogue.
+    assert.match(lastHtml, /<div class="end-lines"><div class="end-lines-label"[^>]*>Closing voicelines<\/div>/);
+    // A resolved line shows its subtitle text, speaker-prefixed (like the main lines).
+    assert.match(lastHtml, /<div class="dialogue-line end-line">.*The job\u2019s number one perk\.\.\. no thanks\.<\/div>/);
+    // No cue-id glyph / provenance marker is shown for resolved lines.
+    assert.doesNotMatch(lastHtml, /ZagreusHome_2389/);
+    // A non-subtitled audio cue shows the trimmed cue id as a muted chip.
+    assert.match(lastHtml, /<code class="end-line-cue"[^>]*>CerberusWhineSad<\/code>/);
+});
+
+
 test('bare-key {Count} objects collapse to just the count', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');

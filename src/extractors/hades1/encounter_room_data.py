@@ -109,31 +109,11 @@ _WALK_OWNERS_MAX_DEPTH = 64
 _ENCOUNTER_ROOT = "EncounterData"
 _ROOM_ROOT_PREFIX = "RoomSetData."
 
-# Voice-over cue path prefix -> canonical speaker id. The cue paths use
-# narrative-variant tags (``MegaeraField`` vs ``MegaeraHome``) which all
-# collapse to a single speaker for our purposes. ``ZagreusScratch`` is
-# scratch-recording variants reusing the protagonist's cues.
-CUE_PATH_SPEAKERS = {
-    "Achilles":       "NPC_Achilles_01",
-    "Alecto":         "NPC_FurySister_02",
-    "Charon":         "NPC_Charon_01",
-    "Eurydice":       "NPC_Eurydice_01",
-    "Hades":          "NPC_Hades_01",
-    "MegaeraField":   "NPC_FurySister_01",
-    "MegaeraHome":    "NPC_FurySister_01",
-    "Patroclus":      "NPC_Patroclus_01",
-    "Poseidon":       "NPC_Poseidon_01",
-    "Sisyphus":       "NPC_Sisyphus_01",
-    "Storyteller":    "Storyteller",
-    "Thanatos":       "NPC_Thanatos_01",
-    "ThanatosField":  "NPC_Thanatos_01",
-    "Tisiphone":      "NPC_FurySister_03",
-    "ZagreusField":   "CharProtag",
-    "ZagreusHome":    "CharProtag",
-    "ZagreusScratch": "CharProtag",
-}
-
-_CUE_PATH_RE = re.compile(r"^/VO/([A-Za-z]+?)_\d")
+# Voice-over cue path prefix -> canonical speaker id, shared with the other H1
+# extractors (closing-voiceline speaker recovery). Re-exported here so existing
+# imports of ``CUE_PATH_SPEAKERS`` / ``_cue_speaker_resolver`` from this module
+# keep working.
+from .cue_speakers import CUE_PATH_SPEAKERS, _CUE_PATH_RE, resolve_cue_prefix_speaker
 
 
 def _cue_speaker_resolver(cue_entry):
@@ -144,13 +124,7 @@ def _cue_speaker_resolver(cue_entry):
     explicit ``Speaker = ...`` field never reach this function (they're
     handled upstream in ``extract_textline``).
     """
-    cue = cue_entry.get("Cue")
-    if not isinstance(cue, str):
-        return None
-    m = _CUE_PATH_RE.match(cue)
-    if not m:
-        return None
-    return CUE_PATH_SPEAKERS.get(m.group(1))
+    return resolve_cue_prefix_speaker(cue_entry.get("Cue"))
 
 
 def extract_encounter_room_data(

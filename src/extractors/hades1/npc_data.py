@@ -9,6 +9,7 @@ import re
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
+from .cue_speakers import resolve_cue_prefix_speaker
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 
@@ -169,6 +170,7 @@ def _build_owner_entry(owner_name, owner_table, source_label, source_file, game_
         section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
         offer_text_map=offer_text_map,
         preset_choices=preset_choices,
+        end_cue_speaker_resolver=resolve_cue_prefix_speaker,
     )
     if EXCLUDED_TEXTLINE_NAMES:
         for tl_map in sections.values():

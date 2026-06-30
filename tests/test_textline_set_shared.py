@@ -19,6 +19,7 @@ from src.extractors.textline_set import (
 from src.extractors.hades2.textline_set import (
     extract_textline_sections as h2_extract_textline_sections,
 )
+from src.extractors.hades1.cue_speakers import resolve_cue_prefix_speaker
 
 
 # A choice-bearing textline (``Foo01``, yielding the synthetic
@@ -74,3 +75,112 @@ def test_both_games_produce_the_same_synthetic_variant():
         assert variant["parentTextline"] == "Foo01"
         assert variant["choiceText"] == "ChoiceAccept"
         assert variant["requirements"]["RequiredTextLines"] == ["Foo01"]
+
+
+# --- closing voicelines (EndCue / EndVoiceLines) ---------------------------
+
+_H1_END_LUA = """{
+    InteractTextLineSets = {
+        Foo01 = {
+            EndCue = "/VO/ZagreusHome_2389",
+            EndVoiceLines = {
+                PreLineWait = 0.5,
+                { Cue = "/VO/Hades_1055", Text = "A closing remark." },
+                { Cue = "/VO/ZagreusHome_3245" },
+            },
+            { Cue = "/VO/Storyteller_0337", Text = "Main narration." },
+        },
+    },
+}"""
+
+_H2_END_LUA = """{
+    InteractTextLineSets = {
+        Foo01 = {
+            EndVoiceLines = {
+                UsePlayerSource = true,
+                { Cue = "/VO/Melinoe_0001", Text = "A player closing line." },
+                { Cue = "/VO/Hecate_0002" },
+            },
+            { Cue = "/VO/Hecate_0001", Text = "Main." },
+        },
+    },
+}"""
+
+
+def test_hades1_extracts_endcue_and_endvoicelines():
+    owner = LuaParser(f"O = {_H1_END_LUA}").parse_file()["O"]
+    sections = h1_extract_textline_sections(
+        "Storyteller", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+        end_cue_speaker_resolver=resolve_cue_prefix_speaker,
+    )
+    end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
+    # EndCue: bare cue, speaker recovered from the cue prefix (Zagreus, not the
+    # Storyteller owner), with the /VO/ scope stripped.
+    assert end[0] == {"speaker": "CharProtag", "cue": "ZagreusHome_2389"}
+    # EndVoiceLines entry with inline Text -> {speaker, text}; cue prefix Hades.
+    assert end[1] == {"speaker": "NPC_Hades_01", "text": "A closing remark."}
+    # Bare EndVoiceLines entry (no Text) -> cue-only, prefix-resolved speaker.
+    assert end[2] == {"speaker": "CharProtag", "cue": "ZagreusHome_3245"}
+
+
+def test_hades2_extracts_endvoicelines_with_player_source():
+    owner = LuaParser(f"O = {_H2_END_LUA}").parse_file()["O"]
+    sections = h2_extract_textline_sections(
+        "NPC_Hecate_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+    )
+    end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
+    # Table-level UsePlayerSource routes entries through the player (Melinoe).
+    assert end[0] == {"speaker": "PlayerUnit", "text": "A player closing line."}
+    # Bare entry (no Text) -> cue-only; H2 has no cue-prefix resolver, so the
+    # speaker still comes from UsePlayerSource.
+    assert end[1] == {"speaker": "PlayerUnit", "cue": "Hecate_0002"}
+
+
+def test_no_end_lines_field_when_textline_has_none():
+    owner = LuaParser('O = { InteractTextLineSets = { Foo01 = { { Cue = "/VO/X_0001", Text = "hi" } } } }').parse_file()["O"]
+    sections = h1_extract_textline_sections(
+        "NPC_Owner_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+        end_cue_speaker_resolver=resolve_cue_prefix_speaker,
+    )
+    assert "endLines" not in sections["InteractTextLineSets"]["Foo01"]
+
+
+def test_cue_comment_map_recovers_subtitles_from_source_comments():
+    from src.extractors.textline_set import build_cue_comment_map, apply_cue_comment_texts
+    source = '\n'.join([
+        '    Foo01 = {',
+        "        -- The job's number one perk... no thanks.",
+        '        EndCue = "/VO/ZagreusHome_2389",',
+        '        EndVoiceLines = {',
+        '            -- No thanks!',
+        '            { Cue = "/VO/ZagreusHome_3245" },',
+        '            -- Enough. Get out.',
+        '            { Cue = "/VO/Hades_0550", PostLineFunctionName = "X" },',
+        '            { Cue = "/VO/Hades_0001", Text = "Inline, not from a comment." },',
+        '        },',
+        '    },',
+    ])
+    cmap = build_cue_comment_map(source)
+    # EndCue and bare / trailing-field cue entries pick up the comment above;
+    # the inline-Text entry's line is skipped (its subtitle is the inline text).
+    assert cmap["ZagreusHome_2389"] == "The job's number one perk... no thanks."
+    assert cmap["ZagreusHome_3245"] == "No thanks!"
+    assert cmap["Hades_0550"] == "Enough. Get out."
+    assert "Hades_0001" not in cmap
+    # Applying the map fills the subtitle of cue-only end lines (keeping the cue
+    # id) and leaves already-resolved / unknown entries untouched.
+    textlines = {
+        "Foo01": {"endLines": [
+            {"speaker": "CharProtag", "cue": "ZagreusHome_2389"},
+            {"speaker": "NPC_Hades_01", "text": "Already has text.", "cue": "Hades_0001"},
+            {"speaker": "NPC_Cerberus_01", "cue": "CerberusWhineSad"},
+        ]},
+    }
+    apply_cue_comment_texts(textlines, cmap)
+    el = textlines["Foo01"]["endLines"]
+    assert el[0] == {"speaker": "CharProtag", "cue": "ZagreusHome_2389", "text": "The job's number one perk... no thanks."}
+    assert el[1]["text"] == "Already has text."  # untouched
+    assert "text" not in el[2]  # no comment for a non-/VO/ sound cue

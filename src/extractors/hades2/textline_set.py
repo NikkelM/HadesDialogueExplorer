@@ -75,6 +75,7 @@ from ..textline_set import (
     build_synthetic_variants,
     walk_textline_sections,
     _collect_cue_choices,
+    build_end_lines,
 )
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
@@ -242,6 +243,24 @@ def extract_textline(
             line["kind"] = "choicePrompt"
             line["choices"] = choices
         data["dialogueLines"].append(line)
+
+    # Closing voicelines (EndVoiceLines; H2 has no EndCue). Resolve text +
+    # speaker the same way the main lines do. A table-level ``UsePlayerSource``
+    # routes every entry through the player's subtitle stream (Melinoe).
+    def _end_text(entry):
+        t = entry.get("Text")
+        if not isinstance(t, str):
+            return None
+        return _FORMAT_TAG_RE.sub("", t)
+
+    def _end_speaker(entry, table):
+        if table.get("UsePlayerSource") is True and entry.get("Speaker") is None:
+            return PLAYER_SPEAKER_ID
+        return _resolve_cue_speaker(entry, fallback_speaker)
+
+    end_lines = build_end_lines(tl_table, _end_text, _end_speaker, lambda c: fallback_speaker)
+    if end_lines:
+        data["endLines"] = end_lines
 
     # Drop empty containers so downstream code's
     # ``data.get("orBranches") or []`` idiom keeps working and merged

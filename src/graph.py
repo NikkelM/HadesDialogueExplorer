@@ -183,6 +183,10 @@ def build_graph_data(
                 # pick the canonical (cue-bearing) side over the stub.
                 if tl_data.get("partner"):
                     new_entry["partner"] = tl_data["partner"]
+                # Closing voicelines (EndCue / EndVoiceLines) played after the
+                # main dialogue. Surfaced in the details-panel preview.
+                if tl_data.get("endLines"):
+                    new_entry["endLines"] = tl_data["endLines"]
                 # Variants pre-populated by the extractor (within-owner
                 # name collisions caught by ``encounter_room_data.py``).
                 # Surfaced verbatim so the cross-file merge layer can
@@ -380,6 +384,7 @@ _VARIANT_OPTIONAL_FIELDS = (
     "parentTextline",
     "choiceText",
     "isSynthetic",
+    "endLines",
 ) + _NARRATIVE_PRIORITY_FIELDS
 
 

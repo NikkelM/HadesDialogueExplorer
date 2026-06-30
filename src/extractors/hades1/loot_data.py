@@ -10,6 +10,7 @@ one speaker per god, not one per boon table).
 
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
+from .cue_speakers import resolve_cue_prefix_speaker
 from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 
 # Maps `LootData.<key>` -> canonical speaker id for that boon. Lines without
@@ -46,6 +47,7 @@ def extract_loot_data(parsed: dict, source_label: str = "", source_file: str = "
             section_priority_tiers=HADES1_SECTION_KEY_PRIORITY_TIER,
             offer_text_map=offer_text_map,
             preset_choices=preset_choices,
+            end_cue_speaker_resolver=resolve_cue_prefix_speaker,
         )
         if any(sections.values()):
             entry = {"source": source_label}

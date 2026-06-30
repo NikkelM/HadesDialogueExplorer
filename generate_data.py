@@ -47,6 +47,8 @@ from src.extractors.hades2.req_extractor import extract_requirements
 from src.extractors.textline_set import (
     reset_section_key_audit,
     get_unlisted_section_keys,
+    build_cue_comment_map,
+    apply_cue_comment_texts,
 )
 from src.graph import build_graph_data
 
@@ -162,6 +164,14 @@ def generate_source(
     print(f"  Owners: {len(owners)}")
 
     graph_data = build_graph_data(owners, speakers=HADES1_SPEAKERS)
+
+    # Recover the subtitle text of cue-only closing voicelines (EndCue /
+    # EndVoiceLines) from the dev comment above each cue line in this source -
+    # the cue itself carries no inline Text (H1 plays it as audio).
+    apply_cue_comment_texts(
+        graph_data["textlines"],
+        build_cue_comment_map(lua_path.read_text(encoding="utf-8", errors="replace")),
+    )
 
     stats = graph_data["stats"]
     print(f"  Textlines: {stats['totalTextlines']}")

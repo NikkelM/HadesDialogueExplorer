@@ -11,7 +11,7 @@ import { strict as assert } from 'node:assert';
 
 import { loadData } from '../templates/viewer/data.js';
 import { buildPrereqChain, summarizePrereqs, renderOrBranchesHtml, renderTreeHtml, clusterAlternatesHtml, renderBlockingGatesHtml, renderOtherConditionsHtml } from '../templates/viewer/eligibility-view.js';
-import { isUnobtainable, unobtainableReasons, isGroupUnobtainable, isRequirementSetUnobtainable, namedRequirementGroupVerdict } from '../templates/viewer/unobtainable.js';
+import { isUnobtainable, unobtainableReasons, isGroupUnobtainable, isRequirementSetUnobtainable, orBranchVerdict, namedRequirementGroupVerdict } from '../templates/viewer/unobtainable.js';
 
 function tl(requirements, otherRequirements) {
     return { owner: 'NPC_Test_01', section: 'InteractTextLineSets', requirements, otherRequirements };
@@ -493,6 +493,39 @@ describe('isUnobtainable', () => {
             isRequirementSetUnobtainable({ otherRequirements: { 'PathTrue:GameState.X': [{}] } }, null, played, null),
             false,
         );
+    });
+
+    test('isRequirementSetUnobtainable: a branch locked by a monotonic GameState gate reads unobtainable (only with a save context)', () => {
+        const played = new Set();
+        const branch = {
+            otherRequirements: {
+                // Must NOT have reached the true ending - but a monotonic flag
+                // that is already set can never clear, so the branch is locked.
+                'PathFalse:GameState.ReachedTrueEnding': [{ PathFalse: ['GameState', 'ReachedTrueEnding'] }],
+            },
+        };
+        // Without a GameState context only textline-record locks apply -> not
+        // provably permanent.
+        assert.equal(isRequirementSetUnobtainable(branch, null, played, null), false);
+        // With the save's GameState slice the gate's permanence is resolved.
+        const ctx = { played, gameState: { ReachedTrueEnding: true } };
+        assert.equal(isRequirementSetUnobtainable(branch, null, played, null, ctx), true);
+        // The flag still falsy -> may yet be satisfied, not a permanent lock.
+        const ctxOpen = { played, gameState: { ReachedTrueEnding: false } };
+        assert.equal(isRequirementSetUnobtainable(branch, null, played, null, ctxOpen), false);
+    });
+
+    test('orBranchVerdict: a branch locked by a monotonic GameState gate reads unobtainable, not merely unmet', () => {
+        const branch = {
+            otherRequirements: {
+                'PathFalse:GameState.ReachedTrueEnding': [{ PathFalse: ['GameState', 'ReachedTrueEnding'] }],
+            },
+        };
+        const locked = { played: new Set(), gameState: { ReachedTrueEnding: true } };
+        assert.equal(orBranchVerdict(branch, locked, null), 'unobtainable');
+        // Same gate, flag not yet set -> still obtainable (not a permanent lock).
+        const open = { played: new Set(), gameState: { ReachedTrueEnding: false } };
+        assert.notEqual(orBranchVerdict(branch, open, null), 'unobtainable');
     });
 });
 

@@ -60,6 +60,38 @@
     font-style: normal;
 }
 .dialogue-line .choice-link:hover { color: #fff; }
+
+/* Closing voicelines (EndCue / EndVoiceLines) the textline plays after its
+   main dialogue. Indented under the main lines with a muted label so they read
+   as a distinct trailing block. Cue-only entries (no subtitle text) show the
+   raw voiceline id as a small monospace chip. */
+.end-lines {
+    margin-top: 8px;
+    padding-left: 10px;
+    border-left: 2px dashed var(--border);
+}
+.end-lines-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    cursor: help;
+}
+.dialogue-line.end-line {
+    border-left-color: #6b7a8d;
+    opacity: 0.92;
+}
+.dialogue-line.end-line .end-line-cue {
+    font-style: normal;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    background: var(--bg-elevated, #0d1b2e);
+    padding: 1px 5px;
+    border-radius: 3px;
+    cursor: help;
+}
+
 .choice-name {
     font-style: normal;
 }
