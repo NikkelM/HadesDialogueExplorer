@@ -570,6 +570,11 @@ export function extractH1GameStateSlice(gs, luaState) {
   }
   const rh = gs.RunHistory;
   if (rh && typeof rh === 'object') {
+    // Rooms a consecutive-clears/deaths gate references, so each run's
+    // RoomCountCache can be pruned to just these (the gates only read
+    // RoomCountCache[Name] for their own room).
+    const dataRefs = _h1GlobalRefs();
+    const rooms = (dataRefs && dataRefs.consecutiveRoomNames) || null;
     const pruned = {};
     for (const [k, run] of Object.entries(rh)) {
       if (!/^\d+$/.test(k) || !run || typeof run !== 'object') continue;
@@ -579,6 +584,16 @@ export function extractH1GameStateSlice(gs, luaState) {
       if (run.GameplayTime !== undefined) e.GameplayTime = run.GameplayTime;
       if (run.RunDepthCache !== undefined) e.RunDepthCache = run.RunDepthCache;
       if (run.EasyModeLevel !== undefined) e.EasyModeLevel = run.EasyModeLevel;
+      // Squelched-Hermes run-distance gates (Min/MaxRunsSinceSquelchedHermes).
+      if (run.SquelchedHermes !== undefined) e.SquelchedHermes = run.SquelchedHermes;
+      if (run.SquelchedHermesPermanently !== undefined) e.SquelchedHermesPermanently = run.SquelchedHermesPermanently;
+      // Consecutive-clears / consecutive-deaths gates.
+      if (run.EndingRoomName !== undefined) e.EndingRoomName = run.EndingRoomName;
+      if (rooms && rooms.size && run.RoomCountCache && typeof run.RoomCountCache === 'object') {
+        const rcc = {};
+        for (const name of rooms) if (run.RoomCountCache[name] !== undefined) rcc[name] = run.RoomCountCache[name];
+        if (Object.keys(rcc).length) e.RoomCountCache = rcc;
+      }
       pruned[k] = e;
     }
     slice.RunHistory = pruned;
@@ -988,7 +1003,12 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // v21 added ObjectivesCompleted / LastObjectiveCompletedRun / LastObjectiveFailedRun
 // to the H1 GameState slice so the newly-surfaced ObjectivesCompleted /
 // ObjectiveCompletedLastOffer gates resolve against a save; an older cache lacks them.
-export const SAVE_STORAGE_SCHEMA = 21;
+// v22 extended the H1 slices for the run-history gates: SquelchedHermes /
+// SquelchedHermesPermanently / EndingRoomName / RoomCountCache (pruned to the
+// referenced rooms) on each RunHistory entry, and EndingRoomName / SquelchedHermes /
+// SquelchedHermesPermanently on the currentRun, so ConsecutiveClearsOfRoom /
+// ConsecutiveDeathsInRoom / Min/MaxRunsSinceSquelchedHermes resolve.
+export const SAVE_STORAGE_SCHEMA = 22;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

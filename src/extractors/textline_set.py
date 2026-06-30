@@ -101,6 +101,30 @@ HADES1_NON_PREFIX_ELIGIBILITY_FIELDS = frozenset({
     "ValuableUpgradeInRoom",
 })
 
+# Hades 1 game constants the requirement data references by name: the engine
+# stores e.g. ``MinRunsSinceSquelchedHermes = ConstantsData.SquelchedHermesRunCount``.
+# The Lua parser can't resolve a cross-file global, so the value arrives as the
+# bare dotted ref; resolve the known ones to their numeric value so the gate's
+# threshold is a real number for both display and save evaluation. Sourced from
+# the game's ConstantsData definitions (AudioData.lua:1).
+HADES1_GAME_CONSTANTS = {
+    "ConstantsData.SquelchedHermesRunCount": 5,
+}
+
+
+def _resolve_h1_constants(value):
+    """Replace any known ``ConstantsData.*`` ref (see HADES1_GAME_CONSTANTS) with
+    its numeric value, recursing into dict / list values. Other values pass
+    through unchanged."""
+    if isinstance(value, str):
+        return HADES1_GAME_CONSTANTS.get(value, value)
+    if isinstance(value, dict):
+        return {k: _resolve_h1_constants(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_resolve_h1_constants(v) for v in value]
+    return value
+
+
 # Per requirement-field semantics for the "is this textline blocked by
 # unresolved refs?" analysis. Values:
 #   "all"        every entry must have played -> any unresolved entry
@@ -648,8 +672,10 @@ def extract_textline(
             # naming the branch above keys off (``ConsecutiveClearsOfRoom``,
             # ``HasTraitNameInRoom``, ...). Surfaced as otherRequirements so the
             # gate is visible; the H1 save evaluator resolves the ones it can and
-            # marks the live-only ones indeterminate.
-            data["otherRequirements"][key] = _normalize_value(value, game_data_lists)
+            # marks the live-only ones indeterminate. Known ConstantsData refs in
+            # the value (e.g. SquelchedHermesRunCount) resolve to their number.
+            data["otherRequirements"][key] = _resolve_h1_constants(
+                _normalize_value(value, game_data_lists))
 
     # Set-level narrative priority. SuperPriority wins if both are set
     # (matches engine ordering in `PlayRandomRemainingTextLines`).

@@ -73,6 +73,7 @@ export const H1_GAMESTATE_SLICE_KEYS = [
 export function collectH1GlobalRefs(textlines) {
     const codexEntries = new Set();
     const speechCues = new Set();
+    const consecutiveRoomNames = new Set();
     let needsCodexTotal = false;
     for (const tl of Object.values(textlines || {})) {
         const o = tl && tl.otherRequirements;
@@ -84,8 +85,14 @@ export function collectH1GlobalRefs(textlines) {
             if (v == null) continue;
             for (const cue of (Array.isArray(v) ? v : [v])) speechCues.add(cue);
         }
+        // Rooms a consecutive-clears / consecutive-deaths gate counts, so the
+        // per-run RoomCountCache can be pruned to just these in the save slice.
+        for (const field of ['ConsecutiveClearsOfRoom', 'ConsecutiveDeathsInRoom']) {
+            const v = o[field];
+            if (v && typeof v === 'object' && typeof v.Name === 'string') consecutiveRoomNames.add(v.Name);
+        }
     }
-    return { codexEntries, speechCues, needsCodexTotal };
+    return { codexEntries, speechCues, needsCodexTotal, consecutiveRoomNames };
 }
 
 // Top-level CurrentRun keys the evaluator reads (captured for an in-run / hub
@@ -97,6 +104,7 @@ export const H1_CURRENTRUN_SLICE_KEYS = [
     'ActivationRecord', 'NPCInteractions',
     'SpeechRecord', 'SupportAINames', 'MetaUpgradeCache',
     'CaughtFish', 'ConsumableRecord',
+    'EndingRoomName', 'SquelchedHermes', 'SquelchedHermesPermanently',
 ];
 
 // ---- Lua-coercion helpers ----------------------------------------------------
@@ -170,6 +178,84 @@ function h1HasResource(resources, name, amount) {
 // Convenience: require a CurrentRun slice (resolved owner-context), else wrong-save.
 function _h1cr(ctx) { return ctx ? ctx.currentRun : null; }
 const _CR_REASON = 'This requirement reads data from a different save type. Load a "ProfileX.sav" file for a hub save, or "ProfileX_Temp.sav" for an in-run save.';
+
+// GameState.RunHistory (persistent) as an array newest-first: index N (the most
+// recent completed run) down to 1 (oldest). The save slice prunes it to a
+// numeric-keyed object; absent -> empty.
+function h1RunHistoryNewestFirst(ctx) {
+    const rh = h1Gs(ctx, 'RunHistory');
+    if (!rh || typeof rh !== 'object') return [];
+    return Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number)
+        .sort((a, b) => b - a).map(i => rh[String(i)]);
+}
+
+// HasSeenRoomInRun / HasSeenRoomEarlierInRun (RunManager.lua): the run visited
+// the named room (its RoomCountCache entry is non-nil and > 0).
+function h1RoomSeenInRun(run, name) {
+    return !!(run && run.RoomCountCache && h1Num(run.RoomCountCache[name]) > 0);
+}
+
+// Recent runs newest-first for the streak / squelched-Hermes gates, which read
+// persistent GameState.RunHistory plus the newest run. The engine evaluates these
+// mid-run with the LIVE CurrentRun as the newest entry; a save reproduces that as:
+//   * in-run (_Temp) save: the live currentRun (not yet archived) prepended to
+//     RunHistory, exactly as the engine sees it;
+//   * hub save: RunHistory alone - the just-ended run is already its newest entry
+//     (EndRun archives it there), and the hub save's CurrentRun is that same run,
+//     so prepending it would double-count.
+// RunHistory is always persisted, so these gates resolve from either save type
+// (the hub answer is "as of the last run's end").
+function h1RecentRuns(ctx) {
+    const history = h1RunHistoryNewestFirst(ctx);
+    if (ctx && ctx.saveInRun) {
+        const cr = _h1cr(ctx);
+        if (cr) return [cr, ...history];
+    }
+    return history;
+}
+
+// Shared consecutive-clears / consecutive-deaths streak counter (RunManager.lua).
+// ``deaths`` counts consecutive deaths in the room instead of clears. Scans recent
+// runs newest-first: a run that saw the room but broke the streak stops the scan;
+// the streak must reach Count. (The engine's separate "saw + broke it THIS run ->
+// fail" branch collapses to the same outcome here: the newest run is first, so
+// breaking on it leaves the streak at 0 < Count.)
+function h1ConsecutiveRoom(ctx, v, deaths) {
+    const name = v && v.Name;
+    const need = (v && v.Count) || 0;
+    const continues = (run) => deaths
+        ? (!luaTruthy(run.Cleared) && run.EndingRoomName === name)
+        : (luaTruthy(run.Cleared) || run.EndingRoomName !== name);
+    let n = 0;
+    for (const run of h1RecentRuns(ctx)) {
+        if (!h1RoomSeenInRun(run, name)) continue;
+        if (continues(run)) n += 1;
+        else break;
+    }
+    return _h1bool(n >= need);
+}
+
+// Min/MaxRunsSinceSquelchedHermes (RunManager.lua). Scans recent runs newest-first
+// counting runsSince; SquelchedHermesPermanently is a hard stop (Min: never
+// eligible; Max: ends the scan). Min is met when no squelch falls within the last
+// N runs; Max when a squelch falls within them (>= 1).
+function h1SquelchedHermes(ctx, v, isMax) {
+    const runs = h1RecentRuns(ctx);
+    let runsSince = 0;
+    let squelchedTimes = 0;
+    for (const r of runs) {
+        if (luaTruthy(r && r.SquelchedHermesPermanently)) {
+            if (isMax) break;
+            return H1_UNMET;
+        }
+        if (luaTruthy(r && r.SquelchedHermes)) {
+            squelchedTimes += 1;
+            if (isMax ? (runsSince >= v) : (runsSince < v)) return H1_UNMET;
+        }
+        runsSince += 1;
+    }
+    return isMax ? _h1bool(squelchedTimes > 0) : H1_OK;
+}
 
 const H1_FIELD_EVALS = {
     // ===== PERSISTENT: GameState flags / values =====
@@ -399,6 +485,12 @@ const H1_FIELD_EVALS = {
     RequiredFalsePlayedThisRoom: (v, ctx) => { const cr = _h1cr(ctx); if (!cr) return H1_WRONGSAVE(_CR_REASON); const list = cr.CurrentRoom && cr.CurrentRoom.VoiceLinesPlayed; return _h1bool(!h1Arr(v).some(k => h1ListHas(list, k))); },
     RequiredSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => h1Arr(v).every(k => luaTruthy(t[k]))),
     RequiredFalseSupportAINames: (v, ctx) => h1CrTable(ctx, 'SupportAINames', t => !h1Arr(v).some(k => luaTruthy(t[k])), true),
+
+    // ===== CURRENT RUN + HISTORY: consecutive room streaks / squelched Hermes =====
+    ConsecutiveClearsOfRoom: (v, ctx) => h1ConsecutiveRoom(ctx, v, false),
+    ConsecutiveDeathsInRoom: (v, ctx) => h1ConsecutiveRoom(ctx, v, true),
+    MinRunsSinceSquelchedHermes: (v, ctx) => h1SquelchedHermes(ctx, v, false),
+    MaxRunsSinceSquelchedHermes: (v, ctx) => h1SquelchedHermes(ctx, v, true),
     RequiredLootChoices: () => H1_LIVE('Reads the live number of loot choices being offered, computed during reward generation.'),
     RequiredMinWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),
     RequiredMaxWeaponUpgrades: () => H1_LIVE('Reads the live Daedalus-hammer pickup count plus the current room\u2019s chosen reward.'),

@@ -19,9 +19,10 @@ import {
 } from '../templates/viewer/gamestate-eval-h1.js';
 
 // Build an H1 save context. ``gs`` is the persistent GameState slice; pass a
-// ``currentRun`` for in-run / hub current-run gates.
-function ctx({ gs = {}, currentRun = null, prevRun = null, runHistory = null } = {}) {
-    return { gs, currentRun, prevRun, runHistory };
+// ``currentRun`` for in-run / hub current-run gates. ``saveInRun`` marks an in-run
+// (_Temp) save, so the run-history streak gates treat currentRun as the live run.
+function ctx({ gs = {}, currentRun = null, prevRun = null, runHistory = null, saveInRun = false } = {}) {
+    return { gs, currentRun, prevRun, runHistory, saveInRun };
 }
 
 // Load (or clear) the H1 static save-eval tables the active-Mirror /
@@ -94,6 +95,76 @@ test('H1: ObjectiveCompletedLastOffer met iff completed at least as recently as 
     assert.equal(evaluateH1OtherRequirements({ ObjectiveCompletedLastOffer: 'PlayerKills' }, c2).status, 'unmet');
     // Never completed nor failed -> 0 >= 0 -> met (engine: not (0 < 0)).
     assert.equal(evaluateH1OtherRequirements({ ObjectiveCompletedLastOffer: 'Other' }, c).status, 'met');
+});
+
+// --- run-history streak gates (consecutive clears / deaths, squelched Hermes) --
+
+test('H1: ConsecutiveClearsOfRoom counts recent runs newest-first (in-run + hub)', () => {
+    const v = { Name: 'A_Boss01', Count: 2 };
+    // IN-RUN save: live currentRun cleared it (left via another room) + one prior
+    // run also saw + cleared it -> streak 2 -> met.
+    const c = ctx({
+        saveInRun: true,
+        currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss02' },
+        gs: { RunHistory: { 1: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss01' } } },
+    });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveClearsOfRoom: v }, c).status, 'met');
+    // Prior run saw the room but DIED there -> streak breaks at 1 -> unmet.
+    const c2 = ctx({
+        saveInRun: true,
+        currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss02' },
+        gs: { RunHistory: { 1: { RoomCountCache: { A_Boss01: 1 }, Cleared: false, EndingRoomName: 'A_Boss01' } } },
+    });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveClearsOfRoom: v }, c2).status, 'unmet');
+    // Saw + died in the room on the newest run -> streak 0 -> unmet.
+    const c3 = ctx({ saveInRun: true, currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: false, EndingRoomName: 'A_Boss01' }, gs: {} });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveClearsOfRoom: v }, c3).status, 'unmet');
+    // HUB save (no live run): the just-ended run is the newest RunHistory entry,
+    // so two cleared history runs still resolve -> met (currentRun NOT double-counted).
+    const hub = ctx({
+        saveInRun: false,
+        currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss01' },
+        gs: { RunHistory: {
+            1: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss01' },
+            2: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss01' },
+        } },
+    });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveClearsOfRoom: v }, hub).status, 'met');
+});
+
+test('H1: ConsecutiveDeathsInRoom counts consecutive deaths in the room', () => {
+    const v = { Name: 'A_Boss01', Count: 2 };
+    const c = ctx({
+        saveInRun: true,
+        currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: false, EndingRoomName: 'A_Boss01' },
+        gs: { RunHistory: { 1: { RoomCountCache: { A_Boss01: 1 }, Cleared: false, EndingRoomName: 'A_Boss01' } } },
+    });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveDeathsInRoom: v }, c).status, 'met');
+    // Cleared the room on the newest run -> not a death -> streak 0 -> unmet.
+    const c2 = ctx({ saveInRun: true, currentRun: { RoomCountCache: { A_Boss01: 1 }, Cleared: true, EndingRoomName: 'A_Boss02' }, gs: {} });
+    assert.equal(evaluateH1OtherRequirements({ ConsecutiveDeathsInRoom: v }, c2).status, 'unmet');
+});
+
+test('H1: Min/MaxRunsSinceSquelchedHermes scan recent runs (in-run + hub)', () => {
+    // IN-RUN: live currentRun (no squelch) at runsSince 0, then history.
+    const c = ctx({ saveInRun: true, currentRun: {}, gs: { RunHistory: { 2: { SquelchedHermes: false }, 1: { SquelchedHermes: true } } } });
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 2 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 3 }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ MaxRunsSinceSquelchedHermes: 3 }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ MaxRunsSinceSquelchedHermes: 2 }, c).status, 'unmet');
+    // Never squelched: Min met (none within range); Max unmet (squelchedTimes 0).
+    const c2 = ctx({ saveInRun: true, currentRun: {}, gs: { RunHistory: {} } });
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 2 }, c2).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ MaxRunsSinceSquelchedHermes: 2 }, c2).status, 'unmet');
+    // Permanently squelched: never eligible (Min) / scan stops with no count (Max).
+    const c3 = ctx({ saveInRun: true, currentRun: { SquelchedHermesPermanently: true }, gs: { RunHistory: {} } });
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 1 }, c3).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ MaxRunsSinceSquelchedHermes: 5 }, c3).status, 'unmet');
+    // HUB save: RunHistory only (squelch in the run 1 back -> runsSince 1).
+    const hub = ctx({ saveInRun: false, currentRun: {}, gs: { RunHistory: { 2: { SquelchedHermes: false }, 1: { SquelchedHermes: true } } } });
+    // runsSince: RH[2]=0, RH[1]=1 (squelched). Min 1: 1<1 false -> met; Min 2: 1<2 -> unmet.
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 1 }, hub).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ MinRunsSinceSquelchedHermes: 2 }, hub).status, 'unmet');
 });
 
 test('H1: RequiredMinCompletedRuns counts RunHistory length', () => {

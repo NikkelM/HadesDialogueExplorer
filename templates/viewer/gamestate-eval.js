@@ -639,6 +639,7 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
             currentRun: (slices && slices.currentRun) || null,
             prevRun: (slices && slices.prevRun) || null,
             runHistory: (slices && slices.runHistory) || null,
+            saveInRun: !!(slices && slices.saveInRun),
         } : null;
         return evaluateH1OtherRequirements(otherRequirements, ctx);
     }
@@ -938,6 +939,11 @@ export function buildOtherReqSlices(ctx, owner, gameId) {
         currentRun: resolveRun ? ctx.currentRun : null,
         rooms: resolveRun ? ctx.rooms : null,
         audioState: ctx.audioState,
+        // Whether the loaded save is an in-run (_Temp) save. The H1 run-history
+        // streak gates read it to decide whether currentRun is the live run (add
+        // it to the scan) or the just-ended run (already the newest RunHistory
+        // entry on a hub save, so adding it would double-count).
+        saveInRun: ctx.saveInRun,
     };
 }
 
