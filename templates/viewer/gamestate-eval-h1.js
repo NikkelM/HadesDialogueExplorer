@@ -54,7 +54,7 @@ export const H1_GAMESTATE_SLICE_KEYS = [
     'LifetimeResourcesSpent', 'QuestStatus', 'TotalCaughtFish', 'CaughtFish',
     'SpentShrinePointsCache', 'ConsecutiveClears', 'LastAwardTrait', 'LastAssistTrait',
     'RecordLastClearedShrineReward', 'Resources', 'SpentMetaPointsCache', 'LastInteractedWeaponUpgrade',
-    'KeepsakeChambers',
+    'KeepsakeChambers', 'CurrentEmployeeOfTheMonth',
 ];
 
 // Hades 1 persists every global not in Main.lua's SaveIgnores, so a few tables
@@ -916,6 +916,17 @@ const H1_OPERAND_SCALAR_FIELDS = {
     RequiredMinCaughtFishThisRun: { value: (ctx) => { const cr = _h1cr(ctx); return cr ? h1SumValues(cr.CaughtFish) : null; }, cmp: '>=' },
 };
 
+// Equality gates compare a top-level GameState field against a literal value:
+// ``RequiredValues`` wants the field to equal it, ``RequiredFalseValues`` wants
+// it to differ. The operand is the field name; the save's current field value is
+// shown as a coloured "(actual)" tally beside the required value (green when the
+// gate's sense is satisfied, red otherwise). The only field these gate on in H1
+// is ``CurrentEmployeeOfTheMonth`` (the Lounge employee-of-the-month sign).
+const H1_OPERAND_EQUALITY_FIELDS = {
+    RequiredValues: { neg: false },
+    RequiredFalseValues: { neg: true },
+};
+
 // Operand marks for an H1 membership gate: each listed operand the save has is
 // coloured by the field's sense - green when having it counts toward the gate
 // (the positive "any of / has" fields), red when having it counts against it (a
@@ -952,6 +963,19 @@ export function h1OperandMarks(key, val, ctx) {
             if (n > 0) (cspec.dir === 'max' ? red : green).add(op);
         }
         return determinable ? { recs: null, flat: { green, red, counts: counts.size ? counts : null } } : null;
+    }
+    const eqspec = H1_OPERAND_EQUALITY_FIELDS[key];
+    if (eqspec) {
+        if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+        const fields = Object.keys(val);
+        if (fields.length === 0) return null;
+        const actuals = new Map();
+        for (const f of fields) {
+            const actual = h1Gs(ctx, f);
+            const met = eqspec.neg ? actual !== val[f] : actual === val[f];
+            actuals.set(f, { value: actual === undefined ? null : actual, met });
+        }
+        return { recs: null, flat: { green: new Set(), red: new Set(), actuals } };
     }
     const spec = H1_OPERAND_MEMBERSHIP[key];
     if (!spec) return null;

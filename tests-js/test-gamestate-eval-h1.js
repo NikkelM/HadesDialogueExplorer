@@ -633,6 +633,23 @@ test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () 
     assert.deepEqual([...mv.flat.green], ['NumCerberusPettings']); // present (>0), min field -> green
 });
 
+test('H1: h1OperandMarks surfaces the actual field value for equality gates', () => {
+    // RequiredValues (must equal): the save's actual employee satisfies the gate.
+    const eq = h1OperandMarks('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' }, ctx({ gs: { CurrentEmployeeOfTheMonth: 'Hypnos' } }));
+    assert.deepEqual(eq.flat.actuals.get('CurrentEmployeeOfTheMonth'), { value: 'Hypnos', met: true });
+    // A different actual value fails the equality gate.
+    const eqMiss = h1OperandMarks('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' }, ctx({ gs: { CurrentEmployeeOfTheMonth: 'Megaera' } }));
+    assert.deepEqual(eqMiss.flat.actuals.get('CurrentEmployeeOfTheMonth'), { value: 'Megaera', met: false });
+    // RequiredFalseValues (must NOT equal): a matching value fails, a differing one passes.
+    const neq = h1OperandMarks('RequiredFalseValues', { CurrentEmployeeOfTheMonth: 'Thanatos' }, ctx({ gs: { CurrentEmployeeOfTheMonth: 'Thanatos' } }));
+    assert.deepEqual(neq.flat.actuals.get('CurrentEmployeeOfTheMonth'), { value: 'Thanatos', met: false });
+    const neqOk = h1OperandMarks('RequiredFalseValues', { CurrentEmployeeOfTheMonth: 'Thanatos' }, ctx({ gs: { CurrentEmployeeOfTheMonth: 'Hypnos' } }));
+    assert.deepEqual(neqOk.flat.actuals.get('CurrentEmployeeOfTheMonth'), { value: 'Hypnos', met: true });
+    // An unset field reads as null (rendered "unset"); RequiredValues stays unmet.
+    const unset = h1OperandMarks('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' }, ctx({ gs: {} }));
+    assert.deepEqual(unset.flat.actuals.get('CurrentEmployeeOfTheMonth'), { value: null, met: false });
+});
+
 test('H1: h1OperandMarks colours run-kill array gates', () => {
     // RequiredKillsThisRun: an enemy killed in the current run -> green.
     const cr = { RoomHistory: { 1: { Kills: { Harpy: 2 } } } };

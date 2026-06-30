@@ -982,7 +982,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // v19 carried the Zagreus' Journey (Hades Biomes) ported completed / cleared
 // run-count caches into the H2 GameState slice, so H1 run-count gates resolve
 // from a modded H2 save; an older cache lacks them, so the bump forces a re-parse.
-export const SAVE_STORAGE_SCHEMA = 19;
+// v20 added CurrentEmployeeOfTheMonth to the H1 GameState slice (so the Lounge
+// employee-of-the-month RequiredValues / RequiredFalseValues gates resolve and
+// show the save's actual employee); an older cache lacks it.
+export const SAVE_STORAGE_SCHEMA = 20;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

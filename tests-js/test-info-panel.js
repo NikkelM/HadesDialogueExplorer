@@ -8,7 +8,7 @@
 import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { renderInfo } from '../templates/viewer/info-panel.js';
+import { renderInfo, renderOtherReqEntryHtml, setOperandMarks } from '../templates/viewer/info-panel.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
@@ -1318,6 +1318,24 @@ test('voiceline cue PathFalse clause renders "Voiceline must NOT have played" wi
         lastHtml,
         /<span class="req-type-name"[^>]*>Voiceline must NOT have played \(this run\)<\/span>: <code data-tooltip="\/VO\/Hecate_0070">Hecate_0070<\/code>/
     );
+});
+
+
+test('equality gate shows the save actual value coloured beside the required value', () => {
+    loadData(fixtureWithSimplifiedOtherReqs());
+    // A failing RequiredValues gate: the save's actual employee (Megaera) differs
+    // from the required Hypnos, so the actual renders red, in parens, by the field.
+    setOperandMarks({ flat: { green: new Set(), red: new Set(), actuals: new Map([['CurrentEmployeeOfTheMonth', { value: 'Megaera', met: false }]]) } });
+    const missHtml = renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' });
+    assert.match(missHtml, /<code[^>]*>CurrentEmployeeOfTheMonth<\/code> \(<code class="other-req-operand-unmet"[^>]*>Megaera<\/code>\) = <code[^>]*>Hypnos<\/code>/);
+    // A satisfied gate colours the actual green; an unset field reads "(unset)".
+    setOperandMarks({ flat: { green: new Set(), red: new Set(), actuals: new Map([['CurrentEmployeeOfTheMonth', { value: 'Hypnos', met: true }]]) } });
+    const okHtml = renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' });
+    assert.match(okHtml, /\(<code class="other-req-operand-met"[^>]*>Hypnos<\/code>\)/);
+    setOperandMarks({ flat: { green: new Set(), red: new Set(), actuals: new Map([['CurrentEmployeeOfTheMonth', { value: null, met: false }]]) } });
+    const unsetHtml = renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' });
+    assert.match(unsetHtml, /\(<code class="other-req-operand-unmet">unset<\/code>\)/);
+    setOperandMarks(null);
 });
 
 

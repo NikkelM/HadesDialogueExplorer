@@ -30,7 +30,7 @@ import {
     groupStatusTooltip,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
-import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, brokenPathRefs } from './data.js';
+import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -205,6 +205,7 @@ let _curTotal = null;
 let _curTotalMet = null;
 let _curScalar = null;
 let _curScalarMet = null;
+let _curActuals = null;
 
 // Compute the operand marks for one gate, dispatched by game. Returns a
 // ``{ recs, flat }`` mark structure (green = having the operand helps the clause,
@@ -229,7 +230,7 @@ export function computeOperandMarks(key, val, sctx, slices, gameId) {
 // X" total to display.
 function _markEntryHasContent(e) {
     return !!(e && (e.green.size || e.red.size || (e.counts && e.counts.size)
-        || e.total != null || e.scalarValue != null));
+        || e.total != null || e.scalarValue != null || (e.actuals && e.actuals.size)));
 }
 function _hasOperandMarks(marks) {
     if (!marks) return false;
@@ -254,6 +255,7 @@ function _setFlatMarks() {
     _curTotalMet = flat ? (flat.totalMet ?? null) : null;
     _curScalar = flat && flat.scalarValue != null ? flat.scalarValue : null;
     _curScalarMet = flat ? (flat.scalarMet ?? null) : null;
+    _curActuals = flat && flat.actuals && flat.actuals.size ? flat.actuals : null;
 }
 // Swap the in-force operand sets to the marks for Path record index ``i`` (used
 // while rendering a multi-clause Path gate). Falls back to no marks for that
@@ -268,6 +270,7 @@ function _setRecordMarks(i) {
     _curTotalMet = rec ? (rec.totalMet ?? null) : null;
     _curScalar = rec && rec.scalarValue != null ? rec.scalarValue : null;
     _curScalarMet = rec ? (rec.scalarMet ?? null) : null;
+    _curActuals = rec && rec.actuals && rec.actuals.size ? rec.actuals : null;
 }
 
 // CSS class colouring a numeric tally by whether its criterion is met: green when
@@ -361,9 +364,12 @@ function _pathGloss(segs) {
                 const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
                 // The label may carry a trailing ':' separator; keep a single space.
                 gloss += ' ' + (friendly || leaf);
-                // Partial when the leaf is an unresolved id, or there are extra
-                // intermediate segments the gloss doesn't account for.
-                if (!friendly || objSegs.length > 1) full = false;
+                // Partial when the leaf is an unresolved id (unless the field's
+                // raw leaf is itself the intended value, e.g. a TextLinesRecord
+                // dialogue id), or there are extra intermediate segments the
+                // gloss doesn't account for.
+                const literalOk = !friendly && pathLiteralLeafFields.has(key);
+                if ((!friendly && !literalOk) || objSegs.length > 1) full = false;
             }
         } else {
             if (gloss.endsWith(':')) gloss = gloss.slice(0, -1);
@@ -519,6 +525,21 @@ function _renderListItemHtml(v) {
         // the name into the tally rather than leaving an uncoloured gap.
         const tint = cls ? ` ${cls}` : '';
         html += `<span class="other-req-operand-count${tint}"> (${escapeHtml(String(_curCounts.get(v)))})</span>`;
+    }
+    if (_curActuals && _curActuals.has(v)) {
+        // Equality gates show the save's actual field value beside the operand
+        // name, coloured green / red by whether it satisfies the gate. The field
+        // name itself stays uncoloured so the "(actual)" reads as distinct from
+        // the required value that follows the operator (e.g. ``field (Megaera) =
+        // Hypnos``). An absent field reads "(unset)".
+        const a = _curActuals.get(v);
+        const acls = _metClass(a.met);
+        if (a.value == null) {
+            const attr = acls ? ` class="${acls}"` : '';
+            html += ` (<code${attr}>unset</code>)`;
+        } else {
+            html += ` (${_valueChip(a.value, acls)})`;
+        }
     }
     return html;
 }
