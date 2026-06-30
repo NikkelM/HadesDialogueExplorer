@@ -58,6 +58,7 @@ export const H1_GAMESTATE_SLICE_KEYS = [
     'SpentShrinePointsCache', 'ConsecutiveClears', 'LastAwardTrait', 'LastAssistTrait',
     'RecordLastClearedShrineReward', 'Resources', 'SpentMetaPointsCache', 'LastInteractedWeaponUpgrade',
     'KeepsakeChambers', 'CurrentEmployeeOfTheMonth',
+    'ObjectivesCompleted', 'LastObjectiveCompletedRun', 'LastObjectiveFailedRun',
 ];
 
 // Hades 1 persists every global not in Main.lua's SaveIgnores, so a few tables
@@ -254,6 +255,24 @@ const H1_FIELD_EVALS = {
     RequiredScreenViewedFalse: (v, ctx) => { const s = h1Gs(ctx, 'ScreensViewed') || {}; return _h1bool(!luaTruthy(s[v])); },
     RequiredKeepsake: (v, ctx) => _h1bool(h1Gs(ctx, 'LastAwardTrait') === v),
     RequiredAssistKeepsake: (v, ctx) => _h1bool(h1Gs(ctx, 'LastAssistTrait') === v),
+
+    // ===== PERSISTENT: objectives (GameState counters) =====
+    // ObjectivesCompleted { Name, Min?, Max? }: GameState.ObjectivesCompleted[Name]
+    // (a lifetime completion count) bounded by Min / Max (RunManager.lua).
+    ObjectivesCompleted: (v, ctx) => {
+        const m = h1Gs(ctx, 'ObjectivesCompleted') || {};
+        const have = h1Num(m[v && v.Name]);
+        if (v && v.Min != null && have < v.Min) return H1_UNMET;
+        if (v && v.Max != null && have > v.Max) return H1_UNMET;
+        return H1_OK;
+    },
+    // ObjectiveCompletedLastOffer "Name": the objective was completed at least as
+    // recently as it was last failed (LastObjectiveCompletedRun >= LastObjectiveFailedRun).
+    ObjectiveCompletedLastOffer: (v, ctx) => {
+        const c = h1Gs(ctx, 'LastObjectiveCompletedRun') || {};
+        const f = h1Gs(ctx, 'LastObjectiveFailedRun') || {};
+        return _h1bool(h1Num(c[v]) >= h1Num(f[v]));
+    },
 
     // ===== PERSISTENT: config options =====
     RequiredTrueConfigOptions: () => H1_LIVE('Reads game config options (settings), which a save file doesn\u2019t store.'),

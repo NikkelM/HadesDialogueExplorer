@@ -985,7 +985,10 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // v20 added CurrentEmployeeOfTheMonth to the H1 GameState slice (so the Lounge
 // employee-of-the-month RequiredValues / RequiredFalseValues gates resolve and
 // show the save's actual employee); an older cache lacks it.
-export const SAVE_STORAGE_SCHEMA = 20;
+// v21 added ObjectivesCompleted / LastObjectiveCompletedRun / LastObjectiveFailedRun
+// to the H1 GameState slice so the newly-surfaced ObjectivesCompleted /
+// ObjectiveCompletedLastOffer gates resolve against a save; an older cache lacks them.
+export const SAVE_STORAGE_SCHEMA = 21;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.

@@ -74,6 +74,28 @@ test('H1: RequiredLastKilledByUnits/WeaponNames resolve from the death globals',
 
 // --- persistent GameState aggregates -----------------------------------------
 
+test('H1: ObjectivesCompleted resolves Min/Max against GameState.ObjectivesCompleted', () => {
+    const c = ctx({ gs: { ObjectivesCompleted: { PlayerKills: 8, Deaths: 2 } } });
+    // Min: met when the count reaches it, unmet just below.
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'PlayerKills', Min: 8 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'PlayerKills', Min: 9 } }, c).status, 'unmet');
+    // Max: met at/under the cap, unmet over it.
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'Deaths', Max: 3 } }, c).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'Deaths', Max: 1 } }, c).status, 'unmet');
+    // Absent objective -> count 0: Min fails, Max passes (engine's `[Name] or 0`).
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'Nope', Min: 1 } }, c).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ ObjectivesCompleted: { Name: 'Nope', Max: 0 } }, c).status, 'met');
+});
+
+test('H1: ObjectiveCompletedLastOffer met iff completed at least as recently as failed', () => {
+    const c = ctx({ gs: { LastObjectiveCompletedRun: { PlayerKills: 5 }, LastObjectiveFailedRun: { PlayerKills: 3 } } });
+    assert.equal(evaluateH1OtherRequirements({ ObjectiveCompletedLastOffer: 'PlayerKills' }, c).status, 'met');
+    const c2 = ctx({ gs: { LastObjectiveCompletedRun: { PlayerKills: 2 }, LastObjectiveFailedRun: { PlayerKills: 6 } } });
+    assert.equal(evaluateH1OtherRequirements({ ObjectiveCompletedLastOffer: 'PlayerKills' }, c2).status, 'unmet');
+    // Never completed nor failed -> 0 >= 0 -> met (engine: not (0 < 0)).
+    assert.equal(evaluateH1OtherRequirements({ ObjectiveCompletedLastOffer: 'Other' }, c).status, 'met');
+});
+
 test('H1: RequiredMinCompletedRuns counts RunHistory length', () => {
     const c = ctx({ gs: { RunHistory: [{}, {}, {}] } });
     assert.equal(evaluateH1OtherRequirements({ RequiredMinCompletedRuns: 3 }, c).status, 'met');
