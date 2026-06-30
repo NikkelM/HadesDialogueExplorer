@@ -470,7 +470,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiresLastRunNotCleared":
         "The previous run must NOT have been cleared.",
     "RequiresBestClearTimeLastRun":
-        "The previous run must have been clared and set a new personal-best clear time.",
+        "The previous run must have been cleared and set a new personal-best clear time.",
     "RequiredMinCompletedRuns":
         "The player must have completed at least N runs (whether cleared or not).",
     "RequiredMaxCompletedRuns":
