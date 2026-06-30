@@ -512,14 +512,14 @@ class TestRealData:
     """Smoke-test against the real ``NarrativeData.lua``."""
 
     @pytest.fixture(scope="class")
-    def priorities(self):
+    def priorities(self, hades2_scripts):
         # Import locally so the fixture file can be missing on dev
         # machines without breaking module-level import of the test
         # module (which other classes' tests still rely on).
         import os
-        fp = r'C:\Program Files (x86)\Steam\steamapps\common\Hades II\Content\Scripts\NarrativeData.lua'
+        fp = os.path.join(str(hades2_scripts), 'NarrativeData.lua')
         if not os.path.exists(fp):
-            pytest.skip("Hades II install not available")
+            pytest.skip("NarrativeData.lua not available")
         with open(fp, encoding='utf-8-sig') as f:
             src = f.read()
         parsed = LuaParser(src).parse_file()

@@ -47,6 +47,8 @@ from src.extractors.hades2.req_extractor import extract_requirements
 from src.extractors.textline_set import (
     reset_section_key_audit,
     get_unlisted_section_keys,
+    reset_unrecognised_textline_key_audit,
+    get_unrecognised_textline_keys,
     build_cue_comment_map,
     apply_cue_comment_texts,
 )
@@ -294,6 +296,30 @@ def report_unlisted_section_keys(game_label: str) -> None:
         print(f"  ... and {len(unlisted) - 10} more")
 
 
+def report_unrecognised_textline_keys(game_label: str) -> None:
+    """Surface engine eligibility fields present on a textline that the extractor
+    failed to capture - a silently-dropped eligibility gate (H1 has ~35 fields
+    that don't follow the ``Require*`` naming the flat loop keys off, e.g.
+    ``ConsecutiveClearsOfRoom`` / ``HasTraitNameInRoom``). Populated during the
+    game's pass by :func:`src.extractors.textline_set._note_unrecognised_textline_keys`;
+    silent once every such gate is captured.
+    """
+    unknown = get_unrecognised_textline_keys()
+    if not unknown:
+        return
+    distinct = sorted({key for _tl, key, _src in unknown})
+    print(
+        f"\nWARNING ({game_label}): {len(unknown)} eligibility gate(s) across "
+        f"{len(distinct)} field type(s) are present on textlines but dropped by "
+        f"the extractor (not surfaced as requirements): {', '.join(distinct)}. "
+        f"Capture them in the extractor so the gate isn't lost."
+    )
+    for tl_name, key, source_file in unknown[:10]:
+        print(f"  {tl_name}.{key}  ({source_file})")
+    if len(unknown) > 10:
+        print(f"  ... and {len(unknown) - 10} more")
+
+
 def main():
     try:
         cfg = load_config()
@@ -321,6 +347,7 @@ def main():
     game_data_lists = load_game_data_lists(hades1_scripts)
 
     reset_section_key_audit()
+    reset_unrecognised_textline_key_audit()
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
@@ -334,6 +361,7 @@ def main():
             f.write("\n")
         print(f"  Written to: {out_path}")
     report_unlisted_section_keys("hades1")
+    report_unrecognised_textline_keys("hades1")
 
     # Standalone H1 metadata payload: the static design-data tables the
     # viewer's save-eligibility evaluator needs to resolve the Mirror /
@@ -442,6 +470,7 @@ def main():
         print(f"  Written to: {metadata_path}")
 
     reset_section_key_audit()
+    reset_unrecognised_textline_key_audit()
     for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
         matched_files = sorted(hades2_scripts.glob(pattern))
         if not matched_files:
@@ -474,6 +503,7 @@ def main():
         if skipped_empty:
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
     report_unlisted_section_keys("hades2")
+    report_unrecognised_textline_keys("hades2")
 
     # Cross-source orphan-priority audit: every (owner, section,
     # textline) tuple present in ``narrative_priorities`` should have

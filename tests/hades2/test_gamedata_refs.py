@@ -163,11 +163,10 @@ class TestRealDataSmoke:
     """
 
     @pytest.fixture
-    def real_scripts(self):
-        path = Path("C:/Program Files (x86)/Steam/steamapps/common/Hades II/Content/Scripts")
-        if not path.exists():
-            pytest.skip("Hades II install not present on this machine")
-        return path
+    def real_scripts(self, hades2_scripts):
+        # Resolve from config.toml (shared conftest fixture) so the test runs
+        # wherever the game is installed, not only on the C: default.
+        return hades2_scripts
 
     def test_captures_canonical_god_about_god_events(self, real_scripts):
         refs = extract_gamedata_refs(real_scripts)
