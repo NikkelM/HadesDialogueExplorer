@@ -431,6 +431,17 @@ export function renderPlayOnceBadgeHtml(tl) {
     return `<span class="play-once-badge play-once-repeatable" data-tooltip="This dialogue can play repeatedly as long as its requirements are met.">\u{1F501} Repeatable</span>`;
 }
 
+// Informational note for a set-level ``ChanceToPlay`` gate (RequirementsLogic.lua
+// line 35): even when every other condition holds, the game only plays the line
+// this fraction of the times it's offered. It's a per-attempt RNG roll, never a
+// permanent block, so it renders as a plain note rather than a met / unmet dot.
+// ``chance`` is the 0..1 probability; returns '' when it's absent.
+export function renderChanceToPlayNoteHtml(chance) {
+    if (typeof chance !== 'number') return '';
+    const pct = +(chance * 100).toFixed(1);
+    return `<div class="chance-to-play-note" data-tooltip="A random per-attempt roll the game makes even when every other condition is met. It never permanently blocks the line.">\u{1F3B2} Random: plays ${pct}% of the times it\u2019s offered</div>`;
+}
+
 // Render a single requirement <div>, applying the resolved/unresolved
 // class plus (when unresolved) the category class so the viewer can
 // color-code back-compat vs typo-or-bug vs cut-content vs uncategorized.

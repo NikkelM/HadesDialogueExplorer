@@ -11,7 +11,7 @@
  */
 
 import { textlines, speakers, alternates, getActiveGame } from './data.js';
-import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType } from './utilities.js';
+import { escapeHtml, jsAttr, renderSpeakerHtml, getEdgeLabel, getEdgeClass, renderSaveBadgeHtml, renderPrimaryPriorityBadgeHtml, renderPriorityBadgeHtml, formatReqType, renderChanceToPlayNoteHtml } from './utilities.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlayed } from './save-parser.js';
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
@@ -1095,9 +1095,11 @@ function renderBranchRequirementsHtml(branch, rootName, isPlayed) {
     // Non-dialogue conditions (state paths, function checks, ...) - now
     // resolvable against the save rather than an opaque "other conditions".
     html += renderConditionsHtml(branch && branch.otherRequirements, textlines[rootName] && textlines[rootName].owner, rootName);
-    if (!html) {
+    const chanceHtml = renderChanceToPlayNoteHtml(branch && branch.flags && branch.flags.chanceToPlay);
+    if (!html && !chanceHtml) {
         html += `<div class="eligibility-branch-note">No requirements - always available.</div>`;
     }
+    html += chanceHtml;
     return html;
 }
 

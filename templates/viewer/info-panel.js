@@ -28,6 +28,7 @@ import {
     renderSaveBadgeHtml,
     saveStatusTooltip,
     groupStatusTooltip,
+    renderChanceToPlayNoteHtml,
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
@@ -1681,6 +1682,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
                 otherHeaderLabel: null,
             }
         );
+        html += renderChanceToPlayNoteHtml(branch.flags && branch.flags.chanceToPlay);
         html += `</div></div>`;
     }
     html += `</div></div>`;

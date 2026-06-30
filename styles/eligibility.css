@@ -472,6 +472,17 @@
     color: #9aa3b2;
 }
 
+/* Set-level ``ChanceToPlay`` note: a per-attempt RNG roll the game applies even
+   when every other condition holds. Informational (not a pass/fail gate), shown
+   in both the detail panel's OR-branch boxes and the eligibility tracer. */
+.chance-to-play-note {
+    margin: 0.25rem 0.4rem 0;
+    padding: 0.15rem 0.4rem;
+    font-size: var(--fs-xs);
+    color: #c9b066;
+    cursor: help;
+}
+
 .eligibility-branch-prereqs {
     margin-top: 0.3rem;
 }
