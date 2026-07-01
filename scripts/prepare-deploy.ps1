@@ -14,6 +14,12 @@ param([switch]$Dry)
 
 $ErrorActionPreference = 'Stop'
 
+# Anchor to the repository root (this script lives in ``scripts/``) so the
+# relative paths below (``generate_data.py``, ``outputs\*.json``) resolve the
+# same way whether the script is invoked from the repo root or from inside
+# ``scripts/``.
+Set-Location (Split-Path $PSScriptRoot -Parent)
+
 # Run a git command and abort if it fails. $ErrorActionPreference='Stop'
 # does not catch native-command exit codes on Windows PowerShell 5.1, so
 # the destructive git steps below (reset --hard, push --force) are routed
