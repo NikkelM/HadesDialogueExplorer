@@ -1,0 +1,4667 @@
+{
+  "alternates": {},
+  "dependents": {
+    "CharonAboutArtemisSinging01": [
+      {
+        "name": "CharonAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "CharonAboutCharonPoints01": [
+      {
+        "name": "CharonGift07",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonGift08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonAboutHermesMission01": [
+      {
+        "name": "CharonAboutHermes01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonAboutHermes01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "CharonAboutKeepsake01": [
+      {
+        "name": "CharonAboutKeepsake02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonAboutOlympians01": [
+      {
+        "name": "CharonAboutHermesMission01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonChat10": [
+      {
+        "name": "CharonChat11",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift01": [
+      {
+        "name": "CharonAboutSmuggling01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonAboutNemesis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift02": [
+      {
+        "name": "CharonAboutNemesis02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift04": [
+      {
+        "name": "CharonAboutTipping01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift05": [
+      {
+        "name": "CharonAboutSpeaking01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift06": [
+      {
+        "name": "CharonGift07",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonGift08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift08": [
+      {
+        "name": "CharonAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonWithHecate01": [
+      {
+        "name": "CharonAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosNightmare01": [
+      {
+        "name": "CharonAboutNyx01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisFirstMeeting": [
+      {
+        "name": "CharonAboutEris01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ErisFirstMeeting_B": [
+      {
+        "name": "CharonAboutEris01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "CharonAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonPostEpilogue01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesAboutCharon01": [
+      {
+        "name": "CharonAboutHermes03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesFieldAboutTyphon01": [
+      {
+        "name": "CharonAboutHermes04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesFirstPickUp": [
+      {
+        "name": "CharonAboutHermes02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MorosAboutFates02": [
+      {
+        "name": "CharonAboutFates01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MorosGrantsQuestLog": [
+      {
+        "name": "CharonAboutMoros01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MorosSecondAppearance": [
+      {
+        "name": "CharonAboutMoros01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CharonAboutMoros02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CharonAboutMoros02",
+        "type": "MaxRunsSinceAnyTextLines"
+      }
+    ],
+    "MorosWithCharon01": [
+      {
+        "name": "CharonAboutMoros02",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CharonAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "MorosWithCharon02": [
+      {
+        "name": "CharonAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NemesisCombatFirstIntro": [
+      {
+        "name": "CharonAboutNemesis02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisGetFreeItemIntro01": [
+      {
+        "name": "CharonAboutNemesis02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisGift03": [
+      {
+        "name": "CharonAboutNemesis02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 36,
+    "totalSpeakers": 1,
+    "totalTextlines": 88,
+    "unresolvedRefs": [
+      "ChronosNightmare01",
+      "ErisFirstMeeting",
+      "ErisFirstMeeting_B",
+      "FatesEpilogue01",
+      "HermesAboutCharon01",
+      "HermesFieldAboutTyphon01",
+      "HermesFirstPickUp",
+      "MorosAboutFates02",
+      "MorosGrantsQuestLog",
+      "MorosSecondAppearance",
+      "NemesisCombatFirstIntro",
+      "NemesisGetFreeItemIntro01",
+      "NemesisGift03"
+    ]
+  },
+  "textlines": {
+    "CharonAboutArachne01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Do you think Arachne's going to be all right in all of this, my lord? The surface was no longer welcoming, or safe, for her. And now, I fear that Erebus is not much better off..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmrrrnnnggghhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're right. She's twice as resourceful as just about anybody. Four times! Just... look out for her, would you?"
+        }
+      ],
+      "name": "CharonAboutArachne01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutNemesis01",
+        "CharonAboutArtemis01",
+        "CharonAboutSelene01",
+        "CharonAboutWellShops01",
+        "CharonAboutSurfaceShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Arachne_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Arachne_01"
+            ],
+            "Value": 8
+          }
+        ],
+        "PathTrue:CurrentRun.BiomesReached.F": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "F"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1853
+    },
+    "CharonAboutArtemis01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's reassuring to know Artemis has been keeping track of things around here lately, my lord. She seems unusually well-supplied..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhrrraaauuggghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, I won't tell a soul."
+        }
+      ],
+      "name": "CharonAboutArtemis01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutNemesis01",
+        "CharonAboutSelene01",
+        "CharonAboutArachne01",
+        "CharonAboutWellShops01",
+        "CharonAboutSurfaceShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:CurrentRun.CurrentRoom.RoomSetName": [
+              {
+                "IsAny": [
+                  "N"
+                ],
+                "Path": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "RoomSetName"
+                ]
+              }
+            ],
+            "Path:EncountersOccurredCache": [
+              {
+                "Comparison": ">=",
+                "CountPathTrue": true,
+                "Path": [
+                  "EncountersOccurredCache"
+                ],
+                "SumPrevRuns": 2,
+                "TableValuesToCount": [
+                  "ArtemisCombatN",
+                  "ArtemisCombatN2"
+                ],
+                "Value": 1
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:CurrentRun.CurrentRoom.RoomSetName": [
+              {
+                "IsAny": [
+                  "F",
+                  "G"
+                ],
+                "Path": [
+                  "CurrentRun",
+                  "CurrentRoom",
+                  "RoomSetName"
+                ]
+              }
+            ],
+            "Path:EncountersOccurredCache": [
+              {
+                "Comparison": ">=",
+                "CountPathTrue": true,
+                "Path": [
+                  "EncountersOccurredCache"
+                ],
+                "SumPrevRuns": 2,
+                "TableValuesToCount": [
+                  "ArtemisCombatF",
+                  "ArtemisCombatF2",
+                  "ArtemisCombatG",
+                  "ArtemisCombatG2"
+                ],
+                "Value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.UseRecord.NPC_Artemis_Field_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "NPC_Artemis_Field_01"
+            ],
+            "Value": 4
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1791
+    },
+    "CharonAboutArtemisSinging01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmm, mmmmrrnnnn..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You picked a fine time to make your deliveries, my lord. That's Artemis singing nearby! Although perhaps such music isn't to your taste."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmm..."
+        }
+      ],
+      "name": "CharonAboutArtemisSinging01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:AudioState.AmbientTrackName": [
+          {
+            "IsAny": [
+              "/Music/ArtemisSong_MC",
+              "/Music/IrisEndThemeCrossroads_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "AmbientTrackName"
+            ]
+          }
+        ],
+        "Path:ConfigOptionCache.MusicVolume": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "ConfigOptionCache",
+              "MusicVolume"
+            ],
+            "Value": 0.1
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2165
+    },
+    "CharonAboutChaos01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Kkhhhaauuugghh, heehhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You can sense it, can't you, my lord? The mark of Primordial Chaos. It seems I have another patron from the ranks of the chthonic gods."
+        }
+      ],
+      "name": "CharonAboutChaos01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.TrialUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "TrialUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1674
+    },
+    "CharonAboutCharonAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Nocturnal Arms entrusted me with other Aspects of themselves, including this one that I think was yours, my lord. Did you... relinquish the Moonstone Axe, knowing I was to be its next bearer?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrraaauuuggghh, krrrnnhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'll bear it to the best of my ability."
+        }
+      ],
+      "name": "CharonAboutCharonAspect01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxeArmCastAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxeArmCastAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 760
+    },
+    "CharonAboutCharonPoints01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rrnnngghh, huuaaahhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Something about your Gold Rewards... in which I've achieved Silver status now? Oh thank you very much, my lord! I'm pleased to be a loyal customer of yours."
+        }
+      ],
+      "name": "CharonAboutCharonPoints01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.LifetimeResourcesGained.WeaponPointsRare": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "WeaponPointsRare"
+            ],
+            "Value": 10
+          }
+        ],
+        "Path:GameState.LifetimeResourcesSpent.CharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesSpent",
+              "CharonPoints"
+            ],
+            "Value": 20
+          }
+        ],
+        "Path:GameState.MoneySpentTowardCharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MoneySpentTowardCharonPoints"
+            ],
+            "Value": 1000
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 486
+    },
+    "CharonAboutChronosBossW01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "We got him finally, Lord Charon! The Titan can be slain... if but to complicate his schemes a little while, till we can put a stop to him for good."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrghhh, hrrrnnn..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes. My father's throne shall be restored."
+        }
+      ],
+      "name": "CharonAboutChronosBossW01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Chronos": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Chronos"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.Cleared": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1104
+    },
+    "CharonAboutDanger01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrnn, nrraauugggghhhhrrrrhhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I shall, my lord. Until then, we each have our tasks to complete."
+        }
+      ],
+      "name": "CharonAboutDanger01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutGold02",
+        "CharonAboutSpeaking01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 590
+    },
+    "CharonAboutErebus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "It must be so frustrating, Lord Charon. Watching the dead of Erebus wallow here with no place to go. You'll send them on their way yet."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrnngghh, hrraaauuuggghh...!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Until then."
+        }
+      ],
+      "name": "CharonAboutErebus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "F"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1039
+    },
+    "CharonAboutEris01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Eris returned to the Crossroads, my lord. Forgive me for speaking ill of one of your siblings, but... I always fear the worst when she's around. Could she be working against us?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mnngghghhhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "If only she was more like you."
+        }
+      ],
+      "name": "CharonAboutEris01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.O_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "O_Boss01"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Eris_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Eris_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ErisFirstMeeting",
+          "ErisFirstMeeting_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1696
+    },
+    "CharonAboutFates01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know already, don't you, my lord? About the Three Fates. That Chronos has your sisters in his thrall. Lord Moros is safe with us, at least."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Kkhhh, kkhhrrrraaauugggghhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Do you truly think so...?"
+        }
+      ],
+      "name": "CharonAboutFates01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "MorosAboutFates02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1759
+    },
+    "CharonAboutGold01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "All of this tainted Gold... you'll see that it's disposed of properly, Lord Charon?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Kkkkhhhrrrssssshhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I long to see that night."
+        }
+      ],
+      "name": "CharonAboutGold01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutSmuggling01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 348
+    },
+    "CharonAboutGold02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Sssshhhhhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, Lord Charon. You'll have what Gold I may find, as I require what supplies you may spare."
+        }
+      ],
+      "name": "CharonAboutGold02",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutSpeaking01",
+        "CharonAboutDanger01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 372
+    },
+    "CharonAboutHeraclesShopping01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Supplying goods to mighty Heracles! Sometimes I wonder whom else you provide for, my lord. Not that you'd say."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnrrrraaauuuggghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh."
+        }
+      ],
+      "name": "CharonAboutHeraclesShopping01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": true,
+              "Units": [
+                "NPC_Heracles_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1644
+    },
+    "CharonAboutHermes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrmmmmmm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm certain he's all right, my lord. This is Hermes we're talking about! It's not like anyone could catch him, even if he were in peril."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrgghhh..."
+        }
+      ],
+      "name": "CharonAboutHermes01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.QuestsViewed": [
+          {
+            "HasAny": [
+              "QuestMeetOlympians"
+            ],
+            "Path": [
+              "GameState",
+              "QuestsViewed"
+            ]
+          }
+        ],
+        "PathFalse:GameState.UseRecord.HermesUpgrade": [
+          {
+            "PathFalse": [
+              "GameState",
+              "UseRecord",
+              "HermesUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "CharonAboutHermesMission01"
+        ],
+        "RequiredTextLines": [
+          "CharonAboutHermesMission01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1421
+    },
+    "CharonAboutHermes02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I heard from Hermes at last, my lord! He didn't get into the details of what he discovered, though perhaps you know more."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Auugggghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I understand. It's not my wish to pry."
+        }
+      ],
+      "name": "CharonAboutHermes02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HermesFirstPickUp"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1457
+    },
+    "CharonAboutHermes03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hermes wanted me to tell you hey, my lord. A message he'd surely deliver himself if he could. Though he seems well enough."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhhrrrrrmmmm..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of course, my lord."
+        }
+      ],
+      "name": "CharonAboutHermes03",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HermesAboutCharon01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1481
+    },
+    "CharonAboutHermes04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've run into Lord Hermes at the summit of Olympus, making preparations against Typhon with the rest. Have you been able to cross paths with him?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrmmm, mmrrrrngghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "So, not for very long."
+        }
+      ],
+      "name": "CharonAboutHermes04",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:RoomsEntered.Q_PreBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "Q_PreBoss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HermesFieldAboutTyphon01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1506
+    },
+    "CharonAboutHermesKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Aauugggh, hhrrrrmm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Swiftness...? You mean the Metallic Droplet that I have, my lord. A gift from Hermes himself! No better way to reach your finest wares as soon as possible."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rraaauuggggghhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrraahhh..."
+        }
+      ],
+      "name": "CharonAboutHermesKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "TimedBuffKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 666
+    },
+    "CharonAboutHermesMission01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "No sign of Hermes yet, my lord...? Forgive my impatience, I know infiltrating our enemy's ranks and discovering the details of his plans to conquer Olympus is sensitive work..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrmmmnnngggggghhhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "He'll be back any evening now I'm sure."
+        }
+      ],
+      "name": "CharonAboutHermesMission01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:GameState.UseRecord.HermesUpgrade": [
+          {
+            "PathFalse": [
+              "GameState",
+              "UseRecord",
+              "HermesUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonAboutOlympians01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1392
+    },
+    "CharonAboutHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "This is it, my lord! The hidden aspect of Nergal that I would never have revealed if not for you. Is this some warrior-god from a distant land, or time?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrrggghhh, haaaa..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then perhaps both..."
+        }
+      ],
+      "name": "CharonAboutHiddenAspect01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxeRallyAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxeRallyAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1947
+    },
+    "CharonAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I bear the gift you generously gave to me. A Keepsake to bring fortune on such nights. Things are looking up already!"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rraaauuggggghhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well it can't hurt..."
+        }
+      ],
+      "name": "CharonAboutKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutKeepsake02"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BonusMoneyKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 605
+    },
+    "CharonAboutKeepsake02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "This Gold Purse that you handed me before... each night I find it brimming with coins... which must mean technically I'm in your debt."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnaauuugghh, hrrnnn..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Whatever you say, my lord."
+        }
+      ],
+      "name": "CharonAboutKeepsake02",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BonusMoneyKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonAboutKeepsake01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 635
+    },
+    "CharonAboutMoros01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I met one of your brothers, Lord Charon. It was Moros. He delivered to me a certain artifact, but then was gone. Do you know of the Fated List?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhhhhoooohhhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's been in my family's care before...? Though, what of Moros? Where could he have gone in all of this?"
+        }
+      ],
+      "name": "CharonAboutMoros01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "MorosSecondAppearance"
+        ],
+        "RequiredTextLines": [
+          "MorosGrantsQuestLog"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1265
+    },
+    "CharonAboutMoros02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Charon, Moros returned! He's joined us at the Crossroads. Now we've no fewer than three mighty sons of Nyx within our ranks. Granted, one's always fast asleep..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Huunnnnnggghhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Forgive me, I must not have understood. Hypnos is of greater use this way...?"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hmm, hmm..."
+        }
+      ],
+      "name": "CharonAboutMoros02",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "MaxRunsSinceAnyTextLines": {
+          "Count": 8
+        },
+        "Path:UseRecord.NPC_Moros_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "UseRecord",
+              "NPC_Moros_01"
+            ],
+            "SumPrevRuns": 2,
+            "Value": 1
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Hypnos_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Hypnos_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "MaxRunsSinceAnyTextLines": [
+          "MorosSecondAppearance"
+        ],
+        "RequiredFalseTextLines": [
+          "MorosWithCharon01"
+        ],
+        "RequiredTextLines": [
+          "MorosSecondAppearance"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1304
+    },
+    "CharonAboutNemesis01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're not particularly close with your brothers or sisters, are you? When you chance to visit us, Nemesis all but ignores you..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrrmmm, hhaaaaahhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know, it's just..."
+        }
+      ],
+      "name": "CharonAboutNemesis01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutArtemis01",
+        "CharonAboutSelene01",
+        "CharonAboutArachne01",
+        "CharonAboutWellShops01",
+        "CharonAboutSurfaceShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": false,
+              "Units": [
+                "NPC_Nemesis_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "CharonWithHecate01",
+          "MorosWithCharon01",
+          "MorosWithCharon02",
+          "CharonAboutArtemisSinging01"
+        ],
+        "RequiredTextLines": [
+          "CharonGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1540
+    },
+    "CharonAboutNemesis02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know that you've seen Nemesis about. She's supposed to be at her post, but... I think you probably can understand. Whatever it takes for the family and the realm, right?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rrrrauuggh, heehhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then may she go unseen."
+        }
+      ],
+      "name": "CharonAboutNemesis02",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutTipping01",
+        "CharonAboutTravel01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": false,
+              "Units": [
+                "NPC_Nemesis_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.BiomesReached.F": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "F"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NemesisCombatFirstIntro",
+          "NemesisGetFreeItemIntro01",
+          "CharonGift02",
+          "NemesisGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1580
+    },
+    "CharonAboutNemesisShopping01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I see you have another customer, my lord. First come first served, is it?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrraauugghhh, haaahhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'll hurry it up."
+        }
+      ],
+      "name": "CharonAboutNemesisShopping01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": true,
+              "Units": [
+                "NPC_Nemesis_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1615
+    },
+    "CharonAboutNyx01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your mother Nyx, my lord... I saw her lately in a nightmare or a dream. She was very beautiful... and she was unharmed, I think."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mrmmm, nrruuunnngghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "We're going to find her. I swear it."
+        }
+      ],
+      "name": "CharonAboutNyx01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ChronosNightmare01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1731
+    },
+    "CharonAboutOlympians01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrmmmm, nnnrrraaauggghhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, my lord, I met Apollo, Grandmother, Uncle Poseidon... I've known Artemis and Hermes for so long, I'm impressed they kept my secret from the others all this time."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrrnhhh..."
+        }
+      ],
+      "name": "CharonAboutOlympians01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutShrine02"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.UseRecord": [
+          {
+            "HasAll": [
+              "ApolloUpgrade",
+              "DemeterUpgrade",
+              "PoseidonUpgrade"
+            ],
+            "Path": [
+              "GameState",
+              "UseRecord"
+            ]
+          }
+        ],
+        "PathFalse:GameState.UseRecord.HermesUpgrade": [
+          {
+            "PathFalse": [
+              "GameState",
+              "UseRecord",
+              "HermesUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1361
+    },
+    "CharonAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I made it all the way up to the mountain of the gods, my lord! Though I missed you up there. Never thought I'd see a place you couldn't reach by boat."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrnnnggghh, hrreehhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You have a very good distributor."
+        }
+      ],
+      "name": "CharonAboutOlympus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered": [
+          {
+            "HasAll": [
+              "P_Shop01",
+              "P_PreBoss01"
+            ],
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.P_Intro": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 973
+    },
+    "CharonAboutPackagedBounties01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Krraaahhhh, hhrrrnn..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You sense it too, don't you? A strange feeling in the air... the influence of Chaos all around us. I'm being tested even now. Perhaps all of us are..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmmmnn..."
+        }
+      ],
+      "name": "CharonAboutPackagedBounties01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 886
+    },
+    "CharonAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "We've found a rhythm to these meetings, haven't we? Though is there anything else I can do, my lord? Besides providing all the Gold and the occasional chat."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrrrnnhhhhnnn..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sounds like a no..."
+        }
+      ],
+      "name": "CharonAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "CharonGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 554
+    },
+    "CharonAboutSelene01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Ssshhhaaaahhh...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I did encounter her, my lord. And I thank the Fates Selene's light is visible in Erebus, for I know she cannot shine much farther past the edge of this realm."
+        }
+      ],
+      "name": "CharonAboutSelene01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutNemesis01",
+        "CharonAboutArtemis01",
+        "CharonAboutArachne01",
+        "CharonAboutWellShops01",
+        "CharonAboutSurfaceShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "F"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "Path:GameState.UseRecord.SpellDrop": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "UseRecord",
+              "SpellDrop"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.SpellDrop": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "SpellDrop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1220
+    },
+    "CharonAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnnnaauggghh, haaauuggh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, my lord; I spoke the Oath, if that is what you mean. Thus in shadow, I serve; and to shadow I'll return, ere comes the light of Dawn."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnnngghh..."
+        }
+      ],
+      "name": "CharonAboutShrine01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutThanatosAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ActiveShrineBounty": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 820
+    },
+    "CharonAboutShrine02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hooaaaaahhh, hrrmm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You sense the Testament of Night I think, my lord. So that your mother Nyx's influence may never fade, whether in the Underworld or beyond."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrrhhh..."
+        }
+      ],
+      "name": "CharonAboutShrine02",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 8
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ActiveShrineBounty": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 853
+    },
+    "CharonAboutSmuggling01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Haaaa, hrrrnnnnggghhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hah! We'll have to see how much Chronos still loves his Gold after all this. The good thing about traitors is their loyalties can be bought..."
+        }
+      ],
+      "name": "CharonAboutSmuggling01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutGold01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.LifetimeResourcesSpent.CharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesSpent",
+              "CharonPoints"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 430
+    },
+    "CharonAboutSpeaking01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmm, hrrrrmmmm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's a pity we've so little opportunity to speak, Lord Charon. Though I'm grateful to be seeing you more frequently of late."
+        }
+      ],
+      "name": "CharonAboutSpeaking01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutGold02",
+        "CharonAboutDanger01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathTrue:PrevRun.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 533
+    },
+    "CharonAboutSurface01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You've come to aid me even here, Lord Charon? Though I imagine not even you can travel much farther, where I'm headed..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnn, nnrrrggghhhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I won't forget your generosity."
+        }
+      ],
+      "name": "CharonAboutSurface01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.BiomesReached.N": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "N"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 942
+    },
+    "CharonAboutSurfaceShops01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Shrines of Lord Hermes that I've seen around the surface... I noticed they take offerings of Gold as well. I take it the two of you are back in business, then?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrrmmm, nnrrrraaauggghh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then may business be good."
+        }
+      ],
+      "name": "CharonAboutSurfaceShops01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutNemesis01",
+        "CharonAboutArtemis01",
+        "CharonAboutSelene01",
+        "CharonAboutArachne01",
+        "CharonAboutWellShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ScreensViewed.SurfaceShop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ScreensViewed",
+              "SurfaceShop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfaceShops": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfaceShops"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 729
+    },
+    "CharonAboutTartarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You were able to reach the House of Hades before me, my lord. Doubtless why that final stretch was clear. You must know I was unable to prevail. Just have to give it another go, won't we...?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrnn, haaaaahhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Thank you for your support."
+        }
+      ],
+      "name": "CharonAboutTartarus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathFalse:PrevRun.Cleared": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1072
+    },
+    "CharonAboutThanatosAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Guuhhhh, raauuugggghh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean this scythe... you recognize it as your brother's then, my lord. Well I may not be Death Incarnate, but shall wield his blade as deftly as I'm able in his honor."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmm..."
+        }
+      ],
+      "name": "CharonAboutThanatosAspect01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutChaos01",
+        "CharonAboutEris01",
+        "CharonAboutMoros01",
+        "CharonAboutMoros02",
+        "CharonAboutNyx01",
+        "CharonAboutHermes03",
+        "CharonAboutHermes04",
+        "CharonAboutHermesKeepsake01",
+        "CharonAboutCharonAspect01",
+        "CharonAboutHiddenAspect01",
+        "CharonAboutShrine01",
+        "CharonAboutPackagedBounties01",
+        "CharonAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxePerfectCriticalAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxePerfectCriticalAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 788
+    },
+    "CharonAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "My Lord, is this your ship? It is remarkable, although I fear with all the hostile vessels everywhere that it may come to harm... or even you."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrnn, neehhhhhhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Smooth sailing all the same."
+        }
+      ],
+      "name": "CharonAboutThessaly01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.BiomesReached.O": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "O"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1005
+    },
+    "CharonAboutTipping01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "When next we meet in Tartarus, could I not give to you what Gold I have remaining after making my purchases? As a sort of tip for your services. Otherwise it all washes away..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnngggghhh, mmmm..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "No goods, no Gold. Got it."
+        }
+      ],
+      "name": "CharonAboutTipping01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutTravel01",
+        "CharonAboutNemesis02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "StandardPackageBountyActive"
+        ],
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsNone": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.BiomesReached.F": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "F"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 389
+    },
+    "CharonAboutTravel01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You've sailed far from your usual course, Boatman. Not solely on my account, I trust?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Ssshhh, hrrrraaauuuggghhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your generous aid is much appreciated, lord."
+        }
+      ],
+      "name": "CharonAboutTravel01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutTipping01",
+        "CharonAboutNemesis02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsNone": [
+              "F"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 914
+    },
+    "CharonAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I reached the summit of Olympus finally... they're fighting back against Typhon himself! Perhaps you knew already..."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hreeeehh, hrrmmm..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "He's quite enormous, yes."
+        }
+      ],
+      "name": "CharonAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1144
+    },
+    "CharonAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hraaaauugghhh, haaaahhh...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We vanquished Typhon, at least for the night, my lord! Hermes ensured that I was well-supplied. Plenty of Gold for you lately!"
+        }
+      ],
+      "name": "CharonAboutTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 33,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.EnemyKills.TyphonHead": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "EnemyKills",
+                  "TyphonHead"
+                ]
+              }
+            ],
+            "PathTrue:CurrentRun.Hero.IsDead": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "Hero",
+                  "IsDead"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathFalse:CurrentRun.Hero.IsDead": [
+              {
+                "PathFalse": [
+                  "CurrentRun",
+                  "Hero",
+                  "IsDead"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.EnemyKills.TyphonHead": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EnemyKills",
+                  "TyphonHead"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1172
+    },
+    "CharonAboutWellShops01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rnnggghhh, ggraagghhh...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The reappearance of your Wells is certainly no accident, my lord. All it took was the appropriate incantation! Little by little, we shall restore the old order."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhhaaughh..."
+        }
+      ],
+      "name": "CharonAboutWellShops01",
+      "narrativePriorityClusterMembers": [
+        "CharonAboutNemesis01",
+        "CharonAboutArtemis01",
+        "CharonAboutSelene01",
+        "CharonAboutArachne01",
+        "CharonAboutSurfaceShops01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.WellShop": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "WellShop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeWellShops": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeWellShops"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 698
+    },
+    "CharonAboutZagreusFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Charon, why didn't you say anything about those Infernal Contracts I've started to see? I wound up in an inadvertent clash with Zagreus!"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Graaahhh, hrrrmmm...?"
+        }
+      ],
+      "name": "CharonAboutZagreusFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:RoomsEntered.C_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "C_Boss01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1973
+    },
+    "CharonChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrrrmmmmmm..."
+        }
+      ],
+      "name": "CharonChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2199
+    },
+    "CharonChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Khhhrrrrraaauugghhh..."
+        }
+      ],
+      "name": "CharonChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2206
+    },
+    "CharonChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhhrrsssshhhh..."
+        }
+      ],
+      "name": "CharonChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2213
+    },
+    "CharonChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Khhhssssshhhh..."
+        }
+      ],
+      "name": "CharonChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2220
+    },
+    "CharonChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Khhrrrnnnnnnggghh..."
+        }
+      ],
+      "name": "CharonChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2227
+    },
+    "CharonChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnnngggghhh..."
+        }
+      ],
+      "name": "CharonChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2234
+    },
+    "CharonChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmnnnnnnhhhhh..."
+        }
+      ],
+      "name": "CharonChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2241
+    },
+    "CharonChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rrrrnnnngggghhh..."
+        }
+      ],
+      "name": "CharonChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2248
+    },
+    "CharonChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnnaaaauugghh..."
+        }
+      ],
+      "name": "CharonChat09",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2255
+    },
+    "CharonChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Ssseeeeaaahhhh..."
+        }
+      ],
+      "name": "CharonChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2262
+    },
+    "CharonChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Ssseeeeaaauuuggghhhh..."
+        }
+      ],
+      "name": "CharonChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonChat10"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2269
+    },
+    "CharonChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnn, hehhhh..."
+        }
+      ],
+      "name": "CharonChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2282
+    },
+    "CharonChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmmrrrrnnngghh..."
+        }
+      ],
+      "name": "CharonChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2289
+    },
+    "CharonChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rrrnnnggghhh..."
+        }
+      ],
+      "name": "CharonChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2296
+    },
+    "CharonChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Muurrnnggghhh..."
+        }
+      ],
+      "name": "CharonChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2303
+    },
+    "CharonChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hheeeehhhhh..."
+        }
+      ],
+      "name": "CharonChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2310
+    },
+    "CharonChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Gggrrrnnngggghhhh..."
+        }
+      ],
+      "name": "CharonChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2317
+    },
+    "CharonChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrruuunnngghhh..."
+        }
+      ],
+      "name": "CharonChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2324
+    },
+    "CharonChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhrrrrmmmmm...?"
+        }
+      ],
+      "name": "CharonChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2331
+    },
+    "CharonChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Aaaauuuuggghhh..."
+        }
+      ],
+      "name": "CharonChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2338
+    },
+    "CharonFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrraauuggh, naaaauugggghh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm in your debt, Lord Charon. These provisions surely shall make all the difference in my task. What Gold I find is yours."
+        }
+      ],
+      "name": "CharonFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 323
+    },
+    "CharonGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Would you indulge me for a moment, Boatman? If we're to restore the old order around here, I was thinking why not start like this?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hhhhrrrrnnnngggghhh...?"
+        }
+      ],
+      "name": "CharonGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2350
+    },
+    "CharonGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Oooohhhhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Indeed, Lord Charon. May we soon restore the old customs between our families, and bring about a new aeon of prosperity."
+        }
+      ],
+      "name": "CharonGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2375
+    },
+    "CharonGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Auuggggghhhhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you require only Gold, my lord. Nevertheless, I wanted to give you something more! I've always found your commitment to the realm and to your discipline inspiring."
+        }
+      ],
+      "name": "CharonGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2398
+    },
+    "CharonGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrrghhhhh, hauuuugghhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perseverance is what got us to this point, my lord. May your resolve never waver! Whenever mine does, I take comfort knowing I have such dependable allies."
+        }
+      ],
+      "name": "CharonGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2422
+    },
+    "CharonGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nraaauuggh, guhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You really should try it sometime, my lord! Nectar is one of the things just about everybody on Olympus can agree on, and that must mean something, right?"
+        }
+      ],
+      "name": "CharonGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2446
+    },
+    "CharonGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnnnmm, nnrrrr..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you never would permit yourself indulgences, my lord, but... you ought to receive more than mere coin in recompense for all your service! Perhaps the Nectar's but another token gesture."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Ehhh..."
+        }
+      ],
+      "name": "CharonGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2470
+    },
+    "CharonGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've heard in times past, you'd discreetly transport shipments of Ambrosia all the way into the depths of Tartarus. And knowing you, my lord, you would never sample your own wares, so here. This is a gift, not a delivery."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hoohhhhh, hrrrnnnn..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "May there soon come such a time..."
+        }
+      ],
+      "name": "CharonGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift06",
+          "CharonAboutCharonPoints01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2501
+    },
+    "CharonGift08": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Here, my lord. If you plan to keep the other Ambrosia bottle in reserve, perhaps you could share this one with a professional associate. No need to save it for later."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Auuugggghh, mmmm...? Kkrrnnn..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...I've merely strived to better understand you, knowing it was never about words or gifts. You are the Boatman of the Underworld... a mighty son of Nyx... and the most dependable sort of comrade I could ever want."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnnhhh..."
+        }
+      ],
+      "name": "CharonGift08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift06",
+          "CharonAboutCharonPoints01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2536
+    },
+    "CharonGrantsHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Shaaaauugghh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Charon, are you giving this to me? The pattern on this parchmentwork... the Mark of Night, and a triple-headed lion, and the words... I see you hoard the shattered corpses of your foes. This is a waking-phrase, for Zorephet?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Rrrraauugghh, hrrrrn..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You are entrusting me with this. Well if you think I'm ready then I'll say it at the Silver Pool next opportunity I get. Thank you, my lord."
+        }
+      ],
+      "name": "CharonGrantsHiddenAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "StaffHiddenAspectRevealInProgress",
+          "DaggerHiddenAspectRevealInProgress",
+          "TorchHiddenAspectRevealInProgress",
+          "LobHiddenAspectRevealInProgress",
+          "SuitHiddenAspectRevealInProgress"
+        ],
+        "Path:GameState.WeaponsUnlocked": [
+          {
+            "HasAll": [
+              "WeaponStaffSwing",
+              "WeaponDagger",
+              "WeaponTorch",
+              "WeaponAxe",
+              "WeaponLob",
+              "WeaponSuit"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAll": [
+              "AxeArmCastAspect",
+              "AxePerfectCriticalAspect"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAny": [
+              "AxeArmCastAspect5",
+              "AxePerfectCriticalAspect5"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 1881
+    },
+    "CharonGrantsMailbox01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrnnnaaauuggghh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "A special offer of some sort, my lord? I've returned as much Gold as I could, but know full well it isn't easy for you to procure the goods you provide."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Why thank you...!"
+        }
+      ],
+      "name": "CharonGrantsMailbox01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "Path:GameState.MoneySpentTowardCharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MoneySpentTowardCharonPoints"
+            ],
+            "Value": 1000
+          }
+        ],
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 457
+    },
+    "CharonPostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Kkhhhrrnn, aaauugggghhhh...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...You mean your sisters the Fates... you knew they'd be all right? I never imagined I could even meet them myself. One of them, she... well, she reminded me a little bit of you."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Guuuhhhhh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well it was only a first impression..."
+        }
+      ],
+      "name": "CharonPostEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2131
+    },
+    "CharonPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Nnnnn... haaaaahh, hrhrrnngghhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We are victorious indeed, my lord, and thanks in no small part to all you've done. I trust that Nyx has already visited with you. But, what of all the Gold that remains?"
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Grrrnn, hraaauggghh..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then you shall have it!"
+        }
+      ],
+      "name": "CharonPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2046
+    },
+    "CharonPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Why am I unsurprised you're still here offering your wares, even with everything that's happened recently, my lord? You won't stop until the Underworld's entirely restored."
+        },
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Hrrraaaugggghhh!!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not even then, got it!"
+        }
+      ],
+      "name": "CharonPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 33,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.BiomesReached.N": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "BiomesReached",
+                  "N"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.BiomesReached.F": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "BiomesReached",
+                  "F"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.BiomesReached.F": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "BiomesReached",
+                  "F"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.BiomesReached.N": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "BiomesReached",
+                  "N"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "PathFalse:CurrentRun.Hero.IsDead": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 2080
+    },
+    "CharonWithHecate01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Charon_01",
+          "text": "Mmnnnggghhhhhh..."
+        },
+        {
+          "speaker": "NPC_Hecate_01",
+          "text": "These shipments shall be very valuable to us. We remain as ever in your debt, Charon. May swift Hermes hasten your voyages across the realms, wherever he may be. And until we meet again, shadows conceal you."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Thank you for the supplies, my lord...!"
+        }
+      ],
+      "name": "CharonWithHecate01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ClearBeforeTrueEnding",
+          "HecateMissing"
+        ],
+        "Path:GameState.MoneySpentTowardCharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MoneySpentTowardCharonPoints"
+            ],
+            "Value": 1000
+          }
+        ],
+        "PathTrue:GameState.UseRecord.CharonPointsDrop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "CharonPointsDrop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Charon_01",
+      "partner": "NPC_Hecate_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 248
+    },
+    "MorosWithCharon01": {
+      "dialogueLines": [],
+      "name": "MorosWithCharon01",
+      "narrativePriorityClusterMembers": [
+        "MorosWithCharon02"
+      ],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "partner": "NPC_Moros_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 286
+    },
+    "MorosWithCharon02": {
+      "dialogueLines": [],
+      "name": "MorosWithCharon02",
+      "narrativePriorityClusterMembers": [
+        "MorosWithCharon01"
+      ],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "partner": "NPC_Moros_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 295
+    },
+    "NemesisWithCharon01": {
+      "dialogueLines": [],
+      "name": "NemesisWithCharon01",
+      "narrativePriorityClusterMembers": [
+        "NemesisWithCharon02"
+      ],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "partner": "NPC_Nemesis_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 304
+    },
+    "NemesisWithCharon02": {
+      "dialogueLines": [],
+      "name": "NemesisWithCharon02",
+      "narrativePriorityClusterMembers": [
+        "NemesisWithCharon01"
+      ],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 33,
+      "otherRequirements": {},
+      "owner": "NPC_Charon_01",
+      "partner": "NPC_Nemesis_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Charon.lua",
+      "sourceLine": 313
+    }
+  }
+}

@@ -1,0 +1,538 @@
+{
+  "alternates": {},
+  "dependents": {
+    "EurydiceFirstMeeting01_A": [
+      {
+        "name": "Inspect_B_Story_01_01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "EurydiceFirstMeeting01_B": [
+      {
+        "name": "Inspect_B_Story_01_01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "EurydiceFirstMeeting01_C": [
+      {
+        "name": "Inspect_B_Story_01_01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "Inspect_B_Intro_01_01": [
+      {
+        "name": "Inspect_B_Intro_02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "ArtemisUpgrade": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "AthenaUpgrade": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "ChaosUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "CharProtag": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "Charon": {
+      "description": "Stygian Boatman",
+      "name": "Charon (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "DionysusUpgrade": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "Hades": {
+      "description": "God of the Dead",
+      "name": "Hades (Boss)"
+    },
+    "Harpy": {
+      "description": "First of the Furies",
+      "name": "Megaera (Boss)"
+    },
+    "Harpy2": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "Harpy3": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HermesUpgradeRare": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "Minotaur": {
+      "description": "Bull of Minos",
+      "name": "Asterius"
+    },
+    "MysteryUpgrade": {
+      "name": "? ? ? (Chaos)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Achilles_Story_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Bouldy"
+    },
+    "NPC_Cerberus_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Field)"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Eurydice_01": {
+      "description": "Carefree Muse",
+      "name": "Eurydice"
+    },
+    "NPC_FurySister_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_FurySister_02": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "NPC_FurySister_03": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "NPC_FurySister_Unnamed_02": {
+      "name": "? ? ? (Alecto)"
+    },
+    "NPC_FurySister_Unnamed_03": {
+      "name": "? ? ? (Tisiphone)"
+    },
+    "NPC_Hades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx (Field)"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Orpheus_Story_01": {
+      "description": "Court Musician",
+      "name": "Orpheus (with Eurydice)"
+    },
+    "NPC_Patroclus_01": {
+      "description": "Fallen Warrior",
+      "name": "Patroclus"
+    },
+    "NPC_Patroclus_Unnamed_01": {
+      "name": "? ? ? (Patroclus)"
+    },
+    "NPC_Persephone_01": {
+      "description": "Goddess of Verdure",
+      "name": "Persephone"
+    },
+    "NPC_Persephone_Home_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone (House)"
+    },
+    "NPC_Persephone_Unnamed_01": {
+      "name": "? ? ? (Persephone)"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_SisyphusAndBouldy_01": {
+      "name": "Sisyphus & Bouldy"
+    },
+    "NPC_Sisyphus_01": {
+      "description": "Tortured Soul",
+      "name": "Sisyphus"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Thanatos_Field_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos (Field)"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "PlayerUnit": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PlayerUnit_Intro": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Seas",
+      "name": "Poseidon"
+    },
+    "SkellyBackstory": {
+      "description": "Schelemeus, Former Captain",
+      "name": "Skelly"
+    },
+    "Storyteller": {
+      "name": "Narrator"
+    },
+    "Theseus": {
+      "description": "Hero of Athens",
+      "name": "Theseus"
+    },
+    "TrainingMelee": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "TrialUpgrade": {
+      "description": "Origin of Creation",
+      "name": "Chaos"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 4,
+    "totalSpeakers": 1,
+    "totalTextlines": 7,
+    "unresolvedRefs": [
+      "EurydiceFirstMeeting01_A",
+      "EurydiceFirstMeeting01_B",
+      "EurydiceFirstMeeting01_C"
+    ]
+  },
+  "textlines": {
+    "B_MiniBoss02_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The act of sorcery often ends in an untimely death and an eternity in Tartarus for careless souls, though some are able to perfect the trade, and take up permanent residence elsewhere..."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_3906",
+          "speaker": "CharProtag",
+          "text": "I'm sure the Witches Circle will reconvene soon enough."
+        }
+      ],
+      "name": "B_MiniBoss02_FirstInspect",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 1
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 914
+    },
+    "Inspect_B_Intro_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The once-verdant plains of Asphodel are now engulfed in scintillating flame, having been flooded by the river Phlegethon, whose hideously superheated contents could bring death swiftly even to those resistant to most heat."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0936",
+          "speaker": "CharProtag",
+          "text": "I'm only flame-resistant not flame-proof."
+        }
+      ],
+      "name": "Inspect_B_Intro_01_01",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 1142
+    },
+    "Inspect_B_Intro_02": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Within the suffocating heat of Asphodel reside the vast majority of those who lived upon the earth and died. There they persist until the end of time."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0534",
+          "speaker": "CharProtag",
+          "text": "Or until I crush their bones to dust."
+        }
+      ],
+      "name": "Inspect_B_Intro_02",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_B_Intro_01_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 1159
+    },
+    "Inspect_B_PreBoss_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Having traversed the flaming river Phlegethon to gain this vantage point, relentless Zagreus must now confront a foe of unimaginable savagery, who lies ahead, awaiting patiently its time to strike."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0932",
+          "speaker": "CharProtag",
+          "text": "Way to spoil the surprise, old man."
+        }
+      ],
+      "name": "Inspect_B_PreBoss_01_01",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 387
+    },
+    "Inspect_B_Reprieve_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Hidden well within the limitless inferno of the river Phlegethon, somehow, a trickle of life-giving water yet remains; as though provided by the Fates themselves unto the very lucky Prince."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0934",
+          "speaker": "CharProtag",
+          "text": "You feeling lucky, too, old man? Then show yourself! No...?"
+        }
+      ],
+      "name": "Inspect_B_Reprieve_01_01",
+      "otherRequirements": {
+        "RequiredCosmetics": [
+          "AsphodelReprieve"
+        ],
+        "RequiredMinBiomeDepth": 3,
+        "RequiredMinCompletedRuns": 0
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 1024
+    },
+    "Inspect_B_Shop_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The searing flame and ashes of the river Phlegethon mean nothing to the ferryman, Charon, who travels all the waters of the Underworld, bearing the dead, the damned, and all their fineries."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0933",
+          "speaker": "CharProtag",
+          "text": "I do enjoy dead people's fineries."
+        }
+      ],
+      "name": "Inspect_B_Shop_01_01",
+      "otherRequirements": {
+        "RequiredMaxBiomeDepth": 5,
+        "RequiredMinExits": 2
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 966
+    },
+    "Inspect_B_Story_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "From within a humble residence in Asphodel reverberates the golden-sounding voice of lorn Eurydice, who once attempted to escape the Underworld, and failed, utterly, much like Prince Zagreus."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusHome_1316",
+          "speaker": "CharProtag",
+          "text": "You watch yourself, old man."
+        }
+      ],
+      "name": "Inspect_B_Story_01_01",
+      "nameCollision": true,
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "EurydiceFirstMeeting01_A",
+          "EurydiceFirstMeeting01_B",
+          "EurydiceFirstMeeting01_C"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataAsphodel.lua",
+      "sourceLine": 1221,
+      "variants": [
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "From within a humble residence in Asphodel reverberates the golden-sounding voice of lorn Eurydice, who once attempted to escape the Underworld, and failed, utterly, much like Prince Zagreus."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusHome_1316",
+              "speaker": "CharProtag",
+              "text": "You watch yourself, old man."
+            }
+          ],
+          "otherRequirements": {},
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {
+            "RequiredAnyTextLines": [
+              "EurydiceFirstMeeting01_A",
+              "EurydiceFirstMeeting01_B",
+              "EurydiceFirstMeeting01_C"
+            ]
+          },
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataAsphodel.lua",
+          "sourceLine": 1221
+        },
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "Well past the flaming river escalates the hidden stair toward the most well-guarded, splendorous environment within the Underworld: the heavenly Elysium, home eternal to the greatest souls which ever lived."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusField_1660",
+              "speaker": "CharProtag",
+              "text": "Surely they're friendly, right?"
+            }
+          ],
+          "otherRequirements": {},
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {},
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataAsphodel.lua",
+          "sourceLine": 611
+        }
+      ]
+    }
+  }
+}

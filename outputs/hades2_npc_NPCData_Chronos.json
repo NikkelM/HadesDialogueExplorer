@@ -1,0 +1,4386 @@
+{
+  "alternates": {
+    "ChronosAnomalyIntro01": [
+      "ChronosAnomalyIntro01_B"
+    ],
+    "ChronosAnomalyIntro01_B": [
+      "ChronosAnomalyIntro01"
+    ],
+    "ChronosReveal01": [
+      "ChronosReveal01B"
+    ],
+    "ChronosReveal01B": [
+      "ChronosReveal01"
+    ],
+    "NeoChronosAboutOlympus01": [
+      "NeoChronosAboutOlympus01_B"
+    ],
+    "NeoChronosAboutOlympus01_B": [
+      "NeoChronosAboutOlympus01"
+    ],
+    "NeoChronosAboutTartarus01": [
+      "NeoChronosAboutTartarus01_B"
+    ],
+    "NeoChronosAboutTartarus01_B": [
+      "NeoChronosAboutTartarus01"
+    ]
+  },
+  "dependents": {
+    "ChaosAboutChronosNightmare01": [
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChaosAboutChronosNightmare01_B": [
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosAnomalyIntro01": [
+      {
+        "name": "ChronosAnomalyIntro01_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosAnomalyIntro01_B": [
+      {
+        "name": "ChronosAnomalyIntro01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ChronosBossFirstMeeting": [
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredFalseTextLinesLastRun"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosBossFirstMeeting_B": [
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredFalseTextLinesLastRun"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosBossFirstMeeting_C": [
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosMeeting03",
+        "type": "RequiredFalseTextLinesLastRun"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosBossOutroPostTrueEnding01": [
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeeting03": [
+      {
+        "name": "ChronosMeeting04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosMeeting04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeeting04": [
+      {
+        "name": "ChronosMeeting05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosMeeting05",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeeting05": [
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeetingAboutDemeter01": [
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeetingAboutHera01": [
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeetingAboutHestia01": [
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeetingAboutPoseidon01": [
+      {
+        "name": "ChronosMeetingAboutZeus01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosMeetingAboutZeus01": [
+      {
+        "name": "ChronosMeetingAboutPoseidon01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHestia01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutDemeter01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutHera01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ChronosMeetingAboutOlympians01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosNightmare01": [
+      {
+        "name": "ChronosPostBattleMeeting04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ChronosPostBattleMeeting02": [
+      {
+        "name": "ChronosPostBattleMeeting04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosPostBattleMeeting03": [
+      {
+        "name": "ChronosPostBattleMeeting04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosPostSurfaceMeeting01": [
+      {
+        "name": "ChronosPostSurfaceMeeting02",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting02",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting03",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosPostSurfaceMeeting02": [
+      {
+        "name": "ChronosPostSurfaceMeeting03",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting03",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosPostSurfaceMeeting03": [
+      {
+        "name": "ChronosPostSurfaceMeeting02",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ChronosPostSurfaceMeeting04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ChronosReveal01": [
+      {
+        "name": "ChronosReveal01B",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ChronosRevealFollowUp",
+        "type": "RequiredAnyTextLinesThisRun"
+      }
+    ],
+    "ChronosReveal01B": [
+      {
+        "name": "ChronosReveal01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ChronosRevealFollowUp",
+        "type": "RequiredAnyTextLinesThisRun"
+      }
+    ],
+    "DoraBathHouse03": [
+      {
+        "name": "NeoChronosAboutGoldenAge01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "NeoChronosPostEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NeoChronosPostEpilogue02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MorosPostTrueEnding02": [
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisPostCombatAboutTartarus03": [
+      {
+        "name": "NeoChronosWithNemesis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisPostCombatPostTrueEnding01": [
+      {
+        "name": "NeoChronosWithNemesis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisPostTrueEnding02": [
+      {
+        "name": "NeoChronosWithNemesis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NemesisPostTrueEndingTimeStopped01": [
+      {
+        "name": "NeoChronosAboutNemesis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NeoChronosAboutOlympus01": [
+      {
+        "name": "NeoChronosAboutErebus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNewJob01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFailure01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTyphon01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutPrometheus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutGoldenAge01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutKeepsake01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutAnomaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBoons01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBeard01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTartarus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTartarus01_B",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "NeoChronosAboutOlympus01_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NeoChronosAboutOlympus01_B": [
+      {
+        "name": "NeoChronosAboutErebus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNewJob01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFailure01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTyphon01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutPrometheus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutGoldenAge01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutKeepsake01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutAnomaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBoons01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBeard01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutOlympus01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NeoChronosAboutTartarus01": [
+      {
+        "name": "NeoChronosAboutErebus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNewJob01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFailure01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTyphon01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutPrometheus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutGoldenAge01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutKeepsake01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutAnomaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBoons01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBeard01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTartarus01_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NeoChronosAboutOlympus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "NeoChronosAboutOlympus01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NeoChronosAboutTartarus01_B": [
+      {
+        "name": "NeoChronosAboutErebus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNewJob01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFailure01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutFates01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTyphon01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutPrometheus01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutGoldenAge01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutChronos01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutKeepsake01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutAnomaly01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBoons01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutNemesis01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutBeard01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "NeoChronosAboutTartarus01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "NeoChronosGift01": [
+      {
+        "name": "NeoChronosAboutPast01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NeoChronosGift04": [
+      {
+        "name": "NeoChronosAboutBeard01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NyxNightmare01": [
+      {
+        "name": "ChronosNightmare01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutPostTyphon02": [
+      {
+        "name": "NeoChronosAboutPrometheus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPostTrueEnding03": [
+      {
+        "name": "NeoChronosAboutNewJob01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 150,
+    "totalSpeakers": 1,
+    "totalTextlines": 61,
+    "unresolvedRefs": [
+      "ChaosAboutChronosNightmare01",
+      "ChaosAboutChronosNightmare01_B",
+      "ChronosBossFirstMeeting",
+      "ChronosBossFirstMeeting_B",
+      "ChronosBossFirstMeeting_C",
+      "ChronosBossOutroPostTrueEnding01",
+      "DoraBathHouse03",
+      "FatesEpilogue01",
+      "MorosPostTrueEnding02",
+      "NemesisPostCombatAboutTartarus03",
+      "NemesisPostCombatPostTrueEnding01",
+      "NemesisPostTrueEnding02",
+      "NemesisPostTrueEndingTimeStopped01",
+      "NyxNightmare01",
+      "PrometheusAboutPostTyphon02",
+      "ZeusPostTrueEnding03"
+    ]
+  },
+  "textlines": {
+    "ChronosAnomalyIntro01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "I know who you are. I know where you go. You shall not get there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This magick... Chronos! I'll carve you limb from limb for this. For everything!"
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "How frightening. Unfortunately, we shall never know if yours was a mere-empty threat, for you are going on a little time out. At least until some other matters are resolved..."
+        }
+      ],
+      "name": "ChronosAnomalyIntro01",
+      "otherRequirements": {
+        "PathFalse:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ChronosAnomalyIntro01_B"
+        ]
+      },
+      "section": "DeathPresentationTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 89
+    },
+    "ChronosAnomalyIntro01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I am afraid I must ask you to cease this at once..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This magick... Chronos! I'll carve you limb from limb for this. For everything!"
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "How frightening. Unfortunately, we shall never know if yours was a mere-empty threat, for you are going on a little time out. At least until some other matters are resolved..."
+        }
+      ],
+      "name": "ChronosAnomalyIntro01_B",
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ChronosAnomalyIntro01"
+        ]
+      },
+      "section": "DeathPresentationTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 125
+    },
+    "ChronosFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "Pray, who might you be, my girl? And what compelled you to wander in and out of Erebus?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm not your girl, old man. My name and business are not your concern."
+        },
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "So it seems. You appear to be quite pressed for time. Forgive this old man his transgressions..."
+        }
+      ],
+      "name": "ChronosFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "F_PostBoss01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 162
+    },
+    "ChronosMeeting02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "You have returned. Or lost your way, perhaps, in those interminable passageways beyond."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know where I'm going. Whom do I address? And what are you doing here yourself, in such a place?"
+        },
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "My name and business are not your concern, is that not what you said? Ahh, the impertinence of the youth of this age..."
+        }
+      ],
+      "name": "ChronosMeeting02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathFalse:GameState.EncountersOccurredCache.GeneratedAnomalyB": [
+          {
+            "PathFalse": [
+              "GameState",
+              "EncountersOccurredCache",
+              "GeneratedAnomalyB"
+            ]
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 202
+    },
+    "ChronosMeeting03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You, my girl, are meddling in matters you do not understand. Your father made certain choices; he was bound by them, but you are not. You need not follow in his ruinous path."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Ruinous?! You brought ruin to the Underworld and the surface! I'll never accept what you've done. Now, enough talk!"
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "How very spirited! You truly think you can stop Time. Well, then... I would like to see you try."
+        }
+      ],
+      "name": "ChronosMeeting03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ChronosAnomalyIntro01",
+          "ChronosBossFirstMeeting",
+          "ChronosBossFirstMeeting_B",
+          "ChronosBossFirstMeeting_C"
+        ],
+        "RequiredFalseTextLinesLastRun": [
+          "ChronosBossFirstMeeting",
+          "ChronosBossFirstMeeting_B",
+          "ChronosBossFirstMeeting_C"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 309
+    },
+    "ChronosMeeting04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Which rock did you crawl out from under, hm? My forces, they are terribly confused! They have no idea where you live! So I thought I would attempt asking you nicely here."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I live in your nightmares, Titan. I thrive on them! I'll see you dead, and then destroyed. However long it takes."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "However long it takes? You speak of inevitability, little one. A subject on which I happen to be the expert. As to whomever sent you after me... I shall find them."
+        }
+      ],
+      "name": "ChronosMeeting04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 7
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting03"
+        ],
+        "RequiredAnyTextLines": [
+          "ChronosMeeting03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 361
+    },
+    "ChronosMeeting05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You yet persist, despite my generous attempts to dissuade you. Then, very well! You carry on as the distraction which you are, whilst I turn my attention to matters of greater import..."
+        }
+      ],
+      "name": "ChronosMeeting05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 9
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting04"
+        ],
+        "RequiredAnyTextLines": [
+          "ChronosMeeting04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 404
+    },
+    "ChronosMeetingAboutDemeter01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "The frosty goddess Demeter is urging you along this eve? Alas, there are no seasons in the Underworld."
+        }
+      ],
+      "name": "ChronosMeetingAboutDemeter01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "PathTrue:CurrentRun.UseRecord.DemeterUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "DemeterUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting05",
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutHera01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 911
+    },
+    "ChronosMeetingAboutHera01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "The self-made Queen of the Gods, bestowing you her Boon? Is there not some mortal wedding she ought to officiate?"
+        }
+      ],
+      "name": "ChronosMeetingAboutHera01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "PathTrue:CurrentRun.UseRecord.HeraUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HeraUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting05",
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutDemeter01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 949
+    },
+    "ChronosMeetingAboutHestia01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "The goddess of the hearth has blessed you now? There is no flame which Time cannot extinguish soon enough."
+        }
+      ],
+      "name": "ChronosMeetingAboutHestia01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "PathTrue:CurrentRun.UseRecord.HestiaUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HestiaUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting05",
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutDemeter01",
+          "ChronosMeetingAboutHera01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 873
+    },
+    "ChronosMeetingAboutOlympians01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Try all you like, my girl; but the outcome of this night shall be no different from the last."
+        }
+      ],
+      "name": "ChronosMeetingAboutOlympians01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "Path:PrevRun": [
+          {
+            "HasNone": [
+              "Cleared",
+              "ActiveBounty"
+            ],
+            "Path": [
+              "PrevRun"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.BiomesReached.F": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "BiomesReached",
+              "F"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutDemeter01",
+          "ChronosMeetingAboutHera01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutDemeter01",
+          "ChronosMeetingAboutHera01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 987
+    },
+    "ChronosMeetingAboutPoseidon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Ah, so Poseidon gave you his blessing, has he now? What are you going to do... pour water on me?"
+        }
+      ],
+      "name": "ChronosMeetingAboutPoseidon01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "PathTrue:CurrentRun.UseRecord.PoseidonUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "PoseidonUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting05",
+          "ChronosMeetingAboutZeus01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutDemeter01",
+          "ChronosMeetingAboutHera01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 835
+    },
+    "ChronosMeetingAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Has crafty Prometheus proven too much for you, that you believe you shall fare better against me?"
+        }
+      ],
+      "name": "ChronosMeetingAboutPrometheus01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutPrometheus02"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Chronos_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Chronos_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 0
+          }
+        ],
+        "PathFalse:PrevRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathFalse:PrevRun.RoomsEntered.Q_Intro": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "RoomsEntered",
+              "Q_Intro"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.P_Boss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1037
+    },
+    "ChronosMeetingAboutPrometheus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "As you yet flail against me here, the shrewd Prometheus has many of your relatives entirely preoccupied..."
+        }
+      ],
+      "name": "ChronosMeetingAboutPrometheus02",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutPrometheus01"
+      ],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:BiomesReached.F": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "BiomesReached",
+              "F"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 4
+          }
+        ],
+        "Path:SpawnRecord.NPC_Chronos_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Chronos_01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.P_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "P_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1070
+    },
+    "ChronosMeetingAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "There is a thickness to the air tonight... such darkness is presumably your doing, but shall do you little good."
+        }
+      ],
+      "name": "ChronosMeetingAboutShrine01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 12
+          }
+        ],
+        "Path:SpawnRecord.NPC_Chronos_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Chronos_01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1202
+    },
+    "ChronosMeetingAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "So you have seen what shall become of Mount Olympus, and abandoned that foolhardy path... soon, this one, too."
+        }
+      ],
+      "name": "ChronosMeetingAboutTyphon01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutTyphonW01",
+        "ChronosMeetingAboutTyphon02"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:PrevRun": [
+          {
+            "HasNone": [
+              "Cleared",
+              "ActiveBounty"
+            ],
+            "Path": [
+              "PrevRun"
+            ]
+          }
+        ],
+        "Path:SpawnRecord.NPC_Chronos_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Chronos_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Opening01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Opening01"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Intro": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1104
+    },
+    "ChronosMeetingAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I would be more concerned with that which now transpires on Olympus, were I you. I hear Typhon is rather upset..."
+        }
+      ],
+      "name": "ChronosMeetingAboutTyphon02",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutTyphon01",
+        "ChronosMeetingAboutTyphonW01"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:BiomesReached.F": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "BiomesReached",
+              "F"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 4
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1173
+    },
+    "ChronosMeetingAboutTyphonW01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I know not how you bested the Father of All Monsters, but all it did was make him angrier."
+        }
+      ],
+      "name": "ChronosMeetingAboutTyphonW01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutTyphon01",
+        "ChronosMeetingAboutTyphon02"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "Path:SpawnRecord.NPC_Chronos_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Chronos_01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.Cleared": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1140
+    },
+    "ChronosMeetingAboutZeus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "My dear son Zeus is already abetting you this night? I fear not his famous thunderbolt, young fool that he is."
+        }
+      ],
+      "name": "ChronosMeetingAboutZeus01",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 4
+        },
+        "PathTrue:CurrentRun.UseRecord.ZeusUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "ZeusUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosMeeting05",
+          "ChronosMeetingAboutPoseidon01",
+          "ChronosMeetingAboutHestia01",
+          "ChronosMeetingAboutDemeter01",
+          "ChronosMeetingAboutHera01"
+        ],
+        "RequiredTextLines": [
+          "ChronosMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 797
+    },
+    "ChronosNightmare01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_Story_01",
+          "text": "Ahh, there you are, my son. Grown a full beard and a broad frame, I see. And now you have a family of your own! How full of life they are, despite the dour environs."
+        },
+        {
+          "speaker": "NPC_LordHades_01",
+          "text": "Greetings, Father. I... was not expecting your arrival. You... must forgive us that the House was unprepared for guests. To what do we owe the pleasure of your company?"
+        },
+        {
+          "speaker": "NPC_Chronos_Story_01",
+          "text": "Oh, you know, for one thing, I was in the area! You might recall the time you, Zeus, and the rest of you little brats cut me to ribbons? Sprinkled all my bits, all throughout Tartarus?"
+        },
+        {
+          "speaker": "NPC_LordHades_01",
+          "text": "Father... that was a war you started, and you know it! We took no joy in what we had to do! But how can this be? I thought that you were gone...!"
+        },
+        {
+          "speaker": "NPC_Chronos_Story_01",
+          "text": "Do not sound so disappointed! It is I who should be disappointed here, not you. You thought I was gone? I was! But it turns out spite is a powerful motivator. Blood sacrifices also helped."
+        },
+        {
+          "speaker": "NPC_LordHades_01",
+          "text": "What do you intend to do? And... what have you done to the others? To my family?!"
+        },
+        {
+          "speaker": "NPC_Chronos_Story_01",
+          "text": "Your cries fall on deaf ears. Fear not, my son. I have not eaten them or anything. I have merely... set them aside. They stand imprisoned in a moment that shall never pass. My qualm is not with them."
+        },
+        {
+          "speaker": "NPC_LordHades_01",
+          "text": "...Olympus shall have your head. You can take mine, for all I care, blast you! But don't you dare harm anybody in my House."
+        },
+        {
+          "speaker": "NPC_Chronos_Story_01",
+          "text": "Tsk! You have grown so accustomed to issuing commands that you forget yourself. Though, I do have such a command for you: Tell me, exactly, where the Fates reside."
+        },
+        {
+          "speaker": "NPC_LordHades_01",
+          "text": "The Fates? How should I know? Not even Nyx herself knows where her daughters are! Why are you... asking me...?"
+        }
+      ],
+      "name": "ChronosNightmare01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.IsDead": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "IsDead"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_Story_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NyxNightmare01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1539
+    },
+    "ChronosPostBattleMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I thought that I might find you here, my girl. Such fire in your eyes! How obstinate the members of our family can be. Have you learned nothing from our previous exchange?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, I learned plenty, and I'm eager to learn more. So why don't you get out of my way, since there's nothing you can do within these woods but try to slow me down?"
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Past the point of reason, and so very self-assured. Then, very well! Come find me if you must, and learn some more. You know where I reside. I do not hide from gods!"
+        }
+      ],
+      "name": "ChronosPostBattleMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.ClearedUnderworldRunsCache": [
+          {
+            "Comparison": "<",
+            "Path": [
+              "GameState",
+              "ClearedUnderworldRunsCache"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 637
+    },
+    "ChronosPostBattleMeeting02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Little one, do not presume to think your movements are invisible to me! I see you plainly where you stand. A trespass for which you shall suffer, although, regrettably, not by my hand right now. Not yet."
+        }
+      ],
+      "name": "ChronosPostBattleMeeting02",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting03",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.I_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.N_Opening01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "N_Opening01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 675
+    },
+    "ChronosPostBattleMeeting03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I am Time itself. What are you? A thrall of those calling themselves gods, mindlessly serving at their whim. My children are crafty... to them, you are nothing but a common tool! And not an especially sharp one, it appears to me."
+        }
+      ],
+      "name": "ChronosPostBattleMeeting03",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting04",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.I_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 702
+    },
+    "ChronosPostBattleMeeting04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "If there is one thing on which the accursed Fates and I agree, it is that all eventually shall decay. All sprang from nothingness, and back into that Chaos we shall all return. You merely hurry it along."
+        }
+      ],
+      "name": "ChronosPostBattleMeeting04",
+      "narrativePriorityClusterMembers": [
+        "ChronosMeetingAboutZeus01",
+        "ChronosMeetingAboutPoseidon01",
+        "ChronosMeetingAboutHestia01",
+        "ChronosMeetingAboutDemeter01",
+        "ChronosMeetingAboutHera01",
+        "ChronosPostBattleMeeting02",
+        "ChronosPostBattleMeeting03",
+        "ChronosMeetingAboutOlympians01"
+      ],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        },
+        "PathTrue:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosPostBattleMeeting02",
+          "ChronosPostBattleMeeting03"
+        ],
+        "RequiredTextLines": [
+          "ChronosNightmare01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 726
+    },
+    "ChronosPostSurfaceMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "I was beginning to think I had successfully dissuaded you, when it came to my attention you were trespassing some other place instead. You dared venture above?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've seen your work up there firsthand. To have unsealed the very gates of hell! And brought disaster to mortals who've nothing to do with your petty vendetta."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You speak of the bedraggled city of Ephyra, which once stood in sycophantic tribute to your upstart father. Perhaps what mortals yet remain there shall think twice next time before they put their faith in gods."
+        }
+      ],
+      "name": "ChronosPostSurfaceMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 11
+          }
+        ],
+        "PathFalse:PrevRun.RoomsEntered.P_Intro": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "RoomsEntered",
+              "P_Intro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomCountCache.N_Opening01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomCountCache",
+              "N_Opening01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ChronosAnomalyIntro01",
+          "ChronosBossFirstMeeting",
+          "ChronosBossFirstMeeting_B",
+          "ChronosBossFirstMeeting_C"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 441
+    },
+    "ChronosPostSurfaceMeeting02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You cannot help the gods above, you know. My legions are vast, and death means little to them anymore. Not that your efforts here shall be of much consequence, either."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your surface legions fight and die for you, yet you hide behind them here. If you're so certain of your victory, you'd be leading them."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Leadership, my girl, is not about having to do everything oneself. It is about ensuring others share your same ideals and methodology. Wherever you may go, you shall encounter many who embrace my point of view, I think."
+        }
+      ],
+      "name": "ChronosPostSurfaceMeeting02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomCountCache.N_Opening01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomCountCache",
+              "N_Opening01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosPostSurfaceMeeting01",
+          "ChronosPostSurfaceMeeting03"
+        ],
+        "RequiredAnyTextLines": [
+          "ChronosPostSurfaceMeeting01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 488
+    },
+    "ChronosPostSurfaceMeeting03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "No victories upon the surface as of yet? It appears you have two hopeless goals, rather than one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've only one, and hope has nothing to do with it. I may not be able to stop you yet, but neither can you stop me. You've tried."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You have been more resistant than some members of your family, I admit. Well then, see where your scattered ventures to the surface, or these depths, shall ultimately lead!"
+        }
+      ],
+      "name": "ChronosPostSurfaceMeeting03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.ClearedSurfaceRunsCache": [
+          {
+            "Comparison": "<",
+            "Path": [
+              "GameState",
+              "ClearedSurfaceRunsCache"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathFalse:PrevRun.Cleared": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.RoomCountCache.N_Opening01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomCountCache",
+              "N_Opening01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosPostSurfaceMeeting01",
+          "ChronosPostSurfaceMeeting02"
+        ],
+        "RequiredAnyTextLines": [
+          "ChronosPostSurfaceMeeting02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 532
+    },
+    "ChronosPostSurfaceMeeting04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "At last you have returned to more-familiar environs, girl. Neither the gods nor the Fates want you upon the surface of this world! Yet you insist on fighting there, for them."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I suppose I'll be more welcome in my father's home later this eve? As you can see I'm willing to fight there as well."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Ah, but you have such a long way to go! Confined to making the journey by foot, like a pathetic mortal. Do be sure to conserve some of your strength for the final stretch."
+        }
+      ],
+      "name": "ChronosPostSurfaceMeeting04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:BiomesReached.N": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "BiomesReached",
+              "N"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 3
+          }
+        ],
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosPostSurfaceMeeting02",
+          "ChronosPostSurfaceMeeting03"
+        ],
+        "RequiredAnyTextLines": [
+          "ChronosPostSurfaceMeeting03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 584
+    },
+    "ChronosPostWinStreakMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Why, here comes our shadowy assassin on her nightly escapade to try and do me harm! Although perhaps the outcome shall not be so fortunate, this time."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We'll soon find out, won't we? I promise not to keep you waiting long. I'm well on my way already, as you can see."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Oh, that I can. Then, I had best return and make ready! We have to tidy up for your arrival, after all. Until later tonight."
+        }
+      ],
+      "name": "ChronosPostWinStreakMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Chronos": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Chronos"
+            ],
+            "Value": 4
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 762
+    },
+    "ChronosReveal01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "You seem to know your way around. I am master of this realm, yet even I would never venture into yonder woods. You even found your way back from your detour in Asphodel..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Damn you, Chronos...!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "The Fates cannot help you now..."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Time is running out..."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Embarrassing."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Then let us wait..."
+        }
+      ],
+      "name": "ChronosReveal01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 16,
+      "otherRequirements": {
+        "Path:GameState.RoomCountCache.F_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache",
+              "F_PostBoss01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ],
+        "PathTrue:GameState.EncountersOccurredCache.GeneratedAnomalyB": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EncountersOccurredCache",
+              "GeneratedAnomalyB"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ChronosReveal01B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 243
+    },
+    "ChronosReveal01B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Such rage! Lashing out like a petulant child. You wish to fight with me, then so be it...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Damn you, Chronos...!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "The Fates cannot help you now..."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Time is running out..."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Embarrassing."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Then let us wait..."
+        }
+      ],
+      "name": "ChronosReveal01B",
+      "otherRequirements": {
+        "PathFalse:GameState.RoomsEntered.I_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "ChronosReveal01"
+        ]
+      },
+      "section": "OnHitTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1246
+    },
+    "ChronosRevealFollowUp": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Oh, stop. It is a pity that this granddaughter of mine is both a weakling and a fool, though an elusive one. I ought to thank the Fates that we have met at last."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Fates had nothing to do with this. You took my family."
+        },
+        {
+          "speaker": "NPC_Chronos_01",
+          "text": "Our family! Make not their same mistakes, and in time, we surely shall grow past this halted start to our relationship. I shall see you later."
+        }
+      ],
+      "name": "ChronosRevealFollowUp",
+      "otherRequirements": {},
+      "owner": "NPC_Chronos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLinesThisRun": [
+          "ChronosReveal01",
+          "ChronosReveal01B"
+        ]
+      },
+      "section": "OnHitTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1305
+    },
+    "HadesTrueEnding01": {
+      "dialogueLines": [],
+      "name": "HadesTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {},
+      "owner": "NPC_Chronos_02",
+      "partner": "NPC_Hades_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2945
+    },
+    "NeoChronosAboutAnomaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh down in Oceanus, it is possible you may encounter remnants of my spell, which casts you to a vision out of time. I've not yet found the means to stop that one..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You have no control over your own magick? I wondered whether that was you, or one of your less agreeable selves."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I cannot rightly deny all responsibility, but it is one of those, yes. And your susceptibility, why... perhaps it is some connection which we share. Resistances and sensitivities..."
+        }
+      ],
+      "name": "NeoChronosAboutAnomaly01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "GeneratedAnomalyB"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2335
+    },
+    "NeoChronosAboutBeard01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I have a question for you, Granddaughter, if you would share your point of view. Do you suppose I ought permit myself to grow a beard? To fit in better with my children, I suppose..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, erm... that's largely a matter of taste. Personally, I think growing a beard would mostly make you look older. And, my father and uncles aren't expecting you to be like them."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I do suppose that you are right. I always did prefer a cleaner countenance. Perhaps that is the very reason that my children opted otherwise..."
+        }
+      ],
+      "name": "NeoChronosAboutBeard01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "NeoChronosGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2455
+    },
+    "NeoChronosAboutBoons01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "You have my children's blessings even now. I am relieved they are still offering their aid, considering the crisis I created, and the harm I brought upon their home..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It seems we're all committed to setting this right, such as we can. The Olympians are no strangers to occasional fights anyhow, although perhaps not quite as bad as this last one."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Yes, well, if we are to exist in this small world together for eternity, we have incentive to alleviate the misery which we ourselves create... I thank you all for the support."
+        }
+      ],
+      "name": "NeoChronosAboutBoons01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:CurrentRun.UseRecord": [
+          {
+            "Comparison": ">=",
+            "CountOf": [
+              "ZeusUpgrade",
+              "PoseidonUpgrade"
+            ],
+            "Path": [
+              "CurrentRun",
+              "UseRecord"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2372
+    },
+    "NeoChronosAboutChronos01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "These other possibilities of you whom I face... it's strange to speak with them as though none of this occurred."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh very much so, yes. However, that is the reason they are possibilities and nothing more. Thus you may humor them before proceeding with the quite unpleasant bit."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And it doesn't trouble you to be involved? Personally eliminating something that looks just like you... that is you?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "But I am me. For are we not the sum of our experiences, Granddaughter? To reject one's stubborn old thoughts and ways... it can be quite invigorating! So let us carry on."
+        }
+      ],
+      "name": "NeoChronosAboutChronos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ChronosBossOutroPostTrueEnding01"
+        ],
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "ChronosBossOutroPostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2250
+    },
+    "NeoChronosAboutErebus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Would you permit that we occasionally meet thus, Granddaughter? I realize our prior conversations here in Erebus were fraught... but perhaps we may yet start anew, here in this life."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'll have to learn not to attack you here on sight, but let's give it a shot. What is it about this place that's so special?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well I know how to find it, for one! And you tend to pass through it, for two! At any rate, you now have seen the real possibilities that linger on Olympus and below. Let us eliminate the ones that would have led to ruin."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I do like preventing ruin. You'll be closely watched by Olympus and the Underworld every step of the way. Don't squander the chance you've been given."
+        }
+      ],
+      "name": "NeoChronosAboutErebus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1899
+    },
+    "NeoChronosAboutFailure01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "One thing I've wondered, Grandfather... for all these possibilities we face... I understand what happens if I prevail, more or less. But if I fail there, what then?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Why, the possibility remains... nothing more! Do not concern yourself with that too much. We know there are a lot of these to go around! You may not prevail in them all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Will I have other chances to correct my mistakes? Return to the same possibility and clear it up?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I do not know! Perhaps not! Perhaps even your failures, as you call them, shall have the desired result. There is much I do not fully understand... embarrassing as that may be."
+        }
+      ],
+      "name": "NeoChronosAboutFailure01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:PrevRun.RoomsEntered": [
+          {
+            "HasAny": [
+              "I_Boss01",
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomsEntered"
+            ]
+          }
+        ],
+        "PathFalse:PrevRun.Cleared": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1991
+    },
+    "NeoChronosAboutFates01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Grandfather, what of the Three Fates? You truly sent them into exile without knowing where they went?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well, yes. Another terrible mistake I dearly wish to rectify. I am attempting to locate them in the depths of possibility, except... they could be almost anywhere in there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "There must be something we can do. Are they in any danger? And don't you fear reprisal if we ever find them?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I must admit I do fear somewhat more for me than them. But my attempts to resist the workings of the Fates have never been successful in the past. Should they return, I shall accept whatsoever they may have in store..."
+        }
+      ],
+      "name": "NeoChronosAboutFates01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ],
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B",
+          "ChaosAboutChronosNightmare01",
+          "ChaosAboutChronosNightmare01_B"
+        ],
+        "RequiredTextLines": [
+          "MorosPostTrueEnding02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2038
+    },
+    "NeoChronosAboutGoldenAge01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "For what it's worth, Grandfather... I think the bitter war you waged against Olympus may have been eye-opening for some of our relatives, at least. They may be gods... but they know they're not perfect."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well... perfection, to my knowledge, cannot be achieved! Merely striven for. My children could be obstinate about their weaknesses, but most likely they inherited that trait from me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Even still... with the war finally ended, there's much to be done on the surface as well as here. I'm realizing that our renovation effort in the Underworld to some extent is worldwide."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "When you get to be my age, you may yet wistfully recall the way the world used to be. It is a curse of growing old, perhaps! May our family yet guide this world into more-prosperous times."
+        }
+      ],
+      "name": "NeoChronosAboutGoldenAge01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:BiomesReached.P": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "BiomesReached",
+              "P"
+            ],
+            "SumPrevRuns": 2,
+            "Value": 1
+          }
+        ],
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "DoraBathHouse03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2198
+    },
+    "NeoChronosAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Why you have there the Time Piece which I gave to you. I thought you would sooner cast it into the lowest depths! The ever-turning clockwork is quite fascinating, is it not?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It is unusual. Is this something that Master Daedalus originally made? To have fitted all these little wheels together so that they could move in perfect harmony..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "The mechanisms governing the ever-shifting chambers of Tartarus were a source of inspiration, certainly. This sense of perfect harmony, which you describe... perhaps it can only be achieved in such a form! But it can be achieved."
+        }
+      ],
+      "name": "NeoChronosAboutKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "GoldifyKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2293
+    },
+    "NeoChronosAboutNemesis01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Grandfather, Nemesis mentioned that she may have encountered you in Tartarus. How did that go?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh, very well, indeed! I had presumed that only you would have capacity to face unwanted traces of myself, but as it happens, so can Nemesis! And she is very strong."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So she was serious! She confronted one of those traces with your aid, and was able to prevail? What, did she hack him to bits with the Stygian Blade?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well I prefer not to describe the details, but... she used effective means. This must be possible only because she was so near your path before!"
+        }
+      ],
+      "name": "NeoChronosAboutNemesis01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "NemesisPostTrueEndingTimeStopped01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2409
+    },
+    "NeoChronosAboutNewJob01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Your father and his brother Zeus were generous enough to give me an opportunity to be of some small service to the Underworld. The Isles of the Blessed are the finest spots in all Elysium! And I shall certainly keep them that way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's a high honor you've been given, Grandfather! Some of the greatest mortal heroes must be there. Shall the new responsibility leave you with time enough to meet like this?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh I should think it shall be more convenient than before. Elysium is really not that far; you shall have to visit at some point, once your father's Underworld renovations are complete. Which I suppose may take another age."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Father does seem the exacting type. Well, all the best in the new role. Fates willing, see you soon in Tartarus."
+        }
+      ],
+      "name": "NeoChronosAboutNewJob01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "ZeusPostTrueEnding03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 1943
+    },
+    "NeoChronosAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Ah, there you are, my girl. As you have faithfully re-traced your path, now I in turn may shift you to a different sort of time in which a remnant of the monstrous Typhon yet looms large over this very place. Ready?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No, not yet. What shall happen if I prevail, let alone fail? Are you certain any of this shall even work?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well I am relatively certain, yes! The visions I can conjure up of Asphodel; the principle of this is much the same! And you have likewise demonstrated aptitude at breaking free of temporal restraints."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So I'm to launch toward the summit, where I'll find Typhon's forces from another time awaiting me, I'll deal with him as I once did, and you shall do the rest?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "If all proceeds as planned, then yes! I shall create a shift as you depart; seek that monster and do battle, so that we may yet eliminate even the possibility of him."
+        }
+      ],
+      "name": "NeoChronosAboutOlympus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2824
+    },
+    "NeoChronosAboutOlympus01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Ah, there you are, my girl. As you have faithfully re-traced your path, now I in turn may shift you to a different sort of time in which a remnant of the monstrous Typhon yet looms large over this very place. Ready?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not quite. Shall this go much like at my father's House? The way you conjured up a vision of a time that could have been..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "If all proceeds as planned, then yes! I shall create a shift as you depart; seek that monster and do battle, so that we may yet eliminate even the possibility of him."
+        }
+      ],
+      "name": "NeoChronosAboutOlympus01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NeoChronosAboutOlympus01"
+        ],
+        "RequiredTextLines": [
+          "NeoChronosAboutTartarus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2877
+    },
+    "NeoChronosAboutOlympus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Now then, my girl, you know what to expect! Leap for the summit, all whilst I shall ensure you find the proper stream."
+        }
+      ],
+      "name": "NeoChronosAboutOlympus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2923
+    },
+    "NeoChronosAboutPast01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Grandfather, do you ever... experience your old feelings of bitterness and spite...? Toward the gods, about your bygone Golden Age, anything of the sort?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "There is no undoing past mistakes. I held to those feelings for a very long time; they shall never leave me in their entirety. But you have given me this other chance."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You seemed so unyielding, so certain of your convictions. Sometimes I still cannot believe the memory of a better past was enough to change your mind."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I was taken aback as well. My memories of seeing you grow up... they represent but a fraction of my existence. But an important one. Change can happen in an instant."
+        }
+      ],
+      "name": "NeoChronosAboutPast01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {},
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "NeoChronosGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2587
+    },
+    "NeoChronosAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you made contact with Prometheus after everything that's happened with us? He and I never really got along. Though I started to sense he wasn't really on your side..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "He is intelligent, that one. Perhaps even too much for his own good. I regret that you were forced to come to blows. But, he and I are no longer in touch... to keep conditions closer to the way they were."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He has navigated this situation rather carefully, for all the trouble he's caused the gods. I suppose that all makes sense, if he truly could anticipate every outcome. "
+        }
+      ],
+      "name": "NeoChronosAboutPrometheus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ],
+        "RequiredTextLines": [
+          "PrometheusAboutPostTyphon02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2148
+    },
+    "NeoChronosAboutTartarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Good, you are here at last! Now that you faithfully re-traced your path, I ought be able to manipulate the course of time such that you find yourself within the House whilst a remnant self of mine sits on your father's throne. Ready?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No, not yet. What shall happen if I prevail, let alone fail? Are you certain any of this shall even work?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well I am relatively certain, yes! The visions I can conjure up of Asphodel; the principle of this is much the same! And you have likewise demonstrated aptitude at breaking free of temporal restraints."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So I'm to enter the House exactly as before, and deal with this remnant Chronos as I have in the past... then you shall do the rest?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Exactly so. First I shall create a shift whilst you enter, then you do as you must with the wrong-headed version of me in there! We shall be rid of the mere possibility of him!"
+        }
+      ],
+      "name": "NeoChronosAboutTartarus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutTartarus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2697
+    },
+    "NeoChronosAboutTartarus01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Good, you are here at last! Now that you faithfully re-traced your path, I ought be able to manipulate the course of time such that you find yourself within the House whilst a remnant self of mine sits on your father's throne. Ready?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not quite. Shall this go much like on the summit of Olympus? The way you conjured up a vision of a time that could have been... "
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well I certainly believe this ought transpire as you say! Of course, that which awaits within shall perhaps be a little different in each instance that we venture thus..."
+        }
+      ],
+      "name": "NeoChronosAboutTartarus01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NeoChronosAboutTartarus01"
+        ],
+        "RequiredTextLines": [
+          "NeoChronosAboutOlympus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2750
+    },
+    "NeoChronosAboutTartarus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "All right, my girl, this shall unfold exactly as before! You leap into the river, I ensure you end up in the proper stream."
+        }
+      ],
+      "name": "NeoChronosAboutTartarus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "I_PreBoss01",
+              "I_PreBoss02"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.IsDreamRun": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2799
+    },
+    "NeoChronosAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "How did you reawaken Typhon, Grandfather? I always wondered about that. And to have caught the Olympians by surprise with such a monstrous being..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh, I... would rather not discuss such bitter memories, but... that monster's reawakening was in some ways akin to mine, when Zagreus found me. On a much larger scale, of course."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I see, and I won't press you on it, but... this may be strange to ask, though did you and Typhon know each other well?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "He was the Father of All Monsters... showing no concern for his own brood, much less others. He was a means to an end. We were using each other, one could say."
+        }
+      ],
+      "name": "NeoChronosAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "F_PostBoss01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01",
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01",
+          "NeoChronosAboutOlympus01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2093
+    },
+    "NeoChronosGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Grandfather...? The wounds our family has suffered perhaps shall never truly heal, but... you've at least tried to take some of the initial steps. So here, this is for you."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Oh, what a precious bottle, thank you, Granddaughter! Nectar from Olympus... but, it does look rather good. The custom still is to provide some sort of gift in kind, is that not so? Then here, if you please."
+        }
+      ],
+      "name": "NeoChronosGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 4,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2963
+    },
+    "NeoChronosGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Why, this is very generous of you. The House of Hades had a relatively small supply of this, but in my rancor, I... well, had it all smashed up. This bottle I'll be careful to preserve."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Please keep it, knowing Nectar is also to be savored. As for those other bottles, their contents would have soaked into the Earth, so... perhaps the House is a bit brighter now."
+        }
+      ],
+      "name": "NeoChronosGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 4,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2990
+    },
+    "NeoChronosGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "This bottle's golden hue... I cannot imagine a more beauteous color, truly. In this life, I did not realize Olympus delighted in gold the way I do. Although you seem to prefer silver, Granddaughter..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I always have. We work under the Moon and stars... the sheen of silver reminds me of them. But gold now reminds me of Apollo I suppose, and he is quite approachable, in case you haven't met."
+        }
+      ],
+      "name": "NeoChronosGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 4,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 3023
+    },
+    "NeoChronosGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I partook of the Nectar which you previously gave to me, and my, such a wondrous flavor... and so I thought, I've not yet rightly earned such privileges from you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's not a privilege, it's a simple gift. It's not even the fancy stuff! You'll have to try Ambrosia sometime, especially since you enjoy a nice golden hue."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Ambrosia, yes... perhaps at some point I shall have opportunity to share in it along with this family. But that I know shall take considerable time. No more for now, please, Granddaughter. Not whilst so much is left undone."
+        }
+      ],
+      "name": "NeoChronosGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 4,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 3058
+    },
+    "NeoChronosPostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Good news, Grandfather. The Three Fates have returned! And they didn't mention any reprisal when it comes to you. On the contrary, they promised a new age would dawn..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "My, but that is good news! Particularly the no-reprisal part, and it is a relief to know the Three have navigated out of temporary exile. But what is this about a new age?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well... it sounds as though they're not planning to weave as much as they used to. And at some point, the gods apparently will hold less sway over mortals' lives..."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "But that is reminiscent of the Golden Age in which I ruled...! Of course, once you have lived sufficient aeons you begin to see such patterns circulating constantly. That which is old becomes the new. How fares our family with all this?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I think we're all having to give it some consideration, though we'll have plenty of time. This age may not be soon."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Perhaps not... but even still, this age may arrive before you know it. Take it from me..."
+        }
+      ],
+      "name": "NeoChronosPostEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2496
+    },
+    "NeoChronosPostEpilogue02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "I always did admire mortalkind... I am pleased the Fates decided they shall have a chance at doing things their way. I shall be curious to see what comes of it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Prometheus must have wanted to work with you toward that common goal. Most of what I know of mortals is from the dead... what's the appeal of the living?"
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Well it is simply that they understand the value of Time... some of them, anyhow. For they have so little, whilst they live and breathe. It is a pity in some ways, but quite inspiring in others."
+        }
+      ],
+      "name": "NeoChronosPostEpilogue02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2547
+    },
+    "NeoChronosWithNemesis01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "...To think the task of vanquishing me almost fell to you! I am most fortunate that it did not, for I could not have easily resisted Retribution Incarnate; I cannot imagine who could!"
+        },
+        {
+          "speaker": "NPC_Nemesis_01",
+          "text": "Me neither, so don't try anything around here. And if you and the Princess need another helping hand cleaning up after yourself, let me know. Been wanting to pitch in."
+        },
+        {
+          "speaker": "NPC_Chronos_02",
+          "text": "Then you have heard about the nature of our present course? There are so many possibilities which must be ruled out one by one. If you are truly willing to assist in this..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Might as well. Set my mind to it a while back, and can get all the way to Tartarus, just not inside the House."
+        }
+      ],
+      "name": "NeoChronosWithNemesis01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Chronos_02",
+      "partner": "NPC_Nemesis_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "NeoChronosWithNemesis01"
+        ],
+        "RequiredTextLines": [
+          "NemesisPostTrueEnding02",
+          "NemesisPostCombatAboutTartarus03",
+          "NemesisPostCombatPostTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2636
+    },
+    "ZeusPalacePostTrueEnding01": {
+      "dialogueLines": [],
+      "name": "ZeusPalacePostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 25,
+      "otherRequirements": {},
+      "owner": "NPC_Chronos_02",
+      "partner": "NPC_Zeus_Story_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Chronos.lua",
+      "sourceLine": 2953
+    }
+  }
+}

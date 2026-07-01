@@ -1,0 +1,5202 @@
+{
+  "alternates": {
+    "ArachneAboutGods06": [
+      "ArachneAboutGods06_B"
+    ],
+    "ArachneAboutGods06_B": [
+      "ArachneAboutGods06"
+    ]
+  },
+  "dependents": {
+    "AphroditeAboutAthena01": [
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ApolloAboutAthena01": [
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ArachneAboutArtemis01": [
+      {
+        "name": "ArachneAboutGods01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutCocoons01": [
+      {
+        "name": "ArachneAboutCocoons02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutCurse01": [
+      {
+        "name": "ArachneAboutCurse02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutCurse02": [
+      {
+        "name": "ArachneAboutCurse03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutCurse03": [
+      {
+        "name": "ArachneWithHecateInHub02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneWithHecateInHub02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ArachneAboutCurse05": [
+      {
+        "name": "ArachneAboutCurse06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutCurseQuest01": [
+      {
+        "name": "ArachneAboutRelationship04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutCurseQuest02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGrantsReward01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutGods01": [
+      {
+        "name": "ArachneAboutGods02",
+        "orBranchIndex": 1,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutGods02": [
+      {
+        "name": "ArachneAboutGods03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutGods03": [
+      {
+        "name": "ArachneAboutGods04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutGods04": [
+      {
+        "name": "ArachneAboutGods05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutGods05": [
+      {
+        "name": "ArachneAboutRelationship01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutGods06_B",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutHecate02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ArachneAboutGods06": [
+      {
+        "name": "ArachneAboutGods06_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ArachneAboutPride01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ArachneAboutGods06_B": [
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ArachneAboutPride01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ArachneAboutHecate02": [
+      {
+        "name": "ArachneAboutCurse01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ArachneAboutPride01": [
+      {
+        "name": "ArachneAboutCurse01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutRelationship01": [
+      {
+        "name": "ArachneGift04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutRelationship02": [
+      {
+        "name": "ArachneAboutRelationship03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutSelf01": [
+      {
+        "name": "ArachneAboutSelf02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutSpiders01": [
+      {
+        "name": "ArachneAboutSpiders02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutSpiders03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutSurface01": [
+      {
+        "name": "ArachneAboutTimePassing01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutDreamRuns01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneAboutWeaving01": [
+      {
+        "name": "ArachneAboutWeaving02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneCurseQuest01": [
+      {
+        "name": "ArachneAboutCurse05",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ArachneAboutCurse06",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ArachneCurseQuestComplete01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutArtemis01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ArachneCurseQuestComplete01": [
+      {
+        "name": "ArachneAboutCurseQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneFirstMeeting": [
+      {
+        "name": "ArachneHubFirstMeeting01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift01": [
+      {
+        "name": "ArachneAboutFood01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat23",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat24",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat25",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat26",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat27",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat28",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat29",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat30",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift02": [
+      {
+        "name": "ArachneAboutPay01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutWeaving01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutSpiders01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift03": [
+      {
+        "name": "ArachneAboutRelationship01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutCurse01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift04": [
+      {
+        "name": "ArachneAboutSpiders03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutQuiet01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift05",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift05": [
+      {
+        "name": "ArachneGift06",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift06": [
+      {
+        "name": "ArachneAboutRelationship02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutRelationship03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift07": [
+      {
+        "name": "ArachneAboutRelationship04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift08",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneGift09",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift08": [
+      {
+        "name": "ArachneAboutCurseQuest02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat31",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneGift09": [
+      {
+        "name": "ArachneAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat38",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat39",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneChat40",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneHubFirstMeeting01": [
+      {
+        "name": "ArachneWithHecateInHub01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachnePostEpilogue01": [
+      {
+        "name": "ArachnePostEpilogue02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneWithHecateInHub01": [
+      {
+        "name": "ArachneAboutCurse01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "ArachneChat36",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ArachneWithHecateInHub02": [
+      {
+        "name": "ArachneAboutHecate01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ArachneAboutHecate02",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HecateWithArachne01_FollowUp",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneWithHecateInHub01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "AthenaAboutArachne03": [
+      {
+        "name": "ArachneCurseQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonGift02": [
+      {
+        "name": "ArachneAboutCharon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "ArachnePostEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachnePostEpilogue02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ArachneAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateAboutArachne03": [
+      {
+        "name": "ArachneAboutCurse03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateBossAboutArachne01": [
+      {
+        "name": "ArachneAboutCurse02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateWithArachne01_FollowUp": [
+      {
+        "name": "ArachneAboutCurse05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesAboutAthena01": [
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZagreusPastMeeting03": [
+      {
+        "name": "ArachneAboutUltimateProgress01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusAboutAthena01": [
+      {
+        "name": "ArachneAboutGods06",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusFirstPickUp": [
+      {
+        "name": "ArachneAboutGods01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceFirstMeeting": [
+      {
+        "name": "ArachneAboutUltimateProgress01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceFirstMeetingAlt": [
+      {
+        "name": "ArachneAboutUltimateProgress01",
+        "type": "RequiredAnyTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 95,
+    "totalSpeakers": 1,
+    "totalTextlines": 123,
+    "unresolvedRefs": [
+      "AphroditeAboutAthena01",
+      "ApolloAboutAthena01",
+      "AthenaAboutArachne03",
+      "CharonGift02",
+      "FatesEpilogue01",
+      "HecateAboutArachne03",
+      "HecateBossAboutArachne01",
+      "HermesAboutAthena01",
+      "ZagreusPastMeeting03",
+      "ZeusAboutAthena01",
+      "ZeusFirstPickUp",
+      "ZeusPalaceFirstMeeting",
+      "ZeusPalaceFirstMeetingAlt"
+    ]
+  },
+  "textlines": {
+    "ArachneAboutArtemis01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hey, I don't suppose you happened to see a woodsy goddess stalking through? Greenish attire, wielding a bow about her height?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know which one you mean, my friend, and I know she's been nosing about. As a rule, I stay away from goddesses like that. Even if they are your kin."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Goddesses like what? You make it sound as though you fear Olympus more than you fear Chronos himself."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, I do. It's not Chronos that made me this way; if anything I've grown more used to it with time. Now, go find your woodsy goddess. And be careful not to lead her here, all right?"
+        }
+      ],
+      "name": "ArachneAboutArtemis01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:UseRecord.NPC_Artemis_Field_01": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "UseRecord",
+              "NPC_Artemis_Field_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Artemis_Field_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Artemis_Field_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneCurseQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1749
+    },
+    "ArachneAboutBrawlers01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I liked it better when there weren't all those Wastrels around here. I think they lost their way before they died. Now that they're all long gone... we get to see them for exactly what they are, don't we now?"
+        }
+      ],
+      "name": "ArachneAboutBrawlers01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Brawler": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Brawler"
+            ],
+            "Value": 20
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.Brawler": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "Brawler"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2045
+    },
+    "ArachneAboutCatFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Is that your cat, my friend? I don't much care for how it's giving me the eye. Good thing I'm way up here, haha! Though wait... can't those things climb?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Don't worry, this is Toula, my familiar. And she'll keep her feline instincts well in check around Arachne, won't you, girl?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I used to love cats... they just don't get on with me quite like they used to. For obvious reasons, I suppose..."
+        }
+      ],
+      "name": "ArachneAboutCatFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutKeepsake02",
+        "ArachneAboutCharon01",
+        "ArachneAboutSurface01",
+        "ArachneAboutOceanus01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "CatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1920
+    },
+    "ArachneAboutCharon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "The other night, I saw you having conversation with the old Boatman who's been showing up more frequently of late. How's he doing, anyway?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Charon takes just about everything in stride. But until he's back to ferrying the dead to their final resting-places, I don't think he'll be entirely himself."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I remember when I stowed away on his little boat! He somehow spotted me amongst his cargo. Oh, I thought I was a goner! But he just kept on. Even stopped for me in Erebus, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutCharon01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutKeepsake02",
+        "ArachneAboutSurface01",
+        "ArachneAboutOceanus01",
+        "ArachneAboutCatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:PrevRun.RoomsEntered.F_PreBoss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "F_PreBoss01"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.UseRecord.NPC_Charon_01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Charon_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CharonGift02",
+          "ArachneGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1800
+    },
+    "ArachneAboutCocoons01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You've been so busy, Arachne. Not just all these dresses, but... all Erebus is teeming with silken cocoons. You're certain it's all right for me to break them?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Of course, you big silly! What, do you suppose they're teeming with my countless brood? By the time you see a cocoon, anything in there is either for you, or was out to get you. Now, here."
+        }
+      ],
+      "name": "ArachneAboutCocoons01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSilk01",
+        "ArachneAboutCocoons02",
+        "ArachneAboutSelf02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 704
+    },
+    "ArachneAboutCocoons02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Now you don't truly think I weave all those cocoons you see out there myself, do you? I weave faster than anyone, though even I'm not that quick...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That does make sense. So instead you command a massive hidden army of spiderlings, standing at the ready to do your bidding?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh no, most of them hang upside-down rather than stand. Khh, come now! I'm not the only spider in the woods! The others keep to themselves. But they do listen sometimes, I suppose, ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutCocoons02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSilk01",
+        "ArachneAboutCocoons01",
+        "ArachneAboutSelf02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutCocoons01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 728
+    },
+    "ArachneAboutCurse01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My friend, I truly hate to ask, but you don't suppose... knowing your craft, you don't suppose there might still be some way to turn me back into myself again, do you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne... I've tried everything I know. This curse of metamorphosis upon you, it's... well, it's extremely powerful. Such change is irreversible as far as I can tell. I'm sorry."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "That's quite all right. Just figured I would ask. Such curses wouldn't be much good if they could just be waved away, now, would they? Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutCurse01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutCurse02"
+      ],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ArachneAboutHecate02",
+          "ArachneWithHecateInHub01"
+        ],
+        "RequiredTextLines": [
+          "ArachneAboutPride01",
+          "ArachneGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1245
+    },
+    "ArachneAboutCurse02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, I... I wasn't entirely forthright with you before, about your curse. Theoretically, there is a way that it can be undone. But it is unlikely to work, and shall be very dangerous."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "What? I don't care what it takes, you have to tell me, my friend, please!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "First, we must discover the source of the curse; Athena is no enchantress. Someone aided her. And second... Athena herself must change her original intent. She has to want this."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "But she despises me! And why would she tell anybody who provided her the curse? Oh, my friend, I almost wish you hadn't told me! Don't bother, ha ha ha ha. Hope can be such a tease..."
+        }
+      ],
+      "name": "ArachneAboutCurse02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutCurse01"
+      ],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutCurse01",
+          "HecateBossAboutArachne01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1284
+    },
+    "ArachneAboutCurse03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Regarding your curse, Arachne... Headmistress discovered who created it. So, if you require closure on this aspect of your life... come visit at the Crossroads. But, such knowledge may be a curse all its own, so... choose carefully, please."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh... why... I suppose that I'll be giving that some thought! What would I even do different, knowing something like that? Give me some time... all right, my friend?"
+        }
+      ],
+      "name": "ArachneAboutCurse03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HecateAboutArachne03",
+          "ArachneAboutCurse02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1322
+    },
+    "ArachneAboutCurse05": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, we need to talk about what happened with Headmistress. She didn't fashion a poison expressly to ruin your life. She didn't even know you at the time."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Don't you think I know all that? But what am I supposed to do, thank her? I may be very small, my friend, but I still have my pride... and you can still have your dress."
+        }
+      ],
+      "name": "ArachneAboutCurse05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneCurseQuest01"
+        ],
+        "RequiredTextLines": [
+          "HecateWithArachne01_FollowUp"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1350
+    },
+    "ArachneAboutCurse06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "So much talk of late about my curse! Let's just go back to how things were, what do you say? All this tension... I don't need it anymore than you. You were only trying to help. And so am I."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I just want you to be well, that's all. The past has already transpired and can't be changed. But we get to decide what happens next."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Perhaps we do! Either we or the Fates, I suppose. Thank you for listening to me, my friend. And you be well yourself, all right?"
+        }
+      ],
+      "name": "ArachneAboutCurse06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneCurseQuest01"
+        ],
+        "RequiredTextLines": [
+          "ArachneAboutCurse05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1383
+    },
+    "ArachneAboutCurseQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Turns out, apologizing to Athena just isn't for me, my friend. However, I apologize to you. For making you go out of your way... making a scene in front of another goddess. Sorry."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Oh, Arachne. I'd have rather you said that to Lady Athena and gotten what you desired. I doubt you'll have another opportunity."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It's quite all right. When I saw Athena again, all battle-weary but same as ever, something in me snapped. And now I'm free! You gods have been having a time... turns out you face the consequences of your pride, same as any of us."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...I suppose you're right. You really told her off! I still can scarcely believe it. Including that she spared you after all."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well, you know. I always had a touch of temper on me. Feels good to let it all out once in a while, come what may! And I've been weaving like there's no tomorrow since."
+        }
+      ],
+      "name": "ArachneAboutCurseQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneCurseQuestComplete01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1584
+    },
+    "ArachneAboutCurseQuest02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Do you still see her anymore? Gray-eyed Athena, that is. She must have moved on from little old me, and is back to dealing with her god-sized problems, I suppose."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I do still see Lady Athena every so often, yes. It's back to normal between us... or so I pretend. I grew up hating my grandfather. Now I have a cousin I resent as well."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Now don't you let your heart do that to you, my friend. Take it from me! Mortals aren't stuck with their families quite like gods, and I think you've all had enough fighting for a while."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I just... I almost miss not knowing some of these relatives of mine as well as I do now. My feelings about them often fluctuate... admiration one moment, frustration the next."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "That's just how it is with families, at least for most of us. Though yours isn't all bad. Who knows? Maybe the rest of them will learn a thing or two from you eventually. Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutCurseQuest02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutHecate02"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:UseRecord.NPC_Athena_01": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "UseRecord",
+              "NPC_Athena_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutCurseQuest01",
+          "ArachneGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1635
+    },
+    "ArachneAboutDreamRuns01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I missed you, my friend. More matters on Olympus pulling you away, I suppose? Oh, it's none of my business. Though I am truly glad you're back."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, thanks Arachne, it's good to see you again. Lately I've been dabbling in dream, trying to better understand the mysteries in our own heads. I got a bit preoccupied, I think."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "<Sigh> If only we could understand what's going on in our own little heads! Do let me know if you ever figure it out. Why, sometimes I think life itself is just a dream... don't you?"
+        }
+      ],
+      "name": "ArachneAboutDreamRuns01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutTimePassing01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:IsDreamRun": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "IsDreamRun"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutSurface01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 584
+    },
+    "ArachneAboutFogEmitters01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Not seen too many Shadow-Spillers hereabouts! Good thing, since it's been plenty dark such as it is. How so many souls manage getting themselves tangled up like that, I never want to know..."
+        }
+      ],
+      "name": "ArachneAboutFogEmitters01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.FogEmitter_Elite": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "FogEmitter_Elite"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.FogEmitter_Elite": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "FogEmitter_Elite"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2115
+    },
+    "ArachneAboutFood01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You must be famished! Might I interest you in a little sustenance? And I do mean little, hahaha! I have a fresh batch here if you'd like to try them!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh! No thank you, Arachne. I... have no appetite at all. And I'm not much for eating animals, even insects. Although I'm certain your flies are very delicious."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "They are! A touch of an acquired taste, I know. But I got used to them much faster than just about any other aspect of this life. Ah well! Your loss, I'm sure."
+        }
+      ],
+      "name": "ArachneAboutFood01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutLair01",
+        "ArachneAboutWeaving01",
+        "ArachneAboutWeaving02",
+        "ArachneAboutSilk02",
+        "ArachneAboutPay01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 753
+    },
+    "ArachneAboutFrogFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Ah! No, wha-what is that? An amphibian?! Do get it out of here, my friend! Please help me get it out!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Steady yourself, Arachne. This is Frinos! Frinos is a friend; a Familiar friend of mine, in fact. He means you no harm at all. Your stash of flies, however... that we may need to safeguard."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, haha, ah that is a relief! Well, then, Frinos... if indeed you are a friend, then you are welcome here. And if you'd like a bite to eat, then you are more than welcome to that, too."
+        }
+      ],
+      "name": "ArachneAboutFrogFamiliar01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1893
+    },
+    "ArachneAboutGods01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "So then the gods above are helping you, aren't they? Though why do I even ask, I already know. I've seen these woods light up with all their multicolored messages..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's true. Olympus and I share a common goal, for the Titan of Time threatens us all. I should have told you, it's just... I didn't know what to say."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Hah, ha ha ha ha... so the Fates got me again. I may be a better weaver than all the gods combined, but those three beat me every time. Though don't worry! I won't turn my abdomen on you. Even if the gods will benefit..."
+        }
+      ],
+      "name": "ArachneAboutGods01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusFirstPickUp",
+          "ArachneAboutArtemis01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 973
+    },
+    "ArachneAboutGods02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You seem distant, Arachne. Is everything all right? Is this about my aiding the Olympians?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Ah, hahaha... wait. What do you mean you're aiding the Olympians? I thought you said it was the other way around! They're helping you!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Same difference, isn't it? A mutual exchange. Like a friendship! There must be reciprocity. But, I know this puts you in a terrible position, and... I would never take your support for granted."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well! You may know all about the gods, more than I. But it seems you have a thing or two to learn still when it comes to friendship. Even a little old spider knows that! Now have a dress."
+        }
+      ],
+      "name": "ArachneAboutGods02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods03",
+        "ArachneAboutGods04",
+        "ArachneAboutGods05"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 36,
+      "orBranches": [
+        {
+          "requirements": {
+            "RequiredTextLines": [
+              "ArachneAboutGods01"
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:GameState.ReachedTrueEnding": [
+              {
+                "PathTrue": [
+                  "GameState",
+                  "ReachedTrueEnding"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1007
+    },
+    "ArachneAboutGods03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know you don't know what to say, my friend. But I want you to know... you don't have to say anything at all! In fact, I'd rather that you didn't right now. Be safe out there, all right?"
+        }
+      ],
+      "name": "ArachneAboutGods03",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods02",
+        "ArachneAboutGods04",
+        "ArachneAboutGods05"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutGods02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1056
+    },
+    "ArachneAboutGods04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Another evening where you're forced to do the bidding of the gods? It's not a partnership you've got with them, you know. They'll tolerate you just as long as they think you're inferior to them. Now, here. Take this and go."
+        }
+      ],
+      "name": "ArachneAboutGods04",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods02",
+        "ArachneAboutGods03",
+        "ArachneAboutGods05"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutGods03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1079
+    },
+    "ArachneAboutGods05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You know the gods did this to me, don't you? Although I shouldn't say the gods. Was truly just the one. But the others... they didn't care. They were complicit in the whole thing! It was as though I was a spider to them all along."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne... the gods could be kinder to mortals. You'll hear no argument from me on that. I've a certain point of view on it, myself. Most mortals I've met... they've all been dead."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Yet you abide Olympus anyhow! I understand, I do. They're family. And that's one thing we can never change... not really. Although the Titan whom you're up against... isn't he family, too? Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutGods05",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods02",
+        "ArachneAboutGods03",
+        "ArachneAboutGods04"
+      ],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutGods04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1104
+    },
+    "ArachneAboutGods06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "So what's she truly like? Gray-eyed Athena. As wise and calculating as they say? Ha ha ha ha... to think she's supposedly the sensible one. She's just as cruel and vindictive as the rest..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wouldn't know. I've heard from most of the Olympians by now, but not Athena. Sounds like she's got her hands full, holding back the Titan's armies gathered at the mountain's base."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "How very noble of her! If you meet eventually, you'll have to tell me how she is. And do feel free to let her know Arachne's still alive and well, and weaving even better than before."
+        }
+      ],
+      "name": "ArachneAboutGods06",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods06_B"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathFalse:GameState.UseRecord.NPC_Athena_01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "UseRecord",
+              "NPC_Athena_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ZeusAboutAthena01",
+          "ApolloAboutAthena01",
+          "AphroditeAboutAthena01",
+          "HermesAboutAthena01"
+        ],
+        "RequiredFalseTextLines": [
+          "ArachneAboutGods06_B"
+        ],
+        "RequiredTextLines": [
+          "ArachneAboutGods05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1137
+    },
+    "ArachneAboutGods06_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "So what's she truly like? Gray-eyed Athena. As wise and calculating as they say? Ha ha ha ha... to think she's supposedly the sensible one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I... don't hear from her quite like most of the rest. She must really have her hands full, holding back the Titan's armies gathered at the mountain's base."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "How very noble of her! Do feel free to let her know Arachne's still alive and well, and weaving even better than before."
+        }
+      ],
+      "name": "ArachneAboutGods06_B",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGods06"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Athena_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Athena_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneAboutGods06"
+        ],
+        "RequiredTextLines": [
+          "ArachneAboutGods05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1176
+    },
+    "ArachneAboutGuards01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Those Whispers that you see floating about... it's just what happens when a Shade gets caught up in the trees. In time, they can't tell where the branches end and they begin. They're angry, sure. But not with you, my friend."
+        }
+      ],
+      "name": "ArachneAboutGuards01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Guard": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Guard"
+            ],
+            "Value": 20
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.Guard": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "Guard"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1999
+    },
+    "ArachneAboutHecate01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Saw you get into a scuffle with the great big witch. Why are you fighting? I thought you were on the same side! Oh, I can hardly keep up with everything lately."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Headmistress and I aren't really fighting. Well... no, I suppose we are, except it isn't born of anger, or misunderstanding. It's just her way of making certain I'm prepared."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Huh. Well look, you show her for me the next chance you get, won't you, my friend? And no pressure! But I might be watching just in case. I won't get underfoot, I promise."
+        }
+      ],
+      "name": "ArachneAboutHecate01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:PrevRun.RoomCountCache": [
+          {
+            "HasAny": [
+              "F_Boss01",
+              "F_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomCountCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneWithHecateInHub02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1684
+    },
+    "ArachneAboutHecate02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "How fares the big witch, by the by, my friend? I often see her in these woods! And every now and then, she says hello. Makes time for little old Arachne. How ungodlike of her, ha ha ha ha..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Headmistress seems as steady as can be. It's strange... her confidence in my ability is one of the greatest sources of pressure that I feel. Although, I can't exactly tell her that..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "And whyever not? I'd always want to hear the honest truth from you. She's a smart one, no? Likely she knows that something's off. You ought to have a little chat, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutHecate02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutCurseQuest02"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "HecateMissing"
+        ],
+        "PathTrue:PrevRun.UseRecord.NPC_Hecate_01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "UseRecord",
+              "NPC_Hecate_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ArachneAboutGods05"
+        ],
+        "RequiredFalseTextLines": [
+          "ArachneWithHecateInHub02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1714
+    },
+    "ArachneAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Why, that's the Sash I gave to you! Isn't it so very soft? May it help keep you warm and safe, wherever your journeys may take you. Now, here's a little something to match..."
+        }
+      ],
+      "name": "ArachneAboutKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "ArmorGainKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1832
+    },
+    "ArachneAboutKeepsake02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You've come a long way with that sash I made for you. Much more durable than your garden variety silk dress, isn't it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It certainly is. And nothing makes me feel confident throwing myself into the fray quite like this gift you gave me all those nights ago."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I'm glad. Even if I can't exactly come along with you myself, having one of my garments is the next best thing."
+        }
+      ],
+      "name": "ArachneAboutKeepsake02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutCharon01",
+        "ArachneAboutSurface01",
+        "ArachneAboutOceanus01",
+        "ArachneAboutCatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "ArmorGainKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.TraitDictionary.ArmorGainKeepsake.1.Rarity": [
+          {
+            "IsAny": [
+              "Epic",
+              "Heroic"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "ArmorGainKeepsake",
+              1,
+              "Rarity"
+            ]
+          }
+        ],
+        "Path:TextLinesRecord.ArachneGift01": [
+          {
+            "Comparison": "==",
+            "CountPathTrue": true,
+            "Path": [
+              "TextLinesRecord",
+              "ArachneGift01"
+            ],
+            "SumPrevRuns": 8,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1852
+    },
+    "ArachneAboutLair01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Are you sure you're all right here? I can scarce go fifty paces in these woods without having to defend myself."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I'm comfortable alone. I have my little lair, I've sustenance, and I have my weaving! I no longer even need a loom and thread. I'm grateful. And, I do so appreciate you visiting! Come back again, won't you?"
+        }
+      ],
+      "name": "ArachneAboutLair01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutWeaving01",
+        "ArachneAboutWeaving02",
+        "ArachneAboutFood01",
+        "ArachneAboutSilk02",
+        "ArachneAboutPay01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 426
+    },
+    "ArachneAboutMages01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "How many Caskets have you had to fend aside, do you suppose? First sign of anything that breathes, and they flock to it like it's going out of style. And, always with the spitting! At least I'm much too small for them to see."
+        }
+      ],
+      "name": "ArachneAboutMages01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Mage": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Mage"
+            ],
+            "Value": 30
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.Mage": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "Mage"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2068
+    },
+    "ArachneAboutMines01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Sorry for all those silk-bombs out there, by the by! All these caustic little mud bubbles I try to wrap up and simmer down. But, if you pop them early, they go up like a moth in a flame, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutMines01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.BloodMinePreFused": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "BloodMinePreFused"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.BloodMinePreFused": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "BloodMinePreFused"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1976
+    },
+    "ArachneAboutOceanus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "These woods have changed an awful lot of late. Sometimes I think of moving out of here. I understand it gets all cold and damp as you head farther down?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "There is a path I know that passes through the edge of Oceanus, where the bottom of the sea and the Underworld meet. No trees, only... strange tubes of metal... brine."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Sounds like a real change of pace! Don't think I'd like it quite as much without my trees. But metal tubes? Could hang my webs on those...! Ah well... a dream's a dream, ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutOceanus01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutKeepsake02",
+        "ArachneAboutCharon01",
+        "ArachneAboutSurface01",
+        "ArachneAboutCatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:PrevRun.RoomCountCache": [
+          {
+            "HasAny": [
+              "G_Boss01",
+              "G_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomCountCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 472
+    },
+    "ArachneAboutOutfits01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, the outfit you wove for me was so beautiful. I'm sorry to say I got into a bit of a scrape or two... and I'm afraid it didn't survive."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, hah, that's quite all right, silly! It wasn't made to last. What is? It was made to be in the moment with you. Now here, I've plenty more."
+        }
+      ],
+      "name": "ArachneAboutOutfits01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 347
+    },
+    "ArachneAboutPay01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "There must be something I can do to repay you for all your hard work. We live modestly in the Crossroads, though we're not without our sources of supplies. Whatever you need, name it."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well that's rather forward of you, my friend, and I appreciate it, truly. Whatever I need, huh. I'll have to give a little thought to that! But right now, I need for you to decide which of these dresses you like, and try it on."
+        }
+      ],
+      "name": "ArachneAboutPay01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutLair01",
+        "ArachneAboutWeaving01",
+        "ArachneAboutWeaving02",
+        "ArachneAboutFood01",
+        "ArachneAboutSilk02"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 323
+    },
+    "ArachneAboutPride01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Should I have held back? When I was challenged by the gods themselves? To decide who was the greatest weaver of all. I was just a mortal girl. Can you imagine the pressure?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wouldn't have held back either, in your place. When our limits are put to the test... only then can we discover who we really are."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "All I discovered was I ceased being a mortal girl anymore. You should have seen the masterpiece I made! Athena's little tapestry wasn't even close. Maybe it was worth it... my humiliation in exchange for hers..."
+        }
+      ],
+      "name": "ArachneAboutPride01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutRelationship01"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ArachneAboutGods06",
+          "ArachneAboutGods06_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1213
+    },
+    "ArachneAboutQuiet01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It gets so quiet in these woods. The sound of my weaving, why, it's practically silent... might as well just be the rush of the leaves. So I sing a little to myself."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The woods may be quiet but they're filled with restless spirits. You're like a ray of moonlight in the middle of it all."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well that is kind of you to say. Though moonlight doesn't come in quite so many different colors as my silk, does it?"
+        }
+      ],
+      "name": "ArachneAboutQuiet01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2231
+    },
+    "ArachneAboutRadiators01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Shades of all sorts wind up in here, you know. Those little Spindles all throughout this place... I don't know what they even were when they drew breath. All I know is that they died before their time. Well, so it goes, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutRadiators01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Radiator": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Radiator"
+            ],
+            "Value": 20
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.Radiator": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "Radiator"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2022
+    },
+    "ArachneAboutRavenFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You know how come I'm in these woods instead of up above? Because we don't get many birds down here. So, keep that white-winged one away from me, would you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Raki here wouldn't so much as look at you...! Though, he's not like other ravens in that way. But I'm sorry I brought him here at all. I should have realized."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, it's all right, silly. Long as he behaves himself while I'm about. I won't ever trust birds, but... I trust you."
+        }
+      ],
+      "name": "ArachneAboutRavenFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutTapestry01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "RavenFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1946
+    },
+    "ArachneAboutRelationship01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I never truly stopped to think how much alike we are, the two of us. Both outcasts, aren't we? You should be living in a palace! Not... talking to a spider in the middle of nowhere."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And you should be the most-renowned, most-beloved weaver in all the land! But that isn't what the Fates had in store for us. Although... it's not all bad, is it?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It isn't? It... isn't. Because if I was still up there... the envy of gods and mortals alike... I wouldn't have met you. My one true friend. Ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutRelationship01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutPride01"
+      ],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift03",
+          "ArachneAboutGods05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 858
+    },
+    "ArachneAboutRelationship02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "About last time... I know that there are others in your life, whom you care about. And that makes me glad. You should feel loved! A lot! But look at me... all I can do a lot is weave."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your size has nothing to do with the love you can give. But how you feel about yourself... it must affect the love you can receive. Whether you can believe it to be true."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You make me feel how I used to feel. And back then...? Back when I used to be myself? You know, we mortals could be just as jealous as the gods. But knowing that you care for me even a little bit, why... it's more than enough. Here, go..."
+        }
+      ],
+      "name": "ArachneAboutRelationship02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 883
+    },
+    "ArachneAboutRelationship03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I've kept on thinking, my friend... about how I've been drawn to you. Like a fly to one of my webs... except I mean to catch them, and I don't think you've meant to do the same to me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of course I haven't meant to catch you, Arachne. It's as I said... I think we've helped keep each other company in these lonesome woods, but... is there... something more?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I... I don't think so, no. Not while I'm the way I am. The girl I used to be, why... she may have been mortal, but she was a lot better than this, ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutRelationship03",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutRelationship04"
+      ],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift06",
+          "ArachneAboutRelationship02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 909
+    },
+    "ArachneAboutRelationship04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Lately, when I'd long to be a girl again, my friend... I think it was in part because I liked the thought that I could be with you. You know, like in a normal way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, what we have is special. Even if I met the mortal girl you once were, I'd likely not have taken notice in the same way. Mortal Shades are commonplace... you're not."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I do appreciate you saying that. Back when I gave Athena a piece of my mind... I knew I was giving something up. But it was just a fantasy, while we have something real."
+        }
+      ],
+      "name": "ArachneAboutRelationship04",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutRelationship03"
+      ],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift07",
+          "ArachneAboutCurseQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 942
+    },
+    "ArachneAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It's been so nice seeing you here. I have been weaving up a storm, so please stop by as often as you like, all right?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wouldn't miss it. My nights aren't always pleasant, but you and your silken dresses are!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well thank you for that, truly. Now go on, I don't want to keep you. Well I do but, you know what I mean, ha ha ha ha ha."
+        }
+      ],
+      "name": "ArachneAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "ArachneGift09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2423
+    },
+    "ArachneAboutSelf01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "...Don't, my friend. Just, you don't need to look at me like that. You don't need to look at me at all! Look at the fineries I've made! Silk in every shape and color, see? It's beautiful, isn't it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It is, Arachne, but... to think I could have wronged you with an inadvertent glance just now. It's just I'm concerned for your safety out here."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh there's no need for that. You see, my form included certain benefits. I get to live a long, long time to enjoy it. Besides, just because you found me here, doesn't mean just anybody can."
+        }
+      ],
+      "name": "ArachneAboutSelf01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 371
+    },
+    "ArachneAboutSelf02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I don't remember, anymore, what it was like... having two legs. Only the two. I'm hideous, I know, but... I don't fall over myself like I once did. It's second nature now, scurrying about."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Don't speak that way! My task would go much faster if I had legs like yours, Arachne."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Save your pity for another soul, my friend. Now then! I've saved some of my softest silk for you."
+        }
+      ],
+      "name": "ArachneAboutSelf02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSilk01",
+        "ArachneAboutCocoons01",
+        "ArachneAboutCocoons02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutSelf01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 399
+    },
+    "ArachneAboutSiegeVines01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Do watch for Thorn-Weepers out there. Thank goodness for my webs, as I can stay up high where all those nasty vines of theirs can't reach. But as for you, you're easy pickings, bare feet and all..."
+        }
+      ],
+      "name": "ArachneAboutSiegeVines01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.EnemyKills": [
+          {
+            "HasAny": [
+              "SiegeVine",
+              "SiegeVine_Elite"
+            ],
+            "Path": [
+              "CurrentRun",
+              "EnemyKills"
+            ]
+          }
+        ],
+        "Path:GameState.EnemyKills.SiegeVine_Elite": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "SiegeVine_Elite"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2091
+    },
+    "ArachneAboutSilk01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My silk is everything to me! It's stronger than it looks. Keeps me safe! It can suffocate even the strongest prey. Don't you like it? Is there a certain pattern-color combination you admire?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's lovely, Arachne. Look, I wish I could stay and admire it, but..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "...But you can't. I understand, I truly do. Though it would mean a lot to me if you would take some of my silk with you on your way."
+        }
+      ],
+      "name": "ArachneAboutSilk01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutCocoons01",
+        "ArachneAboutCocoons02",
+        "ArachneAboutSelf02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 274
+    },
+    "ArachneAboutSilk02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your silk is so luxurious, and the enchantments on the thread are strong. Arachne, it's incredible, really. You know that, right?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Of course I know, my friend. While I may not be quite as strong as you, for my size, I'm something else. And I don't tire easily! As for the rest... trade secret, hah, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutSilk02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutLair01",
+        "ArachneAboutWeaving01",
+        "ArachneAboutWeaving02",
+        "ArachneAboutFood01",
+        "ArachneAboutPay01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 300
+    },
+    "ArachneAboutSpiders01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're always here all by yourself. The woods are filled with spiders... don't you ever get together, something like that? Make great big webs you couldn't on your own?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well I suppose we certainly could. It's just, I happen to hate spiders. Near as I can tell, all spiders do. Weaving's a solitary exercise, and besides... I much prefer your company."
+        }
+      ],
+      "name": "ArachneAboutSpiders01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSpiders02",
+        "ArachneAboutSpiders03"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 780
+    },
+    "ArachneAboutSpiders02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I... for what it's worth, I never have disliked spiders, myself. They keep the woods free of pests. And what would this place be without their webs?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Thank you, my friend. I know you mean well when you say such things. If it makes you feel any better, I don't just hate what I've become. You gods... I hate you, too. Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutSpiders02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSpiders01",
+        "ArachneAboutSpiders03"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutSpiders01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 806
+    },
+    "ArachneAboutSpiders03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You know the thing about spiders, my friend, it's that... well, they're my kin. My own brood, you see. But they're ungrateful rascals to the last! They want nothing to do with me at all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your own brood...! You were the very first. But, how did you, erm... wouldn't you have needed...?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "A mate? Oh, he didn't stick around. So you see, this curse isn't just mine. It's for generations still to come. Perhaps we spiders aren't so different from you gods. Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutSpiders03",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutSpiders01",
+        "ArachneAboutSpiders02"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutSpiders01",
+          "ArachneGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 830
+    },
+    "ArachneAboutSurface01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Where have you been lately, my friend? I'd grown so well-accustomed to you visiting these woods that, when you didn't show up for a night or two, why... I became a touch concerned is all."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm sorry that I worried you. My task requires that I head up to the surface now, as well as down below. It's a big adjustment for me there."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You went that way? Ha ha ha ha, I don't so much as miss it anymore, where I came from. Well, you must know your way around. But if you need a local's point of view, you need but ask."
+        }
+      ],
+      "name": "ArachneAboutSurface01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutKeepsake02",
+        "ArachneAboutCharon01",
+        "ArachneAboutOceanus01",
+        "ArachneAboutCatFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.RoomCountCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomCountCache"
+            ],
+            "SumOf": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Value": 3
+          }
+        ],
+        "Path:PrevRun.RoomCountCache": [
+          {
+            "HasAny": [
+              "N_Boss01",
+              "N_Boss02"
+            ],
+            "Path": [
+              "PrevRun",
+              "RoomCountCache"
+            ]
+          }
+        ],
+        "Path:RoomsEntered.N_Opening01": [
+          {
+            "Comparison": ">=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "N_Opening01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 498
+    },
+    "ArachneAboutTapestry01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "There's a beautiful tapestry we have back at the Crossroads now... it's woven with such skill that I could tell immediately it was from you. Would you come see it sometime?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh no, my friend, I've no intention to return. The great big witch and I are on the outs! But now you all have something to remember me by."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm sorry to hear that, though I understand. I noticed the tapestry depicts the Olympians in a rather unusual way..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Athena didn't care for that depiction. But your beautiful eyes can see things her dull gray eyes can't, ha ha ha ha ha."
+        }
+      ],
+      "name": "ArachneAboutTapestry01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutRavenFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgrades.Cosmetic_ArachneTapestry": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "Cosmetic_ArachneTapestry"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 670
+    },
+    "ArachneAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You've lately been up to the surface more and more. You don't truly like it better there, do you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, no. I wouldn't go that far. I'm there out of necessity more than for pleasure's sake. The climate doesn't suit me at all."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I like it better down here, too. It's more secluded... quieter. But still a hint of moonlight to bring out the best in everything. I'm glad you're back."
+        }
+      ],
+      "name": "ArachneAboutTimePassing01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutDreamRuns01"
+      ],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "~=",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:RoomsEntered.N_Opening01": [
+          {
+            "Comparison": ">=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "N_Opening01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 2
+          }
+        ],
+        "PathFalse:PrevRun.RoomsEntered.F_Story01": [
+          {
+            "PathFalse": [
+              "PrevRun",
+              "RoomsEntered",
+              "F_Story01"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutSurface01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 539
+    },
+    "ArachneAboutTreants01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You must have seen more than your share of Root-Stalkers by now. It's fortunate for me that they mostly like to stay put, so I can keep out of their way. But you're bigger, and you can't just slip by, huh...?"
+        }
+      ],
+      "name": "ArachneAboutTreants01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTrees01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Treant": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Treant"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathTrue:CurrentRun.EnemyKills.Treant": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EnemyKills",
+              "Treant"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2138
+    },
+    "ArachneAboutTrees01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It's mostly quiet in these woods. Lost Souls keep to themselves most of the time. So I listen to the trees... they're tall, and wise, and older than the ones where I come from..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Growing up, I always listened to the whisper of the woods as well! In some respects, it reminds me of the spirits inhabiting this place. Their voices cannot easily be heard."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "But they can be heard, can't they. I'm not imagining it, when I hear them call to me and comfort me? Though there's no need to answer that! For certain things, I'd rather not be sure."
+        }
+      ],
+      "name": "ArachneAboutTrees01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutMines01",
+        "ArachneAboutGuards01",
+        "ArachneAboutRadiators01",
+        "ArachneAboutBrawlers01",
+        "ArachneAboutMages01",
+        "ArachneAboutSiegeVines01",
+        "ArachneAboutFogEmitters01",
+        "ArachneAboutTreants01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 449
+    },
+    "ArachneAboutUltimateProgress01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Have you been getting anywhere, my friend? I know that, whatever you do, you do not give up. But I don't rightly know how close you are to what you mean to achieve."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm closer than before, but how much further I have left is difficult to say. Your silk has been of so much help!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I'm glad it has and figured that it would. Only the very best for you. And one of these nights, you'll make it all the way. And maybe with my silk, ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutUltimateProgress01",
+      "narrativePriorityClusterMembers": [
+        "ArachnePostEpilogue01",
+        "ArachnePostEpilogue02"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ZagreusPastMeeting03",
+          "ZeusPalaceFirstMeeting",
+          "ZeusPalaceFirstMeetingAlt"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2257
+    },
+    "ArachneAboutWeaving01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I loved to weave since I was very small. My father, he would make the richest dyes... reds like the setting sun, blues as deep as the sea, and oh, the purples! I wanted to make fabric worthy of such colors as those..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And now you do. You have extraordinary talent. How long did it take to get so proficient? I've practiced my craft all my life though still fall short of my goals far too often..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You'll get to where you need to be, my friend. I see how hard you work! As for me, as a young woman, I was already quite good. But truth be told, I'm even better now that I'm like this. A blessing... and a curse, ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutWeaving01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutLair01",
+        "ArachneAboutWeaving02",
+        "ArachneAboutFood01",
+        "ArachneAboutSilk02",
+        "ArachneAboutPay01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 621
+    },
+    "ArachneAboutWeaving02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "All I wanted was to have a little shoppe. Arachne's Garments, Dyes, and Fabrics! Not the catchiest of names, now that I sound it out. But our reputation would have been impeccable."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know it's not what you imagined... but you've a loyal customer in me. Although, the part where you ask nothing for your services does make me feel a bit guilty, I suppose."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Don't even start with that! My weavings and my garments aren't just for show, they're practical evening-wear! You, my friend, are helping them fulfill their life's purpose, ha ha ha..."
+        }
+      ],
+      "name": "ArachneAboutWeaving02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutLair01",
+        "ArachneAboutWeaving01",
+        "ArachneAboutFood01",
+        "ArachneAboutSilk02",
+        "ArachneAboutPay01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutWeaving01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 645
+    },
+    "ArachneChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Surely you saw some of the weavings I've been working on along the way?"
+        }
+      ],
+      "name": "ArachneChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2454
+    },
+    "ArachneChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I'm so grateful that you're here! Please make yourself at home."
+        }
+      ],
+      "name": "ArachneChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2465
+    },
+    "ArachneChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know there's not much I can do to help, but here."
+        }
+      ],
+      "name": "ArachneChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2477
+    },
+    "ArachneChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It's always so nice to see you. You do know that, don't you?"
+        }
+      ],
+      "name": "ArachneChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2488
+    },
+    "ArachneChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Just watch your step out there as best you can, all right? Hm hm hm hm hm..."
+        }
+      ],
+      "name": "ArachneChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2499
+    },
+    "ArachneChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I wove each of these with love and care for just such an evening!"
+        }
+      ],
+      "name": "ArachneChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2510
+    },
+    "ArachneChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, don't worry about all those webs. I was going to replace them anyhow!"
+        }
+      ],
+      "name": "ArachneChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2521
+    },
+    "ArachneChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I want you looking your very best out there tonight, my friend."
+        }
+      ],
+      "name": "ArachneChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2532
+    },
+    "ArachneChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My latest fits are light as a feather, and sturdy as silver, you'll see!"
+        }
+      ],
+      "name": "ArachneChat09",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2543
+    },
+    "ArachneChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Welcome back to Arachne's Garments, Dyes, and Fabrics! How may I be of service?"
+        }
+      ],
+      "name": "ArachneChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2554
+    },
+    "ArachneChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Thank you for visiting Arachne's Garments, Dyes, and Fabrics! Please come again!"
+        }
+      ],
+      "name": "ArachneChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2566
+    },
+    "ArachneChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well, if it isn't my favorite customer! What might I do for you this eve?"
+        }
+      ],
+      "name": "ArachneChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2578
+    },
+    "ArachneChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know you can't stay for long... but it's wonderful to see you here, my friend."
+        }
+      ],
+      "name": "ArachneChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2589
+    },
+    "ArachneChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I've plenty of these freshly woven garments here from which to choose!"
+        }
+      ],
+      "name": "ArachneChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2600
+    },
+    "ArachneChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My silk is stronger than it looks, so may it help to keep you safe out there."
+        }
+      ],
+      "name": "ArachneChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2611
+    },
+    "ArachneChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You look absolutely stunning dressed in silk, you know that, right?"
+        }
+      ],
+      "name": "ArachneChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2622
+    },
+    "ArachneChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Do try one of these on for size, my friend, then I'll get out of your hair."
+        }
+      ],
+      "name": "ArachneChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2633
+    },
+    "ArachneChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know my little lair is a bit out of your way, so thanks for visiting me here."
+        }
+      ],
+      "name": "ArachneChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2644
+    },
+    "ArachneChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You sure you wouldn't like to try a couple flies? They're fresh!"
+        }
+      ],
+      "name": "ArachneChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2655
+    },
+    "ArachneChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "So, do you... see anything you like? Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2666
+    },
+    "ArachneChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, do watch for some of my cocoons out there! I packed them just for you."
+        }
+      ],
+      "name": "ArachneChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2677
+    },
+    "ArachneChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You won't find higher-quality silk anywhere above the surface or below."
+        }
+      ],
+      "name": "ArachneChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2688
+    },
+    "ArachneChat23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, I miss you already. You'll come back soon, won't you?"
+        }
+      ],
+      "name": "ArachneChat23",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2699
+    },
+    "ArachneChat24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Seeing you under the light of the full moon, why, it just takes my breath away."
+        }
+      ],
+      "name": "ArachneChat24",
+      "otherRequirements": {
+        "Path:GameState.GamePhase": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "GameState",
+              "GamePhase"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2716
+    },
+    "ArachneChat25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I thought I heard you softly moving through the trees, and now you're here!"
+        }
+      ],
+      "name": "ArachneChat25",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2739
+    },
+    "ArachneChat26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "If only there was more that I could do for you, my friend..."
+        }
+      ],
+      "name": "ArachneChat26",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2756
+    },
+    "ArachneChat27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It must be very difficult for you right now, but do take heart, all right?"
+        }
+      ],
+      "name": "ArachneChat27",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2773
+    },
+    "ArachneChat28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Promise you'll let me know if this is anything short of a perfect fit."
+        }
+      ],
+      "name": "ArachneChat28",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2790
+    },
+    "ArachneChat29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "They always said my silk was like a warm embrace, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneChat29",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2807
+    },
+    "ArachneChat30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I won't have you going out in anything less than the very best."
+        }
+      ],
+      "name": "ArachneChat30",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2824
+    },
+    "ArachneChat31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "These all are freshly woven and should fit you perfectly, my friend!"
+        }
+      ],
+      "name": "ArachneChat31",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2841
+    },
+    "ArachneChat32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Whichever one of these most suits your fancy right now, it's all yours."
+        }
+      ],
+      "name": "ArachneChat32",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2858
+    },
+    "ArachneChat33": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I was hoping you'd show up again! Been a few nights since last time, hasn't it?"
+        }
+      ],
+      "name": "ArachneChat33",
+      "otherRequirements": {
+        "Path:RoomsEntered.F_Story01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "F_Story01"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2872
+    },
+    "ArachneChat34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You've been up top lately, haven't you? Then welcome back!"
+        }
+      ],
+      "name": "ArachneChat34",
+      "otherRequirements": {
+        "Path:RoomsEntered.N_Opening01": [
+          {
+            "Comparison": ">=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "RoomsEntered",
+              "N_Opening01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2894
+    },
+    "ArachneChat35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My dresses aren't made to last, but I just know you'll make the most of them!"
+        }
+      ],
+      "name": "ArachneChat35",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2915
+    },
+    "ArachneChat36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "This should protect you from the great big witch and whatever comes next."
+        }
+      ],
+      "name": "ArachneChat36",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneWithHecateInHub01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2930
+    },
+    "ArachneChat37": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I can afford you some protection, and a beautiful new look!"
+        }
+      ],
+      "name": "ArachneChat37",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2947
+    },
+    "ArachneChat38": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You don't ever seem to give up, my friend. So I won't either."
+        }
+      ],
+      "name": "ArachneChat38",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2962
+    },
+    "ArachneChat39": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I like being alone and like being with you. So this has been a real treat!"
+        }
+      ],
+      "name": "ArachneChat39",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2979
+    },
+    "ArachneChat40": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Would you just look at all this silk? Ha ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneChat40",
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift09"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2997
+    },
+    "ArachneCurseQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, now that we know Headmistress Hecate had a hand in your curse, there is some possibility we can persuade Athena to undo it. Or rather, you could."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Why don't you humor me some more with this, my friend. What exactly do you have in mind? Olympus is a bit of a climb from here..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've a more convenient means in mind: a certain Amulet that I can use to briefly summon her. If it's all right with you, then she can join us here, and you can make your plea."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "What would I even say? But... oh, I'll certainly give it some thought. Next time you have that Amulet, then I might take you up on that. Thank you."
+        }
+      ],
+      "name": "ArachneCurseQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "AthenaAboutArachne03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1416
+    },
+    "ArachneCurseQuestComplete01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have Athena's Amulet, Arachne. Would you be willing to confront her now? Just, speak to how you've changed, how you wish to have your old self back! Whatever she requires."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I'll... I'll do what I have to do, my friend. Now, if you could bring forth the goddess of wisdom, I'd be much obliged."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Very well, here goes. And whatever happens, I'll be right here. Heed now my voice, Lady Athena; one who has sought you is with me!"
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "Hail, Melinoë. Ah, these woods. And sure enough there's the World's Most Talented Weaver herself. Still plying your trade, Arachne?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I most certainly am, Lady Athena! What else would I be doing? Even if I were still the mortal girl I once was, I imagine I'd have stuck with it. And you, how have you been?"
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "Fully occupied. I cannot remain for long, for that reason and more, so what is it? You've grown tired of your form?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well I do miss my old shape and size, and... I've been like this for a while, so... I thought maybe you could turn me back. I'd do anything, please."
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "Anything? Then I've a simple-enough request: Apologize for what you did in all sincerity, and tell me what you've learned."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, why, sure... um, I'm... I'm sorry, Lady Athena. Truly sorry. Sorry that I would... debase myself in front of you like this! In front of my own friend!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne! Please, Lady Athena, she's upset and hasn't thought this through. I know how sorrowful she is."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Stay out of this, my friend. As for you, Lady Athena, you want to know what I learned?"
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "I caution you to measure your words with care, spider. I did not travel all this way to be the object of your ridicule."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "...I learned, just now, that I'll never apologize to you in all sincerity. I'd sooner be a lowly spider till the end of time. And look upon my works! I can still weave better than you."
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "...I suppose you think this outburst moved me in some way, and that I'll now grant your desire? No. You may appear worse off, but you clearly haven't changed at all, Arachne."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Neither have you. Now either go on and squash me like I know you want to, or be on your way. You're scaring the flies."
+        },
+        {
+          "speaker": "NPC_Athena_01",
+          "text": "Fine. I'll take my leave, and we shall never see each other again. Enjoy the feast of flies. Melinoë? This was a mistake."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne... why did you do that? We went through so much for this one chance, and now it's gone!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "No, my friend. That was the chance I had been waiting for. I just didn't realize it till I looked Athena in the eyes again. Now, shoo. I've kept you long enough. Ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneCurseQuestComplete01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AthenaEncounterKeepsake": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AthenaEncounterKeepsake"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneCurseQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 1456
+    },
+    "ArachneDreamRun": {
+      "dialogueLines": [],
+      "name": "ArachneDreamRun",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.IsDreamRun": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3016
+    },
+    "ArachneFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "What are you doing here? Besides tramping all over my webs, that is! Oh, it's nothing, silly. I can always make more perfectly good silk! I can't always see you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Erm, hi, Arachne. Sorry about all this! I think we'll soon be seeing more of one another, now. My task has begun."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Truly? Why then, I'll get out of your hair, you have to go. But first, you have to try on one of these. And don't worry about any wear-and-tear! I've plenty more in stock, ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 215
+    },
+    "ArachneGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Each time I pass through Erebus, it's comforting to know I may run into you along the way. Here's something for your lovely lair."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, why this is very sweet! It should attract a host of flies, I think, so thank you, very, very much! Now won't you please take this? It's only fair...!"
+        }
+      ],
+      "name": "ArachneGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Arachne_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Arachne_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3038
+    },
+    "ArachneGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Wait, is this what I think it is? Oh, no, I shouldn't, not again. Weaving silken fineries for somebody such as you truly is an honor and its own reward! Besides, this stuff is for the gods..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The gods may often be the ones indulging in this stuff, but it's not just for them. It's for you! For those whom we regard as friends."
+        }
+      ],
+      "name": "ArachneGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Arachne_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Arachne_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3063
+    },
+    "ArachneGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, you're much too kind to me! I'm only doing what anybody would be doing in my place, but you? You're treating me like royalty! This Nectar... I tried a touch of it before. It's too good for flies... or spiders."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Too good for flies, perhaps. But it's especially for you. A gift of friendship, whose savor only grows the deeper the friendship is. May it warm you on a cold night such as this."
+        }
+      ],
+      "name": "ArachneGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Arachne_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Arachne_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3088
+    },
+    "ArachneGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Come now, this is all too much! If I were still myself, why, I'd be blushing from my cheeks to my toes. It's just... it's been so long since anybody got me anything, you know?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I like getting you such things, Arachne. It makes me so unhappy, sometimes, seeing you all by yourself like this. I can never stay for long... so perhaps this Nectar can remind you of the pleasant times we share, when I'm not around."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "It most certainly shall. I won't forget your kindness."
+        }
+      ],
+      "name": "ArachneGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Arachne_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Arachne_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutRelationship01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3111
+    },
+    "ArachneGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Ha ha ha ha, I don't mean to be rude, it's just... imagine what the gods above would think, seeing their proudest tradition used to honor the lowliest of creatures in this world."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're not lowly! You're a magnificent talent. A beautiful voice. A trusted friend. I don't know anybody like you, Arachne! And I'm glad you're you. Exactly as you are. I mean it."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I... why, I'm — I'm very flattered you would feel that way... it's just... it's too bad you never knew me in my prime, you know? Ah, but what am I saying, I'm just... ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift04"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3145
+    },
+    "ArachneGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know you're doing this just to be kind, my friend, except... the heart does what it wants, and... I, well... I'm concerned I'm beginning to take it the wrong way! I like being alone, I do... but I get lonely still, from time to time."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I get lonely, too. But when I'm here, with you in your lovely little lair, I feel... oh I don't know, I... just want you to be happier! Perhaps it's as you said; the heart does what it wants."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, your poor heart, if all it wants is this! You're a goddess... positively sublime, you realize? You must have a dozen others falling over themselves just to win your affection!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Even if there were. My other relationships... none of them is any substitute for the one I have with you."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I see... ha ha ha ha..."
+        }
+      ],
+      "name": "ArachneGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift04",
+          "ArachneGift05"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3172
+    },
+    "ArachneGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wanted you to have this: The Ambrosia of the gods. You have our talent, and you even have our pride. I figure, what's one more of our greatest gifts?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Ambrosia... you'll soon spoil me like this, you big silly! What am I going to do with so much? I'll be sipping away forever!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Forever's a long time. And, ideally this is for sharing anyhow. Perhaps for the eventual grand opening of your shoppe!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Now there's an idea. Well then, I ought to store this safe and sound, and know just the way... wrapped in the finest silk."
+        }
+      ],
+      "name": "ArachneGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift06",
+          "ArachneAboutCurseQuest01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3211
+    },
+    "ArachneGift08": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Here's to the success of Arachne's Garments, Dyes, and Fabrics, whenever the time comes. I find it helps always having something to look forward to, even if it's a way off."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Why this is very gracious of you, my friend, and I'd embrace you if I could only reach, and you were so willing, but... I'd best appreciate you from afar."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But I'm not far; I'm here. And I want you to know, I'm glad you haven't changed. If you did... I might have lost you."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You'd sooner lose me now since I am rather small! But thank you, truly. I used to think you were just saying things to pity me but now I know you're not."
+        }
+      ],
+      "name": "ArachneGift08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift07"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3250
+    },
+    "ArachneGift09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "No more Ambrosia, please, my friend. I'm running out of room! And you have given little old me more than enough."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of course, but... perhaps the two of us could share some at some point. Even now...? Since you are running out of room. "
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh! Well if you're not too busy, I would truly welcome that. Care to pop the bottle? The cap's a little tight for me..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "...You've been so gracious with your time and with your love. Most mortals hate spiders... can't imagine most of you goddesses or gods feel any different."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's commonplace to fear what we don't understand. I'm a witch; we get that a lot. Perhaps that's why I felt connected to you from the start."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You felt connected to me because you stepped on me, my friend! Good thing you heard me screaming my head off. That was not the greatest way to meet..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps not, but I'd say it worked out. And I've not stepped on you ever again, have I?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Well, no, you haven't, I suppose. Say, this Ambrosia, it is really something else! And a little goes a long way!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Right? I'm glad you're enjoying it. It's always best with those you care about, and this is clearly a good batch."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "You really do care about me, huh. For the longest time I just wouldn't let myself believe it. But now you know I'm never turning back, and you're still you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I wouldn't know who else to be. What about you? If you could be anything or anybody else, what would you choose?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Why, I... well I'd choose to be the greatest weaver that the world has ever known, is what. I'm choosing that right now."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "That was truly wonderful, my friend. Thank you so much, for being here with me. For everything."
+        }
+      ],
+      "name": "ArachneGift09",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneGift07"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3287
+    },
+    "ArachneGrantsReward01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I know your every measurement by now, my friend, and think I know the style you prefer, and so... I have a little something here I thought you'd like."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Truly? Arachne, I don't see how you could possibly outdo yourself, though I'm prepared to watch you try, if you insist!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh that I do. Look here... silk, the color of blood. The color of your family. It's very delicate, but if you want it, it's all yours."
+        }
+      ],
+      "name": "ArachneGrantsReward01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneAboutCurseQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2202
+    },
+    "ArachneHubFirstMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "Oh, hello there, my friend! I happened to see the Boatman sculling down the Cocytus, presumably to you, for he had all sorts of supplies. He was generous enough to offer me passage. Whether he knew it or not, ha ha ha ha..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Great to see you here and welcome, Arachne! I'm certain Charon doesn't mind such a courteous stowaway. Is there anything we can do to make your stay with us more comfortable?"
+        },
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "No, thank you. I don't intend to be here very long. Especially since the Boatman is my ticket home. I'll just make certain all my silk here is patched up, and then be on my way. Be well, won't you?"
+        }
+      ],
+      "name": "ArachneHubFirstMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ArachneBrooding"
+        ],
+        "Path:GameState.LifetimeResourcesSpent.CharonPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesSpent",
+              "CharonPoints"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathFalse:CurrentRun.RoomsEntered.F_Story01": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "RoomsEntered",
+              "F_Story01"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.AnyMailboxReady": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "AnyMailboxReady"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_Home_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3478
+    },
+    "ArachneLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh no, you're hurt, my friend! And with such a long journey still ahead. Though don't you fret! My silk will make you feel as good as new."
+        }
+      ],
+      "name": "ArachneLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 246
+    },
+    "ArachnePostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You might not believe this, Arachne, but recently I met the Fates themselves! All three of them!"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh you did, did you? And, did you happen to see what they were working on? I like to keep up with the latest happenings in the weaving world."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well if anything I got the sense that they were in between projects, and might be weaving less from here on out..."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Sounds like they just couldn't keep up. But that's all right. The old always have to make way for the young and the new! And before you get too worried that I'm speaking out of turn, I don't think they'll notice little old me, ha ha ha ha ha."
+        }
+      ],
+      "name": "ArachnePostEpilogue01",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutUltimateProgress01",
+        "ArachnePostEpilogue02"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2356
+    },
+    "ArachnePostEpilogue02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I've been wondering what else the Fates had to say to you. To think that all those different strands they weave affect our lives..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "My impression was they're going into a sort of retirement. Leaving us to make our own decisions. I don't know if it'll feel any different than before, though."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I highly doubt it will. The kinds of choices that I've made... I don't know that anybody could have made them for me. Not even those three, ha ha ha ha ha."
+        }
+      ],
+      "name": "ArachnePostEpilogue02",
+      "narrativePriorityClusterMembers": [
+        "ArachneAboutUltimateProgress01",
+        "ArachnePostEpilogue01"
+      ],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "ArachnePostEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2392
+    },
+    "ArachnePostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "We've had some goings-on here in these woods, a lot more goings-on than usual! Lost Souls all acting strange. Did something happen I should know about?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Arachne, it's just that my task is finally complete! Well, for the most part. King Hades and Queen Persephone are back, and they'll soon give all the Lost Souls here a place to go."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "My, but that is exciting! You did it, my friend! But then, it looks to me as though your fighting isn't over with..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not yet, and possibly not for a while. So if it's all the same to you, I may keep passing by every so often. And not just for the beautiful silk dresses, but to say hello."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Why, then, hello right back! And you are truly welcome here whenever you desire. I'm so happy for you!"
+        }
+      ],
+      "name": "ArachnePostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2288
+    },
+    "ArachnePostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Say, if the King and Queen are back just like you said, doesn't that mean... why, doesn't it mean you should be back in their palace, too?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I grew up near to these woods and I mean to remain here for the foreseeable future. Too much I'm not ready to give up."
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Oh, you big silly. You could have had it good. They would have given you the most beautiful dresses, I'm sure. Though maybe not more beautiful than these..."
+        }
+      ],
+      "name": "ArachnePostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2327
+    },
+    "ArachneWithHecateInHub01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "...Oh, don't worry. I'll be fine! I know those woods out there like the back of my, um... leg, I do suppose! I'm always grateful for your hospitality, great Titaness."
+        },
+        {
+          "speaker": "NPC_Hecate_01",
+          "text": "And you are welcome here and safe, Arachne. Now I must beg your pardon. The matters that unfold of late require more of my attention than I'd like..."
+        },
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "I truly understand. Then I'll get out of your hair. Farewell for now!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "Farewell in turn."
+        }
+      ],
+      "name": "ArachneWithHecateInHub01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ArachneBrooding",
+          "ClearBeforeTrueEnding",
+          "HecateMissing"
+        ],
+        "PathFalse:CurrentRun.RoomsEntered.F_Story01": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "RoomsEntered",
+              "F_Story01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Arachne_Home_01",
+      "partner": "NPC_Hecate_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ArachneWithHecateInHub02"
+        ],
+        "RequiredTextLines": [
+          "ArachneHubFirstMeeting01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3546
+    },
+    "ArachneWithHecateInHub02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "...But, this can't be.... Titaness, whatever do you mean? Because if you meant what you said, why... all those times you told me that I'm welcome here and safe... all lies, then. Is that it?"
+        },
+        {
+          "speaker": "NPC_Hecate_01",
+          "text": "Your anger's justified. 'Twas my poison that Athena used whilst cursing you. But the curse is hers, not mine. I'd no desire that you knew any of this. Melinoë, however, swayed me against my instincts."
+        },
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "...I don't know what to say. So this is your fault. Athena never could have done this to me without your help. You Titans and the gods... you're all alike. Good evening!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Arachne_Home_01",
+          "text": "Arachne, be reasonable... ungh..."
+        }
+      ],
+      "name": "ArachneWithHecateInHub02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ArachneBrooding",
+          "ClearBeforeTrueEnding",
+          "HecateMissing"
+        ]
+      },
+      "owner": "NPC_Arachne_Home_01",
+      "partner": "NPC_Hecate_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "ArachneAboutCurse03"
+        ],
+        "RequiredTextLines": [
+          "ArachneAboutCurse03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 3606
+    },
+    "HecateWithArachne01_FollowUp": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "Another customer already! You just missed the great big witch. Not often that I'm honored with her presence. Next you see her out there, give her a good one for me, would you? Hm ha ha ha..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Are you all right, my friend?"
+        },
+        {
+          "speaker": "NPC_Arachne_01",
+          "text": "I... yes! Yes, I've some new dresses for you. Here! Which one do you desire?"
+        }
+      ],
+      "name": "HecateWithArachne01_FollowUp",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ArachneBrooding",
+          "HecateMissing"
+        ]
+      },
+      "owner": "NPC_Arachne_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ArachneWithHecateInHub02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Arachne.lua",
+      "sourceLine": 2162
+    }
+  }
+}

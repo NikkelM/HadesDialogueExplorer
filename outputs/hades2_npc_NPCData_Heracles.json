@@ -1,0 +1,4968 @@
+{
+  "alternates": {},
+  "dependents": {
+    "DionysusAboutHeracles01": [
+      {
+        "name": "HeraclesFieldAboutDionysus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HadesAboutHeracles01": [
+      {
+        "name": "HeraclesFieldAboutUnderworld02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesBathHouse01": [
+      {
+        "name": "HeraclesFieldAboutExpectations01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesBathHouse02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesBathHouse02": [
+      {
+        "name": "HeraclesFieldAboutPerfection01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesBathHouseRepeatable01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesFieldAboutAltFightWin01": [
+      {
+        "name": "HeraclesGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesFieldAboutEpilogue01": [
+      {
+        "name": "HeraclesFieldAboutEpilogue02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesFieldAboutUnderworld01": [
+      {
+        "name": "HeraclesFieldAboutCerberus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesFirstMeeting": [
+      {
+        "name": "HeraclesCombat01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift02": [
+      {
+        "name": "HeraclesFieldAboutFamily01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutMedea01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift03": [
+      {
+        "name": "HeraclesPreEncounterAboutTimePassing01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart45",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutFates01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutTyphon02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift04": [
+      {
+        "name": "HeraclesFieldAboutArtemis01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutFame01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutWeapons01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift06": [
+      {
+        "name": "HeraclesMiscStart42",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart43",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutUnderworld01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutEpilogue02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift07": [
+      {
+        "name": "HeraclesMiscStart14",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart44",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutCerberus01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutIcarus01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutDionysus01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutTrueEnding02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HeraclesMiscChat10",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesMiscChat01": [
+      {
+        "name": "HeraclesFieldAboutCharon01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HeraclesMiscChat08": [
+      {
+        "name": "HeraclesFieldAboutCharon01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "HeraclesPreEncounterAboutArtemis01": [
+      {
+        "name": "HeraclesFieldAboutArtemis01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesPreEncounterAboutTimePassing01": [
+      {
+        "name": "HeraclesFieldAboutTimePassing01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HermesAboutFates01": [
+      {
+        "name": "HeraclesFieldAboutFates01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "IcarusAboutHeracles01": [
+      {
+        "name": "HeraclesFieldAboutIcarus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusAboutHeracles02": [
+      {
+        "name": "HeraclesFieldAboutIcarus02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusGift08": [
+      {
+        "name": "HeraclesFieldAboutIcarus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaGift02": [
+      {
+        "name": "HeraclesFieldAboutMedea01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutAltFight01": [
+      {
+        "name": "HeraclesPreEncounterAboutAltFight01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart37",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart38",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart39",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutOlympus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutPrometheus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutAltFight01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutTrueEnding02",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "PrometheusAboutAltFight01_B": [
+      {
+        "name": "HeraclesPreEncounterAboutAltFight01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart37",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart38",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesMiscStart39",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutOlympus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutPrometheus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutAltFight01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutTrueEnding02",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "PrometheusAboutEpilogue01": [
+      {
+        "name": "HeraclesFieldAboutEpilogue01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusFirstMeeting": [
+      {
+        "name": "HeraclesFieldAboutPrometheus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "TrueEndingFinale01": [
+      {
+        "name": "HeraclesFieldAboutFates01",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "HeraclesFieldAboutTrueEnding02",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 61,
+    "totalSpeakers": 1,
+    "totalTextlines": 113,
+    "unresolvedRefs": [
+      "DionysusAboutHeracles01",
+      "HadesAboutHeracles01",
+      "HermesAboutFates01",
+      "IcarusAboutHeracles01",
+      "IcarusAboutHeracles02",
+      "IcarusGift08",
+      "MedeaGift02",
+      "PrometheusAboutAltFight01",
+      "PrometheusAboutAltFight01_B",
+      "PrometheusAboutEpilogue01",
+      "PrometheusFirstMeeting",
+      "TrueEndingFinale01"
+    ]
+  },
+  "textlines": {
+    "HeraclesBathHouse01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have these purifying salts here, sir. You're welcome to make use of them, especially if you help form a perimeter..."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "...Very well."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Keep your distance from me, witch. My club is readily at hand. The Satyrs and the Nymphs likewise were warned."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh I don't plan on moving from this spot, except to leave reluctantly. I shouldn't be doing this, but I'm cold and tired."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Cold and tired... now we're speaking the same language. How did you learn of such a place? Even the other gods don't know of it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We have a hot spring much like this where I am from. Well... the atmosphere is very different, and there are far fewer in attendance typically."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not what I meant. Why are you here? You don't strike me as the... drinking-feasting sort."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're one to talk. Although you did mention having a drinking contest with Lord Dionysus at some point. I don't know why he lets me in. But I like passing through."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Hm. Bathing with Satyrs for a change, instead of slaughtering them. Anything to break up the routine...."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well...! I feel refreshed and yet uncomfortable. Bye, sir."
+        }
+      ],
+      "name": "HeraclesBathHouse01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_Story01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2678
+    },
+    "HeraclesBathHouse02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I was going to take a quick dip once this pool is sufficiently purified if you'd like to as well, sir."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "...Aye."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Dionysus understands something the other gods do not. Do you know what it is, sister?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You don't mean something simple like debauchery, do you?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "He understands perfection cannot be attained. The rest keep striving for it, demanding it from one another, claiming to have it themselves. All a farce."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're one of the greatest warriors that ever lived. I don't believe you haven't pursued perfection. I've pursued it... I never feel good enough but that hasn't stopped me."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I never said I've not pursued it. My claim is, the pursuit is meaningless... heading for a destination that can never be reached. All because others expect it of you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You also don't seem the sort to be overly concerned with what others think of you. Except perhaps this mountain's Queen and King."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Why am I even speaking to you? Only Atlas himself knows what it's like... bearing the weight of the world."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well this was pleasant for the most part. Take care, sir."
+        }
+      ],
+      "name": "HeraclesBathHouse02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_Story01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesBathHouse01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2770
+    },
+    "HeraclesBathHouseRepeatable01": {
+      "dialogueLines": [],
+      "name": "HeraclesBathHouseRepeatable01",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "P_Story01"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesBathHouse02"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2867
+    },
+    "HeraclesCombat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You. Things are about to turn ugly, and I require neither assistance nor witnesses, sister."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm passing through. And I'm not leaving here until the traitors to the House of Hades lie broken at our feet."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Hah! Fine, then. We'll each earn our share. Though the lion's share is coming with me."
+        }
+      ],
+      "name": "HeraclesCombat01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesFirstMeeting"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 335
+    },
+    "HeraclesFieldAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "There's no more work here to be done... but it never ends. No hard feelings, by the way, about before."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, none at all. I always wondered what it'd feel like to get struck full-on by the force of your club, and now I don't."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Nor do I like leaving any room for doubt. And if you need a reminder about my club, you know where to locate me."
+        }
+      ],
+      "name": "HeraclesFieldAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1713
+    },
+    "HeraclesFieldAboutAltFightWin01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You're not what I thought. Kept your mouth shut about me. Even somehow overcame Prometheus after I butted in. Why and how?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have my reasons and my ways. Why should I be forthcoming about them? You've not exactly been eager to open up."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Thought if I asked nicely, but that doesn't work on me either. Well, suit yourself. Not like I can drag it out of you."
+        }
+      ],
+      "name": "HeraclesFieldAboutAltFightWin01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.EncountersCompletedCache.BossPrometheus02": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EncountersCompletedCache",
+              "BossPrometheus02"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1744
+    },
+    "HeraclesFieldAboutArtemis01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You fight both up close and from afar. Seems inefficient. Choose one or the other and master it. Don't get fancy."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "One can excel at each. The goddess Artemis may favor her bow, but she's as ruthless as you up close, believe me."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Once captured one of her woodland pets and learned that the hard way, so you don't have to persuade me. Fine. Think you're as good as she is, suit yourself."
+        }
+      ],
+      "name": "HeraclesFieldAboutArtemis01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesPreEncounterAboutArtemis01",
+          "HeraclesGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1146
+    },
+    "HeraclesFieldAboutAxe01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Why does a witch go learning to hoist a weapon such as that? You have your tricksy spells, yet bloody your hands."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I needed to gain endurance as well as avoid becoming overly dependent on magick, which can be physically exhausting."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Magick can be physically exhausting. You're an odd one, sister. But you've an eye for weaponry at least."
+        }
+      ],
+      "name": "HeraclesFieldAboutAxe01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasNone": [
+              "AxePerfectCriticalAspect",
+              "AxeRallyAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2049
+    },
+    "HeraclesFieldAboutBlood01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Your blood runs red. You're not entirely a goddess. We truly get the best of both worlds."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You were born to a mortal mother, weren't you? My mother's half-mortal. Death itself is in our blood. But you're different..."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Different. Neither god, nor mortal, nor Shade. It's as you say; death itself is in my blood. All mortals are born to die. I was born also to kill."
+        }
+      ],
+      "name": "HeraclesFieldAboutBlood01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.CurrentRoom.Encounter.PlayerTookDamage": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "PlayerTookDamage"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1920
+    },
+    "HeraclesFieldAboutBoar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Friendly word of advice: beware a large and not-entirely-dead boar snuffing about in the Ephyra alleyways. It's come for me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're being hunted by a boar, not the other way around? Did I hear that correctly?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "We... had our troubles in the past while it was more... alive. This is what I get for not finishing the job when I had the chance."
+        }
+      ],
+      "name": "HeraclesFieldAboutBoar01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 2,
+            "TableValuesToCount": [
+              "N_MiniBoss02"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1529
+    },
+    "HeraclesFieldAboutCerberus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "How is that dog of yours if he resides still underneath the earth? I grew somewhat partial to him as beasts go."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean Cerberus? I never knew him growing up but see him rather often recently. He's been active, and doing very well. I can't believe he didn't snap your head off back then..."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Oh, he tried. And using all three maws. And he was heavy. When next you ascend Olympus, thank the Fates you're not encumbered with the Hound of Hell."
+        }
+      ],
+      "name": "HeraclesFieldAboutCerberus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift07",
+          "HeraclesFieldAboutUnderworld01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1168
+    },
+    "HeraclesFieldAboutCharon01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You seem to know the Boatman pretty well. Worked together before?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I've had occasion to visit your realm in the past. The Boatman is my supplier. And evidently yours as well... buying up all the merchandise."
+        }
+      ],
+      "name": "HeraclesFieldAboutCharon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:PrevRun.ResourcesSpent.Money": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "PrevRun",
+              "ResourcesSpent",
+              "Money"
+            ],
+            "Value": 200
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "HeraclesMiscChat01",
+          "HeraclesMiscChat08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1485
+    },
+    "HeraclesFieldAboutDionysus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I can't believe I'm asking, but would you be interested in attending an exclusive feast with Lord Dionysus and his close associates? There's plenty to drink, a sizable bath..."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "What do you mean, there's a sizeable bath? All he ever talked about was the drink. Where shall it be, and when?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Where is difficult for me to explain but in one of the mountain's interior chambers. And as for when, I think it's ongoing without an end in sight."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Well you make a compelling offer, witch. A feast that's dragged on for gods-know-how-long and you don't know how to get there. I'll give it some serious consideration."
+        }
+      ],
+      "name": "HeraclesFieldAboutDionysus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 36,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathTrue:GameState.ReachedTrueEnding": [
+              {
+                "PathTrue": [
+                  "GameState",
+                  "ReachedTrueEnding"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeStormStop": [
+              {
+                "PathFalse": [
+                  "GameState",
+                  "WorldUpgradesAdded",
+                  "WorldUpgradeStormStop"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:TextLinesRecord": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "TextLinesRecord"
+            ],
+            "SumPrevRuns": 5,
+            "TableValuesToCount": [
+              "PrometheusAboutAltFight01",
+              "PrometheusAboutAltFight01_B"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusAboutHeracles01",
+          "HeraclesGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1594
+    },
+    "HeraclesFieldAboutEphyra01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You live. By my good graces, granted, but... first I've seen somebody stand against the filth that's overtaken this accursed town."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I aim to cleanse the filth down to the source. He resides deep in the Underworld, though I've business to attend to on Olympus first."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "What a coincidence! I just returned from there not long ago. So the gods are putting all the pieces into place.... You watch yourself, sister."
+        }
+      ],
+      "name": "HeraclesFieldAboutEphyra01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1017
+    },
+    "HeraclesFieldAboutEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The Titan Prometheus seems rather pleased of late. Why do you suppose that is?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "How should I know, and why should it matter? Seeing as we don't discuss him here, or anywhere."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Then let's discuss you. Have you gotten what you sought? With the Fates declaring that an age of mortals is to come."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'm a mere half-god, as you may recall. I never get what I want. But when finally comes a time for change, I'll welcome it. May that next age no longer need for gods or men like me."
+        }
+      ],
+      "name": "HeraclesFieldAboutEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2280
+    },
+    "HeraclesFieldAboutEpilogue02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Having given it all some further thought, I must admit I undersold what you achieved, sister. Your task was difficult."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It could have been worse. I had the strength of mighty Heracles on my side, at least for the most part. But thank you; that means a lot coming from you."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No need. For now, it seems we get to ply our trade without the pressure to accomplish the impossible. I'll take it."
+        }
+      ],
+      "name": "HeraclesFieldAboutEpilogue02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesFieldAboutEpilogue01",
+          "HeraclesGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2310
+    },
+    "HeraclesFieldAboutExpectations01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're not the only one who had high expectations to live up to, Heracles. I'm Princess of the Underworld. My father and mother were taken by Chronos, and I was raised to slay him. Repeatedly told it was imperative, but near impossible."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Didn't ask for your life story, but sure. The Fates had big plans for you. It'd be a lot of pressure were the outcome not already preordained."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And what of your various victories? You've had to fight for your every achievement, and bitterly. None of those were preordained?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "We don't know what is preordained or not, and can ill-afford taking any chances. But whichever burdens you've been carrying do nothing to alleviate mine."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your struggles are unchanged knowing you're not alone?"
+        }
+      ],
+      "name": "HeraclesFieldAboutExpectations01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesBathHouse01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1834
+    },
+    "HeraclesFieldAboutFame01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Everywhere I go, the dead know me; it's irksome. Used to be able to show up to a slaughter without drawing attention."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The consequence of notoriety. The Shades where I'm from all think the world of you! We may or may not even have a wall-scroll depicting your adventures."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "They don't know anything about me, only the falsehoods and half-truths. I don't need a cult of mindless followers."
+        }
+      ],
+      "name": "HeraclesFieldAboutFame01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.Cosmetic_FanPoster01b": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "Cosmetic_FanPoster01b"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1275
+    },
+    "HeraclesFieldAboutFamily01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "If you're a daughter of Hades for true, that makes us cousins, doesn't it? Although knowing my father, you must have a lot of those..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've met quite a few recently among the Olympians themselves. But I grew up mostly in solitude."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Thank the Fates for that. Fewer relatives means fewer obligations... fewer wars to be recruited into through no doing of your own, other than being born..."
+        }
+      ],
+      "name": "HeraclesFieldAboutFamily01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1253
+    },
+    "HeraclesFieldAboutFates01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Word is the Fates themselves are gone. Too bad. I always wanted that job for myself. Not that they can be killed."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You always wanted to kill the Three Fates... for deciding you'd become a great hero of exceeding strength whose achievements would inspire countless others?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Certainly if not for them I wouldn't be here. Well now they know what it's like... getting strung about with no say in the matter. The Fates be damned! Justice is all we need."
+        }
+      ],
+      "name": "HeraclesFieldAboutFates01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "HermesAboutFates01",
+          "TrueEndingFinale01"
+        ],
+        "RequiredTextLines": [
+          "HeraclesGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1397
+    },
+    "HeraclesFieldAboutFathers01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Our fathers sure made a mess of things for us, didn't they, sister. Born to the mightiest of gods, yet living like outcasts... like bloody animals."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It's Chronos that made a mess of things. If he'd have just stayed dead, we'd be at peace. And together with our fathers, no doubt."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Have you met our fathers? Sure, we're in the midst of an interminable war, but at least we're far away from them."
+        }
+      ],
+      "name": "HeraclesFieldAboutFathers01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1462
+    },
+    "HeraclesFieldAboutHera01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "...You have her blessing, then. Just like that, she gave you her strength. Her approval..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean Hera? Of course she did; we're all on the same side. More than that, we're family."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Family. It figures that her grace the Queen presides over the entire concept. Marriage, birthing, and the like. Curses, in a charitable form."
+        }
+      ],
+      "name": "HeraclesFieldAboutHera01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.HeraUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HeraUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1125
+    },
+    "HeraclesFieldAboutIcarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "In all your travels back and forth from Mount Olympus, have you ever seen a young man with wings soaring over the waters, dropping explosives to disrupt the Titan's fleets?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The son of the artificer Daedalus. Those are not real wings, and he's a Shade now. He and his father both. What of him?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, it's just that... he's quite an admirer of yours, apparently. He'd give anything to meet you at some point. I thought perhaps I could facilitate an introduction."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not interested in admirers. Especially ones whose drowned corpses I had to bury. He's better off with the idea of me."
+        }
+      ],
+      "name": "HeraclesFieldAboutIcarus01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "IcarusAboutHeracles01",
+          "HeraclesGift07",
+          "IcarusGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1344
+    },
+    "HeraclesFieldAboutIcarus02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Icarus, the son of Daedalus we spoke of, he was very moved to learn you may have helped administer his final rites. He said to tell you cheers... I think he'd want to say much more."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Urgh. Would you just leave me be with all his sentiment."
+        }
+      ],
+      "name": "HeraclesFieldAboutIcarus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "IcarusAboutHeracles02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1375
+    },
+    "HeraclesFieldAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Well, if it isn't my old Lion Fang. I had multiples to spare, and you looked like you could use some of its savagery yourself."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Its strength is useful certainly, though why give it away? The stronger I am, the more I can encroach on your glory."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Simple, sister: I don't want it anymore. Neither the Fang nor the glory. Take my work for all I care; there's always more."
+        }
+      ],
+      "name": "HeraclesFieldAboutKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "DecayingBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1943
+    },
+    "HeraclesFieldAboutKeepsake02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "That Lion Fang still giving you results? Great strength that fades with time... like the experience of being mortal."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "To feel one's body beginning to give way to decrepitude... fortunately, your Fang recovers all its potency each night."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Unlike the lion from which it came. They said it sprang from the moon, can you believe that rubbish? But it was a noble beast..."
+        }
+      ],
+      "name": "HeraclesFieldAboutKeepsake02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "DecayingBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.TraitDictionary.DecayingBoostKeepsake.1.Rarity": [
+          {
+            "IsAny": [
+              "Epic",
+              "Heroic"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "DecayingBoostKeepsake",
+              1,
+              "Rarity"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1966
+    },
+    "HeraclesFieldAboutMagick01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Those magick tricks... you're borrowing that power. How can you trust it when strength belongs to you alone?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Magick and raw strength are not in opposition; both ultimately come from within, they're just trained differently."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I don't think so, sister. You're drawing from the moon, and the earth, and... who knows what else. But in this world, you can't rely on anybody but yourself."
+        }
+      ],
+      "name": "HeraclesFieldAboutMagick01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.SpellDrop": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "SpellDrop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1996
+    },
+    "HeraclesFieldAboutMedea01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You ever see Lady Medea around here? Long dark hair and attire. She could probably help thin the crowd. No denying we're outnumbered."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Already owe her for a time I wasn't... at my best. Won't be asking further favors from a witch. You take more than you give."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What did witches ever do to you? It sounds as though she helped you out, yet you still speak of her with such disdain."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I know what you're capable of. I respect the power of an erupting volcano, doesn't mean I want to be near one."
+        }
+      ],
+      "name": "HeraclesFieldAboutMedea01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "N"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "Path:UseRecord.NPC_Medea_01": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "Path": [
+              "UseRecord",
+              "NPC_Medea_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift02",
+          "MedeaGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1301
+    },
+    "HeraclesFieldAboutNergalAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "That stone club of yours... that is a worthy killing instrument. I'd wrest it from your grip, but it's probably bound to you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're wise to restrain yourself, as the Rock Lion Mace answers to me. Not quite as supple as your own club... olive-wood, is it?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Aren't you the wellspring of experience? Knowing your clubs as well as your trees. I like mine better than yours anyway."
+        }
+      ],
+      "name": "HeraclesFieldAboutNergalAspect01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "AxeRallyAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2118
+    },
+    "HeraclesFieldAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Olympus is fortunate to have your strength and service, Son of Zeus."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I serve the gods all right. Served them a long time, one tall order after another. They've brought me fame, glory... everything. They never get enough of me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But you've had enough of them. Then... what are you doing here?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Oh, my work history can demonstrate I never get enough of them, either. I take a job, I do it."
+        }
+      ],
+      "name": "HeraclesFieldAboutOlympus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1077
+    },
+    "HeraclesFieldAboutOlympus02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Welcome to your ancestral mountain, sister. Everything you dreamed of? I once yearned to be here, too. I got over it."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yet you're still defending this place. You speak as though you've lost your purpose, but I've seen you fight."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Purpose. The gods asked the world of me before I could join them here, only to have to defend their honor some more. You'll find your own purpose, soon enough."
+        }
+      ],
+      "name": "HeraclesFieldAboutOlympus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1101
+    },
+    "HeraclesFieldAboutPerfection01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're known as perhaps the perfect warrior, Heracles, yet don't seem too caught up in that pursuit. You fight savagely, with brute force rather than finesse. You want results."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I do. So what. Perfection is a result. And why don't you stay out of my psyche, witch? I don't need you in my head any more than in my presence."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I just want to understand the things you've said... because I don't want to end up like you, filled with regret despite my excellence. Your greatness is lost only on you."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You don't have to worry, sister. You'll never end up like me. Because you'll never be like me. No one ever has, or shall."
+        }
+      ],
+      "name": "HeraclesFieldAboutPerfection01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesBathHouse02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1888
+    },
+    "HeraclesFieldAboutPolyphemus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You made it out before. Cyclops must have caught your scent, though. He's strong, that one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's a ringing endorsement. Though you must be stronger still! Ever considered putting him to the test? Could save me a lot of trouble."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "He's not my type. Besides, he's a spawn of the gods, just like you and me. Wouldn't be proper if we were all fighting all the time, now would it?"
+        }
+      ],
+      "name": "HeraclesFieldAboutPolyphemus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "N"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1437
+    },
+    "HeraclesFieldAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Have you had any run-ins with the Titan Prometheus while on Olympus recently? He seems to be the one leading the assault forces besieging your family's home."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Is he now? That's rich. Wasn't he supposed to be tied up on some mountain someplace else, getting picked apart?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How do you not know he's free? You should be hunting him, not this fodder. Who's setting your objectives?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "My orders come directly from the King and Queen. If you've any concerns with how I'm carrying out my work, just go complain to them."
+        }
+      ],
+      "name": "HeraclesFieldAboutPrometheus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ],
+        "RequiredTextLines": [
+          "PrometheusFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1559
+    },
+    "HeraclesFieldAboutReturning01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Last we had a skirmish such as this, after the dust settled, you were nowhere to be found. Fled, like a thief in the night."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I had to make an early exit. Figured you would have no trouble resolving the matter, seeing as you work alone."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "That I do. But I don't like combatants disappearing on me. Stay where I can see you, or stay out of the way."
+        }
+      ],
+      "name": "HeraclesFieldAboutReturning01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:EncountersOccurredCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "EncountersOccurredCache"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "HeraclesCombatIntro",
+              "HeraclesCombatN",
+              "HeraclesCombatN2",
+              "HeraclesCombatO",
+              "HeraclesCombatO2",
+              "HeraclesCombatP",
+              "HeraclesCombatP2"
+            ],
+            "Value": 1
+          }
+        ],
+        "Path:SpeechRecord": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpeechRecord"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "/VO/Heracles_0104",
+              "/VO/Heracles_0105",
+              "/VO/Heracles_0106",
+              "/VO/Heracles_0107"
+            ],
+            "Value": 1
+          }
+        ],
+        "Path:UseRecord.NPC_Heracles_01": [
+          {
+            "Comparison": "<",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "UseRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1789
+    },
+    "HeraclesFieldAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You talk too much, you know that, witch? Dispense with the pleasantries, and we could be killing even more."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm not certain which pleasantries you mean, but if you'd like to speak even less, that's certainly your prerogative."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Speaking never was my specialty. And as you may have surmised, I'm more the sort to focus on my strengths."
+        }
+      ],
+      "name": "HeraclesFieldAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2334
+    },
+    "HeraclesFieldAboutThanatosAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Where did you get that scythe of yours, sister? You don't seem like much of a farmer, though neither did Thanatos."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Would you believe me if I told you that his mother was letting me borrow it for a little while?"
+        }
+      ],
+      "name": "HeraclesFieldAboutThanatosAspect01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutWeapons01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "AxePerfectCriticalAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2077
+    },
+    "HeraclesFieldAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sir, what are you doing in the middle of the Rift of Thessaly. How did you even get here? Although, you must be a powerful swimmer."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'm proficient in a wide variety of athletics, since you mention it. Swimming, leaping, striking things with clubs."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So this is part of your patrol path? To think my journey could have been even more infested with foes if not for you."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Much would be different if not for me. Though you're one of the few I've met of late to admit it. Fair voyaging, sister."
+        }
+      ],
+      "name": "HeraclesFieldAboutThessaly01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1049
+    },
+    "HeraclesFieldAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'd given you no thought at all while you were gone. Otherwise I would have figured you had given up."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't know what I'm supposed to say to that except I hadn't given you much thought lately either. Is there anyone you do regularly think about?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I think mainly of the bodies I have crushed beneath my club and feet. You're welcome to join them, at any point."
+        }
+      ],
+      "name": "HeraclesFieldAboutTimePassing01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesPreEncounterAboutTimePassing01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2147
+    },
+    "HeraclesFieldAboutTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "They said the war was finally drawing to a close. Somebody must have forgotten to notify those we slaughtered."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We need them here for the time being anyhow. Has Olympus informed you of the nature of the next phase of our plan?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I got the gist: We fight on. Nothing changes. Never has before, so... why would it now?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What are you talking about? A lot's changed! Olympus is no longer in danger. The House of Hades is restored."
+        }
+      ],
+      "name": "HeraclesFieldAboutTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2192
+    },
+    "HeraclesFieldAboutTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What will you do when all of this is over, sir? Or rather, what would you desire to do?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "...Why ask? I tend not to give desire too much thought, beyond any immediate and bestial cravings I may have."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I would appreciate any perspective, that's all. All my life I had an obligation to my family to fulfill. I'm not certain what to do with myself now that I have..."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I am the last individual whose perspective you should heed, sister. Chase your dreams if you still have any. Now scoot."
+        }
+      ],
+      "name": "HeraclesFieldAboutTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 6
+        },
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "TrueEndingFinale01",
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ],
+        "RequiredTextLines": [
+          "HeraclesGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2238
+    },
+    "HeraclesFieldAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You make it to the mountaintop as yet? In case you haven't, nothing good awaits you there. Or so I hear."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What, you mean Typhon? I'm surprised the Olympians don't have you helping out with him, instead of bashing a bunch of weaklings far from where the real danger is."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The Olympians won't abide some half-god stealing their glory. I get the drudgery, not the important work. Thank the Fates that you get some of each."
+        }
+      ],
+      "name": "HeraclesFieldAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1646
+    },
+    "HeraclesFieldAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "What is it like... being up against that monster at the summit. I've not faced something of that size. Not yet at least."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've not faced anything of Typhon's size either. His enormity is to his disadvantage in some ways, but facing him, a torrential storm, and his broodlings all at once can be a lot."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "To think the multi-headed Hydra I once slew was merely one of his offspring. But there shall be worse monsters to fight in ages hence..."
+        }
+      ],
+      "name": "HeraclesFieldAboutTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.TyphonHead": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "TyphonHead"
+            ],
+            "Value": 2
+          }
+        ],
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1673
+    },
+    "HeraclesFieldAboutUnderworld01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You must be rather comfortable up here. This land has become near as dismal as the one from which you hail."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How would you even know what all the Underworld is like? It couldn't be more different. Stop by sometime and see."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Already had my fill. Ask your father sometime about when last I visited. If you ever see him or his dog ever again."
+        }
+      ],
+      "name": "HeraclesFieldAboutUnderworld01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1195
+    },
+    "HeraclesFieldAboutUnderworld02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You really have been to the Underworld before... and dragged my family's dog all the way to the surface, with my father's consent?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Your father didn't think I had it in me. Another of the many gods who failed to take me at my word. But fear not, I let the dog return. He's fortunate he's not a cat."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Unbelievable. Then why didn't Olympus send you in after Chronos if you have that sort of experience?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "They've been on the defensive. They probably don't think I could do it. And they may not trust me. Who knows why else."
+        }
+      ],
+      "name": "HeraclesFieldAboutUnderworld02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HadesAboutHeracles01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1220
+    },
+    "HeraclesFieldAboutWeapons01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You've more aptitude for weaponry than one might expect. I once sought to master every armament under the sun, but in the end... I settled for the simple club."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I am bearer of the Arms of Night in all their various Aspects; I'd never settle for just one. Do you not fear you've grown complacent?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No. Tread this path long enough, you'll find that any weapon can do the job. At that point, there's no real choice. Though I still carry all these other arms just to put on a show."
+        }
+      ],
+      "name": "HeraclesFieldAboutWeapons01",
+      "narrativePriorityClusterMembers": [
+        "HeraclesFieldAboutBoar01",
+        "HeraclesFieldAboutMedea01",
+        "HeraclesFieldAboutMagick01",
+        "HeraclesFieldAboutIcarus01",
+        "HeraclesFieldAboutAxe01",
+        "HeraclesFieldAboutThanatosAspect01",
+        "HeraclesFieldAboutNergalAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {
+        "Path:GameState.WeaponsUnlocked": [
+          {
+            "Comparison": ">=",
+            "CountOf": "<ref:GameData.AllWeaponAspects>",
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ],
+            "Value": 10
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2019
+    },
+    "HeraclesFieldAboutWitches01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I know what you are. You bloody witches. One foreign word... one finger-wagging gesture directed at me... and I'll squeeze you till you pop."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That won't be necessary... though I would know how came you to feel this way about us bloody witches? How many have you met?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Two questions too many. The more you know, the more you can manipulate. Now, off with you."
+        }
+      ],
+      "name": "HeraclesFieldAboutWitches01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 36,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 1033
+    },
+    "HeraclesFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You're the help? Oh, that's rich. Friendly word of advice, sister: Stay out of my bloody way, else you're liable to get hurt. Now scoot, and tell whomever sent you that I work alone."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your threat is duly noted, Son of Zeus. I'm headed for the docks, but understand this city's sealed shut."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Then you understand you ought turn back. This town is dead, and doesn't let the living pass."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm Daughter of Hades; the dead shall answer to me. They may just need a little encouragement."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Try all you like. But remember you were warned."
+        }
+      ],
+      "name": "HeraclesFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Name": [
+          {
+            "IsAny": [
+              "N_Hub"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Name"
+            ]
+          }
+        ],
+        "Path:CurrentRun.SpawnRecord.SoulPylon": [
+          {
+            "Comparison": "==",
+            "Path": [
+              "CurrentRun",
+              "SpawnRecord",
+              "SoulPylon"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.N_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "N_Boss01"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 290
+    },
+    "HeraclesGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Great Son of Zeus, I offer you this gift of Nectar, that it may quench your thirst as you labor for the gods. They must be grateful for your might."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Heh. Saves me having to find another bottle for when next I have to prove my fealty. Here, something for your trouble."
+        }
+      ],
+      "name": "HeraclesGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2361
+    },
+    "HeraclesGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Sure you don't want to give me only half the bottle there? Seeing as I'm merely half a god... I got their strength but seldom get their luxury."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Nothing's gained from luxury in excess, anyway. But there are times a little doesn't hurt! May this soothe your spirit when the occasion arises."
+        }
+      ],
+      "name": "HeraclesGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2393
+    },
+    "HeraclesGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You truly take me for a fool, believing I would drink from this? You could have ensorcelled the contents in any number of ways, to drive me to madness, or worse..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I swear to you upon my father's name that I've done no such thing. And it would have obviously spoiled if I had. Do you want to see me drink it first?"
+        }
+      ],
+      "name": "HeraclesGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2423
+    },
+    "HeraclesGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "My favor, in exchange for drink? No. You waste your resources and time; my time as well. You'll get a share of spoils if you earn your kills, but nothing more. "
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I understand. Nevertheless, we're both working for the same family, and I have seen firsthand the efforts you're taking to drive back their enemies. And I'm grateful."
+        }
+      ],
+      "name": "HeraclesGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2470
+    },
+    "HeraclesGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "They never give this stuff to me themselves, the mountain gods. Developed a distaste for it as a result, especially after a certain... contest with the god of wine. But that was long ago."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You tried to out-drink Lord Dionysus? Even with all your fortitude, that sounds like a very dangerous undertaking from what I understand."
+        }
+      ],
+      "name": "HeraclesGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2515
+    },
+    "HeraclesGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You say the gods never shared Nectar with you; well, I'm sharing some now. Perhaps you can regain a taste for it."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No more of this, witch. I told you I don't care for it, and presently I have no plans to go make any offerings myself. My tolerance for you likewise nears its limit."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your tolerance is enough, sir. I see how hard you work, expecting nothing in return. For all you've given to Olympus, may you never give your soul."
+        }
+      ],
+      "name": "HeraclesGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.EncountersOccurredCache.HeraclesCombatIntro": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncountersOccurredCache",
+              "HeraclesCombatIntro"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2561
+    },
+    "HeraclesGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You said I wasn't what you thought; neither are you what I expected, sir. I'd heard tales of your exploits, and truly never seen so fierce a fighter. But I know there's more to you. Here, then! For one of your divinity, a divine gift."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Ambrosia... you would take me for another god. I am half-man; such stuff is not for me, and you sully its purpose merely in the offering. What do you want from me?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I want you to accept that there are gods and goddesses who hold you in esteem. If falling short of perfection means falling short of godhood, then none of us are divine."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "...Now you're on to something, sister. Well, if and when the rest of the family gets around to accepting your terms, let's all share this bottle. I'll just hang onto it for now."
+        }
+      ],
+      "name": "HeraclesGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.Encounter.Name": [
+          {
+            "IsNone": [
+              "Shop"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "Encounter",
+              "Name"
+            ]
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Heracles_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Heracles_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift06",
+          "HeraclesFieldAboutAltFightWin01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 2611
+    },
+    "HeraclesHotSpringsChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Oh, it's you. Either get in or get out."
+        }
+      ],
+      "name": "HeraclesHotSpringsChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4096
+    },
+    "HeraclesHotSpringsChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Fear not, sister. We are at rest here rather than at work."
+        }
+      ],
+      "name": "HeraclesHotSpringsChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4107
+    },
+    "HeraclesHotSpringsChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No need for killing at the moment here, sister..."
+        }
+      ],
+      "name": "HeraclesHotSpringsChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4118
+    },
+    "HeraclesHotSpringsChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "How long since these waters were last purified...?"
+        }
+      ],
+      "name": "HeraclesHotSpringsChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4129
+    },
+    "HeraclesHotSpringsChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Look wine-god, you've another guest..."
+        }
+      ],
+      "name": "HeraclesHotSpringsChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4140
+    },
+    "HeraclesHotSpringsChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Touch me again, Satyr, and by the gods I'll... urgh..."
+        }
+      ],
+      "name": "HeraclesHotSpringsChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4151
+    },
+    "HeraclesMiscChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "If you're starved for conversation, you'll have better fortune with the Boatman there."
+        }
+      ],
+      "name": "HeraclesMiscChat01",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 3979
+    },
+    "HeraclesMiscChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Save it for somebody who cares, sister."
+        }
+      ],
+      "name": "HeraclesMiscChat05",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 3997
+    },
+    "HeraclesMiscChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I look like I want to have ourselves a chat?"
+        }
+      ],
+      "name": "HeraclesMiscChat07",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4014
+    },
+    "HeraclesMiscChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Urgh. You just made me lose count of all my blasted coin."
+        }
+      ],
+      "name": "HeraclesMiscChat08",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4030
+    },
+    "HeraclesMiscChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The Boatman cannot be negotiated with at all, it seems."
+        }
+      ],
+      "name": "HeraclesMiscChat09",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4047
+    },
+    "HeraclesMiscChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not even a hello for his returning customers from that one."
+        }
+      ],
+      "name": "HeraclesMiscChat10",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift07"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 4063
+    },
+    "HeraclesMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'm working here, sister. Care to pitch in, fine, but don't get underfoot."
+        }
+      ],
+      "name": "HeraclesMiscStart01",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.SpeechRecord": [
+          {
+            "HasNone": [
+              "/VO/Heracles_0047"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 501
+    },
+    "HeraclesMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Much as I'd love to have ourselves a chat, I'm on the job. And better get to work."
+        }
+      ],
+      "name": "HeraclesMiscStart03",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 515
+    },
+    "HeraclesMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You look like you've a taste for blood. Come get your fill for now."
+        }
+      ],
+      "name": "HeraclesMiscStart04",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 521
+    },
+    "HeraclesMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Well don't just stand there, sister; we've a war here to perpetuate."
+        }
+      ],
+      "name": "HeraclesMiscStart05",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.SpeechRecord": [
+          {
+            "HasNone": [
+              "/VO/Heracles_0047"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 527
+    },
+    "HeraclesMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Enjoy the silence, sister. We'll have company here any moment now."
+        }
+      ],
+      "name": "HeraclesMiscStart06",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.SpeechRecord": [
+          {
+            "HasNone": [
+              "/VO/Heracles_0047"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 540
+    },
+    "HeraclesMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Need a break from all the slaughter, just stand back. Far back."
+        }
+      ],
+      "name": "HeraclesMiscStart07",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 553
+    },
+    "HeraclesMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The gods must want for us to give another glorious performance, huh."
+        }
+      ],
+      "name": "HeraclesMiscStart08",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 559
+    },
+    "HeraclesMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Why am I even talking to you, sister? You save your breath, I'll save mine."
+        }
+      ],
+      "name": "HeraclesMiscStart10",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.SpeechRecord": [
+          {
+            "HasNone": [
+              "/VO/Heracles_0047"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 566
+    },
+    "HeraclesMiscStart11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "We get to know each other, you'll live to regret it. Happens all the time."
+        }
+      ],
+      "name": "HeraclesMiscStart11",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 579
+    },
+    "HeraclesMiscStart13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Suggest remaining far afield of me at all times, witch."
+        }
+      ],
+      "name": "HeraclesMiscStart13",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 586
+    },
+    "HeraclesMiscStart14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You blasted gods and goddesses are all alike..."
+        }
+      ],
+      "name": "HeraclesMiscStart14",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "HeraclesGift07"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 592
+    },
+    "HeraclesMiscStart16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Go about your business, sister. I'm on the job."
+        }
+      ],
+      "name": "HeraclesMiscStart16",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.SpeechRecord": [
+          {
+            "HasNone": [
+              "/VO/Heracles_0047"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "SpeechRecord"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 605
+    },
+    "HeraclesMiscStart17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "This vessel's going back to the bottom of the sea, whether you're here or not."
+        }
+      ],
+      "name": "HeraclesMiscStart17",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 618
+    },
+    "HeraclesMiscStart18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Rough waters ahead, sister. End up overboard, I won't be diving in to get you out."
+        }
+      ],
+      "name": "HeraclesMiscStart18",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.SpeechRecord./VO/Heracles_0438": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "SpeechRecord",
+              "/VO/Heracles_0438"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 631
+    },
+    "HeraclesMiscStart19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Another stowaway aboard. And here I thought I was the only one."
+        }
+      ],
+      "name": "HeraclesMiscStart19",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "PathFalse:CurrentRun.SpeechRecord./VO/Heracles_0440": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "SpeechRecord",
+              "/VO/Heracles_0440"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 647
+    },
+    "HeraclesMiscStart20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The sea took these ships' crews once before, and it's about to take them back."
+        }
+      ],
+      "name": "HeraclesMiscStart20",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 663
+    },
+    "HeraclesMiscStart21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "This ship's a mess, but let me go ahead and swab the deck, if you'll stand clear."
+        }
+      ],
+      "name": "HeraclesMiscStart21",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 676
+    },
+    "HeraclesMiscStart22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "What a coincidence, I was just heading to the mountain of the gods myself."
+        }
+      ],
+      "name": "HeraclesMiscStart22",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 689
+    },
+    "HeraclesMiscStart23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I've an urge to smash this ship to splinters, but then we'd be forced to swim."
+        }
+      ],
+      "name": "HeraclesMiscStart23",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 702
+    },
+    "HeraclesMiscStart24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I claim this ship in the name of the gods, although you're one of them, aren't you?"
+        }
+      ],
+      "name": "HeraclesMiscStart24",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 715
+    },
+    "HeraclesMiscStart25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not much room here to maneuver, so best stay far afield of my club."
+        }
+      ],
+      "name": "HeraclesMiscStart25",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 728
+    },
+    "HeraclesMiscStart26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The darkness of these waters brings about a certain peace, doesn't it, sister?"
+        }
+      ],
+      "name": "HeraclesMiscStart26",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "O"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 741
+    },
+    "HeraclesMiscStart27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Go someplace else. This blasted mountain's defenses are already spread too thin."
+        }
+      ],
+      "name": "HeraclesMiscStart27",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 754
+    },
+    "HeraclesMiscStart28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "The gods require all the aid they can muster, which is why we're both here."
+        }
+      ],
+      "name": "HeraclesMiscStart28",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 767
+    },
+    "HeraclesMiscStart29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Oh good. I was beginning to feel lonesome having to shoulder all the work myself..."
+        }
+      ],
+      "name": "HeraclesMiscStart29",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 780
+    },
+    "HeraclesMiscStart30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Suggest you stand clear before you're driven back from this mountain like all the rest."
+        }
+      ],
+      "name": "HeraclesMiscStart30",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 793
+    },
+    "HeraclesMiscStart32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Everybody wants a piece of Olympus lately, don't they. But it's not for the taking."
+        }
+      ],
+      "name": "HeraclesMiscStart32",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 807
+    },
+    "HeraclesMiscStart34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Best watch your step in all this ice and snow. Wouldn't want you to slip."
+        }
+      ],
+      "name": "HeraclesMiscStart34",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 821
+    },
+    "HeraclesMiscStart35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Now what could be more glorious than crushing Satyrs into frozen earth?"
+        }
+      ],
+      "name": "HeraclesMiscStart35",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 834
+    },
+    "HeraclesMiscStart36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I was here first, sister. Go find your own Harpies and such to massacre."
+        }
+      ],
+      "name": "HeraclesMiscStart36",
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "P"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 847
+    },
+    "HeraclesMiscStart37": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "This is just a warm-up for what's to come later this evening, isn't it, sister?"
+        }
+      ],
+      "name": "HeraclesMiscStart37",
+      "otherRequirements": {
+        "Path:GameState.ShrineUpgrades.BossDifficultyShrineUpgrade": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ShrineUpgrades",
+              "BossDifficultyShrineUpgrade"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 860
+    },
+    "HeraclesMiscStart38": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'll pull my strikes should you happen to get in the way here, but at the summit? No."
+        }
+      ],
+      "name": "HeraclesMiscStart38",
+      "otherRequirements": {
+        "Path:GameState.ShrineUpgrades.BossDifficultyShrineUpgrade": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ShrineUpgrades",
+              "BossDifficultyShrineUpgrade"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 879
+    },
+    "HeraclesMiscStart39": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Soon you shall face me and the Flame Thief once again, but let's keep up the act for now."
+        }
+      ],
+      "name": "HeraclesMiscStart39",
+      "otherRequirements": {
+        "Path:GameState.ShrineUpgrades.BossDifficultyShrineUpgrade": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ShrineUpgrades",
+              "BossDifficultyShrineUpgrade"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 898
+    },
+    "HeraclesMiscStart40": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'm just about to start killing everything that moves, other than you and your pet."
+        }
+      ],
+      "name": "HeraclesMiscStart40",
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar",
+              "RavenFamiliar",
+              "CatFamiliar",
+              "HoundFamiliar",
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 917
+    },
+    "HeraclesMiscStart41": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Credit to the most efficient killer here; you do the work, you get the coin."
+        }
+      ],
+      "name": "HeraclesMiscStart41",
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 930
+    },
+    "HeraclesMiscStart42": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "It's been too long since last we slaughtered everything that moved about this place."
+        }
+      ],
+      "name": "HeraclesMiscStart42",
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": "<",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift06"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 936
+    },
+    "HeraclesMiscStart43": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "While you've been navigating your father's catacombs, I've had all the glory to myself."
+        }
+      ],
+      "name": "HeraclesMiscStart43",
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 4,
+            "TableValuesToCount": [
+              "F_Opening01",
+              "F_Opening02",
+              "F_Opening03"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift06"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 956
+    },
+    "HeraclesMiscStart44": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "We're making a regular habit of crushing the life from anything that moves."
+        }
+      ],
+      "name": "HeraclesMiscStart44",
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift07"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 977
+    },
+    "HeraclesMiscStart45": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You're bloodied, so you'd best stand back and leave the taking of the glory all to me."
+        }
+      ],
+      "name": "HeraclesMiscStart45",
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.4
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 996
+    },
+    "HeraclesPreEncounterAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Hold, sister. Remember, not a word about before, or else. We can have ourselves another happy massacre and then be on our way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And then perhaps we'll meet again on my way to the summit, if the conditions are just right. Wouldn't that be nice?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Sure it would. We understand each other, then. Now to the bloodletting at hand."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {},
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 357
+    },
+    "HeraclesPreEncounterAboutArtemis01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Mistook you for the goddess of the hunt, stalking about these streets. Let's see if you can pick your targets off as well as she."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutArtemis01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.CurrentRoom.RoomSetName": [
+          {
+            "IsAny": [
+              "N"
+            ],
+            "Path": [
+              "CurrentRun",
+              "CurrentRoom",
+              "RoomSetName"
+            ]
+          }
+        ],
+        "Path:CurrentRun.EncountersOccurredCache": [
+          {
+            "HasAny": [
+              "ArtemisCombatN",
+              "ArtemisCombatN2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "EncountersOccurredCache"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 379
+    },
+    "HeraclesPreEncounterAboutAxe01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Isn't that axe a little big for you, sister? Though I laud the effort. We'll soon see if you can put it to the proper use."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutAxe01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasNone": [
+              "AxePerfectCriticalAspect",
+              "AxeRallyAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 400
+    },
+    "HeraclesPreEncounterAboutNergalAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not often I'm envious of another's weaponry, but that is a thing of beauty you have there. Show me what it can do."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutNergalAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "AxeRallyAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 440
+    },
+    "HeraclesPreEncounterAboutThanatosAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You wield a scythe much like the one carried by Death himself. Here, we shall have to take his place."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutThanatosAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "AxePerfectCriticalAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponAxe"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 420
+    },
+    "HeraclesPreEncounterAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Look who decided to show her shining face again. You want to earn some extra coin, have I the opportunity for you."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutTimePassing01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Heracles_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Heracles_01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 477
+    },
+    "HeraclesPreEncounterAboutTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I heard the tidings of your victory, but knew this wasn't over. Always more to be done. Now, come on."
+        }
+      ],
+      "name": "HeraclesPreEncounterAboutTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 9,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Heracles_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Heracles.lua",
+      "sourceLine": 461
+    }
+  }
+}
