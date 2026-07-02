@@ -96,7 +96,7 @@ Browsers block `fetch()` from `file://`, so the split build needs a static HTTP 
 The bundled file doesn't - you can open it straight from disk.
 
 ```bash
-python -m http.server 8000 --directory dist
+npm run serve   # -> http://localhost:8765 (python -m http.server 8765 --directory dist)
 ```
 
 ## Disclaimer

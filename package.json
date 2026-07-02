@@ -6,7 +6,8 @@
   "description": "Dev-tooling manifest for the JavaScript viewer assets. The viewer itself is a static template processed by `build_viewer.py` (Python); npm is used only for the JS linter and the node:test runner so unintroduced identifiers, unused names, and broken pure logic get caught the same way pyflakes + pytest catch their Python equivalents.",
   "scripts": {
     "lint": "eslint templates/ tests-js/",
-    "test": "node --test"
+    "test": "node --test",
+    "serve": "python -m http.server 8765 --directory dist"
   },
   "devDependencies": {
     "eslint": "^9.16.0",
