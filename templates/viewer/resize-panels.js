@@ -417,7 +417,7 @@ function _makeCollapseBtn(key) {
     btn.className = 'panel-collapse-btn';
     btn.innerHTML = COLLAPSE_ICON[key];
     btn.setAttribute('aria-label', `Collapse the ${PANEL_LABELS[key]} panel`);
-    btn.dataset.tooltip = 'Collapse this column';
+    btn.dataset.tooltip = `Collapse ${PANEL_LABELS[key]}`;
     btn.addEventListener('click', () => _setCollapsed(key, true));
     return btn;
 }
@@ -430,7 +430,7 @@ function _makeRail(key) {
     rail.type = 'button';
     rail.className = 'panel-rail';
     rail.setAttribute('aria-label', `Expand the ${PANEL_LABELS[key]} panel`);
-    rail.dataset.tooltip = 'Expand this column';
+    rail.dataset.tooltip = `Expand ${PANEL_LABELS[key]}`;
     rail.innerHTML = `<span class="panel-rail-icon" aria-hidden="true">${EXPAND_ICON[key]}</span>`
         + `<span class="panel-rail-label">${PANEL_LABELS[key]}</span>`;
     rail.addEventListener('click', () => _setCollapsed(key, false));
