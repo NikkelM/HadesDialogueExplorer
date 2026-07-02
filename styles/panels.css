@@ -89,6 +89,22 @@ body.resizing-panels * { cursor: col-resize !important; }
     overflow: auto;
     padding: 0 16px 16px;
 }
+/* Dialogue view: hide the vertical scrollbar on each panel (three side-by-side
+   vertical bars read as clutter) while KEEPING the horizontal one - the tree
+   panels scroll sideways to follow deep chains. WebKit/Blink size the two
+   scrollbars independently: ``width`` is the vertical bar's thickness (0 hides
+   it) and ``height`` is the horizontal bar's. Defining the pseudo opts into
+   custom styling, so the horizontal thumb/track are themed below. Firefox has
+   no per-axis control (``scrollbar-width`` hides both), so it keeps both bars -
+   an acceptable fallback that never hides the horizontal one. Vertical scroll
+   still works everywhere via wheel / trackpad / keyboard. */
+body.layout-dialogue .panel-body::-webkit-scrollbar { width: 0; height: 8px; }
+body.layout-dialogue .panel-body::-webkit-scrollbar-track { background: transparent; }
+body.layout-dialogue .panel-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 .textline-info {
     background: var(--surface);
     border: 1px solid var(--border);
