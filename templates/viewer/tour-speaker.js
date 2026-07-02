@@ -36,7 +36,7 @@ const SPEAKER_TOUR_STEPS = [
     {
         target: '.speaker-textline-controls-group',
         title: 'Filter the list',
-        body: 'Narrow the dialogue list by repeatability (play-once or repeatable). Load a save to also filter by eligibility - what is played, reachable, or still blocked.',
+        body: 'Filter this speaker\u2019s dialogues by name or line content, and narrow the list by repeatability (play-once or repeatable). Load a save to also filter by eligibility - what is played, reachable, or still blocked.',
     },
 ];
 

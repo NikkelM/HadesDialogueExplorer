@@ -437,6 +437,28 @@ body.layout-speaker #panel-info {
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
 }
+/* The name-search row sits above the filter chips; drop its separator so it
+   reads as one control block with the chips below it. */
+.speaker-textline-search-row {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 6px;
+}
+.speaker-textline-search {
+    width: 100%;
+    max-width: 500px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text-color);
+    font-size: var(--fs-base);
+    line-height: 18px;
+    outline: none;
+}
+.speaker-textline-search:focus {
+    border-color: var(--accent-color);
+}
 .speaker-control-label {
     font-size: var(--fs-xs);
     color: var(--text-muted);

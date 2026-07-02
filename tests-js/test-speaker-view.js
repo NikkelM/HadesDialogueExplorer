@@ -19,6 +19,7 @@ import {
     canonicalisePriority,
     canonicaliseEligibility,
     toggleSpeakerSection,
+    searchSpeakerTextlines,
     buildAdjacencyDetail,
     renderAdjacencyDetailRows,
 } from '../templates/viewer/speaker-view.js';
@@ -28,6 +29,7 @@ import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../
 import { buildFixtureData, loadFixtureData } from './fixtures.js';
 
 let lastHtml = '';
+let lastBodyHtml = '';
 
 globalThis.document = {
     getElementById(id) {
@@ -35,6 +37,18 @@ globalThis.document = {
             return {
                 set innerHTML(v) { lastHtml = v; },
                 get innerHTML() { return lastHtml; },
+            };
+        }
+        return null;
+    },
+    // Live-search re-render target: ``searchSpeakerTextlines`` rewrites only the
+    // list body element, so return a capture stub whose innerHTML the search
+    // tests can read back.
+    querySelector(sel) {
+        if (sel === '.speaker-textlines .speaker-textline-body') {
+            return {
+                set innerHTML(v) { lastBodyHtml = v; },
+                get innerHTML() { return lastBodyHtml; },
             };
         }
         return null;
@@ -67,6 +81,18 @@ function buildSpeakerFixture() {
             AphroditeWithZeus01: {
                 ...base.textlines.AphroditeWithZeus01,
                 requirements: { RequiredTextLines: ['ZeusWithAphrodite01'] },
+            },
+            // A speaker that owns several same-section lines with distinct
+            // names, used by the in-speaker name-search tests.
+            HeraldGreeting01: {
+                owner: 'NPC_Herald_01', section: 'InteractTextLineSets',
+                requirements: {}, otherRequirements: {},
+                dialogueLines: [{ speaker: 'NPC_Herald_01', text: 'Hail.' }],
+            },
+            HeraldFarewell01: {
+                owner: 'NPC_Herald_01', section: 'InteractTextLineSets',
+                requirements: {}, otherRequirements: {},
+                dialogueLines: [{ speaker: 'NPC_Herald_01', text: 'Until next time.' }],
             },
         },
         dependents: {
@@ -102,6 +128,15 @@ function buildSpeakerFixture() {
                 sectionCounts: { InteractTextLineSets: 1 },
                 priorityCounts: { super: 1, priority: 0, plain: 0 },
             },
+            NPC_Herald_01: {
+                name: 'Herald',
+                description: 'Announcer',
+                ownedTextlines: ['HeraldGreeting01', 'HeraldFarewell01'],
+                asSpeakerTextlines: [],
+                sourceFiles: ['NPCData.lua'],
+                sectionCounts: { InteractTextLineSets: 2 },
+                priorityCounts: { super: 0, priority: 0, plain: 2 },
+            },
         },
     };
 }
@@ -122,6 +157,11 @@ beforeEach(() => {
     clearSaveProgress();
     _localStore.clear();
     lastHtml = '';
+    lastBodyHtml = '';
+    // Clear any in-speaker search query left by a prior test so the module's
+    // ``_speakerQuery`` state doesn't leak across tests (it survives while the
+    // same speaker id is re-rendered).
+    searchSpeakerTextlines('');
 });
 
 // --- canonicalisers -----------------------------------------------
@@ -1003,4 +1043,74 @@ test('renderAdjacencyDetailRows shows save badges for dependent and required nam
     const html = renderAdjacencyDetailRows(new Map([['TestBlocked01', new Set(['TestPlayed01'])]]));
     assert.match(html, /save-badge blocked/);
     assert.match(html, /save-badge played/);
+});
+
+// --- in-speaker dialogue name search ------------------------------
+
+test('renderSpeaker includes an empty dialogue name search box', () => {
+    const html = render('NPC_Herald_01', { priority: 'all' });
+    assert.match(html, /class="speaker-textline-search"/);
+    assert.match(html, /oninput="searchSpeakerTextlines\(this\.value\)"/);
+    // The list body wrapper the live search re-renders into is present.
+    assert.match(html, /class="speaker-textline-body"/);
+    // Fresh speaker render starts with an empty query value.
+    assert.match(html, /class="speaker-textline-search"[^>]*value=""/);
+    // Both owned lines are listed before any search.
+    assert.match(html, /HeraldGreeting01/);
+    assert.match(html, /HeraldFarewell01/);
+});
+
+test('searchSpeakerTextlines narrows the list body to name matches and force-expands the section', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    searchSpeakerTextlines('greeting');
+    // Only the matching line survives in the re-rendered body.
+    assert.match(lastBodyHtml, /HeraldGreeting01/);
+    assert.doesNotMatch(lastBodyHtml, /HeraldFarewell01/);
+    // The section is force-expanded so the match shows without a manual click.
+    assert.match(lastBodyHtml, /speaker-textline-group expanded/);
+    // The section count reflects the filtered rows (1 of the 2 owned).
+    assert.match(lastBodyHtml, /speaker-count">1</);
+});
+
+test('searchSpeakerTextlines is case-insensitive and matches substrings', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    searchSpeakerTextlines('FAREWELL');
+    assert.match(lastBodyHtml, /HeraldFarewell01/);
+    assert.doesNotMatch(lastBodyHtml, /HeraldGreeting01/);
+});
+
+test('searchSpeakerTextlines also matches on dialogue line content', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    // "Until next time." is HeraldFarewell01's line text; its name doesn't
+    // contain "next", so this only matches via content.
+    searchSpeakerTextlines('next time');
+    assert.match(lastBodyHtml, /HeraldFarewell01/);
+    assert.doesNotMatch(lastBodyHtml, /HeraldGreeting01/);
+});
+
+test('searchSpeakerTextlines shows a no-match message when nothing matches', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    searchSpeakerTextlines('zzznope');
+    assert.match(lastBodyHtml, /speaker-textlines-empty/);
+    assert.match(lastBodyHtml, /No dialogues match/);
+    assert.match(lastBodyHtml, /zzznope/);
+});
+
+test('the search query resets when navigating to a different speaker', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    searchSpeakerTextlines('greeting');
+    // A fresh render for a different speaker clears the query, so its search
+    // box comes back empty and its full list shows.
+    const html = render('NPC_Zeus_01', { priority: 'all' });
+    assert.match(html, /class="speaker-textline-search"[^>]*value=""/);
+    assert.match(html, /ZeusWithAphrodite01/);
+});
+
+test('re-rendering the same speaker preserves the active search query in the input', () => {
+    render('NPC_Herald_01', { priority: 'all' });
+    searchSpeakerTextlines('farewell');
+    // A same-speaker re-render (e.g. a filter-chip click) keeps the typed
+    // query so the input stays pre-filled.
+    const html = render('NPC_Herald_01', { priority: 'all' });
+    assert.match(html, /class="speaker-textline-search"[^>]*value="farewell"/);
 });

@@ -561,21 +561,60 @@ function displayNameFor(speakerId) {
 // filter) renders above the list.
 function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     // Preserve which sections the user expanded across re-renders (filter /
-    // eligibility changes) for the SAME speaker; reset for a new speaker.
+    // eligibility changes) for the SAME speaker; reset for a new speaker
+    // (along with the in-speaker name search).
     if (speakerId !== _expandedSpeaker) {
         _expandedSpeaker = speakerId;
         _expandedSections = new Set();
+        _speakerQuery = '';
     }
+    // Stash the render context so ``searchSpeakerTextlines`` can rebuild just
+    // the list body (keeping the search input, and its focus, intact) as the
+    // user types.
+    _listCtx = { entry, speakerId, filter, eligFilter, game };
+
+    const controls = renderTextlineControls(entry, speakerId, filter, eligFilter);
+    return `<section class="speaker-textlines">${controls}`
+        + `<div class="speaker-textline-body">${renderTextlineListBody()}</div>`
+        + `</section>`;
+}
+
+// True when any of the textline's dialogue lines contains ``query`` (already
+// lower-cased) in its spoken text. Lets the in-speaker filter match on line
+// content, not just the internal name.
+function textlineTextMatches(tl, query) {
+    const lines = (tl && tl.dialogueLines) || [];
+    return lines.some(l => l && typeof l.text === 'string'
+        && l.text.toLowerCase().includes(query));
+}
+
+// Render the section-grouped list body from the stashed context, applying the
+// repeatability / eligibility filters plus the in-speaker name search. Split
+// out from ``renderTextlineList`` so a live search keystroke re-renders only
+// this part (the search input, a sibling, keeps focus).
+function renderTextlineListBody() {
+    if (!_listCtx) return '';
+    const { entry, filter, eligFilter, game } = _listCtx;
     const owned = (entry.ownedTextlines || [])
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
-    const filtered = owned.filter(o =>
+    let filtered = owned.filter(o =>
         filterPassesBucket(priorityBucket(o.tl), filter) && eligibilityPasses(o, eligFilter));
 
-    const controls = renderTextlineControls(entry, speakerId, filter, eligFilter);
+    // In-speaker filter: case-insensitive substring match on the textline name
+    // or any of its dialogue lines' text. When active, every rendered section is
+    // force-expanded so matches are visible without manually opening each group.
+    const query = _speakerQuery.trim().toLowerCase();
+    if (query) {
+        filtered = filtered.filter(o =>
+            o.name.toLowerCase().includes(query) || textlineTextMatches(o.tl, query));
+    }
 
     if (filtered.length === 0) {
-        return `<section class="speaker-textlines">${controls}<p class="muted speaker-textlines-empty">No textlines match the current filter.</p></section>`;
+        const msg = query
+            ? `No dialogues match \u201C${escapeHtml(_speakerQuery.trim())}\u201D.`
+            : 'No textlines match the current filter.';
+        return `<p class="muted speaker-textlines-empty">${msg}</p>`;
     }
 
     const groups = new Map();
@@ -586,15 +625,16 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     }
     const orderedSections = Array.from(groups.keys()).sort((a, b) =>
         compareSections(a, b));
-    const body = orderedSections.map(sec => {
+    return orderedSections.map(sec => {
         const rows = groups.get(sec).slice().sort((a, b) => compareWithinSection(a, b, game));
         const header = sec
             ? renderSectionHtml(sec)
             : `<span class="section-name">(unknown section)</span>`;
         // Collapsed by default; an expanded section is remembered (see
         // ``_expandedSections``) so it survives a filter / eligibility
-        // re-render. The header toggle records the new state.
-        const expandedClass = _expandedSections.has(sec) ? ' expanded' : '';
+        // re-render. An active name search force-expands every group so the
+        // matches show without extra clicks. The header toggle records state.
+        const expandedClass = (query || _expandedSections.has(sec)) ? ' expanded' : '';
         return `<div class="speaker-textline-group${expandedClass}">`
             + `<h5 class="speaker-textline-group-header" onclick="toggleSpeakerSection(this, ${jsAttr(sec)})">`
             + `<span class="speaker-group-chevron">\u25B6</span>`
@@ -603,8 +643,6 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
             + `<ul class="speaker-textline-list">${renderSectionRowsHtml(rows)}</ul>`
             + `</div>`;
     }).join('');
-
-    return `<section class="speaker-textlines">${controls}${body}</section>`;
 }
 
 // Section expand/collapse state, preserved across re-renders for the SAME
@@ -613,6 +651,21 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
 // in ``renderTextlineList`` when a different speaker is rendered.
 let _expandedSpeaker = null;
 let _expandedSections = new Set();
+
+// In-speaker dialogue filter. ``_speakerQuery`` is the live filter text (reset
+// per speaker); ``_listCtx`` stashes the last list render's inputs so a
+// keystroke can rebuild the list body in place without a full navigation.
+let _speakerQuery = '';
+let _listCtx = null;
+
+// Live filter-input handler for the textline list. Re-renders only the list
+// body element so the filter input (a sibling) keeps its focus and caret as
+// the user types. Not URL-persisted - it's a transient within-speaker filter.
+export function searchSpeakerTextlines(query) {
+    _speakerQuery = query || '';
+    const bodyEl = document.querySelector('.speaker-textlines .speaker-textline-body');
+    if (bodyEl) bodyEl.innerHTML = renderTextlineListBody();
+}
 
 // Section-header click target: toggle the group open/closed and record the
 // choice so the next re-render keeps it. Exposed globally for the inline
@@ -663,13 +716,20 @@ function renderAlternatesClusterHtml(cluster) {
         + `</li>`;
 }
 
-// Render the controls strip above the textline list: the repeatability
-// filter chips, plus the eligibility (save-status) filter chips on a
-// second row when a save applies to the active game. Both rows are wrapped in
-// a single container so the onboarding tour can highlight them together.
+// Render the controls strip above the textline list: a dialogue filter box
+// (matching name or line content), the repeatability filter chips, plus the
+// eligibility (save-status) filter chips on a further row when a save applies
+// to the active game. All rows are wrapped in a single container so the
+// onboarding tour can highlight them together.
 function renderTextlineControls(entry, speakerId, filter, eligFilter) {
+    let html = `<div class="speaker-textline-controls speaker-textline-search-row">`
+        + `<input type="text" class="speaker-textline-search" placeholder="Filter dialogues by name or content..." `
+        + `spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" `
+        + `value="${escapeHtml(_speakerQuery)}" oninput="searchSpeakerTextlines(this.value)" `
+        + `aria-label="Filter this speaker\u2019s dialogues by name or content" />`
+        + `</div>`;
     const priorityChips = renderPriorityChips(entry, speakerId, filter, eligFilter);
-    let html = `<div class="speaker-textline-controls">`
+    html += `<div class="speaker-textline-controls">`
         + `<span class="speaker-control-label">Filter:</span>`
         + `<div class="speaker-priority-chips" role="group" aria-label="Repeatability filter">${priorityChips}</div>`
         + `</div>`;
