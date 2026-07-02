@@ -185,11 +185,25 @@ export function ensureGameLoaded(gameId) {
     return _loadGame(gameId);
 }
 
+// Subscribers notified when a game's data blob becomes available (the
+// split build streams the non-active game(s) in after boot). Lets the
+// search UI refresh its cross-game sections once the other game's data
+// arrives, so a search run during the load window isn't stuck showing no
+// cross-game matches until the query is edited.
+const _gameDataListeners = [];
+
+export function onGameData(fn) {
+    if (typeof fn === 'function') _gameDataListeners.push(fn);
+}
+
 // Merge a fetched game blob into the registry. Idempotent.
 export function registerGameData(gameId, blob) {
     if (!games) games = {};
     games[gameId] = blob;
     delete _pendingGameLoads[gameId];
+    for (const fn of _gameDataListeners) {
+        try { fn(gameId); } catch { /* a listener must not break data loading */ }
+    }
 }
 
 // Swap every per-game binding to the requested game's blob. Throws on

@@ -20,7 +20,7 @@
 // each row carries ``role="option"`` with a stable id and the input
 // mirrors the active row via ``aria-activedescendant``.
 
-import { textlines, speakers } from './data.js';
+import { textlines, speakers, onGameData } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
@@ -426,6 +426,18 @@ export function initSearch() {
     }
 
     searchInput.addEventListener('input', onInput);
+
+    // In the split build the non-active game's data streams in after boot. If a
+    // search ran during that window its cross-game sections came back empty (the
+    // other game's blob wasn't there yet) and wouldn't recover until the query
+    // changed. Re-run the current search when a game's data arrives so those
+    // cross-game matches fill in, but only while the dropdown is open with a
+    // typed query (never steal focus or reopen a closed dropdown).
+    onGameData(() => {
+        if (!searchResults.classList.contains('visible')) return;
+        if (searchInput.value.trim() === '') return;
+        onInput();
+    });
 
     // The value the search box holds when it simply mirrors the open page
     // (set by ``applyState`` after a navigation): the dialogue name in the

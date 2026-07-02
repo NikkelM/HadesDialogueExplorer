@@ -139,3 +139,24 @@ test('loadData with a flat single-game payload wraps under hades1', () => {
     assert.equal(getActiveGame(), 'hades1');
     assert.ok(dataMod.textlines.Foo);
 });
+
+test('registerGameData notifies onGameData subscribers when a game blob arrives', () => {
+    // The split build streams the non-active game in after boot; subscribers
+    // (the search UI) refresh their cross-game sections once it lands.
+    loadData(makeMultiGamePayload());
+    setActiveGame('hades1');
+    const seen = [];
+    dataMod.onGameData((gid) => seen.push(gid));
+    // Simulate a re-arriving blob (idempotent registration).
+    dataMod.registerGameData('hades2', { textlines: { H2_Only: { owner: 'NPC_Hecate_01' } }, speakers: {} });
+    assert.deepEqual(seen, ['hades2']);
+    assert.ok(dataMod.isGameLoaded('hades2'));
+});
+
+test('a throwing onGameData subscriber does not break data registration', () => {
+    loadData(makeMultiGamePayload());
+    dataMod.onGameData(() => { throw new Error('listener boom'); });
+    // Must not throw despite the bad listener.
+    assert.doesNotThrow(() => dataMod.registerGameData('hades2', { textlines: { X: {} }, speakers: {} }));
+    assert.ok(dataMod.isGameLoaded('hades2'));
+});
