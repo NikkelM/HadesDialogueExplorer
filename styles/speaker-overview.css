@@ -504,6 +504,21 @@ body.layout-speaker #panel-info {
     list-style: none;
     padding: 0;
     margin: 0;
+    /* Most speakers pile the bulk of their lines into one large section, so a
+       single column of short name+badge rows wastes the full-width panel. Flow
+       the rows into a responsive grid: as many columns of at least
+       ``--speaker-col-min`` as fit, so wide displays get three or more columns,
+       a typical desktop two, and a narrow panel collapses to one (the
+       ``min(100%, ...)`` lets the sole column shrink below the min rather than
+       overflow). ``grid-auto-flow: row`` keeps play order reading left-to-right
+       then down, so a section's ranked lines stay in order across the columns.
+       The min width is the widest a real row gets - the longest dialogue name
+       plus its badges and a save-status dot - so no name is ever truncated. */
+    --speaker-col-min: 620px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--speaker-col-min)), 1fr));
+    align-items: start;
+    column-gap: 2rem;
 }
 .speaker-textline-row {
     display: flex;
