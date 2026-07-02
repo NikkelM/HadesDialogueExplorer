@@ -357,7 +357,14 @@ export function reqGroupStatus(reqType, refs, context, count = 1, selfName = nul
         return runsSinceStatus(reqType, refs, ctx, count, selfName);
     }
     const record = _recordFor(ctx, reqType);
-    if (!record) return 'unknown';
+    if (!record) {
+        // The scoped record is missing (e.g. Hades II never persists the
+        // textline queue), so the gate is normally indeterminate. But a
+        // *permanent lock* is decidable from the cumulative played set alone -
+        // a positive queued gate whose play-once operand(s) have already played
+        // can never be queued again, so it's definitively unmet, not unknown.
+        return reqGroupLocked(reqType, refs, ctx, count, selfName) ? 'unmet' : 'unknown';
+    }
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     if (AND_REQ_TYPES.has(reqType)) {

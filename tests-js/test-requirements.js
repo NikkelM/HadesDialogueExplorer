@@ -627,6 +627,21 @@ describe('run-count tooltips: play-once wording and permanence', () => {
         assert.equal(exR.blockers[0].playedInSave, true);
     });
 
+    test('reqGroupStatus: a played play-once queued gate is unmet even with no queue record', () => {
+        // Hades II never persists the textline queue, so the queued record is
+        // missing - but a play-once operand that already played can never be
+        // queued again, so the gate is *determinably* unmet, not indeterminate.
+        // (Regression: it used to report 'unknown', leaving named-requirement
+        // branches like IcarusBecomingCloserEligible indeterminate.)
+        const noQueue = { played: new Set(['POnce']) }; // no `queued` set
+        assert.equal(reqGroupStatus('RequiredAnyQueuedTextLines', ['POnce'], noQueue), 'unmet');
+        assert.equal(reqGroupStatus('RequiredQueuedTextLines', ['POnce'], noQueue), 'unmet');
+        // A repeatable operand could still be queued -> stays indeterminate.
+        assert.equal(reqGroupStatus('RequiredAnyQueuedTextLines', ['Rep'], { played: new Set(['Rep']) }), 'unknown');
+        // A play-once operand that hasn't played could still be queued -> unknown.
+        assert.equal(reqGroupStatus('RequiredAnyQueuedTextLines', ['POnce'], { played: new Set() }), 'unknown');
+    });
+
     test('runsSinceGroupTooltip flags a permanent play-once lock in the head', () => {
         const tip = runsSinceGroupTooltip('MaxRunsSinceAnyTextLines', ['POnce'],
             { played: new Set(['POnce']), runsAgo: { POnce: 5 } }, 3);
