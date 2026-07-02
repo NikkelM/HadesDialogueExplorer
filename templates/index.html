@@ -42,6 +42,22 @@
     var v = m ? decodeURIComponent(m[1]).toLowerCase() : '';
     var single = v === 'speaker' || v === 'duplicates' || v === 'eligibility';
     document.body.className = single ? 'layout-speaker' : 'layout-dialogue';
+    // Apply any saved dialogue-panel split before paint so the loading skeleton
+    // already sits at the stored column widths - otherwise it paints at the
+    // default equal split and visibly jumps when resize-panels.js re-applies
+    // the ratios after viewer.js loads. Key + shape mirror resize-panels.js
+    // (STORAGE_KEY 'hde:panelGrow', { info, upstream, downstream } numbers).
+    if (!single) {
+        try {
+            var g = JSON.parse(localStorage.getItem('hde:panelGrow'));
+            var keys = ['info', 'upstream', 'downstream'];
+            if (g && keys.every(function(k) { return typeof g[k] === 'number' && g[k] > 0; })) {
+                keys.forEach(function(k) {
+                    document.body.style.setProperty('--grow-' + k, String(g[k]));
+                });
+            }
+        } catch (e) { /* corrupt / unavailable storage -> default equal split */ }
+    }
 })();
 </script>
 <header>
