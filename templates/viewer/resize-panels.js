@@ -329,6 +329,18 @@ function _recompute() {
     _applyGrow();
 }
 
+// Reset to the default layout: all three columns open at an equal split, and
+// persist it (so it sticks). Used by the divider double-click and by the
+// dialogue tour replay (which wants every column visible for its highlights).
+export function resetPanels() {
+    _baseGrow = { info: 1, upstream: 1, downstream: 1 };
+    _collapsed = { info: false, upstream: false, downstream: false };
+    _applyCollapsed();
+    _recompute();
+    _saveGrow();
+    _saveCollapsed();
+}
+
 // Re-weight ``leftKey`` / ``rightKey`` so the left panel becomes ``targetLeftPx``
 // wide, holding their combined width + combined grow constant (so the third
 // panel is unaffected). Clamps to the per-panel minimum. When all three panels
@@ -417,12 +429,7 @@ function _wireResizer(el, entry) {
 
     // Double-click a divider to reset: all three panels open, equal split.
     el.addEventListener('dblclick', () => {
-        _baseGrow = { info: 1, upstream: 1, downstream: 1 };
-        _collapsed = { info: false, upstream: false, downstream: false };
-        _applyCollapsed();
-        _recompute();
-        _saveGrow();
-        _saveCollapsed();
+        resetPanels();
     });
 }
 

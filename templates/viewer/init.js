@@ -12,7 +12,7 @@ import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-upload.js';
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
-import { initResizePanels } from './resize-panels.js';
+import { initResizePanels, resetPanels } from './resize-panels.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { initFabMenu } from './fab-menu.js';
 import { startDialogueTourReplay } from './tour-home.js';
@@ -79,8 +79,13 @@ function init(data) {
         // Dialogue view: chain the generic walkthrough with the save callout
         // (its status badges / tree dots / tracer entry) into one continuous
         // tour when a save is loaded, so the counter sums both; with no save it
-        // is just the generic walkthrough.
-        else startDialogueTourReplay();
+        // is just the generic walkthrough. Reset the columns to the default
+        // (all open, equal) first so every highlighted column is visible; the
+        // reset persists, so the layout stays reset after the tour.
+        else {
+            resetPanels();
+            startDialogueTourReplay();
+        }
     });
 }
 
