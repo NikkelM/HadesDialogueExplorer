@@ -6,7 +6,7 @@
 import { test, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { computeResizeGrow, collapseTargetForDrag, computeAbsorbSplit, expandChevronFor, collapseChevronFor, deriveDisplayGrow } from '../templates/viewer/resize-panels.js';
+import { computeResizeGrow, collapseTargetForDrag, computeAbsorbSplit, expandChevronFor, collapseChevronFor, deriveDisplayGrow, resolveResizerPair } from '../templates/viewer/resize-panels.js';
 
 const LAQUO = '\u00AB'; // <<
 const RAQUO = '\u00BB'; // >>
@@ -195,5 +195,33 @@ describe('deriveDisplayGrow', () => {
         // Collapsing then expanding is a pure function of the collapsed set, so
         // the fully-open result is base regardless of the path taken.
         assert.deepEqual(deriveDisplayGrow(base, open), base);
+    });
+});
+
+describe('resolveResizerPair', () => {
+    const none = { info: false, upstream: false, downstream: false };
+
+    test('no collapse: each resizer keeps its own pair', () => {
+        assert.deepEqual(resolveResizerPair('info', 'upstream', none), { left: 'info', right: 'upstream' });
+        assert.deepEqual(resolveResizerPair('upstream', 'downstream', none), { left: 'upstream', right: 'downstream' });
+    });
+
+    test('collapsed middle: both handles resolve to details<->dependents', () => {
+        const c = { ...none, upstream: true };
+        assert.deepEqual(resolveResizerPair('info', 'upstream', c), { left: 'info', right: 'downstream' });
+        assert.deepEqual(resolveResizerPair('upstream', 'downstream', c), { left: 'info', right: 'downstream' });
+    });
+
+    test('collapsed edge: the handle touching it has no pair', () => {
+        // info collapsed -> the info|upstream handle has no open panel to its left.
+        assert.equal(resolveResizerPair('info', 'upstream', { ...none, info: true }), null);
+        // downstream collapsed -> the upstream|downstream handle has none to its right.
+        assert.equal(resolveResizerPair('upstream', 'downstream', { ...none, downstream: true }), null);
+    });
+
+    test('two collapsed: no resolvable pair (one panel open)', () => {
+        const c = { info: true, upstream: true, downstream: false };
+        assert.equal(resolveResizerPair('info', 'upstream', c), null);
+        assert.equal(resolveResizerPair('upstream', 'downstream', c), null);
     });
 });

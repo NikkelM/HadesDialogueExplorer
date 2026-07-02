@@ -146,6 +146,20 @@ export function deriveDisplayGrow(base, collapsed) {
     return g;
 }
 
+// Resolve which two OPEN panels a resizer sits between, skipping any collapsed
+// columns on either side. So a handle next to a collapsed prerequisites rail
+// still resizes details vs dependents across it. Returns null when there is no
+// open panel on a side (the handle then has nothing to resize). Factored out for
+// testing.
+export function resolveResizerPair(leftKey, rightKey, collapsed) {
+    let li = PANEL_ORDER.indexOf(leftKey);
+    while (li >= 0 && collapsed[PANEL_ORDER[li]]) li--;
+    let ri = PANEL_ORDER.indexOf(rightKey);
+    while (ri < PANEL_ORDER.length && collapsed[PANEL_ORDER[ri]]) ri++;
+    if (li < 0 || ri >= PANEL_ORDER.length || li >= ri) return null;
+    return { left: PANEL_ORDER[li], right: PANEL_ORDER[ri] };
+}
+
 function _readGrow(storageKey) {
     try {
         const raw = localStorage.getItem(storageKey);
@@ -220,10 +234,22 @@ function _applyCollapsed() {
             else body.style.removeProperty('display');
         }
     }
+    // Each resizer resolves to the two open panels it sits between (skipping a
+    // collapsed rail). Deduplicate so two handles resolving to the same pair
+    // don't both show; a handle with no resolvable pair is hidden.
+    const claimed = new Set();
     for (const r of _resizers) {
-        const hide = _collapsed[r.leftKey] || _collapsed[r.rightKey];
+        const pair = resolveResizerPair(r.leftKey, r.rightKey, _collapsed);
+        const pairKey = pair ? pair.left + '|' + pair.right : null;
+        r.pair = (pair && !claimed.has(pairKey)) ? pair : null;
+        if (r.pair) claimed.add(pairKey);
+        const hide = !r.pair;
         r.el.classList.toggle('panel-resizer-hidden', hide);
         r.el.setAttribute('tabindex', hide ? '-1' : '0');
+        if (r.pair) {
+            r.el.setAttribute('aria-label',
+                `Resize the ${PANEL_LABELS[r.pair.left]} and ${PANEL_LABELS[r.pair.right]} panels (drag, or arrow keys; double-click to reset)`);
+        }
     }
     const lastOpen = _expandedCount() === 1;
     for (const key of PANEL_ORDER) {
@@ -328,7 +354,7 @@ function _resizeTo(leftKey, rightKey, targetLeftPx) {
     _applyGrow();
 }
 
-function _wireResizer(el, leftKey, rightKey) {
+function _wireResizer(el, entry) {
     let dragging = false;
 
     const stopDrag = () => {
@@ -341,18 +367,21 @@ function _wireResizer(el, leftKey, rightKey) {
 
     const onMove = (e) => {
         if (!dragging) return;
-        const lEl = document.getElementById('panel-' + leftKey);
-        const rEl = document.getElementById('panel-' + rightKey);
+        const pair = entry.pair;
+        if (!pair) return;
+        const lEl = document.getElementById('panel-' + pair.left);
+        const rEl = document.getElementById('panel-' + pair.right);
         if (!lEl || !rEl) return;
-        // Target the left edge->pointer distance so the divider tracks the
-        // cursor regardless of where in the handle the drag started.
+        // Target the open-left edge->pointer distance so the divider tracks the
+        // cursor. The shown handle always abuts its open-left panel, so any
+        // collapsed rail between the pair sits past the target and is untouched.
         const target = e.clientX - lEl.getBoundingClientRect().left;
         const wSum = lEl.getBoundingClientRect().width + rEl.getBoundingClientRect().width;
         // Dragged well past a panel's minimum -> snap it closed and end the drag.
-        const snap = collapseTargetForDrag(target, wSum, PANEL_MIN_PX[leftKey], PANEL_MIN_PX[rightKey]);
-        if (snap === 'left' && _canCollapse(leftKey)) { stopDrag(); _setCollapsed(leftKey, true); return; }
-        if (snap === 'right' && _canCollapse(rightKey)) { stopDrag(); _setCollapsed(rightKey, true); return; }
-        _resizeTo(leftKey, rightKey, target);
+        const snap = collapseTargetForDrag(target, wSum, PANEL_MIN_PX[pair.left], PANEL_MIN_PX[pair.right]);
+        if (snap === 'left' && _canCollapse(pair.left)) { stopDrag(); _setCollapsed(pair.left, true); return; }
+        if (snap === 'right' && _canCollapse(pair.right)) { stopDrag(); _setCollapsed(pair.right, true); return; }
+        _resizeTo(pair.left, pair.right, target);
     };
     const onUp = (e) => {
         if (!dragging) return;
@@ -362,7 +391,7 @@ function _wireResizer(el, leftKey, rightKey) {
     };
 
     el.addEventListener('pointerdown', (e) => {
-        if (e.button !== 0) return;
+        if (e.button !== 0 || !entry.pair) return;
         dragging = true;
         el.classList.add('dragging');
         // Suppress text selection + force the col-resize cursor everywhere
@@ -377,10 +406,10 @@ function _wireResizer(el, leftKey, rightKey) {
     // Keyboard: Left/Right nudge the divider; Enter/double-click reset the split.
     el.addEventListener('keydown', (e) => {
         const dir = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
-        if (dir) {
-            const lEl = document.getElementById('panel-' + leftKey);
+        if (dir && entry.pair) {
+            const lEl = document.getElementById('panel-' + entry.pair.left);
             if (!lEl) return;
-            _resizeTo(leftKey, rightKey, lEl.getBoundingClientRect().width + dir * KEY_STEP_PX);
+            _resizeTo(entry.pair.left, entry.pair.right, lEl.getBoundingClientRect().width + dir * KEY_STEP_PX);
             _saveGrow();
             e.preventDefault();
         }
@@ -403,10 +432,11 @@ function _makeResizer(leftKey, rightKey) {
     el.setAttribute('role', 'separator');
     el.setAttribute('aria-orientation', 'vertical');
     el.setAttribute('tabindex', '0');
-    el.setAttribute('aria-label', `Resize the ${leftKey} and ${rightKey} panels (drag, or arrow keys; double-click to reset)`);
+    el.setAttribute('aria-label', `Resize the ${PANEL_LABELS[leftKey]} and ${PANEL_LABELS[rightKey]} panels (drag, or arrow keys; double-click to reset)`);
     el.dataset.tooltip = 'Drag to resize, double-click to reset';
-    _wireResizer(el, leftKey, rightKey);
-    return el;
+    const entry = { el, leftKey, rightKey, pair: { left: leftKey, right: rightKey } };
+    _wireResizer(el, entry);
+    return entry;
 }
 
 // A collapse button placed over each panel's header; its chevron points the
@@ -456,12 +486,11 @@ export function initResizePanels() {
     _baseGrow = storedBase || { ..._grow };
     _applyGrow();
 
-    const r1 = _makeResizer('info', 'upstream');
-    const r2 = _makeResizer('upstream', 'downstream');
-    _resizers.push({ el: r1, leftKey: 'info', rightKey: 'upstream' });
-    _resizers.push({ el: r2, leftKey: 'upstream', rightKey: 'downstream' });
-    main.insertBefore(r1, upstream);
-    main.insertBefore(r2, downstream);
+    const e1 = _makeResizer('info', 'upstream');
+    const e2 = _makeResizer('upstream', 'downstream');
+    _resizers.push(e1, e2);
+    main.insertBefore(e1.el, upstream);
+    main.insertBefore(e2.el, downstream);
 
     for (const key of PANEL_ORDER) {
         const panel = document.getElementById('panel-' + key);
