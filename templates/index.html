@@ -288,7 +288,12 @@
         + '</div>';
     var set = function(id, inner) {
         var el = document.getElementById(id);
-        if (el) el.innerHTML = '<div class="panel-skeleton" aria-hidden="true">' + inner + '</div>';
+        if (!el) return;
+        // A collapsed column is a thin rail whose body is only fully hidden once
+        // viewer.js runs; painting a skeleton into it now shows a sliver at the
+        // seam, so skip collapsed panels.
+        if (el.parentElement && el.parentElement.classList.contains('collapsed')) return;
+        el.innerHTML = '<div class="panel-skeleton" aria-hidden="true">' + inner + '</div>';
     };
     // Record when the skeleton is painted so boot() (init.js) can hold it for a
     // minimum visible time, avoiding a one-frame flash on fast loads.
