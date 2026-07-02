@@ -163,6 +163,29 @@
     var speaker = pick('speaker');
     var single = document.body.className === 'layout-speaker';
 
+    // Apply any saved collapsed columns before paint so a collapsed panel opens
+    // as a thin rail immediately instead of painting full-width and snapping
+    // shut when resize-panels.js runs. Key + shape mirror resize-panels.js
+    // (COLLAPSE_KEY 'hde:panelCollapsed', { info, upstream, downstream } bools);
+    // an all-collapsed value is ignored (one column always stays open). The rail
+    // label itself is added by resize-panels.js a moment later.
+    if (!single) {
+        try {
+            var col = JSON.parse(localStorage.getItem('hde:panelCollapsed'));
+            var ck = ['info', 'upstream', 'downstream'];
+            var ok = col && ck.every(function(k) { return typeof col[k] === 'boolean'; })
+                && !ck.every(function(k) { return col[k]; });
+            if (ok) {
+                ck.forEach(function(k) {
+                    if (col[k]) {
+                        var p = document.getElementById('panel-' + k);
+                        if (p) p.classList.add('collapsed');
+                    }
+                });
+            }
+        } catch (e) { /* corrupt / unavailable storage -> all columns open */ }
+    }
+
     // Single-panel heading (mirrors applyLayoutMode) so "Textline Details"
     // never flashes for speaker/duplicates/eligibility URLs.
     var hdr = document.getElementById('panel-info-heading');

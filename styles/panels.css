@@ -30,6 +30,11 @@
  * ``flex-basis: 0`` / ``flex-shrink: 1`` intact, so the ratios distribute the
  * full row width. */
 .panel-resizer { display: none; }
+/* Collapse chrome is inert (hidden) outside the desktop dialogue layout; the
+   media query below reveals the pieces that apply. */
+.panel-resizer-hidden { display: none !important; }
+.panel-rail { display: none; }
+.panel-collapse-btn { display: none; }
 
 @media (min-width: 1025px) {
     body.layout-dialogue #panel-info { flex-grow: var(--grow-info, 1); }
@@ -56,6 +61,99 @@
        covers (the last panel already has none). */
     body.layout-dialogue #panel-info,
     body.layout-dialogue #panel-upstream { border-right: none; }
+
+    /* --- Collapsed columns ------------------------------------------------
+     * A collapsed panel shrinks to a fixed-width rail. The id + class selectors
+     * clear the ``#panel-* { flex-grow }`` rules above (equal id specificity,
+     * later in source) so the panel stops growing and holds the rail width;
+     * the open panels' grow ratios then split the remaining space. */
+    body.layout-dialogue #panel-info.collapsed,
+    body.layout-dialogue #panel-upstream.collapsed,
+    body.layout-dialogue #panel-downstream.collapsed {
+        flex: 0 0 34px;
+    }
+    /* Swap the panel's normal contents for its rail. */
+    body.layout-dialogue .panel.collapsed > h2,
+    body.layout-dialogue .panel.collapsed > .panel-body { display: none; }
+    /* A collapsed panel is a 34px rail and must never show a scrollbar, whatever
+       descendant (the rail button, a stray tree container, etc.) a UA decides is
+       scrollable. Kill them on the whole collapsed subtree - both engines. */
+    body.layout-dialogue .panel.collapsed,
+    body.layout-dialogue .panel.collapsed * { scrollbar-width: none; }
+    body.layout-dialogue .panel.collapsed ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    body.layout-dialogue .panel.collapsed > .panel-rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        height: 100%;
+        padding: 14px 0;
+        border: none;
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-muted);
+        font: inherit;
+        cursor: pointer;
+        overflow: hidden;
+        scrollbar-width: none;
+        transition: background 0.12s ease, color 0.12s ease;
+    }
+    body.layout-dialogue .panel.collapsed > .panel-rail::-webkit-scrollbar { display: none; }
+    body.layout-dialogue #panel-downstream.collapsed > .panel-rail {
+        border-right: none;
+        border-left: 1px solid var(--border);
+    }
+    body.layout-dialogue .panel.collapsed > .panel-rail:hover,
+    body.layout-dialogue .panel.collapsed > .panel-rail:focus-visible {
+        background: var(--border);
+        color: var(--text-color);
+        outline: none;
+    }
+    .panel-rail-icon { font-size: var(--fs-lg); line-height: 1; }
+    .panel-rail-label {
+        writing-mode: vertical-rl;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: var(--fs-base);
+    }
+
+    /* The ``>>`` collapse button, floated over the top-right of each panel
+       header. Absolutely positioned (not a header child) so it survives the
+       heading's ``textContent`` resets on navigation. */
+    body.layout-dialogue .panel { position: relative; }
+    body.layout-dialogue .panel > h2 { padding-right: 42px; }
+    body.layout-dialogue .panel-collapse-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 12px;
+        right: 10px;
+        z-index: 11;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: none;
+        border-radius: 3px;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: var(--fs-lg);
+        line-height: 1;
+        cursor: pointer;
+        transition: background 0.12s ease, color 0.12s ease;
+    }
+    body.layout-dialogue .panel.collapsed > .panel-collapse-btn { display: none; }
+    body.layout-dialogue .panel-collapse-btn:hover:not(:disabled),
+    body.layout-dialogue .panel-collapse-btn:focus-visible {
+        background: var(--border);
+        color: var(--text-color);
+        outline: none;
+    }
+    body.layout-dialogue .panel-collapse-btn:disabled {
+        opacity: 0.3;
+        cursor: default;
+    }
 }
 
 /* While dragging a divider, suppress text selection and force the resize
