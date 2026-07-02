@@ -180,17 +180,35 @@ body.tour-open #custom-tooltip {
     color: #c0c6d2;
 }
 
-/* Replay / help control: a small fixed "?" button (re-runs the onboarding
-   tours after they've been seen or disabled). Floating rather than in the
-   header so it doesn't disturb the header's packed, responsive layout. Sits
-   below the tour layers but above page content. */
-.tour-help-btn {
+/* Floating help menu (FAB): a fixed "?" toggle that folds out action bubbles
+   (replay tutorials, GitHub) upward and turns into an X while open. Floating
+   rather than in the header so it doesn't disturb the header's packed,
+   responsive layout. Sits below the tour layers but above page content. */
+.fab-menu {
+    --fab-size: 40px;
+    --fab-step: calc(var(--fab-size) + 12px);
     position: fixed;
     bottom: calc(14px + env(safe-area-inset-bottom));
     right: calc(14px + env(safe-area-inset-right));
     z-index: 90;
-    width: 40px;
-    height: 40px;
+    width: var(--fab-size);
+    height: var(--fab-size);
+}
+
+/* The main toggle stacks above the bubbles so they tuck behind it when closed.
+   All three bubbles centre horizontally the same way (left:50% + a translateX
+   transform) so they line up exactly regardless of box quirks. */
+.tour-help-btn {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--fab-size);
+    height: var(--fab-size);
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
@@ -207,6 +225,64 @@ body.tour-open #custom-tooltip {
 .tour-help-btn:hover {
     background: var(--border);
     color: #fff;
+}
+
+/* Action bubbles: same look as the toggle, hidden behind it (scaled to 0)
+   until open, then they translate up into a stack. */
+.fab-action {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--fab-size);
+    height: var(--fab-size);
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: #c0c6d2;
+    font-size: var(--fs-lg);
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.5);
+    pointer-events: none;
+    transition: transform 0.18s ease, opacity 0.18s ease, background-color 0.12s ease, color 0.12s ease;
+}
+
+.fab-action:hover {
+    background: var(--border);
+    color: #fff;
+}
+
+.fab-action svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.tour-help-btn svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.fab-menu.open .fab-action {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.fab-menu.open #fab-tour {
+    transform: translate(-50%, calc(-1 * var(--fab-step))) scale(1);
+}
+
+.fab-menu.open #fab-github {
+    transform: translate(-50%, calc(-2 * var(--fab-step))) scale(1);
+    transition-delay: 0.04s;
 }
 
 /* Secondary emphasis: a ring around small repeated elements (e.g. every status
@@ -252,8 +328,7 @@ body.tour-open #custom-tooltip {
         padding-left: 26px;
         padding-right: 26px;
     }
-    .tour-help-btn {
-        width: var(--tap-min);
-        height: var(--tap-min);
+    .fab-menu {
+        --fab-size: var(--tap-min);
     }
 }

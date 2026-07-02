@@ -14,6 +14,7 @@ import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
 import { initResizePanels } from './resize-panels.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
+import { initFabMenu } from './fab-menu.js';
 import { startDialogueTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
@@ -63,11 +64,9 @@ function init(data) {
     // the status badges (this listener is registered after forceRefresh, so it
     // runs second on the same event).
     window.addEventListener('save-loaded', maybeStartSaveCallout);
-    // The floating "?" control re-runs the onboarding tours on demand.
-    const tourHelp = document.getElementById('tour-help');
-    if (tourHelp) {
-        tourHelp.addEventListener('click', replayTours);
-    }
+    // The floating "?" control folds out a help menu; one bubble re-runs the
+    // onboarding tour for the current view, another links to GitHub.
+    initFabMenu(replayTours);
     // Onboarding: the replay control re-runs the tour matching the current
     // view. The per-view tours auto-start (once) from their own render hooks
     // in applyState, so first-time visitors are covered whether they land on
