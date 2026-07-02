@@ -22,6 +22,7 @@
 
 import { games, gameIds, gameLabels, getActiveGame } from './data.js';
 import { rankSearchToken } from './search-name.js';
+import { computeDialogueKeywords } from './search-keywords.js';
 import { findWordPositions, buildSnippetHtml, phraseExistsInLine, textlineHasNegativeContent } from './search-text.js';
 import { tokeniseSpeakerLabel, tokeniseSpeakerId, rankSpeakerToken } from './search-speaker.js';
 
@@ -100,10 +101,17 @@ export function searchCrossGameNames(query, limit) {
 
         if (nameNegativeHit(nameLower, ownerIdLower, ownerDisplayLower, negative, negativePhrases)) continue;
 
+        // Concept keyword ("buzzword") set for this other-game dialogue,
+        // computed inline (the cross-game path builds no index by design).
+        // Lets a semantic query like "romance" surface the other game's
+        // relationship dialogues at the lowest tier, matching the active
+        // name search.
+        const keywordSet = computeDialogueKeywords(name, tl.section);
+
         let tierSum = 0;
         let allMatched = true;
         for (const tok of positive) {
-            const r = rankSearchToken(tok, name, nameLower, ownerIdLower, ownerDisplayLower);
+            const r = rankSearchToken(tok, name, nameLower, ownerIdLower, ownerDisplayLower, null, keywordSet);
             if (r < 0) { allMatched = false; break; }
             tierSum += r;
         }

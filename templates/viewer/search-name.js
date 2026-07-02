@@ -8,6 +8,7 @@
 import { textlines, allNames, speakers } from './data.js';
 import { computeIdf, candidateTokenWeight } from './idf.js';
 import { passesTextlineFilters } from './query-filters.js';
+import { computeDialogueKeywords, keywordSetMatches } from './search-keywords.js';
 
 // Token -> IDF weight, computed over the name corpus (textline names
 // tokenised on PascalCase / digit transitions, owner display names
@@ -27,6 +28,15 @@ let nameTokens;
 // (``hadesaboutrenovations`` -> ``HadesAboutUnderworldRenovations01``)
 // still finds the dialogue, anchored to the start of the name.
 let nameSegments;
+
+// Per-candidate concept keyword set (e.g. {romance, relationship, ...}),
+// keyed by textline name. Derived from the dialogue's section + name by
+// :mod:`search-keywords`; powers the lowest-tier "buzzword" match so
+// ``eris romance`` surfaces ``ErisBecomingCloser01`` even though the name
+// contains neither the word "romance" nor "relationship". Names with no
+// concept keywords are omitted from the map (so the common case is a cheap
+// miss).
+let nameKeywords;
 
 // Split a textline name (PascalCase identifier) into its constituent
 // segments. Boundaries are:
@@ -96,6 +106,7 @@ export function buildNameIndex() {
     const docs = [];
     nameTokens = new Map();
     nameSegments = new Map();
+    nameKeywords = new Map();
     for (const name of allNames) {
         const tl = textlines[name];
         if (!tl) continue;
@@ -106,6 +117,8 @@ export function buildNameIndex() {
             for (const t of tokeniseOwnerDisplay(ownerDisplay)) tokens.push(t);
         }
         nameTokens.set(name, tokens);
+        const keywords = computeDialogueKeywords(name, tl.section);
+        if (keywords.size > 0) nameKeywords.set(name, keywords);
         docs.push(tokens);
     }
     nameIdf = computeIdf(docs, (d) => d);
@@ -163,11 +176,16 @@ function matchSegmentsAnyOrder(rem, segs) {
 //       segments, skipping a middle segment (only when ``nameSegs``
 //       is supplied - i.e. single-token queries). A pure recall
 //       fallback, ranked below every contiguous match.
+//   6 = concept keyword ("buzzword") match: the token matches one of
+//       the dialogue's derived keyword terms (e.g. ``romance`` ->
+//       ``ErisBecomingCloser01``). The lowest tier, so a semantic hit
+//       never outranks a literal name / owner match. Only fires when
+//       ``keywordSet`` is supplied and the token is 3+ characters.
 //
 // Kept pure (tier only, no IDF weighting) so per-token tier logic
 // stays unit-testable in isolation. Weighting happens in
 // :func:`searchNameMatches`.
-export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower, nameSegs) {
+export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ownerDisplayLower, nameSegs, keywordSet) {
     if (nameLower.startsWith(token)) return 0;
     if (ownerIdLower.startsWith(token)) return 1;
     if (ownerDisplayLower && ownerDisplayLower.startsWith(token)) return 1;
@@ -186,6 +204,7 @@ export function rankSearchToken(token, nameOriginal, nameLower, ownerIdLower, ow
     if (ownerIdLower.includes(token)) return 4;
     if (ownerDisplayLower && ownerDisplayLower.includes(token)) return 4;
     if (nameSegs && gappyTokenSubsequence(token, nameSegs)) return 5;
+    if (keywordSet && keywordSetMatches(keywordSet, token)) return 6;
     return -1;
 }
 
@@ -271,6 +290,7 @@ export function searchNameMatches(query, limit) {
         if (negHit) continue;
 
         const candidateTokens = (nameTokens && nameTokens.get(n)) || [];
+        const keywordSet = (nameKeywords && nameKeywords.get(n)) || null;
         // Gappy subsequence recall only applies to single-token queries
         // (a concatenated string like ``hadesaboutrenovations``); multi
         // token queries already bridge gaps via per-token PascalCase
@@ -282,7 +302,7 @@ export function searchNameMatches(query, limit) {
         const weightedTiers = [];
         let allMatched = true;
         for (let i = 0; i < positive.length; i++) {
-            const r = rankSearchToken(positive[i], n, nameLower, ownerIdLower, ownerDisplayLower, nameSegs);
+            const r = rankSearchToken(positive[i], n, nameLower, ownerIdLower, ownerDisplayLower, nameSegs, keywordSet);
             if (r < 0) { allMatched = false; break; }
             const w = useIdf
                 ? candidateTokenWeight(nameIdf, candidateTokens, positive[i])

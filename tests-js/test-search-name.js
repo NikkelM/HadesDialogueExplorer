@@ -674,3 +674,62 @@ test('searchNameMatches: -section:GiftTextLineSets (full internal key) excludes 
     assert.ok(!names.includes('AphroditeWithZeus01'));
     assert.ok(names.includes('OrpheusSingsAgain02'));
 });
+
+// --- concept keyword ("buzzword") tier ----------------------------
+
+test('rankSearchToken: tier 6 (concept keyword) when the token matches only the keyword set', () => {
+    // ``romance`` is nowhere in the name / owner, but the candidate's keyword
+    // set carries it -> the lowest tier.
+    const kw = new Set(['romance', 'relationship']);
+    assert.equal(
+        rankSearchToken('romance', 'ErisBecomingCloser01', 'erisbecomingcloser01', 'npc_eris_01', 'eris', null, kw),
+        6,
+    );
+});
+
+test('rankSearchToken: a literal name match still beats a keyword match', () => {
+    // ``eris`` prefixes the name (tier 0) even though the keyword set would
+    // also match - the better tier wins.
+    const kw = new Set(['eris', 'romance']);
+    assert.equal(
+        rankSearchToken('eris', 'ErisBecomingCloser01', 'erisbecomingcloser01', 'npc_eris_01', 'eris', null, kw),
+        0,
+    );
+});
+
+test('rankSearchToken: keyword tier is gated to 3+ character tokens', () => {
+    const kw = new Set(['romance']);
+    // 2-char prefix must NOT trigger a keyword match (still mid-typing a name).
+    assert.equal(
+        rankSearchToken('ro', 'ErisBecomingCloser01', 'erisbecomingcloser01', 'npc_eris_01', 'eris', null, kw),
+        -1,
+    );
+    assert.equal(
+        rankSearchToken('rom', 'ErisBecomingCloser01', 'erisbecomingcloser01', 'npc_eris_01', 'eris', null, kw),
+        6,
+    );
+});
+
+test('searchNameMatches: a concept keyword surfaces dialogues whose name lacks the word', () => {
+    // The fixture's Gift-section dialogues carry the ``gift`` concept even
+    // though "gift" is nowhere in their names or owners.
+    const names = searchNameMatches(_q(['gift']), 50).map((m) => m.name);
+    assert.ok(names.includes('ZeusWithAphrodite01'));
+    assert.ok(names.includes('AphroditeWithZeus01'));
+});
+
+test('searchNameMatches: a 2-char prefix does not trigger keyword recall', () => {
+    // ``gi`` is below the keyword min length, so it must not pull in the
+    // Gift-section dialogues via the concept tier.
+    const names = searchNameMatches(_q(['gi']), 50).map((m) => m.name);
+    assert.ok(!names.includes('ZeusWithAphrodite01'));
+    assert.ok(!names.includes('AphroditeWithZeus01'));
+});
+
+test('searchNameMatches: "zeus gift" ANDs a literal name match with a concept keyword', () => {
+    // ``zeus`` matches the name literally; ``gift`` matches only via the
+    // concept keyword. Both must hold, and the literal-name candidate ranks
+    // ahead of the boundary-match one.
+    const names = searchNameMatches(_q(['zeus', 'gift']), 50).map((m) => m.name);
+    assert.deepEqual(names, ['ZeusWithAphrodite01', 'AphroditeWithZeus01']);
+});

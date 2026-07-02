@@ -101,6 +101,18 @@ test('cross-game name search returns null when nothing in the other game matches
     assert.equal(searchCrossGameNames(_q(['zeus']), 6), null);
 });
 
+test('cross-game name search applies the concept-keyword tier to the other game', () => {
+    // From the Hades view, "guardian" is a boss synonym that appears in no
+    // H2 name, but the H2 Hecate lines live in a Boss* section, so the
+    // keyword tier must still surface them cross-game.
+    const res = searchCrossGameNames(_q(['guardian']), 6);
+    assert.ok(res, 'expected a cross-game keyword result');
+    assert.equal(res.gameId, 'hades2');
+    const names = res.matches.map((m) => m.name);
+    assert.ok(names.includes('HecateWeaponUpgrade01'));
+    assert.ok(names.includes('HecateAboutMoros01'));
+});
+
 test('cross-game name search respects the result cap', () => {
     const res = searchCrossGameNames(_q(['hecate']), 2);
     assert.ok(res);
