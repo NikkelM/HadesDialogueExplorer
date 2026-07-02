@@ -432,6 +432,18 @@ def _set_count_extreme(result, syn_key, value, strict):
         bucket["Count"] = value if existing is None else strict(existing, value)
 
 
+# Count-meta synthetic keys whose ``otherRequirements`` value is a ``{Count: N}``
+# dict (not a record list), with the composition rule for combining duplicates:
+# Min thresholds keep the largest (strictest lower bound), Max the smallest. Used
+# by ``_merge`` so a RunsSince gate reached via an inline-expanded
+# NamedRequirements block keeps its dict shape instead of being list-wrapped by
+# ``_add_other`` (which would hide the Count from the viewer's ``countFrom``).
+_COUNT_META_STRICT = {
+    "MinRunsSinceAnyTextLines": max,
+    "MaxRunsSinceAnyTextLines": min,
+}
+
+
 def _try_classify_textline_function(record, result):
     """Re-route a ``FunctionName`` record into the dialogue-edge graph
     when its semantics gate on textline records. Returns ``True`` if
@@ -591,6 +603,12 @@ def _merge(into, other):
     for syn_key, names in other["requirements"].items():
         _extend_requirements(into, syn_key, names)
     for key, val in other["otherRequirements"].items():
+        # Count-meta keys stay ``{Count: N}`` dicts, composed by their strict
+        # rule - never list-wrapped (see _COUNT_META_STRICT).
+        strict = _COUNT_META_STRICT.get(key)
+        if strict is not None and isinstance(val, dict) and isinstance(val.get("Count"), (int, float)):
+            _set_count_extreme(into, key, val["Count"], strict)
+            continue
         if isinstance(val, list):
             for item in val:
                 _add_other(into, key, item)

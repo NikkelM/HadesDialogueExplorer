@@ -571,6 +571,39 @@ class TestFunctionTextlineRouting:
         result = extract_requirements(_parse_req_set(lua))
         assert result["otherRequirements"]["MaxRunsSinceAnyTextLines"] == {"Count": 4}
 
+    def test_runs_since_count_from_named_requirement_stays_dict(self):
+        """Regression: a RequireRunsSinceTextLines gate reached via an inline-
+        expanded NamedRequirements block must keep its ``{Count: N}`` dict shape
+        (not be list-wrapped by the otherRequirements merge). The viewer reads
+        ``otherRequirements[field].Count`` for the "at least N runs" label in the
+        tree / detail / tracer, so a ``[{Count: N}]`` list would hide the number
+        (the ErisBecomingCloser01 bug)."""
+        named = {
+            "NoRecent": _parse_req_set('''{
+                { FunctionName = "RequireRunsSinceTextLines", FunctionArgs = { TextLines = { "A", "B" }, Min = 3 } },
+                { FunctionName = "RequireRunsSinceTextLines", FunctionArgs = { TextLines = { "C" }, Min = 5 } },
+            }'''),
+        }
+        host = _parse_req_set('{ NamedRequirements = { "NoRecent" } }')
+        result = extract_requirements(host, named)
+        # Textline edges surface on the host; the count stays a composed dict.
+        assert set(result["requirements"]["MinRunsSinceAnyTextLines"]) == {"A", "B", "C"}
+        assert result["otherRequirements"]["MinRunsSinceAnyTextLines"] == {"Count": 5}
+
+    def test_runs_since_count_composes_across_host_and_named(self):
+        """A host-level RunsSince count composes (strictest wins) with one from
+        an expanded NamedRequirements block, staying a single dict."""
+        named = {
+            "NoRecent": _parse_req_set(
+                '{ { FunctionName = "RequireRunsSinceTextLines", FunctionArgs = { TextLines = { "C" }, Min = 7 } } }'),
+        }
+        host = _parse_req_set('''{
+            { FunctionName = "RequireRunsSinceTextLines", FunctionArgs = { TextLines = { "A" }, Min = 2 } },
+            NamedRequirements = { "NoRecent" },
+        }''')
+        result = extract_requirements(host, named)
+        assert result["otherRequirements"]["MinRunsSinceAnyTextLines"] == {"Count": 7}
+
     def test_require_runs_since_textlines_no_threshold_falls_through(self):
         """Without Min OR Max the record carries no useful semantics -
         leave it in otherRequirements so nothing is silently dropped."""
