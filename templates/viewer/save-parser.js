@@ -912,6 +912,21 @@ export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
 // true = in-run (_Temp) save, false = hub save, null = unknown / none loaded.
 export function getSaveInRun() { return _saveInRun; }
 
+// Detect the known Hades II story-softlock state: the player holds Gigaros (the
+// ``HadesSpearPoints`` inventory resource, granted on picking up Hades' spear
+// during the Zagreus dream sequence) WITHOUT having played
+// ``ZagreusPastMeeting06`` - the meeting that legitimately drives that stretch
+// of the story. This mismatch only arises when a mod grants resources ahead of
+// the story, and it can soft-lock further progress. Reads the already-parsed
+// slice + played set, so it works after both a fresh load and a restore.
+export function detectH2Softlock() {
+  if (_saveGameId !== 'hades2') return false;
+  if (!_saveProgress || _saveProgress.has('ZagreusPastMeeting06')) return false;
+  const res = _saveGameState && _saveGameState.Resources;
+  const pts = res && res.HadesSpearPoints;
+  return typeof pts === 'number' && pts > 0;
+}
+
 // The full save context for requirement evaluation: the global played set
 // plus the run-scoped records (each ``null`` when the save doesn't carry
 // it). ``requirements.js`` picks the right record per requirement field.

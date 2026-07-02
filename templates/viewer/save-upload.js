@@ -14,8 +14,10 @@ import {
     validateSaveFilename,
     persistSaveProgress,
     restoreSaveProgress,
+    detectH2Softlock,
 } from './save-parser.js';
 import { gameLabels } from './data.js';
+import { showSoftlockWarning } from './softlock-warning.js';
 
 // A genuine ProfileX.sav is only a few MB; reject larger files outright rather
 // than reading them into memory.
@@ -54,6 +56,8 @@ export function initSaveUpload() {
             persistSaveProgress(file.name);
             // Trigger re-render of current view to show badges
             window.dispatchEvent(new CustomEvent('save-loaded'));
+            // Warn about the known story-softlock if this save exhibits it.
+            if (detectH2Softlock()) showSoftlockWarning();
         } catch (err) {
             console.error('Save parse error:', err);
             showStatus('error', `Parse error: ${err.message}`);
@@ -84,6 +88,8 @@ export function initSaveUpload() {
 export function restoreSavedSave() {
     if (!restoreSaveProgress()) return false;
     refreshSaveStatus();
+    // A restored save can be softlocked too - warn on boot, once.
+    if (detectH2Softlock()) showSoftlockWarning();
     return true;
 }
 

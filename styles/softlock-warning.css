@@ -1,0 +1,92 @@
+/* Softlock-warning modal (see softlock-warning.js). Styled to match the
+   onboarding tour card - the project's existing popup pattern: surface fill,
+   accent-coloured border + title, muted body text, and tour-style buttons. */
+.softlock-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.softlock-card {
+    box-sizing: border-box;
+    background: var(--surface);
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    max-width: min(460px, calc(100vw - 32px));
+    width: 100%;
+    padding: 14px 18px 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    font-size: var(--fs-base);
+    line-height: 1.5;
+}
+
+.softlock-title {
+    margin: 0 0 8px;
+    font-size: var(--fs-lg);
+    color: var(--accent-color);
+}
+
+.softlock-card p {
+    margin: 0 0 10px;
+    color: #d0d4dd;
+}
+
+.softlock-card code {
+    font-family: 'Consolas', monospace;
+    font-size: 0.92em;
+    background: var(--bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+.softlock-link {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.softlock-link:hover {
+    color: #d13551;
+}
+
+/* The offending dialogue rendered as an inline link in normal body text
+   (accent-coloured so it reads as clickable, no code/monospace styling). */
+.softlock-dialogue-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.softlock-dialogue-link:hover {
+    color: #d13551;
+}
+
+.softlock-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+/* Matches ``.tour-btn-next`` - the tour's primary action button. */
+.softlock-dismiss {
+    appearance: none;
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--accent-color);
+    background: var(--accent-color);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.softlock-dismiss:hover {
+    background: #d13551;
+    border-color: #d13551;
+}
