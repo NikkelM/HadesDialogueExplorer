@@ -17,6 +17,52 @@
     overflow: hidden;
 }
 .panel:last-child { border-right: none; }
+
+/* Resizable columns (desktop dialogue view only).
+ *
+ * ``resize-panels.js`` inserts a ``.panel-resizer`` handle on each inter-panel
+ * border and stores the split as per-panel flex-grow ratios in the
+ * ``--grow-*`` custom properties below. Both the handles and the ratio rules
+ * are scoped to ``@media (min-width: 1025px)`` + ``body.layout-dialogue`` so
+ * the stacked mobile layout (responsive.css, <= 1024px) and the single-panel
+ * speaker / duplicates / eligibility views are untouched. The higher-specificity
+ * id selectors here win over the base ``.panel { flex: 1 }`` while leaving its
+ * ``flex-basis: 0`` / ``flex-shrink: 1`` intact, so the ratios distribute the
+ * full row width. */
+.panel-resizer { display: none; }
+
+@media (min-width: 1025px) {
+    body.layout-dialogue #panel-info { flex-grow: var(--grow-info, 1); }
+    body.layout-dialogue #panel-upstream { flex-grow: var(--grow-upstream, 1); }
+    body.layout-dialogue #panel-downstream { flex-grow: var(--grow-downstream, 1); }
+
+    /* The handle replaces the panel's 1px right border it sits on. */
+    body.layout-dialogue .panel-resizer {
+        display: block;
+        flex: 0 0 5px;
+        align-self: stretch;
+        background: var(--border);
+        cursor: col-resize;
+        transition: background-color 0.12s ease;
+        touch-action: none;
+    }
+    body.layout-dialogue .panel-resizer:hover,
+    body.layout-dialogue .panel-resizer:focus-visible,
+    body.layout-dialogue .panel-resizer.dragging {
+        background: var(--accent-color);
+        outline: none;
+    }
+    /* The handle is the visual divider now, so drop the panel borders it
+       covers (the last panel already has none). */
+    body.layout-dialogue #panel-info,
+    body.layout-dialogue #panel-upstream { border-right: none; }
+}
+
+/* While dragging a divider, suppress text selection and force the resize
+   cursor across the whole document (the pointer often leaves the 5px handle). */
+body.resizing-panels { cursor: col-resize; user-select: none; }
+body.resizing-panels * { cursor: col-resize !important; }
+
 /* The header is rendered OUTSIDE the scroll container so scrolled
    content can't slide under it - no `position: sticky` needed - and it
    stays visible regardless of how far the body has been scrolled in

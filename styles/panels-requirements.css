@@ -109,6 +109,13 @@
    line up vertically down the requirements list, mirroring the tree
    view layout. */
 .req-item .priority-badge { margin-left: auto; }
+/* Name span shrinks and wraps long unbroken textline ids within the row so
+   they don't overflow the panel horizontally when it's dragged narrow. */
+.req-item-name {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+}
 .req-item:hover { background: var(--border); }
 .req-item.resolved { color: #a8dadc; }
 .req-item.unresolved { color: var(--text-muted); font-style: italic; }

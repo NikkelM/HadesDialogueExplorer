@@ -12,6 +12,7 @@ import { initGameToggle } from './game-toggle.js';
 import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-upload.js';
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
+import { initResizePanels } from './resize-panels.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { startDialogueTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
@@ -39,6 +40,9 @@ function init(data) {
     initKeyboardA11y();
     // Arrow-key / Enter navigation for the prerequisite & dependent trees.
     initTreeKeyboard();
+    // Draggable dividers between the three dialogue-view column panels
+    // (desktop dialogue layout only; the module + CSS guard the mode).
+    initResizePanels();
     // Re-hydrate a cached save before the first render so its badges show
     // immediately (indistinguishable from a freshly loaded save).
     restoreSavedSave();

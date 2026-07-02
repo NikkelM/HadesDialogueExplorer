@@ -482,7 +482,10 @@ export function renderReqItem(ref, selfName) {
     // indeterminate / unobtainable), matching the dependency-tree rows. Empty
     // when no matching save is loaded or the ref is unresolved.
     const saveBadge = refTl ? renderSaveBadgeHtml(ref, refTl) : '';
-    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${saveBadge}${escapeHtml(ref)}${selfBadge}${tierBadge}</div>`;
+    // The name sits in its own shrinkable span so a long unbroken textline id
+    // wraps within the row instead of overflowing the panel when it's narrow
+    // (the flex row's trailing tier badge still right-aligns via margin-left).
+    return `<div class="${classes.join(' ')}" data-name="${escapeHtml(ref)}"${tip} onclick="navigateTo(${jsAttr(ref)})">${saveBadge}<span class="req-item-name">${escapeHtml(ref)}${selfBadge}</span>${tierBadge}</div>`;
 }
 
 // Render a human-friendly explanation for one blockingReasons entry.
