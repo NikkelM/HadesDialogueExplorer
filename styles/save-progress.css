@@ -161,7 +161,7 @@
    is deliberately the most prominent control in the panel - bold amber ink
    button with a faint glow and an inspect glyph. */
 .trace-eligibility-row {
-    margin: 12px 0 4px;
+    margin: 12px 0 14px;
 }
 .trace-eligibility-btn {
     display: inline-flex;
