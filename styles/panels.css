@@ -196,11 +196,11 @@ body.resizing-panels * { cursor: col-resize !important; }
    no per-axis control (``scrollbar-width`` hides both), so it keeps both bars -
    an acceptable fallback that never hides the horizontal one. Vertical scroll
    still works everywhere via wheel / trackpad / keyboard. */
-body.layout-dialogue .panel-body::-webkit-scrollbar { width: 0; height: 8px; }
+body.layout-dialogue .panel-body::-webkit-scrollbar { width: 0; height: 6px; }
 body.layout-dialogue .panel-body::-webkit-scrollbar-track { background: transparent; }
 body.layout-dialogue .panel-body::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 4px;
+    border-radius: 3px;
 }
 body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 .textline-info {

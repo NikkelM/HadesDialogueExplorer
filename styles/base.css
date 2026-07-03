@@ -421,10 +421,15 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     flex-shrink: 0;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+/* Scrollbar. Thin and minimal to echo nikkelm.dev's slim scrollbar, via
+   ::-webkit-scrollbar (Chromium/Safari). The standard scrollbar-width/color are
+   deliberately NOT set: setting scrollbar-color anywhere makes Chromium ignore
+   ::-webkit-scrollbar and fall back to the fat 15px default bar, so Firefox
+   keeps its native scrollbar rather than break the themed WebKit one. Amber
+   highlights the thumb on hover. */
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
 /* The corner is the small square where the horizontal and vertical
    scrollbars meet on a 2-axis-scrolling container (`.panel-body`).
@@ -441,6 +446,11 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .layout-speaker #info-content {
     display: flex;
     flex-direction: column;
+}
+/* Reserve the scrollbar gutter in the speaker overview so the thin bar
+   appearing on overflow doesn't reflow / resize the content beneath it. */
+.layout-speaker #info-content {
+    scrollbar-gutter: stable;
 }
 #upstream-content::after,
 .layout-speaker #info-content::after {
