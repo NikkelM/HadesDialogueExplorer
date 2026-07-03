@@ -514,6 +514,21 @@ function _renderBrokenReqFieldHtml(key) {
         + `(broken requirement key - never evaluated, no effect)</span>`;
 }
 
+// Render a malformed Path* gate whose path root is itself an operator keyword
+// (a source-data typo). Show the raw path (so the fault is visible) plus a note:
+// the root doesn't exist, so a PathFalse / PathEmpty gate is always satisfied
+// (no effect) and a PathTrue / PathNotEmpty gate can never be satisfied.
+function _renderBrokenPathHtml(key, opKey) {
+    const rawPath = key.slice(key.indexOf(':') + 1);
+    const alwaysSatisfied = opKey === 'PathFalse' || opKey === 'PathEmpty';
+    const tag = alwaysSatisfied ? '(broken path - always passes, no effect)' : '(broken path - never passes)';
+    const tip = alwaysSatisfied
+        ? 'Broken requirement: this path\u2019s root does not exist in the save, so the check is always satisfied and has no effect on playability.'
+        : 'Broken requirement: this path\u2019s root does not exist in the save, so the check can never be satisfied.';
+    return `<code class="other-req-path">${escapeHtml(rawPath)}</code>`
+        + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(tip)}">${tag}</span>`;
+}
+
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
 // ``GameState.ReachedTrueEnding``, ...) as an ``other-req-path`` chip. A fully
 // resolved path renders as just its friendly gloss, with the raw internal path
@@ -937,6 +952,16 @@ function _renderFunctionRecord(fnName, rec) {
 // falls back to raw JSON.
 function _renderPathOpEntry(opKey, key, val) {
     if (!Array.isArray(val) || val.length === 0) return null;
+    // Malformed path: the operator keyword leaked into the path array as its
+    // root (a source-data typo, e.g. ``PathFalse: ["PathFalse", "RoomsEntered",
+    // ...]``). That root doesn't exist, so a "must be false" / "must be empty"
+    // gate is always satisfied and a "must be true" / "must be non-empty" one
+    // never is - either way it has no effect. Flag it like a broken requirement
+    // rather than rendering a bogus friendly path.
+    const p0 = val[0] && val[0][opKey];
+    if (Array.isArray(p0) && _PATH_OP_FRIENDLY_KEYS.has(p0[0])) {
+        return _renderBrokenPathHtml(key, opKey);
+    }
     const friendlyKey = renderOtherReqKeyHtml(key);
     const parts = [];
     for (const rec of val) {

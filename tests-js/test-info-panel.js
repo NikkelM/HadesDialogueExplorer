@@ -1370,6 +1370,17 @@ test('a broken / typo requirement key renders an amber warning and hides the val
     assert.doesNotMatch(html, /OlympianReunionQuestComplete/);
 });
 
+test('a malformed path (operator keyword as root) renders a broken-path no-op note', () => {
+    loadData(buildFixtureData());
+    // ``PathFalse: ["PathFalse", "RoomsEntered", "N_Opening01"]`` - the operator
+    // leaked into the path (a source typo). Show the raw path + a note that the
+    // root doesn't exist so the "must be false" check always passes / has no effect.
+    const key = 'PathFalse:PathFalse.RoomsEntered.N_Opening01';
+    const html = renderOtherReqEntryHtml(key, [{ PathFalse: ['PathFalse', 'RoomsEntered', 'N_Opening01'] }]);
+    assert.match(html, /<code class="other-req-path">PathFalse\.RoomsEntered\.N_Opening01<\/code>/);
+    assert.match(html, /class="other-req-broken-ref"[^>]*>\(broken path - always passes, no effect\)<\/span>/);
+});
+
 
 test('closing voicelines (endLines) render speaker-prefixed after the main dialogue', () => {
     const data = buildFixtureData();

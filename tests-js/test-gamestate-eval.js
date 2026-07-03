@@ -79,6 +79,17 @@ test('PathFalse: passes only on nil/false (0 is truthy here, so it fails)', () =
     assert.equal(evalReq(clause(rec), { Flags: { X: 0 } }), 'unmet');   // 0 is Lua-truthy
 });
 
+test('malformed path (operator keyword as root) is a no-op: PathFalse always met', () => {
+    // ``PathFalse: ["PathFalse", "RoomsEntered", "N_Opening01"]`` - the operator
+    // leaked into the path array (a source typo, e.g. OdysseusAboutHermes01). The
+    // root doesn't exist, so PathFalse on the absent value is always satisfied.
+    assert.equal(evalReq(clause({ PathFalse: ['PathFalse', 'RoomsEntered', 'N_Opening01'] }), {}), 'met');
+    assert.equal(evalReq(clause({ PathEmpty: ['PathEmpty', 'RoomsEntered', 'X'] }), {}), 'met');
+    // The inverse operators can never be satisfied on the absent value.
+    assert.equal(evalReq(clause({ PathTrue: ['PathTrue', 'RoomsEntered', 'X'] }), {}), 'unmet');
+    assert.equal(evalReq(clause({ PathNotEmpty: ['PathNotEmpty', 'RoomsEntered', 'X'] }), {}), 'unmet');
+});
+
 test('PathEmpty / PathNotEmpty test table emptiness (nil or zero keys)', () => {
     const empty = { PathEmpty: ['GameState', 'Gift'] };
     const notEmpty = { PathNotEmpty: ['GameState', 'Gift'] };

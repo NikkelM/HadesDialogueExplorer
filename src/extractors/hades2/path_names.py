@@ -26,12 +26,11 @@ has no path vocabulary; these maps are H2-only.
 """
 
 # Root scope -> suffix appended to the gloss. GameState is the persistent
-# default and adds nothing; CurrentHubRoom is a present-tense context.
+# default and adds nothing.
 HADES2_PATH_SCOPE_NAMES = {
     "CurrentRun": "this run",
     "PrevRun": "last run",
     "GameState": "",
-    "CurrentHubRoom": "",
 }
 
 # Field key -> friendly label. Keys are the path segment after the root (or a
@@ -124,6 +123,27 @@ HADES2_PATH_FIELD_NAMES = {
     # Live-playback audio snapshot (root with no scope prefix).
     "AudioState.MusicName": "current music track",
     "AudioState.AmbientTrackName": "current ambient track",
+    # --- previously-unlabelled fields ---
+    # ``CurrentHubRoom`` is a top-level global holding the current hub room's
+    # internal name (a string), or nil when not in a hub - so a truthy value
+    # means the player is in a hub room. ``.Name`` is its room-name sub-field.
+    "CurrentHubRoom": "in a hub room",
+    "CurrentHubRoom.Name": "current hub room",
+    "AllSpellInvestedCache": "Hex fully upgraded",
+    "ArtemisHubSong": "Artemis singing in the Crossroads",
+    "BountyCleared": "Chaos Trial cleared",
+    "PendingSpellDrop": "Shrine of Hermes Hex delivery pending",
+    "UsedStoryReset": "performed Returning to a Real Possibility (story reset)",
+    "LastDreamRunCleared": "cleared the last Dream Dive",
+    "BiomeHarvestPointsSeen.PickaxePoint": "pickaxe resource point seen (this biome)",
+    "BiomeHarvestPointsSeen.ShovelPoint": "shovel resource point seen (this biome)",
+    "ScreenViewRecord.CosmeticsShop": "viewed any cosmetics screen",
+    "ShrineUpgradesDisabled.MinibossCountShrineUpgrade": "Vow of Shadow inactive",
+    "SessionMapState.CauldronWitchcraftOccurring": "Hecate is using the Cauldron",
+    "SessionMapState.OdysseusAtTaverna": "Odysseus is at the Taverna",
+    # Music-record fields take a track leaf resolved via the leaf-name map below.
+    "MusicRecord": "heard",
+    "ScyllaDefeatMusicRecord": "heard",
 }
 
 # Fields whose path carries a trailing entity-id object (a record keyed by an
@@ -156,6 +176,8 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "WeaponsFiredRecord",
     "ObjectivesCompleted",
     "CosmeticsPurchasedCountCache",
+    "MusicRecord",
+    "ScyllaDefeatMusicRecord",
 })
 
 # Per-field leaf-name maps: an object-taking field whose trailing leaf is NOT a
@@ -183,6 +205,14 @@ HADES2_PATH_FIELD_LEAF_NAMES = {
         "Total": "Total",
         "Tent": "Melinoe's Tent",
         "PreRun": "Training Grounds",
+    },
+    # Scylla band song tracks (the leaf is an internal ``/Music/...`` id), shown
+    # as the song's in-game title.
+    "MusicRecord": {
+        "/Music/IrisMusicScylla2_MC": '"I am Gonna Claw (Out Your Eyes)"',
+    },
+    "ScyllaDefeatMusicRecord": {
+        "/Music/IrisMusicScylla4_MC": '"Bewitching Eyes"',
     },
 }
 

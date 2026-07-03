@@ -478,7 +478,16 @@ function evalClause(rec, root) {
     }
     const base = path[0];
     if (base === 'AudioState') return evalAudioState(rec, path, root);
-    if (base !== 'GameState' && base !== 'PrevRun') {
+    // A path whose root segment is itself a Path* operator keyword is malformed
+    // (a source-data typo where the operator leaked into the path array, e.g.
+    // ``PathFalse: ["PathFalse", "RoomsEntered", ...]``). No such root exists in
+    // the save, so it resolves to nil and the operator applies to an absent
+    // value: PathFalse / PathEmpty are always satisfied, PathTrue / PathNotEmpty
+    // never are. Fall through to the nil-walk below (walkPath returns undefined)
+    // so the gate reads as the no-op it is in-engine, rather than indeterminate.
+    const malformedRoot = base === 'PathTrue' || base === 'PathFalse'
+        || base === 'PathEmpty' || base === 'PathNotEmpty';
+    if (!malformedRoot && base !== 'GameState' && base !== 'PrevRun') {
         // CurrentRun.* resolves from the persisted CurrentRun slice, but only
         // when the caller supplied one (the dialogue's owner matches the loaded
         // save type - see ``currentRunResolvable``). Otherwise it stays
