@@ -51,6 +51,18 @@ const MONOTONIC_FLAGS = new Set([
     'ReachedTrueEnding', 'TyphonDefeatedWithStormStop',
 ]);
 
+// Scalar top-level ``GameState`` counter keys that are only ever recomputed
+// upward in normal play: the lifetime number of runs ever completed / cleared,
+// both derived from the append-only ``RunHistory`` (``EndRun`` /
+// ``RecordRunStats`` in RunLogic). They only grow (only a story reset lowers
+// them; see the caveat). NOTE: ``SpentShrinePointsCache`` is deliberately NOT
+// here - it is the total of the player's *current* Oath-of-the-Unseen ranks and
+// drops when an upgrade is ranked down (``ShrineScreenRankDown``), so it is not
+// monotonic.
+const MONOTONIC_COUNTERS = new Set([
+    'CompletedRunsCache', 'ClearedRunsCache',
+]);
+
 // True when ``path`` (an engine path array including the leading 'GameState')
 // reads a value that only ever moves "up" - nil / 0 / false -> truthy / larger -
 // over the profile's lifetime in normal play. Resettable / "last-status" keys
@@ -60,7 +72,7 @@ const MONOTONIC_FLAGS = new Set([
 export function isMonotonicUpPath(path) {
     if (!Array.isArray(path) || path[0] !== 'GameState' || path.length < 2) return false;
     const seg = path[1];
-    if (path.length === 2) return MONOTONIC_FLAGS.has(seg);
+    if (path.length === 2) return MONOTONIC_FLAGS.has(seg) || MONOTONIC_COUNTERS.has(seg);
     // ``MetaUpgradeState.<Arcana>.Unlocked`` is a one-way unlock flag (the
     // equipped / rank state in the same record is not).
     if (seg === 'MetaUpgradeState') return path[path.length - 1] === 'Unlocked';
@@ -164,7 +176,12 @@ export function gameStateClausePermanence(rec, gameStateSlice) {
         const now = compareNum(left, rec.Comparison, right);
         if (rec.Comparison === '>' || rec.Comparison === '>=') return now ? 'met' : null;
         if (rec.Comparison === '<' || rec.Comparison === '<=') return now ? null : 'unmet';
-        return null; // == / ~= are unstable as the counter grows
+        // "== N" on a monotonic-up counter is decidable once the value has grown
+        // PAST N: it can never come back down, so the gate is permanently unmet.
+        // At or below N it is still reachable (the counter climbs to N), so not
+        // permanent. (~= stays unstable: it flips as the counter passes N.)
+        if (rec.Comparison === '==') return left > right ? 'unmet' : null;
+        return null; // ~= is unstable as the counter grows
     }
 
     // Set-membership over a monotonic-up table (keys are only ever added).

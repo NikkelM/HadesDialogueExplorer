@@ -1159,6 +1159,11 @@ const H1_MONOTONIC_TRUE_FLAGS = new Set(['ShrineUnlocked', 'AspectsUnlocked']);
 const H1_PERMANENT_UNMET_EVALS = {
     RequiredMaxCompletedRuns: (v, ctx) => h1CompletedRuns(ctx) > v,
     RequiredMaxRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
+    // "Completed / cleared runs must equal exactly N" on a strictly-increasing
+    // counter: once the count has grown PAST N it can never come back down, so
+    // the gate is permanently unmet. Below N it is still reachable (blocked).
+    RequiredCompletedRuns: (v, ctx) => h1CompletedRuns(ctx) > v,
+    RequiredRunsCleared: (v, ctx) => h1RunsCleared(ctx) > v,
     RequiredMaxRunsWithWeapons: (v, ctx) => Object.entries(v || {}).some(([w, c]) => h1RunsWithWeapon(ctx, w) > c),
     RequiredMaxUnlockedWeaponEnchantments: (v, ctx) => h1WeaponStaticReady() && h1CountWeaponUnlocks(ctx, false) > v,
     RequiredMaxNPCInteractions: (v, ctx) => { const n = h1Gs(ctx, 'NPCInteractions') || {}; return Object.entries(v || {}).some(([k, c]) => n[k] != null && h1Num(n[k]) > c); },

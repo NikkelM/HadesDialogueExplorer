@@ -811,6 +811,21 @@ test('H1: surpassed monotonic max gates are permanently unmet (unobtainable)', (
     assert.equal(evaluateH1OtherReqPermanence({ RequiredMaxQuestsComplete: 1 }, { QuestStatus: { Q1: 'CashedOut', Q2: 'CashedOut' } }), 'unmet');
 });
 
+test('H1: "runs must equal exactly N" is permanent once the counter passes N', () => {
+    // Completed/cleared run counts only ever increase, so once the count has
+    // grown past the required-exact value the gate can never be met again.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredCompletedRuns: 2 }, { RunHistory: [{}, {}, {}] }), 'unmet');
+    // At the exact value it is currently met -> not permanently unmet.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredCompletedRuns: 3 }, { RunHistory: [{}, {}, {}] }), null);
+    // Below the value it is still reachable (counter climbs) -> blocked, not permanent.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredCompletedRuns: 5 }, { RunHistory: [{}, {}, {}] }), null);
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredRunsCleared: 1 }, { RunHistory: [{ Cleared: true }, { Cleared: true }] }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredRunsCleared: 2 }, { RunHistory: [{ Cleared: true }, { Cleared: true }] }), null);
+    // Modded Hades Biomes run-count caches are likewise monotonic.
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredCompletedRuns: 2 }, { ModsNikkelMHadesBiomesCompletedRunsCache: 4 }), 'unmet');
+    assert.equal(evaluateH1OtherReqPermanence({ RequiredRunsCleared: 1 }, { ModsNikkelMHadesBiomesClearedRunsCache: 3 }), 'unmet');
+});
+
 test('H1: an already-maxed weapon aspect makes "must NOT be maxed" permanent', () => {
     assert.equal(
         evaluateH1OtherReqPermanence(

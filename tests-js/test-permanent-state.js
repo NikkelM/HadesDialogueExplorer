@@ -19,6 +19,14 @@ describe('isMonotonicUpPath', () => {
         assert.equal(isMonotonicUpPath(['GameState', 'WorldUpgradesAdded', 'WorldUpgradeFoo']), true);
     });
 
+    test('lifetime run-count caches are monotonic; the shrine-spend cache is not', () => {
+        // Derived from the append-only RunHistory -> only grow.
+        assert.equal(isMonotonicUpPath(['GameState', 'CompletedRunsCache']), true);
+        assert.equal(isMonotonicUpPath(['GameState', 'ClearedRunsCache']), true);
+        // Tracks the current Oath-of-the-Unseen spend; ranking down lowers it.
+        assert.equal(isMonotonicUpPath(['GameState', 'SpentShrinePointsCache']), false);
+    });
+
     test('MetaUpgradeState is monotonic only at its Unlocked leaf', () => {
         assert.equal(isMonotonicUpPath(['GameState', 'MetaUpgradeState', 'ChaosArcana', 'Unlocked']), true);
         assert.equal(isMonotonicUpPath(['GameState', 'MetaUpgradeState', 'ChaosArcana', 'Equipped']), false);
@@ -78,9 +86,19 @@ describe('gameStateClausePermanence', () => {
             { Comparison: '<', Path: ['GameState', 'EnemyKills', 'Cerberus'], Value: 9 }, gs), null);
     });
 
-    test('equality comparisons are unstable as the counter grows -> null', () => {
+    test('an == comparison is permanently unmet once the counter grows past the target', () => {
+        // Counter is 3. "== 3" is currently met (not permanently unmet) -> null.
         assert.equal(gameStateClausePermanence(
             { Comparison: '==', Path: ['GameState', 'EnemyKills', 'Cerberus'], Value: 3 }, gs), null);
+        // "== 2": the counter has already grown past 2 and never returns -> unmet.
+        assert.equal(gameStateClausePermanence(
+            { Comparison: '==', Path: ['GameState', 'EnemyKills', 'Cerberus'], Value: 2 }, gs), 'unmet');
+        // "== 5": still reachable as the counter climbs -> not permanent.
+        assert.equal(gameStateClausePermanence(
+            { Comparison: '==', Path: ['GameState', 'EnemyKills', 'Cerberus'], Value: 5 }, gs), null);
+        // ~= stays unstable (flips as the counter passes the target) -> null.
+        assert.equal(gameStateClausePermanence(
+            { Comparison: '~=', Path: ['GameState', 'EnemyKills', 'Cerberus'], Value: 2 }, gs), null);
     });
 
     test('a CountOf upper bound already exceeded over a monotonic table is permanently unmet', () => {
