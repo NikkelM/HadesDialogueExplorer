@@ -19,12 +19,13 @@
     cursor: pointer;
     font-size: var(--fs-base);
     line-height: 18px;
-    transition: background-color 0.12s ease, color 0.12s ease;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
     white-space: nowrap;
 }
 
 .save-upload-btn:hover {
-    background: var(--border);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 .save-upload-btn:focus-visible {
