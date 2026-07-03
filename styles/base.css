@@ -447,8 +447,10 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     display: flex;
     flex-direction: column;
 }
-/* Reserve the scrollbar gutter in the speaker overview so the thin bar
-   appearing on overflow doesn't reflow / resize the content beneath it. */
+/* Reserve the scrollbar gutter in the single-panel views (speaker overview,
+   eligibility tracer, cross-game duplicates - all share the layout-speaker
+   body class and render into #info-content) so the thin bar appearing on
+   overflow doesn't reflow / resize the content beneath it. */
 .layout-speaker #info-content {
     scrollbar-gutter: stable;
 }
