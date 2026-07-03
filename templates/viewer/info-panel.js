@@ -1612,6 +1612,26 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                           + optionHtml
                           + `</div>`;
                 }
+            } else if (typeof line === 'object' && line.kind === 'randomGroup' && Array.isArray(line.options)) {
+                // A random-pick-one segment (a ``RandomRemaining`` voice-line
+                // group): the game plays exactly one of these options here, so
+                // render a collapsed section headed "one of these plays at
+                // random" listing the candidates. ``source`` marks options that
+                // come from a shared cross-dialogue set (HeroRepeatableTextLines).
+                const n = line.options.length;
+                const tip = 'The game generates a randomised dialogue by picking one line from each of these sets in turn. '
+                    + 'RandomRemaining: once a line has played, it will not play again until every other line in the set has been played.';
+                html += `<details class="random-group" open><summary class="random-group-header" data-tooltip="${escapeHtml(tip)}">`
+                      + `<span class="random-group-chevron" aria-hidden="true">\u25B6</span>`
+                      + `<span class="random-group-label">One of these plays at random</span>`
+                      + `<span class="random-group-count">${n}</span></summary>`
+                      + `<div class="random-group-options">`;
+                for (const o of line.options) {
+                    html += (o && o.speaker)
+                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(o.text)}</div>`
+                        : `<div class="dialogue-line">${escapeHtml((o && o.text) || '')}</div>`;
+                }
+                html += `</div></details>`;
             } else if (typeof line === 'object' && line.speaker) {
                 html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
             } else if (typeof line === 'object') {

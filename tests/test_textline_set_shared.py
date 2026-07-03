@@ -195,8 +195,54 @@ def test_hades2_extracts_indexed_positional_main_groups():
         section_keys={"InteractTextLineSets"},
     )
     lines = sections["InteractTextLineSets"]["Rep01"]["dialogueLines"]
-    assert [l["text"] for l in lines] == ["Line A.", "Line B.", "Line C."]
-    assert all(l["speaker"] == "NPC_Eris_01" for l in lines)
+    # [1] carries RandomRemaining -> a random-pick-one segment listing its
+    # options; [2] has no RandomRemaining -> its cue is a plain sequential line.
+    assert lines[0]["kind"] == "randomGroup"
+    assert [o["text"] for o in lines[0]["options"]] == ["Line A.", "Line B."]
+    assert lines[1] == {"speaker": "NPC_Eris_01", "text": "Line C."}
+
+
+# A repeatable dialogue whose [2] branch splices in a shared
+# HeroRepeatableTextLines set by name; the resolver expands it to a random group.
+_H2_SHARED_SET_LUA = """{
+    InteractTextLineSets = {
+        Rep01 = {
+            [1] = {
+                RandomRemaining = true,
+                { Cue = "/VO/Eris_0294", Text = "Eris intro." },
+            },
+            [2] = HeroRepeatableTextLines.BathHouseIntroTextLines,
+        },
+    },
+}"""
+
+_HERO_DATA_LUA = """{
+    BathHouseIntroTextLines = {
+        RandomRemaining = true,
+        { Cue = "/VO/Melinoe_5307", UsePlayerSource = true, Text = "...This is nice..." },
+        { Cue = "/VO/Melinoe_5308", UsePlayerSource = true, Text = "...I needed this..." },
+    },
+}"""
+
+
+def test_hades2_resolves_hero_repeatable_shared_set_branch():
+    from src.extractors.hades2.textline_set import extract_hero_repeatable_sets
+    hero_parsed = {"HeroRepeatableTextLines": LuaParser(f"O = {_HERO_DATA_LUA}").parse_file()["O"]}
+    hero_sets = extract_hero_repeatable_sets(hero_parsed)
+    assert "BathHouseIntroTextLines" in hero_sets
+
+    owner = LuaParser(f"O = {_H2_SHARED_SET_LUA}").parse_file()["O"]
+    sections = h2_extract_textline_sections(
+        "NPC_Eris_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+        hero_repeatable_sets=hero_sets,
+    )
+    lines = sections["InteractTextLineSets"]["Rep01"]["dialogueLines"]
+    assert lines[0]["kind"] == "randomGroup"           # [1] Eris
+    assert lines[1]["kind"] == "randomGroup"           # [2] resolved shared set
+    assert lines[1]["source"] == "BathHouseIntroTextLines"
+    assert [o["text"] for o in lines[1]["options"]] == ["...This is nice...", "...I needed this..."]
+    assert all(o["speaker"] == "PlayerUnit" for o in lines[1]["options"])
 
 
 # H1 EndVoiceLines can also use the nested-group shape.

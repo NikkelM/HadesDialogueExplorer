@@ -106,3 +106,50 @@
 .choice-link .choice-name[data-tooltip] {
     cursor: pointer;
 }
+
+/* Random-pick-one segment (a ``RandomRemaining`` voice-line group): the game
+   plays exactly one of the listed options at this point in the dialogue. A
+   collapsed <details> block, styled like the other collapsible group headers,
+   makes clear the dialogue is assembled at random rather than read straight. */
+.random-group {
+    margin: 4px 0;
+    background: #1b1b2e;
+    border-left: 3px solid #6c5b7b;
+    border-radius: 0 4px 4px 0;
+}
+.random-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: var(--fs-sm);
+    color: #b8a5ff;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+.random-group-header::-webkit-details-marker { display: none; }
+.random-group-chevron {
+    color: #b8a5ff;
+    font-size: 10px;
+    transition: transform 0.15s ease;
+}
+.random-group[open] > .random-group-header > .random-group-chevron { transform: rotate(90deg); }
+.random-group-label { font-weight: 600; }
+.random-group-count {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    background: var(--border);
+    padding: 0 6px;
+    border-radius: 8px;
+}
+.random-group-options {
+    padding: 0 8px 6px 8px;
+}
+/* Option lines sit flush inside the box; drop their own background so they read
+   as members of the group rather than standalone lines. */
+.random-group-options .dialogue-line {
+    background: transparent;
+    border-left-color: color-mix(in srgb, #6c5b7b 55%, transparent);
+    margin-left: 8px;
+}

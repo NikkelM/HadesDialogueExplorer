@@ -280,6 +280,22 @@ def _group_speaker(group):
     return None
 
 
+def iter_top_segments(container):
+    """Yield a voice-line container's top-level segments in play order (array
+    entries first, then explicit ``[N] =`` numeric-index keys), WITHOUT
+    flattening. Unlike :func:`iter_voice_cues`, this preserves each segment as a
+    unit so the caller can tell a flat cue from a group (and decide sequential
+    vs random-pick handling) and see cross-file identifier references."""
+    if not isinstance(container, LuaTable):
+        return
+    for el in container.array:
+        yield el
+    for k in sorted(
+        (k for k in container.named if isinstance(k, str) and _NUM_KEY_RE.match(k)),
+        key=int):
+        yield container.named[k]
+
+
 def iter_voice_cues(container, _depth: int = 0):
     """Yield ``(cue_entry, group)`` for every cue line in a voice-line container,
     flattening the two "voice-line group" shapes the engine allows.

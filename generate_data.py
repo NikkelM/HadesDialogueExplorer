@@ -44,6 +44,7 @@ from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.god_traits import extract_god_trait_metadata
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.extractors.hades2.req_extractor import extract_requirements
+from src.extractors.hades2.textline_set import extract_hero_repeatable_sets
 from src.extractors.textline_set import (
     reset_section_key_audit,
     get_unlisted_section_keys,
@@ -184,13 +185,15 @@ def generate_source(
     return graph_data
 
 
-def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict]:
-    """Load H2's shared cross-file context: NamedRequirements registry
-    and NarrativeData priority annotations.
+def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict, dict]:
+    """Load H2's shared cross-file context: NamedRequirements registry,
+    NarrativeData priority annotations, and the ``HeroRepeatableTextLines``
+    shared cue sets (spliced into repeatable NPC dialogues by name).
 
-    Both files are optional - returns an empty mapping for each when the
+    All files are optional - returns an empty mapping for each when the
     corresponding source isn't present, so the H2 pipeline still runs
-    (named refs surface as unresolved, priorities go unattached).
+    (named refs surface as unresolved, priorities go unattached, repeatable
+    shared-set branches drop).
     """
     nr_path = hades2_scripts / HADES2_NAMED_REQUIREMENTS_FILE
     if nr_path.exists():
@@ -215,7 +218,16 @@ def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict]:
         print(f"SKIP {HADES2_NARRATIVE_DATA_FILE}: file not found at {nd_path}")
         priorities = {}
 
-    return named_reqs, priorities
+    hero_path = hades2_scripts / "HeroData.lua"
+    if hero_path.exists():
+        print(f"Parsing Hades 2: {hero_path}")
+        hero_repeatable = extract_hero_repeatable_sets(parse_lua_file(str(hero_path)))
+        print(f"  HeroRepeatableTextLines shared sets: {len(hero_repeatable)}")
+    else:
+        print(f"SKIP HeroData.lua: file not found at {hero_path}")
+        hero_repeatable = {}
+
+    return named_reqs, priorities, hero_repeatable
 
 
 def generate_hades2_source(
@@ -226,6 +238,7 @@ def generate_hades2_source(
     named_requirements: dict,
     narrative_priorities: dict,
     attached_priority_keys: set,
+    hero_repeatable_sets: dict = None,
 ) -> tuple[str, dict]:
     """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
 
@@ -240,11 +253,15 @@ def generate_hades2_source(
     print(f"Parsing {source_label}: {lua_path}")
     parsed = parse_lua_file(str(lua_path))
 
+    # Only the NPC extractor consumes the HeroRepeatableTextLines shared sets
+    # (repeatable NPC dialogues splice them in); other families don't accept it.
+    extra = {"hero_repeatable_sets": hero_repeatable_sets} if extractor is h2_extract_npc_data else {}
     owners = extractor(
         parsed,
         source_label=source_label,
         source_file=lua_path.name,
         named_requirements=named_requirements,
+        **extra,
     )
     print(f"  Owners: {len(owners)}")
 
@@ -412,7 +429,7 @@ def main():
     print("=" * 60)
     print("Hades 2")
     print("=" * 60)
-    named_reqs, narrative_priorities = load_hades2_context(hades2_scripts)
+    named_reqs, narrative_priorities, hero_repeatable_sets = load_hades2_context(hades2_scripts)
 
     # Accumulator for cross-source orphan-priority audit (see end of
     # this function). Every ``apply_narrative_priorities`` call below
@@ -483,6 +500,7 @@ def main():
                 output_prefix, source_label, lua_path, extractor,
                 named_reqs, narrative_priorities,
                 attached_priority_keys,
+                hero_repeatable_sets=hero_repeatable_sets,
             )
             # Skip writing per-source JSONs that hold zero textlines.
             # Each empty stub still carries the full ~9 KB speakers /
