@@ -92,7 +92,13 @@
 }
 body {
     font-family: var(--font-sans);
-    background: var(--bg);
+    background-color: var(--bg);
+    /* Faint dotted-grid backdrop, mirroring nikkelm.dev's .grid-backdrop. The
+       panels and main are transparent, so this subtle texture shows through the
+       whole app (most visibly in the empty/home state); the dots are --border
+       on --bg, so they stay very low-contrast behind dense content. */
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 28px 28px;
     color: var(--text-color);
     height: 100vh;
     height: 100dvh;
