@@ -51,7 +51,7 @@
 }
 
 .softlock-link:hover {
-    color: #d13551;
+    color: color-mix(in srgb, var(--accent-color) 72%, #fff);
 }
 
 /* The offending dialogue rendered as an inline link in normal body text
@@ -63,7 +63,7 @@
 }
 
 .softlock-dialogue-link:hover {
-    color: #d13551;
+    color: color-mix(in srgb, var(--accent-color) 72%, #fff);
 }
 
 .softlock-actions {
@@ -81,12 +81,12 @@
     border-radius: 4px;
     border: 1px solid var(--accent-color);
     background: var(--accent-color);
-    color: #fff;
+    color: var(--accent-contrast);
     cursor: pointer;
     transition: background-color 0.12s ease, border-color 0.12s ease;
 }
 
 .softlock-dismiss:hover {
-    background: #d13551;
-    border-color: #d13551;
+    background: color-mix(in srgb, var(--accent-color) 86%, #fff);
+    border-color: color-mix(in srgb, var(--accent-color) 86%, #fff);
 }

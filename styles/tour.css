@@ -148,12 +148,12 @@ body.tour-open #custom-tooltip {
 .tour-btn-next {
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: #fff;
+    color: var(--accent-contrast);
 }
 
 .tour-btn-next:hover {
-    background: #d13551;
-    border-color: #d13551;
+    background: color-mix(in srgb, var(--accent-color) 86%, #fff);
+    border-color: color-mix(in srgb, var(--accent-color) 86%, #fff);
 }
 
 .tour-btn:disabled {

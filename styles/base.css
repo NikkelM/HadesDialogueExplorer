@@ -257,7 +257,7 @@ header h1 {
 }
 .search-item mark {
     background: var(--accent-color);
-    color: #fff;
+    color: var(--accent-contrast);
     padding: 0 2px;
     border-radius: 2px;
 }
