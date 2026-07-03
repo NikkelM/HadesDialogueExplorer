@@ -21,7 +21,7 @@
 }
 .dialogue-line .speaker-name[data-tooltip] {
     cursor: help;
-    border-bottom: 1px dotted #e9456066;
+    border-bottom: 1px dotted color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 .dialogue-line .speaker-sep {
     font-style: normal;
@@ -86,10 +86,11 @@
     font-style: normal;
     font-size: var(--fs-xs);
     color: var(--text-muted);
-    background: var(--bg-elevated, #0d1b2e);
+    background: var(--border);
     padding: 1px 5px;
     border-radius: 3px;
     cursor: help;
+    font-family: var(--font-mono);
 }
 
 .choice-name {

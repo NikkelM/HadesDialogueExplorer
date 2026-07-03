@@ -302,7 +302,7 @@
         font-size: var(--fs-2xs);
         color: #444;
         text-align: center;
-        border-top: 1px solid #0f346040;
+        border-top: 1px solid var(--border);
     }
 }
 

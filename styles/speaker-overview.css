@@ -70,7 +70,7 @@ body.layout-speaker #panel-info {
     font-weight: normal;
 }
 .speaker-overview-header .speaker-description {
-    color: #b8b8b8;
+    color: var(--text-muted);
     font-size: var(--fs-base);
     font-style: italic;
     margin-bottom: 4px;
@@ -92,9 +92,9 @@ body.layout-speaker #panel-info {
 }
 .speaker-similar-pill {
     display: inline-block;
-    background: var(--border);
-    color: #d8dbe6;
-    border: 1px solid #1c4584;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 3px 10px;
     font-size: var(--fs-sm);
@@ -104,9 +104,9 @@ body.layout-speaker #panel-info {
     transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 .speaker-similar-pill:hover {
-    background: #1c4584;
-    color: #fff;
-    border-color: #2a5aa8;
+    background: var(--border);
+    color: var(--text-color);
+    border-color: var(--accent-color);
 }
 .speaker-overview-header .speaker-ids {
     color: var(--text-muted);
@@ -116,10 +116,11 @@ body.layout-speaker #panel-info {
 }
 .speaker-overview-header .speaker-ids code {
     background: var(--border);
-    color: #b8b8b8;
+    color: var(--text-muted);
     padding: 1px 5px;
     border-radius: 3px;
     font-size: var(--fs-xs);
+    font-family: var(--font-mono);
 }
 .speaker-overview-missing {
     padding: 16px;
@@ -345,9 +346,9 @@ body.layout-speaker #panel-info {
     flex-shrink: 0;
     font-size: var(--fs-sm);
     font-weight: 600;
-    color: #dfe2f0;
+    color: var(--text-color);
     background: var(--border);
-    border: 1px solid #1c4584;
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 0 8px;
     min-width: 22px;
@@ -358,7 +359,7 @@ body.layout-speaker #panel-info {
     list-style: none;
     margin: 1px 0 6px 18px;
     padding: 4px 0 4px 10px;
-    border-left: 1px solid #1c4584;
+    border-left: 1px solid var(--border);
     font-size: var(--fs-sm);
 }
 /* Each link is shown stacked: the depending dialogue (emphasised) above
@@ -366,7 +367,7 @@ body.layout-speaker #panel-info {
    what" reads clearly even with long names. */
 .speaker-adjacency-detail-row {
     padding: 4px 0;
-    border-bottom: 1px solid #0f346066;
+    border-bottom: 1px solid var(--border);
 }
 .speaker-adjacency-detail-row:last-child { border-bottom: none; }
 /* Centre each save-status dot with its name. The dots are inline-block, so
@@ -422,7 +423,7 @@ body.layout-speaker #panel-info {
     flex-shrink: 0;
 }
 .speaker-adjacency-name {
-    color: #b8b8b8;
+    color: var(--text-color);
 }
 .speaker-id-inline {
     color: var(--text-dim);
@@ -495,7 +496,7 @@ body.layout-speaker #panel-info {
     cursor: pointer;
     user-select: none;
 }
-.speaker-textline-group-header:hover { color: #b8b8b8; }
+.speaker-textline-group-header:hover { color: var(--text-color); }
 .speaker-group-chevron {
     font-size: 0.7em;
     color: var(--text-dim);
@@ -533,7 +534,7 @@ body.layout-speaker #panel-info {
     align-items: center;
     gap: 10px;
     padding: 5px 0;
-    border-bottom: 1px solid #0f346040;
+    border-bottom: 1px solid var(--border);
 }
 .speaker-textline-row:last-child { border-bottom: none; }
 /* Rows inside a .speaker-alt-group box are inset on the right by the box's
@@ -567,7 +568,7 @@ body.layout-speaker #panel-info {
     margin: 0;
 }
 .textline-link {
-    color: #b8b8b8;
+    color: var(--text-color);
     cursor: pointer;
     font-size: var(--fs-base);
     flex: 1;

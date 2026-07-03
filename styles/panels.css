@@ -334,7 +334,7 @@ body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: va
 }
 
 .alternates-name {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-base);
     color: var(--text-color);
 }

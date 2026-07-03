@@ -141,7 +141,7 @@
     background: #1d242c;
     color: #c7d2dc;
     border: 1px solid #303a47;
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
 }
 
@@ -219,7 +219,7 @@
     flex-shrink: 0;
 }
 .gamedata-group-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #b8a5ff;
 }
@@ -300,7 +300,7 @@
     cursor: help;
 }
 .req-type-group-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #c0c0c0;
     text-transform: uppercase;
@@ -359,7 +359,7 @@
     flex-shrink: 0;
 }
 .or-group-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #f4a261;
     text-transform: uppercase;
@@ -398,7 +398,7 @@
     flex-shrink: 0;
 }
 .or-branch-box-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #e9c46a;
     text-transform: uppercase;
@@ -479,7 +479,7 @@
     flex-shrink: 0;
 }
 .or-downstream-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #f4a261;
     text-transform: uppercase;
@@ -511,7 +511,7 @@
     background: rgba(176, 122, 58, 0.15);
     color: #f4a261;
     border: 1px solid rgba(176, 122, 58, 0.4);
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
 }
 .or-alt-badge[data-tooltip] { cursor: help; }

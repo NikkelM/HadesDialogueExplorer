@@ -26,6 +26,7 @@
     --surface:      #161a20;   /* header / panel surface (--surface) */
     --border:       #272c34;   /* default panel border (--line) */
     --accent-color: #e8a33d;   /* amber accent: titles, links, highlights (--accent) */
+    --accent-contrast: #14161a; /* near-black text/ink on amber fills (--accent-contrast) */
     --text-color:   #e8e9ec;   /* primary body text (--fg) */
     --text-muted:   #9aa1ab;   /* muted secondary text (--muted) */
     --text-dim:     #6b7280;   /* dim secondary text */
@@ -84,6 +85,11 @@
     }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Amber text-selection highlight, mirroring nikkelm.dev's ::selection. */
+::selection {
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+}
 body {
     font-family: var(--font-sans);
     background: var(--bg);
@@ -183,7 +189,7 @@ header h1 {
     padding: 6px 12px;
     cursor: pointer;
     font-size: var(--fs-base);
-    border-bottom: 1px solid #0f346040;
+    border-bottom: 1px solid var(--border);
 }
 .search-no-matches {
     padding: 10px 12px;
@@ -221,7 +227,7 @@ header h1 {
 .search-item-text .search-item-head { font-size: var(--fs-base); }
 .search-item-text .search-snippet {
     font-size: var(--fs-xs);
-    color: #b8b8b8;
+    color: var(--text-muted);
     margin-top: 2px;
     line-height: 1.4;
     white-space: normal;
@@ -416,5 +422,5 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     font-size: var(--fs-2xs);
     color: #444;
     text-align: center;
-    border-top: 1px solid #0f346040;
+    border-top: 1px solid var(--border);
 }

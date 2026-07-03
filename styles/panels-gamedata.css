@@ -30,7 +30,7 @@
     flex-shrink: 0;
 }
 .gamedata-group-header-inline .gamedata-group-label {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: #b8a5ff;
 }

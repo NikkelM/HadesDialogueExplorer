@@ -181,7 +181,7 @@
     margin: 2px 0;
     font-size: var(--fs-sm);
     color: #8d99ae;
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
 }
 /* Very light divider between consecutive rows so items that wrap
    across multiple lines stay visually distinguishable. Only applies
@@ -239,15 +239,15 @@
    path pill (e.g. ``...ForceAphroditeBoonKeepsake (Beautiful Mirror)``). Muted
    + non-mono so the raw path the gate checks still reads as the primary text. */
 .other-req-item .other-req-path .other-req-friendly {
-    color: #8b949e;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
 }
 /* "(cut content)" note flagging a path gate whose reference was cut from the
    game (see brokenPathRefs). Amber + non-mono with the full explanation in the
    hover tooltip, so a reader knows the gate has no effect. */
 .other-req-item .other-req-broken-ref {
-    color: #d29922;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--accent-color);
+    font-family: var(--font-sans);
     cursor: help;
 }
 /* AND joiner between multiple comparison/membership records that share

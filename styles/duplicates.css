@@ -131,7 +131,7 @@
     display: inline-block;
     width: var(--dup-name-col, max-content);
     font-size: var(--fs-base);
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     color: var(--text-color);
 }
 
