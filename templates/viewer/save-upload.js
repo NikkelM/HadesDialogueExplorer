@@ -33,7 +33,7 @@ export function initSaveUpload() {
         if (!file) return;
 
         if (!validateSaveFilename(file.name)) {
-            showStatus('error', 'Invalid file: must be Profile1-4.sav');
+            showStatus('error', 'Invalid file: must be a .sav file');
             input.value = '';
             return;
         }
@@ -48,7 +48,7 @@ export function initSaveUpload() {
 
         try {
             const buffer = await file.arrayBuffer();
-            parseSaveFile(buffer, file.name);
+            parseSaveFile(buffer);
             // Status text + colour are derived from the parsed state, the same
             // as on a game switch, so the message stays in one place.
             refreshSaveStatus();

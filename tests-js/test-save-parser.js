@@ -28,6 +28,8 @@ import {
     extractH1GameStateSlice,
     extractH1CurrentRunSlice,
     extractH1PrevRunSlice,
+    getSaveInRun,
+    validateSaveFilename,
 } from '../templates/viewer/save-parser.js';
 import { loadData } from '../templates/viewer/data.js';
 
@@ -235,6 +237,40 @@ test('parses a Hades 2 patch-11 save (extra cosmeticsPoints header field)', () =
     assert.equal(result.gameId, 'hades2');
     assert.equal(result.completedRuns, 3);
     assert.equal(result.count, 1);
+});
+
+// --- hub vs in-run classification (from contents, not filename) ---
+
+test('validateSaveFilename accepts any .sav name, rejects the rest', () => {
+    // Canonical and custom-renamed names are all accepted.
+    for (const ok of ['Profile1.sav', 'Profile2_Temp.sav', 'Profile1 Something else.sav',
+        'Profile2_Temp Testing thing.sav', 'my run.SAV', 'backup.sav']) {
+        assert.equal(validateSaveFilename(ok), true, ok);
+    }
+    for (const bad of ['notasave.txt', 'Profile1.sav.bak', 'save', '', null, undefined]) {
+        assert.equal(validateSaveFilename(bad), false, String(bad));
+    }
+});
+
+test('detectInRun: Hades 1 hub vs in-run save read from contents', () => {
+    const parse = (luaState) => { clearSaveProgress(); parseSaveFile(buildSGB1({ gameVersion: GAME_VERSION_HADES1, luaState })); return getSaveInRun(); };
+    // Hub markers -> hub save (false), even with no filename.
+    assert.equal(parse({ CurrentRun: { Hero: { IsDead: true } } }), false);   // death-flagged hero
+    assert.equal(parse({ CurrentDeathAreaRoom: { Name: 'DeathArea' } }), false); // in the House
+    assert.equal(parse({ GameState: { LocationName: 'Location_Home' } }), false); // boot/transition fallback
+    // No hub marker -> in-run save (true).
+    assert.equal(parse({ CurrentRun: { Hero: { IsDead: false }, CurrentRoom: { Name: 'A_Combat01' } }, GameState: { LocationName: 'Location_BiomeA' } }), true);
+    assert.equal(parse({ CurrentRun: {} }), true);
+});
+
+test('detectInRun: Hades 2 hub vs in-run save read from contents', () => {
+    const parse = (luaState) => { clearSaveProgress(); parseSaveFile(buildSGB1({ gameVersion: GAME_VERSION_HADES2, luaState })); return getSaveInRun(); };
+    // Hub markers -> hub save (false).
+    assert.equal(parse({ CurrentHubRoom: { Name: 'Hub_Main' } }), false);
+    assert.equal(parse({ GameState: { LocationName: 'Location_Home' } }), false);
+    // No hub marker -> in-run save (true). H1's IsDead marker must NOT leak into H2.
+    assert.equal(parse({ GameState: { LocationName: 'Location_BiomeF' } }), true);
+    assert.equal(parse({ CurrentRun: { Hero: { IsDead: true } }, GameState: {} }), true);
 });
 
 test('rejects a buffer without the SGB1 magic', () => {

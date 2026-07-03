@@ -897,9 +897,10 @@ let _savePrevRun = null;
 // Recent-runs slice (RunHistory newest-first, pruned to the clear fields) for
 // resolving RequiredConsecutiveClears/DeathsInRoom; null when none is loaded.
 let _saveRunHistory = null;
-// Whether the loaded save is an in-run (_Temp) save (true) or a hub save
-// (false). Decides which owners' CurrentRun.* gates resolve (see
-// ``currentRunResolvable``). null when no save is loaded.
+// Whether the loaded save is an in-run save (true) or a hub save (false),
+// classified from the save contents (see ``detectInRun``). Decides which
+// owners' CurrentRun.* gates resolve (see ``currentRunResolvable``). null when
+// no save is loaded (or the state was unreadable).
 let _saveInRun = null;
 // Minimal persisted AudioState slice (AmbientTrackName / MusicName) for resolving
 // H2 AudioState.* gates; null for non-H2 saves or when none is loaded.
@@ -909,7 +910,7 @@ export function getSaveProgress() { return _saveProgress; }
 export function getSaveGameId() { return _saveGameId; }
 export function getSaveRuns() { return _saveRuns; }
 export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
-// true = in-run (_Temp) save, false = hub save, null = unknown / none loaded.
+// true = in-run save, false = hub save, null = unknown / none loaded.
 export function getSaveInRun() { return _saveInRun; }
 
 // Detect the known Hades II story-softlock state: the player holds Gigaros (the
@@ -1136,7 +1137,38 @@ export function clearPersistedSave() {
   if (store) _removePersistedSave(store);
 }
 
-export function parseSaveFile(arrayBuffer, filename = null) {
+// Whether a successfully-parsed save is an in-run autosave (true) or a hub save
+// (false), decided from the save CONTENTS rather than its filename, so a
+// custom-renamed ``.sav`` still classifies correctly. A hub save carries a
+// game-specific "in the hub" marker that an in-run save never does:
+//   * Hades II: the top-level ``CurrentHubRoom`` global (set on hub load, nil
+//     during a run).
+//   * Hades 1: there is no ``CurrentHubRoom``; the hub (House of Hades) sets the
+//     top-level ``CurrentDeathAreaRoom`` global, and the hero is flagged
+//     ``CurrentRun.Hero.IsDead`` the instant the run ends - the latter also
+//     covers the death-moment hub save, taken before ``CurrentDeathAreaRoom``
+//     is repopulated.
+// ``GameState.LocationName === 'Location_Home'`` is a shared fallback for the
+// rare boot / transition-window save where the primary hub global has not been
+// (re)populated yet. Verified against both games' Lua save whitelists and their
+// hub-load / StartOver write sites. Returns true (in-run) / false (hub), or
+// null when there is no usable Lua state.
+function detectInRun(gameId, luaState) {
+  if (!luaState || typeof luaState !== 'object') return null;
+  const gs = (luaState.GameState && typeof luaState.GameState === 'object') ? luaState.GameState : {};
+  const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : null;
+  const atHubLocation = gs.LocationName === 'Location_Home';
+  let inHub;
+  if (gameId === 'hades1') {
+    const heroDead = !!(cr && cr.Hero && cr.Hero.IsDead);
+    inHub = heroDead || !!luaState.CurrentDeathAreaRoom || atHubLocation;
+  } else {
+    inHub = !!luaState.CurrentHubRoom || atHubLocation;
+  }
+  return !inHub;
+}
+
+export function parseSaveFile(arrayBuffer) {
   const parsed = parseSGB1(arrayBuffer);
   const ctx = extractSaveContext(parsed);
   _saveProgress = ctx.played;
@@ -1152,10 +1184,10 @@ export function parseSaveFile(arrayBuffer, filename = null) {
   _savePrevRun = ctx.prevRun;
   _saveRunHistory = ctx.runHistory;
   _saveAudioState = ctx.audioState;
-  // An in-run autosave is named ProfileX_Temp.sav; the hub save is ProfileX.sav.
-  // The flag decides which owners' CurrentRun.* gates resolve. Unknown filename
-  // (e.g. tests) leaves it null -> CurrentRun.* stays indeterminate.
-  _saveInRun = (typeof filename === 'string') ? /_Temp\.sav$/i.test(filename) : null;
+  // Hub vs in-run is read from the save contents (see ``detectInRun``), not the
+  // filename, so custom-renamed saves still classify correctly. It decides which
+  // owners' CurrentRun.* gates resolve. Null (no usable state) -> indeterminate.
+  _saveInRun = detectInRun(parsed.gameId, parsed.luaState);
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   _saveHasBiomesMod = !!parsed.hasBiomesMod;
@@ -1189,8 +1221,13 @@ export function getDialogueStatus(name, textlineData) {
   return sat === 'unknown' ? 'indeterminate' : 'blocked';
 }
 
+// Accept any ``.sav`` file: players and modders may rename their profiles
+// (e.g. ``Profile1 Something.sav``), so the name is only a coarse gate - the
+// real validation is whether ``parseSaveFile`` decodes it as an SGB1 save of a
+// known game (it throws otherwise, surfaced as a parse error). Hub-vs-run is
+// then decided from the save contents (see ``detectInRun``), not the name.
 export function validateSaveFilename(filename) {
-  return /^Profile[1-4](_Temp)?\.sav$/i.test(filename);
+  return typeof filename === 'string' && /\.sav$/i.test(filename);
 }
 
 // ``activeGameId`` defaults to the loaded active game, but callers that run
