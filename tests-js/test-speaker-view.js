@@ -903,6 +903,53 @@ test('renderSpeaker eligibility filter narrows the list to one status', () => {
     assert.doesNotMatch(playedOnly, /TestBlocked01/);
 });
 
+test('renderSpeaker keeps the alternates cluster when the filter hides a sibling (labelled "N of M")', () => {
+    // Two mutually-exclusive variants: AltPlayed01 has played, so its sibling
+    // AltUnobtainable01 (gated on AltPlayed01 NOT having played) is permanently
+    // unobtainable. Filtering to 'unobtainable' leaves only the sibling visible.
+    const base = buildFixtureData();
+    const fixture = {
+        ...base,
+        alternates: { ...base.alternates, AltPlayed01: ['AltUnobtainable01'], AltUnobtainable01: ['AltPlayed01'] },
+        textlines: {
+            ...base.textlines,
+            AltPlayed01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true },
+            AltUnobtainable01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: { RequiredFalseTextLines: ['AltPlayed01'] }, playOnce: true },
+        },
+        speakers: {
+            ...base.speakers,
+            NPC_Test_01: {
+                name: 'Tester',
+                ownedTextlines: ['AltPlayed01', 'AltUnobtainable01'],
+                asSpeakerTextlines: [],
+                sourceFiles: ['NPCData.lua'],
+                sectionCounts: { InteractTextLineSets: 2 },
+                priorityCounts: { super: 0, priority: 2, plain: 0 },
+                adjacencyUpstream: {}, adjacencyDownstream: {},
+            },
+        },
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    _localStore.set('hde.save', JSON.stringify({
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played: ['AltPlayed01'],
+    }));
+    restoreSaveProgress();
+
+    // No filter: both variants visible -> one cluster, plain count 2.
+    const all = render('NPC_Test_01', {});
+    assert.match(all, /speaker-alt-group-label">Alternates <span class="speaker-count">2<\/span>/);
+
+    // Filter to 'unobtainable': only the sibling survives, but its counterpart is
+    // still owned -> the cluster is KEPT and labelled "1 of 2" (not a lone row),
+    // so it still reads as an alternate of something the filter is hiding.
+    const unobtainableOnly = render('NPC_Test_01', { eligibility: 'unobtainable' });
+    assert.match(unobtainableOnly, /class="speaker-alt-group"/);
+    assert.match(unobtainableOnly, /speaker-alt-group-label">Alternates <span class="speaker-count">1 of 2<\/span>/);
+    assert.match(unobtainableOnly, /AltUnobtainable01</);
+    assert.doesNotMatch(unobtainableOnly, /AltPlayed01</);
+});
+
 test('renderSpeaker disables filter/eligibility chips whose selection would be empty', () => {
     loadEligibilityFixtureWithSave();
     const html = render('NPC_Test_01', {});

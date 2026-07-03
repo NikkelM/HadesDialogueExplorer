@@ -433,8 +433,8 @@ function _wireResizer(el, entry) {
     });
 }
 
-function _makeResizer(leftKey, rightKey) {
-    const el = document.createElement('div');
+function _makeResizer(leftKey, rightKey, existing) {
+    const el = existing || document.createElement('div');
     el.className = 'panel-resizer';
     el.setAttribute('role', 'separator');
     el.setAttribute('aria-orientation', 'vertical');
@@ -493,11 +493,16 @@ export function initResizePanels() {
     _baseGrow = storedBase || { ..._grow };
     _applyGrow();
 
-    const e1 = _makeResizer('info', 'upstream');
-    const e2 = _makeResizer('upstream', 'downstream');
+    // Reuse the resize handles from the static markup when present (so they
+    // hold their width from the first paint and the loading skeleton doesn't
+    // jump when they appear); fall back to creating + inserting them otherwise.
+    const staticR1 = document.getElementById('resizer-info-upstream');
+    const staticR2 = document.getElementById('resizer-upstream-downstream');
+    const e1 = _makeResizer('info', 'upstream', staticR1);
+    const e2 = _makeResizer('upstream', 'downstream', staticR2);
     _resizers.push(e1, e2);
-    main.insertBefore(e1.el, upstream);
-    main.insertBefore(e2.el, downstream);
+    if (!staticR1) main.insertBefore(e1.el, upstream);
+    if (!staticR2) main.insertBefore(e2.el, downstream);
 
     for (const key of PANEL_ORDER) {
         const panel = document.getElementById('panel-' + key);

@@ -598,6 +598,10 @@ function renderTextlineListBody() {
     const owned = (entry.ownedTextlines || [])
         .map(n => ({ name: n, tl: textlines[n] }))
         .filter(o => o.tl);
+    // Names this speaker owns (pre-filter), so the alternate clustering can tell
+    // a sibling hidden by the current filter (still owned -> keep the cluster)
+    // from a sibling that isn't in this speaker's list at all (render inline).
+    const ownedNames = new Set(owned.map(o => o.name));
     let filtered = owned.filter(o =>
         filterPassesBucket(priorityBucket(o.tl), filter) && eligibilityPasses(o, eligFilter));
 
@@ -640,7 +644,7 @@ function renderTextlineListBody() {
             + `<span class="speaker-group-chevron">\u25B6</span>`
             + `${header} <span class="speaker-count">${rows.length}</span>`
             + `</h5>`
-            + `<ul class="speaker-textline-list">${renderSectionRowsHtml(rows)}</ul>`
+            + `<ul class="speaker-textline-list">${renderSectionRowsHtml(rows, ownedNames)}</ul>`
             + `</div>`;
     }).join('');
 }
@@ -681,10 +685,15 @@ export function toggleSpeakerSection(headerEl, sectionKey) {
 // Render a section's rows, grouping mutually-exclusive alternate variants
 // (e.g. ``SomeLine01`` / ``SomeLine01_B``) into a single labelled cluster
 // so the list reads as one logical line with its variants, rather than N
-// near-identical rows. Only variants co-present in this section's rows are
-// clustered; a lone variant renders as a normal row. Order within the
-// cluster follows the already-sorted ``rows``.
-function renderSectionRowsHtml(rows) {
+// near-identical rows. A variant is shown inside its Alternates cluster even
+// when the active filter (repeatability / eligibility / name search) leaves
+// only one of its siblings visible - so it never reads as a lone standalone
+// line with no hint that it is an alternate. ``ownedNames`` is the speaker's
+// full pre-filter name set: the cluster is kept whenever two or more variants
+// are OWNED (a filtered-out sibling still counts), and its label reads "N of M"
+// when the filter hides some. A variant whose siblings aren't owned by this
+// speaker at all renders as a normal row. Order follows the sorted ``rows``.
+function renderSectionRowsHtml(rows, ownedNames) {
     const grouped = new Set();
     let html = '';
     for (const o of rows) {
@@ -692,10 +701,11 @@ function renderSectionRowsHtml(rows) {
         const siblings = alternates[o.name];
         if (siblings && siblings.length) {
             const names = new Set([o.name, ...siblings]);
-            const cluster = rows.filter(r => names.has(r.name) && !grouped.has(r.name));
-            if (cluster.length >= 2) {
+            const ownedVariants = [...names].filter(n => ownedNames.has(n)).length;
+            if (ownedVariants >= 2) {
+                const cluster = rows.filter(r => names.has(r.name) && !grouped.has(r.name));
                 for (const c of cluster) grouped.add(c.name);
-                html += renderAlternatesClusterHtml(cluster);
+                html += renderAlternatesClusterHtml(cluster, ownedVariants);
                 continue;
             }
         }
@@ -707,11 +717,19 @@ function renderSectionRowsHtml(rows) {
 
 // A cluster of mutually-exclusive alternate variants: a labelled box (the
 // gold ``Alternates`` accent shared with the dialogue detail view) wrapping
-// the variant rows.
-function renderAlternatesClusterHtml(cluster) {
+// the variant rows. ``totalVariants`` is how many variants the speaker owns;
+// when the current filter hides some of them the label reads "N of M" and the
+// tooltip notes the hidden variants, so a filtered-down cluster (even a single
+// surviving variant) still reads as an alternate.
+function renderAlternatesClusterHtml(cluster, totalVariants) {
     const rowsHtml = cluster.map(o => renderTextlineRow(o.name, o.tl)).join('');
-    return `<li class="speaker-alt-group" data-tooltip="Mutually exclusive variants - only one of these can play; the others are blocked once one does.">`
-        + `<div class="speaker-alt-group-label">Alternates <span class="speaker-count">${cluster.length}</span></div>`
+    const hiddenSome = totalVariants > cluster.length;
+    const countLabel = hiddenSome ? `${cluster.length} of ${totalVariants}` : `${cluster.length}`;
+    const tip = hiddenSome
+        ? 'Mutually exclusive variants - only one of these can play; the others are blocked once one does. Some variants are hidden by the current filter.'
+        : 'Mutually exclusive variants - only one of these can play; the others are blocked once one does.';
+    return `<li class="speaker-alt-group" data-tooltip="${tip}">`
+        + `<div class="speaker-alt-group-label">Alternates <span class="speaker-count">${countLabel}</span></div>`
         + `<ul class="speaker-alt-group-rows">${rowsHtml}</ul>`
         + `</li>`;
 }

@@ -135,10 +135,18 @@
         <h2 id="panel-info-heading">Textline Details</h2>
         <div id="info-content" class="panel-body"><div class="empty-state">Select a textline to see its details</div></div>
     </div>
+    <!-- Inter-panel resize handles are present in the static markup (rather than
+         created by resize-panels.js at boot) so they occupy their width from the
+         first paint: otherwise the loading skeleton paints with the panels flush
+         and jumps sideways when the handles are inserted after viewer.js loads.
+         Hidden by CSS except on the desktop dialogue layout; resize-panels.js
+         wires these existing elements. -->
+    <div class="panel-resizer" id="resizer-info-upstream"></div>
     <div class="panel" id="panel-upstream">
         <h2>↑ Prerequisites (what it requires)</h2>
         <div id="upstream-content" class="panel-body"><div class="empty-state">Select a textline to see its prerequisites</div></div>
     </div>
+    <div class="panel-resizer" id="resizer-upstream-downstream"></div>
     <div class="panel" id="panel-downstream">
         <h2>↓ Dependents (what requires it)</h2>
         <div id="downstream-content" class="panel-body"><div class="empty-state">Select a textline to see what depends on it</div></div>
