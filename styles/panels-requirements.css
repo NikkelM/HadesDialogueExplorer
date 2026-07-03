@@ -253,7 +253,7 @@
 /* AND joiner between multiple comparison/membership records that share
    a Path:<head> key (engine AND-combines them). */
 .other-req-item .other-req-and {
-    color: #6b7280;
+    color: var(--text-dim);
     font-weight: 600;
     margin: 0 4px;
     letter-spacing: 0.5px;
@@ -392,7 +392,7 @@
     border-radius: 3px;
 }
 .named-req-suffix {
-    color: #6b7280;
+    color: var(--text-dim);
     font-size: var(--fs-xs);
     margin-left: 4px;
 }

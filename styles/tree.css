@@ -139,8 +139,8 @@
    they share placement rules. */
 .priority-ordinal {
     background: #1d242c;
-    color: #c7d2dc;
-    border: 1px solid #303a47;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
 }

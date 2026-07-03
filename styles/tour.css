@@ -170,7 +170,7 @@ body.tour-open #custom-tooltip {
     border: none;
     padding: 8px 0 0;
     margin: 0;
-    color: #8a93a6;
+    color: var(--text-muted);
     font-family: inherit;
     font-size: var(--fs-xs);
     text-decoration: underline;
@@ -178,7 +178,7 @@ body.tour-open #custom-tooltip {
 }
 
 .tour-disable:hover {
-    color: #c0c6d2;
+    color: var(--text-color);
 }
 
 /* Floating help menu (FAB): a fixed "?" toggle that folds out action bubbles
@@ -213,7 +213,7 @@ body.tour-open #custom-tooltip {
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
-    color: #c0c6d2;
+    color: var(--text-muted);
     font-family: inherit;
     font-size: var(--fs-lg);
     font-weight: 600;
@@ -243,7 +243,7 @@ body.tour-open #custom-tooltip {
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
-    color: #c0c6d2;
+    color: var(--text-muted);
     font-size: var(--fs-lg);
     line-height: 1;
     cursor: pointer;
