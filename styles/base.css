@@ -90,6 +90,12 @@ header {
     align-items: center;
     gap: 16px;
     flex-shrink: 0;
+    /* Wrap to further rows when the controls no longer fit on one line, rather
+       than letting the single flexible item (the search box) collapse to a
+       sliver while the fixed-width save group overflows off-screen. Below
+       1024px the responsive overrides regroup this into predictable rows; here
+       it just prevents overflow on in-between desktop widths. */
+    flex-wrap: wrap;
 }
 header h1 {
     font-size: var(--fs-xl);
@@ -100,6 +106,11 @@ header h1 {
     flex: 1;
     position: relative;
     max-width: 500px;
+    /* Keep the search box usable when space is tight: floor its width so it
+       stays legible and, once it can't fit alongside the other controls,
+       forces the trailing group to wrap to the next row instead of squeezing
+       the search box down to nothing. */
+    min-width: 260px;
 }
 #search {
     width: 100%;
