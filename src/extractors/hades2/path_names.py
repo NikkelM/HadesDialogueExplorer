@@ -93,7 +93,7 @@ HADES2_PATH_FIELD_NAMES = {
     "CurrentRoom.Encounter.Spawns": "current room spawns",
     "CurrentRoom.Encounter.PlayerTookDamage": "took damage in current room",
     "Hero": "the player",
-    "Hero.IsDead": "is dead",
+    "Hero.IsDead": "the player is dead",
     "Hero.LastStands": "Death Defiances remaining",
     "Hero.MetGods": "gods encountered",
     "Hero.UpgradableHammerCount": "Upgradable Daedalus' Hammers equipped",
