@@ -693,6 +693,14 @@ export function extractH1CurrentRunSlice(luaState) {
     };
     if (hero.Traits && typeof hero.Traits === 'object') slice.Hero.Traits = pruneHeroTraits(hero.Traits);
   }
+  // ``CurrentDeathAreaRoom`` is a top-level global (which House room the player
+  // is in), not a CurrentRun field - carry its Name in so the dead-hero room
+  // gates (``RequiredRoom`` etc.) resolve against the House room rather than the
+  // biome room the run ended in.
+  const deathArea = luaState.CurrentDeathAreaRoom;
+  if (deathArea && typeof deathArea === 'object' && deathArea.Name != null) {
+    slice.CurrentDeathAreaRoom = { Name: deathArea.Name };
+  }
   slice.RoomHistory = _h1PruneCurrentRunRooms(cr.RoomHistory);
   return slice;
 }

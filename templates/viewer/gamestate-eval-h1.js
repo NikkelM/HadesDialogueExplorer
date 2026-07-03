@@ -810,11 +810,18 @@ function h1RunsWithWeapon(ctx, weapon) {
     return n;
 }
 
-// CurrentRun current-room name predicate, honouring the death-area room.
+// CurrentRun current-room name predicate, honouring the death-area room. When
+// the hero is dead the player is back in the House, so the current room is the
+// House room (``CurrentDeathAreaRoom.Name``), not the biome room the run ended
+// in. If the save doesn't record which House room (a death-moment / boot save),
+// default to the main hall ``DeathArea`` - the room the player spawns into (and
+// where Thanatos and the other House speakers are).
+const H1_HUB_MAIN_ROOM = 'DeathArea';
 function h1CrRoomName(ctx, pred, negateDefault) {
     const cr = _h1cr(ctx);
     if (!cr) return H1_WRONGSAVE(_CR_REASON);
-    const name = (cr.Hero && cr.Hero.IsDead && cr.CurrentDeathAreaRoom) ? cr.CurrentDeathAreaRoom.Name
+    const name = (cr.Hero && cr.Hero.IsDead)
+        ? ((cr.CurrentDeathAreaRoom && cr.CurrentDeathAreaRoom.Name) || H1_HUB_MAIN_ROOM)
         : (cr.CurrentRoom && cr.CurrentRoom.Name);
     if (name == null) return negateDefault ? H1_OK : H1_UNMET;
     return _h1bool(pred(name));

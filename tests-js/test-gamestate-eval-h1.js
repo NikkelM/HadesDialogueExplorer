@@ -245,6 +245,30 @@ test('H1: RequiredEncounterThisRun reads EncountersOccurredCache (occurred, not 
     assert.equal(evaluateH1OtherRequirements({ RequiredEncounterThisRun: 'Boss01' }, cNo).status, 'unmet');
 });
 
+test('H1: RequiredRoom resolves the House room (CurrentDeathAreaRoom) for a dead hero', () => {
+    // In-run (alive): the live biome room is compared directly.
+    const inRun = ctx({ currentRun: { Hero: { IsDead: false }, CurrentRoom: { Name: 'A_Boss01' } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'A_Boss01' }, inRun).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'DeathArea' }, inRun).status, 'unmet');
+    // Hub (dead): the House room comes from CurrentDeathAreaRoom, NOT the biome
+    // room the run ended in. Standing in the main hall -> the Thanatos DeathArea
+    // chats resolve met; standing in the bedroom -> the DeathArea gate is unmet.
+    const inHall = ctx({ currentRun: { Hero: { IsDead: true }, CurrentRoom: { Name: 'A_Boss01' }, CurrentDeathAreaRoom: { Name: 'DeathArea' } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'DeathArea' }, inHall).status, 'met');
+    const inBedroom = ctx({ currentRun: { Hero: { IsDead: true }, CurrentRoom: { Name: 'A_Boss01' }, CurrentDeathAreaRoom: { Name: 'DeathAreaBedroom' } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'DeathArea' }, inBedroom).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'DeathAreaBedroom' }, inBedroom).status, 'met');
+    // Dead hero but no recorded House room (death-moment / boot save) -> default
+    // to the main hall DeathArea, where the player spawns and Thanatos stands.
+    const unknownRoom = ctx({ currentRun: { Hero: { IsDead: true }, CurrentRoom: { Name: 'A_Boss01' } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredRoom: 'DeathArea' }, unknownRoom).status, 'met');
+    // Ending01's RequiredFalseRooms:[DeathAreaBedroomHades] is unmet only when the
+    // player is actually in the Hades bedroom.
+    const inHadesBedroom = ctx({ currentRun: { Hero: { IsDead: true }, CurrentDeathAreaRoom: { Name: 'DeathAreaBedroomHades' } } });
+    assert.equal(evaluateH1OtherRequirements({ RequiredFalseRooms: ['DeathAreaBedroomHades'] }, inHadesBedroom).status, 'unmet');
+    assert.equal(evaluateH1OtherRequirements({ RequiredFalseRooms: ['DeathAreaBedroomHades'] }, inHall).status, 'met');
+});
+
 test('H1: RequiredDeathRoom is ineligible on a run that did not fail', () => {
     // Engine: not DidFailRun (run cleared OR hero alive) -> the gate returns false.
     const alive = ctx({ currentRun: { Hero: { IsDead: false }, CurrentRoom: { Name: 'A_Boss01' } } });
