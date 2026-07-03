@@ -194,9 +194,9 @@ body.layout-speaker #panel-info {
     gap: 6px;
 }
 .priority-chip {
-    background: var(--border);
-    color: #b8b8b8;
-    border: 1px solid #1c4584;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 4px 10px;
     font-size: var(--fs-sm);
@@ -204,28 +204,36 @@ body.layout-speaker #panel-info {
     font-family: inherit;
 }
 .priority-chip:hover {
-    background: #1c4584;
+    background: var(--border);
     color: var(--text-color);
 }
+/* Active filter/eligibility chip. Outlined rather than solid-filled: an amber
+   border + amber label on the same dark surface as the inactive chips, so the
+   text stays high-contrast and (crucially for the eligibility row) the leading
+   status dots keep their own colours instead of washing out on an amber fill.
+   The inset ring thickens the amber edge to ~2px without changing the box size,
+   so toggling active state can't nudge the chip's layout. */
 .priority-chip.is-active {
-    background: var(--accent-color);
-    color: #fff;
+    background: var(--surface);
+    color: var(--accent-color);
     border-color: var(--accent-color);
+    box-shadow: inset 0 0 0 1px var(--accent-color);
+    font-weight: 600;
 }
 /* A filter/eligibility chip whose selection would yield no dialogues:
    greyed out and unclickable (the button also carries ``disabled``). */
 .priority-chip.is-disabled,
 .priority-chip:disabled {
-    background: #11223d;
-    color: #5a6478;
-    border-color: #173050;
+    background: var(--surface);
+    color: var(--text-dim);
+    border-color: var(--border);
     cursor: not-allowed;
     opacity: 0.55;
 }
 .priority-chip.is-disabled:hover,
 .priority-chip:disabled:hover {
-    background: #11223d;
-    color: #5a6478;
+    background: var(--surface);
+    color: var(--text-dim);
 }
 .priority-chip .speaker-count {
     color: inherit;

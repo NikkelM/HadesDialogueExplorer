@@ -89,6 +89,14 @@ _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
 # the viewer swaps between (see ``updateFavicon`` in game-toggle.js).
 _STATIC_ASSET_NAMES = ("hades.ico", "hades2.ico")
 
+# Self-hosted IBM Plex woff2 files (styles/fonts.css @font-face rules point at
+# ``fonts/<name>.woff2`` relative to viewer.css). Copied into ``dist/fonts/``
+# for the split build so they load same-origin under the strict
+# ``font-src 'self'`` CSP, and inlined as data: URIs for the single-file bundle
+# so it stays self-contained offline. Discovered from disk so adding a weight is
+# just dropping the woff2 in and referencing it from fonts.css.
+_FONTS_DIR = STATIC_DIR / "fonts"
+
 # Map each per-source JSON filename prefix to the canonical game id
 # used as a key in the final ``games`` map and in the URL hash. The
 # prefix is the canonical routing signal - ``generate_data.py`` writes
@@ -426,6 +434,22 @@ def build_split(payload: dict) -> dict:
     for name in _STATIC_ASSET_NAMES:
         shutil.copyfile(STATIC_DIR / name, DIST_DIR / name)
 
+    # Copy the self-hosted fonts into dist/fonts/ (referenced by fonts.css as
+    # ``fonts/<name>.woff2`` relative to viewer.css). Copy per-file with
+    # overwrite and prune only stale ``*.woff2`` - removing the whole directory
+    # is lock-prone on Windows (an open browser tab or OneDrive sync can hold a
+    # woff2 handle), and would fail the build for a cosmetic clean.
+    dist_fonts = DIST_DIR / "fonts"
+    if _FONTS_DIR.exists():
+        dist_fonts.mkdir(parents=True, exist_ok=True)
+        wanted = set()
+        for font in sorted(_FONTS_DIR.glob("*.woff2")):
+            shutil.copyfile(font, dist_fonts / font.name)
+            wanted.add(font.name)
+        for stale in dist_fonts.glob("*.woff2"):
+            if stale.name not in wanted:
+                stale.unlink()
+
     sizes = {name: (DIST_DIR / name).stat().st_size for name in _SPLIT_OUTPUT_NAMES}
     game_sizes = {
         gid: (DIST_DIR / f"data-{gid}.json").stat().st_size for gid in per_game_json
@@ -516,6 +540,17 @@ def build_bundle(payload: dict) -> None:
     bundled = bundled.replace('href="hades2.ico"', f'href="{favicon_uris["hades2.ico"]}"')
     bundled = bundled.replace('data-hades1="hades.ico"', f'data-hades1="{favicon_uris["hades.ico"]}"')
     bundled = bundled.replace('data-hades2="hades2.ico"', f'data-hades2="{favicon_uris["hades2.ico"]}"')
+
+    # Inline the self-hosted fonts as data: URIs so the bundle needs no sidecar
+    # fonts/ directory (the split build's ``url("fonts/<name>.woff2")`` refs
+    # would 404 from file://). Mirrors the favicon inlining above.
+    if _FONTS_DIR.exists():
+        for font in sorted(_FONTS_DIR.glob("*.woff2")):
+            data_uri = (
+                "data:font/woff2;base64,"
+                + base64.b64encode(font.read_bytes()).decode("ascii")
+            )
+            bundled = bundled.replace(f'url("fonts/{font.name}")', f'url({data_uri})')
 
     out = DIST_DIR / _BUNDLE_OUTPUT_NAME
     out.write_text(bundled, encoding="utf-8")
