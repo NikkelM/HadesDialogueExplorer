@@ -1,19 +1,21 @@
 /* Base layout, body, header, scrollbar */
 :root {
     /* Font-size scale. One source of truth; 1rem = 16px.
-       The values below are the baseline used on mobile / small screens
-       (kept as-is so the existing mobile sizing is untouched). Desktop
-       (> the 1024px tablet breakpoint) bumps the whole scale up a step
-       via the ``@media (min-width: 1025px)`` block right below, so the
-       increase is desktop-only and cannot affect mobile. */
-    --fs-2xs:  0.625rem;   /* 10px - badges, counts, tags, toggles */
-    --fs-xs:   0.6875rem;  /* 11px - small labels, group headers */
-    --fs-sm:   0.75rem;    /* 12px - meta / secondary text, panel h4 */
-    --fs-base: 0.8125rem;  /* 13px - body: inputs, buttons, links, names */
-    --fs-lg:   0.9375rem;  /* 15px - panel & section titles */
-    --fs-xl:   1rem;       /* 16px - headings */
-    --fs-2xl:  1.125rem;   /* 18px - large headings */
-    --fs-3xl:  1.375rem;   /* 22px - display stat */
+       The values below are the baseline used on mobile / small screens.
+       Desktop (> the 1024px tablet breakpoint) bumps the whole scale up a
+       further step via the ``@media (min-width: 1025px)`` block right below.
+       The whole scale was nudged up ~1px (mobile and desktop together, so
+       their one-step relationship is preserved) for a touch more legibility;
+       everything sizes from these tokens (or em relative to them), so this
+       lifts the entire UI proportionally without touching the px breakpoints. */
+    --fs-2xs:  0.6875rem;  /* 11px - badges, counts, tags, toggles */
+    --fs-xs:   0.75rem;    /* 12px - small labels, group headers */
+    --fs-sm:   0.8125rem;  /* 13px - meta / secondary text, panel h4 */
+    --fs-base: 0.875rem;   /* 14px - body: inputs, buttons, links, names */
+    --fs-lg:   1rem;       /* 16px - panel & section titles */
+    --fs-xl:   1.0625rem;  /* 17px - headings */
+    --fs-2xl:  1.1875rem;  /* 19px - large headings */
+    --fs-3xl:  1.5rem;     /* 24px - display stat */
 
     /* Core colour palette. One source of truth for the recurring values.
        The neutral chrome (bg / surface / border / text / accent) mirrors the
@@ -75,14 +77,14 @@
    baseline tokens above stay the mobile sizing. */
 @media (min-width: 1025px) {
     :root {
-        --fs-2xs:  0.6875rem;  /* 11px */
-        --fs-xs:   0.75rem;    /* 12px */
-        --fs-sm:   0.8125rem;  /* 13px */
-        --fs-base: 0.875rem;   /* 14px */
-        --fs-lg:   1rem;       /* 16px */
-        --fs-xl:   1.0625rem;  /* 17px */
-        --fs-2xl:  1.1875rem;  /* 19px */
-        --fs-3xl:  1.5rem;     /* 24px */
+        --fs-2xs:  0.75rem;    /* 12px */
+        --fs-xs:   0.8125rem;  /* 13px */
+        --fs-sm:   0.875rem;   /* 14px */
+        --fs-base: 0.9375rem;  /* 15px */
+        --fs-lg:   1.0625rem;  /* 17px */
+        --fs-xl:   1.125rem;   /* 18px */
+        --fs-2xl:  1.25rem;    /* 20px */
+        --fs-3xl:  1.625rem;   /* 26px */
     }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
