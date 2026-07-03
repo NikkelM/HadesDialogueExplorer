@@ -342,13 +342,16 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .sk-title  { height: 20px; width: 50%; }
 .sk-badge  { height: 16px; width: 48px; border-radius: 8px; }
 .sk-pill   { height: 22px; width: 92px; border-radius: 11px; }
-.sk-btn    { height: 28px; width: 112px; border-radius: 5px; margin: 0 0 16px; }
+.sk-btn    { height: 32px; width: 192px; border-radius: 6px; margin: 0 0 16px; }
 .sk-toggle { height: 12px; width: 12px; flex: 0 0 auto; }
 .sk-dot    { height: 10px; width: 10px; border-radius: 50%; flex: 0 0 auto; }
 .sk-grow   { flex: 1; }
 .sk-row    { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
 .sk-row.split { justify-content: space-between; }
 .sk-row .sk { margin: 0; }
+/* Right-hand indicator cluster in the detail header skeleton (save pill +
+   priority + play-once), mirroring the real ``.h3-indicators`` group. */
+.sk-h3-ind { display: flex; align-items: center; gap: 8px; }
 .sk-indent { margin-left: 22px; }
 
 /* Bordered card matching the panels the wide single-panel views render in. */

@@ -62,7 +62,7 @@ test('renderInfo shows a prominent Trace eligibility button only when a matching
     restoreSaveProgress();
     renderInfo('ZeusWithAphrodite01');
     assert.match(lastHtml, /trace-eligibility-btn/);
-    assert.match(lastHtml, /Trace eligibility/);
+    assert.match(lastHtml, /Check dialogue eligibility/);
     // It opens the tracer for this dialogue.
     assert.match(lastHtml, /navigateToEligibility\(&quot;ZeusWithAphrodite01&quot;\)/);
     clearSaveProgress();

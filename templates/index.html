@@ -255,8 +255,10 @@
     // card - title + badges, the owner/type meta, the eligibility button, the
     // spoken-line blocks, then the bordered requirement groups - so the
     // skeleton wraps the same way (bars inside the box, not at its border).
+    // The top row mirrors the real header: the name sits left and the
+    // save/priority/play-once indicator cluster is pushed to the right.
     var DETAIL = card(
-        row(sk('sk-title') + sk('sk-badge') + sk('sk-badge') + sk('sk-badge'))
+        row(sk('sk-title') + '<div class="sk-h3-ind">' + rep(sk('sk-badge'), 3) + '</div>', 'split')
         + sk('sk-line short') + sk('sk-btn') + sk('sk-line short')
         + rep(dlgLine(), 4) + group(2) + group(1));
 

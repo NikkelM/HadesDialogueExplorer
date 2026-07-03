@@ -1308,7 +1308,7 @@ function renderTraceEligibilityButtonHtml(name, tl) {
     if (!getDialogueStatus(name, tl)) return '';
     return `<div class="trace-eligibility-row">`
         + `<a class="trace-eligibility-btn" data-tooltip="Open the eligibility tracer to see what this dialogue still needs to play, based on your loaded save" onclick="navigateToEligibility(${jsAttr(name)})">`
-        + `Trace eligibility</a></div>`;
+        + `Check dialogue eligibility</a></div>`;
 }
 
 function renderAlternatesHtml(name) {

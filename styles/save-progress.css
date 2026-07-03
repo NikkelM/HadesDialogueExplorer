@@ -155,23 +155,32 @@
 }
 
 /* Eligibility-tracer entry button in the dialogue detail view (the
-   discoverable counterpart to the clickable status pill above). Matches
-   the header nav buttons' background so it reads as a peer control,
-   without a loud call-to-action colour. */
+   discoverable counterpart to the clickable status pill above). A filled
+   amber call-to-action: users often miss the quieter status pill, so this
+   is deliberately the most prominent control in the panel - bold amber ink
+   button with a faint glow and an inspect glyph. */
 .trace-eligibility-row {
-    margin: 8px 0 2px;
+    margin: 12px 0 4px;
 }
 .trace-eligibility-btn {
-    display: inline-block;
-    padding: 5px 12px;
-    background: var(--bg);
-    color: var(--text-color);
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+    border: 1px solid var(--accent-color);
+    border-radius: 6px;
     font-size: var(--fs-base);
+    font-weight: 600;
     cursor: pointer;
     text-decoration: none;
+    box-shadow: 0 1px 8px color-mix(in srgb, var(--accent-color) 32%, transparent);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 .trace-eligibility-btn:hover {
-    background: var(--border);
+    background: color-mix(in srgb, var(--accent-color) 86%, #fff);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+.trace-eligibility-btn:active {
+    transform: translateY(1px);
 }
