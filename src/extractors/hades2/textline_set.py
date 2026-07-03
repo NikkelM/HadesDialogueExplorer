@@ -74,6 +74,8 @@ from ..textline_set import (
     walk_textline_sections,
     _collect_cue_choices,
     build_end_lines,
+    iter_voice_cues,
+    _group_speaker,
     _FORMAT_TAG_RE,
 )
 from .req_extractor import (
@@ -213,15 +215,28 @@ def extract_textline(
     if isinstance(partner_value, str) and partner_value:
         data["partner"] = partner_value
 
+    # Speaker for a cue, honouring per-cue attribution first, then the enclosing
+    # voice-line group's (a nested / ``[N] =`` group can attribute its cues via a
+    # group-level ``UsePlayerSource`` / ``Speaker`` / ``Source`` / ``ObjectType``),
+    # then the owner fallback. Shared by the main lines and the closing lines.
+    def _cue_speaker(entry, group):
+        own = _resolve_cue_speaker(entry, None)  # UsePlayerSource > Speaker > Source, else None
+        if own is not None:
+            return own
+        if isinstance(group, LuaTable) and group.get("UsePlayerSource") is True:
+            return PLAYER_SPEAKER_ID
+        return _group_speaker(group) or fallback_speaker
+
     # Cue array -> dialogue lines (with optional choice-prompt attachment).
-    for entry in tl_table.array:
-        if not isinstance(entry, LuaTable):
-            continue
+    # ``iter_voice_cues`` flattens nested / ``[N] =`` positional voice-line
+    # groups (e.g. the Bath House / Fishing / Taverna repeatable sets store
+    # their lines under numeric index keys), so those no longer render empty.
+    for entry, group in iter_voice_cues(tl_table):
         text = entry.get("Text")
         if not isinstance(text, str):
             continue
         text = _FORMAT_TAG_RE.sub("", text)
-        speaker = _resolve_cue_speaker(entry, fallback_speaker)
+        speaker = _cue_speaker(entry, group)
         line = {"speaker": speaker, "text": text}
         # Choice-prompt cue: attach the option metadata so the viewer
         # can render the prompt as a structured choice block rather
@@ -238,20 +253,16 @@ def extract_textline(
         data["dialogueLines"].append(line)
 
     # Closing voicelines (EndVoiceLines; H2 has no EndCue). Resolve text +
-    # speaker the same way the main lines do. A table-level ``UsePlayerSource``
-    # routes every entry through the player's subtitle stream (Melinoe).
+    # speaker the same way the main lines do (``_cue_speaker`` handles the
+    # per-cue / group-level / owner attribution, including a group-level
+    # ``UsePlayerSource`` routing through the player's subtitle stream).
     def _end_text(entry):
         t = entry.get("Text")
         if not isinstance(t, str):
             return None
         return _FORMAT_TAG_RE.sub("", t)
 
-    def _end_speaker(entry, table):
-        if table.get("UsePlayerSource") is True and entry.get("Speaker") is None:
-            return PLAYER_SPEAKER_ID
-        return _resolve_cue_speaker(entry, fallback_speaker)
-
-    end_lines = build_end_lines(tl_table, _end_text, _end_speaker, lambda c: fallback_speaker)
+    end_lines = build_end_lines(tl_table, _end_text, _cue_speaker, lambda c: fallback_speaker)
     if end_lines:
         data["endLines"] = end_lines
 

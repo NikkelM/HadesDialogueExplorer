@@ -256,6 +256,62 @@ def apply_cue_comment_texts(textlines: dict, comment_map: dict) -> None:
                 _fill(variant.get("endLines"))
 
 
+# A cue entry is a table carrying an inline ``Cue`` and/or ``Text``.
+_NUM_KEY_RE = re.compile(r"^\d+$")
+
+
+def _is_cue_entry(e) -> bool:
+    return isinstance(e, LuaTable) and (
+        isinstance(e.get("Cue"), str) or isinstance(e.get("Text"), str))
+
+
+def _group_speaker(group):
+    """Group-level speaker attribution for a voice-line group: the actor a
+    nested / positional group's cues are spoken by, declared as a group-level
+    ``Speaker`` / ``Source`` / ``ObjectType`` (all canonical speaker ids).
+    Returns ``None`` when the group carries no such id (the caller then applies
+    its own ``UsePlayerSource`` handling and/or the owner fallback)."""
+    if not isinstance(group, LuaTable):
+        return None
+    for k in ("Speaker", "Source", "ObjectType"):
+        v = group.get(k)
+        if isinstance(v, str) and v:
+            return v
+    return None
+
+
+def iter_voice_cues(container, _depth: int = 0):
+    """Yield ``(cue_entry, group)`` for every cue line in a voice-line container,
+    flattening the two "voice-line group" shapes the engine allows.
+
+    A container's lines live in its array part and/or under explicit numeric
+    index keys (``[1] = {...}, [2] = {...}`` - Lua index assignment, which the
+    parser stores as string-keyed ``"1"`` / ``"2"`` named fields, NOT array
+    entries). Each element is either a *cue entry* (``{Cue/Text}``) or a *group*
+    (timing / ``RandomRemaining`` / speaker params alongside its own nested cue
+    entries). Groups are recursed into so their cues surface. ``group`` is the
+    nearest enclosing group table (for group-level speaker attribution such as
+    ``ObjectType`` / ``UsePlayerSource``), or ``container`` for a top-level cue.
+
+    Flat containers (the common case: cues directly in the array part) yield
+    exactly their array cues, so this is a no-op superset of the old
+    ``for entry in table.array`` walk.
+    """
+    if not isinstance(container, LuaTable) or _depth > 8:
+        return
+    numeric_keys = sorted(
+        (k for k in container.named if isinstance(k, str) and _NUM_KEY_RE.match(k)),
+        key=int)
+    elements = list(container.array) + [container.named[k] for k in numeric_keys]
+    for el in elements:
+        if _is_cue_entry(el):
+            yield el, container
+        elif isinstance(el, LuaTable):
+            # A group (no inline cue of its own) - recurse so its nested cues
+            # surface, attributed to the group itself.
+            yield from iter_voice_cues(el, _depth + 1)
+
+
 def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker):
     """Build a textline's ``endLines`` - the closing voicelines it plays after
     its main dialogue.
@@ -290,11 +346,9 @@ def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker):
         })
     end_voice = tl_table.get("EndVoiceLines")
     if isinstance(end_voice, LuaTable):
-        for entry in end_voice.array:
-            if not isinstance(entry, LuaTable):
-                continue
+        for entry, group in iter_voice_cues(end_voice):
             text = resolve_text(entry)
-            speaker = resolve_speaker(entry, end_voice)
+            speaker = resolve_speaker(entry, group)
             if isinstance(text, str) and text:
                 end_lines.append({"speaker": speaker, "text": text})
                 continue
@@ -722,9 +776,7 @@ def extract_textline(
     if isinstance(partner_value, str) and partner_value:
         data["partner"] = partner_value
 
-    for entry in tl_table.array:
-        if not isinstance(entry, LuaTable):
-            continue
+    for entry, group in iter_voice_cues(tl_table):
         text = entry.get("Text")
         if not isinstance(text, str):
             continue
@@ -740,6 +792,11 @@ def extract_textline(
             line: dict = {"speaker": speaker, "text": text}
         else:
             derived = cue_speaker_resolver(entry) if cue_speaker_resolver is not None else None
+            if not derived:
+                # A voice-line group can attribute its cues via a group-level
+                # ObjectType / Speaker / Source (used by ``[N] =`` positional
+                # groups); fall back to it before the owner default.
+                derived = _group_speaker(group)
             line = {"speaker": derived or fallback_speaker, "text": text}
         # Choice-prompt cue: when a cue declares a ``Choices = {...}``
         # table (or a ``Choices = PresetEventArgs.<Name>`` reference to
@@ -771,7 +828,7 @@ def extract_textline(
             t = offer_text_map.get(t, t)
         return _FORMAT_TAG_RE.sub("", t)
 
-    def _end_speaker(entry, _table):
+    def _end_speaker(entry, group):
         sp = entry.get("Speaker")
         if isinstance(sp, str):
             return sp
@@ -781,7 +838,7 @@ def extract_textline(
             if resolved:
                 return resolved
         derived = cue_speaker_resolver(entry) if cue_speaker_resolver is not None else None
-        return derived or fallback_speaker
+        return derived or _group_speaker(group) or fallback_speaker
 
     def _end_cue_speaker(cue_str):
         if end_cue_speaker_resolver is not None:
