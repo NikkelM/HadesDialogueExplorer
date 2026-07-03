@@ -90,6 +90,15 @@
     background: var(--accent-color);
     color: var(--accent-contrast);
 }
+/* Global keyboard-focus ring, mirroring nikkelm.dev's single :focus-visible
+   rule: one token-driven amber outline for every keyboard-focused control, so
+   focus is consistent instead of falling back to the browser default. Specific
+   controls override this where an inset ring or a border-colour focus reads
+   better (buttons, the search inputs, the panel resizers). */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
 body {
     font-family: var(--font-sans);
     background-color: var(--bg);
@@ -166,12 +175,11 @@ header h1 {
 }
 #search:focus { border-color: var(--accent-color); }
 
-/* Visible focus ring for keyboard users on the viewer's inline-onclick
-   controls (made focusable by keyboard-a11y.js). Only shows for keyboard
-   focus (:focus-visible), so mouse clicks don't leave a lingering outline. */
+/* Inline-onclick controls (made focusable by keyboard-a11y.js) are often
+   spans/anchors; round the shared focus ring (see the global :focus-visible
+   above) so it hugs them neatly. Only shows for keyboard focus, so mouse
+   clicks don't leave a lingering outline. */
 [onclick]:focus-visible {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
     border-radius: 2px;
 }
 #search-results {
