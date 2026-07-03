@@ -283,26 +283,27 @@
 }
 
 /* === Site disclaimer placement ======================================
- * Desktop pins the disclaimer to the foot of the middle (prerequisites)
- * panel via ``#upstream-content::after``. Once the panels stack on mobile
- * that lands it mid-page, between prerequisites and dependents. Move it to
- * the foot of the last panel (dependents) so it reads as a page footer. The
- * single-panel views keep their ``#info-content`` disclaimer, already last
- * on mobile. (The string is repeated from base.css rather than touching the
- * locked desktop rule; it is also the README's wording.)
+ * Desktop pins the disclaimer to the foot of a scrolling panel via the
+ * appended .site-footer (dialogue view -> dependents panel; single-panel
+ * views -> info panel). On mobile the panels stack into the page scroll, and
+ * the sticky-footer rules below keep that footer pinned to the viewport
+ * bottom for short content while taller content grows the page.
  * ==================================================================== */
 @media (max-width: 1024px) {
-    #upstream-content::after {
-        display: none;
-    }
-    #downstream-content::after {
-        content: 'Built with the assistance of generative AI. All game content belongs to Supergiant Games.';
-        display: block;
-        padding: 12px 20px;
-        font-size: var(--fs-2xs);
-        color: #444;
-        text-align: center;
-        border-top: 1px solid var(--border);
+    /* Single-panel views (speaker / eligibility / duplicates) and the
+       3-panel dialogue view both flow to content height on mobile, which let
+       the appended site footer ride up under short content while the fixed
+       help FAB stayed at the viewport bottom. Make the footer's host panel
+       fill the viewport so its margin-top:auto keeps the footer at the bottom;
+       taller content still grows the page and scrolls (the panels are
+       overflow:visible on mobile). Single-panel views footer lives in
+       #info-content (#panel-info); the dialogue view's in #downstream-content
+       (#panel-downstream, the last panel when they stack). */
+    body.layout-speaker #panel-info,
+    body.layout-speaker #info-content,
+    body.layout-dialogue #panel-downstream,
+    body.layout-dialogue #downstream-content {
+        flex: 1 0 auto;
     }
 }
 
