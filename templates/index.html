@@ -152,6 +152,31 @@
         <div id="downstream-content" class="panel-body"><div class="empty-state">Select a textline to see what depends on it</div></div>
     </div>
 </main>
+<!-- Site footer, mirroring nikkelm.dev's Footer.astro (copyright + GitHub /
+     LinkedIn / Contact) plus the tool's AI / content disclaimer. A single
+     page-level element below <main> so it spans the full width and stays in
+     one consistent place across every view (rather than living inside a
+     panel). The year is filled in by the inline script below so it never needs
+     a manual update. -->
+<footer class="site-footer" role="contentinfo">
+    <div class="site-footer-row">
+        <span class="site-footer-copy">&copy; <span data-current-year>2026</span> Nikkel Mollenhauer</span>
+        <span class="site-footer-links">
+            <a href="https://github.com/NikkelM" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/nikkel-mollenhauer/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://nikkelm.dev/contact" target="_blank" rel="noopener noreferrer">Contact</a>
+        </span>
+    </div>
+    <div class="site-footer-disclaimer">Built with the assistance of generative AI. All game content belongs to Supergiant Games.</div>
+</footer>
+<script>
+// Keep the footer copyright year current without a build/manual update
+// (mirrors nikkelm.dev's Footer.astro script).
+(function() {
+    var y = document.querySelector('[data-current-year]');
+    if (y) y.textContent = String(new Date().getFullYear());
+})();
+</script>
 <!-- Floating help menu (wired in init.js / fab-menu.js). The "?" toggle folds
      out two action bubbles upward - replay the tutorials and open the GitHub
      repo - and turns into an X while open. Floating rather than in the header

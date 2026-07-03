@@ -283,29 +283,12 @@
 }
 
 /* === Site disclaimer placement ======================================
- * Desktop pins the disclaimer to the foot of a scrolling panel via the
- * appended .site-footer (dialogue view -> dependents panel; single-panel
- * views -> info panel). On mobile the panels stack into the page scroll, and
- * the sticky-footer rules below keep that footer pinned to the viewport
- * bottom for short content while taller content grows the page.
+ * The site footer is a single page-level element below <main> (index.html),
+ * so it spans the full width in every view. On mobile the page scrolls and
+ * main's flex-grow (base rule) keeps the footer at the viewport bottom for
+ * short content while taller content grows the page - no per-view rules
+ * needed here.
  * ==================================================================== */
-@media (max-width: 1024px) {
-    /* Single-panel views (speaker / eligibility / duplicates) and the
-       3-panel dialogue view both flow to content height on mobile, which let
-       the appended site footer ride up under short content while the fixed
-       help FAB stayed at the viewport bottom. Make the footer's host panel
-       fill the viewport so its margin-top:auto keeps the footer at the bottom;
-       taller content still grows the page and scrolls (the panels are
-       overflow:visible on mobile). Single-panel views footer lives in
-       #info-content (#panel-info); the dialogue view's in #downstream-content
-       (#panel-downstream, the last panel when they stack). */
-    body.layout-speaker #panel-info,
-    body.layout-speaker #info-content,
-    body.layout-dialogue #panel-downstream,
-    body.layout-dialogue #downstream-content {
-        flex: 1 0 auto;
-    }
-}
 
 /* === Eligibility tracer ==============================================
  * The tracer is a single panel of wrapping flex rows, so it reflows through

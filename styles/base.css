@@ -441,15 +441,6 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
    corner blends into the scrollbar gutter. */
 ::-webkit-scrollbar-corner { background: var(--bg); }
 
-/* Flex-column scroll containers whose footer (the appended .site-footer)
-   uses margin-top:auto to stick to the bottom even with short content: the
-   dependents panel in the 3-column dialogue view, and the single info panel in
-   the single-panel views. */
-#downstream-content,
-.layout-speaker #info-content {
-    display: flex;
-    flex-direction: column;
-}
 /* Reserve the scrollbar gutter in the single-panel views (speaker overview,
    eligibility tracer, cross-game duplicates - all share the layout-speaker
    body class and render into #info-content) so the thin bar appearing on
@@ -458,19 +449,20 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     scrollbar-gutter: stable;
 }
 
-/* Site footer at the bottom of the scrolling content in every view, mirroring
-   nikkelm.dev's Footer.astro (copyright + GitHub / LinkedIn / Contact, muted
-   with an amber hover) plus the tool's AI / content disclaimer. margin-top:auto
-   keeps it at the panel bottom when content is short (its parent is a
-   flex-column scroll container: #info-content in single-panel views,
-   #downstream-content in the dialogue view). The right padding keeps the row
-   and disclaimer clear of the floating help FAB (40px + 14px offset) so the
-   FAB sits beside the links in the bottom-right corner rather than over them;
-   the top border sits above the FAB's zone, so it stays full-width. */
+/* Site footer, a single page-level element below <main> (see index.html) so it
+   spans the full width and stays in one consistent place across every view.
+   Mirrors nikkelm.dev's Footer.astro (copyright + GitHub / LinkedIn / Contact,
+   muted with an amber hover) plus the tool's AI / content disclaimer. On
+   desktop the shell is a fixed-height flex column (header / main / footer), so
+   this is always visible at the bottom and main scrolls its panels internally;
+   on mobile the page scrolls and main's flex-grow keeps the footer at the
+   viewport bottom for short content. The wide right padding keeps the row and
+   disclaimer clear of the floating help FAB (40px + 14px offset) so the FAB
+   sits beside them in the bottom-right corner rather than over them. */
 .site-footer {
-    margin-top: auto;
+    flex-shrink: 0;
     border-top: 1px solid var(--border);
-    padding: 16px 3rem 2px 0;
+    padding: 12px 4rem 12px 20px;
     font-size: var(--fs-sm);
     color: var(--text-muted);
     font-family: var(--font-sans);
@@ -495,7 +487,7 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     color: var(--accent-color);
 }
 .site-footer-disclaimer {
-    margin-top: 10px;
+    margin-top: 8px;
     font-size: var(--fs-2xs);
     color: var(--text-dim);
 }

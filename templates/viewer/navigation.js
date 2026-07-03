@@ -50,10 +50,6 @@ export function selectTextline(name) {
     renderInfo(name);
     renderUpstream(name);
     renderDownstream(name);
-    // The dialogue view's footer lives at the foot of the dependents panel,
-    // which is the last panel when the three stack on mobile (so it reads as a
-    // page footer there, and as a panel footer on desktop).
-    appendViewFooter('downstream-content');
 }
 
 // Convenience entry point used by every inline ``onclick`` in the
@@ -352,33 +348,8 @@ export function eligibilityRedirectTarget(hasUsableSave, dialogue) {
 //
 // States that name no entity reset the viewer to its empty-state
 // placeholders in the default dialogue layout.
-// The nikkelm.dev-style footer shown at the bottom of the scrolling content in
-// every view. Mirrors the site's Footer.astro - a copyright line and GitHub /
-// LinkedIn / Contact links - with the tool's AI / content disclaimer appended.
-// Real DOM (not the CSS ::after the views used to share) so the links are
-// clickable; the year is computed at render time so it needs no manual update.
-// Appended into the view's main scrolling container after each full render
-// (single-panel views -> #info-content; the 3-panel dialogue view -> the
-// dependents panel #downstream-content, which is last when the panels stack on
-// mobile). Filter/search re-renders touch inner elements only, so it survives.
-function renderFooterHtml() {
-    const year = new Date().getFullYear();
-    return '<footer class="site-footer">'
-        + '<div class="site-footer-row">'
-        + `<span class="site-footer-copy">\u00A9 ${year} Nikkel Mollenhauer</span>`
-        + '<span class="site-footer-links">'
-        + '<a href="https://github.com/NikkelM" target="_blank" rel="noopener noreferrer">GitHub</a>'
-        + '<a href="https://www.linkedin.com/in/nikkel-mollenhauer/" target="_blank" rel="noopener noreferrer">LinkedIn</a>'
-        + '<a href="https://nikkelm.dev/contact" target="_blank" rel="noopener noreferrer">Contact</a>'
-        + '</span></div>'
-        + '<div class="site-footer-disclaimer">Built with the assistance of generative AI. '
-        + 'All game content belongs to Supergiant Games.</div>'
-        + '</footer>';
-}
-function appendViewFooter(containerId) {
-    const el = document.getElementById(containerId);
-    if (el) el.insertAdjacentHTML('beforeend', renderFooterHtml());
-}
+// The nikkelm.dev-style footer is a single page-level element in index.html
+// (below <main>), so no per-view rendering is needed here.
 
 function applyState(state) {
     const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
@@ -394,7 +365,6 @@ function applyState(state) {
             priority: canonicalisePriority(state.priority),
             eligibility: canonicaliseEligibility(state.eligibility),
         });
-        appendViewFooter('info-content');
         const searchInput = document.getElementById('search');
         if (searchInput) {
             const entry = speakerId ? speakers[speakerId] : null;
@@ -411,7 +381,6 @@ function applyState(state) {
             q: state.q || '',
             dup: state.dup || '',
         });
-        appendViewFooter('info-content');
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = '';
         // Onboarding: first time the duplicates view renders, offer its tour.
@@ -428,7 +397,6 @@ function applyState(state) {
         applyLayoutMode('eligibility');
         const name = state.dialogue || null;
         renderEligibility(name);
-        appendViewFooter('info-content');
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = name || '';
         // Onboarding: first time the tracer renders for a dialogue (the save is
@@ -484,7 +452,6 @@ export function clearSelection() {
         '<div class="empty-state">Select a textline to see its prerequisites</div>';
     document.getElementById('downstream-content').innerHTML =
         '<div class="empty-state">Select a textline to see what depends on it</div>';
-    appendViewFooter('downstream-content');
     document.getElementById('search').value = '';
 }
 
