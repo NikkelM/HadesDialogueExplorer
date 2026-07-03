@@ -642,6 +642,26 @@ describe('run-count tooltips: play-once wording and permanence', () => {
         assert.equal(reqGroupStatus('RequiredAnyQueuedTextLines', ['POnce'], { played: new Set() }), 'unknown');
     });
 
+    test('reqGroupStatus/reqGroupLocked: a played play-once this-run gate is unmet with no run record', () => {
+        // A hub save carries no current-run record, so a ``*ThisRun`` gate is
+        // normally indeterminate - but a play-once operand that already played
+        // can never play *this* run again, so it's determinably unmet + locked.
+        // (Regression: e.g. HadesFirstMeetingCont1 needs HadesFirstMeeting this
+        // run; once that run passed the follow-up can never play.)
+        const hub = { played: new Set(['POnce']) }; // no `thisRun` set
+        assert.equal(reqGroupStatus('RequiredTextLinesThisRun', ['POnce'], hub), 'unmet');
+        assert.equal(reqGroupLocked('RequiredTextLinesThisRun', ['POnce'], hub), true);
+        assert.equal(reqGroupStatus('RequiredAnyTextLinesThisRun', ['POnce'], hub), 'unmet');
+        // Operand played THIS run -> gate is met (its record shows it), not locked.
+        const inRun = { played: new Set(['POnce']), thisRun: new Set(['POnce']) };
+        assert.equal(reqGroupStatus('RequiredTextLinesThisRun', ['POnce'], inRun), 'met');
+        assert.equal(reqGroupLocked('RequiredTextLinesThisRun', ['POnce'], inRun), false);
+        // Repeatable operand can replay a future run -> stays indeterminate on a hub save.
+        assert.equal(reqGroupStatus('RequiredTextLinesThisRun', ['Rep'], { played: new Set(['Rep']) }), 'unknown');
+        // Play-once operand not yet played -> could still play a future run -> unknown.
+        assert.equal(reqGroupStatus('RequiredTextLinesThisRun', ['POnce'], { played: new Set() }), 'unknown');
+    });
+
     test('runsSinceGroupTooltip flags a permanent play-once lock in the head', () => {
         const tip = runsSinceGroupTooltip('MaxRunsSinceAnyTextLines', ['POnce'],
             { played: new Set(['POnce']), runsAgo: { POnce: 5 } }, 3);
@@ -700,5 +720,76 @@ describe('namedRequirement host status', () => {
         // Brooding not eligible -> host ok; Empty always eligible but inverted -> unmet anyway.
         assert.equal(namedRequirementGroupStatus('NamedRequirementsFalse', ['Empty'], played()), 'unmet');
         assert.equal(namedRequirementGroupStatus('NamedRequirements', ['Brooding'], played('A')), 'met');
+    });
+});
+
+// Regression (Finding B): a dialogue's ``directSatisfaction`` must evaluate a
+// NamedRequirements* gate as a FULL requirement set - its textline records and
+// orBranches - not the GameState-only view. A named requirement whose logic
+// lives entirely in ``requirements`` / ``orBranches`` (empty
+// ``otherRequirements``) used to be read as satisfied, giving the host dialogue
+// the wrong badge.
+describe('directSatisfaction: named requirements with logic in requirements/orBranches', () => {
+    const host = (otherRequirements) => ({ owner: 'NPC_Test_01', requirements: {}, otherRequirements });
+    before(() => {
+        loadData({
+            textlines: {
+                IcarusIntro: { owner: 'NPC_Test_01', requirements: {}, playOnce: true },
+                IcarusChoice: { owner: 'NPC_Test_01', requirements: {} },
+                SeenLine: { owner: 'NPC_Test_01', requirements: {} },
+            },
+            speakers: { NPC_Test_01: { name: 'Tester' } },
+            namedRequirements: {
+                // orBranches-only (like IcarusBecomingCloserEligible): eligible if
+                // IcarusIntro is queued, OR IcarusChoice has played. Textline-record
+                // only, so it's game-agnostic (the harness's active game is hades1).
+                IcarusLikeEligible: {
+                    requirements: {}, otherRequirements: {},
+                    orBranches: [
+                        { requirements: { RequiredAnyQueuedTextLines: ['IcarusIntro'] } },
+                        { requirements: { RequiredAnyTextLines: ['IcarusChoice'] } },
+                    ],
+                },
+                // requirements-only (like ArachneBrooding).
+                BroodingLike: { requirements: { RequiredTextLines: ['SeenLine'] }, otherRequirements: {}, orBranches: [] },
+                // Nested: references another named req.
+                NestedOuter: { requirements: {}, otherRequirements: { NamedRequirements: ['BroodingLike'] }, orBranches: [] },
+                // Self-cycle (extractor normally prevents this; guard must not hang).
+                Cyclic: { requirements: {}, otherRequirements: { NamedRequirements: ['Cyclic'] }, orBranches: [] },
+            },
+        });
+    });
+
+    test('NamedRequirementsFalse on an orBranches-only named req: passes when the named set is not eligible', () => {
+        // IcarusIntro is play-once + played -> queued branch permanently unmet;
+        // IcarusChoice unplayed -> other branch unmet. So the named set is NOT
+        // eligible -> the must-NOT-pass gate is satisfied. (The old GameState-only
+        // evalNamedSet read the empty otherRequirements as met, wrongly blocking.)
+        const ctx = { played: new Set(['IcarusIntro']), thisRun: new Set(), thisRoom: new Set() };
+        assert.equal(directSatisfaction(host({ NamedRequirementsFalse: ['IcarusLikeEligible'] }), ctx, 'Host'), 'met');
+    });
+
+    test('NamedRequirementsFalse: blocks when the named set IS eligible via an orBranch', () => {
+        // IcarusChoice played -> second branch met -> named set eligible -> the
+        // must-NOT-pass gate is blocked.
+        const ctx = { played: new Set(['IcarusChoice']), thisRun: new Set(), thisRoom: new Set() };
+        assert.equal(directSatisfaction(host({ NamedRequirementsFalse: ['IcarusLikeEligible'] }), ctx, 'Host'), 'unmet');
+    });
+
+    test('NamedRequirements (must pass) on a requirements-only named req reflects its textline gate', () => {
+        // BroodingLike needs SeenLine played.
+        assert.equal(directSatisfaction(host({ NamedRequirements: ['BroodingLike'] }), { played: new Set(['SeenLine']) }, 'Host'), 'met');
+        assert.equal(directSatisfaction(host({ NamedRequirements: ['BroodingLike'] }), { played: new Set() }, 'Host'), 'unmet');
+    });
+
+    test('nested named requirements resolve through the full evaluator', () => {
+        // NestedOuter must-pass -> BroodingLike must-pass -> needs SeenLine.
+        assert.equal(directSatisfaction(host({ NamedRequirements: ['NestedOuter'] }), { played: new Set(['SeenLine']) }, 'Host'), 'met');
+        assert.equal(directSatisfaction(host({ NamedRequirements: ['NestedOuter'] }), { played: new Set() }, 'Host'), 'unmet');
+    });
+
+    test('a self-cyclic named requirement resolves to indeterminate, not an infinite loop', () => {
+        // The cycle guard returns 'unknown' on re-entry rather than recursing.
+        assert.equal(directSatisfaction(host({ NamedRequirements: ['Cyclic'] }), { played: new Set() }, 'Host'), 'unknown');
     });
 });

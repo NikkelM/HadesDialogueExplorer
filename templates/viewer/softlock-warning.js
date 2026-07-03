@@ -38,7 +38,7 @@ export function showSoftlockWarning() {
         + `<p>This Hades II save has <strong>Gigaros</strong> (Hades\u2019 spear) in the `
         + `inventory, but the dialogue that normally grants it `
         + `(<a class="softlock-dialogue-link" href="#" role="button">${SOFTLOCK_DIALOGUE}</a>) `
-        + `hasn\u2019t played. This can happen if you've used a mod like PonyMenu and granted yourself `
+        + `hasn\u2019t played. This can happen if you've used a mod or save editor and granted yourself `
         + `this resource manually, and it can <strong>soft-lock further story progress</strong>.</p>`
         + `<p>The <a class="softlock-link" href="${SAVE_SAVER_URL}" `
         + `target="_blank" rel="noopener noreferrer">Save Saver</a> mod can help repair this, `

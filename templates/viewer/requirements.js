@@ -203,15 +203,27 @@ export function isPlayOnceRef(name) {
     return !!(textlines && textlines[name] && textlines[name].playOnce);
 }
 
-// A positive queued gate (``RequiredQueuedTextLines`` / ``RequiredAnyQueuedTextLines``)
-// is satisfied only while the referenced line is *queued to play next* - the
-// engine checks an active NPC's ``NextInteractLines.Name == ref``, which
-// requires ``ref`` to still be eligible to play. A play-once ref that has
-// already played can therefore NEVER be queued again, so an already-played
-// play-once operand is a *permanent lock* here - the opposite of a
-// "must have played" prerequisite, where a played operand satisfies the gate.
-function queuedRefPermanentlyUnqueueable(ref, playedSet) {
-    return isPlayOnceRef(ref) && playedSet instanceof Set && playedSet.has(ref);
+// Positive run/room/queue-scoped gates share a permanent-lock rule for
+// play-once operands: a play-once line plays exactly once ever, so once it is
+// in the global played set it can never play THIS run, play THIS room, or be
+// QUEUED to play next again. The single exception is when the scope's own
+// record (if the save carries it) already shows the ref played in *this* very
+// run / room - then the gate is satisfied now, not locked.
+export const SINGLE_PLAY_SCOPES = new Set(['queued', 'thisRun', 'thisRoom']);
+
+// Whether ``ref`` can never (re)satisfy a positive gate scoped to ``scope``
+// (one of ``SINGLE_PLAY_SCOPES``) as the save's cumulative state grows: it is
+// play-once and already in the global played set, and the scope's record - when
+// the save carries it - does not show it played in this current run / room. A
+// missing scope record (e.g. a hub save with no active run, or Hades II's
+// never-persisted textline queue) still resolves this: a play-once line that
+// already played can't be in the current scope, so the lock holds.
+function scopedRefPermanentlyUnplayable(ref, scope, ctx) {
+    if (!isPlayOnceRef(ref)) return false;
+    if (!(ctx.played instanceof Set) || !ctx.played.has(ref)) return false;
+    const record = ctx[scope];
+    if (record instanceof Set && record.has(ref)) return false; // played this scope -> met, not locked
+    return true;
 }
 
 /**
@@ -414,15 +426,18 @@ export function reqGroupLocked(reqType, refs, context, count = 1, selfName = nul
     }
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
-    // Positive queued gate with a play-once operand that has already played: it
-    // can never be queued again. AND ("all must be queued") is locked if ANY
-    // operand is permanently unqueueable; OR ("any queued") is locked only if
-    // EVERY operand is. Resolves against the cumulative played set.
-    if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
-        return others.some(r => queuedRefPermanentlyUnqueueable(r, ctx.played));
+    // Positive run/room/queue-scoped gate with a play-once operand that has
+    // already played: it can never (re)play in that scope. AND ("all must have
+    // played this run / room / be queued") is locked if ANY operand is
+    // permanently unplayable there; OR ("any of them") is locked only if EVERY
+    // operand is. Resolves against the cumulative played set (+ the scope's own
+    // record when present, to spare an operand that played in this very scope).
+    const scope = REQ_TYPE_SCOPE[reqType];
+    if (SINGLE_PLAY_SCOPES.has(scope) && AND_REQ_TYPES.has(reqType)) {
+        return others.some(r => scopedRefPermanentlyUnplayable(r, scope, ctx));
     }
-    if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
-        return others.length > 0 && others.every(r => queuedRefPermanentlyUnqueueable(r, ctx.played));
+    if (SINGLE_PLAY_SCOPES.has(scope) && OR_REQ_TYPES.has(reqType)) {
+        return others.length > 0 && others.every(r => scopedRefPermanentlyUnplayable(r, scope, ctx));
     }
     if (COUNT_MAX_REQ_TYPES.has(reqType)) {
         const record = _recordFor(ctx, reqType);
@@ -478,17 +493,26 @@ export function scopedGateExplain(reqType, refs, context, selfName = null) {
         .filter(r => typeof r === 'string' && r !== selfName);
     // A positive-gate ref missing from the scope record: distinguish "played
     // in the save but not this scope" (a near-miss) from "never played". For a
-    // *queued* gate the near-miss is permanent when the ref is play-once: a
-    // play-once line that already played can never be queued to play next again.
+    // single-play scope (queued / this run / this room) the near-miss is
+    // *permanent* when the ref is play-once: a play-once line that already
+    // played can never play in that scope again.
+    const singlePlay = SINGLE_PLAY_SCOPES.has(scope);
     const positiveBlocker = (r) => {
         if (playedSet && playedSet.has(r)) {
-            if (scope === 'queued' && isPlayOnceRef(r)) {
-                return {
-                    name: r,
-                    reason: 'played - can never be queued again',
-                    permanent: true,
-                    tooltip: `${r} is a play-once line that has already played, so it can never be queued to play next again. This requirement can no longer be satisfied.`,
-                };
+            if (singlePlay && isPlayOnceRef(r)) {
+                return scope === 'queued'
+                    ? {
+                        name: r,
+                        reason: 'played - can never be queued again',
+                        permanent: true,
+                        tooltip: `${r} is a play-once line that has already played, so it can never be queued to play next again. This requirement can no longer be satisfied.`,
+                    }
+                    : {
+                        name: r,
+                        reason: `played - can never play ${phrases.noun} again`,
+                        permanent: true,
+                        tooltip: `${r} is a play-once line that has already played (in an earlier run), so it can never play ${phrases.noun} again. This requirement can no longer be satisfied.`,
+                    };
             }
             return {
                 name: r,
@@ -541,6 +565,32 @@ export function requirementSetStatus(requirements, otherRequirements, context, n
 }
 
 /**
+ * Aggregate verdict of a requirement set's ``otherRequirements``: the GameState
+ * Path / aggregation gates (via ``evaluateOtherRequirements``) ANDed with the
+ * NamedRequirements* gates (via ``namedRequirementGroupStatus``, a *full*
+ * requirement-set evaluation of each named requirement). The named keys are
+ * split out because ``evaluateOtherRequirements`` is GameState-only - it has no
+ * textline-record access, so it can't evaluate a named requirement whose logic
+ * lives in its ``requirements`` / ``orBranches`` (with empty
+ * ``otherRequirements``), and would wrongly read such a set as satisfied.
+ * ``hostOwner`` gives the named sets their run context (hub vs in-run).
+ */
+export function otherRequirementsStatus(otherRequirements, ctx, gs, slices, gameId, hostOwner) {
+    if (!otherRequirements) return 'met';
+    let rest = null;
+    let status = 'met';
+    for (const [k, v] of Object.entries(otherRequirements)) {
+        if (k.startsWith('NamedRequirements')) {
+            status = _combine3(status, namedRequirementGroupStatus(k, v, ctx, hostOwner));
+        } else {
+            (rest || (rest = {}))[k] = v;
+        }
+    }
+    if (rest) status = _combine3(status, evaluateOtherRequirements(rest, gs, slices, gameId).status);
+    return status;
+}
+
+/**
  * Three-state direct eligibility for ``textlineData`` given a save
  * ``context``:
  *   'met'     - directly eligible now (all requirements confirmed satisfied)
@@ -571,7 +621,7 @@ export function directSatisfaction(textlineData, context, name) {
     const slices = buildOtherReqSlices(ctx, textlineData.owner, gameId);
     const base = _combine3(
         requirementSetStatus(textlineData.requirements, textlineData.otherRequirements, ctx, name),
-        evaluateOtherRequirements(textlineData.otherRequirements, gs, slices, gameId).status);
+        otherRequirementsStatus(textlineData.otherRequirements, ctx, gs, slices, gameId, textlineData.owner));
     if (base === 'unmet') return 'unmet';
     let orStatus = 'met';
     const branches = Array.isArray(textlineData.orBranches) ? textlineData.orBranches : [];
@@ -581,7 +631,7 @@ export function directSatisfaction(textlineData, context, name) {
         for (const b of branches) {
             const st = _combine3(
                 requirementSetStatus(b.requirements, b.otherRequirements, ctx, name),
-                evaluateOtherRequirements(b.otherRequirements, gs, slices, gameId).status);
+                otherRequirementsStatus(b.otherRequirements, ctx, gs, slices, gameId, textlineData.owner));
             if (st === 'met') { anyMet = true; break; }
             if (st !== 'unmet') anyUnknown = true;
         }
@@ -619,11 +669,25 @@ function _invert3(s) {
  *                                                   the named set is eligible)
  *   - ``NamedRequirementsCycle`` / unresolved    -> 'unknown'
  */
+// Guards against a cyclic named-requirement reference while evaluating a named
+// set as a full requirement set (``namedRequirementHostStatus`` recurses through
+// ``directSatisfaction``). The extractor normally breaks cycles into a
+// ``NamedRequirementsCycle`` key, but this is a defensive backstop: a name seen
+// again mid-evaluation resolves to 'unknown' rather than looping.
+const _namedEvalStack = new Set();
+
 export function namedRequirementHostStatus(key, name, context, hostOwner) {
     if (key === 'NamedRequirementsCycle') return 'unknown';
     const def = namedRequirements[name];
     if (!def) return 'unknown';
-    const s = directSatisfaction({ ...def, owner: hostOwner }, context, null);
+    if (_namedEvalStack.has(name)) return 'unknown';
+    _namedEvalStack.add(name);
+    let s;
+    try {
+        s = directSatisfaction({ ...def, owner: hostOwner }, context, null);
+    } finally {
+        _namedEvalStack.delete(name);
+    }
     return key === 'NamedRequirementsFalse' ? _invert3(s) : s;
 }
 

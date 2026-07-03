@@ -469,6 +469,28 @@ describe('isUnobtainable', () => {
         assert.equal(isGroupUnobtainable('RequiredAnyQueuedTextLines', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
     });
 
+    test('isGroupUnobtainable: a positive this-run / this-room gate locks on a played play-once operand', () => {
+        // A play-once operand that already played (globally) but is not in the
+        // current-run/room record can never play *this* run / room again -> the
+        // gate is permanently unsatisfiable. No scope record present (hub save):
+        // a played play-once is definitively out of scope.
+        assert.equal(isGroupUnobtainable('RequiredTextLinesThisRun', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
+        assert.equal(isGroupUnobtainable('RequiredTextLinesThisRoom', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
+        // Repeatable operand can replay in a future run/room -> not locked.
+        assert.equal(isGroupUnobtainable('RequiredTextLinesThisRun', ['RepFoe'], new Set(['RepFoe']), null, 1), false);
+        // Not yet played -> could still play this run someday -> not locked.
+        assert.equal(isGroupUnobtainable('RequiredTextLinesThisRun', ['PlayOnceFoe'], new Set(), null, 1), false);
+        // The play-once operand is in the CURRENT run's record -> the gate is
+        // live right now, so not unobtainable.
+        assert.equal(
+            isGroupUnobtainable('RequiredTextLinesThisRun', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1, null,
+                { played: new Set(['PlayOnceFoe']), thisRun: new Set(['PlayOnceFoe']) }),
+            false);
+        // OR this-run: locked only when every operand can never re-enter scope.
+        assert.equal(isGroupUnobtainable('RequiredAnyTextLinesThisRun', ['PlayOnceFoe', 'RepFoe'], new Set(['PlayOnceFoe', 'RepFoe']), null, 1), false);
+        assert.equal(isGroupUnobtainable('RequiredAnyTextLinesThisRun', ['PlayOnceFoe'], new Set(['PlayOnceFoe']), null, 1), true);
+    });
+
     test('isRequirementSetUnobtainable: a host gated on a played-out queued line is unobtainable', () => {
         assert.equal(
             isRequirementSetUnobtainable({ requirements: { RequiredQueuedTextLines: ['PlayOnceFoe'] } }, null, new Set(['PlayOnceFoe']), null),

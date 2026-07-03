@@ -28,8 +28,8 @@
  */
 
 import { textlines, namedRequirements, getActiveGame } from './data.js';
-import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
-import { evaluateOtherRequirements, buildOtherReqSlices } from './gamestate-eval.js';
+import { AND_REQ_TYPES, OR_REQ_TYPES, NEGATIVE_REQ_TYPES, COUNT_MIN_REQ_TYPES, COUNT_MAX_REQ_TYPES, REQ_TYPE_SCOPE, SINGLE_PLAY_SCOPES, requiredCount, reqGroupStatus, reqGroupLocked, requirementSetStatus, otherRequirementsStatus, namedRequirementHostStatus, isPlayOnceRef } from './requirements.js';
+import { buildOtherReqSlices } from './gamestate-eval.js';
 import { evaluateH1OtherReqPermanence, h1FieldPermanentlyUnmet } from './gamestate-eval-h1.js';
 import { gameStateClausePermanence } from './permanent-state.js';
 
@@ -40,6 +40,13 @@ let _unobtainableRunsAgo = null;
 // gate reads permanent state (see ``permanent-state.js``). Null when the caller
 // supplied no save context, in which case only textline-record locks apply.
 let _unobtainableGameState = null;
+// The save's current-run / current-room textline records (Sets), used to spare
+// a play-once operand of a positive ``*ThisRun`` / ``*ThisRoom`` gate that
+// played in *this* very run / room from being called permanently unplayable.
+// Null when the save carries no such record (e.g. a hub save with no active
+// run), in which case a played play-once operand is definitively out of scope.
+let _unobtainableThisRun = null;
+let _unobtainableThisRoom = null;
 let _unobtainableCache = null;
 let _playedChoiceByParent = null;
 
@@ -48,12 +55,17 @@ let _playedChoiceByParent = null;
 // after a game switch, the run-count distances, or the GameState slice) changes.
 function refreshUnobtainableCaches(playedSet, runsAgo, context = null) {
     const gameState = (context && context.gameState) || null;
+    const thisRun = (context && context.thisRun instanceof Set) ? context.thisRun : null;
+    const thisRoom = (context && context.thisRoom instanceof Set) ? context.thisRoom : null;
     if (_unobtainablePlayedSet === playedSet && _unobtainableTextlines === textlines
-        && _unobtainableRunsAgo === runsAgo && _unobtainableGameState === gameState) return;
+        && _unobtainableRunsAgo === runsAgo && _unobtainableGameState === gameState
+        && _unobtainableThisRun === thisRun && _unobtainableThisRoom === thisRoom) return;
     _unobtainablePlayedSet = playedSet;
     _unobtainableTextlines = textlines;
     _unobtainableRunsAgo = runsAgo;
     _unobtainableGameState = gameState;
+    _unobtainableThisRun = thisRun;
+    _unobtainableThisRoom = thisRoom;
     _unobtainableCache = new Map();
     _playedChoiceByParent = new Map();
     for (const name of playedSet) {
@@ -78,13 +90,22 @@ function maxRunsPermanentlyOut(ref, n, playedSet) {
     return playedSet.has(ref); // beyond the tracked depth, but played -> out forever
 }
 
-// Whether a positive-queued operand could still be queued to play next at some
-// future point: it must still be able to play at all (not a play-once line that
-// already played, and not itself transitively unobtainable). A repeatable line
-// can be re-queued even after playing; a play-once line that has played, or any
-// line that can never play, can never be queued again.
-function canStillBeQueued(ref, playedSet, stack) {
-    if (isPlayOnceRef(ref) && playedSet.has(ref)) return false;
+// Whether a positive single-play-scoped operand (``queued`` / ``thisRun`` /
+// ``thisRoom``) could still satisfy its gate at some future point: it must still
+// be able to play at all (not a play-once line that already played *outside*
+// this scope, and not itself transitively unobtainable). A repeatable line can
+// re-appear even after playing; a play-once line that already played can never
+// play this run / room / be queued again - unless the scope's own record shows
+// it played in *this* very run / room (then the gate is live, not locked). For
+// ``queued`` there is no persisted record (H2) and a played play-once can never
+// be queued anyway, so the record check is a no-op there.
+function canStillEnterScope(ref, scope, playedSet, stack) {
+    if (isPlayOnceRef(ref) && playedSet.has(ref)) {
+        const record = scope === 'thisRun' ? _unobtainableThisRun
+            : scope === 'thisRoom' ? _unobtainableThisRoom
+                : null;
+        if (!(record instanceof Set && record.has(ref))) return false;
+    }
     return !unobtainableRec(ref, playedSet, stack);
 }
 
@@ -263,15 +284,18 @@ function requirementSetUnobtainable(reqHost, hostName, playedSet, stack) {
             // whole gate is permanently unsatisfiable.
             const n = requiredCount(reqHost, reqType);
             if (others.some(r => maxRunsPermanentlyOut(r, n, playedSet))) return true;
-        } else if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
-            // Positive queued AND: every ref must be queued to play next. A ref
-            // that can never be queued again (play-once + already played, or
-            // itself unobtainable) locks the whole gate.
-            if (others.some(r => !canStillBeQueued(r, playedSet, stack))) return true;
-        } else if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
-            // Positive queued OR: at least one ref must be queueable; locked only
-            // when none of them can ever be queued again.
-            if (others.length > 0 && others.every(r => !canStillBeQueued(r, playedSet, stack))) return true;
+        } else if (SINGLE_PLAY_SCOPES.has(REQ_TYPE_SCOPE[reqType]) && AND_REQ_TYPES.has(reqType)) {
+            // Positive single-play-scoped AND (queued / this run / this room):
+            // every ref must (re)appear in that scope. A ref that never can - a
+            // play-once line that already played outside this scope, or itself
+            // unobtainable - locks the whole gate.
+            const scope = REQ_TYPE_SCOPE[reqType];
+            if (others.some(r => !canStillEnterScope(r, scope, playedSet, stack))) return true;
+        } else if (SINGLE_PLAY_SCOPES.has(REQ_TYPE_SCOPE[reqType]) && OR_REQ_TYPES.has(reqType)) {
+            // Positive single-play-scoped OR: at least one ref must be able to
+            // (re)appear; locked only when none of them ever can again.
+            const scope = REQ_TYPE_SCOPE[reqType];
+            if (others.length > 0 && others.every(r => !canStillEnterScope(r, scope, playedSet, stack))) return true;
         } else if (AND_REQ_TYPES.has(reqType)) {
             if (others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack))) return true;
         } else if (OR_REQ_TYPES.has(reqType)) {
@@ -307,11 +331,13 @@ export function isGroupUnobtainable(reqType, refs, playedSet, runsAgo, count = 1
     const others = (Array.isArray(refs) ? refs : [])
         .filter(r => typeof r === 'string' && r !== selfName);
     const stack = new Set();
-    if (REQ_TYPE_SCOPE[reqType] === 'queued' && AND_REQ_TYPES.has(reqType)) {
-        return others.some(r => !canStillBeQueued(r, playedSet, stack));
+    if (SINGLE_PLAY_SCOPES.has(REQ_TYPE_SCOPE[reqType]) && AND_REQ_TYPES.has(reqType)) {
+        const scope = REQ_TYPE_SCOPE[reqType];
+        return others.some(r => !canStillEnterScope(r, scope, playedSet, stack));
     }
-    if (REQ_TYPE_SCOPE[reqType] === 'queued' && OR_REQ_TYPES.has(reqType)) {
-        return others.length > 0 && others.every(r => !canStillBeQueued(r, playedSet, stack));
+    if (SINGLE_PLAY_SCOPES.has(REQ_TYPE_SCOPE[reqType]) && OR_REQ_TYPES.has(reqType)) {
+        const scope = REQ_TYPE_SCOPE[reqType];
+        return others.length > 0 && others.every(r => !canStillEnterScope(r, scope, playedSet, stack));
     }
     if (AND_REQ_TYPES.has(reqType)) {
         return others.some(r => !playedSet.has(r) && unobtainableRec(r, playedSet, stack));
@@ -366,8 +392,9 @@ export function isRequirementSetUnobtainable(reqHost, hostName, playedSet, runsA
 // Combined save verdict for one OR-branch (an ``orBranches`` alternative):
 // 'unobtainable' when the branch can never be satisfied, else the AND of its
 // textline-requirement verdict (``requirementSetStatus``) and its non-textline
-// GameState-gate verdict (``evaluateOtherRequirements``). Shared by the
-// dependency tree and the detail panel so per-branch dots agree.
+// gate verdict (``otherRequirementsStatus`` - GameState gates plus a full
+// evaluation of any NamedRequirements*). Shared by the dependency tree and the
+// detail panel so per-branch dots agree.
 export function orBranchVerdict(branch, context, name) {
     const ctx = (context instanceof Set) ? { played: context } : (context || {});
     if (ctx.played && isRequirementSetUnobtainable(branch, name, ctx.played, ctx.runsAgo, ctx)) {
@@ -379,7 +406,9 @@ export function orBranchVerdict(branch, context, name) {
     const owner = (name && textlines[name]) ? textlines[name].owner : undefined;
     const gameId = getActiveGame();
     const slices = buildOtherReqSlices(ctx, owner, gameId);
-    const gateSt = evaluateOtherRequirements(branch && branch.otherRequirements, ctx.gameState, slices, gameId).status;
+    // Named-aware: NamedRequirements* gates are evaluated as full requirement
+    // sets (their textline records + orBranches), not the GameState-only view.
+    const gateSt = otherRequirementsStatus(branch && branch.otherRequirements, ctx, ctx.gameState, slices, gameId, owner);
     if (textlineSt === 'unmet' || gateSt === 'unmet') return 'unmet';
     if (textlineSt === 'unknown' || gateSt === 'unknown') return 'unknown';
     return 'met';
