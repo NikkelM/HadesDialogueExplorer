@@ -111,7 +111,7 @@ body.tour-open #custom-tooltip {
 
 .tour-card-text {
     margin: 0;
-    color: #d0d4dd;
+    color: var(--text-secondary);
 }
 
 .tour-card-footer {
@@ -123,7 +123,7 @@ body.tour-open #custom-tooltip {
 
 .tour-card-step {
     font-size: var(--fs-xs);
-    color: #8a93a6;
+    color: var(--text-muted);
     /* Push the buttons to the right of the step counter. */
     margin-right: auto;
 }

@@ -131,7 +131,7 @@
 .priority-super { background: #3b2a0a; color: #ffd166; border: 1px solid #6b4e1f; }
 .priority-priority { background: #2a2438; color: #b8a5ff; border: 1px solid #4a3a6b; }
 .priority-normal { background: #1c2530; color: #8fb3d1; border: 1px solid #2c4258; }
-.priority-low { background: #20242a; color: #8a98a8; border: 1px solid #3a4350; }
+.priority-low { background: #20242a; color: var(--text-muted); border: 1px solid #3a4350; }
 /* H2 ordinal-rank badge ("#N/M"). Neutral monospace styling - the
    ordinal/size pair is purely positional information, so a tinted
    colour would suggest a qualitative tier that the H2 data does not
@@ -302,7 +302,7 @@
 .req-type-group-label {
     font-family: var(--font-mono);
     font-weight: 600;
-    color: #c0c0c0;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     font-size: var(--fs-2xs);
@@ -437,7 +437,7 @@
     margin-left: auto;
     font-size: var(--fs-2xs);
     font-style: italic;
-    color: #999;
+    color: var(--text-muted);
 }
 
 /* Leaf-root note shown when a textline has no prerequisites / dependents,

@@ -94,7 +94,7 @@
 .req-type-RequiredMaxAnyTextLines h4 { background: #2e2818; color: #d4b870; }
 .req-type-MinRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
 .req-type-MaxRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
-.req-type-other h4 { background: #2b2d42; color: #8d99ae; }
+.req-type-other h4 { background: #2b2d42; color: var(--text-muted); }
 .req-item {
     padding: 3px 8px;
     margin: 2px 0;
@@ -180,7 +180,7 @@
     padding: 3px 8px;
     margin: 2px 0;
     font-size: var(--fs-sm);
-    color: #8d99ae;
+    color: var(--text-muted);
     font-family: var(--font-mono);
 }
 /* Very light divider between consecutive rows so items that wrap
@@ -230,7 +230,7 @@
    ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
    nudged slightly to read as a quoted identifier. */
 .other-req-item .other-req-path {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
     padding: 0 4px;
     border-radius: 3px;
@@ -261,7 +261,7 @@
 /* Aggregation modifier clause appended to a Path record (e.g.
    ``(over the last 2 runs)``). Muted so the core predicate reads first. */
 .other-req-item .other-req-mod {
-    color: #8b949e;
+    color: var(--text-muted);
     font-style: italic;
 }
 /* The function-call signature inside a rendered FunctionName:<name> entry
@@ -269,7 +269,7 @@
    `RequiredAlive(Ids=[42])` must evaluate to `true`"). Subtle tint + weight to
    separate the call from the surrounding prose. */
 .other-req-item .other-req-func {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     font-weight: 600;
 }
 
@@ -363,7 +363,7 @@
    composition). */
 .named-req-item .named-req-label {
     font-weight: 600;
-    color: #c9d1d9;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
 /* The label's verdict dot sits inside the block label (not a flex row), so
@@ -386,7 +386,7 @@
     background: rgba(80, 160, 160, 0.03);
 }
 .named-req-name {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
     padding: 0 4px;
     border-radius: 3px;

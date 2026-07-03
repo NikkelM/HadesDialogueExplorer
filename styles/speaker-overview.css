@@ -400,17 +400,17 @@ body.layout-speaker #panel-info {
 .speaker-adjacency-reqs {
     margin-left: 16px;
     margin-top: 1px;
-    color: #9a9ab0;
+    color: var(--text-muted);
     line-height: 1.45;
 }
 .speaker-adjacency-reqs .textline-link { font-size: var(--fs-sm); color: #aab0c8; }
 .speaker-adjacency-reqs .textline-link:hover { color: var(--accent-color); }
 .speaker-adjacency-req-label {
-    color: #6a6a82;
+    color: var(--text-dim);
     font-style: italic;
     margin-right: 4px;
 }
-.speaker-adjacency-sep { color: #555; }
+.speaker-adjacency-sep { color: var(--text-dim); }
 .speaker-adjacency-detail-empty { color: var(--text-dim); font-style: italic; padding: 2px 0; }
 .speaker-adjacency-self {
     font-size: var(--fs-2xs);
@@ -581,7 +581,7 @@ body.layout-speaker #panel-info {
 /* The dialogue name is the row's primary element: brighter and heavier
    than the badges that trail it. */
 .speaker-textline-row > .textline-link {
-    color: #c8c8c8;
+    color: var(--text-secondary);
     font-weight: 500;
     font-size: var(--fs-base);
 }

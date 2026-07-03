@@ -98,7 +98,7 @@
     margin: 0.2rem 0 0;
     padding-left: 1.2rem;
     font-size: var(--fs-base);
-    color: #c8d0d8;
+    color: var(--text-secondary);
     line-height: 1.5;
 }
 
@@ -181,7 +181,7 @@
     border-radius: 0 4px 4px 0;
     font-size: var(--fs-xs);
     font-style: italic;
-    color: #9aa4b2;
+    color: var(--text-muted);
     line-height: 1.4;
 }
 .eligibility-chain-note::before {
@@ -265,7 +265,7 @@
 }
 .eligibility-play-order-tag {
     font-size: var(--fs-2xs);
-    color: #9a9ab0;
+    color: var(--text-muted);
     border: 1px solid #4a4636;
     border-radius: 3px;
     padding: 0 4px;
@@ -469,7 +469,7 @@
 .eligibility-branch-note {
     padding: 0.2rem 0.4rem 0;
     font-size: var(--fs-xs);
-    color: #9aa3b2;
+    color: var(--text-muted);
 }
 
 /* Set-level ``ChanceToPlay`` note: a per-attempt RNG roll the game applies even

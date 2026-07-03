@@ -34,7 +34,7 @@
 
 .softlock-card p {
     margin: 0 0 10px;
-    color: #d0d4dd;
+    color: var(--text-secondary);
 }
 
 .softlock-card code {

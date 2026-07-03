@@ -28,6 +28,7 @@
     --accent-color: #e8a33d;   /* amber accent: titles, links, highlights (--accent) */
     --accent-contrast: #14161a; /* near-black text/ink on amber fills (--accent-contrast) */
     --text-color:   #e8e9ec;   /* primary body text (--fg) */
+    --text-secondary: #c6cbd3; /* secondary text: a step below primary, above muted */
     --text-muted:   #9aa1ab;   /* muted secondary text (--muted) */
     --text-dim:     #6b7280;   /* dim secondary text */
     --danger:       #e57373;   /* blocked / warning / error red */
@@ -201,7 +202,7 @@ header h1 {
     padding: 4px 12px;
     font-size: var(--fs-2xs);
     font-weight: bold;
-    color: #aaa;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     background: var(--border);
@@ -310,7 +311,7 @@ main {
     overflow: hidden;
 }
 .empty-state {
-    color: #555;
+    color: var(--text-dim);
     font-style: italic;
     text-align: center;
     padding: 40px;
