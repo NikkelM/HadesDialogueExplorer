@@ -75,6 +75,42 @@ function kindTooltip(status, kind) {
     return groupStatusTooltip(status);
 }
 
+// With a save loaded, a fully-satisfied ('met') requirement group is collapsed
+// by default so the reader's attention falls on what is still unmet; unmet /
+// indeterminate / unobtainable groups (and everything when no save is loaded)
+// stay open. This includes inverted "must NOT pass" gates that are correctly
+// satisfied ('met'). The user can still toggle any group; collapse state is not
+// persisted (each re-render recomputes it from the live verdict). Returns
+// ``[chevronGlyph, childExpandedClass]`` for interpolation into a group header.
+function metCollapse(verdict, showDots) {
+    const collapsed = showDots && verdict === 'met';
+    return [collapsed ? '\u25B6' : '\u25BC', collapsed ? '' : ' expanded'];
+}
+
+// A compact key for the requirement status dots, shown at the top of the
+// requirements block when a save is loaded. Teaches the shape language (colour
+// encodes the verdict; SHAPE encodes the node kind): solid disc = a single
+// condition, hollow ring = a rolled-up group, ring + slash = a "must NOT pass"
+// gate. The shape swatches force a neutral --dot-color so only the shape reads;
+// the colour swatches are solid discs in each verdict colour.
+export function renderStatusLegendHtml() {
+    const shape = (kind, label) => {
+        const cls = kind ? ` group-kind-${kind}` : '';
+        return `<span class="status-legend-item"><span class="group-status${cls}" style="--dot-color: var(--text-muted)"></span>${escapeHtml(label)}</span>`;
+    };
+    const colour = (st, label) =>
+        `<span class="status-legend-item"><span class="group-status group-status-${st}"></span>${escapeHtml(label)}</span>`;
+    return `<div class="status-legend">`
+         + `<span class="status-legend-title">Dot key</span>`
+         + `<span class="status-legend-set">`
+         + shape('', 'condition') + shape('aggregate', 'group (any / all of)') + shape('inverted', 'must NOT pass')
+         + `</span>`
+         + `<span class="status-legend-set">`
+         + colour('met', 'satisfied') + colour('unmet', 'not met') + colour('unknown', 'can\u2019t tell') + colour('unobtainable', 'locked')
+         + `</span>`
+         + `</div>`;
+}
+
 // Hover text for a gate that reads monotonic save progress already past the
 // point it allows: its underlying counter only ever grows (or the forbidden
 // event is permanently on record), so it can never be satisfied again.
@@ -1847,7 +1883,10 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     // branches.
     reqHtml += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
 
-    if (reqHtml) html += `<div class="requirements-group">${reqHtml}</div>`;
+    if (reqHtml) {
+        const legend = _saveDotsActive() ? renderStatusLegendHtml() : '';
+        html += `<div class="requirements-group">${legend}${reqHtml}</div>`;
+    }
 
     return html;
 }
@@ -1866,26 +1905,22 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
     const showDots = _saveDotsActive();
     const ctx = showDots ? getSaveContext() : null;
     // Overall "alternates" verdict: met if any option's requirements hold.
-    let groupDot = '';
-    if (showDots) {
-        const gv = orGroupVerdict(branches, ctx, textlineName);
-        groupDot = statusDot(gv, kindTooltip(gv, 'aggregate'), 'aggregate');
-    }
+    const gv = showDots ? orGroupVerdict(branches, ctx, textlineName) : null;
+    const groupDot = gv ? statusDot(gv, kindTooltip(gv, 'aggregate'), 'aggregate') : '';
+    const [gChev, gExp] = metCollapse(gv, showDots);
     let html = `<div class="req-section req-type-or-group">`
-             + `<h4><span class="toggle">\u25BC</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
-             + `<div class="req-section-children expanded">`;
+             + `<h4><span class="toggle">${gChev}</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
+             + `<div class="req-section-children${gExp}">`;
     for (let bi = 0; bi < branches.length; bi++) {
         const branch = branches[bi] || {};
         // Per-option verdict: this branch's combined requirement + GameState dot.
-        let branchDot = '';
-        if (showDots) {
-            const bv = orBranchVerdict(branch, ctx, textlineName);
-            branchDot = statusDot(bv, kindTooltip(bv, 'aggregate'), 'aggregate');
-        }
+        const bv = showDots ? orBranchVerdict(branch, ctx, textlineName) : null;
+        const branchDot = bv ? statusDot(bv, kindTooltip(bv, 'aggregate'), 'aggregate') : '';
+        const [bChev, bExp] = metCollapse(bv, showDots);
         html += `<div class="or-branch">`
-              + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
+              + `<h5 class="or-branch-header"><span class="toggle">${bChev}</span>`
               + `${branchDot}Option ${bi + 1} of ${total}</h5>`
-              + `<div class="or-branch-children expanded">`;
+              + `<div class="or-branch-children${bExp}">`;
         html += renderRequirementsAndOtherHtml(
             branch.requirements || {},
             branch.otherRequirements || {},
@@ -1975,11 +2010,8 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         const resolved = namedRequirements ? namedRequirements[name] : null;
         const safeName = escapeHtml(name);
         const safeSuffix = suffix ? ` <span class="named-req-suffix">(${escapeHtml(suffix)})</span>` : '';
-        let nameDot = '';
-        if (showDots) {
-            const s = namedRequirementHostVerdict(key, name, sctx, hostOwner);
-            nameDot = statusDot(s, kindTooltip(s, nkind), nkind);
-        }
+        const s = showDots ? namedRequirementHostVerdict(key, name, sctx, hostOwner) : null;
+        const nameDot = s ? statusDot(s, kindTooltip(s, nkind), nkind) : '';
         if (_namedReqIsEmpty(resolved)) {
             html += `<div class="named-req-flat">`
                   + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
@@ -1995,12 +2027,13 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
                 otherHeaderLabel: null,
             }
         ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName);
+        const [nChev, nExp] = metCollapse(s, showDots);
         html += `<div class="named-req-expand">`
               + `<h5 class="named-req-header">`
-              + `<span class="toggle">\u25BC</span>`
+              + `<span class="toggle">${nChev}</span>`
               + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
               + `</h5>`
-              + `<div class="named-req-children expanded">${inner}</div>`
+              + `<div class="named-req-children${nExp}">${inner}</div>`
               + `</div>`;
     }
     html += `</div></div>`;
@@ -2055,18 +2088,16 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         }
         // Group verdict dot (met / unmet / indeterminate / unobtainable),
         // shared with the dependency tree's group dots.
-        let groupDot = '';
-        if (showDots) {
-            const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
-            const v = requirementGroupVerdict(type, refs, ctx, cnt, textlineName);
-            // Negative ("must not have played") and count-max ("at most N")
-            // groups are inverted gates: mark them so, else aggregate.
-            const gkind = (NEGATIVE_REQ_TYPES.has(type) || COUNT_MAX_REQ_TYPES.has(type)) ? 'inverted' : 'aggregate';
-            groupDot = statusDot(v, kindTooltip(v, gkind), gkind);
-        }
+        const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
+        const v = showDots ? requirementGroupVerdict(type, refs, ctx, cnt, textlineName) : null;
+        // Negative ("must not have played") and count-max ("at most N")
+        // groups are inverted gates: mark them so, else aggregate.
+        const gkind = (NEGATIVE_REQ_TYPES.has(type) || COUNT_MAX_REQ_TYPES.has(type)) ? 'inverted' : 'aggregate';
+        const groupDot = v ? statusDot(v, kindTooltip(v, gkind), gkind) : '';
+        const [tChev, tExp] = metCollapse(v, showDots);
         html += `<div class="req-section req-type-${type}">`
-              + `<h4><span class="toggle">\u25BC</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
-              + `<div class="req-section-children expanded">`;
+              + `<h4><span class="toggle">${tChev}</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
+              + `<div class="req-section-children${tExp}">`;
         const sources = (sourcesByType && sourcesByType[type]) || [];
         let i = 0;
         while (i < refs.length) {
@@ -2186,9 +2217,10 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     if (!otherHtml) return '';
     if (otherHeaderLabel) {
         const headerDot = showDots ? statusDot(overallVerdict, kindTooltip(overallVerdict, 'aggregate'), 'aggregate') : '';
+        const [oChev, oExp] = metCollapse(overallVerdict, showDots);
         return `<div class="req-section req-type-other">`
-              + `<h4><span class="toggle">\u25BC</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
-              + `<div class="req-section-children expanded">${otherHtml}</div>`
+              + `<h4><span class="toggle">${oChev}</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
+              + `<div class="req-section-children${oExp}">${otherHtml}</div>`
               + `</div>`;
     }
     // Compact (OR-branch) mode: inline the items directly under the

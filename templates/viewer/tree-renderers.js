@@ -411,6 +411,9 @@ export function createOrGroupBox(total, status = null) {
 
     const childrenBox = document.createElement('div');
     childrenBox.className = 'or-group-children expanded';
+    // A fully-satisfied ('met') group collapses by default so the tree
+    // foregrounds what is still unmet; see the detail panel's metCollapse.
+    if (status === 'met') { toggle.textContent = '\u25B6'; childrenBox.classList.remove('expanded'); }
 
     attachCollapseToggle(header, toggle, childrenBox);
 
@@ -449,6 +452,7 @@ export function createOrBranchBox(index, total, count, status = null) {
 
     const childrenBox = document.createElement('div');
     childrenBox.className = 'or-branch-box-children expanded';
+    if (status === 'met') { toggle.textContent = '\u25B6'; childrenBox.classList.remove('expanded'); }
 
     attachCollapseToggle(header, toggle, childrenBox);
 
@@ -508,6 +512,7 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
 
     const childrenBox = document.createElement('div');
     childrenBox.className = 'req-type-group-children expanded';
+    if (status === 'met') { toggle.textContent = '\u25B6'; childrenBox.classList.remove('expanded'); }
 
     attachCollapseToggle(header, toggle, childrenBox);
 

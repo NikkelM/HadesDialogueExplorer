@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection, clauseStatusDotHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection, clauseStatusDotHtml, renderStatusLegendHtml } from './info-panel.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, evaluateOtherReqUnit } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -1139,6 +1139,9 @@ export function renderEligibility(dialogueName) {
     html += `<div class="eligibility-target-meta">Owner: ${renderSpeakerHtml(tl.owner)}</div>`;
     html += `</div>`;
     html += renderSummaryHtml(dialogueName, chain, groups, mandatory);
+    // Dot key for the requirement status dots shown below (skipped once the
+    // dialogue has played, when those sections are hidden).
+    if (!played) html += renderStatusLegendHtml();
 
     // The "what to play" list and the prerequisite tree describe a path to
     // eligibility. That path is meaningless once the dialogue is permanently
