@@ -216,12 +216,20 @@
    words wrap instead of overflow. */
 .other-req-item:has(> .group-status) {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: 0.35rem;
 }
+/* Center the dot on the FIRST text line (via a top margin of half the leftover
+   line-box height), matching the centred .req-item / tree-row dots. Plain
+   ``align-items: center`` would centre it over the whole wrapped block, and
+   ``baseline`` sat it slightly high; ``flex-start`` + this margin keeps it
+   beside the first line and vertically centred on it. The +1px baseline nudge
+   from the shared rule above is cancelled. */
 .other-req-item:has(> .group-status) > .group-status {
     flex-shrink: 0;
     margin-right: 0;
+    top: 0;
+    margin-top: calc((1lh - var(--dot-size)) / 2);
 }
 .other-req-item .other-req-text {
     min-width: 0;
