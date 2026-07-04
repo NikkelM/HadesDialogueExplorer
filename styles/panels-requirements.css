@@ -78,6 +78,14 @@
     font-size: var(--fs-2xs);
     color: var(--text-muted);
 }
+/* In the dialogue detail panel the legend is the first thing under the
+   Dialogue-lines block, so give it a little top margin: it reads as clearly
+   separated from that dialogue content above, and sits a touch lower. Scoped to
+   the detail panel so the eligibility tracer's legend (which follows a summary,
+   not dialogue) keeps its own spacing. */
+.requirements-group .status-legend {
+    margin-top: 14px;
+}
 .status-legend-title {
     text-transform: uppercase;
     letter-spacing: 0.5px;
