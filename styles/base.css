@@ -340,7 +340,14 @@ main {
 body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .panel-skeleton .sk {
     border-radius: 4px;
-    background: linear-gradient(90deg, #1f2742 25%, #2a3556 37%, #1f2742 63%);
+    /* Neutral shimmer matching the new theme: a --border-toned base sweeping
+       through a lighter grey highlight (mixed toward --text-dim), replacing the
+       old pre-redesign blue gradient so the loading state reads as the same
+       dark-neutral surface as the loaded UI. */
+    background: linear-gradient(90deg,
+        var(--border) 25%,
+        color-mix(in srgb, var(--border) 55%, var(--text-dim)) 37%,
+        var(--border) 63%);
     background-size: 400% 100%;
     animation: skeleton-shimmer 1.4s ease infinite;
 }
