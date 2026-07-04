@@ -672,7 +672,7 @@ test('Path TableValuesToCount renders a count-of-items threshold with a run clau
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">EncountersOccurredCache<\/code> has at least <code>1<\/code> of: <code>DevotionTestF<\/code> \u2022 <code>DevotionTestG<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+        /<code class="other-req-path">EncountersOccurredCache<\/code> has any of: <code>DevotionTestF<\/code> \u2022 <code>DevotionTestG<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
     );
 });
 
@@ -742,8 +742,45 @@ test('Path CountPathTrue + TableValuesToCount renders as a count-of-items thresh
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">EncountersOccurredCache2<\/code> has at least <code>1<\/code> of: <code>ArtemisCombatN<\/code> \u2022 <code>ArtemisCombatN2<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
+        /<code class="other-req-path">EncountersOccurredCache2<\/code> has any of: <code>ArtemisCombatN<\/code> \u2022 <code>ArtemisCombatN2<\/code> <span class="other-req-mod">\(over the last 2 runs\)<\/span>/
     );
+});
+
+
+// Boundary count thresholds read as "has none of" / "has any of" rather than
+// "has at most 0 of" / "has at least 1 of"; non-boundary counts keep the
+// operator phrasing. Covers both the Comparison count-of-items path and the
+// bare-key "N of a set" path (issue #134).
+const _stripReq = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/\s+/g, ' ').trim();
+
+test('count-of-a-set boundary thresholds render as "has none of" / "has any of"', () => {
+    loadData(buildFixtureData());
+    const countRec = (op, value) => [{ Comparison: op, Path: ['GameState', 'RoomsEntered'], TableValuesToCount: ['A_Boss01', 'B_Boss01'], Value: value }];
+    const r = (op, value) => _stripReq(renderOtherReqEntryHtml('Path:GameState.RoomsEntered', countRec(op, value)));
+    // Boundary -> "none".
+    assert.match(r('<=', 0), /has none of:/);
+    assert.match(r('==', 0), /has none of:/);
+    assert.match(r('<', 1), /has none of:/);
+    assert.doesNotMatch(r('<=', 0), /at most 0/);
+    // Boundary -> "any".
+    assert.match(r('>=', 1), /has any of:/);
+    assert.match(r('>', 0), /has any of:/);
+    // Non-boundary keeps the operator phrasing.
+    assert.match(r('>=', 3), /has at least <code>3<\/code> of:|has at least 3 of:/);
+    assert.match(r('<=', 8), /has at most 8 of:/);
+});
+
+test('bare-key "N of a set" gate renders a Count of 0 as "none of"', () => {
+    loadData(buildFixtureData());
+    // A max-kind list gate with Count 0 -> "none of"; a min-kind Count 1 -> "any of".
+    const maxHtml = _stripReq(renderOtherReqEntryHtml('RequiredMaxAnyCosmetics', { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 0 }));
+    assert.match(maxHtml, /none of:/);
+    assert.doesNotMatch(maxHtml, /at most 0/);
+    const minHtml = _stripReq(renderOtherReqEntryHtml('RequiredMinAnyCosmetics', { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 1 }));
+    assert.match(minHtml, /any of:/);
+    // Non-boundary count keeps the quantifier.
+    const min2 = _stripReq(renderOtherReqEntryHtml('RequiredMinAnyCosmetics', { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 2 }));
+    assert.match(min2, /at least 2 of:/);
 });
 
 
@@ -1279,7 +1316,7 @@ test('Path CountOf referencing a GameData table renders the ref name in the head
     // clauses, each rendered on its own row.
     assert.match(
         lastHtml,
-        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code><\/span><\/div>/
+        /<div class="other-req-item"[^>]*><span class="other-req-text"><code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has any of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code><\/span><\/div>/
     );
     assert.match(
         lastHtml,
@@ -1746,7 +1783,7 @@ test('row display keeps the bare identifier even when the ref expands in the too
     // so long lists don't blow up the row width.
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has at least <code>1<\/code> of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
+        /<code class="other-req-path">GameState\.WeaponsUnlocked<\/code> has any of: <code class="other-req-path">GameData\.AllWeaponAspects<\/code>/
     );
 });
 

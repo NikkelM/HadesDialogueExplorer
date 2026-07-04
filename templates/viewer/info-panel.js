@@ -163,6 +163,20 @@ const _COUNT_OP_PHRASING = {
     '!=': 'does not have exactly',
 };
 
+// Natural quantifier for a "N of a set" count threshold sitting at a boundary
+// value: on an integer count, ``<= 0`` / ``== 0`` / ``< 1`` all mean "none",
+// and ``>= 1`` / ``> 0`` mean "any" (at least one). Returns ``'none'`` /
+// ``'any'`` (so a caller can render "has none of" / "none of: ..."), or null
+// when the threshold isn't a boundary (the caller keeps "at most N of ...").
+function _countBoundaryWord(op, value) {
+    const v = Number(value);
+    if (!Number.isFinite(v)) return null;
+    if ((op === '<=' || op === '==') && v === 0) return 'none';
+    if (op === '<' && v === 1) return 'none';
+    if ((op === '>=' && v === 1) || (op === '>' && v === 0)) return 'any';
+    return null;
+}
+
 // Friendly head labels for the four single-path operator prefixes whose
 // value records carry no extra info beyond the path repeated. These
 // drive the row 1-5 rendering: ``Must be true: <head>`` (no value
@@ -767,8 +781,16 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
             // "count the truthy entries among these items"; the count
             // phrasing already conveys that, so consume it here.
             if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
+            if (!_allConsumed(keys, consumed)) return null;
+            // A boundary threshold reads better as a quantifier word: "has none
+            // of" / "has any of" rather than "has at most 0 of" / "has at least
+            // 1 of". Fall back to the operator phrasing for non-boundary counts.
+            const word = _countBoundaryWord(rec.Comparison, rec.Value);
+            if (word) {
+                return `${headHtml} has ${word} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
+            }
             const phrase = _COUNT_OP_PHRASING[rec.Comparison];
-            if (!phrase || !_allConsumed(keys, consumed)) return null;
+            if (!phrase) return null;
             return `${headHtml} ${phrase} ${valueHtml} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
         }
     }
@@ -1022,6 +1044,13 @@ function _renderBareKeyValueHtml(val, key) {
         // most> N of: items`` rather than dumping the array against an operator.
         const listKey = objKeys.find(k => Array.isArray(val[k]));
         if (listKey && 'Count' in val && objKeys.length === 2) {
+            // A boundary count reads better as "none of" / "any of" than "at
+            // most 0 of" / "at least 1 of".
+            const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+            const word = _countBoundaryWord(kindOp, val.Count);
+            if (word) {
+                return `${word} of: ${_renderOperandList(val[listKey])}${_renderAggregateHtml()}`;
+            }
             return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}${_renderAggregateHtml()}`;
         }
         // Scalar value map -> ``key op value`` per entry. The key is the
