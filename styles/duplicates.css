@@ -78,10 +78,11 @@
     font-size: var(--fs-base);
     text-align: left;
     cursor: pointer;
+    transition: border-color 0.12s ease, background-color 0.12s ease;
 }
 
 .duplicates-speaker-item:hover {
-    background: var(--border);
+    border-color: var(--accent-color);
 }
 
 .duplicates-speaker-item.is-active {
@@ -145,10 +146,10 @@
     border-radius: 3px;
     background: transparent;
     text-align: center;
+    transition: border-color 0.12s ease;
 }
 
 .duplicates-game-link:hover {
-    background: var(--border);
     border-color: var(--accent-color);
 }
 

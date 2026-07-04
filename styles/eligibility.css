@@ -307,7 +307,6 @@
 }
 
 .eligibility-item:hover {
-    background: #2a2a3e;
     border-color: var(--accent-color);
 }
 
