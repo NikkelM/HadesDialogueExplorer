@@ -37,6 +37,7 @@ import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGa
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
+import { NEGATIVE_REQ_TYPES, COUNT_MAX_REQ_TYPES } from './requirements.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
 function _saveDotsActive() {
@@ -46,9 +47,32 @@ function _saveDotsActive() {
 // A met / unmet / indeterminate / unobtainable status dot (same colour
 // language as the dependency tree's group dots), or '' for an unknown status
 // value. The trailing space lets callers interpolate it before a label.
-function statusDot(status, tooltip) {
+// ``kind`` encodes the node shape: 'leaf' (default) = solid disc (an atomic
+// condition's own verdict), 'aggregate' = hollow ring (a verdict rolled up
+// from the requirements below), 'inverted' = ring + slash (a must-NOT-pass
+// gate, blocked exactly when the requirement below IS satisfied).
+function statusDot(status, tooltip, kind = 'leaf') {
     if (!['met', 'unmet', 'unknown', 'unobtainable'].includes(status)) return '';
-    return `<span class="group-status group-status-${status}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
+    const kindCls = (kind === 'aggregate' || kind === 'inverted') ? ` group-kind-${kind}` : '';
+    return `<span class="group-status group-status-${status}${kindCls}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
+}
+
+// Compose a dot's hover text so it states the node KIND (atomic leaf vs a
+// verdict rolled up from - or inverted relative to - the requirements below) on
+// top of the shared met/unmet/unknown/unobtainable wording. Keeps the
+// "eligible option under a must-NOT-pass gate is the blocker" case from reading
+// as a contradiction.
+function kindTooltip(status, kind) {
+    if (kind === 'inverted') {
+        if (status === 'unmet') return 'Inverted gate (must NOT pass): blocked because the requirement below IS satisfied.';
+        if (status === 'unobtainable') return 'Inverted gate (must NOT pass): permanently blocked - the requirement below is permanently satisfied.';
+        if (status === 'met') return 'Inverted gate (must NOT pass): satisfied because the requirement below is not satisfied.';
+        return groupStatusTooltip(status);
+    }
+    if (kind === 'aggregate') {
+        return 'Combined verdict, rolled up from the requirements below. ' + groupStatusTooltip(status);
+    }
+    return groupStatusTooltip(status);
 }
 
 // Hover text for a gate that reads monotonic save progress already past the
@@ -1845,7 +1869,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
     let groupDot = '';
     if (showDots) {
         const gv = orGroupVerdict(branches, ctx, textlineName);
-        groupDot = statusDot(gv, groupStatusTooltip(gv));
+        groupDot = statusDot(gv, kindTooltip(gv, 'aggregate'), 'aggregate');
     }
     let html = `<div class="req-section req-type-or-group">`
              + `<h4><span class="toggle">\u25BC</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
@@ -1856,7 +1880,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
         let branchDot = '';
         if (showDots) {
             const bv = orBranchVerdict(branch, ctx, textlineName);
-            branchDot = statusDot(bv, groupStatusTooltip(bv));
+            branchDot = statusDot(bv, kindTooltip(bv, 'aggregate'), 'aggregate');
         }
         html += `<div class="or-branch">`
               + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
@@ -1936,10 +1960,13 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
     const sctx = showDots ? getSaveContext() : null;
     const hostOwner = (hostTextlineName && textlines[hostTextlineName])
         ? textlines[hostTextlineName].owner : undefined;
+    // A must-NOT-pass gate inverts: render its dots as 'inverted' (ring +
+    // slash) so an eligible child below reads as the blocker, not a paradox.
+    const nkind = key === 'NamedRequirementsFalse' ? 'inverted' : 'aggregate';
     let groupDot = '';
     if (showDots) {
         const g = namedRequirementGroupVerdict(key, names, sctx, hostOwner);
-        groupDot = statusDot(g, groupStatusTooltip(g));
+        groupDot = statusDot(g, kindTooltip(g, nkind), nkind);
     }
     let html = `<div class="other-req-item named-req-item">`
              + `<div class="named-req-label">${groupDot}${renderOtherReqKeyHtml(key)}:</div>`
@@ -1951,7 +1978,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         let nameDot = '';
         if (showDots) {
             const s = namedRequirementHostVerdict(key, name, sctx, hostOwner);
-            nameDot = statusDot(s, groupStatusTooltip(s));
+            nameDot = statusDot(s, kindTooltip(s, nkind), nkind);
         }
         if (_namedReqIsEmpty(resolved)) {
             html += `<div class="named-req-flat">`
@@ -2032,7 +2059,10 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         if (showDots) {
             const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
             const v = requirementGroupVerdict(type, refs, ctx, cnt, textlineName);
-            groupDot = statusDot(v, groupStatusTooltip(v));
+            // Negative ("must not have played") and count-max ("at most N")
+            // groups are inverted gates: mark them so, else aggregate.
+            const gkind = (NEGATIVE_REQ_TYPES.has(type) || COUNT_MAX_REQ_TYPES.has(type)) ? 'inverted' : 'aggregate';
+            groupDot = statusDot(v, kindTooltip(v, gkind), gkind);
         }
         html += `<div class="req-section req-type-${type}">`
               + `<h4><span class="toggle">\u25BC</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
@@ -2155,7 +2185,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
 
     if (!otherHtml) return '';
     if (otherHeaderLabel) {
-        const headerDot = showDots ? statusDot(overallVerdict, groupStatusTooltip(overallVerdict)) : '';
+        const headerDot = showDots ? statusDot(overallVerdict, kindTooltip(overallVerdict, 'aggregate'), 'aggregate') : '';
         return `<div class="req-section req-type-other">`
               + `<h4><span class="toggle">\u25BC</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
               + `<div class="req-section-children expanded">${otherHtml}</div>`

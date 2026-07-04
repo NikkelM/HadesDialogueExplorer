@@ -272,11 +272,45 @@
     height: var(--dot-size);
     border-radius: 50%;
     flex-shrink: 0;
+    /* Colour encodes the verdict; --dot-color is set per status below and is
+       also consumed by the kind (shape) variants. */
+    background: var(--dot-color, var(--elig-blocked));
 }
-.group-status-met { background: var(--elig-met); }
-.group-status-unmet { background: var(--elig-blocked); }
-.group-status-unknown { background: var(--elig-indeterminate); }
-.group-status-unobtainable { background: var(--elig-unobtainable); }
+.group-status-met { --dot-color: var(--elig-met); }
+.group-status-unmet { --dot-color: var(--elig-blocked); }
+.group-status-unknown { --dot-color: var(--elig-indeterminate); }
+.group-status-unobtainable { --dot-color: var(--elig-unobtainable); }
+
+/* Node-KIND shape language (colour still encodes the verdict), so a reader can
+   tell an atomic verdict from one rolled up (or inverted) from its children:
+     leaf (default, no class) = solid disc: this condition's own verdict.
+     aggregate = hollow ring: a verdict combined from the requirements below
+                 (AND / OR / count) - drill in to see them.
+     inverted = ring with a slash (a prohibition / "no" mark): a "must NOT
+                pass" gate, so it is BLOCKED precisely when the requirement
+                below IS satisfied. Shared by every surface via statusDot()
+                and makeGroupStatusBadge(). */
+.group-status.group-kind-aggregate {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--dot-color);
+}
+.group-status.group-kind-inverted {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--dot-color);
+    position: relative;
+}
+.group-status.group-kind-inverted::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -2px;
+    bottom: -2px;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--dot-color);
+    transform: rotate(45deg);
+    border-radius: 1px;
+}
 .req-type-group-header:hover { background: rgba(255, 255, 255, 0.04); }
 .req-type-group-header .toggle {
     width: 12px;

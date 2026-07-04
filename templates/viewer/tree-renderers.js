@@ -11,7 +11,7 @@ import {
     reqTypeTitleText,
     groupStatusTooltip,
 } from './utilities.js';
-import { runsSinceGroupTooltip } from './requirements.js';
+import { runsSinceGroupTooltip, NEGATIVE_REQ_TYPES, COUNT_MAX_REQ_TYPES } from './requirements.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict } from './unobtainable.js';
 import { getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { createNodeEl, getChildren, ensureExpandedContentVisible } from './tree.js';
@@ -36,10 +36,15 @@ function activeSaveContext() {
 // periwinkle when it can't be resolved from a save, and the unobtainable red
 // when the group can never be satisfied again. Placed right after the chevron
 // so the verdicts line up down the left edge.
-function makeGroupStatusBadge(status, detail = null) {
+// Every tree group badge is a rolled-up verdict, so it defaults to the
+// 'aggregate' (hollow ring) shape; a negative / count-max requirement group is
+// an inverted gate ('inverted' = ring + slash). Leaf row dots use the
+// save-badge, not this. See the .group-kind-* shape language in tree.css.
+function makeGroupStatusBadge(status, detail = null, kind = 'aggregate') {
     if (!['met', 'unmet', 'unknown', 'unobtainable'].includes(status)) return null;
     const badge = document.createElement('span');
-    badge.className = `group-status group-status-${status}`;
+    const kindCls = (kind === 'aggregate' || kind === 'inverted') ? ` group-kind-${kind}` : '';
+    badge.className = `group-status group-status-${status}${kindCls}`;
     badge.dataset.tooltip = detail || groupStatusTooltip(status);
     return badge;
 }
@@ -464,7 +469,8 @@ export function createReqTypeGroup(edgeType, count, requirementCount, direction 
     toggle.textContent = '\u25BC';
     header.appendChild(toggle);
 
-    const statusBadge = makeGroupStatusBadge(status, statusDetail);
+    const statusBadge = makeGroupStatusBadge(status, statusDetail,
+        (NEGATIVE_REQ_TYPES.has(edgeType) || COUNT_MAX_REQ_TYPES.has(edgeType)) ? 'inverted' : 'aggregate');
     if (statusBadge) header.appendChild(statusBadge);
 
     const edgeChip = document.createElement('span');
