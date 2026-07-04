@@ -6,7 +6,7 @@
 // URL: ``#view=duplicates&dup=<speaker>&q=<search>``
 
 import { duplicates, games, gameLabels } from './data.js';
-import { escapeHtml, jsAttr } from './utilities.js';
+import { escapeHtml, jsAttr, applyColumnStripes } from './utilities.js';
 
 // Sentinel master-list entry that shows every speaker's shared dialogues at
 // once. Keyed with a control char so it can never collide with a real
@@ -20,12 +20,48 @@ export const ALL_SPEAKERS = '\u0000all';
 // ``ALL_SPEAKERS`` (every shared dialogue).
 let selectedSpeaker = ALL_SPEAKERS;
 
-// Resolve the friendly speaker name for a duplicate entry, using the
-// Hades 1 speaker name as the canonical display name.
+// Single ResizeObserver reused across renders to keep the alternating
+// column tint in sync with the pane's live (auto-fill) column count.
+let _dupColObserver = null;
+
+// Resolve the friendly speaker name for a duplicate entry. The build bakes it
+// into the meta ``duplicates`` payload (``d.speaker``) so the master list shows
+// a friendly name even before the per-game blobs stream in. Falls back to a
+// runtime lookup (the Hades 1 speaker name, canonical) then the raw owner id.
 function speakerName(d) {
+    if (d.speaker) return d.speaker;
     const h1Speakers = games && games.hades1 && games.hades1.speakers;
     const entry = h1Speakers && h1Speakers[d.hades1.owner];
     return (entry && entry.name) || d.hades1.owner;
+}
+
+// The detail grid uses ``auto-fill``, so its column count is dynamic and
+// unbounded on wide screens. Tag every entry in an even grid column with
+// ``dup-col-alt`` (see applyColumnStripes) and let the stylesheet tint it.
+function stripeDuplicateColumns() {
+    applyColumnStripes(document.querySelector('.duplicates-detail-list'), 'dup-col-alt');
+}
+
+// Re-stripe after each render and whenever the detail pane resizes (which
+// changes the column count without re-rendering). A single observer is
+// reused across renders and re-pointed at the freshly rendered pane.
+function observeDuplicateColumns() {
+    if (typeof document.querySelector !== 'function') return;
+    const detail = document.querySelector('.duplicates-detail');
+    if (!detail) return;
+    if (typeof ResizeObserver !== 'undefined') {
+        if (!_dupColObserver) {
+            let queued = false;
+            _dupColObserver = new ResizeObserver(() => {
+                if (queued) return;
+                queued = true;
+                requestAnimationFrame(() => { queued = false; stripeDuplicateColumns(); });
+            });
+        }
+        _dupColObserver.disconnect();
+        _dupColObserver.observe(detail);
+    }
+    stripeDuplicateColumns();
 }
 
 // Render the full duplicates view into the given container element.
@@ -76,6 +112,7 @@ export function renderDuplicates(opts) {
             const tmp = document.createElement('div');
             tmp.innerHTML = renderBody(items, h1Label, h2Label);
             bodyEl.replaceWith(tmp.firstElementChild || tmp.firstChild);
+            observeDuplicateColumns();
         }
         return;
     }
@@ -96,6 +133,8 @@ export function renderDuplicates(opts) {
         + controlsHtml
         + renderBody(items, h1Label, h2Label)
         + `</div>`;
+
+    observeDuplicateColumns();
 }
 
 // Build the master-detail body (or the empty-state message). Groups the

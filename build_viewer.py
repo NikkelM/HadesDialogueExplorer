@@ -660,7 +660,12 @@ def _compute_cross_game_duplicates(games_payload):
     Returns a sorted list of dicts, one per duplicate name::
 
         {"name": "...", "hades1": {"owner": "...", "section": "..."},
-                        "hades2": {"owner": "...", "section": "..."}}
+                        "hades2": {"owner": "...", "section": "..."},
+         "speaker": "..."}
+
+    ``speaker`` is the friendly display name for the master-list buttons,
+    resolved here so the duplicates view (which renders from the meta payload,
+    before/without the per-game blobs) never falls back to the raw owner id.
 
     Returns an empty list when fewer than two games are loaded (the
     feature only makes sense with a cross-game comparison).
@@ -673,6 +678,8 @@ def _compute_cross_game_duplicates(games_payload):
     g1, g2 = game_ids
     tl1 = games_payload[g1].get("textlines", {})
     tl2 = games_payload[g2].get("textlines", {})
+    sp1 = games_payload[g1].get("speakers", {})
+    sp2 = games_payload[g2].get("speakers", {})
     shared = sorted(set(tl1) & set(tl2))
     results = []
     for name in shared:
@@ -683,6 +690,16 @@ def _compute_cross_game_duplicates(games_payload):
                 "owner": tl.get("owner", ""),
                 "section": tl.get("section", ""),
             }
+        # Prefer the first game's speaker name as canonical, then the second,
+        # then the raw owner id if neither game resolves a friendly name.
+        o1 = entry[g1]["owner"]
+        o2 = entry[g2]["owner"]
+        entry["speaker"] = (
+            sp1.get(o1, {}).get("name")
+            or sp2.get(o2, {}).get("name")
+            or o1
+            or o2
+        )
         results.append(entry)
     return results
 
