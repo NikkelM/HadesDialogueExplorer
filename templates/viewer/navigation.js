@@ -351,6 +351,20 @@ export function eligibilityRedirectTarget(hasUsableSave, dialogue) {
 // The nikkelm.dev-style footer is a single page-level element in index.html
 // (below <main>), so no per-view rendering is needed here.
 
+// Base document title; the current view/entity is appended after it by
+// setDocumentTitle so the browser tab, history entries and bookmarks are
+// meaningful (this is a hash-driven SPA - the static index.html title never
+// changes on its own).
+const APP_TITLE = 'Hades Dialogue Explorer';
+
+// Set document.title to the app name followed by the given segments (most- to
+// least-specific), dropping empty ones and joining with " - ". Called from
+// applyState on every navigation (including hashchange back/forward), so each
+// history entry carries its own title and the tab reflects the open entity.
+function setDocumentTitle(...segments) {
+    document.title = [APP_TITLE, ...segments.filter(Boolean)].join(' - ');
+}
+
 function applyState(state) {
     const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
     if (view === 'speaker') {
@@ -370,6 +384,7 @@ function applyState(state) {
             const entry = speakerId ? speakers[speakerId] : null;
             searchInput.value = (entry && entry.name) || ref || '';
         }
+        setDocumentTitle((speakerId && speakers[speakerId] && speakers[speakerId].name) || ref);
         // Onboarding: first time a speaker overview actually renders, offer
         // the speaker tour (no-op on later visits / when opted out).
         if (speakerId) maybeStartSpeakerTour();
@@ -383,6 +398,7 @@ function applyState(state) {
         });
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = '';
+        setDocumentTitle('Cross-game Duplicates');
         // Onboarding: first time the duplicates view renders, offer its tour.
         maybeStartDuplicatesTour();
         return;
@@ -397,6 +413,7 @@ function applyState(state) {
         applyLayoutMode('eligibility');
         const name = state.dialogue || null;
         renderEligibility(name);
+        setDocumentTitle(name);
         const searchInput = document.getElementById('search');
         if (searchInput) searchInput.value = name || '';
         // Onboarding: first time the tracer renders for a dialogue (the save is
@@ -409,12 +426,14 @@ function applyState(state) {
     if (name) {
         selectTextline(name);
         document.getElementById('search').value = name;
+        setDocumentTitle(name);
         // Onboarding: first time a dialogue detail renders, offer the home
         // tour - covers both the first-visit landing and a deep link to a
         // specific dialogue. Runs on the open dialogue, not a forced default.
         maybeStartHomeTour();
     } else {
         clearSelection();
+        setDocumentTitle();
     }
 }
 
