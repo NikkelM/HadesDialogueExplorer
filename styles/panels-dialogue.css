@@ -92,6 +92,36 @@
     cursor: help;
     font-family: var(--font-mono);
 }
+/* A conditional closing-line group: closing lines the engine plays only when a
+   GameStateRequirements gate is satisfied (e.g. a different coda depending on
+   whether another line was seen). The "Only when ..." note heads the group and
+   its lines sit just beneath it, tinted so the conditional block reads apart
+   from the unconditional closing lines around it. */
+.end-line-group {
+    /* Extra space above the group separates it from the preceding closing line
+       (or the previous conditional group), so the "only when" note reads as
+       heading the lines below it rather than trailing the ones above. */
+    margin: 14px 0 4px;
+}
+.end-line-cond-note {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    /* Indent to sit above the closing lines' text (past their accent border +
+       padding), so the note reads as a label for the indented lines beneath. */
+    padding-left: 13px;
+    margin: 0 0 2px;
+    cursor: help;
+    line-height: 1.5;
+}
+.end-line-cond-tag {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+}
+.end-line-group .dialogue-line.end-line {
+    opacity: 1;
+}
 
 .choice-name {
     font-style: normal;

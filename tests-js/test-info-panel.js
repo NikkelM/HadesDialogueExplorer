@@ -1531,6 +1531,43 @@ test('closing voicelines (endLines) render speaker-prefixed after the main dialo
 });
 
 
+test('conditional closing voicelines group under an "only when" note', () => {
+    const data = buildFixtureData();
+    data.reqTypeLabels = {
+        ...data.reqTypeLabels,
+        RequiredTextLines: 'Must have played (ALL)',
+        RequiredFalseTextLines: 'Must NOT have played',
+    };
+    data.textlines.SeenGate01 = {
+        owner: 'NPC_X_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_X_01', text: 'A gating line.' }],
+        requirements: {}, otherRequirements: {},
+    };
+    data.textlines.CondEndDemo = {
+        owner: 'NPC_X_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 2,
+        dialogueLines: [{ speaker: 'NPC_X_01', text: 'Main.' }],
+        endLines: [
+            // Two mutually-exclusive codas, each its own condGroup, gated on
+            // whether SeenGate01 has played (the Homer / Inspect_G_Intro_01 shape).
+            { speaker: 'PlayerUnit', text: 'Seen it.', condGroup: 0, requirements: { RequiredTextLines: ['SeenGate01'] } },
+            { speaker: 'PlayerUnit', text: 'Not seen.', condGroup: 1, requirements: { RequiredFalseTextLines: ['SeenGate01'] } },
+        ],
+        requirements: {}, otherRequirements: {},
+    };
+    loadData(data);
+    renderInfo('CondEndDemo');
+    // Two conditional groups -> two "Only when" notes, each in its own wrapper.
+    assert.equal((lastHtml.match(/end-line-cond-note/g) || []).length, 2);
+    assert.equal((lastHtml.match(/class="end-line-group"/g) || []).length, 2);
+    assert.match(lastHtml, /Only when/);
+    // The gating textline is referenced (navigable) inside the note.
+    assert.match(lastHtml, /class="choice-link"[^>]*>SeenGate01</);
+    // Both coda subtitles still render as end lines.
+    assert.match(lastHtml, /<div class="dialogue-line end-line">.*Seen it\./);
+    assert.match(lastHtml, /<div class="dialogue-line end-line">.*Not seen\./);
+});
+
+
 test('bare-key {Count} objects collapse to just the count', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');

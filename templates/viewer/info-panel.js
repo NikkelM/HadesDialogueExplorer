@@ -1746,23 +1746,79 @@ function computeChoiceLetters(choices) {
 // Each entry is speaker-prefixed like the main lines. A ``text`` entry shows its
 // subtitle (like the main lines); a ``cue``-only entry (a non-subtitled audio
 // cue, e.g. a sound effect) shows the trimmed cue id as a muted chip.
+//
+// A closing line may be conditional: the engine gates some voice-line groups on
+// game state (``GameStateRequirements``) and plays only the eligible one - e.g.
+// a different coda depending on whether another line was seen. Such lines carry
+// a per-group ``condGroup`` id plus the group's extracted ``requirements`` /
+// ``otherRequirements``; consecutive lines sharing a ``condGroup`` render under
+// a single "only plays when ..." note. (Choice-gated codas are routed to the
+// choice-child textline at extract time, so they appear as that branch's plain
+// closing lines rather than a condition here.)
 function _renderEndLinesHtml(endLines) {
     if (!Array.isArray(endLines) || endLines.length === 0) return '';
     let html = '<div class="end-lines">'
         + '<div class="end-lines-label" data-tooltip="Voicelines this dialogue plays after its main lines (EndCue / EndVoiceLines).">Closing voicelines</div>';
-    for (const line of endLines) {
-        const speaker = line.speaker
-            ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
-            : '';
-        if (line.text) {
-            html += `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
-        } else if (line.cue) {
-            html += `<div class="dialogue-line end-line">${speaker}`
-                + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
+    let i = 0;
+    while (i < endLines.length) {
+        const cond = endLines[i].condGroup;
+        if (cond === undefined) {
+            html += _renderEndLineHtml(endLines[i]);
+            i++;
+            continue;
         }
+        // Gather the run of consecutive lines sharing this conditional group.
+        const group = [];
+        while (i < endLines.length && endLines[i].condGroup === cond) {
+            group.push(endLines[i]);
+            i++;
+        }
+        html += `<div class="end-line-group">`
+            + _renderEndLineConditionHtml(group[0])
+            + group.map(_renderEndLineHtml).join('')
+            + `</div>`;
     }
     html += '</div>';
     return html;
+}
+
+// One closing line: speaker prefix + subtitle text, or a muted cue chip when the
+// line has no subtitle.
+function _renderEndLineHtml(line) {
+    const speaker = line.speaker
+        ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
+        : '';
+    if (line.text) {
+        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
+    }
+    if (line.cue) {
+        return `<div class="dialogue-line end-line">${speaker}`
+            + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
+    }
+    return '';
+}
+
+// The "only plays when ..." note heading a conditional closing-line group,
+// built from the group's extracted textline ``requirements`` (rendered as their
+// type pill + navigable names) and ``otherRequirements`` (rendered as the same
+// friendly clauses used in the Other Requirements section).
+function _renderEndLineConditionHtml(line) {
+    const parts = [];
+    for (const [type, names] of Object.entries(line.requirements || {})) {
+        if (!Array.isArray(names) || names.length === 0) continue;
+        const links = names.map(n => textlines[n]
+            ? `<a class="choice-link" onclick="navigateTo(${jsAttr(n)})">${escapeHtml(n)}</a>`
+            : escapeHtml(n)).join(', ');
+        parts.push(`${renderReqTypeHtml(type)}: ${links}`);
+    }
+    for (const [key, val] of Object.entries(line.otherRequirements || {})) {
+        parts.push(renderOtherReqEntryHtml(key, val));
+    }
+    if (parts.length === 0) return '';
+    return `<div class="end-line-cond-note" data-tooltip="This closing line only plays when the condition holds; the engine picks whichever gated group is eligible.">`
+        + `<span class="end-line-cond-tag">Only when</span> `
+        + parts.join(` <span class="other-req-and">AND</span> `)
+        + `</div>`;
 }
 
 // Render the dialogue lines + textline-typed requirements + other

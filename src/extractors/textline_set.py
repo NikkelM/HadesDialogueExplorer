@@ -328,50 +328,165 @@ def iter_voice_cues(container, _depth: int = 0):
             yield from iter_voice_cues(el, _depth + 1)
 
 
-def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker):
-    """Build a textline's ``endLines`` - the closing voicelines it plays after
-    its main dialogue.
+def _gsr_records(gsr):
+    """The requirement records inside a ``GameStateRequirements`` table (its
+    array part). ``[]`` for a missing / non-table gate."""
+    return list(gsr.array) if isinstance(gsr, LuaTable) else []
 
-    Captures two fields:
-      * ``EndCue`` (H1 only) - a single bare ``/VO/<id>`` cue string. These have
-        no subtitle text in the game data (audio-only, no in-game caption), so
-        the entry carries only the trimmed cue id.
-      * ``EndVoiceLines`` (both games) - a table whose array holds cue entries
-        (``{ Cue, Text?, Speaker? }``). Entries with inline ``Text`` resolve to a
-        subtitle like the main lines; bare ``{ Cue }`` entries (no Text) fall
-        back to the trimmed cue id.
 
-    Each result entry is ``{speaker, text}`` when a subtitle is available, else
-    ``{speaker, cue}`` (trimmed ``/VO/`` id). Returns ``[]`` when the textline
-    has no closing voicelines.
+# Path segment marking a per-textline dialogue-choice-outcome lookup: the engine
+# records ``TextLinesChoiceRecord[<setName>] = <ChoiceText>`` when the player
+# picks an option, and closing-line gates read it back to branch the coda.
+_CHOICE_RECORD_KEY = "TextLinesChoiceRecord"
 
-    Callbacks (provided per game so text / speaker resolution matches the main
-    line extraction):
-      * ``resolve_text(entry)`` -> subtitle ``str`` or ``None``.
-      * ``resolve_speaker(entry, table)`` -> speaker id (``table`` is the
-        ``EndVoiceLines`` table, so a table-level ``UsePlayerSource`` /
-        ``Speaker`` can override the per-entry resolution).
-      * ``end_cue_speaker(cue_str)`` -> speaker id for a bare ``EndCue``.
+
+def _choice_target_from_record(rec, parent_name):
+    """If ``rec`` is a *pure* single choice-outcome gate on ``parent_name`` -
+    ``{Path=[..,"TextLinesChoiceRecord",<parent>], IsAny=[<one ChoiceText>]}``
+    with no other keys - return the synthetic choice-child name
+    ``<parent><ChoiceText>`` whose branch that coda belongs to; else ``None``.
+
+    Multi-value ``IsAny`` (an OR across choices) and records carrying any extra
+    condition fall through to ``None`` so their coda stays a labelled
+    conditional on the parent rather than being mis-routed to one branch.
     """
-    end_lines = []
+    if not isinstance(rec, LuaTable):
+        return None
+    if set(rec.named.keys()) != {"Path", "IsAny"}:
+        return None
+    path = rec.get("Path")
+    isany = rec.get("IsAny")
+    if not isinstance(path, LuaTable) or not isinstance(isany, LuaTable):
+        return None
+    parts = [p for p in path.array if isinstance(p, str)]
+    if len(parts) < 2 or parts[-2] != _CHOICE_RECORD_KEY or parts[-1] != parent_name:
+        return None
+    picks = [c for c in isany.array if isinstance(c, str)]
+    if len(picks) != 1:
+        return None
+    return parent_name + picks[0]
+
+
+def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker,
+                    *, parent_name=None, extract_group_reqs=None):
+    """Build a textline's closing voicelines (the ``endLines`` it plays after
+    its main dialogue), honouring per-group ``GameStateRequirements``.
+
+    Captures:
+      * ``EndCue`` (H1 only) - a single bare ``/VO/<id>`` cue string (audio-only,
+        no subtitle), stored as a trimmed cue id.
+      * ``EndVoiceLines`` (both games) - a table whose top-level segments are
+        flat cue entries and/or *voice-line groups*. A table-level
+        ``GameStateRequirements`` gates every segment; a group may add its own.
+
+    Each closing line is ``{speaker, text}`` (subtitle available) else
+    ``{speaker, cue}`` (trimmed ``/VO/`` id). The engine plays *every* eligible
+    group, so gated groups are surfaced individually:
+
+      * A group gated *solely* on a dialogue-choice outcome
+        (``TextLinesChoiceRecord.<parent> IsAny [<ChoiceText>]``) plays only
+        after that choice, so its lines are ROUTED to the choice child
+        ``<parent><ChoiceText>`` with the now-implied choice gate dropped (they
+        are unconditional within that branch). See ``walk_textline_sections``.
+      * A group gated on any other state stays on the parent; each of its lines
+        gets a ``condGroup`` id plus the group's extracted ``requirements`` /
+        ``otherRequirements`` so the viewer can label it "plays if ...".
+      * An ungated group / cue (the overwhelming majority) yields plain
+        ``{speaker, text|cue}`` lines, so the ``endLines`` shape is unchanged.
+
+    Returns ``(parent_lines, routed)``; ``routed`` is ``{child_name: [lines]}``
+    and is empty unless ``parent_name`` + ``extract_group_reqs`` enable the
+    choice / requirement handling. H1 passes neither (and has no
+    ``EndVoiceLines`` gates), so it keeps the old flat behaviour with an empty
+    ``routed``.
+
+    Callbacks (per game, matching the main-line extraction):
+      * ``resolve_text(entry)`` -> subtitle ``str`` or ``None``.
+      * ``resolve_speaker(entry, group)`` -> speaker id.
+      * ``end_cue_speaker(cue_str)`` -> speaker id for a bare ``EndCue``.
+      * ``extract_group_reqs(gsr_tables)`` -> ``{requirements, otherRequirements,
+        ...}`` merged across the given ``GameStateRequirements`` tables (the
+        per-game requirement extractor; omit to skip requirement surfacing).
+    """
+    parent_lines = []
+    routed = {}
+    next_cond = [0]
+    # Signature (GameStateRequirements table identities) + id of the last
+    # conditional group placed, so consecutive segments sharing one condition -
+    # e.g. several flat cues under a single table-level gate (ChronosReveal01) -
+    # collapse into one group and render under a single "only when" note rather
+    # than repeating it per line. Reset on any ungated / routed segment so a run
+    # is always contiguous.
+    last_sig = [None]
+    last_gid = [None]
+
+    def make_line(entry, group):
+        text = resolve_text(entry)
+        speaker = resolve_speaker(entry, group)
+        if isinstance(text, str) and text:
+            return {"speaker": speaker, "text": text}
+        cue = entry.get("Cue")
+        if isinstance(cue, str) and cue:
+            return {"speaker": speaker, "cue": _VO_PREFIX_RE.sub("", cue)}
+        return None
+
+    def place(lines, gsr_tables):
+        lines = [ln for ln in lines if ln]
+        if not lines:
+            return
+        records = [r for t in gsr_tables for r in _gsr_records(t)]
+        if not records:
+            parent_lines.extend(lines)
+            last_sig[0] = None
+            return
+        # Pure single choice-outcome gate -> route the coda to the choice child.
+        if parent_name is not None and len(records) == 1:
+            target = _choice_target_from_record(records[0], parent_name)
+            if target is not None:
+                routed.setdefault(target, []).extend(lines)
+                last_sig[0] = None
+                return
+        # Any other gate -> a labelled conditional coda kept on the parent.
+        # Consecutive segments under the same gate(s) share one group id.
+        sig = tuple(id(t) for t in gsr_tables)
+        if sig == last_sig[0]:
+            gid = last_gid[0]
+        else:
+            gid = next_cond[0]
+            next_cond[0] += 1
+            last_sig[0] = sig
+            last_gid[0] = gid
+        reqs = extract_group_reqs(gsr_tables) if extract_group_reqs else {}
+        other = reqs.get("otherRequirements") or {}
+        req = reqs.get("requirements") or {}
+        for ln in lines:
+            ln["condGroup"] = gid
+            if other:
+                ln["otherRequirements"] = other
+            if req:
+                ln["requirements"] = req
+        parent_lines.extend(lines)
+
     end_cue = tl_table.get("EndCue")
     if isinstance(end_cue, str) and end_cue:
-        end_lines.append({
+        parent_lines.append({
             "speaker": end_cue_speaker(end_cue),
             "cue": _VO_PREFIX_RE.sub("", end_cue),
         })
+
     end_voice = tl_table.get("EndVoiceLines")
     if isinstance(end_voice, LuaTable):
-        for entry, group in iter_voice_cues(end_voice):
-            text = resolve_text(entry)
-            speaker = resolve_speaker(entry, group)
-            if isinstance(text, str) and text:
-                end_lines.append({"speaker": speaker, "text": text})
-                continue
-            cue = entry.get("Cue")
-            if isinstance(cue, str) and cue:
-                end_lines.append({"speaker": speaker, "cue": _VO_PREFIX_RE.sub("", cue)})
-    return end_lines
+        table_gsr = end_voice.get("GameStateRequirements")
+        table_gsr = table_gsr if isinstance(table_gsr, LuaTable) else None
+        for seg in iter_top_segments(end_voice):
+            if _is_cue_entry(seg):
+                place([make_line(seg, end_voice)], [table_gsr] if table_gsr else [])
+            elif isinstance(seg, LuaTable):
+                group_gsr = seg.get("GameStateRequirements")
+                group_gsr = group_gsr if isinstance(group_gsr, LuaTable) else None
+                lines = [make_line(c, g) for c, g in iter_voice_cues(seg)]
+                place(lines, [t for t in (table_gsr, group_gsr) if t])
+    return parent_lines, routed
 
 
 # --- Section-key audit (see generate_data.py) ------------------------
@@ -550,7 +665,24 @@ def walk_textline_sections(
         # by other textlines' requirements, so each choice is surfaced as
         # a synthetic sibling textline so the graph resolves cleanly.
         # `_merge_synthetic` keeps any real definition of the same name.
-        for syn_name, syn_data in extract_variants(tl_name, tl_table).items():
+        variants = extract_variants(tl_name, tl_table)
+        # Route any choice-gated closing voicelines the parent set aside (see
+        # `build_end_lines`) onto the matching choice child: a coda gated solely
+        # on `TextLinesChoiceRecord.<parent> IsAny [ChoiceText]` plays only after
+        # that choice, so it belongs on `<parent><ChoiceText>`, not the parent.
+        # The now-implied choice gate is already dropped. A target with no
+        # materialised child (a choice without a follow-up textline) falls back
+        # to the parent so the coda is never silently dropped.
+        parent = section.get(tl_name)
+        routed = parent.pop("_choiceEndLines", None) if isinstance(parent, dict) else None
+        if routed:
+            for child_name, lines in routed.items():
+                child = variants.get(child_name)
+                if isinstance(child, dict):
+                    child.setdefault("endLines", []).extend(lines)
+                elif isinstance(parent, dict):
+                    parent.setdefault("endLines", []).extend(lines)
+        for syn_name, syn_data in variants.items():
             if section_tier is not None:
                 syn_data["narrativePrioritySectionTier"] = section_tier
             _merge_synthetic(section, syn_name, syn_data)
@@ -864,7 +996,9 @@ def extract_textline(
         derived = cue_speaker_resolver({"Cue": cue_str}) if cue_speaker_resolver is not None else None
         return derived or fallback_speaker
 
-    end_lines = build_end_lines(tl_table, _end_text, _end_speaker, _end_cue_speaker)
+    # H1 EndVoiceLines carry no GameStateRequirements (verified across the H1
+    # scripts), so ``routed`` is always empty here - the flat behaviour holds.
+    end_lines, _ = build_end_lines(tl_table, _end_text, _end_speaker, _end_cue_speaker)
     if end_lines:
         data["endLines"] = end_lines
 

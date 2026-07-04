@@ -169,7 +169,149 @@ def test_hades2_extracts_nested_endvoicelines_group():
     assert end == [{"speaker": "NPC_Eris_01", "text": "Sure has!"}]
 
 
-# Main lines held under explicit ``[N] =`` positional groups (each a group with
+# EndVoiceLines groups each gated on a dialogue-choice outcome
+# (``TextLinesChoiceRecord.<parent> IsAny {ChoiceText}``) - the ErisBecomingCloser01
+# shape. Each coda plays only after its choice, so it must land on the matching
+# synthetic choice child, NOT the parent.
+_H2_CHOICE_END_LUA = """{
+    InteractTextLineSets = {
+        Foo01 = {
+            { Cue = "/VO/Hecate_0001", Text = "Prompt." },
+            EndVoiceLines = {
+                {
+                    GameStateRequirements = {
+                        { Path = { "CurrentRun", "TextLinesChoiceRecord", "Foo01" }, IsAny = { "Choice_Decline" } },
+                    },
+                    { Cue = "/VO/Mel_1", Text = "Please don't.", UsePlayerSource = true },
+                    { Cue = "/VO/Eris_1", Text = "Aw...", ObjectType = "NPC_Eris_01" },
+                },
+                {
+                    GameStateRequirements = {
+                        { Path = { "CurrentRun", "TextLinesChoiceRecord", "Foo01" }, IsAny = { "Choice_Accept" } },
+                    },
+                    { Cue = "/VO/Mel_2", Text = "Whew...", UsePlayerSource = true },
+                },
+            },
+            {
+                Text = "Choice_Foo01",
+                IsNarration = true,
+                Choices = {
+                    { ChoiceText = "Choice_Decline",
+                        { Cue = "/VO/Mel_3", Text = "Decline body.", UsePlayerSource = true },
+                    },
+                    { ChoiceText = "Choice_Accept",
+                        { Cue = "/VO/Mel_4", Text = "Accept body.", UsePlayerSource = true },
+                    },
+                },
+            },
+        },
+    },
+}"""
+
+
+def test_hades2_routes_choice_gated_endvoicelines_to_choice_children():
+    owner = LuaParser(f"O = {_H2_CHOICE_END_LUA}").parse_file()["O"]
+    sections = h2_extract_textline_sections(
+        "NPC_Eris_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+    )
+    section = sections["InteractTextLineSets"]
+    parent = section["Foo01"]
+    # Both codas are pure choice gates -> nothing stays on the parent, and the
+    # temporary routing key never leaks into the output.
+    assert "endLines" not in parent
+    assert "_choiceEndLines" not in parent
+    # Decline coda lands on the Decline child, attributed per sub-cue, with the
+    # now-implied choice gate dropped (no condGroup / requirements).
+    assert section["Foo01Choice_Decline"]["endLines"] == [
+        {"speaker": "PlayerUnit", "text": "Please don't."},
+        {"speaker": "NPC_Eris_01", "text": "Aw..."},
+    ]
+    assert section["Foo01Choice_Accept"]["endLines"] == [
+        {"speaker": "PlayerUnit", "text": "Whew..."},
+    ]
+
+
+# EndVoiceLines groups gated on non-choice game state (the Inspect_G_Intro_01
+# "Homer" shape: PathTrue / PathFalse on whether another line was seen). These
+# stay on the parent but carry a ``condGroup`` id + the extracted requirement so
+# the viewer can label each "plays if ...".
+_H2_COND_END_LUA = """{
+    InteractTextLineSets = {
+        Foo01 = {
+            { Cue = "/VO/Storyteller_1", Text = "Main." },
+            EndVoiceLines = {
+                {
+                    GameStateRequirements = {
+                        { PathTrue = { "GameState", "TextLinesRecord", "SomeOther01" } },
+                    },
+                    { Cue = "/VO/Mel_1", Text = "Seen it.", UsePlayerSource = true },
+                },
+                {
+                    GameStateRequirements = {
+                        { PathFalse = { "GameState", "TextLinesRecord", "SomeOther01" } },
+                    },
+                    { Cue = "/VO/Mel_2", Text = "Not seen.", UsePlayerSource = true },
+                },
+            },
+        },
+    },
+}"""
+
+
+def test_hades2_labels_non_choice_conditional_endvoicelines():
+    owner = LuaParser(f"O = {_H2_COND_END_LUA}").parse_file()["O"]
+    sections = h2_extract_textline_sections(
+        "NPC_Eris_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+    )
+    parent = sections["InteractTextLineSets"]["Foo01"]
+    assert "_choiceEndLines" not in parent
+    end = parent["endLines"]
+    assert len(end) == 2
+    # Each line keeps its subtitle + speaker, gains a per-group condGroup id, and
+    # carries the group's extracted requirement (Path record or textline edge).
+    assert end[0]["text"] == "Seen it." and end[0]["speaker"] == "PlayerUnit"
+    assert end[1]["text"] == "Not seen."
+    assert end[0]["condGroup"] == 0 and end[1]["condGroup"] == 1
+    assert end[0].get("otherRequirements") or end[0].get("requirements")
+    assert end[1].get("otherRequirements") or end[1].get("requirements")
+
+
+# A single table-level GameStateRequirements gating several flat cues (the
+# ChronosReveal01 shape). All cues share the one gate, so they must collapse
+# into ONE conditional group (one "only when" note), not one per line.
+_H2_TABLE_COND_END_LUA = """{
+    InteractTextLineSets = {
+        Foo01 = {
+            { Cue = "/VO/Chronos_1", Text = "Main." },
+            EndVoiceLines = {
+                GameStateRequirements = {
+                    { PathFalse = { "CurrentRun", "TextLinesRecord", "FollowUp01" } },
+                },
+                { Cue = "/VO/Chronos_2", Text = "Line one." },
+                { Cue = "/VO/Chronos_3", Text = "Line two." },
+            },
+        },
+    },
+}"""
+
+
+def test_hades2_groups_shared_table_level_conditional_endvoicelines():
+    owner = LuaParser(f"O = {_H2_TABLE_COND_END_LUA}").parse_file()["O"]
+    sections = h2_extract_textline_sections(
+        "NPC_Chronos_01", owner, "Test.lua",
+        section_keys={"InteractTextLineSets"},
+    )
+    end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
+    assert len(end) == 2
+    assert end[0]["text"] == "Line one." and end[1]["text"] == "Line two."
+    # Same table-level gate -> one shared condGroup, not one per cue.
+    assert end[0]["condGroup"] == 0 and end[1]["condGroup"] == 0
+    assert end[0].get("otherRequirements") or end[0].get("requirements")
+
+
+
 # RandomRemaining + nested cues), the shape of the Bath House / Fishing / Taverna
 # repeatable sets that previously extracted with zero dialogue lines.
 _H2_INDEXED_MAIN_LUA = """{

@@ -335,9 +335,27 @@ def extract_textline(
             return None
         return _FORMAT_TAG_RE.sub("", t)
 
-    end_lines = build_end_lines(tl_table, _end_text, _cue_speaker, lambda c: fallback_speaker)
+    # Requirements on a conditional closing-line group: run each group's
+    # GameStateRequirements table(s) through the same RequirementSet extractor
+    # the main gates use, merging table-level + group-level records so the
+    # viewer can label a gated coda "plays if ...".
+    def _end_group_reqs(gsr_tables):
+        merged = {"requirements": {}, "otherRequirements": {}, "orBranches": [], "flags": {}}
+        for gsr in gsr_tables:
+            if isinstance(gsr, LuaTable):
+                _merge_requirement_result(merged, extract_requirements(gsr, named_requirements))
+        return merged
+
+    end_lines, end_routed = build_end_lines(
+        tl_table, _end_text, _cue_speaker, lambda c: fallback_speaker,
+        parent_name=tl_name, extract_group_reqs=_end_group_reqs)
     if end_lines:
         data["endLines"] = end_lines
+    # Choice-gated codas set aside for the matching synthetic choice child;
+    # walk_textline_sections.merge_variants moves these onto that child and
+    # strips this temporary key from the parent.
+    if end_routed:
+        data["_choiceEndLines"] = end_routed
 
     # Drop empty containers so downstream code's
     # ``data.get("orBranches") or []`` idiom keeps working and merged
