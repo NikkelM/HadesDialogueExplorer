@@ -1173,9 +1173,25 @@ const _GATE_OF_PHRASE = { min: 'at least', max: 'at most', eq: 'exactly', neq: '
 // with comma+space spacing and map values use the ``Name >= Count``
 // idiom rather than the raw JSON fallback.
 function _renderBareKeyEntry(key, val) {
+    const health = _renderHealthFractionEntry(key, val);
+    if (health !== null) return health;
     const noneEntry = _renderMaxZeroNoneEntry(key, val);
     if (noneEntry !== null) return noneEntry;
     return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
+}
+
+// H1 carries the player-health gate as a bare ``RequiredMaxHealthFraction`` /
+// ``RequiredMinHealthFraction`` field (a 0..1 fraction), which would otherwise
+// render as "Maximum health fraction : 0.5". H2 expresses the same gate through
+// ``FunctionName:RequiredHealthFraction`` and renders "Player health at most
+// 33%". Unify H1 onto that nicer phrasing (percentage + at most/at least),
+// matching the H2 function-gate wrapper. Returns null for any other key/shape.
+function _renderHealthFractionEntry(key, val) {
+    if (key !== 'RequiredMaxHealthFraction' && key !== 'RequiredMinHealthFraction') return null;
+    if (typeof val !== 'number') return null;
+    const pct = Math.round(val * 100);
+    const word = key === 'RequiredMaxHealthFraction' ? 'at most' : 'at least';
+    return `<span class="other-req-func-gate">Player health ${word} ${pct}%</span>`;
 }
 
 // A "max threshold of 0" bare gate (e.g. H1 ``RequiredMaxLastStands: 0``) means

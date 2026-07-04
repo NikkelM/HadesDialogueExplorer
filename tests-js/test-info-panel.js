@@ -847,6 +847,17 @@ test('H2 scalar cumulative-count gate renders "No" / "Has <noun>"; value fields 
     assert.match(r(['GameState', 'LastBossHealthBarRecord', 'Chronos'], '<=', 0), /Previous-encounter health of Chronos.*&lt;=.*0|Previous-encounter health of Chronos.*<=.*0/);
 });
 
+test('H1 RequiredMaxHealthFraction renders like H2 ("Player health at most N%")', () => {
+    loadData(buildFixtureData());
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5)), 'Player health at most 50%');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.33)), 'Player health at most 33%');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinHealthFraction', 0.25)), 'Player health at least 25%');
+    // No leftover "fraction" label or raw 0.xx value.
+    const html = renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5);
+    assert.doesNotMatch(html, /fraction/i);
+    assert.doesNotMatch(html, /0\.5/);
+});
+
 
 // ``FunctionName:<name>`` compound keys carry a record array whose
 // entries each have ``FunctionName`` + optional ``FunctionArgs``. The
