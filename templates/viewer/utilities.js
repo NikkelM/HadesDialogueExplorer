@@ -40,6 +40,21 @@ export function saveStatusTooltip(status) {
     return SAVE_STATUS_TOOLTIPS[status] || '';
 }
 
+// Tag every direct child of a responsive (``auto-fill``) grid that lands in an
+// even column with ``altClass``, so CSS can tint alternate columns as distinct
+// bands. CSS has no per-column selector and the column count is dynamic, so it
+// is read from the resolved grid tracks. Idempotent - toggles the class both
+// ways, so it is safe to call after every render and on resize.
+export function applyColumnStripes(listEl, altClass) {
+    if (!listEl || typeof getComputedStyle !== 'function') return;
+    const tracks = getComputedStyle(listEl).gridTemplateColumns.split(' ').filter(Boolean);
+    const cols = tracks.length || 1;
+    const items = listEl.children;
+    for (let i = 0; i < items.length; i++) {
+        items[i].classList.toggle(altClass, cols > 1 && (i % cols) % 2 === 1);
+    }
+}
+
 // Tooltip for a requirement-group / OR-option / "other requirements" dot.
 // Generalised over BOTH dialogue-line requirements and non-textline game-state
 // conditions, since a group dot can now reflect either (or a mix). Shared by

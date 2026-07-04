@@ -115,17 +115,28 @@
 
 .duplicates-detail-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(405px, 1fr));
     align-items: start;
-    gap: 0.3rem 0.8rem;
+    column-gap: 0.8rem;
+    row-gap: 0.2rem;
 }
 
 .duplicates-entry {
     display: grid;
-    grid-template-columns: max-content auto auto;
+    grid-template-columns: 1fr auto auto;
     align-items: center;
-    justify-content: start;
     column-gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+}
+
+/* The grid uses ``auto-fill`` so its column count is dynamic and unbounded
+   on wide screens. CSS has no per-column selector, so ``applyColumnStripes``
+   (utilities.js, driven from duplicates-view.js) tags every entry in an even
+   grid column and this rule tints it - a subtle rounded band, inset from the
+   text by the entry padding, that separates adjacent columns. */
+.duplicates-entry.dup-col-alt {
+    background-color: var(--col-stripe);
 }
 
 .duplicates-name {
@@ -152,9 +163,4 @@
 
 .duplicates-game-link:hover {
     border-color: var(--accent-color);
-}
-
-/* Keep the wider name-to-pill gap while the two game pills sit close together. */
-.duplicates-entry > .duplicates-game-link:first-of-type {
-    margin-left: 0.35rem;
 }

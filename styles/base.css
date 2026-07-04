@@ -35,6 +35,11 @@
     --text-dim:     #6b7280;   /* dim secondary text */
     --danger:       #e57373;   /* blocked / warning / error red */
 
+    /* Subtle tint for striping alternate columns of a responsive grid (the
+       cross-game duplicates grid and the speaker overview's textline lists),
+       so adjacent columns read as distinct bands. One source of truth. */
+    --col-stripe: color-mix(in srgb, var(--border) 55%, transparent);
+
     /* Per-game theme colours, used to tint the game toggle's active button and
        the cross-game badges so Hades and Hades II are visually distinct. Hades
        1's UI was a red/crimson theme, Hades II's is blue. */
@@ -104,13 +109,7 @@
 }
 body {
     font-family: var(--font-sans);
-    background-color: var(--bg);
-    /* Faint dotted-grid backdrop, mirroring nikkelm.dev's .grid-backdrop. The
-       panels and main are transparent, so this subtle texture shows through the
-       whole app (most visibly in the empty/home state); the dots are --border
-       on --bg, so they stay very low-contrast behind dense content. */
-    background-image: radial-gradient(var(--border) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background: var(--bg);
     color: var(--text-color);
     height: 100vh;
     height: 100dvh;

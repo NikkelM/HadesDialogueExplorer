@@ -33,6 +33,7 @@ import {
     renderPlayOnceBadgeHtml,
     renderSectionHtml,
     renderSaveBadgeHtml,
+    applyColumnStripes,
 } from './utilities.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 import { mergedSectionKey, playRank } from './play-order.js';
@@ -668,7 +669,42 @@ let _listCtx = null;
 export function searchSpeakerTextlines(query) {
     _speakerQuery = query || '';
     const bodyEl = document.querySelector('.speaker-textlines .speaker-textline-body');
-    if (bodyEl) bodyEl.innerHTML = renderTextlineListBody();
+    if (bodyEl) {
+        bodyEl.innerHTML = renderTextlineListBody();
+        observeSpeakerColumns();
+    }
+}
+
+// A speaker's textline sections each flow into a responsive (``auto-fill``)
+// grid, so the column count is dynamic. Tag every direct child (row or
+// Alternates box) in an even column of every section grid with
+// ``speaker-col-alt`` so the stylesheet tints alternate columns as distinct
+// bands (mirrors the cross-game duplicates view). Recomputed after each render
+// and, via a reused ResizeObserver, whenever the panel resizes or a section is
+// expanded/collapsed (both change the layout without a full re-render).
+let _speakerColObserver = null;
+function stripeSpeakerColumns() {
+    if (typeof document.querySelectorAll !== 'function') return;
+    document.querySelectorAll('.speaker-textline-list')
+        .forEach(list => applyColumnStripes(list, 'speaker-col-alt'));
+}
+function observeSpeakerColumns() {
+    if (typeof document.querySelector !== 'function') return;
+    const host = document.querySelector('.speaker-textlines');
+    if (!host) return;
+    if (typeof ResizeObserver !== 'undefined') {
+        if (!_speakerColObserver) {
+            let queued = false;
+            _speakerColObserver = new ResizeObserver(() => {
+                if (queued) return;
+                queued = true;
+                requestAnimationFrame(() => { queued = false; stripeSpeakerColumns(); });
+            });
+        }
+        _speakerColObserver.disconnect();
+        _speakerColObserver.observe(host);
+    }
+    stripeSpeakerColumns();
 }
 
 // Section-header click target: toggle the group open/closed and record the
@@ -680,6 +716,7 @@ export function toggleSpeakerSection(headerEl, sectionKey) {
     const nowExpanded = group.classList.toggle('expanded');
     if (nowExpanded) _expandedSections.add(sectionKey);
     else _expandedSections.delete(sectionKey);
+    stripeSpeakerColumns();
 }
 
 // Render a section's rows, grouping mutually-exclusive alternate variants
@@ -845,4 +882,6 @@ export function renderSpeaker(speakerId, opts) {
         + renderAdjacency(entry, canonical)
         + renderTextlineList(entry, canonical, filter, eligFilter, game)
         + `</div>`;
+
+    observeSpeakerColumns();
 }

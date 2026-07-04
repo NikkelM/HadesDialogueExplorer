@@ -537,13 +537,24 @@ body.layout-speaker #panel-info {
     border-bottom: 1px solid var(--border);
 }
 .speaker-textline-row:last-child { border-bottom: none; }
-/* Rows inside a .speaker-alt-group box are inset on the right by the box's
-   border (1px) + padding (8px), which shifts their trailing badges left.
-   Reserve the same 9px inset on rows rendered directly in the list so the
-   priority / play-once badges line up whether or not a row sits inside an
-   Alternates box. */
+/* Rows inside a .speaker-alt-group box are inset by the box's border (1px) +
+   padding (8px). Reserve the same ~9px inset on both sides of rows rendered
+   directly in the list so (a) the priority / play-once badges line up whether
+   or not a row sits inside an Alternates box, and (b) the alternate-column
+   tint band has breathing room to the left of the name and right of the
+   badges. */
 .speaker-textline-list > .speaker-textline-row {
+    padding-left: 9px;
     padding-right: 9px;
+}
+
+/* Alternating column tint: ``stripeSpeakerColumns`` (speaker-view.js) tags
+   every direct child (row or Alternates box) of each section grid that lands
+   in an even column, and this rule tints it. Rows stack with no row-gap, so a
+   column's tinted rows read as one continuous band; the 2rem column-gap keeps
+   adjacent columns apart. Mirrors the cross-game duplicates grid. */
+.speaker-textline-list > .speaker-col-alt {
+    background-color: var(--col-stripe);
 }
 /* Mutually-exclusive alternate variants, clustered into one labelled box
    within a section (gold accent shared with the dialogue detail view). */
