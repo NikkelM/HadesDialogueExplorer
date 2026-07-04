@@ -252,3 +252,31 @@ class TestBuildAlternates:
             "Chat_A": ["Chat_B"],
             "Chat_B": ["Chat_A"],
         }
+
+    def test_content_alternate_group_linked_without_gate(self):
+        # Names in _CONTENT_ALTERNATE_GROUPS (issue #133) are linked even with no
+        # gating requirements and no shared name stem - the trailing "03" means
+        # the name-stem heuristic never groups them, so only the content list
+        # links them.
+        tls = {
+            "Inspect_Q_Boss01_03": _tl(),
+            "Inspect_Q_Boss02_03": _tl(),
+        }
+        assert build_alternates(tls) == {
+            "Inspect_Q_Boss01_03": ["Inspect_Q_Boss02_03"],
+            "Inspect_Q_Boss02_03": ["Inspect_Q_Boss01_03"],
+        }
+
+    def test_content_alternate_skips_absent_members(self):
+        # A content group only links members actually present in the textline
+        # set, so an H1 group never leaks into an H2-only build (and vice versa).
+        assert build_alternates({"Inspect_Q_Boss01_03": _tl()}) == {}
+
+    def test_content_alternate_multi_member_group_is_symmetric(self):
+        # A 4-member content group is emitted as one symmetric cluster (each
+        # member lists the other three).
+        members = {"MegaeraMeeting01", "MegaeraMeeting01_Alt",
+                   "MegaeraMeeting01_Alt_B", "MegaeraMeeting01_B"}
+        alt = build_alternates({m: _tl() for m in members})
+        for m in members:
+            assert set(alt[m]) == members - {m}
