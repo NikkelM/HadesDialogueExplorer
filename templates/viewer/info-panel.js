@@ -958,6 +958,16 @@ function _fnRefOrList(v) {
     return _renderOperandList(v);
 }
 
+// Shared friendly gloss for the player-health-fraction gate. Both games gate on
+// the same 0..1 fraction but carry it differently: H2 as
+// FunctionName:RequiredHealthFraction (Comparison + Value), H1 as the bare
+// RequiredMin/MaxHealthFraction fields. Centralised here so both render
+// identically, e.g. "Player health at most 33%".
+function _healthFractionGloss(word, fraction) {
+    const pct = Math.round((Number(fraction) || 0) * 100);
+    return `Player health ${word} ${pct}%`;
+}
+
 const _FN_RENDERERS = {
     RequiredAlive(a) {
         return `${_fnAliveSubject(a)} must be ${a.Alive === false ? 'dead' : 'alive'}`;
@@ -966,9 +976,8 @@ const _FN_RENDERERS = {
         return 'Vow of Rivals is active (boss fought in its unrivalled form)';
     },
     RequiredHealthFraction(a) {
-        const pct = Math.round((Number(a.Value) || 0) * 100);
         const w = _FN_CMP_WORDS[a.Comparison] || escapeHtml(String(a.Comparison));
-        return `Player health ${w} ${pct}%`;
+        return _healthFractionGloss(w, a.Value);
     },
     RequiredTraitNameInRoom(a) {
         return `This room offers the boon ${_valueChip(a.Name)}`;
@@ -1183,15 +1192,15 @@ function _renderBareKeyEntry(key, val) {
 // H1 carries the player-health gate as a bare ``RequiredMaxHealthFraction`` /
 // ``RequiredMinHealthFraction`` field (a 0..1 fraction), which would otherwise
 // render as "Maximum health fraction : 0.5". H2 expresses the same gate through
-// ``FunctionName:RequiredHealthFraction`` and renders "Player health at most
-// 33%". Unify H1 onto that nicer phrasing (percentage + at most/at least),
-// matching the H2 function-gate wrapper. Returns null for any other key/shape.
+// ``FunctionName:RequiredHealthFraction``. Both go through the shared
+// ``_healthFractionGloss`` so they render identically ("Player health at most
+// 33%"); this wraps it in the same func-gate span the H2 path uses. Returns
+// null for any other key/shape.
 function _renderHealthFractionEntry(key, val) {
     if (key !== 'RequiredMaxHealthFraction' && key !== 'RequiredMinHealthFraction') return null;
     if (typeof val !== 'number') return null;
-    const pct = Math.round(val * 100);
     const word = key === 'RequiredMaxHealthFraction' ? 'at most' : 'at least';
-    return `<span class="other-req-func-gate">Player health ${word} ${pct}%</span>`;
+    return `<span class="other-req-func-gate">${_healthFractionGloss(word, val)}</span>`;
 }
 
 // A "max threshold of 0" bare gate (e.g. H1 ``RequiredMaxLastStands: 0``) means

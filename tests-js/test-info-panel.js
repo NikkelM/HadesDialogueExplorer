@@ -856,6 +856,13 @@ test('H1 RequiredMaxHealthFraction renders like H2 ("Player health at most N%")'
     const html = renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5);
     assert.doesNotMatch(html, /fraction/i);
     assert.doesNotMatch(html, /0\.5/);
+    // Both games route through the shared _healthFractionGloss, so the H1 bare
+    // field and the H2 function-gate record must produce byte-identical HTML.
+    const h1 = renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.49);
+    const h2 = renderOtherReqEntryHtml('FunctionName:RequiredHealthFraction', [
+        { FunctionName: 'RequiredHealthFraction', FunctionArgs: { Comparison: '<=', Value: 0.49 } },
+    ]);
+    assert.equal(h1, h2);
 });
 
 
