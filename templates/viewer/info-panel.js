@@ -82,8 +82,8 @@ function kindTooltip(status, kind) {
 // satisfied ('met'). The user can still toggle any group; collapse state is not
 // persisted (each re-render recomputes it from the live verdict). Returns
 // ``[chevronGlyph, childExpandedClass]`` for interpolation into a group header.
-function metCollapse(verdict, showDots) {
-    const collapsed = showDots && verdict === 'met';
+function metCollapse(verdict, showDots, keepOpen = false) {
+    const collapsed = showDots && verdict === 'met' && !keepOpen;
     return [collapsed ? '\u25B6' : '\u25BC', collapsed ? '' : ' expanded'];
 }
 
@@ -1897,7 +1897,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
 // so both call sites use the exact same layout, branch numbering, and
 // collapse semantics. Returns an empty string when ``orBranches`` is
 // missing, not an array, or has no entries.
-function renderOrBranchesSectionHtml(orBranches, textlineName) {
+function renderOrBranchesSectionHtml(orBranches, textlineName, keepOpen = false) {
     const branches = Array.isArray(orBranches) ? orBranches : [];
     if (branches.length === 0) return '';
     const total = branches.length;
@@ -1907,7 +1907,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
     // Overall "alternates" verdict: met if any option's requirements hold.
     const gv = showDots ? orGroupVerdict(branches, ctx, textlineName) : null;
     const groupDot = gv ? statusDot(gv, kindTooltip(gv, 'aggregate'), 'aggregate') : '';
-    const [gChev, gExp] = metCollapse(gv, showDots);
+    const [gChev, gExp] = metCollapse(gv, showDots, keepOpen);
     let html = `<div class="req-section req-type-or-group">`
              + `<h4><span class="toggle">${gChev}</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
              + `<div class="req-section-children${gExp}">`;
@@ -1916,7 +1916,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
         // Per-option verdict: this branch's combined requirement + GameState dot.
         const bv = showDots ? orBranchVerdict(branch, ctx, textlineName) : null;
         const branchDot = bv ? statusDot(bv, kindTooltip(bv, 'aggregate'), 'aggregate') : '';
-        const [bChev, bExp] = metCollapse(bv, showDots);
+        const [bChev, bExp] = metCollapse(bv, showDots, keepOpen);
         html += `<div class="or-branch">`
               + `<h5 class="or-branch-header"><span class="toggle">${bChev}</span>`
               + `${branchDot}Option ${bi + 1} of ${total}</h5>`
@@ -1928,6 +1928,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
                 textlineName,
                 sourcesByType: {},
                 otherHeaderLabel: null,
+                keepOpen,
             }
         );
         html += renderChanceToPlayNoteHtml(branch.flags && branch.flags.chanceToPlay);
@@ -2018,6 +2019,10 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
                   + `</div>`;
             continue;
         }
+        // When a must-NOT-pass gate is currently satisfied (its host verdict is
+        // 'unmet' = blocking), its satisfied content IS the blocker, so keep it
+        // expanded (don't let the met sub-groups auto-collapse) and flag it.
+        const keepBlockerOpen = nkind === 'inverted' && s === 'unmet';
         const inner = renderRequirementsAndOtherHtml(
             resolved.requirements || {},
             resolved.otherRequirements || {},
@@ -2025,13 +2030,17 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
                 textlineName: hostTextlineName,
                 sourcesByType: {},
                 otherHeaderLabel: null,
+                keepOpen: keepBlockerOpen,
             }
-        ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName);
+        ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName, keepBlockerOpen);
+        const blockerNote = keepBlockerOpen
+            ? ` <span class="named-req-blocker-note" data-tooltip="This must-NOT-pass gate is currently satisfied, which is exactly what blocks the dialogue. The satisfied requirement is shown expanded below.">satisfied below, so blocked</span>`
+            : '';
         const [nChev, nExp] = metCollapse(s, showDots);
         html += `<div class="named-req-expand">`
               + `<h5 class="named-req-header">`
               + `<span class="toggle">${nChev}</span>`
-              + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
+              + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}${blockerNote}`
               + `</h5>`
               + `<div class="named-req-children${nExp}">${inner}</div>`
               + `</div>`;
@@ -2061,7 +2070,7 @@ function renderRequirementsAndOtherHtml(requirements, otherRequirements, options
 // with the matching requirement-section header. Reused verbatim by the
 // OR-branch and NamedRequirements call sites for identical markup.
 function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
-    const { textlineName, sourcesByType } = options;
+    const { textlineName, sourcesByType, keepOpen } = options;
     let html = '';
     const showDots = _saveDotsActive();
     const ctx = showDots ? getSaveContext() : null;
@@ -2094,7 +2103,7 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         // groups are inverted gates: mark them so, else aggregate.
         const gkind = (NEGATIVE_REQ_TYPES.has(type) || COUNT_MAX_REQ_TYPES.has(type)) ? 'inverted' : 'aggregate';
         const groupDot = v ? statusDot(v, kindTooltip(v, gkind), gkind) : '';
-        const [tChev, tExp] = metCollapse(v, showDots);
+        const [tChev, tExp] = metCollapse(v, showDots, keepOpen);
         html += `<div class="req-section req-type-${type}">`
               + `<h4><span class="toggle">${tChev}</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
               + `<div class="req-section-children${tExp}">`;
@@ -2139,7 +2148,7 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
 // expansion call sites, where the surrounding header already provides
 // scope).
 export function renderOtherRequirementsSectionHtml(requirements, otherRequirements, options) {
-    const { textlineName, otherHeaderLabel } = options;
+    const { textlineName, otherHeaderLabel, keepOpen } = options;
     if (Object.keys(otherRequirements).length === 0) return '';
 
     // With a matching save loaded, evaluate each non-textline gate against the
@@ -2217,7 +2226,7 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
     if (!otherHtml) return '';
     if (otherHeaderLabel) {
         const headerDot = showDots ? statusDot(overallVerdict, kindTooltip(overallVerdict, 'aggregate'), 'aggregate') : '';
-        const [oChev, oExp] = metCollapse(overallVerdict, showDots);
+        const [oChev, oExp] = metCollapse(overallVerdict, showDots, keepOpen);
         return `<div class="req-section req-type-other">`
               + `<h4><span class="toggle">${oChev}</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
               + `<div class="req-section-children${oExp}">${otherHtml}</div>`

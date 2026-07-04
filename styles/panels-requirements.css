@@ -438,6 +438,15 @@
     font-size: var(--fs-xs);
     margin-left: 4px;
 }
+/* Inline flag on a must-NOT-pass gate that is currently satisfied (the
+   blocker): the satisfied requirement is kept expanded below it. */
+.named-req-blocker-note {
+    color: var(--danger);
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    margin-left: 6px;
+    cursor: help;
+}
 .named-req-header {
     font-size: var(--fs-xs);
     margin: 0 0 2px;
