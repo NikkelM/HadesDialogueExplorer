@@ -19,6 +19,7 @@ import {
     renderSpeakerHtml,
     renderSectionHtml,
     renderReqTypeHtml,
+    reqTypeTitleText,
     renderPriorityBadgeHtml,
     renderPlayOnceBadgeHtml,
     renderBlockingReason,
@@ -175,6 +176,53 @@ function _countBoundaryWord(op, value) {
     if (op === '<' && v === 1) return 'none';
     if ((op === '>=' && v === 1) || (op === '>' && v === 0)) return 'any';
     return null;
+}
+
+// ``GameState`` field families that count occurrences of an event, so a plain
+// scalar comparison against a boundary reads as a past-tense verb clause:
+// none -> "Never <did X>", any -> "Has <done X>". Their path-gloss labels are
+// bare past-tense verb phrases ("interacted with", "entered", "killed", ...).
+const _H2_EVENT_COUNT_FIELDS = new Set([
+    'UseRecord', 'RoomsEntered', 'RoomCountCache', 'EnemyKills',
+    'BiomesReached', 'SpawnRecord', 'NemesisTakeExitRecord', 'NemesisTakeRoomExitRecord',
+]);
+// ``GameState`` cumulative counters whose gloss is a plural noun, so a boundary
+// reads as none -> "No <noun>", any -> "Has <noun>". Deliberately excludes
+// value caches (costs, points totals, health, phase), which are not occurrence
+// counts and stay on the raw operator.
+const _H2_CUMULATIVE_COUNT_FIELDS = new Set([
+    'CompletedRunsCache', 'ClearedRunsCache', 'ClearedUnderworldRunsCache',
+    'ClearedSurfaceRunsCache', 'MetaUpgradeUnlockedCountCache', 'StoryResetCount',
+]);
+
+// Semantic family of a plain scalar count path for boundary phrasing:
+// 'event' (verb clause) / 'count' (noun clause) / null (leave the raw operator).
+// The field segment sits after the scope root (GameState / CurrentRun / PrevRun).
+function _scalarCountFamily(path) {
+    if (!Array.isArray(path) || path.length === 0) return null;
+    const root = path[0];
+    const seg = (root === 'GameState' || root === 'CurrentRun' || root === 'PrevRun')
+        ? path[1] : path[0];
+    if (_H2_EVENT_COUNT_FIELDS.has(seg)) return 'event';
+    if (_H2_CUMULATIVE_COUNT_FIELDS.has(seg)) return 'count';
+    return null;
+}
+
+// Lowercase the first visible letter of a rendered chip so a sentence-case
+// standalone gloss (``Interacted with Ares``) reads correctly after a prefix
+// word (``Never interacted with Ares``). Skips a leading opening tag; a proper
+// noun never leads these glosses (the field label always does), so only the
+// first letter is touched.
+function _lcFirstVisible(html) {
+    const start = html[0] === '<' ? html.indexOf('>') + 1 : 0;
+    for (let i = start; i < html.length; i++) {
+        const c = html[i];
+        if (c === '<') break;
+        if (/[A-Za-z]/.test(c)) {
+            return html.slice(0, i) + c.toLowerCase() + html.slice(i + 1);
+        }
+    }
+    return html;
 }
 
 // Friendly head labels for the four single-path operator prefixes whose
@@ -799,6 +847,14 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
     let subjectHtml = headHtml;
     if ('UseLength' in rec) {
         consumed.add('UseLength');
+        // A length compared to a boundary reads as emptiness rather than
+        // "Number of entries in X == 0": ``<= 0`` / ``== 0`` / ``< 1`` -> the
+        // table is empty; ``>= 1`` / ``> 0`` -> it has at least one entry.
+        const word = _countBoundaryWord(rec.Comparison, rec.Value);
+        if (word && _allConsumed(keys, consumed)) {
+            const state = word === 'none' ? 'is empty' : 'is not empty';
+            return `${headHtml} ${state}${_renderScalarHaveHtml()}${suffix}`;
+        }
         subjectHtml = `Number of entries in ${headHtml}`;
     } else if ('CountPathTrue' in rec) {
         consumed.add('CountPathTrue');
@@ -809,6 +865,22 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
     }
 
     if (!_allConsumed(keys, consumed)) return null;
+    // A plain scalar count (no aggregation reshaped the subject) on a known
+    // event / cumulative-count field reads better at a boundary as a natural
+    // clause than "<subject> <= 0". Only when the gloss fully resolves (so the
+    // lowercased head is a clean verb/noun phrase); otherwise keep the operator.
+    if (subjectHtml === headHtml) {
+        const word = _countBoundaryWord(rec.Comparison, rec.Value);
+        const fam = _scalarCountFamily(rec.Path);
+        if (word && fam) {
+            const gloss = _pathGloss(Array.isArray(rec.Path) ? rec.Path : []);
+            if (gloss && gloss.full) {
+                const lc = _lcFirstVisible(headHtml);
+                const prefix = word === 'none' ? (fam === 'event' ? 'Never' : 'No') : 'Has';
+                return `${prefix} ${lc}${_renderScalarHaveHtml()}${suffix}`;
+            }
+        }
+    }
     return `${subjectHtml}${_renderScalarHaveHtml()} ${escapeHtml(String(rec.Comparison))} ${valueHtml}${suffix}`;
 }
 
@@ -1101,7 +1173,25 @@ const _GATE_OF_PHRASE = { min: 'at least', max: 'at most', eq: 'exactly', neq: '
 // with comma+space spacing and map values use the ``Name >= Count``
 // idiom rather than the raw JSON fallback.
 function _renderBareKeyEntry(key, val) {
+    const noneEntry = _renderMaxZeroNoneEntry(key, val);
+    if (noneEntry !== null) return noneEntry;
     return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
+}
+
+// A "max threshold of 0" bare gate (e.g. H1 ``RequiredMaxLastStands: 0``) means
+// "at most 0" = "none", so render it as "No <thing>" rather than the awkward
+// "Maximum <thing>: 0". Only fires for a numeric-zero max-kind gate whose label
+// is a "Maximum <noun>" phrase (the H1 convention), yielding "No <noun>"; the
+// coloured save "(actual)" tally still trails when a save is loaded. Returns
+// null for any other shape so the normal "Label: value" rendering is used.
+function _renderMaxZeroNoneEntry(key, val) {
+    if (_reqGateKind(key) !== 'max' || val !== 0) return null;
+    const label = reqTypeLabels[key];
+    if (typeof label !== 'string' || !label.startsWith('Maximum ')) return null;
+    const noun = label.slice('Maximum '.length);
+    const tip = reqTypeTitleText(key);
+    const attr = tip !== null ? ` data-tooltip="${escapeHtml(tip)}"` : '';
+    return `<span class="req-type-name"${attr}>No ${escapeHtml(noun)}</span>${_renderScalarHaveHtml()}`;
 }
 
 // Lua identifier check for the tooltip formatter: bare keys reproduce

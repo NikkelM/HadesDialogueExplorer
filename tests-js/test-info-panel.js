@@ -783,6 +783,70 @@ test('bare-key "N of a set" gate renders a Count of 0 as "none of"', () => {
     assert.match(min2, /at least 2 of:/);
 });
 
+// --- issue #135: boundary phrasing for scalar / length / H1-Maximum gates ---
+
+// Fixture carrying the H2 path vocabulary the boundary phrasing reads from.
+function fixtureWithPathVocab() {
+    const data = buildFixtureData();
+    data.pathScopeNames = { CurrentRun: 'this run', PrevRun: 'last run', GameState: '' };
+    data.pathFieldNames = {
+        UseRecord: 'interacted with',
+        RoomsEntered: 'entered',
+        EnemyKills: 'killed',
+        CompletedRunsCache: 'completed runs',
+        'Hero.MetGods': 'gods encountered',
+        'LastBossHealthBarRecord': 'previous-encounter health of',
+    };
+    data.pathObjectFields = ['UseRecord', 'RoomsEntered', 'EnemyKills', 'LastBossHealthBarRecord'];
+    data.entityNames = { AresUpgrade: 'Ares', H_Boss01: "Cerberus' chamber", Chronos: 'Chronos' };
+    return data;
+}
+
+test('H1 "Maximum X: 0" max gate renders as "No X"', () => {
+    const data = buildFixtureData();
+    data.reqTypeLabels.RequiredMaxLastStands = 'Maximum Death Defiance charges remaining';
+    loadData(data);
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxLastStands', 0)), 'No Death Defiance charges remaining');
+    // Non-zero max keeps the "Maximum X: N" form.
+    assert.match(_stripReq(renderOtherReqEntryHtml('RequiredMaxLastStands', 3)), /Maximum Death Defiance charges remaining : 3/);
+});
+
+test('H2 UseLength boundary renders "is empty" / "is not empty"', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (op, value) => [{ Comparison: op, Path: ['CurrentRun', 'Hero', 'MetGods'], UseLength: true, Value: value }];
+    const r = (op, value) => _stripReq(renderOtherReqEntryHtml('Path:CurrentRun.Hero.MetGods', rec(op, value)));
+    assert.match(r('==', 0), /Gods encountered is empty, this run/);
+    assert.match(r('<=', 0), /is empty/);
+    assert.match(r('<', 1), /is empty/);
+    assert.match(r('>=', 1), /is not empty/);
+    assert.match(r('>', 0), /is not empty/);
+    // Non-boundary keeps the "Number of entries in X >= N" form.
+    assert.match(r('>=', 3), /Number of entries in .* &gt;= .*3|Number of entries in .* >= .*3/);
+});
+
+test('H2 scalar event-count gate renders "Has" / "Never <verb>" at boundaries', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (path, op, value) => [{ Comparison: op, Path: path, Value: value }];
+    const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
+    // Event verb families: none -> "Never <verb>", any -> "Has <verb>".
+    assert.match(r(['CurrentRun', 'UseRecord', 'AresUpgrade'], '<=', 0), /Never interacted with Ares/);
+    assert.match(r(['CurrentRun', 'UseRecord', 'AresUpgrade'], '>=', 1), /Has interacted with Ares/);
+    assert.match(r(['GameState', 'RoomsEntered', 'H_Boss01'], '==', 0), /Never entered Cerberus/);
+    assert.match(r(['GameState', 'EnemyKills', 'Chronos'], '>', 0), /Has killed Chronos/);
+    // Non-boundary keeps the operator.
+    assert.match(r(['GameState', 'EnemyKills', 'Chronos'], '>=', 3), /Killed Chronos.*3/);
+});
+
+test('H2 scalar cumulative-count gate renders "No" / "Has <noun>"; value fields stay raw', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (path, op, value) => [{ Comparison: op, Path: path, Value: value }];
+    const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
+    assert.match(r(['GameState', 'CompletedRunsCache'], '<', 1), /No completed runs/);
+    assert.match(r(['GameState', 'CompletedRunsCache'], '>', 0), /Has completed runs/);
+    // A value field (health) is not an occurrence count -> keep the raw operator.
+    assert.match(r(['GameState', 'LastBossHealthBarRecord', 'Chronos'], '<=', 0), /Previous-encounter health of Chronos.*&lt;=.*0|Previous-encounter health of Chronos.*<=.*0/);
+});
+
 
 // ``FunctionName:<name>`` compound keys carry a record array whose
 // entries each have ``FunctionName`` + optional ``FunctionArgs``. The
