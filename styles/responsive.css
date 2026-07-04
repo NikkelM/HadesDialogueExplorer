@@ -185,11 +185,22 @@
         min-height: 38px;
         margin: 1px 0;
     }
-    .req-section h4 {
-        min-height: 36px;
+    /* Bigger tap target for the collapse-toggle header pills. Use symmetric
+       vertical padding rather than ``min-height`` + ``align-items: center`` so
+       the desktop ``align-items: flex-start`` still holds: the status dot stays
+       centred on the label's FIRST line no matter how many lines it wraps to
+       (``center`` floated it between the two lines of a wrapped header like "AT
+       LEAST ONE OF THESE 2 BRANCHES"), and a single-line pill still reads
+       vertically centred thanks to the equal padding. Listed for every header
+       pill type so h4 (req-type / OR-group) and h5 (OR-branch / named) stay
+       consistent - previously only ``.req-section h4`` was enlarged, which is
+       what made h4 and h5 headers misalign against each other. */
+    .req-section h4,
+    .or-branch-header,
+    .named-req-header {
+        padding-top: 7px;
+        padding-bottom: 7px;
         margin-bottom: 4px;
-        display: inline-flex;
-        align-items: center;
     }
 }
 @media (max-width: 599px) {

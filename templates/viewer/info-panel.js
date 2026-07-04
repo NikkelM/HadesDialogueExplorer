@@ -2061,7 +2061,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         groupDot = statusDot(g, kindTooltip(g, nkind), nkind);
     }
     let html = `<div class="other-req-item named-req-item">`
-             + `<div class="named-req-label">${groupDot}${renderOtherReqKeyHtml(key)}:</div>`
+             + `<div class="named-req-label">${groupDot}<span class="req-header-text">${renderOtherReqKeyHtml(key)}:</span></div>`
              + `<div class="named-req-list">`;
     for (const name of names) {
         const resolved = namedRequirements ? namedRequirements[name] : null;
@@ -2096,7 +2096,7 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
         html += `<div class="named-req-expand">`
               + `<h5 class="named-req-header">`
               + `<span class="toggle">${nChev}</span>`
-              + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}${blockerNote}`
+              + `${nameDot}<span class="req-header-text"><code class="named-req-name">${safeName}</code>${safeSuffix}${blockerNote}</span>`
               + `</h5>`
               + `<div class="named-req-children${nExp}">${inner}</div>`
               + `</div>`;
@@ -2161,7 +2161,7 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         const groupDot = v ? statusDot(v, kindTooltip(v, gkind), gkind) : '';
         const [tChev, tExp] = metCollapse(v, showDots, keepOpen);
         html += `<div class="req-section req-type-${type}">`
-              + `<h4><span class="toggle">${tChev}</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
+              + `<h4><span class="toggle">${tChev}</span>${groupDot}<span class="req-header-text">${renderReqTypeHtml(type)}${countSuffix}</span></h4>`
               + `<div class="req-section-children${tExp}">`;
         const sources = (sourcesByType && sourcesByType[type]) || [];
         let i = 0;

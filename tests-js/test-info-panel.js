@@ -423,7 +423,7 @@ test('otherRequirements: known operator prefixes render as friendly pills with t
     // the reader knows the operator's intent.
     assert.match(
         lastHtml,
-        /<div class="other-req-item named-req-item"><div class="named-req-label"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>:<\/div><div class="named-req-list"><div class="named-req-flat"><code class="named-req-name">NoBossActive<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div><\/div><\/div>/
+        /<div class="other-req-item named-req-item"><div class="named-req-label"><span class="req-header-text"><span class="req-type-name" data-tooltip="Internal name: NamedRequirementsFalse\n\nNamed requirements inverse tooltip blurb\.">Named requirements must NOT pass<\/span>:<\/span><\/div><div class="named-req-list"><div class="named-req-flat"><code class="named-req-name">NoBossActive<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/div><\/div><\/div>/
     );
 });
 
@@ -2018,7 +2018,7 @@ test('NamedRequirementsFalse: resolved entry expands into a collapsible inner ch
     // that holds the resolved inner requirements + otherRequirements.
     assert.match(
         lastHtml,
-        /<div class="named-req-expand"><h5 class="named-req-header"><span class="toggle">.<\/span><code class="named-req-name">HecateMissing<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/h5><div class="named-req-children expanded">/
+        /<div class="named-req-expand"><h5 class="named-req-header"><span class="toggle">.<\/span><span class="req-header-text"><code class="named-req-name">HecateMissing<\/code> <span class="named-req-suffix">\(must NOT pass\)<\/span><\/span><\/h5><div class="named-req-children expanded">/
     );
     // Inner body re-uses the per-req-type section markup; the
     // resolved textline edge renders as a clickable ``.req-item``.
@@ -2093,7 +2093,7 @@ test('NamedRequirementsFalse: per-name label pill is rendered exactly once (abov
     // that exactly one label pill appears on the host textline (the
     // nested expansions add their own pills inside their bodies).
     const labels = lastHtml.match(
-        /<div class="named-req-label"><span class="req-type-name"[^>]*>Named requirements must NOT pass<\/span>/g
+        /<div class="named-req-label"><span class="req-header-text"><span class="req-type-name"[^>]*>Named requirements must NOT pass<\/span>/g
     ) || [];
     // Exactly 2 today: 1 for the host, 1 for the nested expansion in
     // ScyllaBalladForced. The host always has 1; the nested count is

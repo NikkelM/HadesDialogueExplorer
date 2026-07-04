@@ -24,12 +24,11 @@
     margin-right: 4px;
     vertical-align: middle;
 }
-/* Group dot in an OR-branch (alternates) option header. */
+/* Group dot in an OR-branch (alternates) option header. No overrides: it
+   inherits the same inline-block baseline placement and trailing-space spacing
+   as the other section headers (req-section / named-req), so all the section
+   headers read consistently. */
 .or-branch-header .group-status {
-    position: relative;
-    top: -1px;
-    vertical-align: middle;
-    margin-right: 3px;
     cursor: help;
 }
 .req-section h4 {
@@ -37,7 +36,10 @@
     margin: 0 0 6px;
     padding: 1px 6px;
     border-radius: 3px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     /* Whole pill acts as the collapse toggle. The colored bg per
@@ -52,7 +54,6 @@
     display: inline-block;
     font-size: var(--fs-2xs);
     opacity: 0.7;
-    margin-right: 4px;
 }
 /* Collapsed by default + override via `.expanded` mirrors the
    tree-view children box (styles/tree.css) and the GameData inline
@@ -253,12 +254,12 @@
     align-items: flex-start;
     gap: 0.35rem;
 }
-/* Center the dot on the FIRST text line (via a top margin of half the leftover
-   line-box height), matching the centred .req-item / tree-row dots. Plain
-   ``align-items: center`` would centre it over the whole wrapped block, and
-   ``baseline`` sat it slightly high; ``flex-start`` + this margin keeps it
-   beside the first line and vertically centred on it. The +1px baseline nudge
-   from the shared rule above is cancelled. */
+/* Centre the dot on the FIRST text line via a top margin of half the leftover
+   line-box height. ``align-items: flex-start`` pins the dot to line 1's top, so
+   its placement is independent of how many lines the text wraps to; the margin
+   then drops it onto that line's optical centre. (``baseline`` shifted the dot
+   when the text wrapped to 2 lines; plain ``center`` centres it over the whole
+   wrapped block.) The +1px baseline nudge from the shared rule above is cancelled. */
 .other-req-item:has(> .group-status) > .group-status {
     flex-shrink: 0;
     margin-right: 0;
@@ -377,7 +378,10 @@
     margin: 0 0 4px;
     padding: 1px 6px;
     border-radius: 3px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     cursor: pointer;
@@ -388,7 +392,22 @@
     display: inline-block;
     font-size: var(--fs-2xs);
     opacity: 0.7;
-    margin-right: 4px;
+}
+/* Section headers lay their [chevron | dot | label] out with
+   ``align-items: flex-start`` (set per header rule), which pins the chevron and
+   dot to the TOP of the first text line. That makes their vertical placement
+   independent of how many lines a long label wraps to - unlike
+   ``align-items: baseline``/``center``, which shifted the dot by ~2px between a
+   single-line header (e.g. "OPTION 1 OF 2") and a wrapped one (e.g. "AT LEAST
+   ONE OF THESE 2 BRANCHES"). The dot is then dropped onto the first line's
+   optical centre with a top margin of half the leftover line height; the chevron
+   sits centred beside it. Same idiom as the resolved gate rows above. */
+.req-section h4 > .group-status,
+.or-branch-header > .group-status,
+.named-req-header > .group-status,
+.named-req-item .named-req-label > .group-status {
+    margin-top: calc((1lh - var(--dot-size)) / 2);
+    top: 0;
 }
 .or-branch-children { display: none; }
 .or-branch-children.expanded { display: block; }
@@ -407,12 +426,16 @@
     font-weight: 600;
     color: var(--text-secondary);
     margin-bottom: 8px;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
 }
-/* The label's verdict dot sits inside the block label (not a flex row), so
-   centre it on the text rather than the baseline, which read a touch high. */
-.named-req-item .named-req-label .group-status {
-    top: 0;
-    vertical-align: middle;
+/* Label content after a section-header status dot, wrapped as one flex item so
+   multi-part labels (a name + count / suffix) keep a single, consistent gap and
+   can wrap as a block rather than splitting into separately-spaced items. */
+.req-header-text {
+    min-width: 0;
 }
 .named-req-list {
     margin-left: 8px;
@@ -455,7 +478,10 @@
     cursor: pointer;
     background: rgba(80, 160, 160, 0.10);
     color: #5dbfbf;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -466,7 +492,6 @@
     display: inline-block;
     font-size: var(--fs-2xs);
     opacity: 0.7;
-    margin-right: 4px;
 }
 .named-req-children { display: none; padding: 4px 0 2px 4px; }
 .named-req-children.expanded { display: block; }
