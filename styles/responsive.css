@@ -453,6 +453,29 @@
     .duplicates-entry > .duplicates-game-link:first-of-type {
         margin-left: 0;
     }
+    /* Loading skeleton mirrors the mobile stack: the speaker placeholders wrap
+       as a chip row and the detail drops to one column, like ``.duplicates-md``
+       / ``.duplicates-speakers`` above. The detail grid's auto-fill already
+       collapses to a single 405px-min column at phone width, so only the row
+       gap needs matching. */
+    .sk-dup {
+        grid-template-columns: 1fr;
+    }
+    .sk-dup-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .sk-dup-spk {
+        flex: 0 0 auto;
+    }
+    .sk-dup-spk .sk-line.sk-grow {
+        flex: 0 0 auto;
+        width: 54px;
+    }
+    .sk-dup-grid {
+        row-gap: 0.9rem;
+    }
 }
 @media (max-width: 1024px) {
     /* Touch-size the filter input, the game-open buttons and the speaker

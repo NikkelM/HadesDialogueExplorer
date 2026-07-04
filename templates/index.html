@@ -330,13 +330,28 @@
         + '</div>';
 
     // Duplicates: a bordered header card (title + subtitle), the search input,
-    // then the speaker list / detail two-column grid.
+    // then the speaker master list and the detail grid. Speaker rows mirror
+    // ``.duplicates-speaker-item`` (name bar + count pill); the detail grid
+    // reuses the real ``auto-fill`` column sizing (see ``.sk-dup-grid``) so the
+    // skeleton shows the same number of columns as the loaded view at the
+    // current width. The entry count is a fallback - the duplicates branch below
+    // re-fills the grid to 10 placeholders per column once the real column count
+    // is known.
+    var dupSpk = function() {
+        return '<div class="sk-dup-spk">' + sk('sk-line sk-grow') + sk('sk-dup-count') + '</div>';
+    };
+    var dupEntry = function() {
+        return '<div class="sk-dup-entry">' + sk('sk-line sk-grow') + sk('sk-badge') + sk('sk-badge') + '</div>';
+    };
     var DUPLICATES =
         sec(card(sk('sk-title') + sk('sk-line short')))
         + sec(sk('sk-input'))
         + '<div class="sk-dup">'
-        + '<div class="sk-dup-left">' + rep(sk('sk-line'), 7) + '</div>'
-        + '<div class="sk-dup-right">' + sk('sk-line short') + rep(sk('sk-line'), 5) + '</div>'
+        + '<div class="sk-dup-left">' + rep(dupSpk(), 10) + '</div>'
+        + '<div class="sk-dup-right">'
+        + sk('sk-title sk-dup-detail-title')
+        + '<div class="sk-dup-grid">' + rep(dupEntry(), 10) + '</div>'
+        + '</div>'
         + '</div>';
     var set = function(id, inner) {
         var el = document.getElementById(id);
@@ -354,6 +369,16 @@
         if (speaker) { set('info-content', SPEAKER); painted = true; }
     } else if (view === 'duplicates') {
         set('info-content', DUPLICATES); painted = true;
+        // Fill each detail column to 10 rows: read the real auto-fill column
+        // count off the just-painted grid (same technique as
+        // stripeDuplicateColumns) and render 10 entry placeholders per column,
+        // so the skeleton is as full down each column as the loaded list. Runs
+        // synchronously before first paint, so the fallback count never shows.
+        var dupGrid = document.querySelector('.sk-dup-grid');
+        if (dupGrid) {
+            var dupCols = getComputedStyle(dupGrid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+            dupGrid.innerHTML = rep(dupEntry(), 10 * dupCols);
+        }
     } else if (view === 'eligibility') {
         if (dialogue) { set('info-content', ELIGIBILITY); painted = true; }
     } else if (dialogue) {

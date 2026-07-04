@@ -410,11 +410,53 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .sk-stat .sk-lbl { height: 10px; width: 70%; margin: 0 0 10px; }
 .sk-stat .sk-val { height: 24px; width: 45%; }
 
-/* Duplicates: speaker list on the left, detail list on the right. */
+/* Duplicates: speaker master list on the left, detail grid on the right -
+   mirrors ``.duplicates-md`` (fixed-ish speaker column + fluid detail) so the
+   skeleton has the same two-column shape as the loaded view. */
 .sk-input  { height: 30px; border-radius: 6px; margin: 0 0 14px; }
-.sk-dup    { display: flex; gap: 14px; }
-.sk-dup-left  { flex: 0 0 38%; }
-.sk-dup-right { flex: 1; }
+.sk-dup {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    align-items: start;
+    gap: 1.2rem;
+}
+.sk-dup-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+/* A speaker master-list row: name bar + count pill, matching
+   ``.duplicates-speaker-item`` (bordered row, space-between). */
+.sk-dup-spk {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.sk-dup-spk .sk { margin: 0; }
+.sk-dup-count { height: 14px; width: 26px; border-radius: 8px; flex: 0 0 auto; }
+.sk-dup-detail-title { margin: 0 0 0.6rem; }
+/* Detail grid: same ``auto-fill`` column sizing as ``.duplicates-detail-list``,
+   so the skeleton's column count tracks the loaded view at any width. */
+.sk-dup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(405px, 1fr));
+    align-items: start;
+    column-gap: 0.8rem;
+    row-gap: 0.2rem;
+}
+/* One shared-dialogue row: name bar + two game-link bars (``1fr auto auto``). */
+.sk-dup-entry {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    column-gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+}
+.sk-dup-entry .sk { margin: 0; }
 
 /* Failure banner rendered by viewer.js when data load (fetch or
    JSON.parse) fails. Hidden until populated; styled to be unmissable
