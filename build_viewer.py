@@ -51,8 +51,8 @@ real ES module imports.
 
 import argparse
 import base64
-import difflib
 import hashlib
+import html
 import json
 import re
 import shutil
@@ -60,6 +60,7 @@ import sys
 from pathlib import Path
 
 from src.graph_merge import merge_graph_data
+from viewer_bundle import assemble_viewer_js, build_js, build_source_map
 from src.known_unresolved import annotate_known_unresolved
 from src.blocked_textlines import annotate_blocked_textlines
 from src.manual_overrides import apply_manual_overrides
@@ -73,7 +74,6 @@ from src.extractors.hades2 import HADES2_OFFER_TEXT_MAP
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
 INDEX_TEMPLATE = TEMPLATES_DIR / "index.html"
-VIEWER_JS_DIR = TEMPLATES_DIR / "viewer"
 STYLES_DIR = PROJECT_DIR / "styles"
 STATIC_DIR = PROJECT_DIR / "static"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
@@ -82,8 +82,29 @@ DIST_DIR = PROJECT_DIR / "dist"
 # Files written by the split build. Tracked explicitly so the cleaner
 # only removes managed artifacts, not anything else the user may have
 # dropped in ``dist/`` (e.g. screenshots, release notes).
-_SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.js.map", "viewer.css", "data.json")
+_SPLIT_OUTPUT_NAMES = (
+    "index.html", "viewer.js", "viewer.js.map", "viewer.css", "data.json", "og-image.png",
+)
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
+
+# Absolute deploy URL. Social scrapers (Open Graph / Twitter cards) don't
+# reliably resolve *relative* image URLs, so og:image / twitter:image must be
+# absolute. The hosted split build lives here; the offline single-file bundle
+# omits all SEO/OG tags (it's opened via file:// where they're meaningless).
+DEPLOY_BASE_URL = "https://nikkelm.dev/HadesDialogueExplorer/"
+OG_IMAGE_NAME = "og-image.png"
+# Tool-specific SEO copy (issue #141). The nikkelm.dev Cloudflare Worker injects
+# the site-wide tags (canonical, og:url, og:type, og:site_name) as
+# inject-if-absent fallbacks, so we deliberately emit ONLY the tags that
+# describe *this* tool here - no duplicates in the deployed HTML.
+SEO_DESCRIPTION = (
+    "Explore all dialogues from Hades & Hades II: what each one requires to "
+    "unlock, and where you are in your playthrough."
+)
+SEO_IMAGE_ALT = (
+    "Hades Dialogue Explorer - a browser tool showing the dialogue dependency "
+    "graph and eligibility requirements for lines from Hades and Hades II."
+)
 
 # Static assets copied verbatim into ``dist/`` for the split build and
 # inlined as data URIs for the single-file bundle. The per-game favicons
@@ -158,317 +179,6 @@ def build_css() -> str:
 
 # Single-line ``import { a, b } from './foo.js';`` blocks - the only
 # import shape used in templates/viewer/*.js.
-_JS_IMPORT_RE = re.compile(
-    r"^\s*import\s*\{[^}]*\}\s*from\s*['\"][^'\"]+['\"]\s*;?\s*$",
-    re.MULTILINE,
-)
-
-# ``export function|const|let|async function|class ...`` declarations.
-# The leading whitespace is preserved so indentation stays consistent
-# after the keyword is removed.
-_JS_EXPORT_RE = re.compile(
-    r"^(\s*)export\s+(?=(?:async\s+)?(?:function|const|let|class)\s)",
-    re.MULTILINE,
-)
-
-# Post-strip safety net: any line whose first non-whitespace token is
-# ``import`` or ``export`` indicates the strip pass missed a module-
-# syntax shape (e.g. ``export default``, ``export *``, ``export {name}
-# from ...``, ``import *``, ``import name``). The concatenated bundle
-# would throw ``SyntaxError`` at script-eval time, so we raise here
-# with a precise file:line pointer instead.
-_JS_LEFTOVER_MODULE_KEYWORD_RE = re.compile(
-    r"^\s*(?:import|export)\b",
-    re.MULTILINE,
-)
-
-# Column-0 (top-level) declarations in a stripped viewer module. After
-# ``_strip_module_syntax`` removes the ``export `` prefix, a top-level
-# ``export function foo`` becomes a column-0 ``function foo``; anything nested
-# inside a block is indented, so anchoring at the start of the line isolates the
-# bundle's shared-scope top level. One capture group per declaration kind.
-_JS_TOP_LEVEL_DECL_RE = re.compile(
-    r"^(?:async\s+)?function\s+(\w+)"
-    r"|^(?:const|let|var)\s+(\w+)"
-    r"|^class\s+(\w+)",
-    re.MULTILINE,
-)
-
-
-def _strip_module_syntax(js_text: str, source_name: str = "<viewer module>") -> str:
-    """Strip ES module ``import``/``export`` syntax so the file can be
-    concatenated into a single classic browser script.
-
-    Sources under ``templates/viewer/`` use ES module syntax purely so
-    ESLint can validate cross-file references. The deployed artifact
-    is one concatenated script (``dist/viewer.js``) because the offline
-    bundle runs from ``file://`` where browsers block ES module imports
-    via CORS.
-
-    After stripping, the result is asserted to contain no remaining
-    top-level ``import``/``export`` keywords. The strip regexes only
-    cover the shapes used today (single-line ``import { ... } from`` and
-    ``export {function|const|let|class}``); anything else (``export
-    default``, ``export *``, ``export { name } from ...``, ``import *``,
-    ``import name``) would otherwise pass through verbatim and produce a
-    ``SyntaxError`` at script-eval time of the concatenated bundle. The
-    assertion turns that runtime failure into a build-time error with a
-    pointer to the offending module.
-    """
-    js_text = _JS_IMPORT_RE.sub("", js_text)
-    js_text = _JS_EXPORT_RE.sub(r"\1", js_text)
-    leftover = _JS_LEFTOVER_MODULE_KEYWORD_RE.search(js_text)
-    if leftover is not None:
-        line_no = js_text.count("\n", 0, leftover.start()) + 1
-        line_text = js_text.splitlines()[line_no - 1].rstrip()
-        raise RuntimeError(
-            f"{source_name}:{line_no}: leftover ES module keyword after strip pass: "
-            f"{line_text!r}. _JS_IMPORT_RE / _JS_EXPORT_RE only cover the shapes used "
-            f"by templates/viewer/*.js today (single-line ``import {{ ... }} from`` and "
-            f"``export {{function|const|let|class}}``). Extend the regexes to cover the "
-            f"new shape, or rewrite the module to use a supported one."
-        )
-    return js_text
-
-
-def _assert_unique_top_level_names(file_texts: list) -> None:
-    """Fail the build if any top-level declaration name appears in more than
-    one viewer module.
-
-    ``build_js`` concatenates every ``templates/viewer/*.js`` module into one
-    classic (sloppy-mode) script, so all module top levels share a single
-    scope. A duplicate top-level ``function`` is legal in sloppy mode and
-    silently collapses to the last-concatenated definition, shipping a wrong
-    bundle that the unit tests (which import the ES modules in separate scopes)
-    and the boot smoke test (which only trips on duplicate ``const`` / ``let``
-    / ``class``) cannot see. This guard turns that silent-wrong-bundle class
-    into a build-time error naming both modules.
-
-    ``file_texts`` is a list of ``(source_name, stripped_js)`` pairs - the
-    already-stripped text is what actually lands in the bundle.
-    """
-    seen = {}
-    for source_name, text in file_texts:
-        for match in _JS_TOP_LEVEL_DECL_RE.finditer(text):
-            name = match.group(1) or match.group(2) or match.group(3)
-            line_no = text.count("\n", 0, match.start()) + 1
-            where = f"{source_name}:{line_no}"
-            if name in seen:
-                raise RuntimeError(
-                    f"Duplicate top-level name {name!r} in the concatenated "
-                    f"viewer bundle: first at {seen[name]}, again at {where}. "
-                    f"Every top-level function/const/let/var/class name must be "
-                    f"globally unique across templates/viewer/*.js because the "
-                    f"build concatenates them into one classic-script scope - a "
-                    f"duplicate silently shadows (last-declared wins). Rename "
-                    f"one of the declarations."
-                )
-            seen[name] = where
-
-
-def build_js() -> str:
-    """Concatenate every ``templates/viewer/*.js`` module into a single
-    classic script.
-
-    Files are sorted alphabetically with ``init.js`` pinned to the end.
-    The pinning matters because ``init.js`` ends with a top-level
-    ``boot()`` call, and ``boot()`` synchronously calls into
-    ``loadData()`` which assigns to the ``let`` bindings declared in
-    ``data.js`` and other modules. Those bindings are in TDZ until
-    their textual declaration is reached, so the call site has to come
-    after every declaration. Function declarations hoist so their
-    ordering doesn't matter.
-
-    The same TDZ trap applies to top-level ``const`` declarations:
-    invoking a function whose body dereferences a later-declared
-    ``const`` from an earlier-concatenated file throws
-    ``ReferenceError`` at script-eval time and prevents ``boot()``
-    from ever running. Avoid cross-file top-level calls at module
-    init - keep module top levels free of work that reaches into
-    later-concatenated files.
-
-    Module syntax is stripped so the result runs as a plain script in
-    any browser, including from ``file://`` (the offline bundle case,
-    where browsers block real ES module imports via CORS).
-    """
-    return _assemble_viewer_js()[0]
-
-
-def _ordered_viewer_js_files() -> list:
-    """The viewer JS modules in concatenation order: alphabetical with
-    ``init.js`` pinned last (see :func:`build_js` for why the boot call must
-    come after every declaration)."""
-    js_files = sorted(VIEWER_JS_DIR.glob("*.js"))
-    if not js_files:
-        raise RuntimeError(f"No viewer JS modules found in {VIEWER_JS_DIR}")
-    init_files = [f for f in js_files if f.name == "init.js"]
-    if not init_files:
-        raise RuntimeError(
-            f"Expected {VIEWER_JS_DIR / 'init.js'} (must contain the "
-            f"top-level boot() call); not found."
-        )
-    other_files = [f for f in js_files if f.name != "init.js"]
-    return other_files + init_files
-
-
-def _strip_export_prefix_line(line: str) -> str:
-    """Apply the single-line ``export `` prefix strip to one line (the same
-    transform :data:`_JS_EXPORT_RE` applies across the whole module). Used to
-    normalise raw lines when aligning them to the stripped output."""
-    return _JS_EXPORT_RE.sub(r"\1", line)
-
-
-def _stripped_line_to_raw(raw_text: str, stripped_text: str) -> list:
-    """Map each line of a module's stripped output back to its 0-based line in
-    the raw source.
-
-    ``_strip_module_syntax`` only deletes whole ``import`` lines and removes
-    ``export `` prefixes in place, so the stripped lines are a pure subsequence
-    of the raw lines after export-normalisation. A ``difflib`` alignment over
-    those two line lists therefore recovers an exact stripped->raw line map
-    (used to build the source map)."""
-    raw_norm = [_strip_export_prefix_line(ln) for ln in raw_text.split("\n")]
-    stripped_lines = stripped_text.split("\n")
-    mapping = [None] * len(stripped_lines)
-    sm = difflib.SequenceMatcher(a=raw_norm, b=stripped_lines, autojunk=False)
-    for tag, a1, a2, b1, b2 in sm.get_opcodes():
-        if tag == "equal":
-            for k in range(b2 - b1):
-                mapping[b1 + k] = a1 + k
-    return mapping
-
-
-def _assemble_viewer_js():
-    """Concatenate the viewer modules and record per-line provenance.
-
-    Returns ``(js_text, blocks)`` where each block is
-    ``{"source_name", "raw_text", "text_line_start", "line_to_raw"}``:
-
-    * ``source_name`` - repo-relative path used as the source-map ``sources``
-      entry (and keyed to ``raw_text`` for ``sourcesContent``).
-    * ``text_line_start`` - 0-based line index in ``js_text`` where this
-      module's stripped body begins (after its ``// --- name ---`` header).
-    * ``line_to_raw`` - per body line, the 0-based raw source line it came
-      from (or ``None`` for a line the alignment couldn't place).
-
-    The concatenation is byte-identical to the historical ``"\\n\\n".join``
-    assembly (asserted in :func:`build_source_map`), so adding the source map
-    never changes the shipped ``viewer.js`` bytes.
-    """
-    ordered = _ordered_viewer_js_files()
-    prepared = []
-    for js_file in ordered:
-        source_name = (
-            js_file.relative_to(PROJECT_DIR).as_posix()
-            if js_file.is_relative_to(PROJECT_DIR)
-            else js_file.name
-        )
-        raw_text = js_file.read_text(encoding="utf-8")
-        stripped = _strip_module_syntax(raw_text, source_name=source_name)
-        text = stripped.strip()
-        prepared.append((js_file, source_name, raw_text, stripped, text))
-
-    _assert_unique_top_level_names([(sn, text) for _f, sn, _r, _s, text in prepared])
-
-    out_lines = []
-    blocks = []
-    for idx, (js_file, source_name, raw_text, stripped, text) in enumerate(prepared):
-        if idx > 0:
-            out_lines.append("")  # blank separator (the historical "\n\n" join)
-        out_lines.append(f"// --- {js_file.name} ---")
-        out_lines.append("")  # blank line between header and body
-        text_line_start = len(out_lines)
-
-        stripped_to_raw = _stripped_line_to_raw(raw_text, stripped)
-        # ``.strip()`` drops leading whitespace-only lines; the first body line
-        # is stripped line ``lead``. Body line i == stripped line (lead + i).
-        lead = len(stripped) - len(stripped.lstrip("\n"))
-        lead = stripped[:lead].count("\n")
-        line_to_raw = []
-        for i in range(len(text.split("\n"))):
-            si = lead + i
-            line_to_raw.append(stripped_to_raw[si] if si < len(stripped_to_raw) else None)
-
-        out_lines.extend(text.split("\n"))
-        blocks.append({
-            "source_name": source_name,
-            "raw_text": raw_text,
-            "text_line_start": text_line_start,
-            "line_to_raw": line_to_raw,
-        })
-
-    js_text = "\n".join(out_lines) + "\n"
-    return js_text, blocks
-
-
-# Base64 alphabet for source-map VLQ segments (RFC-style; not standard base64
-# padding).
-_VLQ_B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-
-
-def _vlq_encode(value: int) -> str:
-    """Base64 VLQ-encode a signed integer (Source Map v3 ``mappings`` field)."""
-    vlq = (-value << 1) | 1 if value < 0 else value << 1
-    out = ""
-    while True:
-        digit = vlq & 0x1F
-        vlq >>= 5
-        if vlq:
-            digit |= 0x20
-        out += _VLQ_B64[digit]
-        if not vlq:
-            break
-    return out
-
-
-def build_source_map(js_text: str, blocks: list, source_file: str) -> str:
-    """Build a Source Map v3 JSON string for the concatenated ``viewer.js``.
-
-    Maps each generated body line back to its original
-    ``templates/viewer/<module>.js`` line (column 0 - line granularity is what
-    browser stack traces report), and inlines each module's source via
-    ``sourcesContent`` so the map resolves regardless of how the host serves the
-    original files. ``js_text`` / ``blocks`` come from :func:`_assemble_viewer_js`.
-    """
-    sources = [b["source_name"] for b in blocks]
-    sources_content = [b["raw_text"] for b in blocks]
-    total_lines = js_text.count("\n")  # generated lines (trailing "\n" terminates the last)
-
-    # Per generated line: (source_index, source_line) or None (unmapped).
-    per_line = [None] * (total_lines + 1)
-    for src_idx, block in enumerate(blocks):
-        start = block["text_line_start"]
-        for i, raw_line in enumerate(block["line_to_raw"]):
-            if raw_line is not None and start + i < len(per_line):
-                per_line[start + i] = (src_idx, raw_line)
-
-    segments = []
-    prev_src, prev_src_line = 0, 0
-    for mapping in per_line:
-        if mapping is None:
-            segments.append("")
-            continue
-        src_idx, src_line = mapping
-        seg = (
-            _vlq_encode(0)  # generated column (line-level: always 0)
-            + _vlq_encode(src_idx - prev_src)
-            + _vlq_encode(src_line - prev_src_line)
-            + _vlq_encode(0)  # source column
-        )
-        segments.append(seg)
-        prev_src, prev_src_line = src_idx, src_line
-
-    return json.dumps({
-        "version": 3,
-        "file": source_file,
-        "sourceRoot": "",
-        "sources": sources,
-        "sourcesContent": sources_content,
-        "names": [],
-        "mappings": ";".join(segments),
-    }, separators=(",", ":"))
-
-
 def _ensure_clean_dist() -> None:
     """Remove just the managed split/bundle outputs from ``dist/`` so a
     rebuild can't leave a stale ``data.json`` next to a fresh
@@ -484,6 +194,74 @@ def _ensure_clean_dist() -> None:
     # blob behind.
     for stale in DIST_DIR.glob("data-*.json"):
         stale.unlink()
+
+
+def _build_split_index_html(version: str) -> str:
+    """Turn the raw ``templates/index.html`` into the hosted split-build page:
+    cache-bust the asset refs, inject the Content-Security-Policy, and add the
+    tool-specific SEO / Open Graph tags.
+
+    All three are split-build-only, which is why they live here and not in the
+    template: the offline single-file bundle serves the un-augmented template
+    (a 'self' CSP misfires from ``file://``, and the absolute og:image / social
+    URLs are meaningless there).
+    """
+    # Content-Security-Policy for the hosted (web) build only - the offline
+    # single-file bundle is opened via file://, where a 'self' policy misfires,
+    # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
+    # headers, so it goes in a <meta>. 'unsafe-inline' is required by the
+    # pre-paint inline scripts and the generated inline onclick/style handlers;
+    # the policy still blocks external script loading, eval, plugins and <base>
+    # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
+    # so framing can't be restricted here.)
+    #
+    # Cloudflare Web Analytics: the nikkelm.dev deploy layer injects the beacon
+    # <script src="https://static.cloudflareinsights.com/beacon.min.js"> (which
+    # then POSTs page views to cloudflareinsights.com). Both hosts are allow-
+    # listed so the beacon isn't CSP-blocked; nothing else external is permitted.
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "connect-src 'self' https://cloudflareinsights.com; "
+        "font-src 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'none'"
+    )
+    og_image_url = DEPLOY_BASE_URL + OG_IMAGE_NAME
+    # Tool-specific SEO + social-card tags for the hosted build (#141). Twitter
+    # falls back to og:title/og:description, so only twitter:card (+image) are
+    # set explicitly. Site-wide tags (canonical/og:url/og:type/og:site_name)
+    # come from the nikkelm.dev Worker's inject-if-absent fallback.
+    # HTML-escape the free-text values so a literal ``&`` (e.g. "Hades & Hades
+    # II") becomes ``&amp;`` - a raw ``&`` in an attribute is invalid HTML and
+    # can trip strict Open Graph scrapers.
+    desc = html.escape(SEO_DESCRIPTION)
+    alt = html.escape(SEO_IMAGE_ALT)
+    seo_tags = "\n    ".join([
+        f'<meta name="description" content="{desc}">',
+        '<meta property="og:title" content="Hades Dialogue Explorer">',
+        f'<meta property="og:description" content="{desc}">',
+        f'<meta property="og:image" content="{og_image_url}">',
+        '<meta property="og:image:width" content="1200">',
+        '<meta property="og:image:height" content="630">',
+        f'<meta property="og:image:alt" content="{alt}">',
+        '<meta name="twitter:card" content="summary_large_image">',
+        f'<meta name="twitter:image" content="{og_image_url}">',
+    ])
+    return (
+        INDEX_TEMPLATE.read_text(encoding="utf-8")
+        .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
+        .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
+        .replace(
+            '<meta name="viewer-version" content="">',
+            f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n'
+            f'    {seo_tags}\n'
+            f'    <meta name="viewer-version" content="{version}">',
+        )
+    )
 
 
 def build_split(payload: dict) -> dict:
@@ -505,7 +283,7 @@ def build_split(payload: dict) -> dict:
     _ensure_clean_dist()
 
     css_data = build_css()
-    js_data, js_blocks = _assemble_viewer_js()
+    js_data, js_blocks = assemble_viewer_js()
     # Source map for the concatenated viewer.js (issue #140): browsers report
     # stack traces against the original templates/viewer/*.js modules. Assert the
     # provenance-tracked assembly matches build_js() byte-for-byte so the map can
@@ -539,40 +317,7 @@ def build_split(payload: dict) -> dict:
         per_game_json[gid] for gid in sorted(per_game_json)
     )
     version = hashlib.sha256(hash_src.encode("utf-8")).hexdigest()[:10]
-    # Content-Security-Policy for the hosted (web) build only - the offline
-    # single-file bundle is opened via file://, where a 'self' policy misfires,
-    # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
-    # headers, so it goes in a <meta>. 'unsafe-inline' is required by the
-    # pre-paint inline scripts and the generated inline onclick/style handlers;
-    # the policy still blocks external script loading, eval, plugins and <base>
-    # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
-    # so framing can't be restricted here.)
-    #
-    # Cloudflare Web Analytics: the nikkelm.dev deploy layer injects the beacon
-    # <script src="https://static.cloudflareinsights.com/beacon.min.js"> (which
-    # then POSTs page views to cloudflareinsights.com). Both hosts are allow-
-    # listed so the beacon isn't CSP-blocked; nothing else external is permitted.
-    csp = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:; "
-        "connect-src 'self' https://cloudflareinsights.com; "
-        "font-src 'self'; "
-        "object-src 'none'; "
-        "base-uri 'self'; "
-        "form-action 'none'"
-    )
-    index_html = (
-        INDEX_TEMPLATE.read_text(encoding="utf-8")
-        .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
-        .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
-        .replace(
-            '<meta name="viewer-version" content="">',
-            f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n'
-            f'    <meta name="viewer-version" content="{version}">',
-        )
-    )
+    index_html = _build_split_index_html(version)
 
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
     # Append the sourceMappingURL directive so browsers/devtools pick up the
@@ -589,6 +334,12 @@ def build_split(payload: dict) -> dict:
     # the split build's index.html).
     for name in _STATIC_ASSET_NAMES:
         shutil.copyfile(STATIC_DIR / name, DIST_DIR / name)
+
+    # Copy the social-card image (referenced by absolute URL in the split
+    # build's og:image/twitter:image). Kept OUT of _STATIC_ASSET_NAMES so the
+    # offline bundle - which carries no SEO/OG tags - doesn't inline ~180 KB it
+    # never references.
+    shutil.copyfile(STATIC_DIR / OG_IMAGE_NAME, DIST_DIR / OG_IMAGE_NAME)
 
     # Copy the self-hosted fonts into dist/fonts/ (referenced by fonts.css as
     # ``fonts/<name>.woff2`` relative to viewer.css). Copy per-file with
@@ -619,6 +370,7 @@ def build_split(payload: dict) -> dict:
         f"viewer.js {sizes['viewer.js']/1024:.1f} KB, "
         f"viewer.js.map {sizes['viewer.js.map']/1024:.0f} KB, "
         f"viewer.css {sizes['viewer.css']/1024:.1f} KB, "
+        f"og-image.png {sizes['og-image.png']/1024:.0f} KB, "
         f"data.json (meta) {sizes['data.json']/1024:.0f} KB, "
         f"{game_report}"
     )
