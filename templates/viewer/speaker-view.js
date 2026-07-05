@@ -25,7 +25,7 @@
 // stability; see ``priorityScheme`` below.
 
 import { textlines, speakers, sectionKeyLabels, getActiveGame, alternates, dependents } from './data.js';
-import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers } from './speaker-groups.js';
+import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers, listCanonicalSpeakerIds, speakerGroupMembers } from './speaker-groups.js';
 import {
     escapeHtml,
     jsAttr,
@@ -809,6 +809,87 @@ function renderTextlineRow(name, tl) {
         + `</li>`;
 }
 
+// ---- Empty-state speaker picker ----------------------------------------
+//
+// Shown when the speaker view is opened without a selected speaker (a bare
+// ``#view=speaker`` deep link, or arriving via the header nav). Previously this
+// state was a dead-end ("Select a speaker to see their overview") with no way to
+// actually choose one; now it renders a searchable grid of every speaker in the
+// active game so the user can drill in directly. Each tile navigates via the
+// global ``navigateToSpeaker`` (same entry point the clickable speaker names and
+// "other versions" pills use), so the canonical-id resolution and URL write are
+// shared.
+
+// Live filter text for the picker. Reset to empty on every fresh empty-state
+// render (a new speaker view should start unfiltered); not URL-persisted.
+let _pickerQuery = '';
+
+// One pickable entry per canonical speaker group in the active game, EXCLUDING
+// speakers that own no dialogues (a 0-owned speaker has an empty overview list;
+// guest-only speakers stay reachable by clicking their name in a dialogue). Each
+// entry carries the friendly name plus the group's owned-textline count (summed
+// across member ids, deduped - matching the "Owned dialogues" figure the
+// overview headlines). Sorted by friendly name so the grid reads alphabetically.
+function listSpeakerPickerEntries() {
+    const out = [];
+    for (const canon of listCanonicalSpeakerIds()) {
+        const owned = new Set();
+        for (const mid of speakerGroupMembers(canon)) {
+            for (const t of (speakers[mid] || {}).ownedTextlines || []) owned.add(t);
+        }
+        if (owned.size === 0) continue;
+        const name = ((speakers[canon] || {}).name || '').trim() || canon;
+        out.push({ id: canon, name, count: owned.size });
+    }
+    out.sort((a, b) => a.name.localeCompare(b.name));
+    return out;
+}
+
+// Render just the filtered speaker grid (the part the live filter re-renders in
+// place, so the search input keeps focus/caret as the user types). Matches on
+// the friendly name or the canonical id, case-insensitively.
+function renderSpeakerPickerBody() {
+    const query = _pickerQuery.trim().toLowerCase();
+    let entries = listSpeakerPickerEntries();
+    if (query) {
+        entries = entries.filter(e =>
+            e.name.toLowerCase().includes(query) || e.id.toLowerCase().includes(query));
+    }
+    if (entries.length === 0) {
+        return `<p class="muted speaker-picker-empty">No speakers match \u201C${escapeHtml(_pickerQuery.trim())}\u201D.</p>`;
+    }
+    return `<div class="speaker-picker-grid">`
+        + entries.map(e =>
+            `<button type="button" class="speaker-picker-item" onclick="navigateToSpeaker(${jsAttr(e.id)})" data-tooltip="${escapeHtml(e.id)}">`
+            + `<span class="speaker-picker-name">${escapeHtml(e.name)}</span>`
+            + `<span class="speaker-picker-count" data-tooltip="${e.count} owned dialogue${e.count === 1 ? '' : 's'}">${e.count}</span>`
+            + `</button>`).join('')
+        + `</div>`;
+}
+
+// Full empty-state markup: an intro line, a filter input, and the speaker grid.
+// Exported so the renderer (and tests) can build it directly.
+export function renderSpeakerPicker() {
+    _pickerQuery = '';
+    return `<div class="speaker-picker">`
+        + `<p class="speaker-picker-intro">Select a speaker to see their overview - every line they own, who they depend on, and (with a save loaded) what's eligible to play.</p>`
+        + `<input type="text" class="speaker-picker-search" placeholder="Filter speakers..." `
+        + `spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" `
+        + `value="" oninput="filterSpeakerPicker(this.value)" aria-label="Filter speakers" />`
+        + `<div class="speaker-picker-body">${renderSpeakerPickerBody()}</div>`
+        + `</div>`;
+}
+
+// Live filter-input handler for the empty-state picker. Re-renders only the grid
+// body element so the filter input (a sibling) keeps focus/caret. Guards the
+// ``document.querySelector`` call so it no-ops under the test DOM stub.
+export function filterSpeakerPicker(query) {
+    _pickerQuery = query || '';
+    if (typeof document.querySelector !== 'function') return;
+    const bodyEl = document.querySelector('.speaker-picker .speaker-picker-body');
+    if (bodyEl) bodyEl.innerHTML = renderSpeakerPickerBody();
+}
+
 // Main entry. ``opts.priority`` is the URL-supplied filter string
 // (already canonicalised by ``navigation.js``). The function is
 // pure-render: it never touches the URL or any global state besides the
@@ -822,7 +903,7 @@ export function renderSpeaker(speakerId, opts) {
     const container = document.getElementById('info-content');
     if (!container) return;
     if (!speakerId) {
-        container.innerHTML = `<div class="empty-state">Select a speaker to see their overview</div>`;
+        container.innerHTML = renderSpeakerPicker();
         return;
     }
     if (!speakers[speakerId]) {

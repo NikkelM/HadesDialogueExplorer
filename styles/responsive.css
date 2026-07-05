@@ -501,6 +501,12 @@
         align-items: center;
         justify-content: center;
     }
+    /* Speaker-picker (empty-state) filter input + tiles: same touch sizing as
+       the duplicates master list they mirror. */
+    .speaker-picker-search,
+    .speaker-picker-item {
+        min-height: var(--tap-min);
+    }
 }
 
 /* === Search results dropdown =======================================

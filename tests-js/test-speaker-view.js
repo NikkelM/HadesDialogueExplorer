@@ -16,6 +16,8 @@ import { strict as assert } from 'node:assert';
 
 import {
     renderSpeaker,
+    renderSpeakerPicker,
+    filterSpeakerPicker,
     canonicalisePriority,
     canonicaliseEligibility,
     toggleSpeakerSection,
@@ -30,6 +32,7 @@ import { buildFixtureData, loadFixtureData } from './fixtures.js';
 
 let lastHtml = '';
 let lastBodyHtml = '';
+let lastPickerBodyHtml = '';
 
 globalThis.document = {
     getElementById(id) {
@@ -43,12 +46,19 @@ globalThis.document = {
     },
     // Live-search re-render target: ``searchSpeakerTextlines`` rewrites only the
     // list body element, so return a capture stub whose innerHTML the search
-    // tests can read back.
+    // tests can read back. ``filterSpeakerPicker`` does the same for the
+    // empty-state picker's grid body.
     querySelector(sel) {
         if (sel === '.speaker-textlines .speaker-textline-body') {
             return {
                 set innerHTML(v) { lastBodyHtml = v; },
                 get innerHTML() { return lastBodyHtml; },
+            };
+        }
+        if (sel === '.speaker-picker .speaker-picker-body') {
+            return {
+                set innerHTML(v) { lastPickerBodyHtml = v; },
+                get innerHTML() { return lastPickerBodyHtml; },
             };
         }
         return null;
@@ -158,6 +168,7 @@ beforeEach(() => {
     _localStore.clear();
     lastHtml = '';
     lastBodyHtml = '';
+    lastPickerBodyHtml = '';
     // Clear any in-speaker search query left by a prior test so the module's
     // ``_speakerQuery`` state doesn't leak across tests (it survives while the
     // same speaker id is re-rendered).
@@ -191,6 +202,78 @@ test('canonicaliseEligibility passes the four save statuses through and defaults
     assert.equal(canonicaliseEligibility(null), 'all');
     assert.equal(canonicaliseEligibility(undefined), 'all');
     assert.equal(canonicaliseEligibility('nonsense'), 'all');
+});
+
+// --- empty-state speaker picker -----------------------------------
+
+test('renderSpeaker with no speaker renders the picker, not a dead-end message', () => {
+    const html = render(null, {});
+    // The old dead-end text is gone; the picker scaffold is present.
+    assert.doesNotMatch(html, /Select a speaker to see their overview<\/div>/);
+    assert.match(html, /class="speaker-picker"/);
+    assert.match(html, /class="speaker-picker-intro"/);
+    // A filter input wired to the live handler.
+    assert.match(html, /class="speaker-picker-search"[^>]*oninput="filterSpeakerPicker\(this\.value\)"/);
+    assert.match(html, /class="speaker-picker-search"[^>]*value=""/);
+    // A grid of speaker tiles.
+    assert.match(html, /class="speaker-picker-grid"/);
+});
+
+test('the picker lists every speaker as a navigable tile with an owned-dialogue count', () => {
+    const html = renderSpeakerPicker();
+    // Fixture speakers appear as tiles that navigate via navigateToSpeaker.
+    assert.match(html, /class="speaker-picker-item" onclick="navigateToSpeaker\(&quot;NPC_Zeus_01&quot;\)"/);
+    assert.match(html, /class="speaker-picker-item" onclick="navigateToSpeaker\(&quot;NPC_Herald_01&quot;\)"/);
+    assert.match(html, /class="speaker-picker-item" onclick="navigateToSpeaker\(&quot;NPC_Aphrodite_01&quot;\)"/);
+    // Friendly names are shown.
+    assert.match(html, /<span class="speaker-picker-name">Zeus<\/span>/);
+    assert.match(html, /<span class="speaker-picker-name">Herald<\/span>/);
+    // Owned-dialogue counts: Herald owns 2, Zeus owns 1.
+    assert.match(html, /Herald<\/span><span class="speaker-picker-count"[^>]*>2<\/span>/);
+    assert.match(html, /Zeus<\/span><span class="speaker-picker-count"[^>]*>1<\/span>/);
+});
+
+test('the picker excludes speakers that own no dialogues', () => {
+    // Zagreus and Achilles are in the fixture speaker map but own no textlines,
+    // so the picker must not list them (a 0-owned speaker has an empty overview;
+    // guest-only speakers stay reachable by clicking their name in a dialogue).
+    const html = renderSpeakerPicker();
+    assert.doesNotMatch(html, /navigateToSpeaker\(&quot;NPC_Zagreus_01&quot;\)/);
+    assert.doesNotMatch(html, /navigateToSpeaker\(&quot;NPC_Achilles_01&quot;\)/);
+    // Sanity: speakers that DO own dialogues are still listed.
+    assert.match(html, /navigateToSpeaker\(&quot;NPC_Zeus_01&quot;\)/);
+});
+
+test('the picker sorts tiles alphabetically by friendly name', () => {
+    const html = renderSpeakerPicker();
+    // Aphrodite before Herald before Zeus.
+    const iA = html.indexOf('>Aphrodite<');
+    const iH = html.indexOf('>Herald<');
+    const iZ = html.indexOf('>Zeus<');
+    assert.ok(iA > -1 && iH > -1 && iZ > -1, 'all three tiles present');
+    assert.ok(iA < iH && iH < iZ, 'tiles ordered Aphrodite < Herald < Zeus');
+});
+
+test('filterSpeakerPicker narrows the grid body to friendly-name matches', () => {
+    renderSpeakerPicker();
+    filterSpeakerPicker('herald');
+    assert.match(lastPickerBodyHtml, /navigateToSpeaker\(&quot;NPC_Herald_01&quot;\)/);
+    assert.doesNotMatch(lastPickerBodyHtml, /navigateToSpeaker\(&quot;NPC_Zeus_01&quot;\)/);
+});
+
+test('filterSpeakerPicker also matches on the internal speaker id', () => {
+    renderSpeakerPicker();
+    filterSpeakerPicker('NPC_Zeus');
+    assert.match(lastPickerBodyHtml, /navigateToSpeaker\(&quot;NPC_Zeus_01&quot;\)/);
+    assert.doesNotMatch(lastPickerBodyHtml, /navigateToSpeaker\(&quot;NPC_Herald_01&quot;\)/);
+});
+
+test('filterSpeakerPicker shows an empty message when nothing matches', () => {
+    renderSpeakerPicker();
+    filterSpeakerPicker('zzznope');
+    assert.match(lastPickerBodyHtml, /speaker-picker-empty/);
+    assert.match(lastPickerBodyHtml, /No speakers match/);
+    assert.match(lastPickerBodyHtml, /zzznope/);
 });
 
 // --- renderSpeaker -------------------------------------------------

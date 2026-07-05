@@ -32,6 +32,87 @@ body.layout-speaker #panel-info {
 .speaker-overview {
     padding: 4px 0 16px;
 }
+
+/* Empty-state speaker picker (shown when the speaker view opens without a
+   selection - a bare #view=speaker link or the header nav). A searchable grid
+   of every speaker in the active game so the view is never a dead-end. Styling
+   mirrors the cross-game duplicates master list (search input + name/count
+   tiles) for consistency across the two "browse a list" views. */
+.speaker-picker {
+    padding: 4px 0 16px;
+}
+.speaker-picker-intro {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+}
+/* Match the main search bar + the duplicates filter input. */
+.speaker-picker-search {
+    width: 100%;
+    max-width: 500px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text-color);
+    font-size: var(--fs-base);
+    line-height: 18px;
+    outline: none;
+}
+.speaker-picker-search:focus {
+    border-color: var(--accent-color);
+}
+/* Auto-fill grid: tiles flow across the full panel width on desktop and
+   collapse to a single column on a phone. */
+.speaker-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    align-items: start;
+    gap: 0.4rem;
+}
+.speaker-picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text-color);
+    font-size: var(--fs-base);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+.speaker-picker-item:hover {
+    border-color: var(--accent-color);
+    background: var(--border);
+}
+.speaker-picker-name {
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.speaker-picker-count {
+    flex-shrink: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.1rem 0.45rem;
+    border-radius: 8px;
+}
+.speaker-picker-item:hover .speaker-picker-count {
+    color: var(--text-color);
+}
+.speaker-picker-empty {
+    margin-top: 1rem;
+}
+
 /* This view's title bar is a <header>, so it inherits the global page
    ``header`` rule (display:flex; align-items:center) which vertically
    mis-centres the differently-sized lines. Override to a left-aligned
