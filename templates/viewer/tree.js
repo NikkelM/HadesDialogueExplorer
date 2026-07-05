@@ -250,6 +250,15 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     nameSpan.textContent = name;
     label.appendChild(nameSpan);
 
+    // Secondary metadata (status / blocked / skip badges, cycle marker,
+    // OR-routed badge, narrative-priority badge, owner tag) is wrapped so mobile
+    // can drop it onto its own second row beneath the name - the name is the
+    // important part and should get the full first row. On desktop the wrapper
+    // is ``display: contents`` (tree.css), so these elements stay inline in the
+    // flex row exactly as before: no desktop layout change.
+    const meta = document.createElement('span');
+    meta.className = 'tree-label-meta';
+
     if (!tl) {
         const cat = unresolvedCategoryFor(name);
         const warn = document.createElement('span');
@@ -263,14 +272,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             warn.textContent = '\u26A0 not in game';
             warn.dataset.tooltip = 'Not found in the parsed game data.';
         }
-        label.appendChild(warn);
+        meta.appendChild(warn);
         const blocks = unresolvedRefBlocks[name] || [];
         if (blocks.length > 0) {
             const blockedBadge = document.createElement('span');
             blockedBadge.className = 'tree-blocked-badge';
             blockedBadge.textContent = `\u26D4 blocks ${blocks.length}`;
             blockedBadge.dataset.tooltip = `Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing: ${blocks.join(', ')}`;
-            label.appendChild(blockedBadge);
+            meta.appendChild(blockedBadge);
         }
     } else if (tl.skip) {
         const skipBadge = document.createElement('span');
@@ -282,7 +291,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         skipBadge.dataset.tooltip = tl.skipReplacement
             ? `Retired line (flagged Skip) - can never play. Superseded by ${tl.skipReplacement}.`
             : 'Retired line (flagged Skip) - can never play.';
-        label.appendChild(skipBadge);
+        meta.appendChild(skipBadge);
     } else if (tl.blocked) {
         const blockedBadge = document.createElement('span');
         blockedBadge.className = 'tree-blocked-badge';
@@ -293,14 +302,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         blockedBadge.dataset.tooltip = reasonText
             ? `This dialogue can never play. ${reasonText}`
             : 'This dialogue can never play.';
-        label.appendChild(blockedBadge);
+        meta.appendChild(blockedBadge);
     }
 
     if (isCycle) {
         const cycleSpan = document.createElement('span');
         cycleSpan.className = 'cycle-marker';
         cycleSpan.textContent = ' \u21A9 cycle';
-        label.appendChild(cycleSpan);
+        meta.appendChild(cycleSpan);
     }
 
     // OR-routed dep badge (downstream only). Indicates this row
@@ -315,7 +324,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         orAlt.className = 'or-alt-badge';
         orAlt.textContent = `option ${edgeOpts.orBranchIndex}/${edgeOpts.orBranchTotal}`;
         orAlt.dataset.tooltip = `Routed via option ${edgeOpts.orBranchIndex} of ${edgeOpts.orBranchTotal} in this dependent's OR group. The dependent does not strictly need this textline; any one option in its OR group satisfies the gate.`;
-        label.appendChild(orAlt);
+        meta.appendChild(orAlt);
     }
 
     // Narrative-priority badge. Tree view shows a single compact
@@ -330,7 +339,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tierHtml;
             while (wrapper.firstChild) {
-                label.appendChild(wrapper.firstChild);
+                meta.appendChild(wrapper.firstChild);
             }
         }
     }
@@ -363,7 +372,9 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             navigateToSpeaker(tl.owner);
         });
     }
-    label.appendChild(npcSpan);
+    meta.appendChild(npcSpan);
+
+    label.appendChild(meta);
 
     node.appendChild(label);
 

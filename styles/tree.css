@@ -54,6 +54,12 @@
     width: max-content;
     min-width: 100%;
 }
+/* Secondary-metadata wrapper (badges + owner tag, everything after the name).
+   ``display: contents`` makes it transparent to layout on desktop, so its
+   children remain flex items of ``.tree-label`` exactly as if unwrapped (no
+   desktop change). Mobile (responsive.css) flips it to a real flex box on its
+   own row so the name owns the first line. */
+.tree-label-meta { display: contents; }
 .tree-label:hover { background: var(--border); }
 .tree-label.active { background: var(--border); color: var(--accent-color); }
 .tree-label:focus-visible {

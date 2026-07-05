@@ -13,6 +13,7 @@ import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
 import { initResizePanels, resetPanels } from './resize-panels.js';
+import { initMobileAccordion } from './mobile-accordion.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { initFabMenu } from './fab-menu.js';
 import { startDialogueTourReplay } from './tour-home.js';
@@ -44,6 +45,11 @@ function init(data) {
     // Draggable dividers between the three dialogue-view column panels
     // (desktop dialogue layout only; the module + CSS guard the mode).
     initResizePanels();
+    // Mobile-only: turn the stacked dialogue panels into an accordion (Details
+    // open, the two trees collapsed) so the tall Dependents tree no longer gets
+    // shoved down during load. Runs after initResizePanels so it can clear any
+    // inline body ``display`` that the desktop column-collapse logic set.
+    initMobileAccordion();
     // Re-hydrate a cached save before the first render so its badges show
     // immediately (indistinguishable from a freshly loaded save).
     restoreSavedSave();
