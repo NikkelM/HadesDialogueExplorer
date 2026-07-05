@@ -51,6 +51,7 @@ real ES module imports.
 
 import argparse
 import base64
+import difflib
 import hashlib
 import json
 import re
@@ -81,7 +82,7 @@ DIST_DIR = PROJECT_DIR / "dist"
 # Files written by the split build. Tracked explicitly so the cleaner
 # only removes managed artifacts, not anything else the user may have
 # dropped in ``dist/`` (e.g. screenshots, release notes).
-_SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
+_SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.js.map", "viewer.css", "data.json")
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
 
 # Static assets copied verbatim into ``dist/`` for the split build and
@@ -290,6 +291,13 @@ def build_js() -> str:
     any browser, including from ``file://`` (the offline bundle case,
     where browsers block real ES module imports via CORS).
     """
+    return _assemble_viewer_js()[0]
+
+
+def _ordered_viewer_js_files() -> list:
+    """The viewer JS modules in concatenation order: alphabetical with
+    ``init.js`` pinned last (see :func:`build_js` for why the boot call must
+    come after every declaration)."""
     js_files = sorted(VIEWER_JS_DIR.glob("*.js"))
     if not js_files:
         raise RuntimeError(f"No viewer JS modules found in {VIEWER_JS_DIR}")
@@ -300,32 +308,165 @@ def build_js() -> str:
             f"top-level boot() call); not found."
         )
     other_files = [f for f in js_files if f.name != "init.js"]
-    ordered = other_files + init_files
+    return other_files + init_files
 
-    stripped = []
+
+def _strip_export_prefix_line(line: str) -> str:
+    """Apply the single-line ``export `` prefix strip to one line (the same
+    transform :data:`_JS_EXPORT_RE` applies across the whole module). Used to
+    normalise raw lines when aligning them to the stripped output."""
+    return _JS_EXPORT_RE.sub(r"\1", line)
+
+
+def _stripped_line_to_raw(raw_text: str, stripped_text: str) -> list:
+    """Map each line of a module's stripped output back to its 0-based line in
+    the raw source.
+
+    ``_strip_module_syntax`` only deletes whole ``import`` lines and removes
+    ``export `` prefixes in place, so the stripped lines are a pure subsequence
+    of the raw lines after export-normalisation. A ``difflib`` alignment over
+    those two line lists therefore recovers an exact stripped->raw line map
+    (used to build the source map)."""
+    raw_norm = [_strip_export_prefix_line(ln) for ln in raw_text.split("\n")]
+    stripped_lines = stripped_text.split("\n")
+    mapping = [None] * len(stripped_lines)
+    sm = difflib.SequenceMatcher(a=raw_norm, b=stripped_lines, autojunk=False)
+    for tag, a1, a2, b1, b2 in sm.get_opcodes():
+        if tag == "equal":
+            for k in range(b2 - b1):
+                mapping[b1 + k] = a1 + k
+    return mapping
+
+
+def _assemble_viewer_js():
+    """Concatenate the viewer modules and record per-line provenance.
+
+    Returns ``(js_text, blocks)`` where each block is
+    ``{"source_name", "raw_text", "text_line_start", "line_to_raw"}``:
+
+    * ``source_name`` - repo-relative path used as the source-map ``sources``
+      entry (and keyed to ``raw_text`` for ``sourcesContent``).
+    * ``text_line_start`` - 0-based line index in ``js_text`` where this
+      module's stripped body begins (after its ``// --- name ---`` header).
+    * ``line_to_raw`` - per body line, the 0-based raw source line it came
+      from (or ``None`` for a line the alignment couldn't place).
+
+    The concatenation is byte-identical to the historical ``"\\n\\n".join``
+    assembly (asserted in :func:`build_source_map`), so adding the source map
+    never changes the shipped ``viewer.js`` bytes.
+    """
+    ordered = _ordered_viewer_js_files()
+    prepared = []
     for js_file in ordered:
         source_name = (
-            str(js_file.relative_to(PROJECT_DIR))
+            js_file.relative_to(PROJECT_DIR).as_posix()
             if js_file.is_relative_to(PROJECT_DIR)
             else js_file.name
         )
-        stripped.append(
-            (
-                source_name,
-                _strip_module_syntax(
-                    js_file.read_text(encoding="utf-8"),
-                    source_name=source_name,
-                ).strip(),
-            )
+        raw_text = js_file.read_text(encoding="utf-8")
+        stripped = _strip_module_syntax(raw_text, source_name=source_name)
+        text = stripped.strip()
+        prepared.append((js_file, source_name, raw_text, stripped, text))
+
+    _assert_unique_top_level_names([(sn, text) for _f, sn, _r, _s, text in prepared])
+
+    out_lines = []
+    blocks = []
+    for idx, (js_file, source_name, raw_text, stripped, text) in enumerate(prepared):
+        if idx > 0:
+            out_lines.append("")  # blank separator (the historical "\n\n" join)
+        out_lines.append(f"// --- {js_file.name} ---")
+        out_lines.append("")  # blank line between header and body
+        text_line_start = len(out_lines)
+
+        stripped_to_raw = _stripped_line_to_raw(raw_text, stripped)
+        # ``.strip()`` drops leading whitespace-only lines; the first body line
+        # is stripped line ``lead``. Body line i == stripped line (lead + i).
+        lead = len(stripped) - len(stripped.lstrip("\n"))
+        lead = stripped[:lead].count("\n")
+        line_to_raw = []
+        for i in range(len(text.split("\n"))):
+            si = lead + i
+            line_to_raw.append(stripped_to_raw[si] if si < len(stripped_to_raw) else None)
+
+        out_lines.extend(text.split("\n"))
+        blocks.append({
+            "source_name": source_name,
+            "raw_text": raw_text,
+            "text_line_start": text_line_start,
+            "line_to_raw": line_to_raw,
+        })
+
+    js_text = "\n".join(out_lines) + "\n"
+    return js_text, blocks
+
+
+# Base64 alphabet for source-map VLQ segments (RFC-style; not standard base64
+# padding).
+_VLQ_B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+
+def _vlq_encode(value: int) -> str:
+    """Base64 VLQ-encode a signed integer (Source Map v3 ``mappings`` field)."""
+    vlq = (-value << 1) | 1 if value < 0 else value << 1
+    out = ""
+    while True:
+        digit = vlq & 0x1F
+        vlq >>= 5
+        if vlq:
+            digit |= 0x20
+        out += _VLQ_B64[digit]
+        if not vlq:
+            break
+    return out
+
+
+def build_source_map(js_text: str, blocks: list, source_file: str) -> str:
+    """Build a Source Map v3 JSON string for the concatenated ``viewer.js``.
+
+    Maps each generated body line back to its original
+    ``templates/viewer/<module>.js`` line (column 0 - line granularity is what
+    browser stack traces report), and inlines each module's source via
+    ``sourcesContent`` so the map resolves regardless of how the host serves the
+    original files. ``js_text`` / ``blocks`` come from :func:`_assemble_viewer_js`.
+    """
+    sources = [b["source_name"] for b in blocks]
+    sources_content = [b["raw_text"] for b in blocks]
+    total_lines = js_text.count("\n")  # generated lines (trailing "\n" terminates the last)
+
+    # Per generated line: (source_index, source_line) or None (unmapped).
+    per_line = [None] * (total_lines + 1)
+    for src_idx, block in enumerate(blocks):
+        start = block["text_line_start"]
+        for i, raw_line in enumerate(block["line_to_raw"]):
+            if raw_line is not None and start + i < len(per_line):
+                per_line[start + i] = (src_idx, raw_line)
+
+    segments = []
+    prev_src, prev_src_line = 0, 0
+    for mapping in per_line:
+        if mapping is None:
+            segments.append("")
+            continue
+        src_idx, src_line = mapping
+        seg = (
+            _vlq_encode(0)  # generated column (line-level: always 0)
+            + _vlq_encode(src_idx - prev_src)
+            + _vlq_encode(src_line - prev_src_line)
+            + _vlq_encode(0)  # source column
         )
+        segments.append(seg)
+        prev_src, prev_src_line = src_idx, src_line
 
-    _assert_unique_top_level_names(stripped)
-
-    parts = []
-    for (source_name, text), js_file in zip(stripped, ordered):
-        parts.append(f"// --- {js_file.name} ---")
-        parts.append(text)
-    return "\n\n".join(parts) + "\n"
+    return json.dumps({
+        "version": 3,
+        "file": source_file,
+        "sourceRoot": "",
+        "sources": sources,
+        "sourcesContent": sources_content,
+        "names": [],
+        "mappings": ";".join(segments),
+    }, separators=(",", ":"))
 
 
 def _ensure_clean_dist() -> None:
@@ -364,7 +505,13 @@ def build_split(payload: dict) -> dict:
     _ensure_clean_dist()
 
     css_data = build_css()
-    js_data = build_js()
+    js_data, js_blocks = _assemble_viewer_js()
+    # Source map for the concatenated viewer.js (issue #140): browsers report
+    # stack traces against the original templates/viewer/*.js modules. Assert the
+    # provenance-tracked assembly matches build_js() byte-for-byte so the map can
+    # never describe a different bundle than the one we ship.
+    assert js_data == build_js(), "viewer.js assembly diverged from build_js()"
+    source_map = build_source_map(js_data, js_blocks, "viewer.js")
 
     games = payload.get("games", {})
     # Heavy per-game blobs, one file each.
@@ -400,12 +547,17 @@ def build_split(payload: dict) -> dict:
     # the policy still blocks external script loading, eval, plugins and <base>
     # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
     # so framing can't be restricted here.)
+    #
+    # Cloudflare Web Analytics: the nikkelm.dev deploy layer injects the beacon
+    # <script src="https://static.cloudflareinsights.com/beacon.min.js"> (which
+    # then POSTs page views to cloudflareinsights.com). Both hosts are allow-
+    # listed so the beacon isn't CSP-blocked; nothing else external is permitted.
     csp = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline'; "
+        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
         "style-src 'self' 'unsafe-inline'; "
         "img-src 'self' data:; "
-        "connect-src 'self'; "
+        "connect-src 'self' https://cloudflareinsights.com; "
         "font-src 'self'; "
         "object-src 'none'; "
         "base-uri 'self'; "
@@ -423,7 +575,11 @@ def build_split(payload: dict) -> dict:
     )
 
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
-    (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
+    # Append the sourceMappingURL directive so browsers/devtools pick up the
+    # map (issue #140). It is a trailing comment, so it doesn't affect eval.
+    (DIST_DIR / "viewer.js").write_text(
+        js_data + "//# sourceMappingURL=viewer.js.map\n", encoding="utf-8")
+    (DIST_DIR / "viewer.js.map").write_text(source_map, encoding="utf-8")
     (DIST_DIR / "viewer.css").write_text(css_data, encoding="utf-8")
     (DIST_DIR / "data.json").write_text(meta_json, encoding="utf-8")
     for gid, blob_json in per_game_json.items():
@@ -461,6 +617,7 @@ def build_split(payload: dict) -> dict:
         f"Split build -> dist/: "
         f"index.html {sizes['index.html']/1024:.1f} KB, "
         f"viewer.js {sizes['viewer.js']/1024:.1f} KB, "
+        f"viewer.js.map {sizes['viewer.js.map']/1024:.0f} KB, "
         f"viewer.css {sizes['viewer.css']/1024:.1f} KB, "
         f"data.json (meta) {sizes['data.json']/1024:.0f} KB, "
         f"{game_report}"
@@ -497,7 +654,11 @@ def build_bundle(payload: dict) -> None:
     # below still finds the un-versioned ``viewer.css`` / ``viewer.js`` refs.
     # A single-file bundle has nothing to cache-bust anyway.
     index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
+    # Drop the sourceMappingURL directive build_split appends: the offline
+    # single-file bundle ships no viewer.js.map alongside it, so the reference
+    # would dangle. (The hosted split build keeps it - that's where the map lives.)
     viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
+    viewer_js = re.sub(r"\n//# sourceMappingURL=viewer\.js\.map\n?$", "\n", viewer_js)
     viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
     # The bundle ships every game inline (no background loading), so embed the
     # whole payload rather than the split build's meta-only data.json.
