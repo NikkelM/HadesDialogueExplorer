@@ -164,3 +164,17 @@
 .duplicates-game-link:hover {
     border-color: var(--accent-color);
 }
+
+/* In the striped (even) columns the entry background is lightened toward
+   ``--border`` (see ``.dup-col-alt`` / ``--col-stripe``), which nearly matches
+   the game buttons' own ``--border`` edge and makes it vanish (~1.17:1). Give
+   the buttons a lighter border there so they read with the same definition as
+   in the dark columns (~1.6:1 on the stripe). The paired ``:hover`` keeps the
+   accent affordance, which the higher-specificity resting rule would otherwise
+   override. */
+.duplicates-entry.dup-col-alt .duplicates-game-link {
+    border-color: #3a4250;
+}
+.duplicates-entry.dup-col-alt .duplicates-game-link:hover {
+    border-color: var(--accent-color);
+}
