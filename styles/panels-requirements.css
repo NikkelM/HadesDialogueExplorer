@@ -7,6 +7,10 @@
     border-radius: 4px;
     border-left: 3px solid #555;
     background: rgba(255, 255, 255, 0.025);
+    /* The whole header row toggles the section (not just the coloured pill),
+       so the row-level cursor signals it's clickable; the body resets to
+       default below. Toggling is limited to the header line in info-panel.js. */
+    cursor: pointer;
 }
 /* Save-eligibility group dot in a requirement-section header (met / unmet /
    indeterminate / unobtainable), matching the dependency tree's group dots. */
@@ -62,7 +66,7 @@
    group children (styles/panels-gamedata.css). Keeping the same
    idiom across all three collapse targets means the same `.expanded`
    class controls visibility everywhere in the details panel. */
-.req-section-children { display: none; }
+.req-section-children { display: none; cursor: default; }
 .req-section-children.expanded { display: block; }
 
 /* Status-dot key teaching the shape language (see .group-kind-* in tree.css).
