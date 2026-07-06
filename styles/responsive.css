@@ -109,13 +109,27 @@
         align-items: center;
     }
     /* min-height alone top-aligns the label inside the link/button content
-       box; flex-centre it so the text sits in the middle of the 44px row. */
+       box; flex-centre it so the text sits in the middle of the 44px row.
+       ``.save-upload-btn`` is included so the Load-save icon + label centre in
+       their (now half-width) button too - matching the other control buttons.
+       (The save STATUS pill is deliberately excluded: its longer, wrapping text
+       reads better left-aligned.) */
     .header-nav-link,
+    .save-upload-btn,
     .game-toggle-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
+    /* The game-toggle buttons reserve their bold (.active) width via a hidden
+       bold ``::after`` twin (game-toggle.css). That twin only works as an
+       overlay under the base ``inline-grid`` layout; once these rules switch the
+       button to ``inline-flex`` the twin becomes a real flex sibling beside the
+       label and shoves the visible text off-centre. Width reservation isn't
+       needed here anyway - the search sits on its own row at <= 1024px, so a
+       toggle-induced resize can't shift it - so drop the twin and let the label
+       centre cleanly. */
+    .game-toggle-btn::after { display: none; }
     /* The display overrides above (needed for sizing / glyph alignment)
        beat the UA ``[hidden] { display: none }`` rule, which would leave a
        cleared save status visible on mobile. Re-assert it. */
@@ -137,8 +151,28 @@
     .save-upload {
         display: contents;
     }
-    #nav-duplicates { order: 1; }
-    .save-upload-btn { order: 2; }
+    /* Align every control row to the search box's full-width edges so the
+       stacked header reads as one tidy column instead of ragged rows with
+       independent widths. The search box + save status already span the full
+       width; here the two button pairs (game toggle; duplicates + Load save)
+       each fill their row and split it evenly (50/50), so all rows share the
+       same left / right edges. ``min-width: 0`` lets the long "Cross-game
+       duplicates" label shrink to its half rather than overflow. */
+    .game-toggle {
+        display: flex;
+        flex-basis: 100%;
+    }
+    .game-toggle-btn { flex: 1 1 0; }
+    #nav-duplicates {
+        order: 1;
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    .save-upload-btn {
+        order: 2;
+        flex: 1 1 0;
+        min-width: 0;
+    }
     #save-status { order: 5; }
     /* Forced full-width break between the two rows, gated on a loaded save
        (the status pill becomes visible) via :has so the no-save header carries
@@ -149,9 +183,11 @@
         flex-basis: 100%;
         height: 0;
     }
-    /* The status pill can be long (e.g. "Hades II with Zagreus' Journey: 1234
-       dialogues"); let its text wrap rather than overflow its row. */
+    /* Save status spans the full width (its own row); its text can be long
+       (e.g. "Hades II with Zagreus' Journey: 1234 dialogues") so let it wrap
+       rather than overflow. */
     #save-status {
+        flex-basis: 100%;
         min-width: 0;
         white-space: normal;
         max-width: 100%;
