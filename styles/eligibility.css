@@ -561,7 +561,10 @@
 
 .tree-link {
     cursor: pointer;
-    opacity: 0.4;
+    /* 0.65 (was 0.4): keeps the jump-to-dialogue arrow subtle at rest while
+       staying >= AA 4.5:1 (0.4 dropped the near-white glyph to ~3.4:1); full
+       opacity on hover. */
+    opacity: 0.65;
     font-size: 0.8em;
     text-decoration: none;
 }

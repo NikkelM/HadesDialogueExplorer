@@ -50,10 +50,12 @@
 .req-section h4 .toggle {
     /* Inline chevron prepended inside the colored pill. Inline-block
        so margin-right stays consistent regardless of the surrounding
-       text run. */
+       text run. Full opacity: on the tightest per-type header (the red
+       "must NOT" pill) a dimming opacity dropped the chevron below AA
+       4.5:1; the type colour on its tinted pill already reads as
+       de-emphasised without it. */
     display: inline-block;
     font-size: var(--fs-2xs);
-    opacity: 0.7;
 }
 /* Collapsed by default + override via `.expanded` mirrors the
    tree-view children box (styles/tree.css) and the GameData inline
