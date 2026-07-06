@@ -194,6 +194,44 @@
     }
 }
 
+/* === Tap targets (a11y, #139) =====================================
+ * Clickable speaker chips (the detail panel's Owner / Partner, the eligibility
+ * tracer's Owner, and every dialogue-line speaker prefix - all navigate to the
+ * speaker overview) render only ~18px tall, below the comfortable touch
+ * minimum. They are inline within flowing text and carry a dotted-underline
+ * affordance, so neither ``min-height`` (detaches the underline) nor block
+ * ``padding`` (bloats the dense dialogue-line list) is acceptable.
+ *
+ * Instead extend the HIT AREA with a transparent absolutely-positioned
+ * ``::before`` overlay centred on the chip: taps on it bubble to the chip's own
+ * onclick, so the tappable region grows to >= 24px vertically while the text,
+ * underline, and line box are all untouched (zero layout change). Height is
+ * kept at 28px (not the full 44px) so overlays on consecutive dialogue lines
+ * (~35px apart) never collide. ``::before`` is used because the meta variant
+ * already owns ``::after`` (its "go to speaker" chevron).
+ *
+ * Only the ``.clickable`` variant is targeted, so non-navigating speaker labels
+ * (search rows, snippet prefixes) are unchanged. The header controls, search,
+ * collapsible section pills, and FAB menu already meet >= 44px via other rules.
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    .speaker-name.clickable {
+        position: relative;
+    }
+    .speaker-name.clickable::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 28px;
+        transform: translateY(-50%);
+        /* Transparent tap extender only - no visual. Taps here hit the chip
+           (a pseudo-element is part of its host for hit-testing) and fire its
+           navigate-to-speaker onclick. */
+    }
+}
+
 /* === Dialogue detail =============================================
  * The three detail panels already stack vertically (via the shared
  * foundation rules above), and
