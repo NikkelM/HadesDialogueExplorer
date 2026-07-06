@@ -196,17 +196,30 @@ async function boot() {
             duplicates: meta.duplicates,
         });
 
-        // Background-load the remaining game(s) so switching is instant. The
-        // in-flight promise is tracked in data.js so a toggle / cross-game link
-        // that fires during the window awaits it (see ``ensureGameLoaded``). A
-        // failed preload is non-fatal: the active game stays usable, and the
-        // load is retried on demand when the user actually switches to that game
-        // (navigation surfaces a message if the retry also fails).
-        for (const gid of ids) {
-            if (gid === initialGame) continue;
-            preloadGame(gid).then((ok) => {
-                if (!ok) console.warn('Background load of ' + gid + ' failed; will retry on demand');
-            });
+        // Background-load the remaining game(s) so switching is instant, but
+        // DEFER it to browser idle so the inactive game's multi-hundred-KB blob
+        // does not compete with the critical path (the active blob + first
+        // render + LCP) - worst on slow mobile connections (#137). The in-flight
+        // promise is tracked in data.js, so a toggle / cross-game link that fires
+        // before idle still awaits it, or triggers an on-demand load via
+        // ``ensureGameLoaded`` when the idle callback has not run yet. A failed
+        // preload is non-fatal: the active game stays usable and the load is
+        // retried on demand when the user switches (navigation surfaces a message
+        // if the retry also fails).
+        const preloadInactiveGames = () => {
+            for (const gid of ids) {
+                if (gid === initialGame) continue;
+                preloadGame(gid).then((ok) => {
+                    if (!ok) console.warn('Background load of ' + gid + ' failed; will retry on demand');
+                });
+            }
+        };
+        // ``timeout`` guarantees the preload still runs on a page that never goes
+        // idle; the setTimeout fallback covers browsers without requestIdleCallback.
+        if (typeof requestIdleCallback === 'function') {
+            requestIdleCallback(preloadInactiveGames, { timeout: 3000 });
+        } else {
+            setTimeout(preloadInactiveGames, 1500);
         }
     } catch (err) {
         console.error('Viewer boot failed:', err);
