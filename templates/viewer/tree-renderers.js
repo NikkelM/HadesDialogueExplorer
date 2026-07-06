@@ -63,7 +63,7 @@ function attachCollapseToggle(header, toggle, childrenBox) {
         const isExpanded = childrenBox.classList.contains('expanded');
         childrenBox.classList.toggle('expanded');
         toggle.textContent = isExpanded ? '\u25B6' : '\u25BC';
-        if (!isExpanded) ensureExpandedContentVisible(childrenBox);
+        if (!isExpanded) ensureExpandedContentVisible(header);
     });
 }
 

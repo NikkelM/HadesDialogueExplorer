@@ -123,35 +123,33 @@ export function hasChildren(name, direction) {
     return (dependents[name] || []).some(d => d.name !== name);
 }
 
-// Bring newly-expanded content into the visible scroll viewport. After
-// a DOM mutation reveals new tree rows (e.g. clicking a `.tree-label`
-// toggle, expanding a `.req-type-group` / `.gamedata-group` header),
-// horizontally scroll the enclosing `.panel-body` to the rightmost
-// position so the full extent of the section is on-screen. CSS handles
-// the actual layout / right-edge alignment (see `styles/tree.css`):
-// each container uses default block layout so its right edge equals
-// its parent's right edge, and the root `.tree-node.root` sizes to
-// `max-content` so the panel-body scrollWidth equals the widest
-// descendant's natural content width. We only need to nudge the
-// scroll position here.
+// Bring a newly-expanded row into a useful scroll position. After a DOM
+// mutation reveals new tree rows (clicking a `.tree-label` toggle, expanding a
+// `.req-type-group` / `.gamedata-group` / OR-group header), horizontally scroll
+// the enclosing `.panel-body` so the EXPANDED row's own left edge sits at the
+// column's left content edge (where top-level rows naturally begin, i.e. just
+// inside the panel-body's left padding).
 //
-// We always scroll to `panelBody.scrollWidth` (auto-clamped to the
-// max scrollable position) rather than measuring whether the new
-// container fits in the current viewport. Measuring `container.right`
-// is unreliable because: the newly-revealed branch can contain deeper
-// labels that grew the panel's intrinsic width via `max-content`
-// propagation; each level of `.req-type-group` / `.gamedata-group`
-// adds `padding-right` framing so the container's right edge sits
-// inside the panel's rightmost content; and a previous expand may
-// have already scrolled the container into view, leaving the
-// section's full extent still off-screen. Unconditional max-scroll
-// matches the user's mental model: "expand to see the whole section".
-export function ensureExpandedContentVisible(container) {
-    if (!container) return;
-    const panelBody = container.closest('.panel-body');
+// This keeps the clicked row and the start of its (more-indented) children in
+// view from the left, instead of the old behaviour of jumping to
+// `panelBody.scrollWidth` - the far right - which showed only the single
+// deepest new descendant and scrolled the clicked row off the left entirely.
+//
+// ``rowEl`` is the clicked row/header element (not its children box): its
+// horizontal position is fixed by its nesting depth and is unaffected by the
+// children appended below it, so the target is stable. We measure inside a
+// ``requestAnimationFrame`` so the just-mutated layout is settled first.
+export function ensureExpandedContentVisible(rowEl) {
+    if (!rowEl) return;
+    const panelBody = rowEl.closest('.panel-body');
     if (!panelBody) return;
     requestAnimationFrame(() => {
-        panelBody.scrollTo({ left: panelBody.scrollWidth, behavior: 'smooth' });
+        const rowLeft = rowEl.getBoundingClientRect().left - panelBody.getBoundingClientRect().left;
+        // The row's left edge in the panel's scroll coordinate space, aligned to
+        // the content start (left padding) so it isn't flush against the border.
+        const padLeft = parseFloat(getComputedStyle(panelBody).paddingLeft) || 0;
+        const target = Math.max(0, panelBody.scrollLeft + rowLeft - padLeft);
+        panelBody.scrollTo({ left: target, behavior: 'smooth' });
     });
 }
 
@@ -399,7 +397,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                     childContainer.classList.add('expanded');
                     toggle.textContent = '\u25BC';
                     label.setAttribute('aria-expanded', 'true');
-                    ensureExpandedContentVisible(childContainer);
+                    ensureExpandedContentVisible(label);
                 }
                 return childContainer;
             }
@@ -412,7 +410,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
             label.setAttribute('aria-expanded', 'true');
-            ensureExpandedContentVisible(childContainer);
+            ensureExpandedContentVisible(label);
             return childContainer;
         };
 
