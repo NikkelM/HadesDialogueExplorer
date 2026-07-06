@@ -14,6 +14,8 @@ import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
 import { initResizePanels, resetPanels } from './resize-panels.js';
 import { initMobileAccordion } from './mobile-accordion.js';
+import { initTreeScrollShadow } from './tree-scroll-shadow.js';
+import { initTreeDragScroll } from './tree-drag-scroll.js';
 import { replayTours, setReplayDispatcher } from './tours.js';
 import { initFabMenu } from './fab-menu.js';
 import { startDialogueTourReplay } from './tour-home.js';
@@ -50,6 +52,14 @@ function init(data) {
     // shoved down during load. Runs after initResizePanels so it can clear any
     // inline body ``display`` that the desktop column-collapse logic set.
     initMobileAccordion();
+    // Desktop-only: reveal a horizontal scroll-shadow fade on the two tree
+    // panels when their deep chains overflow the column sideways. The fade
+    // overlay lives in panels.css; this only toggles the can-scroll-* classes.
+    initTreeScrollShadow();
+    // Desktop-only (mouse pointers): let a left-button drag anywhere in a tree
+    // panel pan it, like grabbing a canvas. A movement threshold keeps plain
+    // clicks (navigate / expand) working; touch keeps native scrolling.
+    initTreeDragScroll();
     // Re-hydrate a cached save before the first render so its badges show
     // immediately (indistinguishable from a freshly loaded save).
     restoreSavedSave();

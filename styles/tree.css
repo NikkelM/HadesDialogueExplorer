@@ -62,6 +62,21 @@
 .tree-label-meta { display: contents; }
 .tree-label:hover { background: var(--border); }
 .tree-label.active { background: var(--border); color: var(--accent-color); }
+/* Grab-to-pan (tree-drag-scroll.js): while a left-drag is actively panning a
+   tree view, force the grabbing cursor over the whole panel (overriding the
+   per-row pointer / help cursors) and stop text selection so the drag doesn't
+   smear a highlight. Only toggled for mouse drags, so touch / mobile keep
+   native scrolling and never see this. #info-content is included for the
+   Eligibility Tracer tree (the only content there the drag pans). */
+#upstream-content.tree-panning,
+#downstream-content.tree-panning,
+#info-content.tree-panning { user-select: none; }
+#upstream-content.tree-panning,
+#upstream-content.tree-panning *,
+#downstream-content.tree-panning,
+#downstream-content.tree-panning *,
+#info-content.tree-panning,
+#info-content.tree-panning * { cursor: grabbing !important; }
 .tree-label:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: -2px;
