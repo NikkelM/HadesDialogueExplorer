@@ -296,7 +296,7 @@ const BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP = {
 function evalBossDifficulty(rec, root) {
     const cr = root.CurrentRun;
     const gs = root.GameState;
-    if (!cr) return _WRONGSAVE('Checks the boss-difficulty vow against the current run - load the matching save type to resolve it.');
+    if (!cr) return _WRONGSAVE('Checks the Vow of Rivals against the current run - load the matching save type to resolve it.');
     const args = rec.FunctionArgs || {};
     const entered = cr.EnteredBiomes || 0;
     const rank = args.UseShrineUpgradesCache
@@ -306,7 +306,7 @@ function evalBossDifficulty(rec, root) {
     if (cr.IsDreamRun && entered > 0) {
         const biome = Array.isArray(cr.BiomeVisitOrder) ? cr.BiomeVisitOrder[entered - 1] : (cr.BiomeVisitOrder || {})[entered];
         const map = BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP[biome];
-        if (!map) return _MET('unknown', 'Dream-run boss-difficulty check for an unmapped biome.');
+        if (!map) return _MET('unknown', 'Dream Dive Vow of Rivals check for an unmapped region.');
         const cache = map.OnlyRequireSeen ? (gs && gs.EncountersOccurredCache) : (gs && gs.EncountersCompletedCache);
         return _MET(luaTruthy(cache && cache[map.Encounter]) ? 'met' : 'unmet');
     }

@@ -140,7 +140,7 @@
 .req-type-RequiredMaxAnyTextLines h4 { background: #2e2818; color: #d4b870; }
 .req-type-MinRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
 .req-type-MaxRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
-.req-type-other h4 { background: #2b2d42; color: var(--text-muted); }
+.req-type-other h4 { background: #2b2d42; color: var(--text-secondary); }
 .req-item {
     padding: 3px 8px;
     margin: 2px 0;
