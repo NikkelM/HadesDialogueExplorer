@@ -497,15 +497,16 @@ function fixtureWithPathRecords() {
                     Value: 5,
                 },
             ],
-            // Decorated record carrying a SumPrevRuns modifier - rendered
-            // as a friendly comparison with an "(over the last N runs)"
-            // clause appended.
+            // Decorated record carrying a SumPrevRuns modifier with a
+            // non-boundary threshold - rendered as a friendly comparison with
+            // an "(over the last N runs)" clause appended. (A boundary value
+            // instead reads as a per-run window; see the dedicated test below.)
             'Path:GameState.RunsCache': [
                 {
                     Comparison: '>=',
                     Path: ['GameState', 'RunsCache'],
                     SumPrevRuns: 3,
-                    Value: 1,
+                    Value: 5,
                 },
             ],
             // A record carrying a key the renderer does not recognise must
@@ -574,7 +575,7 @@ test('otherRequirements: Path:<head> + SumPrevRuns renders a friendly "(over the
     renderInfo('PathRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.RunsCache<\/code> &gt;= <code>1<\/code> <span class="other-req-mod">\(over the last 3 runs\)<\/span>/
+        /<code class="other-req-path">GameState\.RunsCache<\/code> &gt;= <code>5<\/code> <span class="other-req-mod">\(over the last 3 runs\)<\/span>/
     );
 });
 
@@ -626,11 +627,12 @@ function fixtureWithModifierRecords() {
             'Path:GameState.RoomsEntered': [
                 { Comparison: '>=', Path: ['GameState', 'RoomsEntered'], SumOf: ['N_Boss01', 'N_Boss02'], Value: 3 },
             ],
-            // ValuePath compared with a negative ValuePathAddition.
-            'Path:GameState.LastObjectiveFailedRun.NemesisBet': [
+            // ValuePath compared with a negative ValuePathAddition (generic
+            // path so it exercises raw ValuePath rendering, not a special gloss).
+            'Path:GameState.SomeCounterCache': [
                 {
                     Comparison: '<',
-                    Path: ['GameState', 'LastObjectiveFailedRun', 'NemesisBet'],
+                    Path: ['GameState', 'SomeCounterCache'],
                     ValuePath: ['GameState', 'CompletedRunsCache'],
                     ValuePathAddition: -5,
                 },
@@ -639,14 +641,15 @@ function fixtureWithModifierRecords() {
             'Path:GameState.TextLinesRecord': [
                 { IsNone: ['SomeLine'], Path: ['GameState', 'TextLinesRecord'], HintId: 7 },
             ],
-            // SumPrevRooms + IgnoreCurrentRun decorators combine.
+            // SumPrevRooms + IgnoreCurrentRun decorators combine into the
+            // "(over the last N rooms...)" suffix for a non-boundary threshold.
             'Path:Encounter.NemesisShopping': [
                 {
                     Comparison: '<=',
                     Path: ['Encounter', 'NemesisShopping'],
                     SumPrevRooms: 12,
                     IgnoreCurrentRun: true,
-                    Value: 0,
+                    Value: 3,
                 },
             ],
             // CountPathTrue + TableValuesToCount co-occur: count the truthy
@@ -677,22 +680,22 @@ test('Path TableValuesToCount renders a count-of-items threshold with a run clau
 });
 
 
-test('Path UseLength renders "Number of entries in <head>"', () => {
+test('Path UseLength renders "Number of distinct <head>"', () => {
     loadData(fixtureWithModifierRecords());
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /Number of entries in <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> &gt;= <code>3<\/code>/
+        /Number of distinct <code class="other-req-path">GameState\.WeaponsUnlocked<\/code> &gt;= <code>3<\/code>/
     );
 });
 
 
-test('Path CountPathTrue renders "Number of true entries in <head>" with a run clause', () => {
+test('Path CountPathTrue over runs reads "In <quantifier> of the last N runs: <clause>"', () => {
     loadData(fixtureWithModifierRecords());
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /Number of true entries in <code class="other-req-path">SpeechRecord<\/code> &lt;= <code>0<\/code> <span class="other-req-mod">\(over the last 4 runs\)<\/span>/
+        /In none of the last 4 runs: <code class="other-req-path">SpeechRecord<\/code>/
     );
 });
 
@@ -712,7 +715,7 @@ test('Path ValuePath renders the referenced path with a signed addition', () => 
     renderInfo('ModifierRecordDemo');
     assert.match(
         lastHtml,
-        /<code class="other-req-path">GameState\.LastObjectiveFailedRun\.NemesisBet<\/code> &lt; <code class="other-req-path">GameState\.CompletedRunsCache<\/code> - <code>5<\/code>/
+        /<code class="other-req-path">GameState\.SomeCounterCache<\/code> &lt; <code class="other-req-path">GameState\.CompletedRunsCache<\/code> - <code>5<\/code>/
     );
 });
 
@@ -794,11 +797,20 @@ function fixtureWithPathVocab() {
         RoomsEntered: 'entered',
         EnemyKills: 'killed',
         CompletedRunsCache: 'completed runs',
+        SpentShrinePointsCache: 'total active Fear',
+        Resources: 'current',
+        TraitCache: 'boons/traits taken:',
+        LifetimeResourcesGained: 'gained',
         'Hero.MetGods': 'gods encountered',
         'LastBossHealthBarRecord': 'previous-encounter health of',
     };
-    data.pathObjectFields = ['UseRecord', 'RoomsEntered', 'EnemyKills', 'LastBossHealthBarRecord'];
-    data.entityNames = { AresUpgrade: 'Ares', H_Boss01: "Cerberus' chamber", Chronos: 'Chronos' };
+    data.pathObjectFields = ['UseRecord', 'RoomsEntered', 'EnemyKills', 'LastBossHealthBarRecord', 'Resources', 'TraitCache', 'LifetimeResourcesGained'];
+    data.entityNames = {
+        AresUpgrade: 'Ares', H_Boss01: "Cerberus' chamber", Chronos: 'Chronos',
+        HadesSpearPoints: 'Gigaros', AthenaEncounterKeepsake: 'Gorgon Amulet', PlantFMoly: 'Moly',
+        SorceryRegenUpgrade: 'The Moon', DoubleRewardBoon: 'Sea Star', NemesisBet: "Nemesis' wager",
+        ForceApolloBoonKeepsake: 'Harmonic Photon', I: 'Tartarus', ArtemisCombatN: 'Artemis',
+    };
     return data;
 }
 
@@ -820,8 +832,8 @@ test('H2 UseLength boundary renders "is empty" / "is not empty"', () => {
     assert.match(r('<', 1), /is empty/);
     assert.match(r('>=', 1), /is not empty/);
     assert.match(r('>', 0), /is not empty/);
-    // Non-boundary keeps the "Number of entries in X >= N" form.
-    assert.match(r('>=', 3), /Number of entries in .* &gt;= .*3|Number of entries in .* >= .*3/);
+    // Non-boundary keeps the "Number of distinct X >= N" form.
+    assert.match(r('>=', 3), /Number of distinct .* &gt;= .*3|Number of distinct .* >= .*3/);
 });
 
 test('H2 scalar event-count gate renders "Has" / "Never <verb>" at boundaries', () => {
@@ -843,8 +855,183 @@ test('H2 scalar cumulative-count gate renders "No" / "Has <noun>"; value fields 
     const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
     assert.match(r(['GameState', 'CompletedRunsCache'], '<', 1), /No completed runs/);
     assert.match(r(['GameState', 'CompletedRunsCache'], '>', 0), /Has completed runs/);
-    // A value field (health) is not an occurrence count -> keep the raw operator.
-    assert.match(r(['GameState', 'LastBossHealthBarRecord', 'Chronos'], '<=', 0), /Previous-encounter health of Chronos.*&lt;=.*0|Previous-encounter health of Chronos.*<=.*0/);
+    // A value cache (points total) is not an occurrence count -> keep the raw operator.
+    assert.match(r(['GameState', 'SpentShrinePointsCache'], '==', 0), /Total active Fear == 0/);
+});
+
+test('H2 boss health-bar defeat gate renders "Defeated" / "Did not defeat" at value 0', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (path, op, value) => [{ Comparison: op, Path: path, Value: value }];
+    const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
+    const boss = ['GameState', 'LastBossHealthBarRecord', 'Chronos'];
+    // Health depleted to exactly 0 = defeated; any health remaining (> 0) = not.
+    assert.match(r(boss, '<=', 0), /Defeated Chronos .*last encounter/);
+    assert.match(r(boss, '>', 0), /Did not defeat Chronos .*last encounter/);
+    // The previous-run record reads "last run" rather than "last encounter".
+    assert.match(r(['PrevRun', 'BossHealthBarRecord', 'Chronos'], '>', 0), /Did not defeat Chronos .*last run/);
+    // Fractional "close match" / "barely lost" thresholds show a remaining-health
+    // percentage (like the player-health gate), not a defeat verb. The
+    // always-true >= 0 also reads as a percentage ("at least 0%").
+    assert.match(r(boss, '<=', 0.15), /Previous-encounter health of Chronos at most 15%/);
+    assert.match(r(boss, '>=', 0.25), /Previous-encounter health of Chronos at least 25%/);
+    assert.doesNotMatch(r(boss, '<=', 0.15), /Defeated/);
+    assert.match(r(boss, '>=', 0), /Previous-encounter health of Chronos at least 0%/);
+    assert.doesNotMatch(r(boss, '>=', 0), /Defeated|Did not defeat/);
+});
+
+test('H2 resource / possession gate renders natural clauses on both boundaries', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (path, op, value) => [{ Comparison: op, Path: path, Value: value }];
+    const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
+    const res = ['GameState', 'Resources', 'HadesSpearPoints'];
+    const trait = ['TraitCache', 'AthenaEncounterKeepsake'];
+    const gained = ['GameState', 'LifetimeResourcesGained', 'PlantFMoly'];
+    // Resources = live amount; TraitCache = use-count (not inventory); *Gained =
+    // lifetime total. Zero side ("none") and at-least-one side ("any") each read
+    // as their own natural phrasing.
+    assert.match(r(res, '<=', 0), /Player does not have Gigaros/);
+    assert.match(r(res, '>=', 1), /Player has Gigaros/);
+    assert.match(r(trait, '<=', 0), /Has not used Gorgon Amulet/);
+    assert.match(r(trait, '>=', 1), /Has used Gorgon Amulet/);
+    assert.match(r(gained, '<=', 0), /Never gained Moly/);
+    assert.match(r(gained, '>', 0), /Has gained Moly/);
+    // No raw "current" gloss or operator leaks through for these fields.
+    assert.doesNotMatch(r(res, '>=', 1), /Current Gigaros/);
+    // Non-boundary counts still keep the operator phrasing (not re-phrased).
+    assert.match(r(res, '>=', 5), /Current Gigaros.*5/);
+});
+
+// Class A: verb-style object fields used with a whole-record set/count
+// aggregation read as a verb clause ("Entered any of: X") instead of leaking
+// the raw path ("CurrentRun.RoomsEntered contains any of: X").
+test('H2 verb-field set aggregations read as verb clauses', () => {
+    loadData(fixtureWithPathVocab());
+    const memb = (path, op, ops) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), [{ [op]: ops, Path: path }]));
+    assert.match(memb(['CurrentRun', 'RoomsEntered'], 'HasAny', ['H_Boss01']), /Entered any of: Cerberus/);
+    assert.match(memb(['CurrentRun', 'UseRecord'], 'HasNone', ['AresUpgrade']), /Interacted with none of: Ares/);
+    assert.match(memb(['GameState', 'EnemyKills'], 'HasAll', ['Chronos']), /Killed all of: Chronos/);
+    assert.doesNotMatch(memb(['CurrentRun', 'RoomsEntered'], 'HasAny', ['H_Boss01']), /RoomsEntered/);
+    // The run scope must survive even though a bare verb-field has no gloss:
+    // CurrentRun -> "this run"; GameState carries no scope.
+    assert.match(memb(['CurrentRun', 'RoomsEntered'], 'HasAny', ['H_Boss01']), /, this run$/);
+    assert.doesNotMatch(memb(['GameState', 'EnemyKills'], 'HasAll', ['Chronos']), /this run/);
+    // CountOf: boundary -> "<verb> any of"; non-boundary -> "<verb> at least N of".
+    const cnt = (op, val) => _stripReq(renderOtherReqEntryHtml('Path:CurrentRun.RoomsEntered', [{ Comparison: op, Path: ['CurrentRun', 'RoomsEntered'], TableValuesToCount: ['H_Boss01'], Value: val }]));
+    assert.match(cnt('>=', 1), /Entered any of: Cerberus/);
+    assert.match(cnt('>=', 3), /Entered at least .*3.* of: Cerberus/);
+    // SumOf -> "Number of times <verb>: X".
+    const sum = _stripReq(renderOtherReqEntryHtml('Path:CurrentRun.RoomsEntered', [{ Comparison: '>=', Path: ['CurrentRun', 'RoomsEntered'], SumOf: ['H_Boss01'], Value: 2 }]));
+    assert.match(sum, /Number of times entered\s*:\s*Cerberus/);
+});
+
+// Class B + leaf/sub-field special renderers.
+test('H2 keepsake rarity, Arcana state, lifetime use, objective delta, region clear', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (obj) => _stripReq(renderOtherReqEntryHtml('Path:' + obj.Path.join('.'), [obj]));
+    // Keepsake rarity (IsAny top-range on ...TraitDictionary.<K>.1.Rarity).
+    assert.match(
+        rec({ IsAny: ['Epic', 'Heroic'], Path: ['CurrentRun', 'Hero', 'TraitDictionary', 'ForceApolloBoonKeepsake', '1', 'Rarity'] }),
+        /Equipped Harmonic Photon at Epic rarity or higher/
+    );
+    // Arcana card rank -> tier name (rank 3 = Epic).
+    assert.match(rec({ Comparison: '>=', Path: ['GameState', 'MetaUpgradeState', 'SorceryRegenUpgrade', 'Level'], Value: 3 }), /The Moon Arcana is upgraded to Epic rank or higher/);
+    // Lifetime trait use count.
+    assert.match(rec({ Comparison: '>=', Path: ['GameState', 'LifetimeTraitStats', 'DoubleRewardBoon', 'UseCount'], Value: 15 }), /Runs using Sea Star >= .*15/);
+    // Objective last-failed run delta -> "N+ runs ago".
+    assert.match(
+        rec({ Comparison: '<', Path: ['GameState', 'LastObjectiveFailedRun', 'NemesisBet'], ValuePath: ['GameState', 'CompletedRunsCache'], ValuePathAddition: -5 }),
+        /Nemesis' wager last failed 5\+ runs ago/
+    );
+    // ClearedWithWeapons region form (leaf is a region code).
+    assert.match(rec({ HasNone: ['SomeWeapon'], Path: ['GameState', 'ClearedWithWeapons', 'I'] }), /Cleared Tartarus with none of:/);
+});
+
+// A scalar per-run occurrence record (UseRecord.<X>) summed over a window at a
+// 0/1 boundary reads as a per-run window ("In none / at least one of the last N
+// runs: ...") rather than a self-contradictory "Never ... (over the last N
+// runs)". Covers issue #134 round-4 item C.
+test('H2 boundary SumPrevRuns reads as an "In <none|at least one> of the last N runs" window', () => {
+    loadData(fixtureWithPathVocab());
+    const rec = (obj) => _stripReq(renderOtherReqEntryHtml('Path:' + obj.Path.join('.'), [obj]));
+    // == 0 over runs -> "In none of the last N runs" (shape of MorosAboutQuestLog08).
+    const none = rec({ Comparison: '==', Path: ['UseRecord', 'ArtemisCombatN'], SumPrevRuns: 3, IgnoreCurrentRun: true, Value: 0 });
+    assert.match(none, /In none of the last 3 runs: Interacted with Artemis/);
+    assert.match(none, /excluding the current run/);
+    assert.doesNotMatch(none, /Never/);
+    // >= 1 over runs -> "In at least one of the last N runs" (AphroditeAboutAthena02).
+    assert.match(
+        rec({ Comparison: '>=', Path: ['UseRecord', 'AresUpgrade'], SumPrevRuns: 2, Value: 1 }),
+        /In at least one of the last 2 runs: Interacted with Ares/
+    );
+});
+
+// QuestsCompleted HasAll <ref:QuestOrderData> is the "every Minor Prophecy"
+// gate; the raw ref name must not leak (item D, MorosAboutQuestLog08).
+test('H2 QuestsCompleted HasAll QuestOrderData reads "Completed all Minor Prophecies"', () => {
+    loadData(buildFixtureData());
+    assert.equal(
+        _stripReq(renderOtherReqEntryHtml('Path:GameState.QuestsCompleted', [{ HasAll: '<ref:QuestOrderData>', Path: ['GameState', 'QuestsCompleted'] }])),
+        'Completed all Minor Prophecies'
+    );
+});
+
+// A CurrentRun run-type boolean (ActiveBounty / IsDreamRun) as a PathTrue /
+// PathFalse gate reads "Must be true/false: This run is a ..." (item E).
+test('H2 ActiveBounty / IsDreamRun PathTrue reads "This run is a Chaos Trial / Dream Dive"', () => {
+    loadData(buildFixtureData());
+    assert.match(
+        _stripReq(renderOtherReqEntryHtml('PathTrue:CurrentRun.ActiveBounty', [{ PathTrue: ['CurrentRun', 'ActiveBounty'] }])),
+        /This run is a Chaos Trial/
+    );
+    assert.match(
+        _stripReq(renderOtherReqEntryHtml('PathFalse:CurrentRun.IsDreamRun', [{ PathFalse: ['CurrentRun', 'IsDreamRun'] }])),
+        /This run is a Dream Dive/
+    );
+});
+
+// NextBiomeStateName is/isn't "Rain" -> the region's weather, keeping the field
+// clause and relabelling only the value (item F).
+test('H2 NextBiomeStateName Rain reads "Raining" / "Not raining"', () => {
+    loadData(buildFixtureData());
+    assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.NextBiomeStateName', [{ IsAny: ['Rain'], Path: ['GameState', 'NextBiomeStateName'] }])), 'Next region condition is: Raining');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.NextBiomeStateName', [{ IsNone: ['Rain'], Path: ['GameState', 'NextBiomeStateName'] }])), 'Next region condition is: Not raining');
+});
+
+// RequireAffordableGhostAdminItems names an incantation as plain resolved text,
+// not an operand code chip (item G, HecateAboutStormStopNotCast01).
+test('H2 RequireAffordableGhostAdminItems renders the incantation as plain text', () => {
+    loadData(fixtureWithPathVocab());
+    const html = renderOtherReqEntryHtml('FunctionName:RequireAffordableGhostAdminItems', [
+        { FunctionArgs: { CategoryIndex: 1, HasAny: ['AresUpgrade'] }, FunctionName: 'RequireAffordableGhostAdminItems' },
+    ]);
+    assert.equal(_stripReq(html), 'Can afford incantation: Ares');
+    // The incantation name must not be wrapped in an operand <code> chip.
+    assert.doesNotMatch(html, /<code[^>]*>Ares<\/code>/);
+});
+
+// A curated GameState.Flags leaf name is used verbatim, not camelCase-split
+// (item I, CirceAboutScyllaQuestComplete01).
+test('H2 the AcquiredMixerForCirceQuest flag reads "Acquired Pearl for Circe"', () => {
+    const data = fixtureWithPathVocab();
+    data.reqTypeLabels = { ...data.reqTypeLabels, PathTrue: 'Must be true' };
+    data.pathFieldNames = { ...data.pathFieldNames, Flags: 'Story flag:' };
+    data.pathObjectFields = [...data.pathObjectFields, 'Flags'];
+    data.pathFieldLeafNames = { Flags: { AcquiredMixerForCirceQuest: 'Acquired Pearl for Circe' } };
+    loadData(data);
+    const html = _stripReq(renderOtherReqEntryHtml('PathTrue:GameState.Flags.AcquiredMixerForCirceQuest', [{ PathTrue: ['GameState', 'Flags', 'AcquiredMixerForCirceQuest'] }]));
+    assert.match(html, /Acquired Pearl for Circe/);
+    // Not the raw camelCase split ("Acquired Mixer For Circe Quest").
+    assert.doesNotMatch(html, /Mixer/);
+});
+
+test('H1 minimum-of-1 value-map gate drops the redundant ">= 1"', () => {
+    loadData(buildFixtureData());
+    const html = _stripReq(renderOtherReqEntryHtml('RequiredResourcesMin', { Nectar: 1, TitanBlood: 5 }));
+    // "at least 1" is implied by the "Minimum ..." label -> show the entity only.
+    assert.match(html, /Nectar\b/);
+    assert.doesNotMatch(html, /Nectar >= 1|Nectar &gt;= 1/);
+    // A higher threshold keeps the operator.
+    assert.match(html, /TitanBlood >= 5|TitanBlood &gt;= 5/);
 });
 
 test('H1 RequiredMaxHealthFraction renders like H2 ("Player health at most N%")', () => {
@@ -1575,13 +1762,15 @@ test('bare-key {Count} objects collapse to just the count', () => {
 });
 
 
-test('bare-key {Count, Name} objects render as "Name >= Count"', () => {
+test('bare-key {Count, Name} object with Count 1 drops the redundant ">= 1"', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
+    // Count 1 ("at least one") is implied by the "min ..." label -> name only.
     assert.match(
         lastHtml,
-        /<span class="req-type-name"[^>]*>Required min active meta upgrade level<\/span>: <code>BossDifficultyShrineUpgrade<\/code> &gt;= <code>1<\/code>/
+        /<span class="req-type-name"[^>]*>Required min active meta upgrade level<\/span>: <code>BossDifficultyShrineUpgrade<\/code>/
     );
+    assert.doesNotMatch(lastHtml, /BossDifficultyShrineUpgrade<\/code> &gt;= <code>1<\/code>/);
 });
 
 
@@ -1720,12 +1909,12 @@ test('unlabelled bare-key lists render as comma-space chips, not raw JSON', () =
 });
 
 
-test('unlabelled bare-key map values render as "k >= v" with the raw key as the label', () => {
+test('unlabelled bare-key map values render with the raw key as the label; min-of-1 drops ">= 1"', () => {
     loadData(fixtureForBareKeyAndRefRefinements());
     renderInfo('UnlabelledOtherReqDemo');
     assert.match(
         lastHtml,
-        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> &gt;= <code>1<\/code> \u2022 <code>SuperGiftPoints<\/code> &gt;= <code>1<\/code>/
+        /<span class="req-type-name">RequiredResourcesMin<\/span>: <code>GiftPoints<\/code> \u2022 <code>SuperGiftPoints<\/code>/
     );
 });
 

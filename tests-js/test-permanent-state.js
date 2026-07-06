@@ -5,7 +5,7 @@
 import { test, describe } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { isMonotonicUpPath, gameStateClausePermanence } from '../templates/viewer/permanent-state.js';
+import { isMonotonicUpPath, isMonotonicTablePath, gameStateClausePermanence } from '../templates/viewer/permanent-state.js';
 
 describe('isMonotonicUpPath', () => {
     test('a write-once GameState flag is monotonic', () => {
@@ -23,6 +23,13 @@ describe('isMonotonicUpPath', () => {
         // Derived from the append-only RunHistory -> only grow.
         assert.equal(isMonotonicUpPath(['GameState', 'CompletedRunsCache']), true);
         assert.equal(isMonotonicUpPath(['GameState', 'ClearedRunsCache']), true);
+        // Per-surface / dream-dive clear counts and the highest-Fear-cleared
+        // "high water mark" caches are one-way too.
+        assert.equal(isMonotonicUpPath(['GameState', 'ClearedUnderworldRunsCache']), true);
+        assert.equal(isMonotonicUpPath(['GameState', 'ClearedSurfaceRunsCache']), true);
+        assert.equal(isMonotonicUpPath(['GameState', 'ClearedDreamRunsCache']), true);
+        assert.equal(isMonotonicUpPath(['GameState', 'HighestShrinePointClearUnderworldCache']), true);
+        assert.equal(isMonotonicUpPath(['GameState', 'HighestShrinePointClearSurfaceCache']), true);
         // Tracks the current Oath-of-the-Unseen spend; ranking down lowers it.
         assert.equal(isMonotonicUpPath(['GameState', 'SpentShrinePointsCache']), false);
     });
@@ -164,6 +171,48 @@ describe('gameStateClausePermanence', () => {
         // A non-cosmetic world upgrade is append-only -> permanent.
         assert.equal(gameStateClausePermanence(
             { Path: ['GameState', 'WorldUpgradesAdded'], HasAny: ['WorldUpgradeFoo'] }, wu), 'met');
+    });
+
+    test('the cleared-with-weapons sets are one-way (a "must NOT have cleared with X" gate is unobtainable once cleared)', () => {
+        // GameState.ClearedWithWeapons.<region> is a per-region set of weapons a
+        // run has been cleared with - only ever appended to.
+        const clearedI = { ClearedWithWeapons: { I: { WeaponDagger: true } } };
+        // "must NOT have cleared Tartarus with the Sister Blades" - permanently
+        // unmet once it has happened (e.g. ArtemisAboutDagger01).
+        assert.equal(gameStateClausePermanence(
+            { Path: ['GameState', 'ClearedWithWeapons', 'I'], HasNone: ['WeaponDagger'] }, clearedI), 'unmet');
+        // A weapon not yet used to clear that region -> the set may still gain it.
+        assert.equal(gameStateClausePermanence(
+            { Path: ['GameState', 'ClearedWithWeapons', 'I'], HasNone: ['WeaponAxe'] }, clearedI), null);
+        // The flat Dream-Dive variant (no region nesting) is likewise one-way.
+        const dream = { DreamRunClearedWithWeapons: { WeaponDagger: true, WeaponAxe: true } };
+        assert.equal(gameStateClausePermanence(
+            { Path: ['GameState', 'DreamRunClearedWithWeapons'], HasAll: ['WeaponDagger', 'WeaponAxe'] }, dream), 'met');
+        assert.equal(gameStateClausePermanence(
+            { Path: ['GameState', 'DreamRunClearedWithWeapons'], HasAll: ['WeaponDagger', 'WeaponTorch'] }, dream), null);
+    });
+
+    test('isMonotonicTablePath accepts the nested ClearedWithWeapons.<region> set', () => {
+        assert.equal(isMonotonicTablePath(['GameState', 'ClearedWithWeapons', 'I']), true);
+        assert.equal(isMonotonicTablePath(['GameState', 'DreamRunClearedWithWeapons']), true);
+        // A generic table is only a set at depth 2, not 3.
+        assert.equal(isMonotonicTablePath(['GameState', 'ExorcisedNames']), true);
+        assert.equal(isMonotonicTablePath(['GameState', 'ExorcisedNames', 'Ghost_A']), false);
+    });
+
+    test('a "cleared below Fear N" / "fewer than N clears" gate is unobtainable once passed', () => {
+        // Highest Fear cleared only rises: a "< 8" gate is unmet forever once you
+        // have cleared Fear 8+ (SkellyAboutTrophyQuestProgress01_B); a ">= 8"
+        // gate is still reachable (ArtemisAboutShrine01-style progress).
+        const fear = { HighestShrinePointClearUnderworldCache: 8 };
+        assert.equal(gameStateClausePermanence({ Comparison: '<', Path: ['GameState', 'HighestShrinePointClearUnderworldCache'], Value: 8 }, fear), 'unmet');
+        assert.equal(gameStateClausePermanence({ Comparison: '<=', Path: ['GameState', 'HighestShrinePointClearUnderworldCache'], Value: 4 }, fear), 'unmet');
+        assert.equal(gameStateClausePermanence({ Comparison: '>=', Path: ['GameState', 'HighestShrinePointClearUnderworldCache'], Value: 16 }, fear), null);
+        // First-clear gates ("< 1 underworld clears") go unobtainable once cleared
+        // (HermesAboutChronosPlan01 / ArtemisAboutApollo01).
+        const cleared = { ClearedUnderworldRunsCache: 3 };
+        assert.equal(gameStateClausePermanence({ Comparison: '<', Path: ['GameState', 'ClearedUnderworldRunsCache'], Value: 1 }, cleared), 'unmet');
+        assert.equal(gameStateClausePermanence({ Comparison: '>=', Path: ['GameState', 'ClearedUnderworldRunsCache'], Value: 9 }, cleared), null);
     });
 
     test('a FunctionName / PathFromSource / SumPrev clause is never permanent', () => {

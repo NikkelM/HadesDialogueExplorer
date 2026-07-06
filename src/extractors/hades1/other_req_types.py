@@ -69,11 +69,11 @@ HADES1_OTHER_REQ_LABELS = {
 
     # ----- Current room / biome -----
     "RequiredRoom":                             "Must be in room",
-    "RequiredBiome":                            "Must be in biome",
-    "RequiredFalseBiome":                       "Must NOT be in biome",
+    "RequiredBiome":                            "Must be in region",
+    "RequiredFalseBiome":                       "Must NOT be in region",
     "RequiredMinExits":                         "Minimum exits in current room",
-    "RequiredMinBiomeDepth":                    "Minimum biome depth (this run)",
-    "RequiredMaxBiomeDepth":                    "Maximum biome depth (this run)",
+    "RequiredMinBiomeDepth":                    "Minimum region depth (this run)",
+    "RequiredMaxBiomeDepth":                    "Maximum region depth (this run)",
     "RequiredMinDepth":                         "Minimum rooms visited (this run)",
     "RequiredMaxDepth":                         "Maximum rooms visited (this run)",
 
@@ -297,13 +297,13 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredFalseDeathRoom":
         "If the current run was not cleared, it must NOT have ended with a death in the named room.",
     "RequiredBiome":
-        "The current room must be in the named biome.",
+        "The current room must be in the named region.",
     "RequiredFalseBiome":
-        "The current room must NOT be in the named biome.",
+        "The current room must NOT be in the named region.",
     "RequiredMinBiomeDepth":
-        "The player must have reached at least the Nth room within the current biome.",
+        "The player must have reached at least the Nth room within the current region.",
     "RequiredMaxBiomeDepth":
-        "The player must have reached no more than the Nth room within the current biome.",
+        "The player must have reached no more than the Nth room within the current region.",
     "RequiredMinDepth":
         "The player must have visited at least N rooms in this run.",
     "RequiredMaxDepth":

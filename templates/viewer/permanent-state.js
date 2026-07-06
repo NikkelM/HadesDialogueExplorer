@@ -43,6 +43,9 @@ const MONOTONIC_TABLES = new Set([
     'LifetimeResourcesGained', 'BiomeVisits', 'ExorcisedNames', 'TraitsTaken',
     'Flags', 'NemesisTakeExitRecord', 'NemesisTakeRoomExitRecord',
     'WorldUpgrades', 'WorldUpgradesAdded', 'WorldUpgradesViewed', 'WorldUpgradesRevealed',
+    // Once a run is cleared with a given weapon (per region, or on a Dream Dive)
+    // it is recorded forever - the membership only ever grows.
+    'ClearedWithWeapons', 'DreamRunClearedWithWeapons',
 ]);
 
 // Scalar ``GameState`` keys that are write-once (nil / false -> truthy) and are
@@ -61,6 +64,13 @@ const MONOTONIC_FLAGS = new Set([
 // monotonic.
 const MONOTONIC_COUNTERS = new Set([
     'CompletedRunsCache', 'ClearedRunsCache',
+    // Per-region / dream-dive run-clear counts (siblings of ClearedRunsCache,
+    // all derived from the append-only RunHistory) - only ever grow.
+    'ClearedUnderworldRunsCache', 'ClearedSurfaceRunsCache', 'ClearedDreamRunsCache',
+    // Highest Fear (Oath-of-the-Unseen rank) ever cleared per surface - a "high
+    // water mark" that only rises, so a "cleared below Fear N" gate can never
+    // come back once you have cleared higher.
+    'HighestShrinePointClearUnderworldCache', 'HighestShrinePointClearSurfaceCache',
 ]);
 
 // True when ``path`` (an engine path array including the leading 'GameState')
@@ -86,13 +96,21 @@ export function isMonotonicUpPath(path) {
     return false;
 }
 
+// ``GameState`` tables that nest one level deeper before the monotonic-up
+// membership set: ``ClearedWithWeapons.<region>`` is the set of weapons a run
+// has been cleared with in that region (only ever appended to).
+const MONOTONIC_NESTED_TABLES = new Set(['ClearedWithWeapons']);
+
 // True when ``path`` points *at* a monotonic-up sub-table (one whose membership
 // is only ever appended to). Unlike ``isMonotonicUpPath`` - which inspects a
 // scalar leaf - this validates the table itself, for the ``Has*`` set-membership
 // operators whose ``Path`` is the table and whose keys are the listed members.
 export function isMonotonicTablePath(path) {
-    return Array.isArray(path) && path[0] === 'GameState' && path.length === 2
-        && MONOTONIC_TABLES.has(path[1]);
+    if (!Array.isArray(path) || path[0] !== 'GameState') return false;
+    if (path.length === 2) return MONOTONIC_TABLES.has(path[1]);
+    // ``ClearedWithWeapons.<region>`` - the per-region cleared-weapon set.
+    if (path.length === 3) return MONOTONIC_NESTED_TABLES.has(path[1]);
+    return false;
 }
 
 // Walk a GameState path array (path[0] === 'GameState') from the slice, breaking
