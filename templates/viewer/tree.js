@@ -153,6 +153,15 @@ export function ensureExpandedContentVisible(rowEl) {
     });
 }
 
+// Whether the stacked mobile layout is active (<= 1024px, the responsive.css
+// tablet breakpoint). Used to disable the owner-tag navigate-on-tap there,
+// where the tag is too small a target and misinputs are common.
+function treeIsMobileLayout() {
+    return typeof window !== 'undefined'
+        && typeof window.matchMedia === 'function'
+        && window.matchMedia('(max-width: 1024px)').matches;
+}
+
 export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
     const tl = textlines[name];
     // Use the friendly display name for the owner tag when available,
@@ -365,7 +374,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         // ``stopPropagation`` keeps the parent row's click handler
         // (which selects or expands the textline) from firing for
         // the same gesture.
+        //
+        // Disabled on the stacked mobile layout (<= 1024px, see
+        // responsive.css): the tag is a tiny tap target crowded against the
+        // row, so navigating on tap causes frequent misinputs. There we let the
+        // tap fall through to the row (toggle / select) instead of yanking the
+        // user to the speaker view.
         npcSpan.addEventListener('click', (e) => {
+            if (treeIsMobileLayout()) return;
             e.stopPropagation();
             navigateToSpeaker(tl.owner);
         });

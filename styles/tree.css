@@ -60,7 +60,14 @@
    desktop change). Mobile (responsive.css) flips it to a real flex box on its
    own row so the name owns the first line. */
 .tree-label-meta { display: contents; }
-.tree-label:hover { background: var(--border); }
+/* Row hover tint, gated to true-hover (mouse) devices. On touch there is no
+   real hover, so :hover sticks after a tap and would leave the tapped row
+   highlighted - especially noticeable on the owner tag, which no longer
+   navigates on mobile (tree.js), so its tap otherwise did nothing but leave a
+   lingering highlight. */
+@media (hover: hover) {
+    .tree-label:hover { background: var(--border); }
+}
 .tree-label.active { background: var(--border); color: var(--accent-color); }
 /* Grab-to-pan (tree-drag-scroll.js): while a left-drag is actively panning a
    tree view, force the grabbing cursor over the whole panel (overriding the

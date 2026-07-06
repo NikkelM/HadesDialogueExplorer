@@ -24,9 +24,15 @@ body.layout-speaker #panel-info {
 .npc-tag.clickable {
     cursor: pointer;
 }
-.speaker-name.clickable:hover,
-.npc-tag.clickable:hover {
-    color: var(--accent-color);
+/* Hover colour gated to true-hover (mouse) devices. On touch, :hover sticks
+   after a tap, which would leave the tapped speaker name / tree owner tag
+   highlighted in the accent colour (the owner tag no longer even navigates on
+   mobile - see tree.js). */
+@media (hover: hover) {
+    .speaker-name.clickable:hover,
+    .npc-tag.clickable:hover {
+        color: var(--accent-color);
+    }
 }
 
 .speaker-overview {
