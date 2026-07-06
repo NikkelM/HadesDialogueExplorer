@@ -32,7 +32,7 @@
     --text-color:   #e8e9ec;   /* primary body text (--fg) */
     --text-secondary: #c6cbd3; /* secondary text: a step below primary, above muted */
     --text-muted:   #9aa1ab;   /* muted secondary text (--muted) */
-    --text-dim:     #6b7280;   /* dim secondary text */
+    --text-dim:     #808791;   /* dim secondary text (AA-compliant: 5.2:1 on bg, 4.8:1 on surface) */
     --danger:       #e57373;   /* blocked / warning / error red */
 
     /* Subtle tint for striping alternate columns of a responsive grid (the

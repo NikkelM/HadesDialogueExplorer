@@ -120,7 +120,11 @@
    long textline names to wrap mid-word. That was dropped: rows stay on a
    single line (`.tree-label` is `white-space: nowrap`) and the
    `.panel-body` scrolls horizontally so deep chains push content right. */
-.tree-label .npc-tag { font-size: var(--fs-2xs); color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
+/* ``--text-muted`` (not ``--text-dim``) so the owner label keeps >= 4.5:1 AA
+   contrast even on the lighter backgrounds it sits over - the selected/hovered
+   row tint (``--border``) and the tinted requirement-group boxes - where dim
+   grey fell short. */
+.tree-label .npc-tag { font-size: var(--fs-2xs); color: var(--text-muted); margin-left: auto; flex-shrink: 0; }
 
 /* Narrative-priority badge. Same compact pill style as the
    other inline tree badges (`.edge-type`, `.tree-blocked-badge`); three
