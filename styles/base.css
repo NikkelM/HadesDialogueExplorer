@@ -177,6 +177,20 @@ header h1 {
 }
 #search:focus { border-color: var(--accent-color); }
 
+/* While a search input is empty (its placeholder is showing), make it
+   non-selectable so a double-click or drag can't highlight the greyed
+   placeholder text. Gated on :placeholder-shown so the restriction lifts the
+   instant the user types - the value they enter stays fully selectable and
+   copyable. Applied to every search bar: the main one, the cross-game
+   duplicates filter, and the two speaker-view filters. */
+#search:placeholder-shown,
+.duplicates-search:placeholder-shown,
+.speaker-textline-search:placeholder-shown,
+.speaker-picker-search:placeholder-shown {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 /* Inline-onclick controls (made focusable by keyboard-a11y.js) are often
    spans/anchors; round the shared focus ring (see the global :focus-visible
    above) so it hugs them neatly. Only shows for keyboard focus, so mouse
