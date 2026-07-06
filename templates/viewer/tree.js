@@ -154,12 +154,36 @@ export function ensureExpandedContentVisible(rowEl) {
 }
 
 // Whether the stacked mobile layout is active (<= 1024px, the responsive.css
-// tablet breakpoint). Used to disable the owner-tag navigate-on-tap there,
-// where the tag is too small a target and misinputs are common.
+// tablet breakpoint). Used to give tree rows touch-tuned tap behaviour: the
+// owner tag doesn't navigate on tap, single-tap only expands (never selects
+// into the details panel), and a quick second tap re-roots.
 function treeIsMobileLayout() {
     return typeof window !== 'undefined'
         && typeof window.matchMedia === 'function'
         && window.matchMedia('(max-width: 1024px)').matches;
+}
+
+// Custom double-tap detection for the mobile tree. Desktop re-roots the tree on
+// ``dblclick``; on touch that is unreliable (double-tap is a zoom gesture and
+// often fires no ``dblclick``), so on mobile we detect two quick taps on the
+// same row here instead. ``touch-action: manipulation`` on ``.tree-label`` (see
+// tree.css) disables the double-tap-zoom so both taps arrive promptly as
+// clicks. Returns true when the tap completed a double-tap (and re-rooted), so
+// the caller skips its single-tap action.
+const DOUBLE_TAP_MS = 300;
+let lastTapName = null;
+let lastTapTime = 0;
+function handleMobileDoubleTap(name) {
+    const now = Date.now();
+    if (lastTapName === name && now - lastTapTime < DOUBLE_TAP_MS) {
+        lastTapName = null;
+        lastTapTime = 0;
+        navigateTo(name);
+        return true;
+    }
+    lastTapName = name;
+    lastTapTime = now;
+    return false;
 }
 
 export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
@@ -454,8 +478,18 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             // Skip clicks inside the toggle chevron (its own handler runs and
             // stops propagation; this guards against future child elements).
             if (e.target.closest('.toggle')) return;
-            // The whole row body toggles expand / collapse; clicking the
-            // dialogue name additionally loads it into the detail panel, so
+            if (treeIsMobileLayout()) {
+                // Mobile: a single tap only expands / collapses (rows are
+                // usually tapped just to explore the tree, so it must NOT select
+                // the row into the details panel). A quick second tap on the
+                // same row re-roots it (makes it the main dialogue, which also
+                // shows its details) - the touch replacement for dblclick.
+                if (handleMobileDoubleTap(name)) return;
+                toggleNode();
+                return;
+            }
+            // Desktop: the whole row body toggles expand / collapse; clicking
+            // the dialogue name additionally loads it into the detail panel, so
             // browsing by toggling the empty space doesn't swap the panel.
             // ``tour-no-nav`` (set during a tour step) suppresses only the
             // panel swap, leaving expand / collapse working.
@@ -465,11 +499,20 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     } else {
         label.addEventListener('click', () => {
             if (document.body.classList.contains('tour-no-nav')) return;
+            if (treeIsMobileLayout()) {
+                // Mobile: a leaf can't expand, so a single tap does nothing
+                // (no details select); a quick second tap re-roots it.
+                handleMobileDoubleTap(name);
+                return;
+            }
             renderInfo(name);
         });
     }
 
-    label.addEventListener('dblclick', () => navigateTo(name));
+    // Desktop re-roots on double-click; on mobile the same is handled by the
+    // two-quick-taps detection in the click handlers above (dblclick is
+    // unreliable on touch), so guard this to true-desktop to avoid firing twice.
+    label.addEventListener('dblclick', () => { if (!treeIsMobileLayout()) navigateTo(name); });
 
     return node;
 }

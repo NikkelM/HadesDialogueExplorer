@@ -43,6 +43,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    /* Disable the browser's double-tap-to-zoom on rows so the mobile
+       two-quick-taps "make main" gesture (tree.js) registers both taps
+       promptly as clicks. Also removes the 300ms tap delay. Panning /
+       pinch-zoom still work; no effect on desktop (touch-only property). */
+    touch-action: manipulation;
     /* Keep each row on a single line; the panel-body scrolls horizontally
        so long names extend right rather than wrapping mid-word.
        `white-space` is inheritable so descendants (`.name`, `.edge-type`,
