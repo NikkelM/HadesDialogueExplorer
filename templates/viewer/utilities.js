@@ -69,7 +69,7 @@ export function groupStatusTooltip(status) {
     case 'unobtainable':
         return 'Permanently locked: this can never be satisfied in this save (e.g. a one-time line already played or now past its run-count window, a max-count cap exceeded, or a required line that is itself unobtainable).';
     case 'unknown':
-        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve - depends on something this save can\u2019t resolve, such as state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined.';
+        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve, such as the state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined.';
     default:
         return '';
     }

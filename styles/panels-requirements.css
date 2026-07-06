@@ -63,8 +63,10 @@
 .req-section-children { display: none; }
 .req-section-children.expanded { display: block; }
 
-/* Status-dot key, shown at the top of the requirements block when a save is
-   loaded. Teaches the shape language (see .group-kind-* in tree.css). */
+/* Status-dot key teaching the shape language (see .group-kind-* in tree.css).
+   Shown when a save is loaded: at the bottom of the dialogue details panel
+   (below the requirements + alternates) and after the summary in the
+   eligibility tracer. */
 .status-legend {
     display: flex;
     flex-wrap: wrap;
@@ -78,12 +80,11 @@
     font-size: var(--fs-2xs);
     color: var(--text-muted);
 }
-/* In the dialogue detail panel the legend is the first thing under the
-   Dialogue-lines block, so give it a little top margin: it reads as clearly
-   separated from that dialogue content above, and sits a touch lower. Scoped to
-   the detail panel so the eligibility tracer's legend (which follows a summary,
-   not dialogue) keeps its own spacing. */
-.requirements-group .status-legend {
+/* In the dialogue details panel the legend sits at the very bottom, so give it
+   a top margin to separate it from the requirements / alternates above. Scoped
+   to the detail panel (``.textline-info``) so the eligibility tracer's legend
+   (which follows a summary) keeps its own spacing. */
+.textline-info .status-legend {
     margin-top: 14px;
 }
 .status-legend-title {
@@ -103,6 +104,11 @@
     align-items: center;
     gap: 4px;
     white-space: nowrap;
+}
+/* Each key entry has a hover tooltip (rendered by tooltip.js) explaining the
+   shape / colour it stands for, so flag it as hoverable with the help cursor. */
+.status-legend-item[data-tooltip] {
+    cursor: help;
 }
 .req-type-RequiredTextLines           { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
 .req-type-RequiredTextLinesThisRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }

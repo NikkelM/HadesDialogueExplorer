@@ -94,16 +94,18 @@ function metCollapse(verdict, showDots, keepOpen = false) {
 // gate. The shape swatches force a neutral --dot-color so only the shape reads;
 // the colour swatches are solid discs in each verdict colour.
 export function renderStatusLegendHtml() {
-    const shape = (kind, label) => {
+    const shape = (kind, label, tip) => {
         const cls = kind ? ` group-kind-${kind}` : '';
-        return `<span class="status-legend-item"><span class="group-status${cls}" style="--dot-color: var(--text-muted)"></span>${escapeHtml(label)}</span>`;
+        return `<span class="status-legend-item" data-tooltip="${escapeHtml(tip)}"><span class="group-status${cls}" style="--dot-color: var(--text-muted)"></span>${escapeHtml(label)}</span>`;
     };
     const colour = (st, label) =>
-        `<span class="status-legend-item"><span class="group-status group-status-${st}"></span>${escapeHtml(label)}</span>`;
+        `<span class="status-legend-item" data-tooltip="${escapeHtml(groupStatusTooltip(st))}"><span class="group-status group-status-${st}"></span>${escapeHtml(label)}</span>`;
     return `<div class="status-legend">`
          + `<span class="status-legend-title">Dot key</span>`
          + `<span class="status-legend-set">`
-         + shape('', 'condition') + shape('aggregate', 'group (any / all of)') + shape('inverted', 'must NOT pass')
+         + shape('', 'condition', 'A single atomic condition (a leaf requirement): its own pass / fail, not a rolled-up group.')
+         + shape('aggregate', 'group (any / all of)', 'A group of conditions combined with AND (all of) or OR (any of). Its dot shows the verdict rolled up from the requirements inside.')
+         + shape('inverted', 'must NOT pass', 'An inverted gate: this requirement must NOT be satisfied for the dialogue to play. It blocks exactly when the requirement inside IS satisfied.')
          + `</span>`
          + `<span class="status-legend-set">`
          + colour('met', 'satisfied') + colour('unmet', 'not met') + colour('unknown', 'can\u2019t tell') + colour('unobtainable', 'locked')
@@ -1695,9 +1697,18 @@ export function renderInfo(name) {
     // Dialogue + requirements: always rendered as a single block since
     // ``split_name_collisions`` (see src/graph.py) has already promoted
     // each collision variant to its own suffixed textline.
-    html += renderDialogueAndRequirementsHtml(tl, name);
+    const dialogueReqHtml = renderDialogueAndRequirementsHtml(tl, name);
+    html += dialogueReqHtml;
 
     html += renderAlternatesHtml(name);
+
+    // Dot key legend: pinned to the bottom of the details panel (below the
+    // requirements and the alternates) rather than above the requirements. Same
+    // gate as before - shown only when save-status dots are active and there is
+    // a requirements block whose dots it keys.
+    if (_saveDotsActive() && dialogueReqHtml.includes('class="requirements-group"')) {
+        html += renderStatusLegendHtml();
+    }
 
     html += `</div>`;
     container.innerHTML = html;
@@ -1940,8 +1951,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     reqHtml += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
 
     if (reqHtml) {
-        const legend = _saveDotsActive() ? renderStatusLegendHtml() : '';
-        html += `<div class="requirements-group">${legend}${reqHtml}</div>`;
+        html += `<div class="requirements-group">${reqHtml}</div>`;
     }
 
     return html;

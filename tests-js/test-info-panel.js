@@ -8,7 +8,7 @@
 import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { renderInfo, renderOtherReqEntryHtml, setOperandMarks } from '../templates/viewer/info-panel.js';
+import { renderInfo, renderOtherReqEntryHtml, setOperandMarks, renderStatusLegendHtml } from '../templates/viewer/info-panel.js';
 import { loadData, getActiveGame } from '../templates/viewer/data.js';
 import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
@@ -2099,4 +2099,20 @@ test('NamedRequirementsFalse: per-name label pill is rendered exactly once (abov
     // ScyllaBalladForced. The host always has 1; the nested count is
     // an artefact of this fixture using ScyllaBalladForced.
     assert.equal(labels.length, 2);
+});
+
+test('renderStatusLegendHtml gives every dot-key entry a hover tooltip', () => {
+    const html = renderStatusLegendHtml();
+    // 3 shape entries + 4 colour entries, each a .status-legend-item carrying a
+    // non-empty data-tooltip the floating tooltip layer will surface on hover.
+    const items = html.match(/<span class="status-legend-item" data-tooltip="[^"]+"/g) || [];
+    assert.equal(items.length, 7);
+    // Shape entries explain the node KIND.
+    assert.match(html, /atomic condition/);
+    assert.match(html, /AND \(all of\) or OR \(any of\)/);
+    assert.match(html, /inverted gate/i);
+    // Colour entries reuse the canonical verdict wording (groupStatusTooltip).
+    assert.match(html, /Satisfied by your save/);
+    assert.match(html, /Not satisfied by your save/);
+    assert.match(html, /Permanently locked/);
 });
