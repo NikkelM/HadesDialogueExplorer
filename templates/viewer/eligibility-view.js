@@ -1139,9 +1139,6 @@ export function renderEligibility(dialogueName) {
     html += `<div class="eligibility-target-meta">Owner: ${renderSpeakerHtml(tl.owner)}</div>`;
     html += `</div>`;
     html += renderSummaryHtml(dialogueName, chain, groups, mandatory);
-    // Dot key for the requirement status dots shown below (skipped once the
-    // dialogue has played, when those sections are hidden).
-    if (!played) html += renderStatusLegendHtml();
 
     // The "what to play" list and the prerequisite tree describe a path to
     // eligibility. That path is meaningless once the dialogue is permanently
@@ -1164,6 +1161,11 @@ export function renderEligibility(dialogueName) {
     if (!played) {
         html += renderOtherConditionsHtml(dialogueName);
     }
+
+    // Dot key legend: pinned to the bottom of the tracer, below every section
+    // whose dots it keys. Skipped once the dialogue has played (those dot-bearing
+    // sections are hidden), matching the gates above.
+    if (!played) html += renderStatusLegendHtml();
 
     html += `</div>`;
     container.innerHTML = html;

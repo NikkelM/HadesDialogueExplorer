@@ -64,14 +64,16 @@
 .req-section-children.expanded { display: block; }
 
 /* Status-dot key teaching the shape language (see .group-kind-* in tree.css).
-   Shown when a save is loaded: at the bottom of the dialogue details panel
-   (below the requirements + alternates) and after the summary in the
-   eligibility tracer. */
+   Shown when a save is loaded, pinned to the bottom of the view it belongs to:
+   below the requirements + alternates in the dialogue details panel, and below
+   every tracer section in the eligibility tracer. The top margin separates it
+   from the content above; the bottom margin keeps it off the panel edge. */
 .status-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 5px 14px;
+    margin-top: 14px;
     margin-bottom: 8px;
     padding: 6px 9px;
     border: 1px solid var(--border);
@@ -79,13 +81,6 @@
     background: var(--bg);
     font-size: var(--fs-2xs);
     color: var(--text-muted);
-}
-/* In the dialogue details panel the legend sits at the very bottom, so give it
-   a top margin to separate it from the requirements / alternates above. Scoped
-   to the detail panel (``.textline-info``) so the eligibility tracer's legend
-   (which follows a summary) keeps its own spacing. */
-.textline-info .status-legend {
-    margin-top: 14px;
 }
 .status-legend-title {
     text-transform: uppercase;
