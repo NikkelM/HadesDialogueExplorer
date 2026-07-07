@@ -56,6 +56,7 @@ from src.extractors.hades2.badge_rank_names import (
     HADES2_BADGE_RANK_NAMES,
     HADES2_BADGE_RANK_MANAGER,
 )
+from src.extractors.hades1.flag_names import HADES1_FLAG_NAMES
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -115,7 +116,10 @@ _GAME_LABELS = {
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
         "entityNames": _entity_names(
             HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES,
-            HADES1_EXTRA_ENTITY_NAMES,
+            # Curated extra entities + story-flag / config-option names (both are
+            # curated ids with no sjson DisplayName); merged so the operand
+            # resolver renders friendly flag names under the flag gate labels.
+            {**HADES1_EXTRA_ENTITY_NAMES, **HADES1_FLAG_NAMES},
         ),
         # H1 uses flat named otherRequirements fields, not dotted save-state
         # paths, so it has no path vocabulary.
