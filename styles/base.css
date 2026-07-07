@@ -524,7 +524,13 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .site-footer {
     flex-shrink: 0;
     border-top: 1px solid var(--border);
-    padding: 12px 4rem 12px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 76px;
+    box-sizing: border-box;
+    padding: 10px 4rem 10px 20px;
     font-size: var(--fs-sm);
     color: var(--text-muted);
     font-family: var(--font-sans);
@@ -549,7 +555,12 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     color: var(--accent-color);
 }
 .site-footer-disclaimer {
-    margin-top: 8px;
+    margin: 0;
+    /* Inset the left to match the footer's right FAB-clearance (4rem) so the
+       text centres on the page AND stays clear of the bottom-right help FAB on
+       both desktop and mobile (a right-side extension would run under the FAB). */
+    margin-left: calc(4rem - 20px);
+    text-align: center;
     font-size: var(--fs-2xs);
     color: var(--text-dim);
 }

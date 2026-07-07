@@ -213,7 +213,7 @@ body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: va
    The fade is an OVERLAY (``.panel::before`` / ``::after``) painted ON TOP of
    the scrolling content, not a ``background`` on the scroll box. A background
    sits behind the panel's own children, so opaque badges / priority pills at
-   the clipped edge cover it (the bug this replaces); an on-top overlay
+   the clipped edge cover it; an on-top overlay
    dissolves whatever is under it - plain text and badges alike. It stays
    layout-neutral: absolutely positioned + ``pointer-events: none``, so the
    desktop layout and hit-testing are untouched.
