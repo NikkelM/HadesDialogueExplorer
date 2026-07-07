@@ -1114,7 +1114,14 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // referenced rooms) on each RunHistory entry, and EndingRoomName / SquelchedHermes /
 // SquelchedHermesPermanently on the currentRun, so ConsecutiveClearsOfRoom /
 // ConsecutiveDeathsInRoom / Min/MaxRunsSinceSquelchedHermes resolve.
-export const SAVE_STORAGE_SCHEMA = 22;
+// v23 makes a biomes-mod H2 save carry the ported Hades 1 progress the H2 mask
+// otherwise prunes: the H1 GameState slice is merged into the H2 GameState slice
+// (EnemyKills / NPCInteractions / ... keyed by H1 names) and the H1 CurrentRun /
+// PrevRun slices are merged into the H2 ones, each now also capturing the flat
+// per-run EnemyKills. Resolves ported H1 kill / interaction gates (RequiredKills,
+// RequiredKillsThisRun / LastRun, ...). An older cache lacks these merged fields,
+// so the bump forces a re-parse rather than silently reading 0.
+export const SAVE_STORAGE_SCHEMA = 23;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
