@@ -126,7 +126,7 @@ test('renamed collision sibling renders the warning badge with a tooltip', () =>
     assert.match(lastHtml, /Renamed/);
     const badgeMatch = lastHtml.match(/<span class="collision-badge"[^>]*data-tooltip="([^"]*)"/);
     assert.ok(badgeMatch, 'expected a collision-badge with a data-tooltip popup');
-    assert.match(badgeMatch[1], /TextLinesRecord/);
+    assert.match(badgeMatch[1], /records played lines globally by name/);
     assert.match(badgeMatch[1], /Shared/);
 });
 
@@ -173,7 +173,7 @@ test('renamed collision sibling renders a banner with original name and all sibl
     // explanation is reachable from both surfaces.
     const labelMatch = lastHtml.match(/<span class="collision-banner-label"[^>]*data-tooltip="([^"]*)"[^>]*>/);
     assert.ok(labelMatch, 'expected a collision-banner-label span with a data-tooltip popup');
-    assert.match(labelMatch[1], /TextLinesRecord/);
+    assert.match(labelMatch[1], /records played lines globally by name/);
     assert.match(labelMatch[1], /Shared/);
     // Badge tooltip and banner-label tooltip must match exactly so they
     // can't drift out of sync if the wording is updated later.

@@ -2809,7 +2809,7 @@ function collisionTooltipText(tl) {
     return (
         `Renamed for Dialogue Explorer. The game's source data has ${tl.collisionTotal} distinct ` +
         `definitions sharing the name "${tl.collisionOriginalName}". The engine ` +
-        `keys CurrentRun.TextLinesRecord globally by name, so once any one of ` +
+        `records played lines globally by name, so once any one of ` +
         `these variants triggers, the others are blocked from ever playing in ` +
         `the same save - almost certainly a base-game bug.`
     );
