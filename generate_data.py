@@ -52,6 +52,7 @@ from src.extractors.textline_set import (
     reset_unrecognised_textline_key_audit,
     get_unrecognised_textline_keys,
     build_cue_comment_map,
+    build_h2_cue_text_map,
     apply_cue_comment_texts,
 )
 from src.graph import build_graph_data
@@ -88,6 +89,37 @@ H1_PLAYED_REQ_TYPES = {
     "RequiredPlayedThisRun", "RequiredPlayedThisRoom",
     "RequiredFalsePlayedThisRoom", "RequiredFalsePlayedThisRun",
 }
+
+# Cue-id prefixes that are not the speaking character's name. Intercom
+# announcements play over the House public-address system but are voiced by
+# Hades, so an ``Intercom_XXXX`` cue is attributed to Hades, not "Intercom".
+H1_CUE_SPEAKER_OVERRIDES = {"Intercom": "Hades"}
+
+# H2 cue-id prefixes whose friendly speaker name differs from the prefix (the
+# protagonist Melinoë carries a diaeresis; Skelly's proper name is Schelemeus).
+H2_CUE_SPEAKER_OVERRIDES = {"Melinoe": "Melino\u00eb", "Skelly": "Schelemeus"}
+
+# H2 "played"-family voiceline refs are ``PathTrue`` / ``PathFalse`` records on a
+# ``GameState.SpeechRecord.<cue>`` path (there is no RequiredPlayed field). The
+# cue's spoken line lives in an inline ``Text`` next to the cue, recovered by
+# build_h2_cue_text_map and baked into ``cueTexts``.
+H2_SPEECH_PATH_OPS = ("PathTrue", "PathFalse", "Path", "PathEmpty", "PathNotEmpty")
+
+
+def _collect_h2_speech_cues(textlines: dict, out: set) -> None:
+    """Add every ``GameState.SpeechRecord.<cue>`` leaf referenced by a textline's
+    otherRequirements (trimmed of the ``/VO/`` prefix) to ``out``."""
+    for tl in (textlines or {}).values():
+        for recs in (tl.get("otherRequirements") or {}).values():
+            for rec in (recs if isinstance(recs, list) else [recs]):
+                if not isinstance(rec, dict):
+                    continue
+                for op in H2_SPEECH_PATH_OPS:
+                    path = rec.get(op)
+                    if isinstance(path, list) and "SpeechRecord" in path:
+                        i = path.index("SpeechRecord")
+                        if i + 1 < len(path):
+                            out.add(str(path[i + 1]).replace("/VO/", ""))
 
 # H2 splits per-character / per-god / per-biome / per-encounter dialogue
 # data across many files, so the H2 sources are declared as globs that
@@ -427,7 +459,7 @@ def main():
         pm = re.match(r"[A-Z][a-z]+", cue)
         entry = {"text": text}
         if pm:
-            entry["speaker"] = pm.group(0)
+            entry["speaker"] = H1_CUE_SPEAKER_OVERRIDES.get(pm.group(0), pm.group(0))
         h1_cue_texts[cue] = entry
     print(
         f"  Cue-text refs: {len(h1_cue_texts)}/{len(h1_referenced_cues)} "
@@ -547,6 +579,7 @@ def main():
 
     reset_section_key_audit()
     reset_unrecognised_textline_key_audit()
+    h2_referenced_cues: set = set()
     for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
         matched_files = sorted(hades2_scripts.glob(pattern))
         if not matched_files:
@@ -561,6 +594,7 @@ def main():
                 attached_priority_keys,
                 hero_repeatable_sets=hero_repeatable_sets,
             )
+            _collect_h2_speech_cues(data.get("textlines"), h2_referenced_cues)
             # Skip writing per-source JSONs that hold zero textlines.
             # Each empty stub still carries the full ~9 KB speakers /
             # stats scaffolding even though it contributes nothing to
@@ -581,6 +615,39 @@ def main():
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
     report_unlisted_section_keys("hades2")
     report_unrecognised_textline_keys("hades2")
+
+    # Resolve the H2 voice-line cues referenced by SpeechRecord "played" gates to
+    # their spoken line (inline ``Text`` next to the cue) + speaker (cue-id
+    # prefix), and bake them as a small ``cueTexts`` metadata file routed onto the
+    # H2 graph (same channel as hades2_metadata.json).
+    h2_cue_texts_all: dict = {}
+    for lua_file in sorted(hades2_scripts.glob("*.lua")):
+        try:
+            src_text = lua_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for cue, text in build_h2_cue_text_map(src_text).items():
+            h2_cue_texts_all.setdefault(cue, text)
+    h2_cue_texts = {}
+    for cue in sorted(h2_referenced_cues):
+        text = h2_cue_texts_all.get(cue)
+        if not text:
+            continue
+        entry = {"text": text}
+        pm = re.match(r"[A-Z][a-z]+", cue)
+        if pm:
+            entry["speaker"] = H2_CUE_SPEAKER_OVERRIDES.get(pm.group(0), pm.group(0))
+        h2_cue_texts[cue] = entry
+    print(
+        f"  Cue-text refs: {len(h2_cue_texts)}/{len(h2_referenced_cues)} "
+        f"SpeechRecord cues resolved to their spoken line"
+    )
+    if h2_cue_texts:
+        cuetext_path = OUTPUT_DIR / "hades2_cuetext.json"
+        with open(cuetext_path, "w", encoding="utf-8") as f:
+            json.dump({"cueTexts": h2_cue_texts}, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(f"  Written to: {cuetext_path}")
 
     # Cross-source orphan-priority audit: every (owner, section,
     # textline) tuple present in ``narrative_priorities`` should have

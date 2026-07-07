@@ -461,3 +461,23 @@ def test_cue_comment_map_recovers_subtitles_from_source_comments():
     assert el[0] == {"speaker": "CharProtag", "cue": "ZagreusHome_2389", "text": "The job's number one perk... no thanks."}
     assert el[1]["text"] == "Already has text."  # untouched
     assert "text" not in el[2]  # no comment for a non-/VO/ sound cue
+
+
+def test_h2_cue_text_map_recovers_inline_text():
+    from src.extractors.textline_set import build_h2_cue_text_map
+    source = '\n'.join([
+        '    { Cue = "/VO/Melinoe_5156", Text = "The Fates... they\'re close..." },',
+        '    { Cue = "/VO/Artemis_0304", Text = "That\'s it!", PlayFirst = true },',
+        # Other cue fields may sit between Cue and Text.
+        '    { Cue = "/VO/Hecate_0070", PlayFirst = true, Text = "There you are." },',
+        # Format tags are stripped, like the dialogue-line treatment.
+        '    { Cue = "/VO/Skelly_0288", Text = "{#Prev}What news?" },',
+        # A cue with no inline Text is not recovered.',
+        '    { Cue = "/VO/Zagreus_9999", PlayFirst = true },',
+    ])
+    m = build_h2_cue_text_map(source)
+    assert m["Melinoe_5156"] == "The Fates... they're close..."
+    assert m["Artemis_0304"] == "That's it!"
+    assert m["Hecate_0070"] == "There you are."
+    assert m["Skelly_0288"] == "What news?"
+    assert "Zagreus_9999" not in m

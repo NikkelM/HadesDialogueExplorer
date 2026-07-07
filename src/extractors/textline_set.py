@@ -227,6 +227,31 @@ def build_cue_comment_map(source_text: str) -> dict:
     return out
 
 
+# An inline-``Text`` voice cue (Hades 2). Unlike H1's ``--`` comment convention,
+# H2 records the spoken line as a ``Text = "..."`` property on the same cue
+# table, so a regex over the raw source recovers ``{cue_id: text}`` directly.
+# The ``[^}]*?`` between the two allows other cue fields (``PlayFirst`` etc.) but
+# stops at the cue table's closing brace so it can't wander into the next entry.
+_H2_CUE_TEXT_RE = re.compile(
+    r'Cue\s*=\s*"(/VO/[^"]+)"[^}]*?\bText\s*=\s*"((?:[^"\\]|\\.)*)"'
+)
+
+
+def build_h2_cue_text_map(source_text: str) -> dict:
+    """Recover ``{trimmed_cue_id: text}`` from an H2 Lua source file's inline
+    ``{ Cue = "/VO/<id>", Text = "..." }`` voice cues (the H2 analogue of
+    :func:`build_cue_comment_map`). Format tags are stripped to match the
+    dialogue-line treatment; the first non-empty text wins per cue id.
+    """
+    out = {}
+    for m in _H2_CUE_TEXT_RE.finditer(source_text):
+        cue = _VO_PREFIX_RE.sub("", m.group(1))
+        text = _FORMAT_TAG_RE.sub("", m.group(2)).replace("\\n", " ").strip()
+        if text and cue not in out:
+            out[cue] = text
+    return out
+
+
 def apply_cue_comment_texts(textlines: dict, comment_map: dict) -> None:
     """Fill in the subtitle ``text`` of cue-only closing voicelines from
     ``comment_map`` (built by :func:`build_cue_comment_map`), in place.
