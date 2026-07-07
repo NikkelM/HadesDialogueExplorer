@@ -812,6 +812,24 @@ test('H1: h1OperandMarks colours run-kill array gates', () => {
     assert.equal(h1OperandMarks('RequiredKillsThisRun', ['Harpy'], ctx({ gs: {} })), null);
 });
 
+test('H1: RequiredKillsThisRun / LastRun read the flat run-level EnemyKills (Hades II / biomes runs)', () => {
+    // Hades II runs (incl. the Hades Biomes ported runs) keep a flat run-level
+    // EnemyKills aggregate instead of the per-room RoomHistory.Kills that vanilla
+    // Hades 1 uses; archived runs keep ONLY this. Both per-run kill gates read it.
+    const cr = { EnemyKills: { Harpy: 2 } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Harpy'] }, ctx({ gs: {}, currentRun: cr })).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Hydra'] }, ctx({ gs: {}, currentRun: cr })).status, 'unmet');
+    const pr = { EnemyKills: { Theseus: 1 } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsLastRun: ['Theseus'] }, ctx({ gs: {}, prevRun: pr })).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsLastRun: ['Minotaur'] }, ctx({ gs: {}, prevRun: pr })).status, 'unmet');
+    // Operand colouring reads the flat table too (green when killed).
+    const m = h1OperandMarks('RequiredKillsThisRun', ['Harpy', 'Hydra'], ctx({ gs: {}, currentRun: cr }));
+    assert.deepEqual([...m.flat.green], ['Harpy']);
+    // Vanilla Hades 1 (no flat EnemyKills) still reads per-room RoomHistory.Kills.
+    const crH1 = { RoomHistory: { 1: { Kills: { Harpy: 1 } } } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Harpy'] }, ctx({ gs: {}, currentRun: crH1 })).status, 'met');
+});
+
 test('H1: h1OperandMarks reads and colours single-scalar numeric gates', () => {
     const c = ctx({ gs: { RunHistory: { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} }, TotalRequiredEnemyKills: 50 } });
     // RequiredMinCompletedRuns: 7 completed runs >= 5 -> met (green).

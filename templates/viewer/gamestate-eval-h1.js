@@ -784,9 +784,21 @@ function h1ListHas(list, value) {
     return Object.values(list).includes(value);
 }
 
-// Sum of a run's per-room kills for any of the listed enemy types.
+// Sum of a run's kills for any of the listed enemy types. Hades II runs (and the
+// Hades Biomes mod's ported runs) keep a flat run-level ``EnemyKills`` aggregate
+// - which the mod's own ported evaluator reads for the kills-this-run /
+// kills-last-run gates, and which is the only kill record that survives on
+// archived runs (their per-room ``RoomHistory`` is stripped). Prefer it. Vanilla
+// Hades 1 runs have no flat run-level ``EnemyKills``, so they fall through to the
+// per-room ``RoomHistory[room].Kills`` sum (the Hades 1 engine's own source).
 function h1RunKills(run, enemyNames) {
     if (!run) return 0;
+    const flat = run.EnemyKills;
+    if (flat && typeof flat === 'object') {
+        let total = 0;
+        for (const e of enemyNames) total += h1Num(flat[e]);
+        return total;
+    }
     const rh = run.RoomHistory;
     if (!rh || typeof rh !== 'object') return 0;
     let total = 0;

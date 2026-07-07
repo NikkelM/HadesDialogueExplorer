@@ -493,8 +493,48 @@ function extractGameStateSlice(gameId, gs, luaState) {
     for (const k of ['ModsNikkelMHadesBiomesCompletedRunsCache', 'ModsNikkelMHadesBiomesClearedRunsCache']) {
       if (typeof gs[k] === 'number') slice[k] = gs[k];
     }
+    // The mod also records the ported Hades 1 progress in the SAME GameState
+    // fields Hades 1 uses - EnemyKills / NPCInteractions / ItemInteractions /
+    // WeaponKills / ... keyed by Hades 1 enemy / NPC / item names. The H2
+    // requirement mask never references those keys, so ``pruneGameState`` drops
+    // them, leaving ported Hades 1 dialogues (e.g. ``RequiredKills {Theseus}``)
+    // reading 0 against a save that actually has ``EnemyKills.Theseus``. When
+    // the mod marker is present, merge the Hades 1 GameState slice in so those
+    // gates resolve. Both slices derive from the same raw GameState, so the
+    // union never overwrites a value - it only restores the Hades-1-keyed leaves
+    // the H2 mask pruned away.
+    if ('ModsNikkelMHadesBiomesCompletedRunsCache' in gs) {
+      const h1slice = extractH1GameStateSlice(gs, luaState);
+      if (h1slice && typeof h1slice === 'object') _mergeGameStateSlice(slice, h1slice);
+    }
   }
   return slice;
+}
+
+// Recursively union ``extra`` into ``target`` without overwriting existing
+// leaves: recurse into shared plain-object subtrees, otherwise add keys missing
+// from ``target``. Used to fold the Hades 1 GameState slice into a biomes-mod H2
+// slice; both derive from the same raw GameState, so wherever a key exists in
+// both the values are identical and keeping ``target``'s is a no-op.
+function _mergeGameStateSlice(target, extra) {
+  for (const [k, v] of Object.entries(extra)) {
+    const tv = target[k];
+    if (v && typeof v === 'object' && !Array.isArray(v)
+        && tv && typeof tv === 'object' && !Array.isArray(tv)) {
+      _mergeGameStateSlice(tv, v);
+    } else if (!(k in target)) {
+      target[k] = v;
+    }
+  }
+}
+
+// Whether a parsed H2 ``luaState`` carries the Zagreus' Journey (Hades Biomes)
+// mod marker under GameState. Gates the merges that fold the Hades 1 per-run
+// slices into the H2 slices so ported Hades 1 dialogues resolve their H1-keyed
+// per-run gates (e.g. RequiredKillsThisRun / RequiredKillsLastRun).
+function _luaHasBiomes(luaState) {
+  const gs = luaState && luaState.GameState;
+  return !!(gs && typeof gs === 'object' && ('ModsNikkelMHadesBiomesCompletedRunsCache' in gs));
 }
 
 // Memoised set of the top-level Hades 1 globals (codex entries / speech cues)
@@ -646,15 +686,29 @@ function extractCurrentRunSlice(gameId, luaState) {
   if (gameId === 'hades1') return extractH1CurrentRunSlice(luaState);
   if (gameId !== 'hades2') return null;
   const mask = _h2CurrentRunMask();
-  if (!mask || Object.keys(mask).length === 0) return null;
-  const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
-  const slice = pruneGameState(cr, mask);
-  // The hero's equipped-trait array (captured wholesale by the mask for
-  // the god-trait / boon-choice gates) is large - each instance is a
-  // deep copy of its full static trait def. Prune each to just the
-  // fields the evaluators read so the persisted slice stays small.
-  if (slice.Hero && slice.Hero.Traits && typeof slice.Hero.Traits === 'object') {
-    slice.Hero.Traits = pruneHeroTraits(slice.Hero.Traits);
+  let slice = null;
+  if (mask && Object.keys(mask).length > 0) {
+    const cr = (luaState.CurrentRun && typeof luaState.CurrentRun === 'object') ? luaState.CurrentRun : {};
+    slice = pruneGameState(cr, mask);
+    // The hero's equipped-trait array (captured wholesale by the mask for
+    // the god-trait / boon-choice gates) is large - each instance is a
+    // deep copy of its full static trait def. Prune each to just the
+    // fields the evaluators read so the persisted slice stays small.
+    if (slice.Hero && slice.Hero.Traits && typeof slice.Hero.Traits === 'object') {
+      slice.Hero.Traits = pruneHeroTraits(slice.Hero.Traits);
+    }
+  }
+  // Biomes-mod save: fold in the Hades 1 CurrentRun slice so ported H1
+  // "...ThisRun" gates (e.g. RequiredKillsThisRun, read from the flat
+  // CurrentRun.EnemyKills) resolve - the H2 requirement mask never references
+  // those H1-keyed fields, so they'd otherwise be pruned. See
+  // extractGameStateSlice for the rationale.
+  if (_luaHasBiomes(luaState)) {
+    const h1cr = extractH1CurrentRunSlice(luaState);
+    if (h1cr && typeof h1cr === 'object') {
+      if (slice) _mergeGameStateSlice(slice, h1cr);
+      else slice = h1cr;
+    }
   }
   return slice;
 }
@@ -702,6 +756,11 @@ export function extractH1CurrentRunSlice(luaState) {
     slice.CurrentDeathAreaRoom = { Name: deathArea.Name };
   }
   slice.RoomHistory = _h1PruneCurrentRunRooms(cr.RoomHistory);
+  // Hades II runs keep a flat run-level EnemyKills aggregate that the Hades
+  // Biomes evaluator reads for kills-this-run gates (more complete than
+  // RoomHistory, which omits the in-progress room). Vanilla Hades 1 runs have no
+  // such field, so this is absent there and the RoomHistory[].Kills sum is used.
+  if (cr.EnemyKills && typeof cr.EnemyKills === 'object') slice.EnemyKills = cr.EnemyKills;
   return slice;
 }
 
@@ -819,13 +878,31 @@ function extractPrevRunSlice(gameId, luaState) {
   if (gameId === 'hades1') return extractH1PrevRunSlice(luaState);
   if (gameId !== 'hades2') return null;
   const mask = _h2PrevRunMask();
-  if (!mask || Object.keys(mask).length === 0) return null;
-  const gs = luaState.GameState || {};
-  const rh = gs.RunHistory;
-  if (!rh || typeof rh !== 'object') return {};
-  const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
-  const last = indices.length ? rh[indices[0]] : null;
-  return (last && typeof last === 'object') ? pruneGameState(last, mask) : {};
+  let slice = null;
+  if (mask && Object.keys(mask).length > 0) {
+    const gs = luaState.GameState || {};
+    const rh = gs.RunHistory;
+    if (!rh || typeof rh !== 'object') {
+      slice = {};
+    } else {
+      const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
+      const last = indices.length ? rh[indices[0]] : null;
+      slice = (last && typeof last === 'object') ? pruneGameState(last, mask) : {};
+    }
+  }
+  // Biomes-mod save: fold in the Hades 1 PrevRun slice so ported H1 "...LastRun"
+  // gates (RequiredKillsLastRun, read from the flat RunHistory[last].EnemyKills)
+  // resolve. Only the single most recent run is resolved (which for a modded
+  // save is the last modded run, well inside the ~10-run window the game keeps
+  // EnemyKills for).
+  if (_luaHasBiomes(luaState)) {
+    const h1pr = extractH1PrevRunSlice(luaState);
+    if (h1pr && typeof h1pr === 'object') {
+      if (slice) _mergeGameStateSlice(slice, h1pr);
+      else slice = h1pr;
+    }
+  }
+  return slice;
 }
 
 // Hades 1 PrevRun slice = the newest RunHistory entry (the last completed run),
@@ -838,11 +915,16 @@ export function extractH1PrevRunSlice(luaState) {
   const indices = Object.keys(rh).filter(k => /^\d+$/.test(k)).map(Number).sort((a, b) => b - a);
   const last = indices.length ? rh[indices[0]] : null;
   if (!last || typeof last !== 'object') return {};
-  return {
+  const out = {
     Cleared: last.Cleared,
     RoomCountCache: last.RoomCountCache,
     RoomHistory: _h1PruneRunKills(last.RoomHistory),
   };
+  // Hades II runs keep a flat run-level EnemyKills aggregate, and archived runs
+  // keep ONLY this (their per-room RoomHistory is stripped); capture it so the
+  // kills-last-run gate resolves. Vanilla Hades 1 runs have no such field.
+  if (last.EnemyKills && typeof last.EnemyKills === 'object') out.EnemyKills = last.EnemyKills;
+  return out;
 }
 
 // How many recent RunHistory entries to retain for the consecutive clears /
