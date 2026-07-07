@@ -34,6 +34,7 @@ import {
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
 import { badgeRankNames, badgeRankManager } from './data.js';
+import { cueTexts } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -702,6 +703,17 @@ function _renderScalarHaveHtml() {
 function _valueChip(v, cls) {
     const klass = cls ? ` class="${cls}"` : '';
     if (typeof v === 'string') {
+        // A ``/VO/<cue>`` voice-line reference ("played"-family gates) whose
+        // spoken line was recovered from the source comment renders as the
+        // quoted line with its speaker in parens, keeping the cue id in the
+        // tooltip.
+        if (v.startsWith('/VO/')) {
+            const cue = cueTexts[v.slice(4)];
+            if (cue && cue.text) {
+                const who = cue.speaker ? ` (${escapeHtml(cue.speaker)})` : '';
+                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + v.slice(4))}">\"${escapeHtml(cue.text)}\"${who}</code>`;
+            }
+        }
         const friendly = entityNames[v];
         if (friendly && friendly !== v) {
             return `<code${klass} data-tooltip="${escapeHtml('Internal name: ' + v)}">${escapeHtml(friendly)}</code>`;

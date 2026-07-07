@@ -288,7 +288,7 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo, context = n
         } else if (r.kind === 'runcount') {
             const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
             items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
-                + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
+                + `\"within ${runs(r.count)}\" gate can never be met again.</li>`);
         } else if (r.kind === 'skip') {
             // Same banner as the detail panel (renderRetiredBannerHtml) so
             // the retired-line treatment is identical across both views.
@@ -344,10 +344,10 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     if (hasIndirect || hasGroups) {
         const parts = ['Counts prerequisites across the whole chain'];
         if (hasIndirect) parts.push('including indirect ones (a prerequisite\u2019s own prerequisites)');
-        if (hasGroups) parts.push('with each \u201Cplay any of\u201D group counted once');
+        if (hasGroups) parts.push('with each \"play any of\" group counted once');
         const visible = parts.join(', ') + ' - so it may differ from the tree below.';
         const tip = 'Indirect prerequisites (prerequisites of prerequisites) are included, so the total '
-            + 'can exceed the requirements listed directly on this dialogue. A \u201Cplay any N of these\u201D '
+            + 'can exceed the requirements listed directly on this dialogue. A \"play any N of these\" '
             + 'group counts as the N you must play - not its number of options - and branches you have '
             + 'already satisfied drop off, so the total can be smaller than the number of rows in the '
             + 'prerequisite tree below.';

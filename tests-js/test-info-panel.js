@@ -215,28 +215,34 @@ function fixtureWithBoonVendorChoices() {
         narrativePrioritySectionTier: 'normal',
         narrativePrioritySetLevel: null,
         dialogueLines: [
-            { speaker: 'NPC_Patroclus_01', text: 'Patroclus offers a token of his favour.',
-              kind: 'choicePrompt',
-              choices: [
-                  { internal: 'ChoiceText_BuffExtraChance',          targetTextline: null,
-                    requiredMetaUpgrade: 'ExtraChanceMetaUpgrade' },
-                  { internal: 'ChoiceText_BuffExtraChanceReplenish', targetTextline: null,
-                    requiredMetaUpgrade: 'ExtraChanceReplenishMetaUpgrade' },
-                  { internal: 'ChoiceText_BuffHealing',              targetTextline: null },
-                  { internal: 'ChoiceText_BuffWeapon',               targetTextline: null },
-              ] },
+            {
+                speaker: 'NPC_Patroclus_01', text: 'Patroclus offers a token of his favour.',
+                kind: 'choicePrompt',
+                choices: [
+                    {
+                        internal: 'ChoiceText_BuffExtraChance', targetTextline: null,
+                        requiredMetaUpgrade: 'ExtraChanceMetaUpgrade'
+                    },
+                    {
+                        internal: 'ChoiceText_BuffExtraChanceReplenish', targetTextline: null,
+                        requiredMetaUpgrade: 'ExtraChanceReplenishMetaUpgrade'
+                    },
+                    { internal: 'ChoiceText_BuffHealing', targetTextline: null },
+                    { internal: 'ChoiceText_BuffWeapon', targetTextline: null },
+                ]
+            },
         ],
         requirements: {},
         otherRequirements: {},
     };
     data.choiceNames = {
-        ChoiceText_BuffExtraChance:          'Kiss of Styx Premium',
+        ChoiceText_BuffExtraChance: 'Kiss of Styx Premium',
         ChoiceText_BuffExtraChanceReplenish: 'Touch of Styx Dark',
-        ChoiceText_BuffHealing:              'HydraLite Gold',
-        ChoiceText_BuffWeapon:               'Cyclops Jerky Select',
+        ChoiceText_BuffHealing: 'HydraLite Gold',
+        ChoiceText_BuffWeapon: 'Cyclops Jerky Select',
     };
     data.metaUpgradeNames = {
-        ExtraChanceMetaUpgrade:          'Death Defiance',
+        ExtraChanceMetaUpgrade: 'Death Defiance',
         ExtraChanceReplenishMetaUpgrade: 'Stubborn Defiance',
     };
     return data;
@@ -1456,27 +1462,27 @@ function fixtureWithSimplifiedOtherReqs() {
     const data = buildFixtureData();
     data.reqTypeLabels = {
         ...data.reqTypeLabels,
-        PathTrue:     'Must be true',
-        PathFalse:    'Must be false',
-        PathEmpty:    'Path must be empty',
+        PathTrue: 'Must be true',
+        PathFalse: 'Must be false',
+        PathEmpty: 'Path must be empty',
         PathNotEmpty: 'Path must not be empty',
-        RequiresRunCleared:                'Requires run cleared',
-        RequiredMinCompletedRuns:          'Required min completed runs',
-        RequiredRoom:                      'Required room',
-        RequiredFalseFlags:                'Required false flags',
-        RequiredCosmetics:                 'Required cosmetics',
-        MinRunsSinceAnyTextLines:          'Min runs since played (ANY)',
+        RequiresRunCleared: 'Requires run cleared',
+        RequiredMinCompletedRuns: 'Required min completed runs',
+        RequiredRoom: 'Required room',
+        RequiredFalseFlags: 'Required false flags',
+        RequiredCosmetics: 'Required cosmetics',
+        MinRunsSinceAnyTextLines: 'Min runs since played (ANY)',
         RequiredMinActiveMetaUpgradeLevel: 'Required min active meta upgrade level',
-        RequiredKills:                     'Required kills',
-        ObjectivesCompleted:               'Minimum objective completions',
-        ObjectiveMaxDemo:                  'Objective max demo',
-        RequiredMinNPCInteractions:        'Required min NPC interactions',
+        RequiredKills: 'Required kills',
+        ObjectivesCompleted: 'Minimum objective completions',
+        ObjectiveMaxDemo: 'Objective max demo',
+        RequiredMinNPCInteractions: 'Required min NPC interactions',
         RequiredLifetimeResourcesSpentMax: 'Maximum lifetime resource spent',
-        RequiredValues:                    'GameState field must equal',
-        RequiredFalseValues:               'GameState field must NOT equal',
-        RequiredMinAnyCosmetics:           'Minimum cosmetics owned (from set)',
-        RequiredCodexEntry:                'Codex entry must be unlocked',
-        RequiredPlayed:                    'Voiceline must have played (ALL)',
+        RequiredValues: 'GameState field must equal',
+        RequiredFalseValues: 'GameState field must NOT equal',
+        RequiredMinAnyCosmetics: 'Minimum cosmetics owned (from set)',
+        RequiredCodexEntry: 'Codex entry must be unlocked',
+        RequiredPlayed: 'Voiceline must have played (ALL)',
     };
     data.textlines.SimplifiedOtherReqDemo = {
         owner: 'NPC_Orpheus_01',
@@ -1551,23 +1557,23 @@ function fixtureWithSimplifiedOtherReqs() {
                 },
             ],
             // Bare keys with friendly labels.
-            RequiresRunCleared:       true,
+            RequiresRunCleared: true,
             RequiredMinCompletedRuns: 4,
-            RequiredRoom:             'A_Boss02',
-            RequiredFalseFlags:       ['InFlashback'],
-            RequiredCosmetics:        ['QuestLog', 'Cosmetic_X'],
+            RequiredRoom: 'A_Boss02',
+            RequiredFalseFlags: ['InFlashback'],
+            RequiredCosmetics: ['QuestLog', 'Cosmetic_X'],
             MinRunsSinceAnyTextLines: { Count: 8 },
             RequiredMinActiveMetaUpgradeLevel: { Count: 1, Name: 'BossDifficultyShrineUpgrade' },
-            RequiredKills:               { Harpy: 2 },
-            ObjectivesCompleted:         { Name: 'PlayerKills', Min: 8 },
-            ObjectiveMaxDemo:            { Name: 'Deaths', Max: 3 },
-            RequiredMinNPCInteractions:  { 'NPC_Hades_01': 5 },
+            RequiredKills: { Harpy: 2 },
+            ObjectivesCompleted: { Name: 'PlayerKills', Min: 8 },
+            ObjectiveMaxDemo: { Name: 'Deaths', Max: 3 },
+            RequiredMinNPCInteractions: { 'NPC_Hades_01': 5 },
             RequiredLifetimeResourcesSpentMax: { Gems: 5000 },
-            RequiredValues:              { CurrentEmployeeOfTheMonth: 'Dusa' },
-            RequiredFalseValues:         { CurrentEmployeeOfTheMonth: 'Achilles' },
-            RequiredMinAnyCosmetics:     { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 2 },
-            RequiredCodexEntry:          { EntryIndex: 3, EntryName: 'RoomRewardConsolationPrize' },
-            RequiredPlayed:              ['/VO/ZagreusHome_0895', '/VO/ZagreusHome_3490'],
+            RequiredValues: { CurrentEmployeeOfTheMonth: 'Dusa' },
+            RequiredFalseValues: { CurrentEmployeeOfTheMonth: 'Achilles' },
+            RequiredMinAnyCosmetics: { Cosmetics: ['Cosmetic_A', 'Cosmetic_B'], Count: 2 },
+            RequiredCodexEntry: { EntryIndex: 3, EntryName: 'RoomRewardConsolationPrize' },
+            RequiredPlayed: ['/VO/ZagreusHome_0895', '/VO/ZagreusHome_3490'],
         },
     };
     return data;
@@ -1793,6 +1799,40 @@ test('a malformed path (operator keyword as root) renders a broken-path no-op no
     assert.match(html, /class="other-req-broken-ref"[^>]*>\(broken path - always passes, no effect\)<\/span>/);
 });
 
+// H1 "played"-family gates reference a voiceline by ``/VO/<cue>`` id; when the
+// cue's spoken line was recovered (from the source comment) into ``cueTexts``,
+// the operand renders as the quoted line, not the raw cue id (#134 follow-up).
+test('a /VO/ voice-line ref renders as its recovered spoken line', () => {
+    const data = buildFixtureData();
+    data.reqTypeLabels = { ...data.reqTypeLabels, RequiredPlayed: 'Voiceline must have played (ALL)' };
+    data.cueTexts = { ZagreusHome_2930: { text: 'Dusa, you did it!', speaker: 'Zagreus' } };
+    loadData(data);
+    const html = renderOtherReqEntryHtml('RequiredPlayed', ['/VO/ZagreusHome_2930']);
+    // The spoken line is shown, quoted, with the speaker in parens; the raw cue
+    // id moves to the tooltip.
+    assert.match(_stripReq(html), /"Dusa, you did it!" \(Zagreus\)/);
+    assert.match(html, /data-tooltip="[^"]*ZagreusHome_2930[^"]*"/);
+    assert.doesNotMatch(_stripReq(html), /\/VO\/|ZagreusHome_2930/);
+    // A cue with no recovered text keeps the raw (VO-stripped) id.
+    const raw = _stripReq(renderOtherReqEntryHtml('RequiredPlayed', ['/VO/ZagreusField_0744']));
+    assert.match(raw, /ZagreusField_0744/);
+});
+
+// A voice-line operand carries the save's played/not-played colour like any
+// other operand: green when the cue has played (RequiredPlayed satisfied), red
+// when a "must NOT have played" cue has played.
+test('a /VO/ voice-line ref is coloured green / red by the loaded save', () => {
+    const data = buildFixtureData();
+    data.reqTypeLabels = { ...data.reqTypeLabels, RequiredPlayed: 'Voiceline must have played (ALL)', RequiredFalsePlayed: 'Voiceline must NOT have played (ANY)' };
+    data.cueTexts = { ZagreusHome_2930: { text: 'Dusa, you did it!', speaker: 'Zagreus' } };
+    loadData(data);
+    setOperandMarks({ flat: { green: new Set(['/VO/ZagreusHome_2930']), red: new Set(), actuals: new Map() } });
+    assert.match(renderOtherReqEntryHtml('RequiredPlayed', ['/VO/ZagreusHome_2930']), /<code class="other-req-operand-met"[^>]*>"Dusa, you did it!" \(Zagreus\)<\/code>/);
+    setOperandMarks({ flat: { green: new Set(), red: new Set(['/VO/ZagreusHome_2930']), actuals: new Map() } });
+    assert.match(renderOtherReqEntryHtml('RequiredFalsePlayed', ['/VO/ZagreusHome_2930']), /<code class="other-req-operand-unmet"[^>]*>"Dusa, you did it!" \(Zagreus\)<\/code>/);
+    setOperandMarks(null);
+});
+
 
 test('closing voicelines (endLines) render speaker-prefixed after the main dialogue', () => {
     const data = buildFixtureData();
@@ -1992,14 +2032,18 @@ function fixtureForBareKeyAndRefRefinements() {
             // (no array wrapper) -> styled as a path chip with the
             // ``<ref:>`` wrapper stripped.
             'Path:GameState.AspectsUnlocked': [
-                { HasAny: '<ref:GameData.AllWeaponAspects>',
-                  Path: ['GameState', 'AspectsUnlocked'] },
+                {
+                    HasAny: '<ref:GameData.AllWeaponAspects>',
+                    Path: ['GameState', 'AspectsUnlocked']
+                },
             ],
             // IsAny operand list that contains ref strings -> each
             // element strips ``<ref:>`` to the bare identifier.
             'Path:GameState.SelectedAspect': [
-                { IsAny: ['<ref:GameData.WeaponAspectA>', 'PlainString'],
-                  Path: ['GameState', 'SelectedAspect'] },
+                {
+                    IsAny: ['<ref:GameData.WeaponAspectA>', 'PlainString'],
+                    Path: ['GameState', 'SelectedAspect']
+                },
             ],
         },
     };

@@ -12,6 +12,7 @@ Usage:
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -76,6 +77,17 @@ HADES1_SOURCES = [
 # It is NOT a per-source dataset and so does not get its own output JSON
 # (build_viewer.py would otherwise try to merge it as a graph dataset).
 HADES1_TEXTLINE_SETS = "TextLineSets.lua"
+
+# "Played"-family H1 requirement types whose operands are ``/VO/<cue>`` voice-
+# line ids. The referenced cue's spoken line is recovered from the dev comment
+# above its definition (build_cue_comment_map) and baked into ``cueTexts`` so the
+# viewer shows the line instead of the raw cue id.
+H1_PLAYED_REQ_TYPES = {
+    "RequiredPlayed", "RequiredFalsePlayed",
+    "RequiredAnyPlayed", "RequiredAnyPlayedThisRun",
+    "RequiredPlayedThisRun", "RequiredPlayedThisRoom",
+    "RequiredFalsePlayedThisRoom", "RequiredFalsePlayedThisRun",
+}
 
 # H2 splits per-character / per-god / per-biome / per-encounter dialogue
 # data across many files, so the H2 sources are declared as globs that
@@ -365,6 +377,11 @@ def main():
 
     reset_section_key_audit()
     reset_unrecognised_textline_key_audit()
+    # Collect the cues actually referenced by "played"-family gates across the
+    # surfaced dialogues, so the viewer can render a ``RequiredPlayed`` voice-line
+    # reference as its spoken line (recovered from the dev comment above the cue)
+    # rather than the raw cue id.
+    h1_referenced_cues: set = set()
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
@@ -372,6 +389,11 @@ def main():
         )
         if data is None:
             continue
+        for tl in (data.get("textlines") or {}).values():
+            for rk, rv in (tl.get("otherRequirements") or {}).items():
+                if rk in H1_PLAYED_REQ_TYPES and isinstance(rv, list):
+                    for ref in rv:
+                        h1_referenced_cues.add(str(ref).replace("/VO/", ""))
         out_path = OUTPUT_DIR / output_name
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
@@ -380,13 +402,49 @@ def main():
     report_unlisted_section_keys("hades1")
     report_unrecognised_textline_keys("hades1")
 
+    # The referenced cues are often defined in files that aren't textline
+    # sources themselves (e.g. HeroData.lua's Zagreus barks), so recover their
+    # subtitle comment across EVERY H1 source.
+    h1_cue_texts_all: dict = {}
+    for lua_file in sorted(hades1_scripts.glob("*.lua")):
+        try:
+            src_text = lua_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for cue, text in build_cue_comment_map(src_text).items():
+            h1_cue_texts_all.setdefault(cue, text)
+
+    # Resolve only the referenced cues (keeps the baked map tiny - a couple of
+    # dozen entries rather than all ~12k source cue comments). Each entry carries
+    # the spoken line plus its speaker (the H1 cue-id character prefix, e.g.
+    # ``ZagreusHome_2930`` -> "Zagreus", ``HadesField_0625`` -> "Hades"), so the
+    # viewer can annotate who says the line.
+    h1_cue_texts = {}
+    for cue in sorted(h1_referenced_cues):
+        text = h1_cue_texts_all.get(cue)
+        if not text:
+            continue
+        pm = re.match(r"[A-Z][a-z]+", cue)
+        entry = {"text": text}
+        if pm:
+            entry["speaker"] = pm.group(0)
+        h1_cue_texts[cue] = entry
+    print(
+        f"  Cue-text refs: {len(h1_cue_texts)}/{len(h1_referenced_cues)} "
+        f"played-family cues resolved to their spoken line"
+    )
+
     # Standalone H1 metadata payload: the static design-data tables the
     # viewer's save-eligibility evaluator needs to resolve the Mirror /
     # weapon-enchantment / cosmetic-visible gates client-side (the engine
-    # reads these from tables the save file doesn't carry). Written as a
-    # separate JSON with no ``textlines`` key so build_viewer routes it as
-    # metadata onto the H1 graph_data (the same channel hades2_metadata.json
-    # uses), rather than treating it as a textline source to merge.
+    # reads these from tables the save file doesn't carry), plus the recovered
+    # ``cueTexts`` for played-family voice-line refs. Written as a separate JSON
+    # with no ``textlines`` key so build_viewer routes it as metadata onto the
+    # H1 graph_data (the same channel hades2_metadata.json uses), rather than
+    # treating it as a textline source to merge.
+    h1_metadata: dict = {}
+    if h1_cue_texts:
+        h1_metadata["cueTexts"] = h1_cue_texts
     meta_lua = hades1_scripts / "MetaUpgradeData.lua"
     weapon_lua = hades1_scripts / "WeaponUpgradeData.lua"
     if meta_lua.exists() and weapon_lua.exists():
@@ -405,11 +463,7 @@ def main():
             print(f"Parsing Hades 1: {trait_lua}")
             trait_parsed = parse_lua_file(str(trait_lua))
         save_eval_static = extract_save_eval_static(meta_parsed, weapon_parsed, loot_parsed, trait_parsed)
-        h1_metadata = {"h1SaveEvalStatic": save_eval_static}
-        meta_out = OUTPUT_DIR / "hades1_metadata.json"
-        with open(meta_out, "w", encoding="utf-8") as f:
-            json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
-            f.write("\n")
+        h1_metadata["h1SaveEvalStatic"] = save_eval_static
         print(
             f"  Save-eval static: {save_eval_static['metaUpgradeOrderLength']} Mirror rows, "
             f"{len(save_eval_static['shrineUpgradeOrder'])} shrine upgrades, "
@@ -417,12 +471,17 @@ def main():
             f"{len(save_eval_static['godLootTraitIndex'])} god-loot owners, "
             f"{len(save_eval_static['keepsakeMaxChambers'])} keepsakes"
         )
-        print(f"  Written to: {meta_out}")
     else:
         print(
-            "SKIP hades1_metadata.json: MetaUpgradeData.lua / WeaponUpgradeData.lua "
+            "SKIP hades1 save-eval static: MetaUpgradeData.lua / WeaponUpgradeData.lua "
             "not found - save-eval static gates will stay indeterminate."
         )
+    if h1_metadata:
+        meta_out = OUTPUT_DIR / "hades1_metadata.json"
+        with open(meta_out, "w", encoding="utf-8") as f:
+            json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(f"  Written to: {meta_out}")
 
     # --- Hades 2 ---
     print()

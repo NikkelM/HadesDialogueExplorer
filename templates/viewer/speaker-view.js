@@ -617,7 +617,7 @@ function renderTextlineListBody() {
 
     if (filtered.length === 0) {
         const msg = query
-            ? `No dialogues match \u201C${escapeHtml(_speakerQuery.trim())}\u201D.`
+            ? `No dialogues match \"${escapeHtml(_speakerQuery.trim())}\".`
             : 'No textlines match the current filter.';
         return `<p class="muted speaker-textlines-empty">${msg}</p>`;
     }
@@ -856,7 +856,7 @@ function renderSpeakerPickerBody() {
             e.name.toLowerCase().includes(query) || e.id.toLowerCase().includes(query));
     }
     if (entries.length === 0) {
-        return `<p class="muted speaker-picker-empty">No speakers match \u201C${escapeHtml(_pickerQuery.trim())}\u201D.</p>`;
+        return `<p class="muted speaker-picker-empty">No speakers match \"${escapeHtml(_pickerQuery.trim())}\".</p>`;
     }
     return `<div class="speaker-picker-grid">`
         + entries.map(e =>
@@ -930,12 +930,12 @@ export function renderSpeaker(speakerId, opts) {
     // Single-member groups keep the existing inline ``(id)`` shape.
     const headerTitle = members.length > 1
         ? `<h3>${escapeHtml(friendly || canonical)}</h3>`
-            + `<p class="speaker-ids"><span class="muted">Internal ids (${members.length}):</span> `
-            + members.map(m => `<code>${escapeHtml(m)}</code>`).join(' \u00B7 ')
-            + `</p>`
+        + `<p class="speaker-ids"><span class="muted">Internal ids (${members.length}):</span> `
+        + members.map(m => `<code>${escapeHtml(m)}</code>`).join(' \u00B7 ')
+        + `</p>`
         : `<h3>${escapeHtml(friendly || canonical)}`
-            + (friendly ? ` <span class="speaker-id">(${escapeHtml(canonical)})</span>` : '')
-            + `</h3>`;
+        + (friendly ? ` <span class="speaker-id">(${escapeHtml(canonical)})</span>` : '')
+        + `</h3>`;
 
     // Other in-game versions of the same character (e.g. Chronos vs
     // Chronos (Boss) / (Reformed)). Rendered in the header's right column,
@@ -943,8 +943,8 @@ export function renderSpeaker(speakerId, opts) {
     const similar = similarSpeakers(canonical);
     const similarHtml = similar.length
         ? `<div class="speaker-similar"><span class="speaker-similar-label">Other versions of this speaker:</span>`
-            + similar.map(s => `<a class="speaker-similar-pill" role="button" data-tooltip="${escapeHtml(s.id)}" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(s.id)})">${escapeHtml(s.name)}</a>`).join('')
-            + `</div>`
+        + similar.map(s => `<a class="speaker-similar-pill" role="button" data-tooltip="${escapeHtml(s.id)}" onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(s.id)})">${escapeHtml(s.name)}</a>`).join('')
+        + `</div>`
         : '';
 
     const headerHtml = `<header class="speaker-overview-header">`

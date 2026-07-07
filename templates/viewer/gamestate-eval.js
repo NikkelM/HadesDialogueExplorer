@@ -109,13 +109,13 @@ function compare(left, op, right) {
     // coerces to 0; everything else (incl. 0, "") is compared as-is.
     const l = (left === undefined || left === null || left === false) ? 0 : left;
     switch (op) {
-    case '==': case '=': return l === right;
-    case '~=': case '!=': return l !== right;
-    case '>=': return l >= right;
-    case '>': return l > right;
-    case '<=': return l <= right;
-    case '<': return l < right;
-    default: return false;
+        case '==': case '=': return l === right;
+        case '~=': case '!=': return l !== right;
+        case '>=': return l >= right;
+        case '>': return l > right;
+        case '<=': return l <= right;
+        case '<': return l < right;
+        default: return false;
     }
 }
 
@@ -204,7 +204,7 @@ function evalSumPrevRuns(rec, root) {
 function evalSumPrevRooms(rec, root) {
     const rooms = root._rooms;
     if (!Array.isArray(rooms)) {
-        return _WRONGSAVE('Aggregates across rooms of the current run - load the matching in-run \u201C_Temp\u201D save to resolve it.');
+        return _WRONGSAVE('Aggregates across rooms of the current run - load the matching in-run \"_Temp\" save to resolve it.');
     }
     if (!Array.isArray(rec.Path) || !rec.Comparison) {
         return _MET('unknown', 'Unrecognised previous-rooms aggregation.');
@@ -497,7 +497,7 @@ function evalClause(rec, root) {
         if (base === 'CurrentRun' && root.CurrentRun) {
             // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
         } else if (base === 'CurrentRun') {
-            return _WRONGSAVE('Reads current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
+            return _WRONGSAVE('Reads current-run state, load the matching save type to resolve it (an in-run \"_Temp\" save for run dialogue, a hub save for hub dialogue).');
         } else {
             const why = base === 'MapState' ? 'live room/map state' : `${base} state`;
             return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
@@ -914,7 +914,7 @@ export const OWNER_RUN_CONTEXT = {
     Prometheus: 'run', Scylla: 'run', Zagreus: 'run', InfestedCerberus: 'run', TyphonHead: 'run',
     // both (5): single owner that speaks in hub AND run
     NPC_Nemesis_01: 'both', NPC_Icarus_01: 'both', PlayerUnit: 'both', Speaker_Homer: 'both',
-    NPC_Charon_01: 'both', 
+    NPC_Charon_01: 'both',
 };
 
 // Whether a dialogue owned by ``owner`` can have its ``CurrentRun.*`` gates

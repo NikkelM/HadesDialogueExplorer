@@ -738,6 +738,26 @@ test('H1: h1OperandMarks marks owned items in a set/membership gate', () => {
     assert.equal(h1OperandMarks('RequiredOneOfTraits', ['T1', 'T2'], ctx({ gs: {} })), null);
 });
 
+test('H1: h1OperandMarks colours played / not-played voice-line cues', () => {
+    const c = ctx({
+        gs: { SpeechRecord: { '/VO/CueA': true } },
+        currentRun: { SpeechRecord: ['/VO/RunA'], CurrentRoom: { VoiceLinesPlayed: ['/VO/RoomA'] } },
+    });
+    // Global "must have played": a played cue is green (not-played stays neutral).
+    assert.deepEqual([...h1OperandMarks('RequiredPlayed', ['/VO/CueA', '/VO/CueB'], c).flat.green], ['/VO/CueA']);
+    // Global "must NOT have played": a played cue violates the gate -> red.
+    const neg = h1OperandMarks('RequiredFalsePlayed', ['/VO/CueA', '/VO/CueB'], c);
+    assert.deepEqual([...neg.flat.red], ['/VO/CueA']);
+    assert.deepEqual([...neg.flat.green], []);
+    // Per-run / per-room gates read the current-run slice's own record.
+    assert.deepEqual([...h1OperandMarks('RequiredAnyPlayedThisRun', ['/VO/RunA', '/VO/RunB'], c).flat.green], ['/VO/RunA']);
+    assert.deepEqual([...h1OperandMarks('RequiredFalsePlayedThisRoom', ['/VO/RoomA'], c).flat.red], ['/VO/RoomA']);
+    // A per-run gate on a hub save (no current run) is indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredAnyPlayedThisRun', ['/VO/RunA'], ctx({ gs: {} })), null);
+    // An older save with no global SpeechRecord is indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredPlayed', ['/VO/CueA'], ctx({ gs: {} })), null);
+});
+
 test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () => {
     const c = ctx({ gs: { EnemyKills: { Harpy: 3, Hydra: 0 }, NPCInteractions: { NPC_Sisyphus_01: 6 } } });
     // RequiredKills (min): present counts green, with the save's actual tally;
