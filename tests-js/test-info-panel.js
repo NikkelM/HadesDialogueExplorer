@@ -1837,6 +1837,27 @@ test('a /VO/ voice-line ref is coloured green / red by the loaded save', () => {
     setOperandMarks(null);
 });
 
+// The H2 equivalent: a single-cue SpeechRecord PathTrue / PathFalse gate colours
+// its voiceline chip the same way (green when the wanted cue has played, red when
+// a forbidden cue has played), driven by the same operand marks
+// (``_h2SpeechCueMark`` -> ``_curGreen`` / ``_curRed``).
+test('an H2 SpeechRecord voice-line gate is coloured green / red by the loaded save', () => {
+    const data = buildFixtureData();
+    data.cueTexts = { Artemis_0304: { text: 'Got it', speaker: 'Artemis' } };
+    loadData(data);
+    const key = 'PathTrue:GameState.SpeechRecord./VO/Artemis_0304';
+    const val = [{ PathTrue: ['GameState', 'SpeechRecord', '/VO/Artemis_0304'] }];
+    setOperandMarks({ flat: { green: new Set(['/VO/Artemis_0304']), red: new Set(), actuals: new Map() } });
+    assert.match(renderOtherReqEntryHtml(key, val), /<code class="other-req-operand-met"[^>]*>"Got it" \(Artemis\)<\/code>/);
+    const negKey = 'PathFalse:GameState.SpeechRecord./VO/Artemis_0304';
+    const negVal = [{ PathFalse: ['GameState', 'SpeechRecord', '/VO/Artemis_0304'] }];
+    setOperandMarks({ flat: { green: new Set(), red: new Set(['/VO/Artemis_0304']), actuals: new Map() } });
+    assert.match(renderOtherReqEntryHtml(negKey, negVal), /<code class="other-req-operand-unmet"[^>]*>"Got it" \(Artemis\)<\/code>/);
+    // No marks (cue not played, or no save) -> neutral chip, no colour class.
+    setOperandMarks(null);
+    assert.doesNotMatch(renderOtherReqEntryHtml(key, val), /other-req-operand-(met|unmet)/);
+});
+
 
 test('closing voicelines (endLines) render speaker-prefixed after the main dialogue', () => {
     const data = buildFixtureData();

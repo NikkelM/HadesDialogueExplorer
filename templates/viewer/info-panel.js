@@ -173,7 +173,13 @@ function _voicelineCueHeadHtml(prefix, tail) {
     const label = (played ? 'Voiceline must have played' : 'Voiceline must NOT have played')
         + _SPEECH_SCOPE_PHRASES[scopeKey];
     const pill = `<span class="req-type-name" data-tooltip="${escapeHtml('Internal name: ' + prefix)}">${escapeHtml(label)}</span>`;
-    return `${pill}: ${_valueChip(leaf)}`;
+    // Colour the cue chip by the save's played-state (marks set by the render
+    // loop from ``_h2SpeechCueMark``): green when it has played and the gate wants
+    // it, red when it has played and the gate forbids it, neutral otherwise.
+    let cls = '';
+    if (_curRed && _curRed.has(leaf)) cls = 'other-req-operand-unmet';
+    else if (_curGreen && _curGreen.has(leaf)) cls = 'other-req-operand-met';
+    return `${pill}: ${_valueChip(leaf, cls)}`;
 }
 
 // CurrentRun run-type booleans that read "This run is a <type>" as a PathTrue /

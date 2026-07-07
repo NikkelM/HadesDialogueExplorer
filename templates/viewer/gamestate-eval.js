@@ -682,10 +682,44 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
 // operand. Returns ``{ recs: [{green,red,counts}], flat: {green,red,counts} }``
 // (``flat`` = the union, for non-record-indexed renders), or null when nothing
 // is determinable.
+// PathTrue / PathFalse gate targeting a single ``SpeechRecord`` voiceline cue:
+// return operand marks that colour the cue's chip green when it has played and
+// the gate wants it played, red when it has played and the gate forbids it, and
+// neutral (no colour) when it has not played. Keyed by the full ``/VO/<cue>``
+// leaf so the voiceline renderer (``_voicelineCueHeadHtml``) can look it up.
+// Mirrors the H1 RequiredPlayed / RequiredFalsePlayed marks. Returns null when
+// the record isn't a single-cue SpeechRecord clause or the SpeechRecord table
+// isn't loaded (the played-state is then indeterminate, so the chip stays
+// neutral - matching a not-played cue).
+function _h2SpeechCueMark(key, val, root) {
+    const opKey = key.startsWith('PathFalse:') ? 'PathFalse' : 'PathTrue';
+    const rec = val[0];
+    const path = rec && typeof rec === 'object' ? rec[opKey] : null;
+    if (!Array.isArray(path)) return null;
+    const srIdx = path.indexOf('SpeechRecord');
+    // The cue must be the single segment immediately after ``SpeechRecord``.
+    if (srIdx < 0 || srIdx !== path.length - 2) return null;
+    const leaf = path[path.length - 1];
+    if (typeof leaf !== 'string' || !leaf.startsWith('/VO/')) return null;
+    const srTable = walkPath(root, path.slice(0, srIdx + 1));
+    if (srTable === undefined || srTable === null || typeof srTable !== 'object') return null;
+    const green = new Set();
+    const red = new Set();
+    if (luaTruthy(srTable[leaf])) (opKey === 'PathFalse' ? red : green).add(leaf);
+    return { recs: null, flat: { green, red } };
+}
+
 export function h2OperandMarks(key, val, slices = {}) {
-    if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
+    if (typeof key !== 'string' || !Array.isArray(val)) return null;
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
     const root = { GameState: slices.gameState || slices.GameState || null, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory };
+    // A single-cue PathTrue / PathFalse gate on a SpeechRecord voiceline table
+    // colours the cue chip by whether it has played, mirroring H1's RequiredPlayed
+    // / RequiredFalsePlayed operand marks.
+    if (key.startsWith('PathTrue:') || key.startsWith('PathFalse:')) {
+        return _h2SpeechCueMark(key, val, root);
+    }
+    if (!key.startsWith('Path:')) return null;
     const recs = [];
     let determinable = false;
     for (const rec of val) {
