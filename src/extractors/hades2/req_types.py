@@ -320,9 +320,9 @@ HADES2_REQ_TYPE_TOOLTIPS = {
     **{k: HADES1_REQ_TYPE_TOOLTIPS[k] for k in HADES2_TEXTLINE_DEPENDENCY_FIELDS},
     # H2-native operators.
     "Skip":
-        "This always evaluates to false.",
+        "Always blocked - this dialogue can never play.",
     "Force":
-        "This always evaluates to true.",
+        "Always passes this check.",
     "ChanceToPlay":
         "Chance for the dialogue to play if all other requirements are satisfied.",
     "NamedRequirements":
@@ -332,29 +332,29 @@ HADES2_REQ_TYPE_TOOLTIPS = {
     "OrRequirements":
         "At least one sub-group of requirements must pass.",
     "PathTrue":
-        "The value at the end of the given path must be true.",
+        "The checked value must be true.",
     "PathFalse":
-        "The value at the end of the given path must be false.",
+        "The checked value must be false.",
     "PathEmpty":
-        "The value at the end of the given path must NOT exist.",
+        "The checked value must be empty or unset.",
     "PathNotEmpty":
-        "The value at the end of the given path must exist.",
+        "The checked value must be present.",
     "HasAny":
-        "The table at the given path must contain at least one of the given values.",
+        "The checked list must contain at least one of the listed values.",
     "HasAll":
-        "The table at the given path must contain all of the given values.",
+        "The checked list must contain all of the listed values.",
     "HasNone":
-        "The table at the given path must NOT contain any of the given values.",
+        "The checked list must contain none of the listed values.",
     "NotHasAll":
-        "The table at the given path must be missing at least one of the given values.",
+        "The checked list must be missing at least one of the listed values.",
     "IsAny":
-        "The value at the given path must be any of the given values.",
+        "The checked value must match one of the listed values.",
     "IsNone":
-        "The value at the given path must NOT be any of the given values.",
+        "The checked value must match none of the listed values.",
     "Comparison":
-        "The comparator used to evaluate if this requirement passes or not.",
+        "The checked value is compared against a number (at least / at most / equal to).",
     "FunctionName":
-        "The function call must evaluate to true with the given arguments.",
+        "A function call must pass with the given inputs.",
 }
 
 
