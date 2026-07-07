@@ -19,9 +19,9 @@ This module supplies two parallel 1:1 maps:
 Every distinct ``otherRequirements`` key encountered in the merged H1
 dataset must appear in BOTH maps; ``tests/hades1/test_other_req_types``
 enforces full coverage and the disjoint-from-textline-vocab invariant.
-Some long-tail entries are best-effort reasoned from field name +
-sample values rather than verified against the engine's
-``RequirementMethods.lua`` - corrections welcome.
+Entries are verified against the engine's ``IsGameStateEligible``
+(``RunManager.lua``) and its helpers; a few long-tail entries remain
+best-effort reasoned from field name + sample values - corrections welcome.
 
 Both maps are merged into the existing per-game ``reqTypeLabels`` /
 ``reqTypeTooltips`` bundles by :mod:`src.label_maps` so the viewer
@@ -256,7 +256,7 @@ HADES1_OTHER_REQ_LABELS = {
     "ValuableUpgradeInRoom":                    "Boon offerings in the room must meet given rarities",
     "MinRunsSinceSquelchedHermes":              "Minimum runs since Hermes was silenced",
     "MaxRunsSinceSquelchedHermes":              "Maximum runs since Hermes was silenced",
-    "ReachedShrineSoftCapWithAnyWeaponName":    "Reached Heat cap with any weapon",
+    "ReachedShrineSoftCapWithAnyWeaponName":    "Cleared Heat cap with any weapon",
     "ObjectivesCompleted":                      "Minimum objective completions",
     "ObjectiveCompletedLastOffer":              "Objective was completed the last time it was active",
     "AreIdsAlive":                              "Specific unit(s) must be alive",
@@ -373,7 +373,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredUnitNotAlive":
         "The named enemy or character must NOT be alive or present.",
     "RequiredBossPhase":
-        "The current boss encounter must be in the named phase.",
+        "The boss in the current room must currently be in this phase number (1 = first phase, 2 = second, and so on). Only checked while that boss is alive.",
 
     # ----- Combat / damage / defiance -----
     "RequiredMaxHealthFraction":
@@ -411,7 +411,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredFalseGodLoots":
         "The player must NOT have received boons from any of the listed gods during the current run.",
     "RequiredLootChoices":
-        "The number of loot choices offered for the current pickup must equal this value.",
+        "The number of Boon/reward choices the player is currently offered must equal this value.",
     "RequiredLootThisRun":
         "The player must have at least one boon from the named god equipped.",
     "RequiredNoGodBoons":
@@ -485,7 +485,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiresLastRunNotCleared":
         "The previous run must NOT have been cleared.",
     "RequiresBestClearTimeLastRun":
-        "The previous run must have been cleared and set a new personal-best clear time.",
+        "The previous run must have been cleared and matched or beaten your best clear time (a tie counts).",
     "RequiredMinCompletedRuns":
         "The player must have completed at least N runs (whether cleared or not).",
     "RequiredMaxCompletedRuns":
@@ -637,8 +637,8 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "MaxRunsSinceSquelchedHermes":
         "Hermes must have been silenced within the last N runs.",
     "ReachedShrineSoftCapWithAnyWeaponName":
-        "With at least one weapon, all available bounties at the Pact of Punishment "
-        "must have been completed.",
+        "With at least one weapon, the player must have cleared a full escape at the top of "
+        "the Heat Gauge or higher (Heat 20+, or 25 in Hell Mode).",
     "ObjectivesCompleted":
         "The named objective must have been completed at least Min, or at most "
         "Max, times.",
