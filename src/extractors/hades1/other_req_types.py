@@ -53,9 +53,9 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredTrueFlags":                        "Must have flag (ALL)",
 
     # ----- GameState.Values / config options -----
-    "RequiredValues":                           "GameState field must equal",
-    "RequiredFalseValues":                      "GameState field must NOT equal",
-    "RequiredMinValues":                        "Minimum GameState field value",
+    "RequiredValues":                           "Game state value must equal",
+    "RequiredFalseValues":                      "Game state value must NOT equal",
+    "RequiredMinValues":                        "Minimum game state value",
     "RequiredTrueConfigOptions":                "Game setting must be enabled (ALL)",
     "RequiredFalseConfigOptions":               "Game setting must be disabled (ALL)",
 
@@ -200,7 +200,7 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredAccumulatedMetaPoints":            "Minimum lifetime collected Darkness",
     "RequiredActiveMetaPointsMin":              "Minimum Darkness invested in the Mirror of Night",
     "RequiredActiveMetaPointsMax":              "Maximum Darkness invested in the Mirror of Night",
-    "RequiredActiveMetaPointMax":               "Maximum Darkness invested in the Mirror of Night",
+    "RequiredActiveMetaPointMax":               "Unused engine field (typo)",
     "RequiredActiveShrinePointsMin":            "Minimum currently active Heat",
     "RequiredLifetimeResourcesGainedMin":       "Minimum lifetime resources gained",
     "RequiredLifetimeResourcesGainedMax":       "Maximum lifetime resources gained",
@@ -279,9 +279,9 @@ HADES1_OTHER_REQ_LABELS = {
 HADES1_OTHER_REQ_TOOLTIPS = {
     # ----- Flags -----
     "RequiredFalseFlags":
-        "Every listed flag must be unset on GameState.Flags.",
+        "Every listed flag must be unset.",
     "RequiredTrueFlags":
-        "Every listed flag must be set on GameState.Flags.",
+        "Every listed flag must be set.",
 
     # ----- NPC interactions -----
     "RequiredMinNPCInteractions":
@@ -551,11 +551,11 @@ HADES1_OTHER_REQ_TOOLTIPS = {
 
     # ----- Flags / Values (generic key-value game state) -----
     "RequiredValues":
-        "Every listed key must equal the given value in the save's GameState.",
+        "Every listed game-state value must equal the specified value.",
     "RequiredFalseValues":
-        "None of the listed keys may be equal to the given value in the save's GameState.",
+        "None of the listed game-state values may equal the specified value.",
     "RequiredMinValues":
-        "Every listed key must be at least the given value in the save's GameState.",
+        "Every listed game-state value must be at least the specified value.",
     "RequiredNotActivatedThisRun":
         "The named interactable ID must NOT have been activated during the current run.",
     "RequiredIdsNotActivatedThisRun":
@@ -633,15 +633,15 @@ HADES1_OTHER_REQ_TOOLTIPS = {
         "The boons currently offered in this room must meet the listed rarity thresholds. "
         "Read from the live reward being offered, so a save can't confirm it.",
     "MinRunsSinceSquelchedHermes":
-        "Hermes must have be silenced at least N runs ago.",
+        "Hermes must have been silenced at least N runs ago.",
     "MaxRunsSinceSquelchedHermes":
-        "Hermes must have be silenced within the last N runs.",
+        "Hermes must have been silenced within the last N runs.",
     "ReachedShrineSoftCapWithAnyWeaponName":
         "With at least one weapon, all available bounties at the Pact of Punishment "
         "must have been completed.",
     "ObjectivesCompleted":
         "The named objective must have been completed at least Min, or at most "
-        "Max, times on record (GameState.ObjectivesCompleted).",
+        "Max, times.",
     "ObjectiveCompletedLastOffer":
         "The named objective must have been completed the last time it was active.",
     "AreIdsAlive":

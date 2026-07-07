@@ -359,7 +359,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
 
     if (rootPlayed) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
-        html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.${rankInline}</div>`;
+        html += `<div class="eligibility-detail">${escapeHtml(rootName)} has already been played in this save.${rankInline}</div>`;
     } else if (unobtainable) {
         // Checked before "eligible": a structurally-locked dialogue (e.g. a
         // choice variant whose sibling was chosen) can still have its
@@ -600,7 +600,7 @@ export function renderOtherConditionsHtml(rootName) {
         ? `Other requirements (${rowCount}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unobtainable' ? 'permanently locked' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
         : `Other requirements (${rowCount})`;
     const hint = haveSave
-        ? 'Non-textline conditions, checked against your save\u2019s GameState. Some requirements can only be checked against hub saves, and others only against in-run saves.'
+        ? 'Non-textline conditions, checked against your save. Some requirements can only be checked against hub saves, and others only against in-run saves.'
         : 'Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. Load a save to check them.';
 
     let html = `<div class="eligibility-tree">`;
