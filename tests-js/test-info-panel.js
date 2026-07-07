@@ -1723,10 +1723,11 @@ test('voiceline cue PathFalse clause renders "Voiceline must NOT have played" wi
 test('equality gate shows the save actual value coloured beside the required value', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     // A failing RequiredValues gate: the save's actual employee (Megaera) differs
-    // from the required Hypnos, so the actual renders red, in parens, by the field.
+    // from the required Hypnos, so the actual renders red, in parens, beside the
+    // curated "Employee of the Month is ..." clause.
     setOperandMarks({ flat: { green: new Set(), red: new Set(), actuals: new Map([['CurrentEmployeeOfTheMonth', { value: 'Megaera', met: false }]]) } });
     const missHtml = renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' });
-    assert.match(missHtml, /<code[^>]*>CurrentEmployeeOfTheMonth<\/code> \(<code class="other-req-operand-unmet"[^>]*>Megaera<\/code>\) = <code[^>]*>Hypnos<\/code>/);
+    assert.match(missHtml, /Employee of the Month is <code[^>]*>Hypnos<\/code> \(<code class="other-req-operand-unmet"[^>]*>Megaera<\/code>\)/);
     // A satisfied gate colours the actual green; an unset field reads "(unset)".
     setOperandMarks({ flat: { green: new Set(), red: new Set(), actuals: new Map([['CurrentEmployeeOfTheMonth', { value: 'Hypnos', met: true }]]) } });
     const okHtml = renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Hypnos' });
@@ -1737,6 +1738,38 @@ test('equality gate shows the save actual value coloured beside the required val
     setOperandMarks(null);
 });
 
+
+// Curated H1 GameState value-map gates read as friendly clauses instead of the
+// generic "GameState field ..." label + raw field name (#134 follow-up).
+test('H1 curated GameState value fields render friendly clauses', () => {
+    const data = fixtureWithSimplifiedOtherReqs();
+    data.badgeRankManager = 'Resources Director';
+    data.badgeRankNames = { 6: 'Alpha Fixer', 21: 'Alpha Shadow', 50: 'Unseen One' };
+    loadData(data);
+    // Employee of the Month (RequiredValues == / RequiredFalseValues !=).
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredValues', { CurrentEmployeeOfTheMonth: 'Megaera' })), 'Employee of the Month is Megaera');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredFalseValues', { CurrentEmployeeOfTheMonth: 'Zagreus' })), 'Employee of the Month is not Zagreus');
+    // Cerberus pettings (RequiredMinValues >=).
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinValues', { NumCerberusPettings: 20 })), 'Petted Cerberus at least 20 times');
+    // BadgeRank (RequiredMinValues >=) -> Resources Director rank name.
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinValues', { BadgeRank: 6 })), 'Resources Director rank: Alpha Fixer or higher');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinValues', { BadgeRank: 50 })), 'Resources Director rank: Unseen One or higher');
+    // A value with no rank name falls back to the generic label (no crash).
+    assert.match(_stripReq(renderOtherReqEntryHtml('RequiredMinValues', { BadgeRank: 999 })), /BadgeRank/);
+});
+
+// H2 GameState.BadgeRank path comparison resolves to the Spirit Mixer rank name.
+test('H2 GameState.BadgeRank resolves to the Spirit Mixer rank name', () => {
+    const data = buildFixtureData();
+    data.pathScopeNames = { GameState: '' };
+    data.badgeRankManager = 'Spirit Mixer';
+    data.badgeRankNames = { 41: 'Unseen X', 50: 'Unseen I' };
+    loadData(data);
+    // == exact rank.
+    assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.BadgeRank', [{ Comparison: '==', Path: ['GameState', 'BadgeRank'], Value: 50 }])), 'Spirit Mixer rank: Unseen I');
+    // >= "or higher".
+    assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.BadgeRank', [{ Comparison: '>=', Path: ['GameState', 'BadgeRank'], Value: 41 }])), 'Spirit Mixer rank: Unseen X or higher');
+});
 
 test('a broken / typo requirement key renders an amber warning and hides the value', () => {
     loadData(buildFixtureData());
@@ -1882,10 +1915,18 @@ test('a "Max" bare-key gate renders with <= (at most), not >=', () => {
 test('equality / negation gates render with = / != , not >=', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
-    // RequiredValues is an equality check (field === value); RequiredFalseValues
-    // is its negation. Rendering either with >= states the opposite.
-    assert.match(lastHtml, /<span class="req-type-name"[^>]*>GameState field must equal<\/span>: <code>CurrentEmployeeOfTheMonth<\/code> = <code>Dusa<\/code>/);
-    assert.match(lastHtml, /<span class="req-type-name"[^>]*>GameState field must NOT equal<\/span>: <code>CurrentEmployeeOfTheMonth<\/code> &ne; <code>Achilles<\/code>/);
+    // CurrentEmployeeOfTheMonth is a curated GameState value field, so it reads
+    // as a friendly clause ("Employee of the Month is ...") - never with ">=".
+    assert.match(lastHtml, /Employee of the Month is <code[^>]*>Dusa<\/code>/);
+    assert.match(lastHtml, /Employee of the Month is not <code[^>]*>Achilles<\/code>/);
+    // An uncurated GameState value field keeps the generic label but must still
+    // use the correct = / != operator (rendering either with >= states the
+    // opposite of the equality / negation check).
+    const eq = renderOtherReqEntryHtml('RequiredValues', { SomeUncuratedField: 'X' });
+    assert.match(eq, /<code>SomeUncuratedField<\/code> = <code>X<\/code>/);
+    assert.doesNotMatch(eq, /&gt;=/);
+    const neq = renderOtherReqEntryHtml('RequiredFalseValues', { SomeUncuratedField: 'X' });
+    assert.match(neq, /<code>SomeUncuratedField<\/code> &ne; <code>X<\/code>/);
 });
 
 test('"N of a set" gates render as "at least N of: items", not an array dump', () => {

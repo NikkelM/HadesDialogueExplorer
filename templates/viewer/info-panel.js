@@ -33,6 +33,7 @@ import {
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
+import { badgeRankNames, badgeRankManager } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -384,6 +385,28 @@ function _scalarBoundaryClause(path, word) {
     const clauses = _H2_SCALAR_BOUNDARY_CLAUSES[path[path.length - 1]];
     if (!clauses) return null;
     return word === 'none' ? clauses[0] : clauses[1];
+}
+
+// ``GameState.BadgeRank`` is a badge / rank number (1..50) run by a per-game
+// manager (H1 "Resources Director", H2 "Spirit Mixer"). Resolve the number to
+// the rank the player must have reached via the per-game ``badgeRankNames`` map,
+// e.g. "Resources Director rank: Alpha Fixer or higher". ``bound`` is the
+// comparison sense: '' (exact ==), ' or higher' (>= / >), ' or lower' (<= / <).
+// Returns null when the value has no rank name (falls back to the raw operator).
+function _badgeRankClause(value, bound) {
+    const name = badgeRankNames[value];
+    if (!name || !badgeRankManager) return null;
+    const chip = `<code data-tooltip="${escapeHtml('BadgeRank = ' + _formatScalar(value))}">${escapeHtml(name)}</code>`;
+    return `${escapeHtml(badgeRankManager)} rank: ${chip}${bound}`;
+}
+
+// Map a comparison operator to the badge-rank ``bound`` suffix (or null for
+// operators that don't read naturally as a single rank threshold, e.g. ~=).
+function _badgeRankBound(op) {
+    if (op === '==') return '';
+    if (op === '>=' || op === '>') return ' or higher';
+    if (op === '<=' || op === '<') return ' or lower';
+    return null;
 }
 
 // Build an ``other-req-path`` chip with custom display text but the raw dotted
@@ -987,16 +1010,24 @@ function _renderListItemHtml(v) {
         // name itself stays uncoloured so the "(actual)" reads as distinct from
         // the required value that follows the operator (e.g. ``field (Megaera) =
         // Hypnos``). An absent field reads "(unset)".
-        const a = _curActuals.get(v);
-        const acls = _metClass(a.met);
-        if (a.value == null) {
-            const attr = acls ? ` class="${acls}"` : '';
-            html += ` (<code${attr}>unset</code>)`;
-        } else {
-            html += ` (${_valueChip(a.value, acls)})`;
-        }
+        html += _actualTallyHtml(v);
     }
     return html;
+}
+
+// The save's actual-value tally for a gate ``field`` (``(Megaera)`` / ``(unset)``,
+// coloured green / red by whether it satisfies the gate), or '' when no save
+// actual is loaded for it. Shared by the generic operand renderer and the
+// curated friendly clauses so both surface the loaded save's current value.
+function _actualTallyHtml(field) {
+    if (!_curActuals || !_curActuals.has(field)) return '';
+    const a = _curActuals.get(field);
+    const acls = _metClass(a.met);
+    if (a.value == null) {
+        const attr = acls ? ` class="${acls}"` : '';
+        return ` (<code${attr}>unset</code>)`;
+    }
+    return ` (${_valueChip(a.value, acls)})`;
 }
 
 // Separator between items in a rendered operand list. A bullet (not a comma) so
@@ -1140,6 +1171,16 @@ function _specialComparisonClause(rec) {
         const add = Number(rec.ValuePathAddition);
         const n = Number.isFinite(add) && add < 0 ? -add : 0;
         return `${obj} last failed ${n > 0 ? `${escapeHtml(String(n))}+ runs ago` : 'this run or later'}`;
+    }
+    // GameState.BadgeRank -> the rank the player reached, resolved to its rank
+    // name via the per-game manager (H2 "Spirit Mixer"). == is exact, >= "or
+    // higher", <= "or lower".
+    if (field === 'BadgeRank' && leafs.length === 0) {
+        const bound = _badgeRankBound(rec.Comparison);
+        if (bound !== null) {
+            const clause = _badgeRankClause(rec.Value, bound);
+            if (clause !== null) return clause;
+        }
     }
     return null;
 }
@@ -1659,7 +1700,54 @@ function _renderBareKeyEntry(key, val) {
     if (health !== null) return health;
     const noneEntry = _renderMaxZeroNoneEntry(key, val);
     if (noneEntry !== null) return noneEntry;
+    const gsValue = _renderGameStateValueEntry(key, val);
+    if (gsValue !== null) return gsValue;
     return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
+}
+
+// Curated friendly clauses for specific H1 ``GameState`` value-map gates that
+// otherwise render with a generic "GameState field ..." label + the raw field
+// name. Keyed by field; each is ``(kind, value) -> clause`` where ``kind`` is the
+// gate sense from ``_reqGateKind`` ('eq' / 'neq' / 'min' / 'max'). Returns null
+// to defer that field to the generic rendering.
+const _H1_VALUE_FIELD_CLAUSES = {
+    // The House "Employee of the Month" plaque; the value is a staff member.
+    CurrentEmployeeOfTheMonth: (kind, v) => {
+        const actual = _actualTallyHtml('CurrentEmployeeOfTheMonth');
+        if (kind === 'eq') return `Employee of the Month is ${_valueChip(v)}${actual}`;
+        if (kind === 'neq') return `Employee of the Month is not ${_valueChip(v)}${actual}`;
+        return null;
+    },
+    // Number of times the player has petted Cerberus.
+    NumCerberusPettings: (kind, v) => (kind === 'min'
+        ? `Petted Cerberus at least ${_valueChip(v)} times${_actualTallyHtml('NumCerberusPettings')}` : null),
+    // The Resources Director badge rank, resolved to its rank name.
+    BadgeRank: (kind, v) => {
+        const bound = kind === 'min' ? ' or higher' : kind === 'max' ? ' or lower' : kind === 'eq' ? '' : null;
+        if (bound === null) return null;
+        const clause = _badgeRankClause(v, bound);
+        return clause === null ? null : `${clause}${_actualTallyHtml('BadgeRank')}`;
+    },
+};
+
+// Friendly rendering of an H1 ``RequiredValues`` / ``RequiredFalseValues`` /
+// ``RequiredMinValues`` / ``RequiredMaxValues`` gate (a ``{field: value}`` map)
+// when every field has a curated clause in ``_H1_VALUE_FIELD_CLAUSES``. Returns
+// a self-contained clause (no generic "GameState field ..." header) or null so a
+// gate with any uncurated field keeps the existing generic rendering.
+function _renderGameStateValueEntry(key, val) {
+    if (key !== 'RequiredValues' && key !== 'RequiredFalseValues'
+        && key !== 'RequiredMinValues' && key !== 'RequiredMaxValues') return null;
+    if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+    const kind = _reqGateKind(key);
+    const clauses = [];
+    for (const [field, v] of Object.entries(val)) {
+        const fn = _H1_VALUE_FIELD_CLAUSES[field];
+        const clause = fn ? fn(kind, v) : null;
+        if (clause === null) return null;
+        clauses.push(clause);
+    }
+    return clauses.length ? clauses.join(_OPERAND_SEP) : null;
 }
 
 // H1 carries the player-health gate as a bare ``RequiredMaxHealthFraction`` /
