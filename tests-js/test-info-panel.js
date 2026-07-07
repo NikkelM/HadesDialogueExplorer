@@ -267,12 +267,12 @@ test('meta-upgrade-gated choices append a Mirror of Night requirement to their t
     // The tooltip lines are joined with a literal newline, which
     // ``escapeHtml`` passes through verbatim (the floating tooltip
     // layer in tooltip.js splits on \n at render time).
-    const a1Match = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffExtraChance\nRequires Death Defiance \(Mirror of Night\)"/);
+    const a1Match = lastHtml.match(/<span class="choice-name" data-tooltip="Internal name: ChoiceText_BuffExtraChance\n\nRequires Death Defiance \(Mirror of Night\)"/);
     assert.ok(a1Match, 'expected A1 to surface Death Defiance in its tooltip');
-    const a2Match = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffExtraChanceReplenish\nRequires Stubborn Defiance \(Mirror of Night\)"/);
+    const a2Match = lastHtml.match(/<span class="choice-name" data-tooltip="Internal name: ChoiceText_BuffExtraChanceReplenish\n\nRequires Stubborn Defiance \(Mirror of Night\)"/);
     assert.ok(a2Match, 'expected A2 to surface Stubborn Defiance in its tooltip');
     // Unconditional choices keep the original tooltip shape (internal id only).
-    const bMatch = lastHtml.match(/<span class="choice-name" data-tooltip="ChoiceText_BuffHealing"/);
+    const bMatch = lastHtml.match(/<span class="choice-name" data-tooltip="Internal name: ChoiceText_BuffHealing"/);
     assert.ok(bMatch, 'expected the ungated HydraLite Gold tooltip to stay internal-id only');
 });
 

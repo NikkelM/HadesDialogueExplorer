@@ -66,7 +66,7 @@ test('renderSpeakerHtml: friendly + description -> "Friendly (id)\\nDescription"
     // Zeus has both a friendly label and a description quip in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Zeus_01'),
-        '<span class="speaker-name clickable" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Zeus_01&quot;)">Zeus</span>',
+        '<span class="speaker-name clickable" data-tooltip="Internal name: NPC_Zeus_01\n\nKing of the Olympians" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Zeus_01&quot;)">Zeus</span>',
     );
 });
 
@@ -74,7 +74,7 @@ test('renderSpeakerHtml: friendly without description -> "Friendly (id)" tooltip
     // Achilles has a friendly label but no description in the fixture.
     assert.equal(
         renderSpeakerHtml('NPC_Achilles_01'),
-        '<span class="speaker-name clickable" data-tooltip="Achilles (NPC_Achilles_01)" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Achilles_01&quot;)">Achilles</span>',
+        '<span class="speaker-name clickable" data-tooltip="Internal name: NPC_Achilles_01" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_Achilles_01&quot;)">Achilles</span>',
     );
 });
 
@@ -107,7 +107,7 @@ test('renderSpeakerHtml: clickable:false -> plain span, no clickable class or na
     // rather than diverting to the speaker overview. The tooltip is kept.
     assert.equal(
         renderSpeakerHtml('NPC_Zeus_01', { clickable: false }),
-        '<span class="speaker-name" data-tooltip="Zeus (NPC_Zeus_01)\nKing of the Olympians">Zeus</span>',
+        '<span class="speaker-name" data-tooltip="Internal name: NPC_Zeus_01\n\nKing of the Olympians">Zeus</span>',
     );
 });
 
@@ -118,7 +118,7 @@ test('renderSpeakerHtml: tooltip parts are HTML-escaped', () => {
     });
     assert.equal(
         renderSpeakerHtml('NPC_<X>_01'),
-        '<span class="speaker-name clickable" data-tooltip="X&amp;Y (NPC_&lt;X&gt;_01)\nGod of &quot;Quotes&quot;" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_&lt;X&gt;_01&quot;)">X&amp;Y</span>',
+        '<span class="speaker-name clickable" data-tooltip="Internal name: NPC_&lt;X&gt;_01\n\nGod of &quot;Quotes&quot;" onclick="event.stopPropagation(); navigateToSpeaker(&quot;NPC_&lt;X&gt;_01&quot;)">X&amp;Y</span>',
     );
     loadFixtureData();
 });

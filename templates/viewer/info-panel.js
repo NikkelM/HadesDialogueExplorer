@@ -704,7 +704,7 @@ function _valueChip(v, cls) {
     if (typeof v === 'string') {
         const friendly = entityNames[v];
         if (friendly && friendly !== v) {
-            return `<code${klass} data-tooltip="${escapeHtml(v)}">${escapeHtml(friendly)}</code>`;
+            return `<code${klass} data-tooltip="${escapeHtml('Internal name: ' + v)}">${escapeHtml(friendly)}</code>`;
         }
     }
     const raw = _formatScalar(v);

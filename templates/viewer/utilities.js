@@ -156,9 +156,9 @@ export function renderSpeakerHtml(id, { clickable = true } = {}) {
     const cls = clickable ? 'speaker-name clickable' : 'speaker-name';
     const clickAttr = clickable ? ` onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(id)})"` : '';
     if (friendly && friendly !== id) {
-        const titleParts = [`${friendly} (${id})`];
+        const titleParts = [`Internal name: ${id}`];
         if (description) titleParts.push(description);
-        return `<span class="${cls}" data-tooltip="${escapeHtml(titleParts.join('\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
+        return `<span class="${cls}" data-tooltip="${escapeHtml(titleParts.join('\n\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
     }
     if (description) {
         return `<span class="${cls}" data-tooltip="${escapeHtml(description)}"${clickAttr}>${escapeHtml(id)}</span>`;
@@ -265,7 +265,7 @@ export function renderReqTypeHtml(type, extraClass, direction = 'upstream') {
 export function renderSectionHtml(key) {
     const friendly = sectionKeyLabels[key];
     if (friendly && friendly !== key) {
-        return `<span class="section-name" data-tooltip="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
+        return `<span class="section-name" data-tooltip="${escapeHtml('Internal name: ' + key)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="section-name">${escapeHtml(key)}</span>`;
 }
@@ -293,10 +293,10 @@ export function renderChoiceNameHtml(internal, extraTooltipLine = null) {
     const friendly = choiceNames[internal];
     const hasFriendly = friendly && friendly !== internal;
     const tooltipParts = [];
-    if (hasFriendly) tooltipParts.push(internal);
+    if (hasFriendly) tooltipParts.push(`Internal name: ${internal}`);
     if (extraTooltipLine) tooltipParts.push(extraTooltipLine);
     const tooltipAttr = tooltipParts.length > 0
-        ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n'))}"`
+        ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n\n'))}"`
         : '';
     const visible = hasFriendly ? friendly : internal;
     return `<span class="choice-name"${tooltipAttr}>${escapeHtml(visible)}</span>`;
