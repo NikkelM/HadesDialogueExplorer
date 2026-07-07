@@ -356,6 +356,36 @@ function _scalarLeafClause(path, word) {
     return `${word === 'none' ? prefixes[0] : prefixes[1]} ${_rephrasedPathChip(friendly, path)}`;
 }
 
+// Curated "success / achievement / possession" scalar counters whose 0/1
+// boundary reads as a whole natural clause rather than "<noun label> <op> N"
+// (e.g. "fish caught by hand >= 1"). Keyed by the final path segment (unique
+// across these fields); value is ``[none-side clause, any-side clause]`` for the
+// zero (``<= 0`` / ``== 0`` / ``< 1``) and at-least-one (``>= 1`` / ``> 0``)
+// boundaries. The run scope (", this run") is appended by the caller, so the
+// clauses omit it. Non-boundary thresholds keep the noun label + operator.
+const _H2_SCALAR_BOUNDARY_CLAUSES = {
+    HighestShrinePointClearUnderworldCache: ['Has never cleared the Underworld with any Fear', 'Has cleared the Underworld with at least 1 Fear'],
+    HighestShrinePointClearSurfaceCache:    ['Has never cleared the Surface with any Fear', 'Has cleared the Surface with at least 1 Fear'],
+    ShovelSuccesses:                        ['Has never dug successfully', 'Has dug successfully'],
+    FishingSuccessesManual:                 ['Has never caught a fish by hand', 'Has caught a fish by hand'],
+    ExorcismSuccessesFamiliar:              ['Has never pacified a shade with Frinos', 'Has pacified a shade with Frinos'],
+    ExorcismSuccesses:                      ['Has never pacified a shade', 'Has pacified a shade'],
+    SpentShrinePointsCache:                 ['No active Fear', 'Has active Fear'],
+    ClearedDreamRunsCache:                  ['Has never cleared a Dream Dive', 'Has cleared a Dream Dive'],
+    UpgradableHammerCount:                  ['No upgradable Daedalus Hammer', 'Has an upgradable Daedalus Hammer'],
+};
+
+// The natural-clause form of a boundary comparison on one of the curated
+// achievement / possession counters above, or null to fall through. Matches on
+// the final path segment so nested paths (``CurrentRun.Hero.UpgradableHammerCount``)
+// resolve too.
+function _scalarBoundaryClause(path, word) {
+    if (!Array.isArray(path) || !path.length) return null;
+    const clauses = _H2_SCALAR_BOUNDARY_CLAUSES[path[path.length - 1]];
+    if (!clauses) return null;
+    return word === 'none' ? clauses[0] : clauses[1];
+}
+
 // Build an ``other-req-path`` chip with custom display text but the raw dotted
 // path kept as the hover tooltip (mirroring a fully-resolved gloss chip, so a
 // re-phrased clause still exposes the exact gate on hover).
@@ -751,16 +781,18 @@ function _pathGloss(segs) {
     return null;
 }
 
-// A "(cut content)" note badge when any segment of a path is a known broken /
-// cut reference (see ``brokenPathRefs``); empty otherwise. The full explanation
-// rides in the hover tooltip. Appended to the rendered path so a reader knows
-// the gate references something that no longer exists and has no effect.
+// A broken-requirement note badge when any segment of a path is a known broken
+// save-record leaf (see ``brokenPathRefs``); empty otherwise. The full
+// explanation rides in the hover tooltip. Appended to the rendered path so a
+// reader knows the gate references a record that can never be set (no effect).
+// (Path* operator gates are intercepted earlier by ``_renderBrokenLeafRefHtml``;
+// this covers the Comparison / normal-path form.)
 function _brokenRefNote(segs) {
     for (const seg of segs) {
         const note = brokenPathRefs[seg];
         if (note) {
             return ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">`
-                + `(cut content)</span>`;
+                + `(broken requirement - no effect)</span>`;
         }
     }
     return '';
@@ -791,6 +823,22 @@ function _renderBrokenPathHtml(key, opKey) {
         : 'Broken requirement: this path\u2019s root does not exist in the save, so the check can never be satisfied.';
     return `<code class="other-req-path">${escapeHtml(rawPath)}</code>`
         + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(tip)}">${tag}</span>`;
+}
+
+// Render a Path* gate whose leaf is a known broken save-record reference - a key
+// the engine never sets, e.g. an interaction-record (``UseRecord``) check keyed
+// by a dialogue id, when ``UseRecord`` is only ever keyed by an entity. The gate
+// is malformed regardless of whether the id exists, so it reads like a broken
+// path: a "must be false / empty" gate always passes (no effect); a "must be
+// true / non-empty" gate can never pass. The raw path is shown (so the fault is
+// visible) with the shared broken-requirement label; specifics ride in the
+// hover tooltip (from ``brokenPathRefs``).
+function _renderBrokenLeafRefHtml(key, opKey, note) {
+    const rawPath = key.slice(key.indexOf(':') + 1);
+    const alwaysSatisfied = opKey === 'PathFalse' || opKey === 'PathEmpty';
+    const tag = alwaysSatisfied ? '(broken requirement - always passes, no effect)' : '(broken requirement - never passes)';
+    return `<code class="other-req-path">${escapeHtml(rawPath)}</code>`
+        + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">${tag}</span>`;
 }
 
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
@@ -1147,11 +1195,17 @@ function _perRunWindowClause(headHtml, rec, keys) {
     const winKey = 'SumPrevRuns' in rec ? 'SumPrevRuns' : 'SumPrevRooms' in rec ? 'SumPrevRooms' : null;
     if (!winKey) return null;
     const unit = winKey === 'SumPrevRuns' ? 'runs' : 'rooms';
-    const isCount = 'CountPathTrue' in rec;
+    // A boolean per-run/room record counted via ``ValuesToCount: [true]`` counts
+    // the runs/rooms where the flag was set - i.e. the same truthy-occurrence
+    // count as CountPathTrue, just expressed as an explicit value list.
+    const isBoolCount = Array.isArray(rec.ValuesToCount)
+        && rec.ValuesToCount.length === 1 && rec.ValuesToCount[0] === true;
+    const isCount = 'CountPathTrue' in rec || isBoolCount;
     const word = _countBoundaryWord(rec.Comparison, rec.Value);
     if (!isCount && !word) return null;
     const consumed = new Set(['Path', 'Comparison', 'Value', winKey]);
-    if (isCount) consumed.add('CountPathTrue');
+    if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
+    if (isBoolCount) consumed.add('ValuesToCount');
     let excl = '';
     if ('IgnoreCurrentRun' in rec) {
         consumed.add('IgnoreCurrentRun');
@@ -1244,6 +1298,10 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
         if (boss) return `${boss}${suffix}`;
         const word = _countBoundaryWord(rec.Comparison, rec.Value);
         if (word) {
+            // Curated success / possession counters read as a whole natural
+            // clause ("Has caught a fish by hand") rather than "<noun> >= 1".
+            const achieved = _scalarBoundaryClause(rec.Path, word);
+            if (achieved) return `${achieved}${_renderScalarHaveHtml()}${suffix}`;
             // Known event / cumulative-count fields read as a natural clause at a
             // boundary ("Never <did X>" / "No <noun>" / "Has <noun>"), but only
             // when the gloss fully resolves so the lowercased head is clean.
@@ -1463,6 +1521,12 @@ function _renderPathOpEntry(opKey, key, val) {
     if (Array.isArray(p0) && _PATH_OP_FRIENDLY_KEYS.has(p0[0])) {
         return _renderBrokenPathHtml(key, opKey);
     }
+    // Known broken save-record leaf (e.g. a UseRecord check keyed by a dialogue
+    // id, when UseRecord only ever holds entity keys): the record can never be
+    // set, so the gate has no effect. Flag it as a broken requirement rather
+    // than glossing the raw path with a misleading "(cut content)" note.
+    const brokenSeg = Array.isArray(p0) ? p0.find(seg => brokenPathRefs[seg]) : null;
+    if (brokenSeg) return _renderBrokenLeafRefHtml(key, opKey, brokenPathRefs[brokenSeg]);
     const friendlyKey = renderOtherReqKeyHtml(key);
     const parts = [];
     for (const rec of val) {

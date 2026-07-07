@@ -91,6 +91,9 @@ HADES2_PATH_FIELD_NAMES = {
     "CurrentRoom.Encounter.Name": "current room encounter",
     "CurrentRoom.Encounter.Spawns": "current room spawns",
     "CurrentRoom.Encounter.PlayerTookDamage": "took damage in current room",
+    # A per-room record of whether Nemesis showed up at the shop that room; gated
+    # counted over a room window ("in none of the last N rooms: ...").
+    "Encounter.NemesisShopping": "Nemesis appeared at a shop",
     "Hero": "the player",
     "Hero.IsDead": "the player is dead",
     "Hero.LastStands": "Death Defiances remaining",

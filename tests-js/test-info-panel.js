@@ -739,6 +739,22 @@ test('Path SumPrevRooms + IgnoreCurrentRun decorators combine in one clause', ()
     );
 });
 
+// A boolean per-room record counted via ``ValuesToCount: [true]`` over a room
+// window is a truthy-occurrence count (like CountPathTrue), so a ``<= 0`` gate
+// reads "In none of the last N rooms: ..." rather than "has none of: true"
+// (#134 follow-up: Encounter.NemesisShopping).
+test('Path ValuesToCount [true] over a room window reads as an "In none of the last N rooms" clause', () => {
+    const data = buildFixtureData();
+    data.pathFieldNames = { ...(data.pathFieldNames || {}), 'Encounter.NemesisShopping': 'Nemesis appeared at a shop' };
+    loadData(data);
+    const html = _stripReq(renderOtherReqEntryHtml('Path:Encounter.NemesisShopping', [
+        { Comparison: '<=', Path: ['Encounter', 'NemesisShopping'], SumPrevRooms: 12, Value: 0, ValuesToCount: [true] },
+    ]));
+    assert.equal(html, 'In none of the last 12 rooms: Nemesis appeared at a shop');
+    // The awkward raw "has none of: true" / raw path must not leak.
+    assert.doesNotMatch(html, /has none of|: true|NemesisShopping/);
+});
+
 
 test('Path CountPathTrue + TableValuesToCount renders as a count-of-items threshold', () => {
     loadData(fixtureWithModifierRecords());
@@ -855,8 +871,63 @@ test('H2 scalar cumulative-count gate renders "No" / "Has <noun>"; value fields 
     const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), rec(path, op, value)));
     assert.match(r(['GameState', 'CompletedRunsCache'], '<', 1), /No completed runs/);
     assert.match(r(['GameState', 'CompletedRunsCache'], '>', 0), /Has completed runs/);
-    // A value cache (points total) is not an occurrence count -> keep the raw operator.
-    assert.match(r(['GameState', 'SpentShrinePointsCache'], '==', 0), /Total active Fear == 0/);
+    // A value cache (points total) keeps the raw operator at non-boundary
+    // thresholds (it is not an occurrence count).
+    assert.match(r(['GameState', 'SpentShrinePointsCache'], '>=', 2), /Total active Fear &gt;= 2|Total active Fear >= 2/);
+    // ...but its 0/1 boundary reads as a curated possession clause.
+    assert.match(r(['GameState', 'SpentShrinePointsCache'], '==', 0), /No active Fear/);
+    assert.match(r(['GameState', 'SpentShrinePointsCache'], '>=', 1), /Has active Fear/);
+});
+
+// Curated "success / achievement / possession" scalar counters read as a whole
+// natural clause at the 0/1 boundary instead of "<noun label> >= 1" (#134
+// follow-up). Non-boundary thresholds keep the noun label + operator.
+test('H2 achievement / possession counters read as a natural clause at the 0/1 boundary', () => {
+    const data = fixtureWithPathVocab();
+    // Glosses used only by the non-boundary assertions below (the boundary
+    // clauses are curated and gloss-independent).
+    data.pathFieldNames = {
+        ...data.pathFieldNames,
+        ClearedDreamRunsCache: 'cleared Dream Dives',
+        ExorcismSuccessesFamiliar: 'shades pacified by Familiar',
+    };
+    loadData(data);
+    const r = (path, op, value) => _stripReq(renderOtherReqEntryHtml('Path:' + path.join('.'), [{ Comparison: op, Path: path, Value: value }]));
+    // >= 1 / > 0 (any-side): "Has <done X>".
+    assert.match(r(['GameState', 'ShovelSuccesses'], '>=', 1), /^Has dug successfully/);
+    assert.match(r(['CurrentRun', 'FishingSuccessesManual'], '>=', 1), /Has caught a fish by hand/);
+    assert.match(r(['GameState', 'ExorcismSuccessesFamiliar'], '>=', 1), /Has pacified a shade with Frinos/);
+    assert.match(r(['CurrentRun', 'ExorcismSuccesses'], '>=', 1), /Has pacified a shade/);
+    assert.match(r(['GameState', 'ClearedDreamRunsCache'], '>=', 1), /Has cleared a Dream Dive/);
+    assert.match(r(['GameState', 'HighestShrinePointClearUnderworldCache'], '>=', 1), /Has cleared the Underworld with at least 1 Fear/);
+    assert.match(r(['CurrentRun', 'Hero', 'UpgradableHammerCount'], '>=', 1), /Has an upgradable Daedalus Hammer/);
+    // The run-scoped ones still append the run scope.
+    assert.match(r(['CurrentRun', 'FishingSuccessesManual'], '>=', 1), /, this run$/);
+    // == 0 / < 1 (none-side): "Has never <done X>".
+    assert.match(r(['GameState', 'ShovelSuccesses'], '==', 0), /Has never dug successfully/);
+    assert.match(r(['GameState', 'ClearedDreamRunsCache'], '<', 1), /Has never cleared a Dream Dive/);
+    // Non-boundary threshold keeps the noun label + operator (no re-phrasing).
+    assert.match(r(['GameState', 'ClearedDreamRunsCache'], '>=', 2), /Cleared Dream Dives &gt;= 2|Cleared Dream Dives >= 2/);
+    assert.match(r(['GameState', 'ExorcismSuccessesFamiliar'], '>=', 5), /Shades pacified by Familiar .*5/);
+    // No raw ">= 1" leaks for any of them.
+    assert.doesNotMatch(r(['GameState', 'ShovelSuccesses'], '>=', 1), />= 1|&gt;= 1/);
+});
+
+// A Path* gate whose leaf is a known broken save-record reference (a UseRecord
+// keyed by a dialogue id) renders as a broken requirement, not a glossed path
+// with a "(cut content)" note (#134 follow-up: ZeusAboutAres01).
+test('H2 a broken UseRecord-leaf gate renders as a broken requirement', () => {
+    const data = fixtureWithPathVocab();
+    data.reqTypeLabels = { ...data.reqTypeLabels, PathFalse: 'Must be false' };
+    data.brokenPathRefs = { ZeusAboutAres02: 'Broken requirement: UseRecord only tracks interactions with entities, never dialogue ids.' };
+    loadData(data);
+    const html = renderOtherReqEntryHtml('PathFalse:GameState.UseRecord.ZeusAboutAres02', [{ PathFalse: ['GameState', 'UseRecord', 'ZeusAboutAres02'] }]);
+    // Raw path shown (so the fault is visible) + the shared broken-requirement label.
+    assert.match(html, /<code class="other-req-path">GameState\.UseRecord\.ZeusAboutAres02<\/code>/);
+    assert.match(html, /class="other-req-broken-ref"[^>]*>\(broken requirement - always passes, no effect\)<\/span>/);
+    // Not glossed as "Interacted with ..." and not labelled "(cut content)".
+    assert.doesNotMatch(html, /Interacted with/);
+    assert.doesNotMatch(html, /cut content/i);
 });
 
 test('H2 boss health-bar defeat gate renders "Defeated" / "Did not defeat" at value 0', () => {
@@ -992,7 +1063,9 @@ test('H2 ActiveBounty / IsDreamRun PathTrue reads "This run is a Chaos Trial / D
 // NextBiomeStateName is/isn't "Rain" -> the region's weather, keeping the field
 // clause and relabelling only the value (item F).
 test('H2 NextBiomeStateName Rain reads "Raining" / "Not raining"', () => {
-    loadData(buildFixtureData());
+    const data = buildFixtureData();
+    data.pathFieldNames = { ...(data.pathFieldNames || {}), NextBiomeStateName: 'next region condition' };
+    loadData(data);
     assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.NextBiomeStateName', [{ IsAny: ['Rain'], Path: ['GameState', 'NextBiomeStateName'] }])), 'Next region condition is: Raining');
     assert.equal(_stripReq(renderOtherReqEntryHtml('Path:GameState.NextBiomeStateName', [{ IsNone: ['Rain'], Path: ['GameState', 'NextBiomeStateName'] }])), 'Next region condition is: Not raining');
 });
