@@ -315,10 +315,10 @@ export function runsSinceGroupTooltip(reqType, refs, context, count = 1, selfNam
     if (!ex) return null;
     let head = ex.isMin
         ? (ex.status === 'met'
-            ? `Satisfied by the save: every line was last played at least ${runsLabel(ex.count)} ago (or never).`
+            ? `Satisfied by your save: every line was last played at least ${runsLabel(ex.count)} ago (or never).`
             : `Not satisfied: a line was played too recently (each needs at least ${runsLabel(ex.count)} since it last played).`)
         : (ex.status === 'met'
-            ? `Satisfied by the save: every line last played within the last ${runsLabel(ex.count)} (or never).`
+            ? `Satisfied by your save: every line last played within the last ${runsLabel(ex.count)} (or never).`
             : `Not satisfied: a line last played too long ago (each must have played within the last ${runsLabel(ex.count)}).`);
     if (ex.permanent) head += ' A play-once line is permanently out of range, so this can never become eligible again.';
     if (ex.refs.length === 0) return head;
@@ -455,10 +455,10 @@ export function reqGroupLocked(reqType, refs, context, count = 1, selfName = nul
 // "elsewhere" case (played somewhere in the save, just not in this scope) and
 // a noun for tooltips.
 const SCOPE_PHRASES = {
-    thisRun: { present: 'played this run', absent: 'not played this run', elsewhere: 'played in the save, but not this run', noun: 'this run' },
-    thisRoom: { present: 'played this room', absent: 'not played this room', elsewhere: 'played in the save, but not this room', noun: 'this room' },
-    lastRun: { present: 'played last run', absent: 'not played last run', elsewhere: 'played in the save, but not last run', noun: 'the last run' },
-    queued: { present: 'queued', absent: 'not queued', elsewhere: 'played in the save, but not queued', noun: 'the textline queue' },
+    thisRun: { present: 'played this run', absent: 'not played this run', elsewhere: 'played in your save, but not this run', noun: 'this run' },
+    thisRoom: { present: 'played this room', absent: 'not played this room', elsewhere: 'played in your save, but not this room', noun: 'this room' },
+    lastRun: { present: 'played last run', absent: 'not played last run', elsewhere: 'played in your save, but not last run', noun: 'the last run' },
+    queued: { present: 'queued', absent: 'not queued', elsewhere: 'played in your save, but not queued', noun: 'the textline queue' },
 };
 
 /**

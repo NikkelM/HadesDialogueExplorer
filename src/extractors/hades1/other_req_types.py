@@ -285,15 +285,15 @@ HADES1_OTHER_REQ_TOOLTIPS = {
 
     # ----- NPC interactions -----
     "RequiredMinNPCInteractions":
-        "The player must have interacted with the NPC at least N times in total.",
+        "Must have interacted with the NPC at least N times in total.",
     "RequiredMaxNPCInteractions":
-        "The player must have interacted with the NPC at most N times in total.",
+        "Must have interacted with the NPC at most N times in total.",
 
     # ----- Room / biome / encounter (current) -----
     "RequiredRoom":
-        "The player must be in the named room.",
+        "Must be in the named room.",
     "RequiredDeathRoom":
-        "The player's most recent run must have ended with a death in the named room.",
+        "The most recent run must have ended with a death in the named room.",
     "RequiredFalseDeathRoom":
         "If the current run was not cleared, it must NOT have ended with a death in the named room.",
     "RequiredBiome":
@@ -301,13 +301,13 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredFalseBiome":
         "The current room must NOT be in the named region.",
     "RequiredMinBiomeDepth":
-        "The player must have reached at least the Nth room within the current region.",
+        "Must have reached at least the Nth room within the current region.",
     "RequiredMaxBiomeDepth":
-        "The player must have reached no more than the Nth room within the current region.",
+        "Must have reached no more than the Nth room within the current region.",
     "RequiredMinDepth":
-        "The player must have visited at least N rooms in this run.",
+        "Must have visited at least N rooms in this run.",
     "RequiredMaxDepth":
-        "The player must have visited fewer than N rooms in this run.",
+        "Must have visited fewer than N rooms in this run.",
     "RequiredMinExits":
         "The current room must offer at least N exits.",
 
@@ -347,13 +347,13 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredAnyEncountersThisRun":
         "At least one of the listed encounters must have been completed during the current run.",
     "RequiredAnyDeathEncounters":
-        "The player's most recent run must have ended with a death during one of the listed encounters.",
+        "The most recent run must have ended with a death during one of the listed encounters.",
     "RequiredFalseDeathEncounters":
-        "The player's most recent run must NOT have ended with a death during one of the listed encounters.",
+        "The most recent run must NOT have ended with a death during one of the listed encounters.",
 
     # ----- Combat / kills -----
     "RequiredKills":
-        "The player must have killed at least N of the named enemy type across the save.",
+        "Must have killed at least N of the named enemy type across the save.",
     "RequiredKillsThisRun":
         "Any of the listed enemy types must have been killed during the current run.",
     "RequiredKillsLastRun":
@@ -363,11 +363,11 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredFalseKills":
         "None of the listed enemy types may have been killed at any point in the save.",
     "RequiredMinTotalKills":
-        "The player must have killed at least N enemies in total across the save.",
+        "Must have killed at least N enemies in total across the save.",
     "RequiredLastKilledByUnits":
-        "The player's most recent death must have been caused by one of the listed enemy types.",
+        "The most recent death must have been caused by one of the listed enemy types.",
     "RequiredLastKilledByWeaponNames":
-        "The player's most recent death must have been caused by one of the listed sources of damage.",
+        "The most recent death must have been caused by one of the listed sources of damage.",
     "RequiredUnitAlive":
         "The named enemy or character must be alive or present.",
     "RequiredUnitNotAlive":
@@ -377,17 +377,17 @@ HADES1_OTHER_REQ_TOOLTIPS = {
 
     # ----- Combat / damage / defiance -----
     "RequiredMaxHealthFraction":
-        "The player's current HP must be at most this fraction of their maximum HP.",
+        "Current HP must be at most this fraction of maximum HP.",
     "RequiredMaxLastStands":
-        "The player must have at most N Death Defiance charges remaining in the current run.",
+        "Must have at most N Death Defiance charges remaining in the current run.",
 
     # ----- Loadout / weapons / traits / cosmetics -----
     "RequiredTrait":
-        "The player must have the named trait (boon or other upgrade) equipped.",
+        "Must have the named trait (boon or other upgrade) equipped.",
     "RequiredFalseTraits":
-        "The player must NOT have any of the listed traits (boon or other upgrade) equipped.",
+        "Must NOT have any of the listed traits (boon or other upgrade) equipped.",
     "RequiredOneOfTraits":
-        "The player must have at least one of the listed traits (boon or other upgrade) equipped.",
+        "Must have at least one of the listed traits (boon or other upgrade) equipped.",
     "RequiredCountOfTraits":
         "Companion to RequiredCountOfTraitsCount: a candidate set of traits (boon or other upgrade) whose currently-equipped count is compared against the threshold.",
     "RequiredCountOfTraitsCount":
@@ -397,35 +397,35 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredRunHasOneOfTraits":
         "At least one of the listed traits (boon or other upgrade) must have been equipped at some point during the current run.",
     "RequiredKeepsake":
-        "The player must have the named keepsake equipped.",
+        "Must have the named keepsake equipped.",
     "RequiredAssistKeepsake":
-        "The player must have the named companion equipped.",
+        "Must have the named companion equipped.",
     "RequiresMaxKeepsake":
         "The currently equipped keepsake must be at its maximum level.",
     "RequiredWeapon":
-        "The player must have the named weapon equipped.",
+        "Must have the named weapon equipped.",
     "RequiredGodLoot":
-        "The player must have at least one boon from the named god equipped.",
+        "Must have at least one boon from the named god equipped.",
     "RequiredFalseGodLoot":
-        "The player must NOT have received any boons from the named god during the current run.",
+        "Must NOT have received any boons from the named god during the current run.",
     "RequiredFalseGodLoots":
-        "The player must NOT have received boons from any of the listed gods during the current run.",
+        "Must NOT have received boons from any of the listed gods during the current run.",
     "RequiredLootChoices":
-        "The number of Boon/reward choices the player is currently offered must equal this value.",
+        "The number of Boon/reward choices currently offered must equal this value.",
     "RequiredLootThisRun":
-        "The player must have at least one boon from the named god equipped.",
+        "Must have at least one boon from the named god equipped.",
     "RequiredNoGodBoons":
-        "The player must NOT have any god boons equipped.",
+        "Must NOT have any god boons equipped.",
     "RequiredCosmetics":
-        "Every listed House cosmetic must be owned by the player.",
+        "Every listed House cosmetic must be owned.",
     "RequiredAnyCosmetics":
-        "At least one of the listed House cosmetics must be owned by the player.",
+        "At least one of the listed House cosmetics must be owned.",
     "RequiredFalseCosmetics":
-        "None of the listed House cosmetics may be owned by the player.",
+        "None of the listed House cosmetics may be owned.",
     "RequiredMinAnyCosmetics":
-        "At least N of the listed House cosmetics must be owned by the player.",
+        "At least N of the listed House cosmetics must be owned.",
     "RequiredMaxAnyCosmetics":
-        "At most N of the listed House cosmetics may be owned by the player.",
+        "At most N of the listed House cosmetics may be owned.",
     "RequiredCosmeticItemVisible":
         "The named cosmetic must currently be equipped.",
     "RequiredCosmeticPurchaseable":
@@ -433,7 +433,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredSeenCosmeticPurchaseable":
         "The named cosmetic must have been seen as an available purchase from the House contractor.",
     "RequiredFalseInteractionThisRun":
-        "The player may NOT have interacted with the named NPC during the current run.",
+        "Must NOT have interacted with the named NPC during the current run.",
     "RequiredSupportAINames":
         "The listed Fury Sisters must be active in the current fight.",
     "RequiredFalseSupportAINames":
@@ -463,11 +463,11 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredFalseMaxWeaponUpgradeIndex":
         "Companion to RequiredFalseMaxWeaponUpgrade: which Aspect slot of the named weapon to test for NOT being fully upgraded.",
     "RequiredMinWeaponUpgrades":
-        "The player must have picked up at least N hammer upgrades during the current run.",
+        "Must have picked up at least N hammer upgrades during the current run.",
     "RequiredMaxWeaponUpgrades":
-        "The player must have picked up at most N hammer upgrades during the current run.",
+        "Must have picked up at most N hammer upgrades during the current run.",
     "RequiredMinWeaponKills":
-        "The player must have at least N lifetime kills with the named weapon.",
+        "Must have at least N lifetime kills with the named weapon.",
     "RequiredMinRunsWithWeapons":
         "The named weapon must have been used in at least N runs.",
     "RequiredMaxRunsWithWeapons":
@@ -487,21 +487,21 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiresBestClearTimeLastRun":
         "The previous run must have been cleared and matched or beaten your best clear time (a tie counts).",
     "RequiredMinCompletedRuns":
-        "The player must have completed at least N runs (whether cleared or not).",
+        "Must have completed at least N runs (whether cleared or not).",
     "RequiredMaxCompletedRuns":
-        "The player must have completed at most N runs (whether cleared or not).",
+        "Must have completed at most N runs (whether cleared or not).",
     "RequiredCompletedRuns":
-        "The player must have completed exactly N runs (whether cleared or not).",
+        "Must have completed exactly N runs (whether cleared or not).",
     "RequiredMinRunsCleared":
-        "The player must have cleared at least N runs.",
+        "Must have cleared at least N runs.",
     "RequiredMaxRunsCleared":
-        "The player must have cleared at most N runs.",
+        "Must have cleared at most N runs.",
     "RequiredRunsCleared":
-        "The player must have cleared exactly N runs.",
+        "Must have cleared exactly N runs.",
     "RequiredMinConsecutiveClears":
-        "The player must have cleared at least N consecutive runs.",
+        "Must have cleared at least N consecutive runs.",
     "RequiredMinBountiesEarned":
-        "The player must have earned at least N Pact of Punishment bounty rewards.",
+        "Must have earned at least N Pact of Punishment bounty rewards.",
     "RequiredMinQuestsComplete":
         "At least N Fated List prophecies must have been cashed out (completed and redeemed).",
     "RequiredMaxQuestsComplete":
@@ -589,7 +589,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredScreenViewedFalse":
         "The named UI screen must NOT have been opened in the save.",
     "RequiredConsumablesThisRun":
-        "The player must have used at least N consumables of the listed names during the current run.",
+        "Must have used at least N consumables of the listed names during the current run.",
     "RequiredCodexEntry":
         "The named Codex entry must be unlocked.",
     "RequiredCodexEntriesMin":
@@ -601,11 +601,11 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "RequiredTrueConfigOptions":
         "All listed config options (game settings) must be enabled.",
     "RequiredUsedAssistInRoomThisRun":
-        "The player must have used a companion in the named room during the current run.",
+        "Must have used a companion in the named room during the current run.",
 
     # ----- Fishing -----
     "RequiredHasFish":
-        "The player must be carrying at least one fish.",
+        "Must be carrying at least one fish.",
     "RequiredMinCaughtFishThisRun":
         "At least N fish must have been caught during the current run.",
     "RequiredMinTotalCaughtFish":
@@ -617,14 +617,14 @@ HADES1_OTHER_REQ_TOOLTIPS = {
 
     # ----- Misc -----
     "RequiredMinItemInteractions":
-        "The player must have interacted with the named object at least N times.",
+        "Must have interacted with the named object at least N times.",
 
     # ----- Non-Require eligibility gates (captured from IsGameStateEligible) -----
     "ConsecutiveClearsOfRoom":
-        "The player must have cleared the named room across at least N "
+        "Must have cleared the named room across at least N "
         "consecutive recent runs.",
     "ConsecutiveDeathsInRoom":
-        "The player must have died in the named room across at least N "
+        "Must have died in the named room across at least N "
         "consecutive recent runs.",
     "HasTraitNameInRoom":
         "The named boon must be offered in the current room. Not part of "
@@ -637,7 +637,7 @@ HADES1_OTHER_REQ_TOOLTIPS = {
     "MaxRunsSinceSquelchedHermes":
         "Hermes must have been silenced within the last N runs.",
     "ReachedShrineSoftCapWithAnyWeaponName":
-        "With at least one weapon, the player must have cleared a full escape at the top of "
+        "With at least one weapon, a full escape must have been cleared at the top of "
         "the Heat Gauge or higher (Heat 20+, or 25 in Hell Mode).",
     "ObjectivesCompleted":
         "The named objective must have been completed at least Min, or at most "

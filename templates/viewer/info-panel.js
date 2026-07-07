@@ -334,10 +334,10 @@ function _bossHealthClause(path, comparison, value, headHtml) {
 // N". Each maps to ``[none-side prefix, any-side prefix]`` for the zero ("none",
 // ``<= 0`` / ``== 0`` / ``< 1``) and at-least-one ("any", ``>= 1`` / ``> 0``)
 // boundaries. TraitCache is a use-count (not an inventory), so it reads "used";
-// Resources are a live amount ("Player has"); the *Gained/*Spent records are
+// Resources are a live amount ("Has"); the *Gained/*Spent records are
 // lifetime totals ("gained" / "spent").
 const _SCALAR_LEAF_PREFIXES = {
-    Resources: ['Player does not have', 'Player has'],
+    Resources: ['Does not have', 'Has'],
     TraitCache: ['Has not used', 'Has used'],
     TraitsTaken: ['Has not used', 'Has used'],
     LifetimeResourcesGained: ['Never gained', 'Has gained'],
@@ -1356,7 +1356,7 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
                 }
             }
             // Resource / possession / lifetime-total fields: re-phrase from the
-            // trailing entity ("Player does not have X" / "Has used X" / ...).
+            // trailing entity ("Does not have X" / "Has used X" / ...).
             const leafClause = _scalarLeafClause(rec.Path, word);
             if (leafClause) return `${leafClause}${_renderScalarHaveHtml()}${suffix}`;
         }
@@ -1455,10 +1455,10 @@ function _fnRefOrList(v) {
 // the same 0..1 fraction but carry it differently: H2 as
 // FunctionName:RequiredHealthFraction (Comparison + Value), H1 as the bare
 // RequiredMin/MaxHealthFraction fields. Centralised here so both render
-// identically, e.g. "Player health at most 33%".
+// identically, e.g. "Health at most 33%".
 function _healthFractionGloss(word, fraction) {
     const pct = Math.round((Number(fraction) || 0) * 100);
-    return `Player health ${word} ${pct}%`;
+    return `Health ${word} ${pct}%`;
 }
 
 const _FN_RENDERERS = {
@@ -1490,7 +1490,7 @@ const _FN_RENDERERS = {
         return `Cleared ${_fnRooms(a)} ${escapeHtml(String(a.Count))} time${n === 1 ? '' : 's'} in a row`;
     },
     RequiredSellableGodTraits() {
-        return 'Player has god boons that can be sold';
+        return 'Has god boons that can be sold';
     },
     RequireQuestCount(a) {
         const st = _FN_QUEST_STATUS[a.Status] || escapeHtml(String(a.Status));
@@ -1754,7 +1754,7 @@ function _renderGameStateValueEntry(key, val) {
 // ``RequiredMinHealthFraction`` field (a 0..1 fraction), which would otherwise
 // render as "Maximum health fraction : 0.5". H2 expresses the same gate through
 // ``FunctionName:RequiredHealthFraction``. Both go through the shared
-// ``_healthFractionGloss`` so they render identically ("Player health at most
+// ``_healthFractionGloss`` so they render identically ("Health at most
 // 33%"); this wraps it in the same func-gate span the H2 path uses. Returns
 // null for any other key/shape.
 function _renderHealthFractionEntry(key, val) {

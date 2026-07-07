@@ -960,8 +960,8 @@ test('H2 resource / possession gate renders natural clauses on both boundaries',
     // Resources = live amount; TraitCache = use-count (not inventory); *Gained =
     // lifetime total. Zero side ("none") and at-least-one side ("any") each read
     // as their own natural phrasing.
-    assert.match(r(res, '<=', 0), /Player does not have Gigaros/);
-    assert.match(r(res, '>=', 1), /Player has Gigaros/);
+    assert.match(r(res, '<=', 0), /Does not have Gigaros/);
+    assert.match(r(res, '>=', 1), /Has Gigaros/);
     assert.match(r(trait, '<=', 0), /Has not used Gorgon Amulet/);
     assert.match(r(trait, '>=', 1), /Has used Gorgon Amulet/);
     assert.match(r(gained, '<=', 0), /Never gained Moly/);
@@ -1107,11 +1107,11 @@ test('H1 minimum-of-1 value-map gate drops the redundant ">= 1"', () => {
     assert.match(html, /TitanBlood >= 5|TitanBlood &gt;= 5/);
 });
 
-test('H1 RequiredMaxHealthFraction renders like H2 ("Player health at most N%")', () => {
+test('H1 RequiredMaxHealthFraction renders like H2 ("Health at most N%")', () => {
     loadData(buildFixtureData());
-    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5)), 'Player health at most 50%');
-    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.33)), 'Player health at most 33%');
-    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinHealthFraction', 0.25)), 'Player health at least 25%');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5)), 'Health at most 50%');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.33)), 'Health at most 33%');
+    assert.equal(_stripReq(renderOtherReqEntryHtml('RequiredMinHealthFraction', 0.25)), 'Health at least 25%');
     // No leftover "fraction" label or raw 0.xx value.
     const html = renderOtherReqEntryHtml('RequiredMaxHealthFraction', 0.5);
     assert.doesNotMatch(html, /fraction/i);
@@ -1181,7 +1181,7 @@ test('otherRequirements: FunctionName records render as friendly per-function cl
     // Two-arg health-fraction function: the 0.49 fraction reads as a percentage.
     assert.match(
         lastHtml,
-        /<span class="other-req-func-gate">Player health at most 49%<\/span>/
+        /<span class="other-req-func-gate">Health at most 49%<\/span>/
     );
 });
 
