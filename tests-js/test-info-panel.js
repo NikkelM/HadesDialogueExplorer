@@ -1676,10 +1676,14 @@ test('Path CountOf referencing a GameData table renders the ref name in the head
 });
 
 
-test('bare-key scalars render as "Label: value"', () => {
+test('bare-key scalars render as "Label: value" (boolean flags render label-only)', () => {
     loadData(fixtureWithSimplifiedOtherReqs());
     renderInfo('SimplifiedOtherReqDemo');
-    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Requires run cleared<\/span>: <code>true<\/code>/);
+    // A boolean-true flag gate states its whole condition in the label, so no
+    // redundant ": true" is appended (mirrors H2's PathTrue / PathFalse gates).
+    assert.match(lastHtml, /<span class="req-type-name"[^>]*>Requires run cleared<\/span>/);
+    assert.doesNotMatch(lastHtml, /Requires run cleared<\/span>: <code>true<\/code>/);
+    // Numeric / string scalars still render their value.
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min completed runs<\/span>: <code>4<\/code>/);
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required room<\/span>: <code>A_Boss02<\/code>/);
 });

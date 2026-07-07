@@ -1714,6 +1714,11 @@ function _renderBareKeyEntry(key, val) {
     if (noneEntry !== null) return noneEntry;
     const gsValue = _renderGameStateValueEntry(key, val);
     if (gsValue !== null) return gsValue;
+    // A bare boolean-flag gate (always ``true`` in the data) states its whole
+    // condition in the label, so render just the label without a redundant
+    // ``: true`` - mirroring how H2 renders PathTrue / PathFalse gates, where the
+    // operator sense is baked into the friendly text and no true/false is shown.
+    if (val === true) return renderReqTypeHtml(key);
     return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
 }
 

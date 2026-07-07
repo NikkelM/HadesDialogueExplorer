@@ -177,10 +177,10 @@ HADES1_OTHER_REQ_LABELS = {
     "RequiredFalseDeathEncounters":             "Most recent death must NOT be in encounter (ANY)",
 
     # ----- Run status -----
-    "RequiresRunCleared":                       "Current run cleared",
-    "RequiresRunNotCleared":                    "Current run not cleared",
-    "RequiresLastRunCleared":                   "Previous run cleared",
-    "RequiresLastRunNotCleared":                "Previous run NOT cleared",
+    "RequiresRunCleared":                       "Current run must be cleared",
+    "RequiresRunNotCleared":                    "Current run must NOT be cleared",
+    "RequiresLastRunCleared":                   "Previous run must be cleared",
+    "RequiresLastRunNotCleared":                "Previous run must NOT be cleared",
     "RequiresBestClearTimeLastRun":             "Previous run matched or beat best clear time",
     "RequiredCompletedRuns":                    "Completed runs must equal",
     "RequiredMinCompletedRuns":                 "Minimum completed runs",
