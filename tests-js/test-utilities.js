@@ -18,6 +18,7 @@ import {
     reqTypeOrderIndex,
     getEdgeLabel,
     formatReqType,
+    stripSingleOperandQuantifier,
     reqTypeTitleText,
     renderReqTypeHtml,
     renderTierBadgeHtml,
@@ -181,6 +182,41 @@ test('renderReqTypeHtml falls back to the internal name with no tooltip when no 
 test('renderReqTypeHtml applies an extra CSS class when one is passed', () => {
     const html = renderReqTypeHtml('RequiredTextLines', 'unresolved-cat');
     assert.ok(html.includes('class="req-type-name unresolved-cat"'));
+});
+
+test('stripSingleOperandQuantifier drops ALL / ANY markers and keeps scope', () => {
+    // Bare quantifiers are dropped entirely.
+    assert.equal(stripSingleOperandQuantifier('Must have played (ALL)'), 'Must have played');
+    assert.equal(stripSingleOperandQuantifier('Must have played (ANY)'), 'Must have played');
+    assert.equal(stripSingleOperandQuantifier('Must have played (ANY other)'), 'Must have played');
+    // A scope qualifier sharing the parenthetical is kept.
+    assert.equal(stripSingleOperandQuantifier('Must have played (ALL, this run)'), 'Must have played (this run)');
+    assert.equal(stripSingleOperandQuantifier('Must have entered room (ANY, last run)'), 'Must have entered room (last run)');
+    // A non-quantifier gloss earlier in the label is preserved; only the
+    // trailing quantifier is touched.
+    assert.equal(
+        stripSingleOperandQuantifier('Must have trait (boon or other upgrade) equipped (ANY)'),
+        'Must have trait (boon or other upgrade) equipped',
+    );
+    // Labels without a trailing quantifier are returned unchanged.
+    assert.equal(stripSingleOperandQuantifier('Current run must NOT be cleared'), 'Current run must NOT be cleared');
+    assert.equal(stripSingleOperandQuantifier('Minimum NPC interactions'), 'Minimum NPC interactions');
+});
+
+test('renderReqTypeHtml strips the quantifier for a single-operand gate (other-requirements path)', () => {
+    // operandCount === 1 -> the ALL / ANY marker is dropped from the VISIBLE
+    // label; the full wording stays in the tooltip. Only the "Other
+    // Requirements" gates pass a count (see _renderBareKeyEntry); textline
+    // requirement labels never do, so they keep their marker everywhere.
+    const one = renderReqTypeHtml('RequiredTextLines', undefined, 'upstream', 1);
+    assert.ok(one.includes('>Required<'));
+    assert.ok(!one.includes('>Required (ALL)<'));
+    assert.ok(one.includes('data-tooltip="Internal name: RequiredTextLines'));
+    // Any other count (incl. omitted) keeps the marker.
+    assert.ok(renderReqTypeHtml('RequiredTextLines', undefined, 'upstream', 2).includes('>Required (ALL)<'));
+    assert.ok(renderReqTypeHtml('RequiredTextLines').includes('>Required (ALL)<'));
+    // formatReqType (tree / tracer, textline contexts) is NOT count-aware.
+    assert.equal(formatReqType('RequiredTextLines', 'upstream'), 'Required (ALL)');
 });
 
 test('formatReqType returns the dependents-perspective label when direction is downstream', () => {

@@ -1671,10 +1671,15 @@ function _renderBareKeyValueHtml(val, key) {
         // (must equal), ``!=`` for RequiredFalseValues, ``<=`` for max
         // thresholds, ``>=`` otherwise. A minimum-of-1 ("at least one") threshold
         // is already implied by the gate's "Minimum ..." label, so the redundant
-        // ">= 1" is dropped and just the entity is shown.
+        // ">= 1" is dropped and just the entity is shown - except for the
+        // ``_H1_COUNT_VERB_GATES`` fields, where an all-boundary gate is handled
+        // upstream as a "Has <verb> X" clause, so a bare-entity drop here would
+        // only ever hit a *mixed* gate and leave its ">= 1" entity reading as a
+        // stray name; those keep the explicit ">= 1".
         const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+        const dropAnyOne = !_H1_COUNT_VERB_GATES[key];
         return Object.entries(val)
-            .map(([k, v]) => (_countBoundaryWord(kindOp, v) === 'any'
+            .map(([k, v]) => (dropAnyOne && _countBoundaryWord(kindOp, v) === 'any'
                 ? _renderListItemHtml(k)
                 : `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`))
             .join(_OPERAND_SEP);
@@ -1720,12 +1725,18 @@ function _renderBareKeyEntry(key, val) {
     if (noneEntry !== null) return noneEntry;
     const gsValue = _renderGameStateValueEntry(key, val);
     if (gsValue !== null) return gsValue;
+    // A boundary "count of an action on an entity" gate reads as "Has <verb> X"
+    // / "Never <verb> X" rather than the awkward "<label>: entity".
+    const countVerb = _renderCountVerbEntry(key, val);
+    if (countVerb !== null) return countVerb;
     // A bare boolean-flag gate (always ``true`` in the data) states its whole
     // condition in the label, so render just the label without a redundant
     // ``: true`` - mirroring how H2 renders PathTrue / PathFalse gates, where the
     // operator sense is baked into the friendly text and no true/false is shown.
     if (val === true) return renderReqTypeHtml(key);
-    return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
+    // A single-operand gate drops the ALL / ANY marker (meaningless for one item).
+    const operandCount = Array.isArray(val) ? val.length : null;
+    return `${renderReqTypeHtml(key, undefined, 'upstream', operandCount)}: ${_renderBareKeyValueHtml(val, key)}`;
 }
 
 // Curated friendly clauses for specific H1 ``GameState`` value-map gates that
@@ -1801,6 +1812,52 @@ function _renderMaxZeroNoneEntry(key, val) {
     const tip = reqTypeTitleText(key);
     const attr = tip !== null ? ` data-tooltip="${escapeHtml(tip)}"` : '';
     return `<span class="req-type-name"${attr}>No ${escapeHtml(noun)}</span>${_renderScalarHaveHtml()}`;
+}
+
+// H1 "count of an action performed on a named entity" gates, whose value is a
+// ``{entity: threshold}`` map (e.g. ``RequiredMinNPCInteractions:
+// {NPC_Achilles_01: 1}``, ``RequiredKills: {Theseus: 1}``). At a boundary
+// threshold these read as a natural past-tense verb clause rather than the
+// awkward "<label>: entity" (which reads as if the entity *were* the minimum) -
+// matching how H2 renders its equivalent occurrence-count gates ("Has killed X"
+// / "Never interacted with X"). Each key maps to its action verb phrase; the
+// entity is the object of the verb.
+const _H1_COUNT_VERB_GATES = {
+    RequiredMinNPCInteractions:  'interacted with',
+    RequiredMaxNPCInteractions:  'interacted with',
+    RequiredMinItemInteractions: 'interacted with',
+    RequiredKills:               'killed',
+    RequiredMinWeaponKills:      'killed an enemy with',
+    RequiredMinRunsWithWeapons:  'completed a run with',
+    RequiredMaxRunsWithWeapons:  'completed a run with',
+    RequiredMinTimesSeenRoom:    'visited',
+    RequiredMaxTimesSeenRoom:    'visited',
+};
+
+// Render a boundary ``{entity: threshold}`` count gate from
+// ``_H1_COUNT_VERB_GATES`` as "Has <verb> X" (>= 1, the "any" boundary) or
+// "Never <verb> X" (<= 0 / == 0, the "none" boundary), mirroring H2's event
+// -count phrasing. Fires only when every entity sits at a boundary so the whole
+// gate becomes clean verb clauses; a gate with any non-boundary threshold
+// (>= 2, <= 12, ...) returns null and keeps the generic "<label>: entity op N"
+// rendering, which conveys the specific count. The verb lead carries the gate's
+// internal-name tooltip; each entity keeps its operand colour + save "(N)" tally.
+function _renderCountVerbEntry(key, val) {
+    const verb = _H1_COUNT_VERB_GATES[key];
+    if (!verb) return null;
+    if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+    const entries = Object.entries(val);
+    if (!entries.length) return null;
+    const kind = _reqGateKind(key);
+    const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+    const words = entries.map(([, n]) => _countBoundaryWord(kindOp, n));
+    if (words.some(w => w !== 'any' && w !== 'none')) return null;
+    const tip = reqTypeTitleText(key);
+    const attr = tip !== null ? ` data-tooltip="${escapeHtml(tip)}"` : '';
+    return entries.map(([entity], i) => {
+        const lead = words[i] === 'none' ? 'Never' : 'Has';
+        return `<span class="req-type-name"${attr}>${lead} ${escapeHtml(verb)}</span> ${_renderListItemHtml(entity)}`;
+    }).join(_OPERAND_SEP);
 }
 
 // Lua identifier check for the tooltip formatter: bare keys reproduce

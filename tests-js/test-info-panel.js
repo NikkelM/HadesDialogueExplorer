@@ -1894,7 +1894,7 @@ test('conditional closing voicelines group under an "only when" note', () => {
     data.reqTypeLabels = {
         ...data.reqTypeLabels,
         RequiredTextLines: 'Must have played (ALL)',
-        RequiredFalseTextLines: 'Must NOT have played',
+        RequiredFalseTextLines: 'Must NOT have played (ANY)',
     };
     data.textlines.SeenGate01 = {
         owner: 'NPC_X_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
@@ -1966,6 +1966,61 @@ test('bare-key map objects render as "k >= v, k >= v"', () => {
     renderInfo('SimplifiedOtherReqDemo');
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required kills<\/span>: <code>Harpy<\/code> &gt;= <code>2<\/code>/);
     assert.match(lastHtml, /<span class="req-type-name"[^>]*>Required min NPC interactions<\/span>: <code>NPC_Hades_01<\/code> &gt;= <code>5<\/code>/);
+});
+
+test('boundary "count of an action" gates render as "Has / Never <verb> X" clauses', () => {
+    const data = buildFixtureData();
+    data.textlines.CountVerbDemo = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'Hi.' }],
+        requirements: {},
+        otherRequirements: {
+            RequiredMinNPCInteractions: { NPC_Achilles_01: 1 }, // >= 1 -> "Has interacted with"
+            RequiredKills: { Theseus: 1 },                      // >= 1 -> "Has killed"
+            RequiredMaxNPCInteractions: { NPC_Sisyphus_01: 0 }, // <= 0 -> "Never interacted with"
+        },
+    };
+    loadData(data);
+    renderInfo('CountVerbDemo');
+    assert.match(lastHtml, /req-type-name[^>]*>Has interacted with<\/span> <code[^>]*>NPC_Achilles_01<\/code>/);
+    assert.match(lastHtml, /req-type-name[^>]*>Has killed<\/span> <code[^>]*>Theseus<\/code>/);
+    assert.match(lastHtml, /req-type-name[^>]*>Never interacted with<\/span> <code[^>]*>NPC_Sisyphus_01<\/code>/);
+    // The awkward "Minimum NPC interactions: entity" boundary form is gone.
+    assert.doesNotMatch(lastHtml, /Minimum NPC interactions/);
+});
+
+test('a mixed-threshold count gate keeps an explicit ">= 1" (no bare entity)', () => {
+    const data = buildFixtureData();
+    data.textlines.MixedKillsDemo = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'Hi.' }],
+        requirements: {},
+        otherRequirements: { RequiredKills: { Hydra: 3, Skull: 1 } },
+    };
+    loadData(data);
+    renderInfo('MixedKillsDemo');
+    // Non-boundary Hydra keeps its count; the boundary Skull entity does NOT
+    // collapse to a bare name - it keeps ">= 1" so it never reads as a stray.
+    assert.match(lastHtml, /<code[^>]*>Hydra<\/code> &gt;= <code>3<\/code>/);
+    assert.match(lastHtml, /<code[^>]*>Skull<\/code> &gt;= <code>1<\/code>/);
+});
+
+test('boundary count verb clause carries the loaded-save operand colour + tally', () => {
+    loadData(buildFixtureData());
+    // A loaded save where Theseus has been killed (count > 0): the operand and
+    // its "(N)" tally colour green (met) via the same path the old rendering
+    // used, so the verb clause is not a colour regression.
+    setOperandMarks({ flat: { green: new Set(['Theseus']), red: new Set(), counts: new Map([['Theseus', 5]]) } });
+    const met = renderOtherReqEntryHtml('RequiredKills', { Theseus: 1 });
+    assert.match(met, /Has killed<\/span> <code class="other-req-operand-met"[^>]*>Theseus<\/code><span class="other-req-operand-count other-req-operand-met"> \(5\)<\/span>/);
+    // A zero-count entity (never killed): the tally shows but stays uncoloured -
+    // h1OperandMarks only colours a count > 0, so absence reads neutral (the
+    // gate's own red/green status dot still conveys met/unmet). Unchanged by the
+    // verb-clause rendering.
+    setOperandMarks({ flat: { green: new Set(), red: new Set(), counts: new Map([['Theseus', 0]]) } });
+    const zero = renderOtherReqEntryHtml('RequiredKills', { Theseus: 1 });
+    assert.match(zero, /Has killed<\/span> <code>Theseus<\/code><span class="other-req-operand-count"> \(0\)<\/span>/);
+    setOperandMarks(null);
 });
 
 test('a "Max" bare-key gate renders with <= (at most), not >=', () => {

@@ -197,6 +197,25 @@ export function formatReqType(type, direction = 'upstream') {
     return reqTypeLabels[type] || type;
 }
 
+// Remove the ALL / ANY quantifier marker from a requirement label when the gate
+// checks a SINGLE operand: "all of" one item and "any of" one item mean the same
+// thing, so the marker carries no information ("Must NOT have flag (ALL)" -> "Must
+// NOT have flag"). Applied ONLY to the non-textline "Other Requirements" gates
+// (see ``_renderBareKeyEntry``); dialogue/textline requirement labels keep their
+// quantifier everywhere for consistency across the details panel, tree and tracer.
+// Only the trailing quantifier parenthetical is touched - a scope qualifier
+// sharing it is kept ("(ALL, this run)" -> "(this run)"), and a non-quantifier
+// gloss earlier in the label ("(boon or other upgrade)") is left intact. Returns
+// the label unchanged when it carries no trailing quantifier.
+export function stripSingleOperandQuantifier(label) {
+    if (!label) return label;
+    // "(ALL)" / "(ANY)" / "(ANY other)" alone -> drop the whole parenthetical.
+    const dropped = label.replace(/\s*\((?:ALL|ANY)(?: other)?\)$/, '');
+    if (dropped !== label) return dropped;
+    // "(ALL, <scope>)" / "(ANY, <scope>)" -> keep just the scope: "(<scope>)".
+    return label.replace(/\s*\((?:ALL|ANY),\s*([^)]+)\)$/, ' ($1)');
+}
+
 // Build the tooltip-attribute string for a requirement-type label. When
 // a plain-English blurb is known for the field, the tooltip is rendered
 // as the internal field name on the first line, a blank line, and the
@@ -237,13 +256,16 @@ export function reqTypeTitleText(type, direction = 'upstream') {
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at
 // the call site - both the friendly label and the tooltip text are
 // already routed through escapeHtml below.
-export function renderReqTypeHtml(type, extraClass, direction = 'upstream') {
-    const friendly = (direction === 'downstream'
+export function renderReqTypeHtml(type, extraClass, direction = 'upstream', operandCount = null) {
+    let friendly = (direction === 'downstream'
         ? (reqTypeLabelsDependents[type] || reqTypeLabels[type])
         : reqTypeLabels[type]);
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
     const titleText = reqTypeTitleText(type, direction);
     if (titleText !== null) {
+        // Drop the ALL / ANY marker from the visible label for a single-operand
+        // gate (the full quantifier wording stays in the hover tooltip's blurb).
+        if (operandCount === 1) friendly = stripSingleOperandQuantifier(friendly);
         return `<span class="${cls}" data-tooltip="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="${cls}">${escapeHtml(type)}</span>`;
