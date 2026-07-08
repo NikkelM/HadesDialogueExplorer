@@ -189,10 +189,11 @@ body.tour-open #custom-tooltip {
     --fab-size: 40px;
     --fab-step: calc(var(--fab-size) + 12px);
     position: fixed;
-    /* Vertically aligned with the footer's links row (the top line of the
-       footer's centred content block) so the toggle reads as part of that row
-       rather than sagging toward the footer's overall centre. */
-    bottom: calc(28px + env(safe-area-inset-bottom));
+    /* Vertically centred within the site footer in the shared bottom-right
+       corner: the footer is sized (64px) to contain this 40px toggle with even
+       12px clearance above and below, so the help button reads as part of the
+       footer without crowding either edge. */
+    bottom: calc(12px + env(safe-area-inset-bottom));
     right: calc(14px + env(safe-area-inset-right));
     z-index: 90;
     width: var(--fab-size);

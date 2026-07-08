@@ -513,13 +513,40 @@
     }
 }
 
-/* === Site disclaimer placement ======================================
+/* === Site footer / disclaimer placement =============================
  * The site footer is a single page-level element below <main> (index.html),
  * so it spans the full width in every view. On mobile the page scrolls and
  * main's flex-grow (base rule) keeps the footer at the viewport bottom for
- * short content while taller content grows the page - no per-view rules
- * needed here.
+ * short content while taller content grows the page.
+ *
+ * The desktop footer is a single ``1fr auto 1fr`` row (copyright | disclaimer |
+ * links). At tablet width and below the three items no longer share that row
+ * comfortably (the copyright starts wrapping while the links stay put), so
+ * stack them in a centred column instead. Asymmetric right padding (4rem) keeps
+ * the centred content clear of the bottom-right help FAB, exactly as the
+ * desktop links' right margin does.
  * ==================================================================== */
+@media (max-width: 1024px) {
+    .site-footer {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "copy"
+            "links"
+            "disclaimer";
+        justify-items: center;
+        row-gap: 4px;
+        padding: 8px 4rem 8px 20px;
+    }
+    .site-footer-copy,
+    .site-footer-links,
+    .site-footer-disclaimer {
+        justify-self: center;
+        text-align: center;
+    }
+    .site-footer-links {
+        margin-right: 0;
+    }
+}
 
 /* === Eligibility tracer ==============================================
  * The tracer is a single panel of wrapping flex rows, so it reflows through
