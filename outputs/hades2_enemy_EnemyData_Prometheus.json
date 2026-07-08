@@ -1,0 +1,5832 @@
+{
+  "alternates": {
+    "PrometheusAboutAltFight01": [
+      "PrometheusAboutAltFight01_B"
+    ],
+    "PrometheusAboutAltFight01_B": [
+      "PrometheusAboutAltFight01"
+    ],
+    "PrometheusAboutHeraclesKeepsake01": [
+      "PrometheusAboutHeraclesKeepsake01_B"
+    ],
+    "PrometheusAboutHeraclesKeepsake01_B": [
+      "PrometheusAboutHeraclesKeepsake01"
+    ],
+    "PrometheusLowHealth02": [
+      "PrometheusLowHealth02_B"
+    ],
+    "PrometheusLowHealth02_B": [
+      "PrometheusLowHealth02"
+    ]
+  },
+  "dependents": {
+    "ChaosAboutChronos03": [
+      {
+        "name": "PrometheusAboutChaos01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ChronosNightmare01": [
+      {
+        "name": "PrometheusAboutFates01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusAboutPrometheus02": [
+      {
+        "name": "PrometheusAboutDionysus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DionysusAboutPrometheus03": [
+      {
+        "name": "PrometheusAboutDionysus02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraAboutMemories02": [
+      {
+        "name": "PrometheusAboutDora03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraAboutMemories04": [
+      {
+        "name": "PrometheusAboutDora04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraAboutMemories05": [
+      {
+        "name": "PrometheusAboutDora05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraAboutPrometheus02": [
+      {
+        "name": "PrometheusAboutDora01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraAboutPrometheus03": [
+      {
+        "name": "PrometheusAboutDora02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraBathHouse02": [
+      {
+        "name": "PrometheusAboutDora02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "DoraBathHouse03": [
+      {
+        "name": "PrometheusAboutMortals02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "DoraGrantsCosmeticsShop01": [
+      {
+        "name": "PrometheusAboutDora02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "PrometheusAboutEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PrometheusAboutEpilogue04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PrometheusBossMiscDefeat18",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HeraclesGift03": [
+      {
+        "name": "PrometheusAboutAltFight04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusAboutPrometheus02": [
+      {
+        "name": "PrometheusAboutWorship01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutAltFight01": [
+      {
+        "name": "PrometheusAboutAltFight01_B",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PrometheusAboutAltFight05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutAltFight06",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01_B",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutEpilogue03",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutAltFight01_B": [
+      {
+        "name": "PrometheusAboutAltFight01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PrometheusAboutAltFight05",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutAltFight06",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01_B",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutEpilogue03",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutAltFight05": [
+      {
+        "name": "PrometheusAboutAltFight05_2",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutChronos01": [
+      {
+        "name": "PrometheusAboutFire01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutDora03": [
+      {
+        "name": "PrometheusAboutDora04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutDora04": [
+      {
+        "name": "PrometheusAboutDora05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutEpilogue01": [
+      {
+        "name": "PrometheusAboutEpilogue02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutEpilogue02": [
+      {
+        "name": "PrometheusAboutEpilogue03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutFates01": [
+      {
+        "name": "PrometheusAboutFates02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutForesight01": [
+      {
+        "name": "PrometheusAboutForesight02",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight03",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutForesight02": [
+      {
+        "name": "PrometheusAboutForesight01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight03",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutForesight03": [
+      {
+        "name": "PrometheusAboutForesight01",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight02",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight04",
+        "type": "RequiredAnyTextLines"
+      },
+      {
+        "name": "PrometheusAboutForesight05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutForesight04": [
+      {
+        "name": "PrometheusAboutForesight05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutForesight05": [
+      {
+        "name": "PrometheusAboutForesight04",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "PrometheusAboutHeraclesKeepsake01": [
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PrometheusAboutHeraclesKeepsake01_B": [
+      {
+        "name": "PrometheusAboutHeraclesKeepsake01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PrometheusAboutMortals02": [
+      {
+        "name": "PrometheusAboutFire01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutPostTyphon01": [
+      {
+        "name": "PrometheusBossMiscDefeat20",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat01": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat02": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat03": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat04": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat05": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat06": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat07": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat08": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat09": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat10": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat11": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat13": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat14": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat15": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusBossMiscDefeat16": [
+      {
+        "name": "PrometheusBossMiscDefeat17",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusLowHealth02": [
+      {
+        "name": "PrometheusLowHealth02_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PrometheusLowHealth02_B": [
+      {
+        "name": "PrometheusLowHealth02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ZeusAboutPrometheus01": [
+      {
+        "name": "PrometheusAboutZeus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZeusPalaceFirstMeeting": [
+      {
+        "name": "PrometheusAboutUltimateProgress02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ZeusPalaceFirstMeetingAlt": [
+      {
+        "name": "PrometheusAboutUltimateProgress02",
+        "type": "RequiredAnyTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 74,
+    "totalSpeakers": 1,
+    "totalTextlines": 147,
+    "unresolvedRefs": [
+      "ChaosAboutChronos03",
+      "ChronosNightmare01",
+      "DionysusAboutPrometheus02",
+      "DionysusAboutPrometheus03",
+      "DoraAboutMemories02",
+      "DoraAboutMemories04",
+      "DoraAboutMemories05",
+      "DoraAboutPrometheus02",
+      "DoraAboutPrometheus03",
+      "DoraBathHouse02",
+      "DoraBathHouse03",
+      "DoraGrantsCosmeticsShop01",
+      "FatesEpilogue01",
+      "HeraclesGift03",
+      "IcarusAboutPrometheus02",
+      "ZeusAboutPrometheus01",
+      "ZeusPalaceFirstMeeting",
+      "ZeusPalaceFirstMeetingAlt"
+    ]
+  },
+  "textlines": {
+    "HeraclesFightMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "One night after another you just keep turning up, sister. Are you enjoying this?"
+        }
+      ],
+      "name": "HeraclesFightMiscStart01",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3744
+    },
+    "HeraclesFightMiscStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You got here rather quick tonight, didn't you, witch. Some dark gods aiding your ascent?"
+        }
+      ],
+      "name": "HeraclesFightMiscStart02",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.HermesUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HermesUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3764
+    },
+    "HeraclesFightMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Already made it all this way. Some strangeness is afoot... but I care not for that right now."
+        }
+      ],
+      "name": "HeraclesFightMiscStart03",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:CurrentRun": [
+          {
+            "HasAny": [
+              "ActiveBounty",
+              "ActiveShrineBounty"
+            ],
+            "Path": [
+              "CurrentRun"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3782
+    },
+    "HeraclesFightMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Whether we fight together or against each other matters not; only the fight itself."
+        }
+      ],
+      "name": "HeraclesFightMiscStart04",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3799
+    },
+    "HeraclesFightMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Should be more than enough carnage for the both of us here any moment now."
+        }
+      ],
+      "name": "HeraclesFightMiscStart05",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3813
+    },
+    "HeraclesFightMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Go home, witch. You're no match for my club."
+        }
+      ],
+      "name": "HeraclesFightMiscStart06",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "FunctionName:RequiredConsecutiveDeathsInRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 1,
+              "Name": "P_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveDeathsInRoom"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3827
+    },
+    "HeraclesFightMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Not too cold for you up here, sister? Or does battle warm you over as it does me?"
+        }
+      ],
+      "name": "HeraclesFightMiscStart07",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3846
+    },
+    "HeraclesFightMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Notice it's harder to breathe up here, sister? Almost like this mountain's cursed."
+        }
+      ],
+      "name": "HeraclesFightMiscStart08",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3858
+    },
+    "HeraclesFightMiscStart09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Keep letting Olympus toss you around, and someday you'll be just like me."
+        }
+      ],
+      "name": "HeraclesFightMiscStart09",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3870
+    },
+    "HeraclesFightMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You're either good or ill fortune, not yet made up my mind."
+        }
+      ],
+      "name": "HeraclesFightMiscStart10",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3885
+    },
+    "PrometheusAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Heracles! What are you doing, fraternizing with our foe?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Our foe? Heh. Well you were right again, Prometheus. So then what now? She finally caught us in the act."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "We fight is what, big man; slow her at least. She shall not tell a soul that you were here. The damage it would cause her family would be catastrophic if she did."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So then you're both traitors. And you expect me not to notify Lord Zeus and the others? Heracles, he's your father! Yet you would turn on him?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Don't we all? Besides, the Titan of Foresight here knew I would, and who am I to argue? Now allow me and my club to ensure you'll forget what you have seen."
+        }
+      ],
+      "name": "PrometheusAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1506
+    },
+    "PrometheusAboutAltFight01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Heracles! What are you doing, fraternizing with him? You're supposed to be defending this mountain like before!"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Fraternizing! Heh. Well you were right again, Prometheus. So then what now? She finally caught us in the act."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "We fight is what, big man; slow her at least. She shall not tell a soul that you were here. Her family is in no position to absorb the truth of it, at least not now, or soon."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't know, this sounds a little treasonous. Yet you expect me not to notify Lord Zeus and the others? Heracles, he's your father! Of all the gods, you'd even turn on him?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Don't we all? Besides, the Titan of Foresight here knew I would, and who am I to argue? Now allow me and my club to ensure you'll forget what you have seen."
+        }
+      ],
+      "name": "PrometheusAboutAltFight01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1555
+    },
+    "PrometheusAboutAltFight02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Agent of Change! I of course foresaw my own defeats. As to whether you can stop both Heracles and me, you'll find there are far fewer paths to that outcome."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Is it necessary that you tell this witch such things, Flame Thief? Leave her to figure it out the hard way."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I knew you'd say that, man. And you've the right of it of course; we are not here for conversation. Nor is she."
+        }
+      ],
+      "name": "PrometheusAboutAltFight02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 45,
+      "narrativePrioritySectionSize": 72,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+              {
+                "Comparison": ">",
+                "Path": [
+                  "GameState",
+                  "LastBossHealthBarRecord",
+                  "Prometheus"
+                ],
+                "Value": 0
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.LastBossHealthBarRecord.Heracles": [
+              {
+                "Comparison": ">",
+                "Path": [
+                  "GameState",
+                  "LastBossHealthBarRecord",
+                  "Heracles"
+                ],
+                "Value": 0
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1607
+    },
+    "PrometheusAboutAltFight03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "If there exists a downside to having the ferocious strength of Heracles at one's call, it must be overconfidence. How could we possibly not prevail, I theorized. Well... there were ways."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You ought have told me of these ways, Flame Thief. For I am unaccustomed to defeat. It's fortunate we have no onlookers, for all the smoke and ash..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you two would like to keep this lovely conversation going, I've no great impulse to break it up. But you're going to force me to fight, I suppose."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It's ultimately why we're here, so yes. Where you're going, Change follows. And Change does not come without conflict."
+        }
+      ],
+      "name": "PrometheusAboutAltFight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Heracles": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Heracles"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1647
+    },
+    "PrometheusAboutAltFight04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Heracles! What do you have to say for yourself in all this? Are you the one who broke Prometheus from his bonds?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You'll get no answers from me, sister; only a splitting headache. You're better off demanding truths from the Titan standing by my side, who speaks them willingly."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Truths are only truths if they're believed. And no matter what I tell our adversary, she shall not believe me; not entirely at least... the splitting headache is the better course for now."
+        }
+      ],
+      "name": "PrometheusAboutAltFight04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 46,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HeraclesGift03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1681
+    },
+    "PrometheusAboutAltFight05": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "No sign of your big friend. It seems you'll have to contend with me on your own, since I'm ignoring your bird."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My big friend, as you call him, answers to a higher power, and I know that you know what it is. You wish to face the two of us again... you know precisely how."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And why would I possibly wish to go through that again? You're enough on your own, without also having to evade a club twice my size."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You're eager to please! To do that which you're called upon to do. That's why you're here. And that's why Heracles shall be here again not very long from now."
+        }
+      ],
+      "name": "PrometheusAboutAltFight05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1703
+    },
+    "PrometheusAboutAltFight05_2": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Aetos has you to himself again! They say that Heracles once slew an entire flock of voracious birds... must make yours a bit uneasy."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your insincere concern is meaningless to me. You gods have a shared purpose, merely to reassert your dominance. We share a purpose, too! But one completely different from your own."
+        }
+      ],
+      "name": "PrometheusAboutAltFight05_2",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 44,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutAltFight05"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1730
+    },
+    "PrometheusAboutAltFight06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You see, big man? She didn't keep you waiting long at all. Though I know how much you detest having your labors dictated by goddesses or gods."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I grow accustomed to it more and more. Relieves me of having to make hard choices; I need but make the easy ones, such as which bones to shatter first."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "And I look forward to seeing what you decide; though I already know, of course..."
+        }
+      ],
+      "name": "PrometheusAboutAltFight06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 43,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1753
+    },
+    "PrometheusAboutAltFight07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "We have some matters to discuss, Prometheus! So why not ask your big friend there to step aside? It would be rather rude of him to eavesdrop on our private conversations."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You shall not believe this for some time, Agent of Change, but Heracles can be trusted... certainly not in your present case, but still."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I care next to naught for what you say, sister. You wish for me to step aside, make me. Either here and now, or by whichever means you got me to show up."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well since the both of you are here, I just want you to know: Neither one of you is as strong as you look."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You underestimate our combined strength, though not for much longer. Let's show her, Heracles!"
+        }
+      ],
+      "name": "PrometheusAboutAltFight07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1782
+    },
+    "PrometheusAboutAltFight08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "If I may, Heracles? It is not necessary to converse with her like this. We could simply attack without warning."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I'm only making conversation here because of you. No need to persuade me about the benefits of attack without warning."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Then it's settled! We agree to keep her guessing. Even though we're going to fall back on old habits, with me doing most of the talking henceforth."
+        }
+      ],
+      "name": "PrometheusAboutAltFight08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 65,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1810
+    },
+    "PrometheusAboutAltFight09": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You, Heracles! When we meet elsewhere it's as though nothing's changed, and still you face me here? I knew you for a great warrior, but you're just a great actor!"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "We're all actors throughout our wretched lives, sister. And don't you dare address me here again; this is the Flame Thief's fight. I'm merely the supporting actor here."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "And is this not a fitting stage on which we're to perform before the gods? Including whichever dark gods you yourself invoked, forcing obedient Heracles to answer their call. Let's give them what they desire!"
+        }
+      ],
+      "name": "PrometheusAboutAltFight09",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:CurrentRun.EncountersOccurredCache": [
+          {
+            "HasAny": [
+              "HeraclesCombatN",
+              "HeraclesCombatN2",
+              "HeraclesCombatO",
+              "HeraclesCombatO2",
+              "HeraclesCombatP",
+              "HeraclesCombatP2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "EncountersOccurredCache"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1830
+    },
+    "PrometheusAboutAltFightHeracles01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Why don't I take point for a while here, Flame Thief? There are such times as you are liable to talk too much."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I'd say I thought you'd never ask, big man, but we both know the truth. I don't foresee the two of you speaking for long."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 47,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1855
+    },
+    "PrometheusAboutAltFightHeracles02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Been so long since I last lost a fight, that I'd forgotten how it felt. The shame... the anger... the blood boiling in my veins."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And it probably doesn't make you feel any better knowing Prometheus there was certain you were going to lose."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No. But something else also occurred: I found myself longing to fight again. To tear my enemies to pieces. I still can suppress the worst part, but I thought all of it was gone..."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 48,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Heracles": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Heracles"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1870
+    },
+    "PrometheusAboutAltFightHeracles03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "When first we met, you said you work alone, Heracles sir. Yet here you are cooperating with this Titan, and I'd say even that Eagle too. Another one of your lies, then?"
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Who says I'm working, sister? For all you know, this is what I do for sake of recreation. My work and interests coincide."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You expect me to believe you're here because you want to be, and not because the will of Night demanded it? I know you haven't shown up by coincidence alone."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Believe whatever you like. Now, I believe it's time to drive this club into your skull; not for business, but for pleasure."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 63,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1897
+    },
+    "PrometheusAboutAltFightHeracles04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "It's dark out there, sister. Yet you always seem to find your way, stalking around like a cat. Know what I do to cats?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Apparently you turn them into fashionable pelts! Well you're not doing that to me. How would it even work? I'm too small."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "You're too clever. How about you keep talking, while I let my club do the rest of the talking for me."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 62,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 10
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1923
+    },
+    "PrometheusAboutAltFightHeracles05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "Whatever it is you do to get me to show up, tonight you must have done a lot of it, sister. It's crawling out there..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Is that a touch of fear in the voice of mighty Heracles? Though I ought to be the one afraid, having to confront you and Prometheus like this. He knows it's going to get ugly."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "When does it ever not? But this is nothing. You wish to know true fear, go train under the Centaur Chiron for a while..."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 61,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 20
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1951
+    },
+    "PrometheusAboutAltFightHeracles06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "I never used to lose. Felt like the Flame Thief here probably does, knowing the outcome of every battle. Not anymore..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Surely the added bit of unexpectedness helps keep things livelier and more entertaining for you now."
+        },
+        {
+          "speaker": "NPC_Heracles_01",
+          "text": "No. I never used to lose, but I never liked surprises, either. So, all in all, things lately haven't gone too well for my career..."
+        }
+      ],
+      "name": "PrometheusAboutAltFightHeracles06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 64,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Heracles": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Heracles"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1978
+    },
+    "PrometheusAboutAthena01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Of all your kin on this accursed mountain, Lady Athena is the worthiest opponent. My master's legions must be keeping her quite busy, that she'd lend some of her strength to you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You call her an opponent but have been avoiding any direct confrontations, throwing your disposable forces against her. You know you'd lose to her in a fair fight."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I would. I lack her martial training, her divinity. But despite her vaunted wisdom, she, like all your kin, possesses what to mortals would be called a fatal flaw. And I know that you know what it is."
+        }
+      ],
+      "name": "PrometheusAboutAthena01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutZeus01",
+        "PrometheusAboutRavenFamiliar01",
+        "PrometheusAboutTorch01"
+      ],
+      "narrativePriorityOrdinal": 58,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.NPC_Athena_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Athena_01"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.ZeusUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "ZeusUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2762
+    },
+    "PrometheusAboutBrothers01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You have a brother you never even knew. I had a prideful one, a scatter-minded one, and a pathetic one bearing the weight of the world on his shoulders. Which do you suppose yours is most like?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No wonder you hate my family; you hate yours. Shall we proceed to try and kill each other now? I don't have all night."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My brothers and I also used to quarrel frequently. I thought I had outgrown it; become more civilized. But clearly no."
+        }
+      ],
+      "name": "PrometheusAboutBrothers01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutUnderworld01"
+      ],
+      "narrativePriorityOrdinal": 59,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.ClearedUnderworldRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedUnderworldRunsCache"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2928
+    },
+    "PrometheusAboutChaos01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know the tinge of gods, but you have something else. Something older... the mark of Chaos. The eldest, most indifferent force in existence, goaded into action!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not even Chaos wishes to see Chronos prevail. What does that tell you about your own decision to take sides?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It tells me that all beings are fallible, beginning with Chaos. We are all vulgar accidents, do you see? Yet still we strive toward perfection, which remains ever out of reach."
+        }
+      ],
+      "name": "PrometheusAboutChaos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 57,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.UseRecord.TrialUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "TrialUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ChaosAboutChronos03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2822
+    },
+    "PrometheusAboutChronos01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps your so-called master Chronos wants for you to fail... to suffer more than you already have. He seeks vengeance on the gods for overthrowing him before. When you were their ally!"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I don't seek my master's forgiveness, nor assume his loyalty. Alliances are born of shared goals, perhaps ideals; whereas the gods and I are at cross purposes."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Because they punished you for crimes you knowingly committed? What else could they have done after you deceived them, and took from them?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I took nothing! Fire spreads; burns anything that stands in its path. The gods sought to imprison it, but I set it loose. Now at last, we each are free. And burning still."
+        }
+      ],
+      "name": "PrometheusAboutChronos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Prometheus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Prometheus"
+            ],
+            "Value": 3
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2595
+    },
+    "PrometheusAboutCirce01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You work with enchantresses to try and gain the upper hand... but such distractions shall be of no avail against me. It is not the size of the opponent that's of consequence."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "To have recognized Madame Circe's craft, only to underestimate its potency. Your foresight evidently has its limits, Titan."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "That it does. But your incantations have their limitations, in kind. You would be wise not to depend on them too much."
+        }
+      ],
+      "name": "PrometheusAboutCirce01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 53,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "CirceShrinkTrait",
+              "CirceEnlargeTrait"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2848
+    },
+    "PrometheusAboutDionysus01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The gods, one of them anyway, extend an offering of peace, Prometheus! Lord Dionysus would have you as a guest of honor at his latest celebration, if you'll indulge him. Given your gift of foresight, you must know I'm entirely sincere."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My foresight only works if there is any possibility of an outcome taking place. Whatever deception you have in mind, you shall have to try harder than that."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You and your master are different; can you not accept that the gods aren't all aligned in their thinking, either? Dionysus wants no part in your feud!"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Dionysus wants merely to drown his few remaining complicated thoughts, and seek more pleasures of the flesh. More beast than god, lacking all self-control."
+        }
+      ],
+      "name": "PrometheusAboutDionysus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusAboutPrometheus02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2786
+    },
+    "PrometheusAboutDionysus02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Dionysus was quite disappointed that you'd not accept the invitation to his feast! Is there truly not some future possibility in which you change your mind?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "None! I've had my liver shorn apart for aeons by good Aetos here; I'll not permit the god of wine to further damage it!"
+        }
+      ],
+      "name": "PrometheusAboutDionysus02",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutDora04"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DionysusAboutPrometheus03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2806
+    },
+    "PrometheusAboutDora01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Tell me, Titan: Do you recall a mortal woman by the name of Dora? Her Shade responded strangely when I mentioned you, but can't seem to remember what you did."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Best leave it be, Agent of Change. That old Shade's latent memories have more to do with gods and their deceptions than with anything I did."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Elaborate! Tell me what happened to her. You keep blaming everything on the gods, as though all this is solely their responsibility."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Oh, on the contrary, I take responsibility for mortalkind. But for all their failings, vices, and downfalls, I am not to blame. Nor is this Dora. You tell her I said that."
+        }
+      ],
+      "name": "PrometheusAboutDora01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DoraAboutPrometheus02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2472
+    },
+    "PrometheusAboutDora02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your companion, Dora... she does not remember me, not yet. But she shall! And in so doing, remember why she chose to forget me to begin with... and forget so much more."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You say she's not to blame for the failings of mortalkind, as though she could have carried such a burden to begin with. What happened? How do you know her?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "That one is haunted by her past, as you can see. But, it is not my place to tell you any more than I already have, lest she recall too much, too quickly. All in due time, as my master would say."
+        }
+      ],
+      "name": "PrometheusAboutDora02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DoraAboutPrometheus03",
+          "DoraGrantsCosmeticsShop01",
+          "DoraBathHouse02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2498
+    },
+    "PrometheusAboutDora03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You do know Dora, don't you? She and some brother of yours... they were wed? And somehow this resulted in her letting loose all sorts of daemons in the mortal world?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "That is one telling of it, more or less... so she remembers, finally? Perhaps with great regret. After all this time, mortals still cannot decide whether to blame themselves or gods for their plight..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh they should blame only gods? Take no responsibility for their own wretched state? Not even Dora would do that, and she's one of the most complacent beings I know. In an impressive way!"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your companion Dora remembers some of the events, but this does not mean she understands any of them. Her actions pitted mortalkind against itself forever!"
+        }
+      ],
+      "name": "PrometheusAboutDora03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "DoraAboutMemories02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2522
+    },
+    "PrometheusAboutDora04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What became of Dora's husband? Your brother, by her recollection. He abandoned her after what happened?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It's more correct to say that your companion Dora finally saw my scatter-minded brother for who he was. Their marriage lasted for about as long as many do."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "All while you stood idly by and did nothing; but now feel bad and thus decided to shoulder this righteous cause? Perhaps to feel a bit of absolution that you never got from her."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your words are harsh but for the most part accurate. Dora remembers now what your own family did to her. If she can forgive you all for that... then she's a stronger soul than I."
+        }
+      ],
+      "name": "PrometheusAboutDora04",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutDionysus02"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutDora03",
+          "DoraAboutMemories04"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2549
+    },
+    "PrometheusAboutDora05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Look at us, Agent of Change! The daemons your companion Dora inadvertently set free... every ill that could befall mortalkind... most all of them yet plague the gods as well."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Existence has its hardships. I'm very familiar with many of these daemons, and they are nuisances; but their power has its limits, and they can be driven back."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Perhaps... but mortals tend to have a harder time of it than you. Don't you see? So long as they suffer, so shall we all."
+        }
+      ],
+      "name": "PrometheusAboutDora05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 49,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutDora04",
+          "DoraAboutMemories05"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2573
+    },
+    "PrometheusAboutEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It's done...! It's finally done, except... I need to hear you say it first. To know for certain what I have foreseen. Now, please..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You may have to be a little more specific, but... I take it you mean that I found the Fates? Or they found me, but either way. I thought you didn't care for them too much."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I care for what they say... what they decide to make of this world of ours. What has their exile driven them to do? They would not make the same mistakes again."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "They've had it with our squabbling; that I can understand. So they have deemed the coming of another age in which the gods apparently shall hold less sway. A time of fewer burdens on us, so our tempers can subside."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...The coming of a golden age... perhaps not quite the one my master had envisioned, but nevertheless. All this toil, at long last... and till then... I suppose we fight."
+        }
+      ],
+      "name": "PrometheusAboutEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3229
+    },
+    "PrometheusAboutEpilogue02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "So you truly saw all this coming? The Three Fates and their prophecy of a new age. Why have you fought so hard to stop me, then? What if you had prevailed?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I knew my efforts to prevent you all would be for naught; but I was compelled to make those efforts anyhow. To put it simply, I could see no other way."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We might have fought on the same side. Surely that would have sooner led to your result than sending Aetos after me."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "A reasonable theory but it never would have gone the way you expect. This was never about mortalkind for you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...You're right, it wasn't. I had my own problems to contend with before attempting to rid mortalkind of theirs."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yet now you have done both. Fear not; the dead may worship you, but the living couldn't care less. Though still we did what needed to be done."
+        }
+      ],
+      "name": "PrometheusAboutEpilogue02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutEpilogue01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3251
+    },
+    "PrometheusAboutEpilogue03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "What of your companion Heracles? I suppose he's been in on your scheme this entire time as well. Appearing to defy the gods while serving them anyway."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You'll have no more success getting such answers out of me than out of him. You've seen the man; he has his reasons."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hence your affiliation? You must have bonded over your disdain for this mountain and all it stands for. Was he the one who liberated you?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "No answers out of me, I said. Not when it comes to him. But at least you now know there are offshoots of your family made of stronger stuff."
+        }
+      ],
+      "name": "PrometheusAboutEpilogue03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ],
+        "RequiredTextLines": [
+          "PrometheusAboutEpilogue02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3278
+    },
+    "PrometheusAboutEpilogue04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Seeing as you know all about the coming age... any interesting details you can share about what's in store?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The world shall be a very different place, in ways you cannot possibly conceive. In other ways, nothing shall change at all; even regress. We shall all be forgotten, then remembered, and forgotten. Again, and again, and again..."
+        }
+      ],
+      "name": "PrometheusAboutEpilogue04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 66,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3303
+    },
+    "PrometheusAboutFates01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The future is a series of fixed points. Not even my master believes this to be true, but I have seen the many possibilities. The only question is... which is our destination?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You fill my mind with this nonsense. Not even the Three Fates know entirely what the future holds, for they are always weaving."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "They were always weaving, yes. I know that you know that they weave no longer now. Yet moment by moment, the future still unfolds. Let us give shape to it ourselves!"
+        }
+      ],
+      "name": "PrometheusAboutFates01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ChronosNightmare01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2869
+    },
+    "PrometheusAboutFates02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Where do you suppose they are, Agent of Change? The Fates, I mean. They, who set the Titans and the gods against each other to begin with, long ago."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wherever they are, pray they can't hear you speaking ill of them. Though why ask me? You're the one who knows everything, including whether they'll ever be located or not."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "That I do. I but spur you to consider the possibility, and your place in their scheme; and, I suppose, in mine."
+        }
+      ],
+      "name": "PrometheusAboutFates02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutFates01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2891
+    },
+    "PrometheusAboutFire01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You, who condemn me as a criminal: Would you know why I liberated fire from this mountain, for the sake of mortalkind?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "My own increasingly strong sense of foresight indicates you're going to tell me no matter what."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "When I gave mortals nourishment... the meat they would have sacrificed to you... they needed fire then, and more. But you hoarded all of it! So I saved them; and I'll do it again."
+        }
+      ],
+      "name": "PrometheusAboutFire01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutChronos01",
+          "PrometheusAboutMortals02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2428
+    },
+    "PrometheusAboutForesight01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Why bother talking to me all these nights, Titan? If you know everything I'm going to say. How tedious your life must be."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It used to be much worse! But to your point, I would not wish the curse of foresight unto anyone... except perhaps the worst of all my enemies. And you are not yet one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh? I'll have to work harder to earn that distinction, then. And when I set my mind to something, I typically succeed."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I am aware. But I also know that pride, one of the defining traits of your kind, tends to precede a fall. You shall see where all your certainty gets you."
+        }
+      ],
+      "name": "PrometheusAboutForesight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 71,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        }
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "PrometheusAboutForesight02",
+          "PrometheusAboutForesight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2280
+    },
+    "PrometheusAboutForesight02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You have questions for me about a great many things... I shall not answer them, not yet. The words must first escape your lips, for one."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How about I save my breath instead? You won't know what I'm going to say if I never say it."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yet your heart if not your eyes and ears suggest to you that I am not the liar that your mind believes me to be. We stand in opposition nonetheless."
+        }
+      ],
+      "name": "PrometheusAboutForesight02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 67,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        }
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "PrometheusAboutForesight01",
+          "PrometheusAboutForesight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2303
+    },
+    "PrometheusAboutForesight03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The question you're about to ask is mocking nonsense to supplant the more important subject troubling you now. Go on! I cannot respond if you hold back."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No. You have no control over me or my future. And don't worry, I'm not going to hold back."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I knew you would react this way, but knew no other way to broach the subject. How often I create the outcomes I'm attempting to prevent..."
+        }
+      ],
+      "name": "PrometheusAboutForesight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 68,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        }
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "PrometheusAboutForesight01",
+          "PrometheusAboutForesight02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2323
+    },
+    "PrometheusAboutForesight04": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Answer me this one question, Titan. If you know everything the future holds, why make the choices leading to the awful punishment that you endured? Why let yourself get caught?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Our choices can reverberate through time, creating outcomes of far greater consequence. If not for my imprisonment, I wouldn't be here now; where I must be."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You suffered as you did just so I could beat you up some more tonight? You're a fraud... making unprovable claims to sound righteous and wise."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You, of all gods, ought to understand something of sacrifice... but for now, at least, it matters not. I've nothing to prove to you, no secrets I'm willing to share; only my rage."
+        }
+      ],
+      "name": "PrometheusAboutForesight04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 51,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ],
+        "Path:GameState.EnemyKills.Prometheus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Prometheus"
+            ],
+            "Value": 3
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutForesight01",
+          "PrometheusAboutForesight02",
+          "PrometheusAboutForesight03",
+          "PrometheusAboutForesight05"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2343
+    },
+    "PrometheusAboutForesight05": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Either you're a liar when it comes to your supposed foresight, or you're letting me win. Who doesn't want a good thrashing from some witch every so often?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The difference between you and me is that you merely can suspect and theorize, whilst I know for certain. Yet there are truths that I cannot impart."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's quite all right, I didn't think you would. I can change the future with my actions whether I know what the future holds or not."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Take it from me, Agent of Change: The more you know of the future, the less likely you are to shape it as you desire."
+        }
+      ],
+      "name": "PrometheusAboutForesight05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 52,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ],
+        "Path:GameState.EnemyKills.Prometheus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Prometheus"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutForesight01",
+          "PrometheusAboutForesight02",
+          "PrometheusAboutForesight03",
+          "PrometheusAboutForesight04"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2377
+    },
+    "PrometheusAboutFuture01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know what you're about to say, Agent of Change, and caution you: Don't say it. Should you verbalize your thoughts, the outcome shall be of no benefit to either of us."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Fine... just in case. But you'll forgive me if I'm a little skeptical that we changed the course of history like this."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You still don't understand. We are as clay, the lot of us. Able to be moulded and re-moulded. One disastrous consequence we avoided; but there's no preventing the next."
+        }
+      ],
+      "name": "PrometheusAboutFuture01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 69,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2411
+    },
+    "PrometheusAboutGoldenAge01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Resist all you like, yet the age of gods shall end! Time shall see to it. And thereafter, a Golden Age of enlightenment shall begin, in which you gods hold far less sway."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If I somehow gave you the impression that I'm interested in your doomsaying and false prophecies, I assure you, I'm not."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your disregard is the very reason you're no longer fit to rule. I know you'll never relinquish this mountain; fall with it, then!"
+        }
+      ],
+      "name": "PrometheusAboutGoldenAge01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2238
+    },
+    "PrometheusAboutHeraclesKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You bear an artifact belonging to one whom I know, I sense it there. How did you get it...? Ah, no need to say; doubtless the gifting custom of Olympus, nothing more."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Gifting custom? You mean this Lion Fang from Heracles. What, were you counting on the son of Zeus giving his hard-fought trophy to one such as you instead?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You can be every bit as stubborn and brutish as the beast from which that tooth was torn. Yet you are unworthy of it all the same."
+        }
+      ],
+      "name": "PrometheusAboutHeraclesKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutHeraclesKeepsake01_B"
+      ],
+      "narrativePriorityOrdinal": 54,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "DecayingBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B",
+          "PrometheusAboutHeraclesKeepsake01_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2975
+    },
+    "PrometheusAboutHeraclesKeepsake01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You bear an artifact belonging to one whom I know, I sense it there. How did you get it...? Ah, no need to say; doubtless the gifting custom of Olympus, nothing more."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean this Lion Fang from your friend Heracles. What, were you counting on the son of Zeus giving his hard-fought trophy to you instead?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You can be every bit as stubborn and brutish as the beast from which that tooth was torn. Yet you are unworthy of it all the same."
+        }
+      ],
+      "name": "PrometheusAboutHeraclesKeepsake01_B",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutHeraclesKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 54,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "DecayingBoostKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "PrometheusAboutAltFight01",
+          "PrometheusAboutAltFight01_B"
+        ],
+        "RequiredFalseTextLines": [
+          "PrometheusAboutHeraclesKeepsake01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2998
+    },
+    "PrometheusAboutMortals01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You gods coerced all mortalkind into worshiping you, and for what? You've nothing to gain by slaughtering them at your whim. Leave them be!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'll be sure to put in the request with my Lord Uncle Zeus, if you could go ahead and let me past so I can pay him a visit."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your Lord Uncle had me bound to a mountain for aeons, so that Aetos here could feast upon my flesh for all that time. Aetos came around eventually, but Zeus...? He never shall."
+        }
+      ],
+      "name": "PrometheusAboutMortals01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2158
+    },
+    "PrometheusAboutMortals02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Why do you care so much for mortals, anyhow? Their lives are short, their flesh is weak. Only in death do many of them finally begin to gain some sense."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Any laborer of skill cares for their work. Mortals! Poor sods created in the image of the gods, yet forced to be inferior, so that they could never achieve what my master and I now intend."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean to say that you fashioned mortalkind? Then stole the fire from this mountain for their sake? Absurd."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The truth can be difficult to absorb. Mortals live only to suffer; as I'm responsible for that, I sought to take some of their suffering from them. And redistribute it to all of you."
+        }
+      ],
+      "name": "PrometheusAboutMortals02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "DoraBathHouse03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2177
+    },
+    "PrometheusAboutMortals03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Gods could learn something from mortals, you know. For all their many failings, they have an admirable tendency to cling to hope; a certain quality we deathless often lack."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hope can be the salve for the naive. So many mortals hope they'll never die; a feeling born of delusion and fear."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yes! Mortals live short, painful lives. And even still they strive for something greater than they mostly can achieve. I fight for them! You gods fight only for yourselves."
+        }
+      ],
+      "name": "PrometheusAboutMortals03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2202
+    },
+    "PrometheusAboutPlans01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My master's plan of course requires time. The objective here is not to stop you permanently, but to slow you down."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Unless you just can't help revealing vital information to your enemies, I'm going to assume you're spouting this drivel to mislead me. Either way, my own objective remains the same."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yes, bullheadedness is one of your family's defining traits. Then let us execute our respective plans; there is a possibility that mine shall succeed here beyond measure."
+        }
+      ],
+      "name": "PrometheusAboutPlans01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2259
+    },
+    "PrometheusAboutPostTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "When my master lets you cross a boundary beyond this realm to face the monster Typhon as before, the outcome of that, I cannot foresee... how did the last one go?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps I'll leave it to your imagination. It must be novel for you not to know the outcome of such incidents."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Oh that it is. Well then don't tell me, if you like; I'm far more interested in the end result than in the many steps we shall be taking on the way."
+        }
+      ],
+      "name": "PrometheusAboutPostTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 42,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3172
+    },
+    "PrometheusAboutPostTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My master indicates that your accomplishments are mounting night by night. He awaits beyond, should you prevail again."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "First you, then Typhon, same as ever. Though I'm delighted to know I'm living up to Grandfather's expectations. Could always use more family members to appease."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I do not envy you in that. Nevertheless, so long as our paths are intertwined, I shall be here; no need to let me know ahead of time."
+        }
+      ],
+      "name": "PrometheusAboutPostTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.ClearedSurfaceRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedSurfaceRunsCache"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:GameState.ClearedUnderworldRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedUnderworldRunsCache"
+            ],
+            "Value": 9
+          }
+        ],
+        "Path:PrevRun.EnemyKills": [
+          {
+            "HasAny": [
+              "Chronos",
+              "TyphonHead"
+            ],
+            "Path": [
+              "PrevRun",
+              "EnemyKills"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3195
+    },
+    "PrometheusAboutRandomBounty01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "What has the whim of Chaos wrought, that our existence led us to this point, in opposition to each other endlessly?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're welcome to surrender at any point, Titan. I'm certain that Chaos would find it terribly amusing if you did."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "As would you, I suppose. But no such outcome ever shall occur, of that you can be certain. Perhaps, however, we may yet provide to Chaos some amusement anyway."
+        }
+      ],
+      "name": "PrometheusAboutRandomBounty01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutShrineBounty01"
+      ],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsAny": "<ref:GameData.AllRandomPackagedBounties>",
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2137
+    },
+    "PrometheusAboutRavenFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You have an avian companion of your own. A scraggly and pallid raven, mediocre wingspan, lacking the raw instinct to hunt and kill like Aetos here. But still, a loyal bird."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And not once has Raki tried to rip my liver out of me. There are much more effective ways to forge bonds with animals, but you must know that now."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I was in no position to negotiate with Aetos when first we met. But now he listens to me, typically... although when he identifies his prey, he can become quite fixated by it."
+        }
+      ],
+      "name": "PrometheusAboutRavenFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutZeus01",
+        "PrometheusAboutAthena01",
+        "PrometheusAboutTorch01"
+      ],
+      "narrativePriorityOrdinal": 58,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "RavenFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2954
+    },
+    "PrometheusAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It seems we may be locked here in this struggle for some time; that is the consequence, of course, for what you did."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I got my family back. If it means having to get chastised every now and then by you, that's perfectly all right."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I did not mean it thus. In fact, knowing these meetings may be quite habitual, perhaps it's best we keep our conversations curt. I ought not say too much from here."
+        }
+      ],
+      "name": "PrometheusAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 72,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3405
+    },
+    "PrometheusAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "This suffocating smoke on a night so black... it fills me with an older strength I thought I'd lost. A good reminder I yet live...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm pleased to hear about this positive new turn in your existence, Titan. A fearsome night can certainly instill heightened awareness, and a will to survive."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You speak as though you are the cause yourself; impossible. Or quite unlikely I should say, but then again... augh, you dark gods. Come, let us see whether this is your night or mine!"
+        }
+      ],
+      "name": "PrometheusAboutShrine01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 60,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 12
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3318
+    },
+    "PrometheusAboutShrineBounty01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You've come specifically for me tonight, haven't you? Some barbarous assignment, perhaps, from dark gods far older and greater. Well here I am."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And how could you possibly know? I've said nothing of the sort, Titan. Nor shall I."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Not this eve you won't, but later. It shall slip your mind that we had this discussion earlier and you shall tell me more. For now, come fight me for the glory of your kind."
+        }
+      ],
+      "name": "PrometheusAboutShrineBounty01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutRandomBounty01"
+      ],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountySuitHeat1PBoss",
+              "BountyLobHeat2PBoss",
+              "BountyTorchHeat4PBoss",
+              "BountyAxeHeat8PBoss",
+              "BountyDaggerHeat12PBoss",
+              "BountyStaffHeat16PBoss",
+              "BountyShrineStaffPBoss",
+              "BountyShrineDaggerPBoss",
+              "BountyShrineTorchPBoss",
+              "BountyShrineAxePBoss",
+              "BountyShrineLobPBoss",
+              "BountyShrineSuitPBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3339
+    },
+    "PrometheusAboutShrineBounty02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're not my objective, Titan. So what do we say we make this quick? Lest you impede the will of Night."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The will of Night, is it... demanding Typhon's sacrifice. Is that what you're after, scaling this mountain again and again?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Not necessarily just Typhon's sacrifice. All enemies of the Underworld shall have their punishment. Even you, if you dare keep this up."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I am no stranger to the punishment of gods. It did not deter me then, nor shall it now, or evermore!"
+        }
+      ],
+      "name": "PrometheusAboutShrineBounty02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 39,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyShrineStaffQBoss",
+              "BountyShrineDaggerQBoss",
+              "BountyShrineTorchQBoss",
+              "BountyShrineAxeQBoss",
+              "BountyShrineLobQBoss",
+              "BountyShrineSuitQBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3374
+    },
+    "PrometheusAboutTorch01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Ah... so it's to be my borrowed flames against your own this night. This could be rather entertaining if I didn't know already how it's going to play out..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm not here for your amusement, Titan. Your stolen flame hasn't made you immune."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Certainly not. And, I anticipate that Ygnium, for I know the weapons that you bear, shall rather sting. But I've felt worse."
+        }
+      ],
+      "name": "PrometheusAboutTorch01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutZeus01",
+        "PrometheusAboutAthena01",
+        "PrometheusAboutRavenFamiliar01"
+      ],
+      "narrativePriorityOrdinal": 58,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponTorch": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponTorch"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2451
+    },
+    "PrometheusAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I'm but a Titan, and unarmed. Should you get past me, however... I know that you know you're certainly no match for what awaits."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps you simply know less than you think. And now you're going to call me arrogant or something, I suppose?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I would have, yes; but since you've foreseen that outcome, it shall not come to pass. Well if you truly think you can withstand that monstrosity... let's see you withstand me."
+        }
+      ],
+      "name": "PrometheusAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.TyphonHead": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "TyphonHead"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2630
+    },
+    "PrometheusAboutTyphon02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The monster Typhon isn't liable to stop, you know. He has your family on the back foot, cowering in your Lord Uncle's palace. Exactly where we want them."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "A suitable distraction I can take advantage of... just as soon as you're out of the way, along with your bird."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You're telling me your plans! Now we're truly getting to know each other. I almost regret what's about to transpire."
+        }
+      ],
+      "name": "PrometheusAboutTyphon02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2658
+    },
+    "PrometheusAboutTyphon03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Do you hear that? Typhon climbs the dark side of the mountain even now. Impressive that you cast him down before... but he shall not rest till the Palace of Zeus lies in ruin."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He'll be destroyed. You along with him if that's what it takes. If he were truly unstoppable, you wouldn't be impeding my ascent. You're buying him time."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I am. It's strange to think that time can be a limited commodity, even for deathless such as we. But no more stalling for now."
+        }
+      ],
+      "name": "PrometheusAboutTyphon03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.TyphonHead": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "TyphonHead"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.EnemyKills.TyphonHead": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EnemyKills",
+              "TyphonHead"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2679
+    },
+    "PrometheusAboutTyphonL01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It may have taken all your godly relatives, but they were able to resist the monster Typhon's wrath, despite the blunders that you made. Yet now you hurry back."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I realize this must be complicated for you, as someone whose loyalties are mostly to an Eagle, but I am not about to let that thing destroy everything my family built."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You ought to choose your loyalties with greater care, not let them be decided by birthright. Well then, come on! You have a summit and a family to protect."
+        }
+      ],
+      "name": "PrometheusAboutTyphonL01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.TyphonHead": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "TyphonHead"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2711
+    },
+    "PrometheusAboutUltimateProgress01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Something has changed in you since when last you were here. I know what it is... and what shall happen when you finally make use of it, perhaps even tonight."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You must mean Disintegration of Monstrosity. Yes, I have something for Typhon here. You're fortunate I don't first put it to the test on you."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Stay your threats! I know you shall not use this power against me; if gods and Titans could kill one another as mortals do, our history would have been much, much shorter."
+        }
+      ],
+      "name": "PrometheusAboutUltimateProgress01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeStormStop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3050
+    },
+    "PrometheusAboutUltimateProgress02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My master does not realize what shall become of him once all is said and done; do you? How abhorrent, to try and steal away one's immortality."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've truly heard it all. A thief, lecturing me about stealing! Chronos took my family, and more... he should realize what shall become of him."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Your father's father... you share some of his ancient lineage, and his obsession with the inevitable. Come get what you desire, then! But one outcome awaits as you continue down this path."
+        }
+      ],
+      "name": "PrometheusAboutUltimateProgress02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesRevealed.WorldUpgradeTimeStop": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesRevealed",
+              "WorldUpgradeTimeStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ZeusPalaceFirstMeeting",
+          "ZeusPalaceFirstMeetingAlt"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3071
+    },
+    "PrometheusAboutUnderworld01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You have been busying yourself elsewhere... down in that Underworld of yours, no doubt. Unless you've started having greater difficulty getting to this point?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're the Titan of Foresight, why don't you tell me? It's a chance to prove this gift of yours is more than a tall claim."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I knew you were going to say that; so that I could now take this as an opportunity to clarify that foresight is not mind-reading."
+        }
+      ],
+      "name": "PrometheusAboutUnderworld01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutBrothers01"
+      ],
+      "narrativePriorityOrdinal": 59,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 4,
+            "TableValuesToCount": [
+              "F_Opening01",
+              "F_Opening02",
+              "F_Opening03"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3026
+    },
+    "PrometheusAboutWorship01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "It seems the mortals whom you love so much don't all reciprocate, Prometheus. For all you claim to have done, they still don't worship you."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Nor shall they ever, I know. Perhaps make cautionary tales I've inspired but that's it. Fortunately, I don't require affirmation; they can save their Nectar and Ambrosia for you."
+        }
+      ],
+      "name": "PrometheusAboutWorship01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 70,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "IcarusAboutPrometheus02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2221
+    },
+    "PrometheusAboutZeus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Great Zeus did not have me bound and tortured merely for the supposed crime of taking fire from this mountain. No; he wanted certain information... about his eventual downfall."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So you threatened the King of the Olympians with false prophecies and he took it out on you. Perhaps not one of my Lord Uncle's proudest moments, and yet understandable. What did you tell him?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I told him nothing! Merely that his time shall come. A specific outcome that grows more likely with each passing night. You are but a wrinkle in the plan, nothing more."
+        }
+      ],
+      "name": "PrometheusAboutZeus01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusAboutAthena01",
+        "PrometheusAboutRavenFamiliar01",
+        "PrometheusAboutTorch01"
+      ],
+      "narrativePriorityOrdinal": 58,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.ZeusUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "ZeusUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusAboutPrometheus01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2740
+    },
+    "PrometheusBossMiscDefeat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I've done my part here, just as you did yours... for this was bound to happen as it did."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat01",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3923
+    },
+    "PrometheusBossMiscDefeat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...Curse these old wounds of mine... I once was stronger than this...!"
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat02",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3932
+    },
+    "PrometheusBossMiscDefeat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I knew that this would be a struggle... but hold always to the chance I may be wrong..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat03",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3941
+    },
+    "PrometheusBossMiscDefeat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I am beaten. But you cannot afford to give chase, and my strength shall return."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat04",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.SpeechRecord./VO/Prometheus_0463": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "SpeechRecord",
+              "/VO/Prometheus_0463"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3950
+    },
+    "PrometheusBossMiscDefeat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...The famous wrath of Olympus... it cannot easily be stopped, you see?"
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat05",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3962
+    },
+    "PrometheusBossMiscDefeat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...Aetos and I have done what needed to be done. Now you go do the same."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat06",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3971
+    },
+    "PrometheusBossMiscDefeat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...If suffering today brings about a better tomorrow, so be it."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat07",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3981
+    },
+    "PrometheusBossMiscDefeat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I foresaw your trickery yet still could not prevent it, no matter what I tried."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat08",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3990
+    },
+    "PrometheusBossMiscDefeat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...Heh! Compared to what I have withstood before, this was nothing at all."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat09",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3999
+    },
+    "PrometheusBossMiscDefeat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...If you could see what I've foreseen, you'd not believe it anyhow."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat10",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4008
+    },
+    "PrometheusBossMiscDefeat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...You gods never forgive; why then should I, when I could fight instead?"
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat11",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4017
+    },
+    "PrometheusBossMiscDefeat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...The strength to best both Heracles and me... I can foresee no way to stop it now."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat12",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4026
+    },
+    "PrometheusBossMiscDefeat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I have foreseen defeats of mine before... every last one of them, in point of fact..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat13",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4037
+    },
+    "PrometheusBossMiscDefeat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...You have defeated me again... but all my wounds shall heal. They always do..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat14",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4046
+    },
+    "PrometheusBossMiscDefeat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...My strength has failed me repeatedly... but it always comes back..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat15",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4055
+    },
+    "PrometheusBossMiscDefeat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...The flames that you withstood... perhaps they were never meant for you..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat16",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4064
+    },
+    "PrometheusBossMiscDefeat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...My foreknowledge of this moment... it's as though... we've done this all before..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat17",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusBossMiscDefeat01",
+          "PrometheusBossMiscDefeat02",
+          "PrometheusBossMiscDefeat03",
+          "PrometheusBossMiscDefeat04",
+          "PrometheusBossMiscDefeat05",
+          "PrometheusBossMiscDefeat06",
+          "PrometheusBossMiscDefeat07",
+          "PrometheusBossMiscDefeat08",
+          "PrometheusBossMiscDefeat09",
+          "PrometheusBossMiscDefeat10",
+          "PrometheusBossMiscDefeat11",
+          "PrometheusBossMiscDefeat13",
+          "PrometheusBossMiscDefeat14",
+          "PrometheusBossMiscDefeat15",
+          "PrometheusBossMiscDefeat16"
+        ]
+      },
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4073
+    },
+    "PrometheusBossMiscDefeat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...Now do you begin to understand... what I have done at every turn...?"
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat18",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4107
+    },
+    "PrometheusBossMiscDefeat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...I knew I could not stop you... on the contrary, you... needed to prevail..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat19",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4118
+    },
+    "PrometheusBossMiscDefeat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "...Were it not for this fight... you'd never find a single remnant of Typhon..."
+        }
+      ],
+      "name": "PrometheusBossMiscDefeat20",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {
+        "RequiredTextLines": [
+          "PrometheusAboutPostTyphon01"
+        ]
+      },
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 4131
+    },
+    "PrometheusBossOutro01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Urgh... I knew this would happen. Yet I could not prevent it, do you see? I could only... do my part..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Silence. Save your troubles for your master Chronos."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It's not my troubles that I mean to save... Agent of Change..."
+        }
+      ],
+      "name": "PrometheusBossOutro01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3903
+    },
+    "PrometheusFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Unnamed_01",
+          "text": "Ah, here comes the unexpected wrinkle in my master's plan! I know who you are, lost daughter of Hades, and I know that you know who I am. I had a premonition of this very moment."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Prometheus, I presume. You must have premonitions all the time. I'd not heard you were liberated, or that Chronos is the master you serve. Solidarity between Titans, then?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Call it a change of heart. I was a coward and a fool, you see; to have sided once with gods against my kind. But no more. This is my attempt at atonement."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What, by leading this reckless assault? I never took you for a coward, but you remain a fool."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Perhaps you're right; but I shall be a victorious fool, at least. For I have seen you stand no chance at all."
+        }
+      ],
+      "name": "PrometheusFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1390
+    },
+    "PrometheusLostAgainstHim01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know you think that you can get past me, if you but continue to try, and to try, and to try. The truth is you shall! Perhaps not this night, but inevitably nonetheless."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "At least you saved me some suspense. If I knew every outcome as does the infamous Titan of Foresight, perhaps I too would become a disaffected, traitorous wretch."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "What would you know of my plight?! You, who flail against Time itself? So much courage born of pride. Come then, Agent of Change, and show me what I know you can do!"
+        }
+      ],
+      "name": "PrometheusLostAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "Value": 3
+          }
+        ],
+        "PathFalse:GameState.EnemyKills.Prometheus": [
+          {
+            "PathFalse": [
+              "GameState",
+              "EnemyKills",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1462
+    },
+    "PrometheusLostAgainstHim02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Aetos has excellent vision, of course. Saw you since you first set foot at the base of the mountain. Slowed you down, perhaps, but still... I knew you'd be here now."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Truly? And what shall be the outcome of our confrontation this time, since you know everything? Same as the last?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "If you knew, the outcome would invariably be rather different than the one that's imminent. Though I suppose I can at least give you a hint..."
+        }
+      ],
+      "name": "PrometheusLostAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 50,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.SpawnRecord.Eagle": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "SpawnRecord",
+              "Eagle"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1486
+    },
+    "PrometheusLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I knew your injuries would be this grave, though perhaps you did not. Nothing a little time can't eventually heal of course."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm grateful for your concern, though best mind your own injuries. Those bandages... you aren't at your peak. Although perhaps this means we'll have a fairer fight."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My wounds have long since been a hindrance to me. I do not let them fully heal, so I am always cognizant of what I'm fighting for. And Aetos here appreciates it, too."
+        }
+      ],
+      "name": "PrometheusLowHealth01",
+      "narrativePriorityClusterMembers": [
+        "PrometheusLowHealth02_B"
+      ],
+      "narrativePriorityOrdinal": 56,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2012
+    },
+    "PrometheusLowHealth02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My forces almost stopped you but they didn't quite succeed. Yet even now you're outnumbered against Aetos and me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The prospect of exacting vengeance on your troublesome Eagle, if not you yourself, helps keep me going. Shall we commence?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yes. I mustn't keep you waiting. For I know who shall have their vengeance here, and I'm eager for you to find out."
+        }
+      ],
+      "name": "PrometheusLowHealth02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 55,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.5
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsNone": [
+              "FrogFamiliar",
+              "RavenFamiliar",
+              "CatFamiliar",
+              "HoundFamiliar",
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusLowHealth02_B"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2032
+    },
+    "PrometheusLowHealth02_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My forces almost stopped you but they didn't quite succeed. Now you're against Aetos and me."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The prospect of exacting vengeance on your troublesome Eagle, if not you yourself, helps keep me going. Shall we commence?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Yes. I mustn't keep you waiting. For I know who shall have their vengeance here, and I'm eager for you to find out."
+        }
+      ],
+      "name": "PrometheusLowHealth02_B",
+      "narrativePriorityClusterMembers": [
+        "PrometheusLowHealth01"
+      ],
+      "narrativePriorityOrdinal": 56,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.5
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar",
+              "RavenFamiliar",
+              "CatFamiliar",
+              "HoundFamiliar",
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PrometheusLowHealth02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2059
+    },
+    "PrometheusLowHealth03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "How can you hope to surpass me in such a wretched state? Perhaps if I were bound in chains and my liver half-eaten this would have been more of an even match."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm not under the impression that you seek sporting competition here, Prometheus. Now let's get on with it."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "A sporting competition! There must be a certain thrill in not knowing a battle's outcome before it occurs. Even outcomes as likely as this."
+        }
+      ],
+      "name": "PrometheusLowHealth03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.4
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2086
+    },
+    "PrometheusMiscStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You cannot die but can be driven back. And you can burn, and shall."
+        }
+      ],
+      "name": "PrometheusMiscStart01",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3425
+    },
+    "PrometheusMiscStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know the outcome of our each and every clash; yet somehow you surprise me even still."
+        }
+      ],
+      "name": "PrometheusMiscStart02",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3432
+    },
+    "PrometheusMiscStart03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The entirety of my strength shall never again return, but I've enough for this."
+        }
+      ],
+      "name": "PrometheusMiscStart03",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3439
+    },
+    "PrometheusMiscStart04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Aetos here still longs for the taste of liver, and who are we to deny him that?"
+        }
+      ],
+      "name": "PrometheusMiscStart04",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3446
+    },
+    "PrometheusMiscStart05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The Agent of Change returns, and the course of history shall never be the same."
+        }
+      ],
+      "name": "PrometheusMiscStart05",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3453
+    },
+    "PrometheusMiscStart06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Sooner or later, the age of gods shall end, no matter how ferociously you fight."
+        }
+      ],
+      "name": "PrometheusMiscStart06",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3460
+    },
+    "PrometheusMiscStart07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I'm still a little sore after what the gods did to me, for all my so-called crimes."
+        }
+      ],
+      "name": "PrometheusMiscStart07",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3467
+    },
+    "PrometheusMiscStart08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You gods seek worshipers, in all your vanity; we Titans seek only what is ours."
+        }
+      ],
+      "name": "PrometheusMiscStart08",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3474
+    },
+    "PrometheusMiscStart09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I endured having my liver eaten for an aeon; these bouts with you are nothing."
+        }
+      ],
+      "name": "PrometheusMiscStart09",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3481
+    },
+    "PrometheusMiscStart10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The gift of fire I bestowed to mortalkind; I made certain to save some for you."
+        }
+      ],
+      "name": "PrometheusMiscStart10",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3488
+    },
+    "PrometheusMiscStart11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Do you see? Each moment I delay you, Time's plan comes closer to fruition."
+        }
+      ],
+      "name": "PrometheusMiscStart11",
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3495
+    },
+    "PrometheusMiscStart12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Whether you shall break me here again is for me to know and for you to find out."
+        }
+      ],
+      "name": "PrometheusMiscStart12",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3509
+    },
+    "PrometheusMiscStart13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I've seen your every trick; all that you are capable of! And you are not at your best."
+        }
+      ],
+      "name": "PrometheusMiscStart13",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3524
+    },
+    "PrometheusMiscStart14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I shall not be the one to topple this mountain; neither shall you be the one to save it."
+        }
+      ],
+      "name": "PrometheusMiscStart14",
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3531
+    },
+    "PrometheusMiscStart15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You've seen nothing of this world, yet defend it; I have seen it all, and shall burn it down."
+        }
+      ],
+      "name": "PrometheusMiscStart15",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3545
+    },
+    "PrometheusMiscStart16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You owe your family nothing, yet give everything to them. Fools, all of you."
+        }
+      ],
+      "name": "PrometheusMiscStart16",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3552
+    },
+    "PrometheusMiscStart17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "There shall come a time when our conflict has ended; but I wouldn't hold my breath."
+        }
+      ],
+      "name": "PrometheusMiscStart17",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3559
+    },
+    "PrometheusMiscStart18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "What gods and Titans did to one another can never be forgiven... merely forgotten."
+        }
+      ],
+      "name": "PrometheusMiscStart18",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3566
+    },
+    "PrometheusMiscStart19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "This fire coursing through me, burning me inside... I'll show you how it feels."
+        }
+      ],
+      "name": "PrometheusMiscStart19",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3573
+    },
+    "PrometheusMiscStart20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "If I'm already guilty of unforgivable crimes according to Olympus, then this matters not."
+        }
+      ],
+      "name": "PrometheusMiscStart20",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3580
+    },
+    "PrometheusMiscStart21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "No chains shall ever bind me again; I both swear it and I know it to be true."
+        }
+      ],
+      "name": "PrometheusMiscStart21",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3587
+    },
+    "PrometheusMiscStart22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You've some small amount of foresight by now, do you not? You know how this ends."
+        }
+      ],
+      "name": "PrometheusMiscStart22",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3594
+    },
+    "PrometheusMiscStart23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The gods demand your services and you comply; but I am obligated to resist."
+        }
+      ],
+      "name": "PrometheusMiscStart23",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3601
+    },
+    "PrometheusMiscStart24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I'll not attempt to tell you what shall come of this... for you would never believe it."
+        }
+      ],
+      "name": "PrometheusMiscStart24",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3608
+    },
+    "PrometheusMiscStart25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I need no armaments to drive you back... unless you count this flame."
+        }
+      ],
+      "name": "PrometheusMiscStart25",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3615
+    },
+    "PrometheusMiscStart26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You've kept good Heracles there waiting patiently to put that club of his to further use."
+        }
+      ],
+      "name": "PrometheusMiscStart26",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3630
+    },
+    "PrometheusMiscStart27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "We are the fury of Olympus here, not you; and we shall never abandon this fight."
+        }
+      ],
+      "name": "PrometheusMiscStart27",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3641
+    },
+    "PrometheusMiscStart28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Heracles is bound to serve the gods, as apparently are you. Yet this is the result."
+        }
+      ],
+      "name": "PrometheusMiscStart28",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3652
+    },
+    "PrometheusMiscStart29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You cannot break us, Agent of Change; but perhaps you can break past us again."
+        }
+      ],
+      "name": "PrometheusMiscStart29",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Prometheus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Prometheus"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3663
+    },
+    "PrometheusMiscStart30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I had a premonition of this very moment."
+        }
+      ],
+      "name": "PrometheusMiscStart30",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3683
+    },
+    "PrometheusMiscStart31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know where this all leads. Let's see it through!"
+        }
+      ],
+      "name": "PrometheusMiscStart31",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3690
+    },
+    "PrometheusMiscStart32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I almost regret what's about to transpire."
+        }
+      ],
+      "name": "PrometheusMiscStart32",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3697
+    },
+    "PrometheusMiscStart33": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Come, let us see whether this is your night or mine!"
+        }
+      ],
+      "name": "PrometheusMiscStart33",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3704
+    },
+    "PrometheusMiscStart34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Perhaps it's best we keep our conversations curt."
+        }
+      ],
+      "name": "PrometheusMiscStart34",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3711
+    },
+    "PrometheusMiscStart35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Change does not come without conflict."
+        }
+      ],
+      "name": "PrometheusMiscStart35",
+      "otherRequirements": {},
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3718
+    },
+    "PrometheusMiscStart36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "It seems I now pay penance to the gods once more, though they shall never bind me."
+        }
+      ],
+      "name": "PrometheusMiscStart36",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Name": "P_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3725
+    },
+    "PrometheusPackagedBounties01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "How quickly you arrived this night! Bending the very laws of nature to achieve your goal... forging alliances with beings who care nothing for you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I did take a shortcut, but you're wrong about the rest. I know the being to whom you refer, and they're not what you presume them to be."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "No...? But isn't it Chaos that delivers you so close to your goal, yet shall let you go no farther... even if you should prevail here? I know where this all leads; let's see it through!"
+        }
+      ],
+      "name": "PrometheusPackagedBounties01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsAny": [
+              "PackageBountyChaos",
+              "PackageBountyHera",
+              "PackageBountySuitLegendary"
+            ],
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 2114
+    },
+    "PrometheusPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "Well, Agent of Change... the monster Typhon is eliminated and my master certainly is not himself; or rather, now he is. Many have said they knew you could do it but only I truly did. Yet you know as well as I that we're not finished."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Chronos has surrendered, but here you still are, giving his remnant legions their orders. Decided to take matters into your own thieving hands, then?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "That I decided long ago, when I gave myself to your lord uncle's chains. And I still oppose you, yes. For what you seek beyond, you shall find only through the flames of battle!"
+        }
+      ],
+      "name": "PrometheusPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3099
+    },
+    "PrometheusPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The gods are grudgingly permitting this behavior of yours, Titan? The vandalizing of their mountain... the perpetual assaults on their defenses... fighting me?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "My master, or perhaps my former master as I now should say, wishes to undo certain perceived wrongs, as you are well aware. I merely have a part to play in this."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And you're prepared to fight eternally against me, then? For my grandfather to be absolved of the mistakes of his past, and for the future of the gods to be secured?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I am prepared to fight eternally for what I believe in; and so that time flows freely forth, if that is what it takes."
+        }
+      ],
+      "name": "PrometheusPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3118
+    },
+    "PrometheusPostTrueEnding03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "The war is over, Titan! Drop the act. You still refer to Chronos as your master, and seem no more charitable towards the gods, despite now doing this for their sake not just yours."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You know as well as I that the conditions of your climb need to approximate your prior path, if you are going to succeed. And I admit that the result I seek would otherwise not be possible. Thus, here we find ourselves."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The result you seek involves me repeatedly beating you up? Perhaps all you really do want is a proper thrashing, under the guise of acting like some sort of savior."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I have extraordinarily high tolerance for pain. Though for such mockery, less so. Remember, we can both administer a thrashing here."
+        }
+      ],
+      "name": "PrometheusPostTrueEnding03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Name": "P_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 3144
+    },
+    "PrometheusWonAgainstHim01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "You know what lies beyond, and still returned. I knew you would, of course, yet I don't know why. Because you won't tell me..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's right. Your nonsense riddles are a bigger threat to my health than you, or your blasted Eagle pet for that matter."
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "The threat you face is beyond your understanding; that is the only reason you persevere. Your ignorance is a gift! Much like the fire that I shared with mortalkind, and now with you."
+        }
+      ],
+      "name": "PrometheusWonAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathFalse": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeTimeStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeTimeStop"
+            ]
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1413
+    },
+    "PrometheusWonAgainstHim02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "I know your capability and can anticipate your every move, but... there are times my mind leads me astray, you see. Anticipating possibilities that do not come to pass... resulting in all too many mistakes."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Mistakes such as revealing this to me, or being here at all. Have you learned nothing from your past imprisonment?"
+        },
+        {
+          "speaker": "NPC_Prometheus_01",
+          "text": "To be imprisoned is to be denied the opportunity to learn. A cruel form of torture in itself, but I did learn something, yes: I cannot break."
+        }
+      ],
+      "name": "PrometheusWonAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 41,
+      "narrativePrioritySectionSize": 72,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Prometheus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Prometheus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Prometheus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Prometheus.lua",
+      "sourceLine": 1441
+    }
+  }
+}
