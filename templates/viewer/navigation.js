@@ -20,7 +20,7 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, isGameLoaded, ensureGameLoaded, gameLabels } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, textlines, isGameLoaded, ensureGameLoaded, gameLabels } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
@@ -43,6 +43,14 @@ import { getSaveProgress, saveMatchesActiveGame, getSaveGameId } from './save-pa
 // ``function``) is not hoisted across the concatenated boundary.
 export let urlSelection = '';
 
+// The most recent dialogue shown in a dialogue-focused view (the 3-panel
+// dialogue detail or the eligibility tracer), so the header title can restore
+// where the user last was (see ``navigateHome``). ``navigateHome`` validates it
+// against the active game before use - textline names aren't unique across
+// games, so a dialogue remembered in one game falls back to the empty view when
+// it doesn't exist in the game that's active at click time.
+let _lastDialogue = null;
+
 // Render the dialogue detail view (info + upstream + downstream
 // panels) for the given textline. Pure render side-effect; does not
 // touch the URL or the search box.
@@ -59,6 +67,17 @@ export function selectTextline(name) {
 // ``navigateToState`` directly with their own keys.
 export function navigateTo(name) {
     navigateToState({ view: 'dialogue', dialogue: name });
+}
+
+// Header-title click target: return to the dialogue view, restoring the last
+// dialogue the user was viewing (in the detail or eligibility view) before they
+// navigated away to another view - or the empty dialogue view when there is no
+// such dialogue (fresh visit) or it isn't a textline in the game active at click
+// time (it was viewed in the other game, whose names don't carry over). Gives
+// the header title the "home" affordance without leaving the tool.
+export function navigateHome() {
+    const dialogue = (_lastDialogue && textlines && textlines[_lastDialogue]) ? _lastDialogue : null;
+    navigateToState(dialogue ? { view: 'dialogue', dialogue } : {});
 }
 
 // Convenience entry point for navigating to a speaker overview.
@@ -367,6 +386,9 @@ function setDocumentTitle(...segments) {
 
 function applyState(state) {
     const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
+    // Remember the dialogue behind any dialogue-focused view (detail or
+    // eligibility tracer) so the header title can restore it (see navigateHome).
+    if (state.dialogue) _lastDialogue = state.dialogue;
     if (view === 'speaker') {
         applyLayoutMode('speaker');
         // The URL carries the friendly speaker name; resolve it back to the
