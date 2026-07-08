@@ -46,6 +46,20 @@ jobs:
         with:
           path: dist/
 
+      # Build the self-contained offline single-file HTML for the release. Done
+      # AFTER the Pages artifact upload so the deployed site stays split-only
+      # (unchanged); --bundle refreshes the split outputs internally, but that
+      # only touches the working tree, not the already-uploaded Pages artifact.
+      - name: Build viewer (offline bundle)
+        run: python build_viewer.py --bundle
+
+      - name: Upload offline bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-bundle
+          path: dist/dialogue_explorer.html
+          if-no-files-found: error
+
   deploy:
     name: deploy
     needs: build
@@ -57,3 +71,54 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+
+  release:
+    name: release
+    needs: build
+    runs-on: ubuntu-latest
+    # Scoped write access just for this job so the build + deploy jobs keep the
+    # read-only default from the workflow-level permissions above.
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download offline bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: offline-bundle
+
+      # Rolling CalVer release: YYYY.MM.DD for the first deploy of a day, a
+      # commit-suffixed YYYY.MM.DD-<sha> for a same-day redeploy (so an earlier
+      # build that day is kept), and a replace for a re-run of the same commit
+      # (idempotent). Every release is marked --latest, so the stable link
+      # .../releases/latest/download/dialogue_explorer.html always serves the
+      # newest offline build.
+      - name: Publish dated release (CalVer, marked latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          date_tag="$(date -u +'%Y.%m.%d')"
+          short_sha="${GITHUB_SHA:0:7}"
+          tag="$date_tag"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            tag="${date_tag}-${short_sha}"
+            if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
+            fi
+          fi
+          {
+            echo "Self-contained, single-file offline build of the Hades Dialogue Explorer."
+            echo ""
+            echo "**Download** the \`dialogue_explorer.html\` asset below and open it directly in a browser. Load a \`ProfileX.sav\` from inside the tool to see your save progress."
+            echo ""
+            echo "Built from commit ${GITHUB_SHA}."
+            echo ""
+            echo "Always-latest download link: https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/dialogue_explorer.html"
+          } > release-notes.md
+          gh release create "$tag" dialogue_explorer.html \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes-file release-notes.md \
+            --latest

@@ -5,7 +5,7 @@ A browser-based tool for exploring the NPC dialogue dependency graphs from Super
 Almost every line an NPC speaks sits behind a set of prerequisites - other dialogues you need to have had, boss encounters you have seen, or any other type of situation that has occurred before.
 This tool visualizes those requirements and lets you walk the graph: what unlocks a line, what that line unlocks in turn, and - once you load your save - exactly what's still standing between you and hearing it.
 
-You can use the hosted viewer at [https://nikkelm.dev/HadesDialogueExplorer](https://nikkelm.dev/HadesDialogueExplorer/), or download a single self-contained HTML file from the releases for offline use.
+You can use the hosted viewer at [https://nikkelm.dev/HadesDialogueExplorer](https://nikkelm.dev/HadesDialogueExplorer/), or [download a single self-contained HTML file](https://github.com/NikkelM/HadesDialogueExplorer/releases/latest/download/dialogue_explorer.html) from the [latest release](https://github.com/NikkelM/HadesDialogueExplorer/releases/latest) for offline use.
 
 ## What it does
 
