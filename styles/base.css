@@ -70,10 +70,13 @@
     --dot-size: 9px;
 
     /* Type families, mirroring nikkelm.dev (IBM Plex Sans / Mono, self-hosted
-       via fonts.css). Each falls back to the system stack until the woff2
-       loads, so first paint and offline use are unaffected. */
-    --font-sans: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace;
+       via fonts.css). The 'IBM Plex <x> Fallback' entry right after each web
+       font is a metric-matched face (size-adjust + metric overrides, fonts.css)
+       so the pre-swap fallback occupies the exact same space as the real font -
+       no layout shift when the woff2 swaps in. The system stack follows for
+       platforms without Arial / Courier New (and for offline / first paint). */
+    --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace;
 }
 /* Desktop type bump. Everything sizes from the --fs-* tokens (or from em
    relative to them), so overriding the scale here lifts the whole desktop
@@ -117,6 +120,17 @@ body {
     flex-direction: column;
     overflow: hidden;
 }
+/* FOUT guard: keep the page hidden until the web fonts have loaded (the
+   ``fonts-pending`` class is added pre-paint and removed on fonts-ready / a
+   timeout by the inline script in index.html). Without it the static chrome
+   (header, search, "Load save") + skeleton paint in the system fallback and
+   then reflow when IBM Plex swaps in - the load jitter, which also made a
+   cache-cold hard reload render a different font than a cached load. html
+   carries the page background while pending so the brief hidden moment shows
+   the dark bg, not a white flash. No-JS clients never get the class, so the
+   page stays visible for them. */
+html.fonts-pending { background: var(--bg); }
+html.fonts-pending body { visibility: hidden; }
 header {
     background: var(--surface);
     padding: 12px 20px;

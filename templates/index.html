@@ -8,6 +8,35 @@
 <link rel="icon" id="favicon" type="image/x-icon" href="hades2.ico" data-hades1="hades.ico" data-hades2="hades2.ico">
 <link rel="stylesheet" href="viewer.css">
 <script>
+// Pre-paint FOUT guard: hide the page (html.fonts-pending -> body hidden, see
+// base.css) until the IBM Plex weights have loaded, so the static chrome and the
+// first content paint in IBM Plex instead of the system fallback and then
+// swapping (which reflows / jitters, and made a cache-cold hard reload render a
+// different font than a cached load). Every weight the UI uses is requested up
+// front so none swaps in late. A timeout always reveals, so a slow / failed
+// font never keeps the page hidden - the fonts.css swap + metric-matched
+// fallback then cover that rare case. This runs after viewer.css (a script
+// waits for preceding stylesheets), so the @font-face rules are known.
+(function() {
+    var el = document.documentElement;
+    el.classList.add('fonts-pending');
+    var done = false;
+    function reveal() { if (done) return; done = true; el.classList.remove('fonts-pending'); }
+    try {
+        if (document.fonts && document.fonts.load) {
+            var specs = ['400 1em "IBM Plex Sans"', '500 1em "IBM Plex Sans"',
+                '600 1em "IBM Plex Sans"', '700 1em "IBM Plex Sans"',
+                '400 1em "IBM Plex Mono"', '500 1em "IBM Plex Mono"',
+                '600 1em "IBM Plex Mono"'];
+            Promise.all(specs.map(function(s) { return document.fonts.load(s).catch(function() {}); })).then(reveal);
+            setTimeout(reveal, 1500);
+        } else {
+            reveal();
+        }
+    } catch (e) { reveal(); }
+})();
+</script>
+<script>
 // Inline pre-fetch (split build): warm the meta + initial game-blob fetches
 // before viewer.js downloads, so the multi-MB blob streams in parallel with
 // the script instead of serially after it. boot() (init.js) reuses these

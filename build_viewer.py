@@ -119,6 +119,19 @@ _STATIC_ASSET_NAMES = ("hades.ico", "hades2.ico")
 # just dropping the woff2 in and referencing it from fonts.css.
 _FONTS_DIR = STATIC_DIR / "fonts"
 
+# The above-the-fold font weights the hosted split build preloads so they are
+# already cached when the first content paints - letting font-display:optional
+# (styles/fonts.css) render them as IBM Plex from the first frame instead of a
+# fallback flash. Kept to the dominant weights (400 body, 600 headers/labels,
+# mono 400 tree/chips) so the preloads don't compete with the data-blob fetch;
+# the remaining weights load on demand and degrade to a metrically-close
+# fallback only on a rare slow first load (no swap-in jitter either way).
+_PRELOAD_FONT_NAMES = (
+    "ibm-plex-sans-400.woff2",
+    "ibm-plex-sans-600.woff2",
+    "ibm-plex-mono-400.woff2",
+)
+
 # Map each per-source JSON filename prefix to the canonical game id
 # used as a key in the final ``games`` map and in the URL hash. The
 # prefix is the canonical routing signal - ``generate_data.py`` writes
@@ -251,8 +264,26 @@ def _build_split_index_html(version: str) -> str:
         '<meta name="twitter:card" content="summary_large_image">',
         f'<meta name="twitter:image" content="{og_image_url}">',
     ])
+    # Preload the dominant above-the-fold fonts (split build only) so they are
+    # in cache before the first paint and font-display:optional renders them as
+    # IBM Plex from the first frame - no fallback flash / layout jitter. Placed
+    # right before the stylesheet that pulls fonts.css so the preload scanner
+    # finds them first. crossorigin is mandatory on font preloads (fonts fetch
+    # in CORS mode) so the hint dedupes with the CSS's own request instead of
+    # double-loading; no ``?v=`` because fonts.css references the unversioned
+    # ``fonts/<name>.woff2``, so the URLs must match exactly. The offline bundle
+    # inlines fonts as data: URIs and is served un-augmented, so these split-only
+    # links never reach it (a ``fonts/`` ref would 404 from file://).
+    font_preloads = "\n    ".join(
+        f'<link rel="preload" href="fonts/{name}" as="font" type="font/woff2" crossorigin>'
+        for name in _PRELOAD_FONT_NAMES
+    )
     return (
         INDEX_TEMPLATE.read_text(encoding="utf-8")
+        .replace(
+            '<link rel="stylesheet" href="viewer.css">',
+            f'{font_preloads}\n<link rel="stylesheet" href="viewer.css">',
+        )
         .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
         .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
         .replace(

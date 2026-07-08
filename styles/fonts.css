@@ -4,9 +4,23 @@
    static/fonts/ and are copied to dist/fonts/ by build_viewer.py (and inlined
    as data: URIs in the single-file bundle), so they load same-origin under the
    tool's strict `font-src 'self'` CSP with no external dependency - the tool
-   stays fully offline / file:// capable. font-display: swap matches the site
-   and avoids blocking first paint (the system-ui fallback in --font-sans shows
-   until the woff2 arrives). */
+   stays fully offline / file:// capable.
+
+   font-display: swap (not optional): swap always ends on IBM Plex, so the
+   steady-state font is the same on a cold hard reload and a cached one.
+   (optional locks in the system fallback for the whole page load whenever the
+   font misses its ~100ms block - which a cache-cold hard reload does, as the
+   heavy JS/data saturate the connection - so the two reloads rendered different
+   fonts.) The hosted build also preloads the dominant weights (build_viewer.py)
+   so on most loads the woff2 is ready before first paint and no fallback shows.
+
+   To stop swap from reflowing when it swaps in (the usual FOUT jitter), each
+   family has a metric-matched fallback face below: a local Arial / Courier New
+   with size-adjust + ascent/descent/line-gap overrides (calibrated from the
+   measured rendered width) so its advance width and line box equal IBM Plex's.
+   Slotted right after the web font in --font-sans / --font-mono (base.css), it
+   holds the exact layout during the brief pre-swap moment, so swapping the real
+   font in changes glyph shapes but never metrics = zero layout shift. */
 
 @font-face {
     font-family: 'IBM Plex Sans';
@@ -56,4 +70,29 @@
     font-weight: 600;
     font-display: swap;
     src: url("fonts/ibm-plex-mono-600.woff2") format("woff2");
+}
+
+/* Metric-matched fallback faces (see the note above). size-adjust is calibrated
+   from the measured rendered-width ratio of representative UI strings (IBM Plex
+   vs the raw fallback), so real content wraps the same; the ascent/descent/line-
+   gap overrides reproduce IBM Plex's 1.30em typo line box (divided by size-adjust
+   so the box stays 1.30em after the scale). Local Arial / Courier New (with their
+   Liberation metric-clones as the Linux stand-in) so no extra download. Used only
+   for the split build's brief pre-swap moment; the offline bundle inlines the
+   real fonts so it never falls back. */
+@font-face {
+    font-family: 'IBM Plex Sans Fallback';
+    src: local('Arial'), local('Liberation Sans');
+    size-adjust: 100.03%;
+    ascent-override: 102.47%;
+    descent-override: 27.49%;
+    line-gap-override: 0%;
+}
+@font-face {
+    font-family: 'IBM Plex Mono Fallback';
+    src: local('Courier New'), local('Liberation Mono');
+    size-adjust: 99.99%;
+    ascent-override: 102.51%;
+    descent-override: 27.50%;
+    line-gap-override: 0%;
 }
