@@ -79,6 +79,17 @@ test('PathFalse: passes only on nil/false (0 is truthy here, so it fails)', () =
     assert.equal(evalReq(clause(rec), { Flags: { X: 0 } }), 'unmet');   // 0 is Lua-truthy
 });
 
+test('malformed path (operator keyword as root) is a no-op: PathFalse always met', () => {
+    // ``PathFalse: ["PathFalse", "RoomsEntered", "N_Opening01"]`` - the operator
+    // leaked into the path array (a source typo, e.g. OdysseusAboutHermes01). The
+    // root doesn't exist, so PathFalse on the absent value is always satisfied.
+    assert.equal(evalReq(clause({ PathFalse: ['PathFalse', 'RoomsEntered', 'N_Opening01'] }), {}), 'met');
+    assert.equal(evalReq(clause({ PathEmpty: ['PathEmpty', 'RoomsEntered', 'X'] }), {}), 'met');
+    // The inverse operators can never be satisfied on the absent value.
+    assert.equal(evalReq(clause({ PathTrue: ['PathTrue', 'RoomsEntered', 'X'] }), {}), 'unmet');
+    assert.equal(evalReq(clause({ PathNotEmpty: ['PathNotEmpty', 'RoomsEntered', 'X'] }), {}), 'unmet');
+});
+
 test('PathEmpty / PathNotEmpty test table emptiness (nil or zero keys)', () => {
     const empty = { PathEmpty: ['GameState', 'Gift'] };
     const notEmpty = { PathNotEmpty: ['GameState', 'Gift'] };
@@ -738,6 +749,29 @@ test('h2OperandMarks sums a SumPrevRooms aggregate over the room slices', () => 
     assert.equal(m.recs[0].scalarMet, false); // 3 <= 0 is false
     // No room slice (hub save / wrong owner context) -> indeterminate, no tally.
     assert.equal(h2OperandMarks('Path:UseRecord.AphroditeUpgrade', rec, { gameState: {}, rooms: null }), null);
+});
+
+// A single-cue SpeechRecord PathTrue / PathFalse gate marks its voiceline cue by
+// the save's played-state, mirroring H1's RequiredPlayed / RequiredFalsePlayed:
+// green when a wanted cue has played, red when a forbidden cue has, neutral when
+// unplayed, and indeterminate (null) when the SpeechRecord table isn't loaded.
+test('h2OperandMarks colours a SpeechRecord voice-line cue by its played-state', () => {
+    const key = 'PathTrue:GameState.SpeechRecord./VO/Chronos_1058';
+    const val = [{ PathTrue: ['GameState', 'SpeechRecord', '/VO/Chronos_1058'] }];
+    const negKey = 'PathFalse:GameState.SpeechRecord./VO/Chronos_1058';
+    const negVal = [{ PathFalse: ['GameState', 'SpeechRecord', '/VO/Chronos_1058'] }];
+    // "must have played" + played -> green.
+    assert.deepEqual([...h2OperandMarks(key, val, { gameState: { SpeechRecord: { '/VO/Chronos_1058': true } } }).flat.green], ['/VO/Chronos_1058']);
+    // "must have played" + not played -> neutral (no colour).
+    const notPlayed = h2OperandMarks(key, val, { gameState: { SpeechRecord: {} } });
+    assert.equal(notPlayed.flat.green.size, 0);
+    assert.equal(notPlayed.flat.red.size, 0);
+    // "must NOT have played" + played -> red.
+    assert.deepEqual([...h2OperandMarks(negKey, negVal, { gameState: { SpeechRecord: { '/VO/Chronos_1058': true } } }).flat.red], ['/VO/Chronos_1058']);
+    // SpeechRecord table absent (not loaded) -> indeterminate.
+    assert.equal(h2OperandMarks(key, val, { gameState: {} }), null);
+    // A non-SpeechRecord PathTrue gate gets no marks (unchanged behaviour).
+    assert.equal(h2OperandMarks('PathTrue:GameState.ReachedTrueEnding', [{ PathTrue: ['GameState', 'ReachedTrueEnding'] }], { gameState: { ReachedTrueEnding: true } }), null);
 });
 
 test('collectCurrentRunPaths captures CurrentRun leaves, ignores GameState/SumPrev', () => {

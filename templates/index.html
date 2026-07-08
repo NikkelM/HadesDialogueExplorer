@@ -8,6 +8,35 @@
 <link rel="icon" id="favicon" type="image/x-icon" href="hades2.ico" data-hades1="hades.ico" data-hades2="hades2.ico">
 <link rel="stylesheet" href="viewer.css">
 <script>
+// Pre-paint FOUT guard: hide the page (html.fonts-pending -> body hidden, see
+// base.css) until the IBM Plex weights have loaded, so the static chrome and the
+// first content paint in IBM Plex instead of the system fallback and then
+// swapping (which reflows / jitters, and made a cache-cold hard reload render a
+// different font than a cached load). Every weight the UI uses is requested up
+// front so none swaps in late. A timeout always reveals, so a slow / failed
+// font never keeps the page hidden - the fonts.css swap + metric-matched
+// fallback then cover that rare case. This runs after viewer.css (a script
+// waits for preceding stylesheets), so the @font-face rules are known.
+(function() {
+    var el = document.documentElement;
+    el.classList.add('fonts-pending');
+    var done = false;
+    function reveal() { if (done) return; done = true; el.classList.remove('fonts-pending'); }
+    try {
+        if (document.fonts && document.fonts.load) {
+            var specs = ['400 1em "IBM Plex Sans"', '500 1em "IBM Plex Sans"',
+                '600 1em "IBM Plex Sans"', '700 1em "IBM Plex Sans"',
+                '400 1em "IBM Plex Mono"', '500 1em "IBM Plex Mono"',
+                '600 1em "IBM Plex Mono"'];
+            Promise.all(specs.map(function(s) { return document.fonts.load(s).catch(function() {}); })).then(reveal);
+            setTimeout(reveal, 1500);
+        } else {
+            reveal();
+        }
+    } catch (e) { reveal(); }
+})();
+</script>
+<script>
 // Inline pre-fetch (split build): warm the meta + initial game-blob fetches
 // before viewer.js downloads, so the multi-MB blob streams in parallel with
 // the script instead of serially after it. boot() (init.js) reuses these
@@ -61,6 +90,7 @@
 })();
 </script>
 <header>
+    <a class="site-wordmark" href="https://nikkelm.dev/" data-tooltip="Back to nikkelm.dev">nikkelm<span class="site-wordmark-tld">.dev</span></a>
     <h1>Hades Dialogue Explorer</h1>
     <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game">
         <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" data-label="Hades" aria-selected="false" data-tooltip="Show dialogue from Hades">Hades</button>
@@ -130,7 +160,7 @@
      reveals it on fetch/JSON.parse failure. -->
 <div id="app-error" class="app-error" hidden></div>
 <main>
-    <div class="panel" id="panel-info">
+    <div class="panel acc-open" id="panel-info">
         <h2 id="panel-info-heading">Textline Details</h2>
         <div id="info-content" class="panel-body"><div class="empty-state">Select a textline to see its details</div></div>
     </div>
@@ -151,6 +181,31 @@
         <div id="downstream-content" class="panel-body"><div class="empty-state">Select a textline to see what depends on it</div></div>
     </div>
 </main>
+<!-- Site footer, mirroring nikkelm.dev's Footer.astro (copyright + GitHub /
+     LinkedIn / Contact) plus the tool's AI / content disclaimer. A single
+     page-level element below <main> so it spans the full width and stays in
+     one consistent place across every view (rather than living inside a
+     panel). The year is filled in by the inline script below so it never needs
+     a manual update. -->
+<footer class="site-footer" role="contentinfo">
+    <div class="site-footer-row">
+        <span class="site-footer-copy">&copy; <span data-current-year>2026</span> Nikkel Mollenhauer</span>
+        <span class="site-footer-links">
+            <a href="https://github.com/NikkelM" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/nikkel-mollenhauer/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://nikkelm.dev/contact" target="_blank" rel="noopener noreferrer">Contact</a>
+        </span>
+    </div>
+    <div class="site-footer-disclaimer">Built with the assistance of generative AI. All game content belongs to Supergiant Games.</div>
+</footer>
+<script>
+// Keep the footer copyright year current without a build/manual update
+// (mirrors nikkelm.dev's Footer.astro script).
+(function() {
+    var y = document.querySelector('[data-current-year]');
+    if (y) y.textContent = String(new Date().getFullYear());
+})();
+</script>
 <!-- Floating help menu (wired in init.js / fab-menu.js). The "?" toggle folds
      out two action bubbles upward - replay the tutorials and open the GitHub
      repo - and turns into an X while open. Floating rather than in the header
@@ -254,8 +309,10 @@
     // card - title + badges, the owner/type meta, the eligibility button, the
     // spoken-line blocks, then the bordered requirement groups - so the
     // skeleton wraps the same way (bars inside the box, not at its border).
+    // The top row mirrors the real header: the name sits left and the
+    // save/priority/play-once indicator cluster is pushed to the right.
     var DETAIL = card(
-        row(sk('sk-title') + sk('sk-badge') + sk('sk-badge') + sk('sk-badge'))
+        row(sk('sk-title') + '<div class="sk-h3-ind">' + rep(sk('sk-badge'), 3) + '</div>', 'split')
         + sk('sk-line short') + sk('sk-btn') + sk('sk-line short')
         + rep(dlgLine(), 4) + group(2) + group(1));
 
@@ -302,13 +359,28 @@
         + '</div>';
 
     // Duplicates: a bordered header card (title + subtitle), the search input,
-    // then the speaker list / detail two-column grid.
+    // then the speaker master list and the detail grid. Speaker rows mirror
+    // ``.duplicates-speaker-item`` (name bar + count pill); the detail grid
+    // reuses the real ``auto-fill`` column sizing (see ``.sk-dup-grid``) so the
+    // skeleton shows the same number of columns as the loaded view at the
+    // current width. The entry count is a fallback - the duplicates branch below
+    // re-fills the grid to 10 placeholders per column once the real column count
+    // is known.
+    var dupSpk = function() {
+        return '<div class="sk-dup-spk">' + sk('sk-line sk-grow') + sk('sk-dup-count') + '</div>';
+    };
+    var dupEntry = function() {
+        return '<div class="sk-dup-entry">' + sk('sk-line sk-grow') + sk('sk-badge') + sk('sk-badge') + '</div>';
+    };
     var DUPLICATES =
         sec(card(sk('sk-title') + sk('sk-line short')))
         + sec(sk('sk-input'))
         + '<div class="sk-dup">'
-        + '<div class="sk-dup-left">' + rep(sk('sk-line'), 7) + '</div>'
-        + '<div class="sk-dup-right">' + sk('sk-line short') + rep(sk('sk-line'), 5) + '</div>'
+        + '<div class="sk-dup-left">' + rep(dupSpk(), 10) + '</div>'
+        + '<div class="sk-dup-right">'
+        + sk('sk-title sk-dup-detail-title')
+        + '<div class="sk-dup-grid">' + rep(dupEntry(), 10) + '</div>'
+        + '</div>'
         + '</div>';
     var set = function(id, inner) {
         var el = document.getElementById(id);
@@ -326,6 +398,16 @@
         if (speaker) { set('info-content', SPEAKER); painted = true; }
     } else if (view === 'duplicates') {
         set('info-content', DUPLICATES); painted = true;
+        // Fill each detail column to 10 rows: read the real auto-fill column
+        // count off the just-painted grid (same technique as
+        // stripeDuplicateColumns) and render 10 entry placeholders per column,
+        // so the skeleton is as full down each column as the loaded list. Runs
+        // synchronously before first paint, so the fallback count never shows.
+        var dupGrid = document.querySelector('.sk-dup-grid');
+        if (dupGrid) {
+            var dupCols = getComputedStyle(dupGrid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+            dupGrid.innerHTML = rep(dupEntry(), 10 * dupCols);
+        }
     } else if (view === 'eligibility') {
         if (dialogue) { set('info-content', ELIGIBILITY); painted = true; }
     } else if (dialogue) {

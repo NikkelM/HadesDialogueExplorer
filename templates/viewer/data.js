@@ -53,6 +53,8 @@ export let choiceNames;
 export let metaUpgradeNames;
 export let entityNames;
 export let pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields;
+export let badgeRankNames, badgeRankManager;
+export let cueTexts;
 export let gameDataRefs;
 export let namedRequirements;
 export let godTraitNames;
@@ -241,6 +243,9 @@ export function setActiveGame(gameId) {
     pathLiteralLeafFields = new Set(Array.isArray(gd.pathLiteralLeafFields) ? gd.pathLiteralLeafFields : []);
     brokenPathRefs = gd.brokenPathRefs || {};
     brokenReqFields = gd.brokenReqFields || {};
+    badgeRankNames = gd.badgeRankNames || {};
+    badgeRankManager = gd.badgeRankManager || '';
+    cueTexts = gd.cueTexts || {};
     gameDataRefs = gd.gameDataRefs || {};
     namedRequirements = gd.namedRequirements || {};
     godTraitNames = new Set(Array.isArray(gd.godTraitNames) ? gd.godTraitNames : []);

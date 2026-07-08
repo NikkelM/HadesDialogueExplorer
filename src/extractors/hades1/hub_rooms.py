@@ -21,7 +21,7 @@ HADES1_HUB_ROOM_NAMES = {
     # its DisplayName). Only the master bedroom is gated on in dialogue.
     "DeathAreaBedroomHades": "Hades' Bedchamber",
     # Temple of Styx central hub (the satyr-guarded door-choice room).
-    "D_Hub": "Temple of Styx (hub)",
+    "D_Hub": "Temple of Styx (Hub)",
     # Biome boss chambers (named by the boss fought there).
     "A_Boss01": "Megaera's boss chamber",
     "A_Boss02": "Alecto's boss chamber",

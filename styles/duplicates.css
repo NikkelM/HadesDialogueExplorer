@@ -78,10 +78,11 @@
     font-size: var(--fs-base);
     text-align: left;
     cursor: pointer;
+    transition: border-color 0.12s ease, background-color 0.12s ease;
 }
 
 .duplicates-speaker-item:hover {
-    background: var(--border);
+    border-color: var(--accent-color);
 }
 
 .duplicates-speaker-item.is-active {
@@ -114,24 +115,35 @@
 
 .duplicates-detail-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(405px, 1fr));
     align-items: start;
-    gap: 0.3rem 0.8rem;
+    column-gap: 0.8rem;
+    row-gap: 0.2rem;
 }
 
 .duplicates-entry {
     display: grid;
-    grid-template-columns: max-content auto auto;
+    grid-template-columns: 1fr auto auto;
     align-items: center;
-    justify-content: start;
     column-gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+}
+
+/* The grid uses ``auto-fill`` so its column count is dynamic and unbounded
+   on wide screens. CSS has no per-column selector, so ``applyColumnStripes``
+   (utilities.js, driven from duplicates-view.js) tags every entry in an even
+   grid column and this rule tints it - a subtle rounded band, inset from the
+   text by the entry padding, that separates adjacent columns. */
+.duplicates-entry.dup-col-alt {
+    background-color: var(--col-stripe);
 }
 
 .duplicates-name {
     display: inline-block;
     width: var(--dup-name-col, max-content);
     font-size: var(--fs-base);
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     color: var(--text-color);
 }
 
@@ -145,14 +157,24 @@
     border-radius: 3px;
     background: transparent;
     text-align: center;
+    white-space: nowrap;
+    transition: border-color 0.12s ease;
 }
 
 .duplicates-game-link:hover {
-    background: var(--border);
     border-color: var(--accent-color);
 }
 
-/* Keep the wider name-to-pill gap while the two game pills sit close together. */
-.duplicates-entry > .duplicates-game-link:first-of-type {
-    margin-left: 0.35rem;
+/* In the striped (even) columns the entry background is lightened toward
+   ``--border`` (see ``.dup-col-alt`` / ``--col-stripe``), which nearly matches
+   the game buttons' own ``--border`` edge and makes it vanish (~1.17:1). Give
+   the buttons a lighter border there so they read with the same definition as
+   in the dark columns (~1.6:1 on the stripe). The paired ``:hover`` keeps the
+   accent affordance, which the higher-specificity resting rule would otherwise
+   override. */
+.duplicates-entry.dup-col-alt .duplicates-game-link {
+    border-color: #3a4250;
+}
+.duplicates-entry.dup-col-alt .duplicates-game-link:hover {
+    border-color: var(--accent-color);
 }

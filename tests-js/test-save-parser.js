@@ -30,8 +30,9 @@ import {
     extractH1PrevRunSlice,
     getSaveInRun,
     validateSaveFilename,
+    getSaveContext,
 } from '../templates/viewer/save-parser.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, registerGameData } from '../templates/viewer/data.js';
 
 // Build an LZ4 block of `n` literal bytes (0,1,2,... mod 256), no matches.
 function literalBlock(n) {
@@ -698,6 +699,63 @@ test('extractH1GameStateSlice omits the global captures when no luaState is give
     assert.equal('SpeechRecord' in slice, false);
     assert.equal('Codex' in slice, false);
     assert.equal('CodexUnlockedTotal' in slice, false);
+});
+
+test('a biomes-mod H2 save retains Hades 1 enemy-kill fields the H2 mask would prune', () => {
+    clearSaveProgress();
+    // Register an H2 dataset whose requirements never reference EnemyKills, so
+    // the H2 GameState mask prunes EnemyKills entirely from a vanilla H2 save.
+    loadData({ textlines: { H1Line: { owner: 'NPC_Test_01', requirements: {} } } });
+    registerGameData('hades2', { textlines: { H2Line: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+
+    // Control: a vanilla H2 save (no biomes marker) -> EnemyKills is pruned away
+    // (a ported Hades 1 enemy name would read 0).
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: { GameState: { EnemyKills: { Theseus: 3, Chronos: 9 } } },
+    }));
+    assert.equal(getSaveContext().gameState.EnemyKills, undefined);
+
+    // Biomes-mod save: the mod marker is present, so the Hades 1 GameState slice
+    // is merged in, restoring EnemyKills keyed by the Hades 1 enemy name.
+    clearSaveProgress();
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: {
+            GameState: {
+                ModsNikkelMHadesBiomesCompletedRunsCache: 12,
+                EnemyKills: { Theseus: 3, Chronos: 9 },
+            },
+        },
+    }));
+    const gs = getSaveContext().gameState;
+    assert.equal(gs.EnemyKills.Theseus, 3);
+    // The ported run-count cache is still carried through as before.
+    assert.equal(gs.ModsNikkelMHadesBiomesCompletedRunsCache, 12);
+    clearSaveProgress();
+});
+
+test('a biomes-mod H2 save carries flat per-run EnemyKills into the current/prev-run slices', () => {
+    clearSaveProgress();
+    loadData({ textlines: { H1Line: { owner: 'NPC_Test_01', requirements: {} } } });
+    registerGameData('hades2', { textlines: { H2Line: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: {
+            GameState: {
+                ModsNikkelMHadesBiomesCompletedRunsCache: 5,
+                // Newest RunHistory entry (index 2) is the "last run".
+                RunHistory: { 1: { EnemyKills: { Theseus: 1 } }, 2: { EnemyKills: { Harpy2: 3 } } },
+            },
+            CurrentRun: { EnemyKills: { Harpy: 2 } },
+        },
+    }));
+    const ctx = getSaveContext();
+    // "This run" kills come from the flat CurrentRun.EnemyKills.
+    assert.equal(ctx.currentRun.EnemyKills.Harpy, 2);
+    // "Last run" kills come from the newest RunHistory entry's flat EnemyKills.
+    assert.equal(ctx.prevRun.EnemyKills.Harpy2, 3);
+    clearSaveProgress();
 });
 
 test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {

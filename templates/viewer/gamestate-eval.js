@@ -109,13 +109,13 @@ function compare(left, op, right) {
     // coerces to 0; everything else (incl. 0, "") is compared as-is.
     const l = (left === undefined || left === null || left === false) ? 0 : left;
     switch (op) {
-    case '==': case '=': return l === right;
-    case '~=': case '!=': return l !== right;
-    case '>=': return l >= right;
-    case '>': return l > right;
-    case '<=': return l <= right;
-    case '<': return l < right;
-    default: return false;
+        case '==': case '=': return l === right;
+        case '~=': case '!=': return l !== right;
+        case '>=': return l >= right;
+        case '>': return l > right;
+        case '<=': return l <= right;
+        case '<': return l < right;
+        default: return false;
     }
 }
 
@@ -204,7 +204,7 @@ function evalSumPrevRuns(rec, root) {
 function evalSumPrevRooms(rec, root) {
     const rooms = root._rooms;
     if (!Array.isArray(rooms)) {
-        return _WRONGSAVE('Aggregates across rooms of the current run - load the matching in-run \u201C_Temp\u201D save to resolve it.');
+        return _WRONGSAVE('Aggregates across rooms of the current run - load the matching in-run \"_Temp\" save to resolve it.');
     }
     if (!Array.isArray(rec.Path) || !rec.Comparison) {
         return _MET('unknown', 'Unrecognised previous-rooms aggregation.');
@@ -296,7 +296,7 @@ const BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP = {
 function evalBossDifficulty(rec, root) {
     const cr = root.CurrentRun;
     const gs = root.GameState;
-    if (!cr) return _WRONGSAVE('Checks the boss-difficulty vow against the current run - load the matching save type to resolve it.');
+    if (!cr) return _WRONGSAVE('Checks the Vow of Rivals against the current run - load the matching save type to resolve it.');
     const args = rec.FunctionArgs || {};
     const entered = cr.EnteredBiomes || 0;
     const rank = args.UseShrineUpgradesCache
@@ -306,7 +306,7 @@ function evalBossDifficulty(rec, root) {
     if (cr.IsDreamRun && entered > 0) {
         const biome = Array.isArray(cr.BiomeVisitOrder) ? cr.BiomeVisitOrder[entered - 1] : (cr.BiomeVisitOrder || {})[entered];
         const map = BOSS_DIFFICULTY_SHRINE_ENCOUNTER_BIOME_MAP[biome];
-        if (!map) return _MET('unknown', 'Dream-run boss-difficulty check for an unmapped biome.');
+        if (!map) return _MET('unknown', 'Dream Dive Vow of Rivals check for an unmapped region.');
         const cache = map.OnlyRequireSeen ? (gs && gs.EncountersOccurredCache) : (gs && gs.EncountersCompletedCache);
         return _MET(luaTruthy(cache && cache[map.Encounter]) ? 'met' : 'unmet');
     }
@@ -478,7 +478,16 @@ function evalClause(rec, root) {
     }
     const base = path[0];
     if (base === 'AudioState') return evalAudioState(rec, path, root);
-    if (base !== 'GameState' && base !== 'PrevRun') {
+    // A path whose root segment is itself a Path* operator keyword is malformed
+    // (a source-data typo where the operator leaked into the path array, e.g.
+    // ``PathFalse: ["PathFalse", "RoomsEntered", ...]``). No such root exists in
+    // the save, so it resolves to nil and the operator applies to an absent
+    // value: PathFalse / PathEmpty are always satisfied, PathTrue / PathNotEmpty
+    // never are. Fall through to the nil-walk below (walkPath returns undefined)
+    // so the gate reads as the no-op it is in-engine, rather than indeterminate.
+    const malformedRoot = base === 'PathTrue' || base === 'PathFalse'
+        || base === 'PathEmpty' || base === 'PathNotEmpty';
+    if (!malformedRoot && base !== 'GameState' && base !== 'PrevRun') {
         // CurrentRun.* resolves from the persisted CurrentRun slice, but only
         // when the caller supplied one (the dialogue's owner matches the loaded
         // save type - see ``currentRunResolvable``). Otherwise it stays
@@ -488,7 +497,7 @@ function evalClause(rec, root) {
         if (base === 'CurrentRun' && root.CurrentRun) {
             // fall through to the shared resolver below (walkPath reads root.CurrentRun.*)
         } else if (base === 'CurrentRun') {
-            return _WRONGSAVE('Reads current-run state, load the matching save type to resolve it (an in-run \u201C_Temp\u201D save for run dialogue, a hub save for hub dialogue).');
+            return _WRONGSAVE('Reads current-run state, load the matching save type to resolve it (an in-run \"_Temp\" save for run dialogue, a hub save for hub dialogue).');
         } else {
             const why = base === 'MapState' ? 'live room/map state' : `${base} state`;
             return _MET('unknown', `Reads ${base}.* - ${why}, not resolved in this pass.`);
@@ -673,10 +682,44 @@ export function evaluateOtherRequirements(otherRequirements, gameStateSlice, sli
 // operand. Returns ``{ recs: [{green,red,counts}], flat: {green,red,counts} }``
 // (``flat`` = the union, for non-record-indexed renders), or null when nothing
 // is determinable.
+// PathTrue / PathFalse gate targeting a single ``SpeechRecord`` voiceline cue:
+// return operand marks that colour the cue's chip green when it has played and
+// the gate wants it played, red when it has played and the gate forbids it, and
+// neutral (no colour) when it has not played. Keyed by the full ``/VO/<cue>``
+// leaf so the voiceline renderer (``_voicelineCueHeadHtml``) can look it up.
+// Mirrors the H1 RequiredPlayed / RequiredFalsePlayed marks. Returns null when
+// the record isn't a single-cue SpeechRecord clause or the SpeechRecord table
+// isn't loaded (the played-state is then indeterminate, so the chip stays
+// neutral - matching a not-played cue).
+function _h2SpeechCueMark(key, val, root) {
+    const opKey = key.startsWith('PathFalse:') ? 'PathFalse' : 'PathTrue';
+    const rec = val[0];
+    const path = rec && typeof rec === 'object' ? rec[opKey] : null;
+    if (!Array.isArray(path)) return null;
+    const srIdx = path.indexOf('SpeechRecord');
+    // The cue must be the single segment immediately after ``SpeechRecord``.
+    if (srIdx < 0 || srIdx !== path.length - 2) return null;
+    const leaf = path[path.length - 1];
+    if (typeof leaf !== 'string' || !leaf.startsWith('/VO/')) return null;
+    const srTable = walkPath(root, path.slice(0, srIdx + 1));
+    if (srTable === undefined || srTable === null || typeof srTable !== 'object') return null;
+    const green = new Set();
+    const red = new Set();
+    if (luaTruthy(srTable[leaf])) (opKey === 'PathFalse' ? red : green).add(leaf);
+    return { recs: null, flat: { green, red } };
+}
+
 export function h2OperandMarks(key, val, slices = {}) {
-    if (typeof key !== 'string' || !key.startsWith('Path:') || !Array.isArray(val)) return null;
+    if (typeof key !== 'string' || !Array.isArray(val)) return null;
     const { runs = null, runsAgo = null, currentRun = null, rooms = null, prevRun = null, runHistory = null, audioState = null } = slices || {};
     const root = { GameState: slices.gameState || slices.GameState || null, CurrentRun: currentRun, PrevRun: prevRun, AudioState: audioState, _runs: runs, _runsAgo: runsAgo, _rooms: rooms, _runHistory: runHistory };
+    // A single-cue PathTrue / PathFalse gate on a SpeechRecord voiceline table
+    // colours the cue chip by whether it has played, mirroring H1's RequiredPlayed
+    // / RequiredFalsePlayed operand marks.
+    if (key.startsWith('PathTrue:') || key.startsWith('PathFalse:')) {
+        return _h2SpeechCueMark(key, val, root);
+    }
+    if (!key.startsWith('Path:')) return null;
     const recs = [];
     let determinable = false;
     for (const rec of val) {
@@ -905,7 +948,7 @@ export const OWNER_RUN_CONTEXT = {
     Prometheus: 'run', Scylla: 'run', Zagreus: 'run', InfestedCerberus: 'run', TyphonHead: 'run',
     // both (5): single owner that speaks in hub AND run
     NPC_Nemesis_01: 'both', NPC_Icarus_01: 'both', PlayerUnit: 'both', Speaker_Homer: 'both',
-    NPC_Charon_01: 'both', 
+    NPC_Charon_01: 'both',
 };
 
 // Whether a dialogue owned by ``owner`` can have its ``CurrentRun.*`` gates

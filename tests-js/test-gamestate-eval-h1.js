@@ -738,6 +738,26 @@ test('H1: h1OperandMarks marks owned items in a set/membership gate', () => {
     assert.equal(h1OperandMarks('RequiredOneOfTraits', ['T1', 'T2'], ctx({ gs: {} })), null);
 });
 
+test('H1: h1OperandMarks colours played / not-played voice-line cues', () => {
+    const c = ctx({
+        gs: { SpeechRecord: { '/VO/CueA': true } },
+        currentRun: { SpeechRecord: ['/VO/RunA'], CurrentRoom: { VoiceLinesPlayed: ['/VO/RoomA'] } },
+    });
+    // Global "must have played": a played cue is green (not-played stays neutral).
+    assert.deepEqual([...h1OperandMarks('RequiredPlayed', ['/VO/CueA', '/VO/CueB'], c).flat.green], ['/VO/CueA']);
+    // Global "must NOT have played": a played cue violates the gate -> red.
+    const neg = h1OperandMarks('RequiredFalsePlayed', ['/VO/CueA', '/VO/CueB'], c);
+    assert.deepEqual([...neg.flat.red], ['/VO/CueA']);
+    assert.deepEqual([...neg.flat.green], []);
+    // Per-run / per-room gates read the current-run slice's own record.
+    assert.deepEqual([...h1OperandMarks('RequiredAnyPlayedThisRun', ['/VO/RunA', '/VO/RunB'], c).flat.green], ['/VO/RunA']);
+    assert.deepEqual([...h1OperandMarks('RequiredFalsePlayedThisRoom', ['/VO/RoomA'], c).flat.red], ['/VO/RoomA']);
+    // A per-run gate on a hub save (no current run) is indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredAnyPlayedThisRun', ['/VO/RunA'], ctx({ gs: {} })), null);
+    // An older save with no global SpeechRecord is indeterminate -> null.
+    assert.equal(h1OperandMarks('RequiredPlayed', ['/VO/CueA'], ctx({ gs: {} })), null);
+});
+
 test('H1: h1OperandMarks tallies and colours "Name op Count" numeric gates', () => {
     const c = ctx({ gs: { EnemyKills: { Harpy: 3, Hydra: 0 }, NPCInteractions: { NPC_Sisyphus_01: 6 } } });
     // RequiredKills (min): present counts green, with the save's actual tally;
@@ -790,6 +810,24 @@ test('H1: h1OperandMarks colours run-kill array gates', () => {
     assert.deepEqual([...f.flat.green], []);
     // No current run (hub save) -> indeterminate -> null.
     assert.equal(h1OperandMarks('RequiredKillsThisRun', ['Harpy'], ctx({ gs: {} })), null);
+});
+
+test('H1: RequiredKillsThisRun / LastRun read the flat run-level EnemyKills (Hades II / biomes runs)', () => {
+    // Hades II runs (incl. the Hades Biomes ported runs) keep a flat run-level
+    // EnemyKills aggregate instead of the per-room RoomHistory.Kills that vanilla
+    // Hades 1 uses; archived runs keep ONLY this. Both per-run kill gates read it.
+    const cr = { EnemyKills: { Harpy: 2 } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Harpy'] }, ctx({ gs: {}, currentRun: cr })).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Hydra'] }, ctx({ gs: {}, currentRun: cr })).status, 'unmet');
+    const pr = { EnemyKills: { Theseus: 1 } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsLastRun: ['Theseus'] }, ctx({ gs: {}, prevRun: pr })).status, 'met');
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsLastRun: ['Minotaur'] }, ctx({ gs: {}, prevRun: pr })).status, 'unmet');
+    // Operand colouring reads the flat table too (green when killed).
+    const m = h1OperandMarks('RequiredKillsThisRun', ['Harpy', 'Hydra'], ctx({ gs: {}, currentRun: cr }));
+    assert.deepEqual([...m.flat.green], ['Harpy']);
+    // Vanilla Hades 1 (no flat EnemyKills) still reads per-room RoomHistory.Kills.
+    const crH1 = { RoomHistory: { 1: { Kills: { Harpy: 1 } } } };
+    assert.equal(evaluateH1OtherRequirements({ RequiredKillsThisRun: ['Harpy'] }, ctx({ gs: {}, currentRun: crH1 })).status, 'met');
 });
 
 test('H1: h1OperandMarks reads and colours single-scalar numeric gates', () => {

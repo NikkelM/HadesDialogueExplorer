@@ -109,13 +109,27 @@
         align-items: center;
     }
     /* min-height alone top-aligns the label inside the link/button content
-       box; flex-centre it so the text sits in the middle of the 44px row. */
+       box; flex-centre it so the text sits in the middle of the 44px row.
+       ``.save-upload-btn`` is included so the Load-save icon + label centre in
+       their (now half-width) button too - matching the other control buttons.
+       (The save STATUS pill is deliberately excluded: its longer, wrapping text
+       reads better left-aligned.) */
     .header-nav-link,
+    .save-upload-btn,
     .game-toggle-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
+    /* The game-toggle buttons reserve their bold (.active) width via a hidden
+       bold ``::after`` twin (game-toggle.css). That twin only works as an
+       overlay under the base ``inline-grid`` layout; once these rules switch the
+       button to ``inline-flex`` the twin becomes a real flex sibling beside the
+       label and shoves the visible text off-centre. Width reservation isn't
+       needed here anyway - the search sits on its own row at <= 1024px, so a
+       toggle-induced resize can't shift it - so drop the twin and let the label
+       centre cleanly. */
+    .game-toggle-btn::after { display: none; }
     /* The display overrides above (needed for sizing / glyph alignment)
        beat the UA ``[hidden] { display: none }`` rule, which would leave a
        cleared save status visible on mobile. Re-assert it. */
@@ -137,8 +151,28 @@
     .save-upload {
         display: contents;
     }
-    #nav-duplicates { order: 1; }
-    .save-upload-btn { order: 2; }
+    /* Align every control row to the search box's full-width edges so the
+       stacked header reads as one tidy column instead of ragged rows with
+       independent widths. The search box + save status already span the full
+       width; here the two button pairs (game toggle; duplicates + Load save)
+       each fill their row and split it evenly (50/50), so all rows share the
+       same left / right edges. ``min-width: 0`` lets the long "Cross-game
+       duplicates" label shrink to its half rather than overflow. */
+    .game-toggle {
+        display: flex;
+        flex-basis: 100%;
+    }
+    .game-toggle-btn { flex: 1 1 0; }
+    #nav-duplicates {
+        order: 1;
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    .save-upload-btn {
+        order: 2;
+        flex: 1 1 0;
+        min-width: 0;
+    }
     #save-status { order: 5; }
     /* Forced full-width break between the two rows, gated on a loaded save
        (the status pill becomes visible) via :has so the no-save header carries
@@ -149,12 +183,52 @@
         flex-basis: 100%;
         height: 0;
     }
-    /* The status pill can be long (e.g. "Hades II with Zagreus' Journey: 1234
-       dialogues"); let its text wrap rather than overflow its row. */
+    /* Save status spans the full width (its own row); its text can be long
+       (e.g. "Hades II with Zagreus' Journey: 1234 dialogues") so let it wrap
+       rather than overflow. */
     #save-status {
+        flex-basis: 100%;
         min-width: 0;
         white-space: normal;
         max-width: 100%;
+    }
+}
+
+/* === Tap targets (a11y, #139) =====================================
+ * Clickable speaker chips (the detail panel's Owner / Partner, the eligibility
+ * tracer's Owner, and every dialogue-line speaker prefix - all navigate to the
+ * speaker overview) render only ~18px tall, below the comfortable touch
+ * minimum. They are inline within flowing text and carry a dotted-underline
+ * affordance, so neither ``min-height`` (detaches the underline) nor block
+ * ``padding`` (bloats the dense dialogue-line list) is acceptable.
+ *
+ * Instead extend the HIT AREA with a transparent absolutely-positioned
+ * ``::before`` overlay centred on the chip: taps on it bubble to the chip's own
+ * onclick, so the tappable region grows to >= 24px vertically while the text,
+ * underline, and line box are all untouched (zero layout change). Height is
+ * kept at 28px (not the full 44px) so overlays on consecutive dialogue lines
+ * (~35px apart) never collide. ``::before`` is used because the meta variant
+ * already owns ``::after`` (its "go to speaker" chevron).
+ *
+ * Only the ``.clickable`` variant is targeted, so non-navigating speaker labels
+ * (search rows, snippet prefixes) are unchanged. The header controls, search,
+ * collapsible section pills, and FAB menu already meet >= 44px via other rules.
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    .speaker-name.clickable {
+        position: relative;
+    }
+    .speaker-name.clickable::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 28px;
+        transform: translateY(-50%);
+        /* Transparent tap extender only - no visual. Taps here hit the chip
+           (a pseudo-element is part of its host for hit-testing) and fire its
+           navigate-to-speaker onclick. */
     }
 }
 
@@ -185,13 +259,75 @@
         min-height: 38px;
         margin: 1px 0;
     }
-    .req-section h4 {
-        min-height: 36px;
+    /* Bigger tap target for the collapse-toggle header pills. Use symmetric
+       vertical padding rather than ``min-height`` + ``align-items: center`` so
+       the desktop ``align-items: flex-start`` still holds: the status dot stays
+       centred on the label's FIRST line no matter how many lines it wraps to
+       (``center`` floated it between the two lines of a wrapped header like "AT
+       LEAST ONE OF THESE 2 BRANCHES"), and a single-line pill still reads
+       vertically centred thanks to the equal padding. Listed for every header
+       pill type so h4 (req-type / OR-group) and h5 (OR-branch / named) stay
+       consistent - previously only ``.req-section h4`` was enlarged, which is
+       what made h4 and h5 headers misalign against each other. */
+    .req-section h4,
+    .or-branch-header,
+    .named-req-header {
+        padding-top: 7px;
+        padding-bottom: 7px;
         margin-bottom: 4px;
-        display: inline-flex;
-        align-items: center;
     }
 }
+
+/* === Dialogue-view mobile accordion ==================================
+ * Desktop lays the three panels out as side-by-side columns, so growth in one
+ * never moves the others (CLS 0). Mobile stacks them vertically (foundation
+ * above), which shoved the tall Dependents tree down as the Details +
+ * Prerequisites content streamed in - a 0.382 CLS pinned to ``#panel-downstream``.
+ *
+ * Turn the stacked panels into an accordion: each ``<h2>`` heading toggles its
+ * body, and only Details is open on first paint (``#panel-info`` carries
+ * ``acc-open`` in the static markup; the trees start collapsed). With the heavy
+ * trees collapsed to just their headers on load, only thin headers can shift,
+ * so the CLS stays tiny; expanding a panel gives it the full page width, which
+ * also relieves the tree / requirement-group horizontal overflow. Toggling is
+ * wired in mobile-accordion.js. Desktop (> 1024px) keeps the columns untouched.
+ * ==================================================================== */
+@media (max-width: 1024px) {
+    /* The heading becomes the accordion toggle: a full-width, touch-height tap
+       target with a trailing chevron. The chevron is a pseudo-element so
+       navigation.js's ``textContent`` reset of the info heading can't wipe it. */
+    body.layout-dialogue .panel > h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: var(--tap-min);
+        padding-top: 10px;
+        padding-bottom: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+    body.layout-dialogue .panel > h2::after {
+        content: "\25B6"; /* right-pointing triangle: collapsed */
+        margin-left: auto;
+        font-size: var(--fs-2xs);
+        opacity: 0.7;
+        transition: transform 0.15s ease;
+    }
+    body.layout-dialogue .panel.acc-open > h2::after {
+        transform: rotate(90deg); /* points down when the section is open */
+    }
+    body.layout-dialogue .panel > h2:focus-visible {
+        outline: 2px solid var(--accent-color);
+        outline-offset: -2px;
+    }
+    /* A collapsed section hides its body - only the header row shows. Info is
+       open by default (``acc-open`` in the static markup); the two trees are
+       collapsed until tapped. */
+    body.layout-dialogue .panel:not(.acc-open) > .panel-body {
+        display: none;
+    }
+}
+
 @media (max-width: 599px) {
     /* The badge cluster (played / priority / play-once / #N/M) sits inline
        at the right of the dialogue name on desktop via margin-left:auto.
@@ -217,20 +353,53 @@
  * reuses these same tree rows, so it inherits the fix.
  * ==================================================================== */
 @media (max-width: 1024px) {
-    /* Contain the wide tree within its panel instead of widening the page.
-       overflow-x:auto promotes overflow-y to auto, but the panel-body height
-       is unconstrained on mobile (it grows to fit content), so nothing is
-       clipped vertically - only the x-axis scrolls. */
+    /* Safety net only: tree rows WRAP on mobile now (see ``.tree-label`` below),
+       so the tree no longer runs wide. This keeps any residual wide content
+       (an unusually long unbreakable token, a deep group box) contained within
+       the panel rather than widening the page. */
     #upstream-content,
     #downstream-content {
         overflow-x: auto;
     }
-    /* Trim the recursive, depth-compounding indent (desktop is 16 + 12) so
-       deep chains run off the right far more slowly on a narrow screen. The
-       one-off group-box offsets are left as-is. */
+    /* Trim the recursive, depth-compounding indent (desktop is 16 + 12) hard on
+       mobile: the dialogue name is the important part and should keep as much
+       width as possible, so give each level only a small step (the border-left
+       still shows the nesting). */
     .tree-node {
-        margin-left: 4px;
-        padding-left: 6px;
+        margin-left: 0;
+        padding-left: 5px;
+    }
+    /* The desktop root is ``width: max-content`` - it drives the shared
+       right-edge that the horizontal scroll follows. On mobile we wrap instead,
+       so pin the root to the panel's width; every box below is ``width: auto``
+       and fills it, so the rows wrap into the panel rather than running wide. */
+    .tree-node.root {
+        width: auto;
+        min-width: 0;
+    }
+    /* Deep-tree indentation: the desktop group boxes each add 16px (8px for OR
+       branches) and their child tree-nodes another 8px, so nesting compounds
+       into unreadable name slivers by ~6 levels deep on a phone. Collapse every
+       per-level left offset to a small uniform step - the coloured box frames +
+       border-left guide lines still convey the nesting - so names stay readable
+       even in deep chains. */
+    .gamedata-group,
+    .req-type-group,
+    .or-group,
+    .or-branch-box,
+    .or-downstream-section,
+    .req-type-group-children > .gamedata-group,
+    .or-branch-box-children > .req-type-group,
+    .or-downstream-children > .req-type-group {
+        margin-left: 3px;
+    }
+    .gamedata-group-children .tree-node,
+    .req-type-group-children > .tree-node {
+        margin-left: 0;
+        padding-left: 5px;
+    }
+    .alternates-group-children {
+        padding-left: 4px;
     }
     /* The eligibility tracer's own dialogue rows wrap rather than scroll, but
        still need a full touch height. */
@@ -251,18 +420,80 @@
     }
     /* The upstream / downstream tree rows themselves are denser: a shorter
        row and tighter vertical margin (still a comfortable tap height), and
-       trimmed horizontal padding to claw back the left gutter. */
+       trimmed horizontal padding to claw back the left gutter. Rows WRAP on
+       mobile (the desktop ``white-space: nowrap`` + ``width: max-content`` made
+       deep chains / long names run ~500px wide inside a 390px panel). The name
+       takes the first line; ``flex-wrap`` lets the secondary metadata drop to a
+       second line below it (``.tree-label-meta``). ``align-items: center`` keeps
+       the chevron and status dot centred on the name's line (not floating at
+       the top), and ``row-gap`` keeps the metadata row tight under the name. */
     .tree-label {
         min-height: 38px;
-        margin: 1px 0;
-        padding: 2px 6px;
+        margin: 3px 0;
+        padding: 2px 4px 6px;
+        white-space: normal;
+        width: auto;
+        /* Fallback wrap-guard: a floor on the row width so it never shrinks into
+           an unreadable sliver. Realistic depths (the reduced indentation above)
+           keep rows far wider than this, so it never triggers in practice; but
+           if some unforeseen extreme nesting pushed a row below the floor, the
+           row holds this width and overflows instead - the panels' ``overflow-x:
+           auto`` (above) then gives that row horizontal scroll rather than
+           wrapping the name one or two characters per line. */
+        min-width: 160px;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: center;
+        row-gap: 2px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
-    /* The chevron column was a full 44px wide, leaving a large dead gutter on
-       the left of every row (leaf rows have no chevron at all). Narrow it -
-       it stays full row height, so it's still an easy target. */
+    /* The two-row rows (name + metadata) can blur into the next row when a run
+       of them is collapsed. A little more vertical margin plus a faint hairline
+       separates each row. Suppressed when the row is expanded - its own children
+       (indented below, behind the node's border-left) already break the flow, so
+       a line there would read as cutting the parent off from its children. */
+    .tree-label:has(+ .tree-children.expanded) {
+        border-bottom: none;
+        padding-bottom: 2px;
+    }
+    /* The name claims the rest of the first line and breaks long unbroken ids
+       to fit rather than overflow. ``flex-basis: 0`` keeps it on the chevron's
+       line (wrapping its text internally) instead of ``flex-wrap`` bumping the
+       whole name onto a line of its own below the chevron. */
+    .tree-label .name {
+        flex: 1 1 0;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+    /* Secondary metadata (priority / edge / OR / owner ...) becomes its own
+       second row (``flex-basis: 100%``), indented under the name so it reads as
+       subordinate to it, and left-aligned - the desktop ``margin-left: auto`` on
+       the owner tag (and any badge) is cleared so they group at the left. */
+    .tree-label-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px 6px;
+        flex-basis: 100%;
+        margin-left: 24px;
+    }
+    .tree-label-meta > * {
+        margin-left: 0;
+    }
+    /* Beat the desktop right-align rules (``.tree-label .priority-badge`` /
+       ``.npc-tag`` use ``margin-left: auto``; the ``~`` rule is 3-class) so the
+       second row's badges + owner group at the left, spaced by the flex gap. */
+    .tree-label-meta .priority-badge,
+    .tree-label-meta .npc-tag,
+    .tree-label-meta .priority-badge ~ .npc-tag {
+        margin-left: 0;
+    }
+    /* The chevron column: keep it tappable but narrow so the name gets the
+       width. ``align-self: center`` (matching the label's ``align-items:
+       center``) centres it on the name's line rather than inflating the row. */
     .tree-label .toggle {
-        min-width: 30px;
-        align-self: stretch;
+        min-width: 22px;
+        align-self: center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -283,28 +514,12 @@
 }
 
 /* === Site disclaimer placement ======================================
- * Desktop pins the disclaimer to the foot of the middle (prerequisites)
- * panel via ``#upstream-content::after``. Once the panels stack on mobile
- * that lands it mid-page, between prerequisites and dependents. Move it to
- * the foot of the last panel (dependents) so it reads as a page footer. The
- * single-panel views keep their ``#info-content`` disclaimer, already last
- * on mobile. (The string is repeated from base.css rather than touching the
- * locked desktop rule; it is also the README's wording.)
+ * The site footer is a single page-level element below <main> (index.html),
+ * so it spans the full width in every view. On mobile the page scrolls and
+ * main's flex-grow (base rule) keeps the footer at the viewport bottom for
+ * short content while taller content grows the page - no per-view rules
+ * needed here.
  * ==================================================================== */
-@media (max-width: 1024px) {
-    #upstream-content::after {
-        display: none;
-    }
-    #downstream-content::after {
-        content: 'Built with the assistance of generative AI. All game content belongs to Supergiant Games.';
-        display: block;
-        padding: 12px 20px;
-        font-size: var(--fs-2xs);
-        color: #444;
-        text-align: center;
-        border-top: 1px solid #0f346040;
-    }
-}
 
 /* === Eligibility tracer ==============================================
  * The tracer is a single panel of wrapping flex rows, so it reflows through
@@ -469,6 +684,29 @@
     .duplicates-entry > .duplicates-game-link:first-of-type {
         margin-left: 0;
     }
+    /* Loading skeleton mirrors the mobile stack: the speaker placeholders wrap
+       as a chip row and the detail drops to one column, like ``.duplicates-md``
+       / ``.duplicates-speakers`` above. The detail grid's auto-fill already
+       collapses to a single 405px-min column at phone width, so only the row
+       gap needs matching. */
+    .sk-dup {
+        grid-template-columns: 1fr;
+    }
+    .sk-dup-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .sk-dup-spk {
+        flex: 0 0 auto;
+    }
+    .sk-dup-spk .sk-line.sk-grow {
+        flex: 0 0 auto;
+        width: 54px;
+    }
+    .sk-dup-grid {
+        row-gap: 0.9rem;
+    }
 }
 @media (max-width: 1024px) {
     /* Touch-size the filter input, the game-open buttons and the speaker
@@ -482,6 +720,12 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+    }
+    /* Speaker-picker (empty-state) filter input + tiles: same touch sizing as
+       the duplicates master list they mirror. */
+    .speaker-picker-search,
+    .speaker-picker-item {
+        min-height: var(--tap-min);
     }
 }
 

@@ -20,7 +20,7 @@
 // each row carries ``role="option"`` with a stable id and the input
 // mirrors the active row via ``aria-activedescendant``.
 
-import { textlines, speakers, onGameData } from './data.js';
+import { textlines, onGameData } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { searchNameMatches } from './search-name.js';
 import { searchTextLines, renderTextMatchHtml } from './search-text.js';
@@ -28,8 +28,6 @@ import { searchSpeakerMatches } from './search-speaker.js';
 import { searchCrossGameNames, searchCrossGameText, searchCrossGameSpeakers } from './search-cross-game.js';
 import { parseQuery, isQueryEmpty } from './query-parser.js';
 import { navigateTo, navigateToSpeaker, navigateToEligibility, navigateToState } from './navigation.js';
-import { parseUrlState } from './url.js';
-import { canonicalIdForSpeakerName } from './speaker-groups.js';
 
 // Pure arithmetic helper for arrow-key navigation. Returns the next
 // active index given the current one (-1 if nothing is active yet),
@@ -439,33 +437,13 @@ export function initSearch() {
         onInput();
     });
 
-    // The value the search box holds when it simply mirrors the open page
-    // (set by ``applyState`` after a navigation): the dialogue name in the
-    // dialogue / eligibility views, or the speaker's friendly name in the
-    // speaker view. Mirrors ``applyState``'s own value computation so the
-    // focus-reopen below can tell "still showing the current page" apart from
-    // "a typed-but-uncommitted phrase".
-    function currentPageSearchValue() {
-        const state = parseUrlState(window.location.hash);
-        const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
-        if (view === 'speaker') {
-            const ref = state.speaker || null;
-            const speakerId = ref ? (canonicalIdForSpeakerName(ref) || ref) : null;
-            const entry = speakerId ? speakers[speakerId] : null;
-            return (entry && entry.name) || ref || '';
-        }
-        return state.dialogue || '';
-    }
-
-    // Re-focusing the search box with a phrase that was typed but never
-    // committed (so it doesn't match the open page) reopens the results
-    // dropdown without needing another keystroke. Skipped when the box is
-    // empty or its content already matches the current page - there's nothing
-    // new to search for in that case.
+    // Re-focusing the search box reopens the results dropdown without needing
+    // another keystroke - including when the box still shows the current page
+    // (set by ``applyState`` after a navigation), so focusing it surfaces the
+    // open dialogue plus its neighbours. Only skipped when the box is empty.
     searchInput.addEventListener('focus', () => {
         if (searchResults.classList.contains('visible')) return;
         if (searchInput.value.trim() === '') return;
-        if (searchInput.value.trim() === currentPageSearchValue().trim()) return;
         onInput();
     });
 

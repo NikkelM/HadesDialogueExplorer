@@ -16,7 +16,7 @@ import { getSaveProgress, getSaveContext, saveMatchesActiveGame, isDialoguePlaye
 import { AND_REQ_TYPES, OR_REQ_TYPES, COUNT_MIN_REQ_TYPES, RUNS_SINCE_REQ_TYPES, REQ_TYPE_SCOPE, requiredCount, directSatisfaction, runsSinceExplain, scopedGateExplain } from './requirements.js';
 import { isUnobtainable, unobtainableReasons } from './unobtainable.js';
 import { computePlayAhead } from './play-order.js';
-import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection, clauseStatusDotHtml } from './info-panel.js';
+import { renderOtherReqEntryHtml, renderOtherReqTooltip, renderNamedReqExpansionsHtml, renderRetiredBannerHtml, computeOperandMarks, setOperandMarks, splitOtherReqRecords, evaluateOtherReqSection, clauseStatusDotHtml, renderStatusLegendHtml } from './info-panel.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, OWNER_RUN_CONTEXT, gateClausePermanentlyUnmet, evaluateOtherReqUnit } from './gamestate-eval.js';
 
 // AND / OR / COUNT_MIN requirement-type sets come from ./requirements.js
@@ -288,7 +288,7 @@ function renderUnobtainableReasonsHtml(rootName, playedSet, runsAgo, context = n
         } else if (r.kind === 'runcount') {
             const when = r.ago === null ? 'longer ago than the tracked run history' : `${runs(r.ago)} ago`;
             items.push(`<li>${ref(r.blocker)} can only play once and played ${when}, so this dialogue\u2019s `
-                + `\u201Cwithin ${runs(r.count)}\u201D gate can never be met again.</li>`);
+                + `\"within ${runs(r.count)}\" gate can never be met again.</li>`);
         } else if (r.kind === 'skip') {
             // Same banner as the detail panel (renderRetiredBannerHtml) so
             // the retired-line treatment is identical across both views.
@@ -344,10 +344,10 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
     if (hasIndirect || hasGroups) {
         const parts = ['Counts prerequisites across the whole chain'];
         if (hasIndirect) parts.push('including indirect ones (a prerequisite\u2019s own prerequisites)');
-        if (hasGroups) parts.push('with each \u201Cplay any of\u201D group counted once');
+        if (hasGroups) parts.push('with each \"play any of\" group counted once');
         const visible = parts.join(', ') + ' - so it may differ from the tree below.';
         const tip = 'Indirect prerequisites (prerequisites of prerequisites) are included, so the total '
-            + 'can exceed the requirements listed directly on this dialogue. A \u201Cplay any N of these\u201D '
+            + 'can exceed the requirements listed directly on this dialogue. A \"play any N of these\" '
             + 'group counts as the N you must play - not its number of options - and branches you have '
             + 'already satisfied drop off, so the total can be smaller than the number of rows in the '
             + 'prerequisite tree below.';
@@ -359,7 +359,7 @@ function renderSummaryHtml(rootName, chain, groups, mandatory) {
 
     if (rootPlayed) {
         html += `<div class="eligibility-status eligibility-played">\u2714 Already played</div>`;
-        html += `<div class="eligibility-detail">${escapeHtml(rootName)} is already in this save's TextLinesRecord.${rankInline}</div>`;
+        html += `<div class="eligibility-detail">${escapeHtml(rootName)} has already been played in this save.${rankInline}</div>`;
     } else if (unobtainable) {
         // Checked before "eligible": a structurally-locked dialogue (e.g. a
         // choice variant whose sibling was chosen) can still have its
@@ -600,7 +600,7 @@ export function renderOtherConditionsHtml(rootName) {
         ? `Other requirements (${rowCount}) - ${verdict === 'met' ? 'all satisfied' : verdict === 'unobtainable' ? 'permanently locked' : verdict === 'unmet' ? 'one or more not satisfied' : 'some can\u2019t be checked from the save'}`
         : `Other requirements (${rowCount})`;
     const hint = haveSave
-        ? 'Non-textline conditions, checked against your save\u2019s GameState. Some requirements can only be checked against hub saves, and others only against in-run saves.'
+        ? 'Non-textline conditions, checked against your save. Some requirements can only be checked against hub saves, and others only against in-run saves.'
         : 'Non-textline conditions (game state, unlocks, run modifiers) this dialogue also gates on. Load a save to check them.';
 
     let html = `<div class="eligibility-tree">`;
@@ -1161,6 +1161,11 @@ export function renderEligibility(dialogueName) {
     if (!played) {
         html += renderOtherConditionsHtml(dialogueName);
     }
+
+    // Dot key legend: pinned to the bottom of the tracer, below every section
+    // whose dots it keys. Skipped once the dialogue has played (those dot-bearing
+    // sections are hidden), matching the gates above.
+    if (!played) html += renderStatusLegendHtml();
 
     html += `</div>`;
     container.innerHTML = html;

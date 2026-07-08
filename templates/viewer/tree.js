@@ -123,36 +123,67 @@ export function hasChildren(name, direction) {
     return (dependents[name] || []).some(d => d.name !== name);
 }
 
-// Bring newly-expanded content into the visible scroll viewport. After
-// a DOM mutation reveals new tree rows (e.g. clicking a `.tree-label`
-// toggle, expanding a `.req-type-group` / `.gamedata-group` header),
-// horizontally scroll the enclosing `.panel-body` to the rightmost
-// position so the full extent of the section is on-screen. CSS handles
-// the actual layout / right-edge alignment (see `styles/tree.css`):
-// each container uses default block layout so its right edge equals
-// its parent's right edge, and the root `.tree-node.root` sizes to
-// `max-content` so the panel-body scrollWidth equals the widest
-// descendant's natural content width. We only need to nudge the
-// scroll position here.
+// Bring a newly-expanded row into a useful scroll position. After a DOM
+// mutation reveals new tree rows (clicking a `.tree-label` toggle, expanding a
+// `.req-type-group` / `.gamedata-group` / OR-group header), horizontally scroll
+// the enclosing `.panel-body` so the EXPANDED row's own left edge sits at the
+// column's left content edge (where top-level rows naturally begin, i.e. just
+// inside the panel-body's left padding).
 //
-// We always scroll to `panelBody.scrollWidth` (auto-clamped to the
-// max scrollable position) rather than measuring whether the new
-// container fits in the current viewport. Measuring `container.right`
-// is unreliable because: the newly-revealed branch can contain deeper
-// labels that grew the panel's intrinsic width via `max-content`
-// propagation; each level of `.req-type-group` / `.gamedata-group`
-// adds `padding-right` framing so the container's right edge sits
-// inside the panel's rightmost content; and a previous expand may
-// have already scrolled the container into view, leaving the
-// section's full extent still off-screen. Unconditional max-scroll
-// matches the user's mental model: "expand to see the whole section".
-export function ensureExpandedContentVisible(container) {
-    if (!container) return;
-    const panelBody = container.closest('.panel-body');
+// This keeps the clicked row and the start of its (more-indented) children in
+// view from the left, instead of the old behaviour of jumping to
+// `panelBody.scrollWidth` - the far right - which showed only the single
+// deepest new descendant and scrolled the clicked row off the left entirely.
+//
+// ``rowEl`` is the clicked row/header element (not its children box): its
+// horizontal position is fixed by its nesting depth and is unaffected by the
+// children appended below it, so the target is stable. We measure inside a
+// ``requestAnimationFrame`` so the just-mutated layout is settled first.
+export function ensureExpandedContentVisible(rowEl) {
+    if (!rowEl) return;
+    const panelBody = rowEl.closest('.panel-body');
     if (!panelBody) return;
     requestAnimationFrame(() => {
-        panelBody.scrollTo({ left: panelBody.scrollWidth, behavior: 'smooth' });
+        const rowLeft = rowEl.getBoundingClientRect().left - panelBody.getBoundingClientRect().left;
+        // The row's left edge in the panel's scroll coordinate space, aligned to
+        // the content start (left padding) so it isn't flush against the border.
+        const padLeft = parseFloat(getComputedStyle(panelBody).paddingLeft) || 0;
+        const target = Math.max(0, panelBody.scrollLeft + rowLeft - padLeft);
+        panelBody.scrollTo({ left: target, behavior: 'smooth' });
     });
+}
+
+// Whether the stacked mobile layout is active (<= 1024px, the responsive.css
+// tablet breakpoint). Used to give tree rows touch-tuned tap behaviour: the
+// owner tag doesn't navigate on tap, single-tap only expands (never selects
+// into the details panel), and a quick second tap re-roots.
+function treeIsMobileLayout() {
+    return typeof window !== 'undefined'
+        && typeof window.matchMedia === 'function'
+        && window.matchMedia('(max-width: 1024px)').matches;
+}
+
+// Custom double-tap detection for the mobile tree. Desktop re-roots the tree on
+// ``dblclick``; on touch that is unreliable (double-tap is a zoom gesture and
+// often fires no ``dblclick``), so on mobile we detect two quick taps on the
+// same row here instead. ``touch-action: manipulation`` on ``.tree-label`` (see
+// tree.css) disables the double-tap-zoom so both taps arrive promptly as
+// clicks. Returns true when the tap completed a double-tap (and re-rooted), so
+// the caller skips its single-tap action.
+const DOUBLE_TAP_MS = 300;
+let lastTapName = null;
+let lastTapTime = 0;
+function handleMobileDoubleTap(name) {
+    const now = Date.now();
+    if (lastTapName === name && now - lastTapTime < DOUBLE_TAP_MS) {
+        lastTapName = null;
+        lastTapTime = 0;
+        navigateTo(name);
+        return true;
+    }
+    lastTapName = name;
+    lastTapTime = now;
+    return false;
 }
 
 export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
@@ -250,6 +281,15 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     nameSpan.textContent = name;
     label.appendChild(nameSpan);
 
+    // Secondary metadata (status / blocked / skip badges, cycle marker,
+    // OR-routed badge, narrative-priority badge, owner tag) is wrapped so mobile
+    // can drop it onto its own second row beneath the name - the name is the
+    // important part and should get the full first row. On desktop the wrapper
+    // is ``display: contents`` (tree.css), so these elements stay inline in the
+    // flex row exactly as before: no desktop layout change.
+    const meta = document.createElement('span');
+    meta.className = 'tree-label-meta';
+
     if (!tl) {
         const cat = unresolvedCategoryFor(name);
         const warn = document.createElement('span');
@@ -263,14 +303,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             warn.textContent = '\u26A0 not in game';
             warn.dataset.tooltip = 'Not found in the parsed game data.';
         }
-        label.appendChild(warn);
+        meta.appendChild(warn);
         const blocks = unresolvedRefBlocks[name] || [];
         if (blocks.length > 0) {
             const blockedBadge = document.createElement('span');
             blockedBadge.className = 'tree-blocked-badge';
             blockedBadge.textContent = `\u26D4 blocks ${blocks.length}`;
             blockedBadge.dataset.tooltip = `Blocks ${blocks.length} dialogue${blocks.length === 1 ? '' : 's'} from ever playing: ${blocks.join(', ')}`;
-            label.appendChild(blockedBadge);
+            meta.appendChild(blockedBadge);
         }
     } else if (tl.skip) {
         const skipBadge = document.createElement('span');
@@ -282,7 +322,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         skipBadge.dataset.tooltip = tl.skipReplacement
             ? `Retired line (flagged Skip) - can never play. Superseded by ${tl.skipReplacement}.`
             : 'Retired line (flagged Skip) - can never play.';
-        label.appendChild(skipBadge);
+        meta.appendChild(skipBadge);
     } else if (tl.blocked) {
         const blockedBadge = document.createElement('span');
         blockedBadge.className = 'tree-blocked-badge';
@@ -293,14 +333,14 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         blockedBadge.dataset.tooltip = reasonText
             ? `This dialogue can never play. ${reasonText}`
             : 'This dialogue can never play.';
-        label.appendChild(blockedBadge);
+        meta.appendChild(blockedBadge);
     }
 
     if (isCycle) {
         const cycleSpan = document.createElement('span');
         cycleSpan.className = 'cycle-marker';
         cycleSpan.textContent = ' \u21A9 cycle';
-        label.appendChild(cycleSpan);
+        meta.appendChild(cycleSpan);
     }
 
     // OR-routed dep badge (downstream only). Indicates this row
@@ -315,7 +355,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         orAlt.className = 'or-alt-badge';
         orAlt.textContent = `option ${edgeOpts.orBranchIndex}/${edgeOpts.orBranchTotal}`;
         orAlt.dataset.tooltip = `Routed via option ${edgeOpts.orBranchIndex} of ${edgeOpts.orBranchTotal} in this dependent's OR group. The dependent does not strictly need this textline; any one option in its OR group satisfies the gate.`;
-        label.appendChild(orAlt);
+        meta.appendChild(orAlt);
     }
 
     // Narrative-priority badge. Tree view shows a single compact
@@ -330,7 +370,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tierHtml;
             while (wrapper.firstChild) {
-                label.appendChild(wrapper.firstChild);
+                meta.appendChild(wrapper.firstChild);
             }
         }
     }
@@ -358,12 +398,21 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
         // ``stopPropagation`` keeps the parent row's click handler
         // (which selects or expands the textline) from firing for
         // the same gesture.
+        //
+        // Disabled on the stacked mobile layout (<= 1024px, see
+        // responsive.css): the tag is a tiny tap target crowded against the
+        // row, so navigating on tap causes frequent misinputs. There we let the
+        // tap fall through to the row (toggle / select) instead of yanking the
+        // user to the speaker view.
         npcSpan.addEventListener('click', (e) => {
+            if (treeIsMobileLayout()) return;
             e.stopPropagation();
             navigateToSpeaker(tl.owner);
         });
     }
-    label.appendChild(npcSpan);
+    meta.appendChild(npcSpan);
+
+    label.appendChild(meta);
 
     node.appendChild(label);
 
@@ -388,7 +437,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                     childContainer.classList.add('expanded');
                     toggle.textContent = '\u25BC';
                     label.setAttribute('aria-expanded', 'true');
-                    ensureExpandedContentVisible(childContainer);
+                    ensureExpandedContentVisible(label);
                 }
                 return childContainer;
             }
@@ -401,7 +450,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
             label.setAttribute('aria-expanded', 'true');
-            ensureExpandedContentVisible(childContainer);
+            ensureExpandedContentVisible(label);
             return childContainer;
         };
 
@@ -429,8 +478,18 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             // Skip clicks inside the toggle chevron (its own handler runs and
             // stops propagation; this guards against future child elements).
             if (e.target.closest('.toggle')) return;
-            // The whole row body toggles expand / collapse; clicking the
-            // dialogue name additionally loads it into the detail panel, so
+            if (treeIsMobileLayout()) {
+                // Mobile: a single tap only expands / collapses (rows are
+                // usually tapped just to explore the tree, so it must NOT select
+                // the row into the details panel). A quick second tap on the
+                // same row re-roots it (makes it the main dialogue, which also
+                // shows its details) - the touch replacement for dblclick.
+                if (handleMobileDoubleTap(name)) return;
+                toggleNode();
+                return;
+            }
+            // Desktop: the whole row body toggles expand / collapse; clicking
+            // the dialogue name additionally loads it into the detail panel, so
             // browsing by toggling the empty space doesn't swap the panel.
             // ``tour-no-nav`` (set during a tour step) suppresses only the
             // panel swap, leaving expand / collapse working.
@@ -440,11 +499,20 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
     } else {
         label.addEventListener('click', () => {
             if (document.body.classList.contains('tour-no-nav')) return;
+            if (treeIsMobileLayout()) {
+                // Mobile: a leaf can't expand, so a single tap does nothing
+                // (no details select); a quick second tap re-roots it.
+                handleMobileDoubleTap(name);
+                return;
+            }
             renderInfo(name);
         });
     }
 
-    label.addEventListener('dblclick', () => navigateTo(name));
+    // Desktop re-roots on double-click; on mobile the same is handled by the
+    // two-quick-taps detection in the click handlers above (dblclick is
+    // unreliable on touch), so guard this to true-desktop to avoid firing twice.
+    label.addEventListener('dblclick', () => { if (!treeIsMobileLayout()) navigateTo(name); });
 
     return node;
 }

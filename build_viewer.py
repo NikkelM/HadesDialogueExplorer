@@ -52,6 +52,7 @@ real ES module imports.
 import argparse
 import base64
 import hashlib
+import html
 import json
 import re
 import shutil
@@ -59,6 +60,7 @@ import sys
 from pathlib import Path
 
 from src.graph_merge import merge_graph_data
+from viewer_bundle import assemble_viewer_js, build_js, build_source_map
 from src.known_unresolved import annotate_known_unresolved
 from src.blocked_textlines import annotate_blocked_textlines
 from src.manual_overrides import apply_manual_overrides
@@ -72,7 +74,6 @@ from src.extractors.hades2 import HADES2_OFFER_TEXT_MAP
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
 INDEX_TEMPLATE = TEMPLATES_DIR / "index.html"
-VIEWER_JS_DIR = TEMPLATES_DIR / "viewer"
 STYLES_DIR = PROJECT_DIR / "styles"
 STATIC_DIR = PROJECT_DIR / "static"
 OUTPUT_DIR = PROJECT_DIR / "outputs"
@@ -81,13 +82,55 @@ DIST_DIR = PROJECT_DIR / "dist"
 # Files written by the split build. Tracked explicitly so the cleaner
 # only removes managed artifacts, not anything else the user may have
 # dropped in ``dist/`` (e.g. screenshots, release notes).
-_SPLIT_OUTPUT_NAMES = ("index.html", "viewer.js", "viewer.css", "data.json")
+_SPLIT_OUTPUT_NAMES = (
+    "index.html", "viewer.js", "viewer.js.map", "viewer.css", "data.json", "og-image.png",
+)
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
+
+# Absolute deploy URL. Social scrapers (Open Graph / Twitter cards) don't
+# reliably resolve *relative* image URLs, so og:image / twitter:image must be
+# absolute. The hosted split build lives here; the offline single-file bundle
+# omits all SEO/OG tags (it's opened via file:// where they're meaningless).
+DEPLOY_BASE_URL = "https://nikkelm.dev/HadesDialogueExplorer/"
+OG_IMAGE_NAME = "og-image.png"
+# Tool-specific SEO copy (issue #141). The nikkelm.dev Cloudflare Worker injects
+# the site-wide tags (canonical, og:url, og:type, og:site_name) as
+# inject-if-absent fallbacks, so we deliberately emit ONLY the tags that
+# describe *this* tool here - no duplicates in the deployed HTML.
+SEO_DESCRIPTION = (
+    "Explore all dialogues from Hades & Hades II: what each one requires to "
+    "unlock, and where you are in your playthrough."
+)
+SEO_IMAGE_ALT = (
+    "Hades Dialogue Explorer - a browser tool showing the dialogue dependency "
+    "graph and eligibility requirements for lines from Hades and Hades II."
+)
 
 # Static assets copied verbatim into ``dist/`` for the split build and
 # inlined as data URIs for the single-file bundle. The per-game favicons
 # the viewer swaps between (see ``updateFavicon`` in game-toggle.js).
 _STATIC_ASSET_NAMES = ("hades.ico", "hades2.ico")
+
+# Self-hosted IBM Plex woff2 files (styles/fonts.css @font-face rules point at
+# ``fonts/<name>.woff2`` relative to viewer.css). Copied into ``dist/fonts/``
+# for the split build so they load same-origin under the strict
+# ``font-src 'self'`` CSP, and inlined as data: URIs for the single-file bundle
+# so it stays self-contained offline. Discovered from disk so adding a weight is
+# just dropping the woff2 in and referencing it from fonts.css.
+_FONTS_DIR = STATIC_DIR / "fonts"
+
+# The above-the-fold font weights the hosted split build preloads so they are
+# already cached when the first content paints - letting font-display:optional
+# (styles/fonts.css) render them as IBM Plex from the first frame instead of a
+# fallback flash. Kept to the dominant weights (400 body, 600 headers/labels,
+# mono 400 tree/chips) so the preloads don't compete with the data-blob fetch;
+# the remaining weights load on demand and degrade to a metrically-close
+# fallback only on a rare slow first load (no swap-in jitter either way).
+_PRELOAD_FONT_NAMES = (
+    "ibm-plex-sans-400.woff2",
+    "ibm-plex-sans-600.woff2",
+    "ibm-plex-mono-400.woff2",
+)
 
 # Map each per-source JSON filename prefix to the canonical game id
 # used as a key in the final ``games`` map and in the URL hash. The
@@ -149,177 +192,6 @@ def build_css() -> str:
 
 # Single-line ``import { a, b } from './foo.js';`` blocks - the only
 # import shape used in templates/viewer/*.js.
-_JS_IMPORT_RE = re.compile(
-    r"^\s*import\s*\{[^}]*\}\s*from\s*['\"][^'\"]+['\"]\s*;?\s*$",
-    re.MULTILINE,
-)
-
-# ``export function|const|let|async function|class ...`` declarations.
-# The leading whitespace is preserved so indentation stays consistent
-# after the keyword is removed.
-_JS_EXPORT_RE = re.compile(
-    r"^(\s*)export\s+(?=(?:async\s+)?(?:function|const|let|class)\s)",
-    re.MULTILINE,
-)
-
-# Post-strip safety net: any line whose first non-whitespace token is
-# ``import`` or ``export`` indicates the strip pass missed a module-
-# syntax shape (e.g. ``export default``, ``export *``, ``export {name}
-# from ...``, ``import *``, ``import name``). The concatenated bundle
-# would throw ``SyntaxError`` at script-eval time, so we raise here
-# with a precise file:line pointer instead.
-_JS_LEFTOVER_MODULE_KEYWORD_RE = re.compile(
-    r"^\s*(?:import|export)\b",
-    re.MULTILINE,
-)
-
-# Column-0 (top-level) declarations in a stripped viewer module. After
-# ``_strip_module_syntax`` removes the ``export `` prefix, a top-level
-# ``export function foo`` becomes a column-0 ``function foo``; anything nested
-# inside a block is indented, so anchoring at the start of the line isolates the
-# bundle's shared-scope top level. One capture group per declaration kind.
-_JS_TOP_LEVEL_DECL_RE = re.compile(
-    r"^(?:async\s+)?function\s+(\w+)"
-    r"|^(?:const|let|var)\s+(\w+)"
-    r"|^class\s+(\w+)",
-    re.MULTILINE,
-)
-
-
-def _strip_module_syntax(js_text: str, source_name: str = "<viewer module>") -> str:
-    """Strip ES module ``import``/``export`` syntax so the file can be
-    concatenated into a single classic browser script.
-
-    Sources under ``templates/viewer/`` use ES module syntax purely so
-    ESLint can validate cross-file references. The deployed artifact
-    is one concatenated script (``dist/viewer.js``) because the offline
-    bundle runs from ``file://`` where browsers block ES module imports
-    via CORS.
-
-    After stripping, the result is asserted to contain no remaining
-    top-level ``import``/``export`` keywords. The strip regexes only
-    cover the shapes used today (single-line ``import { ... } from`` and
-    ``export {function|const|let|class}``); anything else (``export
-    default``, ``export *``, ``export { name } from ...``, ``import *``,
-    ``import name``) would otherwise pass through verbatim and produce a
-    ``SyntaxError`` at script-eval time of the concatenated bundle. The
-    assertion turns that runtime failure into a build-time error with a
-    pointer to the offending module.
-    """
-    js_text = _JS_IMPORT_RE.sub("", js_text)
-    js_text = _JS_EXPORT_RE.sub(r"\1", js_text)
-    leftover = _JS_LEFTOVER_MODULE_KEYWORD_RE.search(js_text)
-    if leftover is not None:
-        line_no = js_text.count("\n", 0, leftover.start()) + 1
-        line_text = js_text.splitlines()[line_no - 1].rstrip()
-        raise RuntimeError(
-            f"{source_name}:{line_no}: leftover ES module keyword after strip pass: "
-            f"{line_text!r}. _JS_IMPORT_RE / _JS_EXPORT_RE only cover the shapes used "
-            f"by templates/viewer/*.js today (single-line ``import {{ ... }} from`` and "
-            f"``export {{function|const|let|class}}``). Extend the regexes to cover the "
-            f"new shape, or rewrite the module to use a supported one."
-        )
-    return js_text
-
-
-def _assert_unique_top_level_names(file_texts: list) -> None:
-    """Fail the build if any top-level declaration name appears in more than
-    one viewer module.
-
-    ``build_js`` concatenates every ``templates/viewer/*.js`` module into one
-    classic (sloppy-mode) script, so all module top levels share a single
-    scope. A duplicate top-level ``function`` is legal in sloppy mode and
-    silently collapses to the last-concatenated definition, shipping a wrong
-    bundle that the unit tests (which import the ES modules in separate scopes)
-    and the boot smoke test (which only trips on duplicate ``const`` / ``let``
-    / ``class``) cannot see. This guard turns that silent-wrong-bundle class
-    into a build-time error naming both modules.
-
-    ``file_texts`` is a list of ``(source_name, stripped_js)`` pairs - the
-    already-stripped text is what actually lands in the bundle.
-    """
-    seen = {}
-    for source_name, text in file_texts:
-        for match in _JS_TOP_LEVEL_DECL_RE.finditer(text):
-            name = match.group(1) or match.group(2) or match.group(3)
-            line_no = text.count("\n", 0, match.start()) + 1
-            where = f"{source_name}:{line_no}"
-            if name in seen:
-                raise RuntimeError(
-                    f"Duplicate top-level name {name!r} in the concatenated "
-                    f"viewer bundle: first at {seen[name]}, again at {where}. "
-                    f"Every top-level function/const/let/var/class name must be "
-                    f"globally unique across templates/viewer/*.js because the "
-                    f"build concatenates them into one classic-script scope - a "
-                    f"duplicate silently shadows (last-declared wins). Rename "
-                    f"one of the declarations."
-                )
-            seen[name] = where
-
-
-def build_js() -> str:
-    """Concatenate every ``templates/viewer/*.js`` module into a single
-    classic script.
-
-    Files are sorted alphabetically with ``init.js`` pinned to the end.
-    The pinning matters because ``init.js`` ends with a top-level
-    ``boot()`` call, and ``boot()`` synchronously calls into
-    ``loadData()`` which assigns to the ``let`` bindings declared in
-    ``data.js`` and other modules. Those bindings are in TDZ until
-    their textual declaration is reached, so the call site has to come
-    after every declaration. Function declarations hoist so their
-    ordering doesn't matter.
-
-    The same TDZ trap applies to top-level ``const`` declarations:
-    invoking a function whose body dereferences a later-declared
-    ``const`` from an earlier-concatenated file throws
-    ``ReferenceError`` at script-eval time and prevents ``boot()``
-    from ever running. Avoid cross-file top-level calls at module
-    init - keep module top levels free of work that reaches into
-    later-concatenated files.
-
-    Module syntax is stripped so the result runs as a plain script in
-    any browser, including from ``file://`` (the offline bundle case,
-    where browsers block real ES module imports via CORS).
-    """
-    js_files = sorted(VIEWER_JS_DIR.glob("*.js"))
-    if not js_files:
-        raise RuntimeError(f"No viewer JS modules found in {VIEWER_JS_DIR}")
-    init_files = [f for f in js_files if f.name == "init.js"]
-    if not init_files:
-        raise RuntimeError(
-            f"Expected {VIEWER_JS_DIR / 'init.js'} (must contain the "
-            f"top-level boot() call); not found."
-        )
-    other_files = [f for f in js_files if f.name != "init.js"]
-    ordered = other_files + init_files
-
-    stripped = []
-    for js_file in ordered:
-        source_name = (
-            str(js_file.relative_to(PROJECT_DIR))
-            if js_file.is_relative_to(PROJECT_DIR)
-            else js_file.name
-        )
-        stripped.append(
-            (
-                source_name,
-                _strip_module_syntax(
-                    js_file.read_text(encoding="utf-8"),
-                    source_name=source_name,
-                ).strip(),
-            )
-        )
-
-    _assert_unique_top_level_names(stripped)
-
-    parts = []
-    for (source_name, text), js_file in zip(stripped, ordered):
-        parts.append(f"// --- {js_file.name} ---")
-        parts.append(text)
-    return "\n\n".join(parts) + "\n"
-
-
 def _ensure_clean_dist() -> None:
     """Remove just the managed split/bundle outputs from ``dist/`` so a
     rebuild can't leave a stale ``data.json`` next to a fresh
@@ -335,6 +207,92 @@ def _ensure_clean_dist() -> None:
     # blob behind.
     for stale in DIST_DIR.glob("data-*.json"):
         stale.unlink()
+
+
+def _build_split_index_html(version: str) -> str:
+    """Turn the raw ``templates/index.html`` into the hosted split-build page:
+    cache-bust the asset refs, inject the Content-Security-Policy, and add the
+    tool-specific SEO / Open Graph tags.
+
+    All three are split-build-only, which is why they live here and not in the
+    template: the offline single-file bundle serves the un-augmented template
+    (a 'self' CSP misfires from ``file://``, and the absolute og:image / social
+    URLs are meaningless there).
+    """
+    # Content-Security-Policy for the hosted (web) build only - the offline
+    # single-file bundle is opened via file://, where a 'self' policy misfires,
+    # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
+    # headers, so it goes in a <meta>. 'unsafe-inline' is required by the
+    # pre-paint inline scripts and the generated inline onclick/style handlers;
+    # the policy still blocks external script loading, eval, plugins and <base>
+    # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
+    # so framing can't be restricted here.)
+    #
+    # Cloudflare Web Analytics: the nikkelm.dev deploy layer injects the beacon
+    # <script src="https://static.cloudflareinsights.com/beacon.min.js"> (which
+    # then POSTs page views to cloudflareinsights.com). Both hosts are allow-
+    # listed so the beacon isn't CSP-blocked; nothing else external is permitted.
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "connect-src 'self' https://cloudflareinsights.com; "
+        "font-src 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'none'"
+    )
+    og_image_url = DEPLOY_BASE_URL + OG_IMAGE_NAME
+    # Tool-specific SEO + social-card tags for the hosted build (#141). Twitter
+    # falls back to og:title/og:description, so only twitter:card (+image) are
+    # set explicitly. Site-wide tags (canonical/og:url/og:type/og:site_name)
+    # come from the nikkelm.dev Worker's inject-if-absent fallback.
+    # HTML-escape the free-text values so a literal ``&`` (e.g. "Hades & Hades
+    # II") becomes ``&amp;`` - a raw ``&`` in an attribute is invalid HTML and
+    # can trip strict Open Graph scrapers.
+    desc = html.escape(SEO_DESCRIPTION)
+    alt = html.escape(SEO_IMAGE_ALT)
+    seo_tags = "\n    ".join([
+        f'<meta name="description" content="{desc}">',
+        '<meta property="og:title" content="Hades Dialogue Explorer">',
+        f'<meta property="og:description" content="{desc}">',
+        f'<meta property="og:image" content="{og_image_url}">',
+        '<meta property="og:image:width" content="1200">',
+        '<meta property="og:image:height" content="630">',
+        f'<meta property="og:image:alt" content="{alt}">',
+        '<meta name="twitter:card" content="summary_large_image">',
+        f'<meta name="twitter:image" content="{og_image_url}">',
+    ])
+    # Preload the dominant above-the-fold fonts (split build only) so they are
+    # in cache before the first paint and font-display:optional renders them as
+    # IBM Plex from the first frame - no fallback flash / layout jitter. Placed
+    # right before the stylesheet that pulls fonts.css so the preload scanner
+    # finds them first. crossorigin is mandatory on font preloads (fonts fetch
+    # in CORS mode) so the hint dedupes with the CSS's own request instead of
+    # double-loading; no ``?v=`` because fonts.css references the unversioned
+    # ``fonts/<name>.woff2``, so the URLs must match exactly. The offline bundle
+    # inlines fonts as data: URIs and is served un-augmented, so these split-only
+    # links never reach it (a ``fonts/`` ref would 404 from file://).
+    font_preloads = "\n    ".join(
+        f'<link rel="preload" href="fonts/{name}" as="font" type="font/woff2" crossorigin>'
+        for name in _PRELOAD_FONT_NAMES
+    )
+    return (
+        INDEX_TEMPLATE.read_text(encoding="utf-8")
+        .replace(
+            '<link rel="stylesheet" href="viewer.css">',
+            f'{font_preloads}\n<link rel="stylesheet" href="viewer.css">',
+        )
+        .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
+        .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
+        .replace(
+            '<meta name="viewer-version" content="">',
+            f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n'
+            f'    {seo_tags}\n'
+            f'    <meta name="viewer-version" content="{version}">',
+        )
+    )
 
 
 def build_split(payload: dict) -> dict:
@@ -356,7 +314,13 @@ def build_split(payload: dict) -> dict:
     _ensure_clean_dist()
 
     css_data = build_css()
-    js_data = build_js()
+    js_data, js_blocks = assemble_viewer_js()
+    # Source map for the concatenated viewer.js (issue #140): browsers report
+    # stack traces against the original templates/viewer/*.js modules. Assert the
+    # provenance-tracked assembly matches build_js() byte-for-byte so the map can
+    # never describe a different bundle than the one we ship.
+    assert js_data == build_js(), "viewer.js assembly diverged from build_js()"
+    source_map = build_source_map(js_data, js_blocks, "viewer.js")
 
     games = payload.get("games", {})
     # Heavy per-game blobs, one file each.
@@ -384,38 +348,14 @@ def build_split(payload: dict) -> dict:
         per_game_json[gid] for gid in sorted(per_game_json)
     )
     version = hashlib.sha256(hash_src.encode("utf-8")).hexdigest()[:10]
-    # Content-Security-Policy for the hosted (web) build only - the offline
-    # single-file bundle is opened via file://, where a 'self' policy misfires,
-    # so the bundler path deliberately omits this. GitHub Pages can't set HTTP
-    # headers, so it goes in a <meta>. 'unsafe-inline' is required by the
-    # pre-paint inline scripts and the generated inline onclick/style handlers;
-    # the policy still blocks external script loading, eval, plugins and <base>
-    # hijacking. (frame-ancestors / X-Frame-Options aren't honoured via <meta>,
-    # so framing can't be restricted here.)
-    csp = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline'; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:; "
-        "connect-src 'self'; "
-        "font-src 'self'; "
-        "object-src 'none'; "
-        "base-uri 'self'; "
-        "form-action 'none'"
-    )
-    index_html = (
-        INDEX_TEMPLATE.read_text(encoding="utf-8")
-        .replace('href="viewer.css"', f'href="viewer.css?v={version}"')
-        .replace('src="viewer.js"', f'src="viewer.js?v={version}"')
-        .replace(
-            '<meta name="viewer-version" content="">',
-            f'<meta http-equiv="Content-Security-Policy" content="{csp}">\n'
-            f'    <meta name="viewer-version" content="{version}">',
-        )
-    )
+    index_html = _build_split_index_html(version)
 
     (DIST_DIR / "index.html").write_text(index_html, encoding="utf-8")
-    (DIST_DIR / "viewer.js").write_text(js_data, encoding="utf-8")
+    # Append the sourceMappingURL directive so browsers/devtools pick up the
+    # map (issue #140). It is a trailing comment, so it doesn't affect eval.
+    (DIST_DIR / "viewer.js").write_text(
+        js_data + "//# sourceMappingURL=viewer.js.map\n", encoding="utf-8")
+    (DIST_DIR / "viewer.js.map").write_text(source_map, encoding="utf-8")
     (DIST_DIR / "viewer.css").write_text(css_data, encoding="utf-8")
     (DIST_DIR / "data.json").write_text(meta_json, encoding="utf-8")
     for gid, blob_json in per_game_json.items():
@@ -425,6 +365,28 @@ def build_split(payload: dict) -> dict:
     # the split build's index.html).
     for name in _STATIC_ASSET_NAMES:
         shutil.copyfile(STATIC_DIR / name, DIST_DIR / name)
+
+    # Copy the social-card image (referenced by absolute URL in the split
+    # build's og:image/twitter:image). Kept OUT of _STATIC_ASSET_NAMES so the
+    # offline bundle - which carries no SEO/OG tags - doesn't inline ~180 KB it
+    # never references.
+    shutil.copyfile(STATIC_DIR / OG_IMAGE_NAME, DIST_DIR / OG_IMAGE_NAME)
+
+    # Copy the self-hosted fonts into dist/fonts/ (referenced by fonts.css as
+    # ``fonts/<name>.woff2`` relative to viewer.css). Copy per-file with
+    # overwrite and prune only stale ``*.woff2`` - removing the whole directory
+    # is lock-prone on Windows (an open browser tab or OneDrive sync can hold a
+    # woff2 handle), and would fail the build for a cosmetic clean.
+    dist_fonts = DIST_DIR / "fonts"
+    if _FONTS_DIR.exists():
+        dist_fonts.mkdir(parents=True, exist_ok=True)
+        wanted = set()
+        for font in sorted(_FONTS_DIR.glob("*.woff2")):
+            shutil.copyfile(font, dist_fonts / font.name)
+            wanted.add(font.name)
+        for stale in dist_fonts.glob("*.woff2"):
+            if stale.name not in wanted:
+                stale.unlink()
 
     sizes = {name: (DIST_DIR / name).stat().st_size for name in _SPLIT_OUTPUT_NAMES}
     game_sizes = {
@@ -437,7 +399,9 @@ def build_split(payload: dict) -> dict:
         f"Split build -> dist/: "
         f"index.html {sizes['index.html']/1024:.1f} KB, "
         f"viewer.js {sizes['viewer.js']/1024:.1f} KB, "
+        f"viewer.js.map {sizes['viewer.js.map']/1024:.0f} KB, "
         f"viewer.css {sizes['viewer.css']/1024:.1f} KB, "
+        f"og-image.png {sizes['og-image.png']/1024:.0f} KB, "
         f"data.json (meta) {sizes['data.json']/1024:.0f} KB, "
         f"{game_report}"
     )
@@ -473,7 +437,11 @@ def build_bundle(payload: dict) -> None:
     # below still finds the un-versioned ``viewer.css`` / ``viewer.js`` refs.
     # A single-file bundle has nothing to cache-bust anyway.
     index_html = INDEX_TEMPLATE.read_text(encoding="utf-8")
+    # Drop the sourceMappingURL directive build_split appends: the offline
+    # single-file bundle ships no viewer.js.map alongside it, so the reference
+    # would dangle. (The hosted split build keeps it - that's where the map lives.)
     viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
+    viewer_js = re.sub(r"\n//# sourceMappingURL=viewer\.js\.map\n?$", "\n", viewer_js)
     viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
     # The bundle ships every game inline (no background loading), so embed the
     # whole payload rather than the split build's meta-only data.json.
@@ -516,6 +484,17 @@ def build_bundle(payload: dict) -> None:
     bundled = bundled.replace('href="hades2.ico"', f'href="{favicon_uris["hades2.ico"]}"')
     bundled = bundled.replace('data-hades1="hades.ico"', f'data-hades1="{favicon_uris["hades.ico"]}"')
     bundled = bundled.replace('data-hades2="hades2.ico"', f'data-hades2="{favicon_uris["hades2.ico"]}"')
+
+    # Inline the self-hosted fonts as data: URIs so the bundle needs no sidecar
+    # fonts/ directory (the split build's ``url("fonts/<name>.woff2")`` refs
+    # would 404 from file://). Mirrors the favicon inlining above.
+    if _FONTS_DIR.exists():
+        for font in sorted(_FONTS_DIR.glob("*.woff2")):
+            data_uri = (
+                "data:font/woff2;base64,"
+                + base64.b64encode(font.read_bytes()).decode("ascii")
+            )
+            bundled = bundled.replace(f'url("fonts/{font.name}")', f'url({data_uri})')
 
     out = DIST_DIR / _BUNDLE_OUTPUT_NAME
     out.write_text(bundled, encoding="utf-8")
@@ -625,7 +604,12 @@ def _compute_cross_game_duplicates(games_payload):
     Returns a sorted list of dicts, one per duplicate name::
 
         {"name": "...", "hades1": {"owner": "...", "section": "..."},
-                        "hades2": {"owner": "...", "section": "..."}}
+                        "hades2": {"owner": "...", "section": "..."},
+         "speaker": "..."}
+
+    ``speaker`` is the friendly display name for the master-list buttons,
+    resolved here so the duplicates view (which renders from the meta payload,
+    before/without the per-game blobs) never falls back to the raw owner id.
 
     Returns an empty list when fewer than two games are loaded (the
     feature only makes sense with a cross-game comparison).
@@ -638,6 +622,8 @@ def _compute_cross_game_duplicates(games_payload):
     g1, g2 = game_ids
     tl1 = games_payload[g1].get("textlines", {})
     tl2 = games_payload[g2].get("textlines", {})
+    sp1 = games_payload[g1].get("speakers", {})
+    sp2 = games_payload[g2].get("speakers", {})
     shared = sorted(set(tl1) & set(tl2))
     results = []
     for name in shared:
@@ -648,6 +634,16 @@ def _compute_cross_game_duplicates(games_payload):
                 "owner": tl.get("owner", ""),
                 "section": tl.get("section", ""),
             }
+        # Prefer the first game's speaker name as canonical, then the second,
+        # then the raw owner id if neither game resolves a friendly name.
+        o1 = entry[g1]["owner"]
+        o2 = entry[g2]["owner"]
+        entry["speaker"] = (
+            sp1.get(o1, {}).get("name")
+            or sp2.get(o2, {}).get("name")
+            or o1
+            or o2
+        )
         results.append(entry)
     return results
 

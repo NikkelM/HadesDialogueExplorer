@@ -12,6 +12,7 @@ Usage:
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -44,12 +45,14 @@ from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.god_traits import extract_god_trait_metadata
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.extractors.hades2.req_extractor import extract_requirements
+from src.extractors.hades2.textline_set import extract_hero_repeatable_sets
 from src.extractors.textline_set import (
     reset_section_key_audit,
     get_unlisted_section_keys,
     reset_unrecognised_textline_key_audit,
     get_unrecognised_textline_keys,
     build_cue_comment_map,
+    build_h2_cue_text_map,
     apply_cue_comment_texts,
 )
 from src.graph import build_graph_data
@@ -75,6 +78,48 @@ HADES1_SOURCES = [
 # It is NOT a per-source dataset and so does not get its own output JSON
 # (build_viewer.py would otherwise try to merge it as a graph dataset).
 HADES1_TEXTLINE_SETS = "TextLineSets.lua"
+
+# "Played"-family H1 requirement types whose operands are ``/VO/<cue>`` voice-
+# line ids. The referenced cue's spoken line is recovered from the dev comment
+# above its definition (build_cue_comment_map) and baked into ``cueTexts`` so the
+# viewer shows the line instead of the raw cue id.
+H1_PLAYED_REQ_TYPES = {
+    "RequiredPlayed", "RequiredFalsePlayed",
+    "RequiredAnyPlayed", "RequiredAnyPlayedThisRun",
+    "RequiredPlayedThisRun", "RequiredPlayedThisRoom",
+    "RequiredFalsePlayedThisRoom", "RequiredFalsePlayedThisRun",
+}
+
+# Cue-id prefixes that are not the speaking character's name. Intercom
+# announcements play over the House public-address system but are voiced by
+# Hades, so an ``Intercom_XXXX`` cue is attributed to Hades, not "Intercom".
+H1_CUE_SPEAKER_OVERRIDES = {"Intercom": "Hades"}
+
+# H2 cue-id prefixes whose friendly speaker name differs from the prefix (the
+# protagonist Melinoë carries a diaeresis; Skelly's proper name is Schelemeus).
+H2_CUE_SPEAKER_OVERRIDES = {"Melinoe": "Melino\u00eb", "Skelly": "Schelemeus"}
+
+# H2 "played"-family voiceline refs are ``PathTrue`` / ``PathFalse`` records on a
+# ``GameState.SpeechRecord.<cue>`` path (there is no RequiredPlayed field). The
+# cue's spoken line lives in an inline ``Text`` next to the cue, recovered by
+# build_h2_cue_text_map and baked into ``cueTexts``.
+H2_SPEECH_PATH_OPS = ("PathTrue", "PathFalse", "Path", "PathEmpty", "PathNotEmpty")
+
+
+def _collect_h2_speech_cues(textlines: dict, out: set) -> None:
+    """Add every ``GameState.SpeechRecord.<cue>`` leaf referenced by a textline's
+    otherRequirements (trimmed of the ``/VO/`` prefix) to ``out``."""
+    for tl in (textlines or {}).values():
+        for recs in (tl.get("otherRequirements") or {}).values():
+            for rec in (recs if isinstance(recs, list) else [recs]):
+                if not isinstance(rec, dict):
+                    continue
+                for op in H2_SPEECH_PATH_OPS:
+                    path = rec.get(op)
+                    if isinstance(path, list) and "SpeechRecord" in path:
+                        i = path.index("SpeechRecord")
+                        if i + 1 < len(path):
+                            out.add(str(path[i + 1]).replace("/VO/", ""))
 
 # H2 splits per-character / per-god / per-biome / per-encounter dialogue
 # data across many files, so the H2 sources are declared as globs that
@@ -184,13 +229,15 @@ def generate_source(
     return graph_data
 
 
-def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict]:
-    """Load H2's shared cross-file context: NamedRequirements registry
-    and NarrativeData priority annotations.
+def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict, dict]:
+    """Load H2's shared cross-file context: NamedRequirements registry,
+    NarrativeData priority annotations, and the ``HeroRepeatableTextLines``
+    shared cue sets (spliced into repeatable NPC dialogues by name).
 
-    Both files are optional - returns an empty mapping for each when the
+    All files are optional - returns an empty mapping for each when the
     corresponding source isn't present, so the H2 pipeline still runs
-    (named refs surface as unresolved, priorities go unattached).
+    (named refs surface as unresolved, priorities go unattached, repeatable
+    shared-set branches drop).
     """
     nr_path = hades2_scripts / HADES2_NAMED_REQUIREMENTS_FILE
     if nr_path.exists():
@@ -215,7 +262,16 @@ def load_hades2_context(hades2_scripts: Path) -> tuple[dict, dict]:
         print(f"SKIP {HADES2_NARRATIVE_DATA_FILE}: file not found at {nd_path}")
         priorities = {}
 
-    return named_reqs, priorities
+    hero_path = hades2_scripts / "HeroData.lua"
+    if hero_path.exists():
+        print(f"Parsing Hades 2: {hero_path}")
+        hero_repeatable = extract_hero_repeatable_sets(parse_lua_file(str(hero_path)))
+        print(f"  HeroRepeatableTextLines shared sets: {len(hero_repeatable)}")
+    else:
+        print(f"SKIP HeroData.lua: file not found at {hero_path}")
+        hero_repeatable = {}
+
+    return named_reqs, priorities, hero_repeatable
 
 
 def generate_hades2_source(
@@ -226,6 +282,7 @@ def generate_hades2_source(
     named_requirements: dict,
     narrative_priorities: dict,
     attached_priority_keys: set,
+    hero_repeatable_sets: dict = None,
 ) -> tuple[str, dict]:
     """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
 
@@ -240,11 +297,15 @@ def generate_hades2_source(
     print(f"Parsing {source_label}: {lua_path}")
     parsed = parse_lua_file(str(lua_path))
 
+    # Only the NPC extractor consumes the HeroRepeatableTextLines shared sets
+    # (repeatable NPC dialogues splice them in); other families don't accept it.
+    extra = {"hero_repeatable_sets": hero_repeatable_sets} if extractor is h2_extract_npc_data else {}
     owners = extractor(
         parsed,
         source_label=source_label,
         source_file=lua_path.name,
         named_requirements=named_requirements,
+        **extra,
     )
     print(f"  Owners: {len(owners)}")
 
@@ -348,6 +409,11 @@ def main():
 
     reset_section_key_audit()
     reset_unrecognised_textline_key_audit()
+    # Collect the cues actually referenced by "played"-family gates across the
+    # surfaced dialogues, so the viewer can render a ``RequiredPlayed`` voice-line
+    # reference as its spoken line (recovered from the dev comment above the cue)
+    # rather than the raw cue id.
+    h1_referenced_cues: set = set()
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
@@ -355,6 +421,11 @@ def main():
         )
         if data is None:
             continue
+        for tl in (data.get("textlines") or {}).values():
+            for rk, rv in (tl.get("otherRequirements") or {}).items():
+                if rk in H1_PLAYED_REQ_TYPES and isinstance(rv, list):
+                    for ref in rv:
+                        h1_referenced_cues.add(str(ref).replace("/VO/", ""))
         out_path = OUTPUT_DIR / output_name
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
@@ -363,13 +434,49 @@ def main():
     report_unlisted_section_keys("hades1")
     report_unrecognised_textline_keys("hades1")
 
+    # The referenced cues are often defined in files that aren't textline
+    # sources themselves (e.g. HeroData.lua's Zagreus barks), so recover their
+    # subtitle comment across EVERY H1 source.
+    h1_cue_texts_all: dict = {}
+    for lua_file in sorted(hades1_scripts.glob("*.lua")):
+        try:
+            src_text = lua_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for cue, text in build_cue_comment_map(src_text).items():
+            h1_cue_texts_all.setdefault(cue, text)
+
+    # Resolve only the referenced cues (keeps the baked map tiny - a couple of
+    # dozen entries rather than all ~12k source cue comments). Each entry carries
+    # the spoken line plus its speaker (the H1 cue-id character prefix, e.g.
+    # ``ZagreusHome_2930`` -> "Zagreus", ``HadesField_0625`` -> "Hades"), so the
+    # viewer can annotate who says the line.
+    h1_cue_texts = {}
+    for cue in sorted(h1_referenced_cues):
+        text = h1_cue_texts_all.get(cue)
+        if not text:
+            continue
+        pm = re.match(r"[A-Z][a-z]+", cue)
+        entry = {"text": text}
+        if pm:
+            entry["speaker"] = H1_CUE_SPEAKER_OVERRIDES.get(pm.group(0), pm.group(0))
+        h1_cue_texts[cue] = entry
+    print(
+        f"  Cue-text refs: {len(h1_cue_texts)}/{len(h1_referenced_cues)} "
+        f"played-family cues resolved to their spoken line"
+    )
+
     # Standalone H1 metadata payload: the static design-data tables the
     # viewer's save-eligibility evaluator needs to resolve the Mirror /
     # weapon-enchantment / cosmetic-visible gates client-side (the engine
-    # reads these from tables the save file doesn't carry). Written as a
-    # separate JSON with no ``textlines`` key so build_viewer routes it as
-    # metadata onto the H1 graph_data (the same channel hades2_metadata.json
-    # uses), rather than treating it as a textline source to merge.
+    # reads these from tables the save file doesn't carry), plus the recovered
+    # ``cueTexts`` for played-family voice-line refs. Written as a separate JSON
+    # with no ``textlines`` key so build_viewer routes it as metadata onto the
+    # H1 graph_data (the same channel hades2_metadata.json uses), rather than
+    # treating it as a textline source to merge.
+    h1_metadata: dict = {}
+    if h1_cue_texts:
+        h1_metadata["cueTexts"] = h1_cue_texts
     meta_lua = hades1_scripts / "MetaUpgradeData.lua"
     weapon_lua = hades1_scripts / "WeaponUpgradeData.lua"
     if meta_lua.exists() and weapon_lua.exists():
@@ -388,11 +495,7 @@ def main():
             print(f"Parsing Hades 1: {trait_lua}")
             trait_parsed = parse_lua_file(str(trait_lua))
         save_eval_static = extract_save_eval_static(meta_parsed, weapon_parsed, loot_parsed, trait_parsed)
-        h1_metadata = {"h1SaveEvalStatic": save_eval_static}
-        meta_out = OUTPUT_DIR / "hades1_metadata.json"
-        with open(meta_out, "w", encoding="utf-8") as f:
-            json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
-            f.write("\n")
+        h1_metadata["h1SaveEvalStatic"] = save_eval_static
         print(
             f"  Save-eval static: {save_eval_static['metaUpgradeOrderLength']} Mirror rows, "
             f"{len(save_eval_static['shrineUpgradeOrder'])} shrine upgrades, "
@@ -400,19 +503,24 @@ def main():
             f"{len(save_eval_static['godLootTraitIndex'])} god-loot owners, "
             f"{len(save_eval_static['keepsakeMaxChambers'])} keepsakes"
         )
-        print(f"  Written to: {meta_out}")
     else:
         print(
-            "SKIP hades1_metadata.json: MetaUpgradeData.lua / WeaponUpgradeData.lua "
+            "SKIP hades1 save-eval static: MetaUpgradeData.lua / WeaponUpgradeData.lua "
             "not found - save-eval static gates will stay indeterminate."
         )
+    if h1_metadata:
+        meta_out = OUTPUT_DIR / "hades1_metadata.json"
+        with open(meta_out, "w", encoding="utf-8") as f:
+            json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(f"  Written to: {meta_out}")
 
     # --- Hades 2 ---
     print()
     print("=" * 60)
     print("Hades 2")
     print("=" * 60)
-    named_reqs, narrative_priorities = load_hades2_context(hades2_scripts)
+    named_reqs, narrative_priorities, hero_repeatable_sets = load_hades2_context(hades2_scripts)
 
     # Accumulator for cross-source orphan-priority audit (see end of
     # this function). Every ``apply_narrative_priorities`` call below
@@ -471,6 +579,7 @@ def main():
 
     reset_section_key_audit()
     reset_unrecognised_textline_key_audit()
+    h2_referenced_cues: set = set()
     for output_prefix, source_label, pattern, extractor in HADES2_SOURCES:
         matched_files = sorted(hades2_scripts.glob(pattern))
         if not matched_files:
@@ -483,7 +592,9 @@ def main():
                 output_prefix, source_label, lua_path, extractor,
                 named_reqs, narrative_priorities,
                 attached_priority_keys,
+                hero_repeatable_sets=hero_repeatable_sets,
             )
+            _collect_h2_speech_cues(data.get("textlines"), h2_referenced_cues)
             # Skip writing per-source JSONs that hold zero textlines.
             # Each empty stub still carries the full ~9 KB speakers /
             # stats scaffolding even though it contributes nothing to
@@ -504,6 +615,39 @@ def main():
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
     report_unlisted_section_keys("hades2")
     report_unrecognised_textline_keys("hades2")
+
+    # Resolve the H2 voice-line cues referenced by SpeechRecord "played" gates to
+    # their spoken line (inline ``Text`` next to the cue) + speaker (cue-id
+    # prefix), and bake them as a small ``cueTexts`` metadata file routed onto the
+    # H2 graph (same channel as hades2_metadata.json).
+    h2_cue_texts_all: dict = {}
+    for lua_file in sorted(hades2_scripts.glob("*.lua")):
+        try:
+            src_text = lua_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for cue, text in build_h2_cue_text_map(src_text).items():
+            h2_cue_texts_all.setdefault(cue, text)
+    h2_cue_texts = {}
+    for cue in sorted(h2_referenced_cues):
+        text = h2_cue_texts_all.get(cue)
+        if not text:
+            continue
+        entry = {"text": text}
+        pm = re.match(r"[A-Z][a-z]+", cue)
+        if pm:
+            entry["speaker"] = H2_CUE_SPEAKER_OVERRIDES.get(pm.group(0), pm.group(0))
+        h2_cue_texts[cue] = entry
+    print(
+        f"  Cue-text refs: {len(h2_cue_texts)}/{len(h2_referenced_cues)} "
+        f"SpeechRecord cues resolved to their spoken line"
+    )
+    if h2_cue_texts:
+        cuetext_path = OUTPUT_DIR / "hades2_cuetext.json"
+        with open(cuetext_path, "w", encoding="utf-8") as f:
+            json.dump({"cueTexts": h2_cue_texts}, f, indent=2, sort_keys=True, ensure_ascii=False)
+            f.write("\n")
+        print(f"  Written to: {cuetext_path}")
 
     # Cross-source orphan-priority audit: every (owner, section,
     # textline) tuple present in ``narrative_priorities`` should have

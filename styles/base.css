@@ -1,29 +1,44 @@
 /* Base layout, body, header, scrollbar */
 :root {
     /* Font-size scale. One source of truth; 1rem = 16px.
-       The values below are the baseline used on mobile / small screens
-       (kept as-is so the existing mobile sizing is untouched). Desktop
-       (> the 1024px tablet breakpoint) bumps the whole scale up a step
-       via the ``@media (min-width: 1025px)`` block right below, so the
-       increase is desktop-only and cannot affect mobile. */
-    --fs-2xs:  0.625rem;   /* 10px - badges, counts, tags, toggles */
-    --fs-xs:   0.6875rem;  /* 11px - small labels, group headers */
-    --fs-sm:   0.75rem;    /* 12px - meta / secondary text, panel h4 */
-    --fs-base: 0.8125rem;  /* 13px - body: inputs, buttons, links, names */
-    --fs-lg:   0.9375rem;  /* 15px - panel & section titles */
-    --fs-xl:   1rem;       /* 16px - headings */
-    --fs-2xl:  1.125rem;   /* 18px - large headings */
-    --fs-3xl:  1.375rem;   /* 22px - display stat */
+       The values below are the baseline used on mobile / small screens.
+       Desktop (> the 1024px tablet breakpoint) bumps the whole scale up a
+       further step via the ``@media (min-width: 1025px)`` block right below.
+       The whole scale was nudged up ~1px (mobile and desktop together, so
+       their one-step relationship is preserved) for a touch more legibility;
+       everything sizes from these tokens (or em relative to them), so this
+       lifts the entire UI proportionally without touching the px breakpoints. */
+    --fs-2xs:  0.6875rem;  /* 11px - badges, counts, tags, toggles */
+    --fs-xs:   0.75rem;    /* 12px - small labels, group headers */
+    --fs-sm:   0.8125rem;  /* 13px - meta / secondary text, panel h4 */
+    --fs-base: 0.875rem;   /* 14px - body: inputs, buttons, links, names */
+    --fs-lg:   1rem;       /* 16px - panel & section titles */
+    --fs-xl:   1.0625rem;  /* 17px - headings */
+    --fs-2xl:  1.1875rem;  /* 19px - large headings */
+    --fs-3xl:  1.5rem;     /* 24px - display stat */
 
-    /* Core colour palette. One source of truth for the recurring values. */
-    --bg:           #1a1a2e;   /* page background */
-    --surface:      #16213e;   /* header / panel surface */
-    --border:       #0f3460;   /* default panel border (blue) */
-    --accent-color: #e94560;   /* pink accent: titles, links, highlights */
-    --text-color:   #e0e0e0;   /* primary body text */
-    --text-muted:   #888;      /* muted secondary text */
-    --text-dim:     #666;      /* dim secondary text */
+    /* Core colour palette. One source of truth for the recurring values.
+       The neutral chrome (bg / surface / border / text / accent) mirrors the
+       nikkelm.dev redesign tokens (src/styles/global.css) so the tool reads as
+       part of the same site when hosted at nikkelm.dev/HadesDialogueExplorer.
+       Keep these in sync with that file. The semantic colours below (--danger,
+       --elig-*, --hades1/2-color) are the tool's own meaning-bearing palette
+       and are deliberately NOT part of the site theme. */
+    --bg:           #0f1115;   /* page background (nikkelm.dev --bg) */
+    --surface:      #161a20;   /* header / panel surface (--surface) */
+    --border:       #272c34;   /* default panel border (--line) */
+    --accent-color: #e8a33d;   /* amber accent: titles, links, highlights (--accent) */
+    --accent-contrast: #14161a; /* near-black text/ink on amber fills (--accent-contrast) */
+    --text-color:   #e8e9ec;   /* primary body text (--fg) */
+    --text-secondary: #c6cbd3; /* secondary text: a step below primary, above muted */
+    --text-muted:   #9aa1ab;   /* muted secondary text (--muted) */
+    --text-dim:     #808791;   /* dim secondary text (AA-compliant: 5.2:1 on bg, 4.8:1 on surface) */
     --danger:       #e57373;   /* blocked / warning / error red */
+
+    /* Subtle tint for striping alternate columns of a responsive grid (the
+       cross-game duplicates grid and the speaker overview's textline lists),
+       so adjacent columns read as distinct bands. One source of truth. */
+    --col-stripe: color-mix(in srgb, var(--border) 55%, transparent);
 
     /* Per-game theme colours, used to tint the game toggle's active button and
        the cross-game badges so Hades and Hades II are visually distinct. Hades
@@ -53,6 +68,15 @@
        group dots and per-line save badges) so they never differ in size when
        shown side by side in the same list. */
     --dot-size: 9px;
+
+    /* Type families, mirroring nikkelm.dev (IBM Plex Sans / Mono, self-hosted
+       via fonts.css). The 'IBM Plex <x> Fallback' entry right after each web
+       font is a metric-matched face (size-adjust + metric overrides, fonts.css)
+       so the pre-swap fallback occupies the exact same space as the real font -
+       no layout shift when the woff2 swaps in. The system stack follows for
+       platforms without Arial / Courier New (and for offline / first paint). */
+    --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', Consolas, monospace;
 }
 /* Desktop type bump. Everything sizes from the --fs-* tokens (or from em
    relative to them), so overriding the scale here lifts the whole desktop
@@ -61,19 +85,33 @@
    baseline tokens above stay the mobile sizing. */
 @media (min-width: 1025px) {
     :root {
-        --fs-2xs:  0.6875rem;  /* 11px */
-        --fs-xs:   0.75rem;    /* 12px */
-        --fs-sm:   0.8125rem;  /* 13px */
-        --fs-base: 0.875rem;   /* 14px */
-        --fs-lg:   1rem;       /* 16px */
-        --fs-xl:   1.0625rem;  /* 17px */
-        --fs-2xl:  1.1875rem;  /* 19px */
-        --fs-3xl:  1.5rem;     /* 24px */
+        --fs-2xs:  0.75rem;    /* 12px */
+        --fs-xs:   0.8125rem;  /* 13px */
+        --fs-sm:   0.875rem;   /* 14px */
+        --fs-base: 0.9375rem;  /* 15px */
+        --fs-lg:   1.0625rem;  /* 17px */
+        --fs-xl:   1.125rem;   /* 18px */
+        --fs-2xl:  1.25rem;    /* 20px */
+        --fs-3xl:  1.625rem;   /* 26px */
     }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Amber text-selection highlight, mirroring nikkelm.dev's ::selection. */
+::selection {
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+}
+/* Global keyboard-focus ring, mirroring nikkelm.dev's single :focus-visible
+   rule: one token-driven amber outline for every keyboard-focused control, so
+   focus is consistent instead of falling back to the browser default. Specific
+   controls override this where an inset ring or a border-colour focus reads
+   better (buttons, the search inputs, the panel resizers). */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
 body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text-color);
     height: 100vh;
@@ -82,6 +120,17 @@ body {
     flex-direction: column;
     overflow: hidden;
 }
+/* FOUT guard: keep the page hidden until the web fonts have loaded (the
+   ``fonts-pending`` class is added pre-paint and removed on fonts-ready / a
+   timeout by the inline script in index.html). Without it the static chrome
+   (header, search, "Load save") + skeleton paint in the system fallback and
+   then reflow when IBM Plex swaps in - the load jitter, which also made a
+   cache-cold hard reload render a different font than a cached load. html
+   carries the page background while pending so the brief hidden moment shows
+   the dark bg, not a white flash. No-JS clients never get the class, so the
+   page stays visible for them. */
+html.fonts-pending { background: var(--bg); }
+html.fonts-pending body { visibility: hidden; }
 header {
     background: var(--surface);
     padding: 12px 20px;
@@ -102,6 +151,23 @@ header h1 {
     color: var(--accent-color);
     white-space: nowrap;
 }
+/* Mirror of the nikkelm.dev nav wordmark (Nav.astro): a compact mono
+   "nikkelm.dev" back-link sitting to the left of the product title, muted body
+   text with an amber ".dev" and an amber hover, divided from the title by a
+   thin rule. Ties the tool's header to the parent site's brand. */
+.site-wordmark {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: -0.01em;
+    color: var(--text-color);
+    text-decoration: none;
+    white-space: nowrap;
+    padding-right: 16px;
+    border-right: 1px solid var(--border);
+    transition: color 0.15s ease;
+}
+.site-wordmark:hover { color: var(--accent-color); }
+.site-wordmark-tld { color: var(--accent-color); }
 .search-container {
     flex: 1;
     position: relative;
@@ -125,12 +191,25 @@ header h1 {
 }
 #search:focus { border-color: var(--accent-color); }
 
-/* Visible focus ring for keyboard users on the viewer's inline-onclick
-   controls (made focusable by keyboard-a11y.js). Only shows for keyboard
-   focus (:focus-visible), so mouse clicks don't leave a lingering outline. */
+/* While a search input is empty (its placeholder is showing), make it
+   non-selectable so a double-click or drag can't highlight the greyed
+   placeholder text. Gated on :placeholder-shown so the restriction lifts the
+   instant the user types - the value they enter stays fully selectable and
+   copyable. Applied to every search bar: the main one, the cross-game
+   duplicates filter, and the two speaker-view filters. */
+#search:placeholder-shown,
+.duplicates-search:placeholder-shown,
+.speaker-textline-search:placeholder-shown,
+.speaker-picker-search:placeholder-shown {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Inline-onclick controls (made focusable by keyboard-a11y.js) are often
+   spans/anchors; round the shared focus ring (see the global :focus-visible
+   above) so it hugs them neatly. Only shows for keyboard focus, so mouse
+   clicks don't leave a lingering outline. */
 [onclick]:focus-visible {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
     border-radius: 2px;
 }
 #search-results {
@@ -152,7 +231,7 @@ header h1 {
     padding: 4px 12px;
     font-size: var(--fs-2xs);
     font-weight: bold;
-    color: #aaa;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     background: var(--border);
@@ -165,7 +244,7 @@ header h1 {
     padding: 6px 12px;
     cursor: pointer;
     font-size: var(--fs-base);
-    border-bottom: 1px solid #0f346040;
+    border-bottom: 1px solid var(--border);
 }
 .search-no-matches {
     padding: 10px 12px;
@@ -203,7 +282,7 @@ header h1 {
 .search-item-text .search-item-head { font-size: var(--fs-base); }
 .search-item-text .search-snippet {
     font-size: var(--fs-xs);
-    color: #b8b8b8;
+    color: var(--text-muted);
     margin-top: 2px;
     line-height: 1.4;
     white-space: normal;
@@ -222,7 +301,7 @@ header h1 {
 }
 .search-item mark {
     background: var(--accent-color);
-    color: #fff;
+    color: var(--accent-contrast);
     padding: 0 2px;
     border-radius: 2px;
 }
@@ -239,10 +318,11 @@ header h1 {
     cursor: pointer;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color 0.12s ease, color 0.12s ease;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 .header-nav-link:hover {
-    background: var(--border);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 .header-nav-link[hidden] {
     display: none;
@@ -260,7 +340,7 @@ main {
     overflow: hidden;
 }
 .empty-state {
-    color: #555;
+    color: var(--text-dim);
     font-style: italic;
     text-align: center;
     padding: 40px;
@@ -287,7 +367,14 @@ main {
 body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .panel-skeleton .sk {
     border-radius: 4px;
-    background: linear-gradient(90deg, #1f2742 25%, #2a3556 37%, #1f2742 63%);
+    /* Neutral shimmer matching the new theme: a --border-toned base sweeping
+       through a lighter grey highlight (mixed toward --text-dim), replacing the
+       old pre-redesign blue gradient so the loading state reads as the same
+       dark-neutral surface as the loaded UI. */
+    background: linear-gradient(90deg,
+        var(--border) 25%,
+        color-mix(in srgb, var(--border) 55%, var(--text-dim)) 37%,
+        var(--border) 63%);
     background-size: 400% 100%;
     animation: skeleton-shimmer 1.4s ease infinite;
 }
@@ -307,13 +394,16 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .sk-title  { height: 20px; width: 50%; }
 .sk-badge  { height: 16px; width: 48px; border-radius: 8px; }
 .sk-pill   { height: 22px; width: 92px; border-radius: 11px; }
-.sk-btn    { height: 28px; width: 112px; border-radius: 5px; margin: 0 0 16px; }
+.sk-btn    { height: 32px; width: 192px; border-radius: 6px; margin: 0 0 16px; }
 .sk-toggle { height: 12px; width: 12px; flex: 0 0 auto; }
 .sk-dot    { height: 10px; width: 10px; border-radius: 50%; flex: 0 0 auto; }
 .sk-grow   { flex: 1; }
 .sk-row    { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
 .sk-row.split { justify-content: space-between; }
 .sk-row .sk { margin: 0; }
+/* Right-hand indicator cluster in the detail header skeleton (save pill +
+   priority + play-once), mirroring the real ``.h3-indicators`` group. */
+.sk-h3-ind { display: flex; align-items: center; gap: 8px; }
 .sk-indent { margin-left: 22px; }
 
 /* Bordered card matching the panels the wide single-panel views render in. */
@@ -348,11 +438,53 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .sk-stat .sk-lbl { height: 10px; width: 70%; margin: 0 0 10px; }
 .sk-stat .sk-val { height: 24px; width: 45%; }
 
-/* Duplicates: speaker list on the left, detail list on the right. */
+/* Duplicates: speaker master list on the left, detail grid on the right -
+   mirrors ``.duplicates-md`` (fixed-ish speaker column + fluid detail) so the
+   skeleton has the same two-column shape as the loaded view. */
 .sk-input  { height: 30px; border-radius: 6px; margin: 0 0 14px; }
-.sk-dup    { display: flex; gap: 14px; }
-.sk-dup-left  { flex: 0 0 38%; }
-.sk-dup-right { flex: 1; }
+.sk-dup {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    align-items: start;
+    gap: 1.2rem;
+}
+.sk-dup-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+/* A speaker master-list row: name bar + count pill, matching
+   ``.duplicates-speaker-item`` (bordered row, space-between). */
+.sk-dup-spk {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.sk-dup-spk .sk { margin: 0; }
+.sk-dup-count { height: 14px; width: 26px; border-radius: 8px; flex: 0 0 auto; }
+.sk-dup-detail-title { margin: 0 0 0.6rem; }
+/* Detail grid: same ``auto-fill`` column sizing as ``.duplicates-detail-list``,
+   so the skeleton's column count tracks the loaded view at any width. */
+.sk-dup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(405px, 1fr));
+    align-items: start;
+    column-gap: 0.8rem;
+    row-gap: 0.2rem;
+}
+/* One shared-dialogue row: name bar + two game-link bars (``1fr auto auto``). */
+.sk-dup-entry {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    column-gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+}
+.sk-dup-entry .sk { margin: 0; }
 
 /* Failure banner rendered by viewer.js when data load (fetch or
    JSON.parse) fails. Hidden until populated; styled to be unmissable
@@ -368,10 +500,15 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
     flex-shrink: 0;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+/* Scrollbar. Thin and minimal to echo nikkelm.dev's slim scrollbar, via
+   ::-webkit-scrollbar (Chromium/Safari). The standard scrollbar-width/color are
+   deliberately NOT set: setting scrollbar-color anywhere makes Chromium ignore
+   ::-webkit-scrollbar and fall back to the fat 15px default bar, so Firefox
+   keeps its native scrollbar rather than break the themed WebKit one. Amber
+   highlights the thumb on hover. */
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
 /* The corner is the small square where the horizontal and vertical
    scrollbars meet on a 2-axis-scrolling container (`.panel-body`).
@@ -380,23 +517,64 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
    corner blends into the scrollbar gutter. */
 ::-webkit-scrollbar-corner { background: var(--bg); }
 
-/* Site disclaimer - pinned to the bottom of the middle panel
-   (upstream/prerequisites) in 3-column dialogue view, and to the
-   bottom of the info panel in single-panel views. Uses margin-top:auto
-   so it sticks to the bottom even with short content. */
-#upstream-content,
+/* Reserve the scrollbar gutter in the single-panel views (speaker overview,
+   eligibility tracer, cross-game duplicates - all share the layout-speaker
+   body class and render into #info-content) so the thin bar appearing on
+   overflow doesn't reflow / resize the content beneath it. */
 .layout-speaker #info-content {
+    scrollbar-gutter: stable;
+}
+
+/* Site footer, a single page-level element below <main> (see index.html) so it
+   spans the full width and stays in one consistent place across every view.
+   Mirrors nikkelm.dev's Footer.astro (copyright + GitHub / LinkedIn / Contact,
+   muted with an amber hover) plus the tool's AI / content disclaimer. On
+   desktop the shell is a fixed-height flex column (header / main / footer), so
+   this is always visible at the bottom and main scrolls its panels internally;
+   on mobile the page scrolls and main's flex-grow keeps the footer at the
+   viewport bottom for short content. The wide right padding keeps the row and
+   disclaimer clear of the floating help FAB (40px + 14px offset) so the FAB
+   sits beside them in the bottom-right corner rather than over them. */
+.site-footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 76px;
+    box-sizing: border-box;
+    padding: 10px 4rem 10px 20px;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    font-family: var(--font-sans);
 }
-#upstream-content::after,
-.layout-speaker #info-content::after {
-    content: 'Built with the assistance of generative AI. All game content belongs to Supergiant Games.';
-    display: block;
-    padding: 12px 20px;
-    margin-top: auto;
-    font-size: var(--fs-2xs);
-    color: #444;
+.site-footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 20px;
+}
+.site-footer-links {
+    display: flex;
+    gap: 20px;
+}
+.site-footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.12s ease;
+}
+.site-footer-links a:hover {
+    color: var(--accent-color);
+}
+.site-footer-disclaimer {
+    margin: 0;
+    /* Inset the left to match the footer's right FAB-clearance (4rem) so the
+       text centres on the page AND stays clear of the bottom-right help FAB on
+       both desktop and mobile (a right-side extension would run under the FAB). */
+    margin-left: calc(4rem - 20px);
     text-align: center;
-    border-top: 1px solid #0f346040;
+    font-size: var(--fs-2xs);
+    color: var(--text-dim);
 }

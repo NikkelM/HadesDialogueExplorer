@@ -320,7 +320,7 @@ test('runsSinceGroupTooltip summarises the group verdict with a per-ref breakdow
 
     const met = runsSinceGroupTooltip('MinRunsSinceAnyTextLines', ['A'],
         { played: played('A'), runsAgo: { A: 5 } }, 3);
-    assert.match(met, /^Satisfied by the save: every line was last played at least 3 runs ago/);
+    assert.match(met, /^Satisfied by your save: every line was last played at least 3 runs ago/);
     assert.match(met, /\u2713 A: last played 5 runs ago/);
 
     const unmet = runsSinceGroupTooltip('MinRunsSinceAnyTextLines', ['Recent', 'Old'],
@@ -439,7 +439,7 @@ test('scopedGateExplain flags a positive-gate ref played in the save but not the
     assert.equal(ex.scopeLabel, 'the last run');
     const by = Object.fromEntries(ex.blockers.map(b => [b.name, b]));
     assert.equal(by.A.playedInSave, true);
-    assert.equal(by.A.reason, 'played in the save, but not last run');
+    assert.equal(by.A.reason, 'played in your save, but not last run');
     assert.match(by.A.tooltip, /Played in your save, but not in the last run/);
     // B never played -> plain "not played" blocker, no playedInSave flag.
     assert.equal(by.B.playedInSave, undefined);

@@ -48,6 +48,15 @@ from src.extractors.hades2.path_names import (
 )
 from src.extractors.hades2.broken_path_refs import HADES2_BROKEN_PATH_REFS
 from src.extractors.hades1.broken_req_fields import HADES1_BROKEN_REQ_FIELDS
+from src.extractors.hades1.badge_rank_names import (
+    HADES1_BADGE_RANK_NAMES,
+    HADES1_BADGE_RANK_MANAGER,
+)
+from src.extractors.hades2.badge_rank_names import (
+    HADES2_BADGE_RANK_NAMES,
+    HADES2_BADGE_RANK_MANAGER,
+)
+from src.extractors.hades1.flag_names import HADES1_FLAG_NAMES
 
 
 def _speaker_names(speakers: dict) -> dict:
@@ -107,7 +116,10 @@ _GAME_LABELS = {
         "metaUpgradeNames": HADES1_META_UPGRADE_NAMES,
         "entityNames": _entity_names(
             HADES1_ENTITY_NAMES, HADES1_SPEAKERS, HADES1_HUB_ROOM_NAMES,
-            HADES1_EXTRA_ENTITY_NAMES,
+            # Curated extra entities + story-flag / config-option names (both are
+            # curated ids with no sjson DisplayName); merged so the operand
+            # resolver renders friendly flag names under the flag gate labels.
+            {**HADES1_EXTRA_ENTITY_NAMES, **HADES1_FLAG_NAMES},
         ),
         # H1 uses flat named otherRequirements fields, not dotted save-state
         # paths, so it has no path vocabulary.
@@ -118,6 +130,8 @@ _GAME_LABELS = {
         "pathLiteralLeafFields": [],
         "brokenPathRefs": {},
         "brokenReqFields": HADES1_BROKEN_REQ_FIELDS,
+        "badgeRankNames": HADES1_BADGE_RANK_NAMES,
+        "badgeRankManager": HADES1_BADGE_RANK_MANAGER,
     },
     "hades2": {
         "sectionKeyLabels": HADES2_SECTION_KEY_LABELS,
@@ -140,6 +154,8 @@ _GAME_LABELS = {
         "pathLiteralLeafFields": sorted(HADES2_PATH_LITERAL_LEAF_FIELDS),
         "brokenPathRefs": HADES2_BROKEN_PATH_REFS,
         "brokenReqFields": {},
+        "badgeRankNames": HADES2_BADGE_RANK_NAMES,
+        "badgeRankManager": HADES2_BADGE_RANK_MANAGER,
     },
 }
 
@@ -212,3 +228,5 @@ def annotate_label_maps(graph_data: dict, game: str) -> None:
     }
     graph_data["brokenPathRefs"] = dict(bundle["brokenPathRefs"])
     graph_data["brokenReqFields"] = dict(bundle["brokenReqFields"])
+    graph_data["badgeRankNames"] = dict(bundle["badgeRankNames"])
+    graph_data["badgeRankManager"] = bundle["badgeRankManager"]

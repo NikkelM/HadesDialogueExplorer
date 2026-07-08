@@ -98,7 +98,7 @@
     margin: 0.2rem 0 0;
     padding-left: 1.2rem;
     font-size: var(--fs-base);
-    color: #c8d0d8;
+    color: var(--text-secondary);
     line-height: 1.5;
 }
 
@@ -181,7 +181,7 @@
     border-radius: 0 4px 4px 0;
     font-size: var(--fs-xs);
     font-style: italic;
-    color: #9aa4b2;
+    color: var(--text-muted);
     line-height: 1.4;
 }
 .eligibility-chain-note::before {
@@ -265,7 +265,7 @@
 }
 .eligibility-play-order-tag {
     font-size: var(--fs-2xs);
-    color: #9a9ab0;
+    color: var(--text-muted);
     border: 1px solid #4a4636;
     border-radius: 3px;
     padding: 0 4px;
@@ -307,7 +307,6 @@
 }
 
 .eligibility-item:hover {
-    background: #2a2a3e;
     border-color: var(--accent-color);
 }
 
@@ -327,7 +326,7 @@
 }
 
 .eligibility-item-name {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-base);
     color: var(--text-color);
     flex: 1;
@@ -387,7 +386,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-base);
     color: var(--text-color);
 }
@@ -469,7 +468,7 @@
 .eligibility-branch-note {
     padding: 0.2rem 0.4rem 0;
     font-size: var(--fs-xs);
-    color: #9aa3b2;
+    color: var(--text-muted);
 }
 
 /* Set-level ``ChanceToPlay`` note: a per-attempt RNG roll the game applies even
@@ -562,7 +561,10 @@
 
 .tree-link {
     cursor: pointer;
-    opacity: 0.4;
+    /* 0.65 (was 0.4): keeps the jump-to-dialogue arrow subtle at rest while
+       staying >= AA 4.5:1 (0.4 dropped the near-white glyph to ~3.4:1); full
+       opacity on hover. */
+    opacity: 0.65;
     font-size: 0.8em;
     text-decoration: none;
 }
@@ -614,6 +616,6 @@
     cursor: help;
 }
 .eligibility-condition-text {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-sm);
 }

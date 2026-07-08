@@ -784,9 +784,21 @@ function h1ListHas(list, value) {
     return Object.values(list).includes(value);
 }
 
-// Sum of a run's per-room kills for any of the listed enemy types.
+// Sum of a run's kills for any of the listed enemy types. Hades II runs (and the
+// Hades Biomes mod's ported runs) keep a flat run-level ``EnemyKills`` aggregate
+// - which the mod's own ported evaluator reads for the kills-this-run /
+// kills-last-run gates, and which is the only kill record that survives on
+// archived runs (their per-room ``RoomHistory`` is stripped). Prefer it. Vanilla
+// Hades 1 runs have no flat run-level ``EnemyKills``, so they fall through to the
+// per-room ``RoomHistory[room].Kills`` sum (the Hades 1 engine's own source).
 function h1RunKills(run, enemyNames) {
     if (!run) return 0;
+    const flat = run.EnemyKills;
+    if (flat && typeof flat === 'object') {
+        let total = 0;
+        for (const e of enemyNames) total += h1Num(flat[e]);
+        return total;
+    }
     const rh = run.RoomHistory;
     if (!rh || typeof rh !== 'object') return 0;
     let total = 0;
@@ -934,6 +946,14 @@ function h1CombineAnd(statuses) {
 // current-run gate with a hub save), so the caller marks nothing in that case.
 const _h1Owned = (slice) => (k, ctx) => luaTruthy((h1Gs(ctx, slice) || {})[k]);
 const _h1RunTrait = (k, ctx) => { const cr = _h1cr(ctx); return cr ? !!h1HeroHasTrait(cr, k) : null; };
+// Voiceline "played" membership for a cue operand (keyed by the full /VO/ id).
+// Global SpeechRecord is a ``cue -> true`` map (keyed lookup); the per-run /
+// per-room records are lists of played cues (value lookup via h1ListHas). A
+// missing global record (older save) is indeterminate (null); a missing per-run
+// / per-room record on a valid current-run slice means "not played there yet".
+const _h1Spoken = (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? luaTruthy(s[k]) : null; };
+const _h1SpokenThisRun = (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1ListHas(cr.SpeechRecord, k) : null; };
+const _h1SpokenThisRoom = (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1ListHas(cr.CurrentRoom && cr.CurrentRoom.VoiceLinesPlayed, k) : null; };
 const H1_OPERAND_MEMBERSHIP = {
     RequiredCosmetics: { pred: _h1Owned('Cosmetics') },
     RequiredAnyCosmetics: { pred: _h1Owned('Cosmetics') },
@@ -947,7 +967,14 @@ const H1_OPERAND_MEMBERSHIP = {
     RequiredCountOfTraits: { pred: _h1RunTrait },
     RequiredRunHasOneOfTraits: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? luaTruthy((cr.TraitCache || {})[k]) : null; } },
     RequiredSupportAINames: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? luaTruthy((cr.SupportAINames || {})[k]) : null; } },
-    RequiredPlayed: { pred: (k, ctx) => { const s = h1Gs(ctx, 'SpeechRecord'); return s ? luaTruthy(s[k]) : null; } },
+    RequiredPlayed: { pred: _h1Spoken },
+    // "Must NOT have played voiceline X": a played cue violates the gate -> red.
+    RequiredFalsePlayed: { pred: _h1Spoken, neg: true },
+    // Per-run / per-room "played" gates read the current-run slice's own record.
+    RequiredAnyPlayedThisRun: { pred: _h1SpokenThisRun },
+    RequiredFalsePlayedThisRun: { pred: _h1SpokenThisRun, neg: true },
+    RequiredPlayedThisRoom: { pred: _h1SpokenThisRoom },
+    RequiredFalsePlayedThisRoom: { pred: _h1SpokenThisRoom, neg: true },
     // Run-kill gates: did the save kill this enemy in the current / previous run.
     // Resolvable only from the matching run slice (else indeterminate -> null).
     RequiredKillsThisRun: { pred: (k, ctx) => { const cr = _h1cr(ctx); return cr ? h1RunKills(cr, [k]) > 0 : null; } },

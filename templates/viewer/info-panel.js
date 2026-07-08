@@ -19,6 +19,7 @@ import {
     renderSpeakerHtml,
     renderSectionHtml,
     renderReqTypeHtml,
+    reqTypeTitleText,
     renderPriorityBadgeHtml,
     renderPlayOnceBadgeHtml,
     renderBlockingReason,
@@ -32,10 +33,13 @@ import {
 } from './utilities.js';
 import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from './data.js';
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
+import { badgeRankNames, badgeRankManager } from './data.js';
+import { cueTexts } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
 import { requirementGroupVerdict, orBranchVerdict, orGroupVerdict, namedRequirementGroupVerdict, namedRequirementHostVerdict } from './unobtainable.js';
+import { NEGATIVE_REQ_TYPES, COUNT_MAX_REQ_TYPES } from './requirements.js';
 
 // Whether to render save-eligibility dots (a matching save is loaded).
 function _saveDotsActive() {
@@ -45,9 +49,70 @@ function _saveDotsActive() {
 // A met / unmet / indeterminate / unobtainable status dot (same colour
 // language as the dependency tree's group dots), or '' for an unknown status
 // value. The trailing space lets callers interpolate it before a label.
-function statusDot(status, tooltip) {
+// ``kind`` encodes the node shape: 'leaf' (default) = solid disc (an atomic
+// condition's own verdict), 'aggregate' = hollow ring (a verdict rolled up
+// from the requirements below), 'inverted' = ring + slash (a must-NOT-pass
+// gate, blocked exactly when the requirement below IS satisfied).
+function statusDot(status, tooltip, kind = 'leaf') {
     if (!['met', 'unmet', 'unknown', 'unobtainable'].includes(status)) return '';
-    return `<span class="group-status group-status-${status}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
+    const kindCls = (kind === 'aggregate' || kind === 'inverted') ? ` group-kind-${kind}` : '';
+    return `<span class="group-status group-status-${status}${kindCls}" data-tooltip="${escapeHtml(tooltip)}"></span> `;
+}
+
+// Compose a dot's hover text so it states the node KIND (atomic leaf vs a
+// verdict rolled up from - or inverted relative to - the requirements below) on
+// top of the shared met/unmet/unknown/unobtainable wording. Keeps the
+// "eligible option under a must-NOT-pass gate is the blocker" case from reading
+// as a contradiction.
+function kindTooltip(status, kind) {
+    if (kind === 'inverted') {
+        if (status === 'unmet') return 'Inverted gate (must NOT pass): blocked because the requirement below IS satisfied.';
+        if (status === 'unobtainable') return 'Inverted gate (must NOT pass): permanently blocked - the requirement below is permanently satisfied.';
+        if (status === 'met') return 'Inverted gate (must NOT pass): satisfied because the requirement below is not satisfied.';
+        return groupStatusTooltip(status);
+    }
+    if (kind === 'aggregate') {
+        return 'Combined verdict, rolled up from the requirements below. ' + groupStatusTooltip(status);
+    }
+    return groupStatusTooltip(status);
+}
+
+// With a save loaded, a fully-satisfied ('met') requirement group is collapsed
+// by default so the reader's attention falls on what is still unmet; unmet /
+// indeterminate / unobtainable groups (and everything when no save is loaded)
+// stay open. This includes inverted "must NOT pass" gates that are correctly
+// satisfied ('met'). The user can still toggle any group; collapse state is not
+// persisted (each re-render recomputes it from the live verdict). Returns
+// ``[chevronGlyph, childExpandedClass]`` for interpolation into a group header.
+function metCollapse(verdict, showDots, keepOpen = false) {
+    const collapsed = showDots && verdict === 'met' && !keepOpen;
+    return [collapsed ? '\u25B6' : '\u25BC', collapsed ? '' : ' expanded'];
+}
+
+// A compact key for the requirement status dots, shown at the top of the
+// requirements block when a save is loaded. Teaches the shape language (colour
+// encodes the verdict; SHAPE encodes the node kind): solid disc = a single
+// condition, hollow ring = a rolled-up group, ring + slash = a "must NOT pass"
+// gate. The shape swatches force a neutral --dot-color so only the shape reads;
+// the colour swatches are solid discs in each verdict colour.
+export function renderStatusLegendHtml() {
+    const shape = (kind, label, tip) => {
+        const cls = kind ? ` group-kind-${kind}` : '';
+        return `<span class="status-legend-item" data-tooltip="${escapeHtml(tip)}"><span class="group-status${cls}" style="--dot-color: var(--text-muted)"></span>${escapeHtml(label)}</span>`;
+    };
+    const colour = (st, label) =>
+        `<span class="status-legend-item" data-tooltip="${escapeHtml(groupStatusTooltip(st))}"><span class="group-status group-status-${st}"></span>${escapeHtml(label)}</span>`;
+    return `<div class="status-legend">`
+         + `<span class="status-legend-title">Dot key</span>`
+         + `<span class="status-legend-set">`
+         + shape('', 'condition', 'A single atomic condition (a leaf requirement): its own pass / fail, not a rolled-up group.')
+         + shape('aggregate', 'group (any / all of)', 'A group of conditions combined with AND (all of) or OR (any of). Its dot shows the verdict rolled up from the requirements inside.')
+         + shape('inverted', 'must NOT pass', 'An inverted gate: this requirement must NOT be satisfied for the dialogue to play. It blocks exactly when the requirement inside IS satisfied.')
+         + `</span>`
+         + `<span class="status-legend-set">`
+         + colour('met', 'satisfied') + colour('unmet', 'not met') + colour('unknown', 'can\u2019t tell') + colour('unobtainable', 'locked')
+         + `</span>`
+         + `</div>`;
 }
 
 // Hover text for a gate that reads monotonic save progress already past the
@@ -108,13 +173,32 @@ function _voicelineCueHeadHtml(prefix, tail) {
     const label = (played ? 'Voiceline must have played' : 'Voiceline must NOT have played')
         + _SPEECH_SCOPE_PHRASES[scopeKey];
     const pill = `<span class="req-type-name" data-tooltip="${escapeHtml('Internal name: ' + prefix)}">${escapeHtml(label)}</span>`;
-    return `${pill}: ${_valueChip(leaf)}`;
+    // Colour the cue chip by the save's played-state (marks set by the render
+    // loop from ``_h2SpeechCueMark``): green when it has played and the gate wants
+    // it, red when it has played and the gate forbids it, neutral otherwise.
+    let cls = '';
+    if (_curRed && _curRed.has(leaf)) cls = 'other-req-operand-unmet';
+    else if (_curGreen && _curGreen.has(leaf)) cls = 'other-req-operand-met';
+    return `${pill}: ${_valueChip(leaf, cls)}`;
 }
+
+// CurrentRun run-type booleans that read "This run is a <type>" as a PathTrue /
+// PathFalse gate (rather than the bare field gloss + a ", this run" scope).
+const _RUN_TYPE_CLAUSE = {
+    'CurrentRun.ActiveBounty': 'a Chaos Trial',
+    'CurrentRun.IsDreamRun': 'a Dream Dive',
+};
 
 function renderOtherReqKeyHtml(key) {
     const colonIdx = key.indexOf(':');
     const prefix = colonIdx >= 0 ? key.slice(0, colonIdx) : key;
     const tail = colonIdx >= 0 ? key.slice(colonIdx + 1) : '';
+    // A CurrentRun run-type boolean (ActiveBounty / IsDreamRun) as a PathTrue /
+    // PathFalse gate reads "Must be true/false: This run is a Chaos Trial / Dream
+    // Dive" rather than the bare field gloss + ", this run" scope.
+    if ((prefix === 'PathTrue' || prefix === 'PathFalse') && _RUN_TYPE_CLAUSE[tail]) {
+        return `${renderReqTypeHtml(prefix)}: This run is ${_RUN_TYPE_CLAUSE[tail]}`;
+    }
     if (tail) {
         const voiceline = _voicelineCueHeadHtml(prefix, tail);
         if (voiceline !== null) return voiceline;
@@ -151,6 +235,16 @@ const _PATH_RECORD_MEMBERSHIP_VERBS = {
     NotHasAll: 'does not contain all of',
 };
 
+// Quantifier phrase paired with a verb-style object-field label so a whole-record
+// set aggregation reads as "<verb> <quantifier>: <items>" (e.g. "Entered any of:
+// ...") instead of leaking the raw path. See ``_aggVerb``.
+const _AGG_VERB_QUANTIFIER = {
+    IsAny: 'any of', HasAny: 'any of',
+    HasAll: 'all of',
+    IsNone: 'none of', HasNone: 'none of',
+    NotHasAll: 'not all of',
+};
+
 // Phrasing for ``CountOf``-modified Path records:
 // ``head <phrase> N of <items>``. Mirror sym for ``~=`` / ``!=``.
 const _COUNT_OP_PHRASING = {
@@ -162,6 +256,212 @@ const _COUNT_OP_PHRASING = {
     '~=': 'does not have exactly',
     '!=': 'does not have exactly',
 };
+
+// Natural quantifier for a "N of a set" count threshold sitting at a boundary
+// value: on an integer count, ``<= 0`` / ``== 0`` / ``< 1`` all mean "none",
+// and ``>= 1`` / ``> 0`` mean "any" (at least one). Returns ``'none'`` /
+// ``'any'`` (so a caller can render "has none of" / "none of: ..."), or null
+// when the threshold isn't a boundary (the caller keeps "at most N of ...").
+function _countBoundaryWord(op, value) {
+    const v = Number(value);
+    if (!Number.isFinite(v)) return null;
+    if ((op === '<=' || op === '==') && v === 0) return 'none';
+    if (op === '<' && v === 1) return 'none';
+    if ((op === '>=' && v === 1) || (op === '>' && v === 0)) return 'any';
+    return null;
+}
+
+// ``GameState`` field families that count occurrences of an event, so a plain
+// scalar comparison against a boundary reads as a past-tense verb clause:
+// none -> "Never <did X>", any -> "Has <done X>". Their path-gloss labels are
+// bare past-tense verb phrases ("interacted with", "entered", "killed", ...).
+const _H2_EVENT_COUNT_FIELDS = new Set([
+    'UseRecord', 'RoomsEntered', 'RoomCountCache', 'EnemyKills',
+    'BiomesReached', 'SpawnRecord', 'NemesisTakeExitRecord', 'NemesisTakeRoomExitRecord',
+]);
+// ``GameState`` cumulative counters whose gloss is a plural noun, so a boundary
+// reads as none -> "No <noun>", any -> "Has <noun>". Deliberately excludes
+// value caches (costs, points totals, health, phase), which are not occurrence
+// counts and stay on the raw operator.
+const _H2_CUMULATIVE_COUNT_FIELDS = new Set([
+    'CompletedRunsCache', 'ClearedRunsCache', 'ClearedUnderworldRunsCache',
+    'ClearedSurfaceRunsCache', 'MetaUpgradeUnlockedCountCache', 'StoryResetCount',
+]);
+
+// Semantic family of a plain scalar count path for boundary phrasing:
+// 'event' (verb clause) / 'count' (noun clause) / null (leave the raw operator).
+// The field segment sits after the scope root (GameState / CurrentRun / PrevRun).
+function _scalarCountFamily(path) {
+    if (!Array.isArray(path) || path.length === 0) return null;
+    const root = path[0];
+    const seg = (root === 'GameState' || root === 'CurrentRun' || root === 'PrevRun')
+        ? path[1] : path[0];
+    if (_H2_EVENT_COUNT_FIELDS.has(seg)) return 'event';
+    if (_H2_CUMULATIVE_COUNT_FIELDS.has(seg)) return 'count';
+    return null;
+}
+
+// Return the field segment of a path (the segment after a ``GameState`` /
+// ``CurrentRun`` / ``PrevRun`` scope root), plus the entity leaf segments that
+// follow it. Shared by the boundary re-phrasers below.
+function _pathFieldParts(path) {
+    if (!Array.isArray(path) || !path.length) return null;
+    const root = path[0];
+    const scoped = root === 'GameState' || root === 'CurrentRun' || root === 'PrevRun';
+    return { root, field: scoped ? path[1] : path[0], leafs: path.slice(scoped ? 2 : 1) };
+}
+
+// Boss health-bar records - ``GameState.LastBossHealthBarRecord.<Boss>`` and the
+// previous-run ``PrevRun.BossHealthBarRecord.<Boss>`` - store a boss's remaining
+// health fraction (0..1) at the end of the most recent encounter. A threshold of
+// exactly 0 is a clean defeat test: ``<= 0`` means the health bar was depleted
+// (the boss was defeated), ``> 0`` means it wasn't (the player didn't). Any other
+// threshold is a remaining-health fraction, shown as a percentage the same way
+// as the player-health gate ("previous-encounter health of X at most 15%") -
+// used by the "close match" / "barely lost" gates. ``headHtml`` is the resolved
+// "previous-encounter health of X" gloss chip.
+const _BOSS_HEALTH_FIELDS = new Set(['LastBossHealthBarRecord', 'BossHealthBarRecord']);
+
+function _bossHealthClause(path, comparison, value, headHtml) {
+    const parts = _pathFieldParts(path);
+    if (!parts || !_BOSS_HEALTH_FIELDS.has(parts.field) || parts.leafs.length !== 1) return null;
+    if (Number(value) === 0 && (comparison === '<=' || comparison === '>')) {
+        const boss = entityNames[parts.leafs[0]] || parts.leafs[0];
+        const verb = comparison === '<=' ? 'Defeated' : 'Did not defeat';
+        const when = parts.root === 'PrevRun' ? 'last run' : 'last encounter';
+        return `${verb} ${_rephrasedPathChip(boss, path)}, ${when}`;
+    }
+    const word = _FN_CMP_WORDS[comparison];
+    if (!word) return null;
+    return `${headHtml} ${word} ${Math.round((Number(value) || 0) * 100)}%`;
+}
+
+// Object-taking scalar fields whose boundary reads as a natural possession /
+// event clause built from the trailing entity leaf, rather than "<label> X <op>
+// N". Each maps to ``[none-side prefix, any-side prefix]`` for the zero ("none",
+// ``<= 0`` / ``== 0`` / ``< 1``) and at-least-one ("any", ``>= 1`` / ``> 0``)
+// boundaries. TraitCache is a use-count (not an inventory), so it reads "used";
+// Resources are a live amount ("Has"); the *Gained/*Spent records are
+// lifetime totals ("gained" / "spent").
+const _SCALAR_LEAF_PREFIXES = {
+    Resources: ['Does not have', 'Has'],
+    TraitCache: ['Has not used', 'Has used'],
+    TraitsTaken: ['Has not used', 'Has used'],
+    LifetimeResourcesGained: ['Never gained', 'Has gained'],
+    ResourcesGained: ['Never gained', 'Has gained'],
+    LifetimeResourcesSpent: ['Never spent', 'Has spent'],
+};
+
+function _scalarLeafClause(path, word) {
+    const parts = _pathFieldParts(path);
+    if (!parts || parts.leafs.length !== 1) return null;
+    const prefixes = _SCALAR_LEAF_PREFIXES[parts.field];
+    if (!prefixes) return null;
+    const leaf = parts.leafs[0];
+    const leafMap = pathFieldLeafNames[parts.field];
+    const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
+    if (!friendly) return null;
+    return `${word === 'none' ? prefixes[0] : prefixes[1]} ${_rephrasedPathChip(friendly, path)}`;
+}
+
+// Curated "success / achievement / possession" scalar counters whose 0/1
+// boundary reads as a whole natural clause rather than "<noun label> <op> N"
+// (e.g. "fish caught by hand >= 1"). Keyed by the final path segment (unique
+// across these fields); value is ``[none-side clause, any-side clause]`` for the
+// zero (``<= 0`` / ``== 0`` / ``< 1``) and at-least-one (``>= 1`` / ``> 0``)
+// boundaries. The run scope (", this run") is appended by the caller, so the
+// clauses omit it. Non-boundary thresholds keep the noun label + operator.
+const _H2_SCALAR_BOUNDARY_CLAUSES = {
+    HighestShrinePointClearUnderworldCache: ['Has never cleared the Underworld with any Fear', 'Has cleared the Underworld with at least 1 Fear'],
+    HighestShrinePointClearSurfaceCache:    ['Has never cleared the Surface with any Fear', 'Has cleared the Surface with at least 1 Fear'],
+    ShovelSuccesses:                        ['Has never dug successfully', 'Has dug successfully'],
+    FishingSuccessesManual:                 ['Has never caught a fish by hand', 'Has caught a fish by hand'],
+    ExorcismSuccessesFamiliar:              ['Has never pacified a shade with Frinos', 'Has pacified a shade with Frinos'],
+    ExorcismSuccesses:                      ['Has never pacified a shade', 'Has pacified a shade'],
+    SpentShrinePointsCache:                 ['No active Fear', 'Has active Fear'],
+    ClearedDreamRunsCache:                  ['Has never cleared a Dream Dive', 'Has cleared a Dream Dive'],
+    UpgradableHammerCount:                  ['No upgradable Daedalus Hammer', 'Has an upgradable Daedalus Hammer'],
+};
+
+// The natural-clause form of a boundary comparison on one of the curated
+// achievement / possession counters above, or null to fall through. Matches on
+// the final path segment so nested paths (``CurrentRun.Hero.UpgradableHammerCount``)
+// resolve too.
+function _scalarBoundaryClause(path, word) {
+    if (!Array.isArray(path) || !path.length) return null;
+    const clauses = _H2_SCALAR_BOUNDARY_CLAUSES[path[path.length - 1]];
+    if (!clauses) return null;
+    return word === 'none' ? clauses[0] : clauses[1];
+}
+
+// ``GameState.BadgeRank`` is a badge / rank number (1..50) run by a per-game
+// manager (H1 "Resources Director", H2 "Spirit Mixer"). Resolve the number to
+// the rank the player must have reached via the per-game ``badgeRankNames`` map,
+// e.g. "Resources Director rank: Alpha Fixer or higher". ``bound`` is the
+// comparison sense: '' (exact ==), ' or higher' (>= / >), ' or lower' (<= / <).
+// Returns null when the value has no rank name (falls back to the raw operator).
+function _badgeRankClause(value, bound) {
+    const name = badgeRankNames[value];
+    if (!name || !badgeRankManager) return null;
+    const chip = `<code data-tooltip="${escapeHtml('BadgeRank = ' + _formatScalar(value))}">${escapeHtml(name)}</code>`;
+    return `${escapeHtml(badgeRankManager)} rank: ${chip}${bound}`;
+}
+
+// Map a comparison operator to the badge-rank ``bound`` suffix (or null for
+// operators that don't read naturally as a single rank threshold, e.g. ~=).
+function _badgeRankBound(op) {
+    if (op === '==') return '';
+    if (op === '>=' || op === '>') return ' or higher';
+    if (op === '<=' || op === '<') return ' or lower';
+    return null;
+}
+
+// Build an ``other-req-path`` chip with custom display text but the raw dotted
+// path kept as the hover tooltip (mirroring a fully-resolved gloss chip, so a
+// re-phrased clause still exposes the exact gate on hover).
+function _rephrasedPathChip(text, path) {
+    return `<code class="other-req-path" data-tooltip="${escapeHtml(_pathToString(path))}">${escapeHtml(text)}</code>`;
+}
+
+const _capFirst = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+// If ``path`` addresses a verb-style object field with NO trailing entity leaf
+// (a set/count aggregation over the whole record, e.g. ``CurrentRun.RoomsEntered``
+// with a HasAny / CountOf / SumOf), return its verb label ("entered",
+// "interacted with", "has equipped", ...) so those renderers can read
+// "<verb> any of: X" / "Number of times <verb>: X" instead of leaking the raw
+// path. Returns null for non-object fields, colon (noun) labels that already read
+// bare, or when a trailing leaf is present (the normal gloss handles those).
+function _aggVerb(path) {
+    const segs = Array.isArray(path) ? path : String(path).split('.');
+    const hasScope = Object.prototype.hasOwnProperty.call(pathScopeNames, segs[0]);
+    const rest = hasScope ? segs.slice(1) : segs;
+    for (const len of [3, 2, 1]) {
+        if (rest.length !== len) continue;
+        const key = rest.join('.');
+        const label = pathFieldNames[key];
+        if (!label || !pathObjectFields.has(key) || label.endsWith(':')) return null;
+        return label;
+    }
+    return null;
+}
+
+// Lowercase the first visible letter of a rendered chip so a sentence-case
+// standalone gloss (``Interacted with Ares``) reads correctly after a prefix
+// word (``Never interacted with Ares``). Skips a leading opening tag; a proper
+// noun never leads these glosses (the field label always does), so only the
+// first letter is touched.
+function _lcFirstVisible(html) {
+    const start = html[0] === '<' ? html.indexOf('>') + 1 : 0;
+    for (let i = start; i < html.length; i++) {
+        const c = html[i];
+        if (c === '<') break;
+        if (/[A-Za-z]/.test(c)) {
+            return html.slice(0, i) + c.toLowerCase() + html.slice(i + 1);
+        }
+    }
+    return html;
+}
 
 // Friendly head labels for the four single-path operator prefixes whose
 // value records carry no extra info beyond the path repeated. These
@@ -409,9 +709,20 @@ function _renderScalarHaveHtml() {
 function _valueChip(v, cls) {
     const klass = cls ? ` class="${cls}"` : '';
     if (typeof v === 'string') {
+        // A ``/VO/<cue>`` voice-line reference ("played"-family gates) whose
+        // spoken line was recovered from the source comment renders as the
+        // quoted line with its speaker in parens, keeping the cue id in the
+        // tooltip.
+        if (v.startsWith('/VO/')) {
+            const cue = cueTexts[v.slice(4)];
+            if (cue && cue.text) {
+                const who = cue.speaker ? ` (${escapeHtml(cue.speaker)})` : '';
+                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + v.slice(4))}">\"${escapeHtml(cue.text)}\"${who}</code>`;
+            }
+        }
         const friendly = entityNames[v];
         if (friendly && friendly !== v) {
-            return `<code${klass} data-tooltip="${escapeHtml(v)}">${escapeHtml(friendly)}</code>`;
+            return `<code${klass} data-tooltip="${escapeHtml('Internal name: ' + v)}">${escapeHtml(friendly)}</code>`;
         }
     }
     const raw = _formatScalar(v);
@@ -419,6 +730,14 @@ function _valueChip(v, cls) {
     // A trimmed ``/VO/`` cue keeps its full form reachable via the tooltip.
     const tip = disp !== raw ? ` data-tooltip="${escapeHtml(raw)}"` : '';
     return `<code${klass}${tip}>${escapeHtml(disp)}</code>`;
+}
+
+// Object fields whose leaf is an arbitrary internal id with no curated friendly
+// name (a story-flag name, an achievement id); the camelCase id is humanised in
+// place so the gloss resolves fully instead of leaking the raw path.
+const _HUMANIZE_LEAF_FIELDS = new Set(['AchievementsUnlocked', 'ExorcisedNames']);
+function _humanizeLeaf(leaf) {
+    return String(leaf).replace(/^Ach(?=[A-Z])/, '').replace(/([a-z0-9])([A-Z])/g, '$1 $2');
 }
 
 // Build a friendly gloss for a dotted save-state path, e.g.
@@ -435,6 +754,21 @@ function _pathGloss(segs) {
     const hasScope = Object.prototype.hasOwnProperty.call(pathScopeNames, segs[0]);
     const scope = hasScope ? pathScopeNames[segs[0]] : '';
     const rest = hasScope ? segs.slice(1) : segs;
+    // Leaf+sub-field records the segment loop can't gloss (it stops at the field
+    // key and can't reach a trailing stat/state sub-field). Resolved here so the
+    // path drops fully rather than leaking its raw internal tail.
+    if (rest[0] === 'MetaUpgradeState' && rest.length === 3
+        && (rest[2] === 'Unlocked' || rest[2] === 'Equipped')) {
+        // Per-card boolean state (the .Level rank form is a comparison).
+        const card = entityNames[rest[1]] || rest[1];
+        return { text: `${card} Arcana ${rest[2].toLowerCase()}`, scope, full: true };
+    }
+    if (rest[0] === 'EncounterClearStats' && rest.length >= 2) {
+        const enc = entityNames[rest[1]] || rest[1];
+        if (rest.length === 2) return { text: `Cleared ${enc}`, scope, full: true };
+        if (rest[2] === 'TookDamage') return { text: `Took damage in ${enc}`, scope, full: true };
+        if (rest[2] === 'ClearTime') return { text: `${enc} clear time`, scope, full: true };
+    }
     // Longest field key first (three-segment CurrentRoom.Encounter.* sub-paths,
     // two-segment Hero.* / CurrentRoom.* sub-paths), then the single segment.
     for (const len of [3, 2, 1]) {
@@ -457,7 +791,8 @@ function _pathGloss(segs) {
             } else {
                 const leaf = objSegs[objSegs.length - 1];
                 const leafMap = pathFieldLeafNames[key];
-                const friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
+                let friendly = (leafMap && leafMap[leaf]) || entityNames[leaf];
+                if (!friendly && _HUMANIZE_LEAF_FIELDS.has(key)) friendly = _humanizeLeaf(leaf);
                 // The label may carry a trailing ':' separator; keep a single space.
                 gloss += ' ' + (friendly || leaf);
                 // Partial when the leaf is an unresolved id (unless the field's
@@ -487,16 +822,18 @@ function _pathGloss(segs) {
     return null;
 }
 
-// A "(cut content)" note badge when any segment of a path is a known broken /
-// cut reference (see ``brokenPathRefs``); empty otherwise. The full explanation
-// rides in the hover tooltip. Appended to the rendered path so a reader knows
-// the gate references something that no longer exists and has no effect.
+// A broken-requirement note badge when any segment of a path is a known broken
+// save-record leaf (see ``brokenPathRefs``); empty otherwise. The full
+// explanation rides in the hover tooltip. Appended to the rendered path so a
+// reader knows the gate references a record that can never be set (no effect).
+// (Path* operator gates are intercepted earlier by ``_renderBrokenLeafRefHtml``;
+// this covers the Comparison / normal-path form.)
 function _brokenRefNote(segs) {
     for (const seg of segs) {
         const note = brokenPathRefs[seg];
         if (note) {
             return ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">`
-                + `(cut content)</span>`;
+                + `(broken requirement - no effect)</span>`;
         }
     }
     return '';
@@ -512,6 +849,37 @@ function _renderBrokenReqFieldHtml(key) {
     return `<code class="other-req-path">${escapeHtml(key)}</code>`
         + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">`
         + `(broken requirement key - never evaluated, no effect)</span>`;
+}
+
+// Render a malformed Path* gate whose path root is itself an operator keyword
+// (a source-data typo). Show the raw path (so the fault is visible) plus a note:
+// the root doesn't exist, so a PathFalse / PathEmpty gate is always satisfied
+// (no effect) and a PathTrue / PathNotEmpty gate can never be satisfied.
+function _renderBrokenPathHtml(key, opKey) {
+    const rawPath = key.slice(key.indexOf(':') + 1);
+    const alwaysSatisfied = opKey === 'PathFalse' || opKey === 'PathEmpty';
+    const tag = alwaysSatisfied ? '(broken path - always passes, no effect)' : '(broken path - never passes)';
+    const tip = alwaysSatisfied
+        ? 'Broken requirement: this path\u2019s root does not exist in the save, so the check is always satisfied and has no effect on playability.'
+        : 'Broken requirement: this path\u2019s root does not exist in the save, so the check can never be satisfied.';
+    return `<code class="other-req-path">${escapeHtml(rawPath)}</code>`
+        + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(tip)}">${tag}</span>`;
+}
+
+// Render a Path* gate whose leaf is a known broken save-record reference - a key
+// the engine never sets, e.g. an interaction-record (``UseRecord``) check keyed
+// by a dialogue id, when ``UseRecord`` is only ever keyed by an entity. The gate
+// is malformed regardless of whether the id exists, so it reads like a broken
+// path: a "must be false / empty" gate always passes (no effect); a "must be
+// true / non-empty" gate can never pass. The raw path is shown (so the fault is
+// visible) with the shared broken-requirement label; specifics ride in the
+// hover tooltip (from ``brokenPathRefs``).
+function _renderBrokenLeafRefHtml(key, opKey, note) {
+    const rawPath = key.slice(key.indexOf(':') + 1);
+    const alwaysSatisfied = opKey === 'PathFalse' || opKey === 'PathEmpty';
+    const tag = alwaysSatisfied ? '(broken requirement - always passes, no effect)' : '(broken requirement - never passes)';
+    return `<code class="other-req-path">${escapeHtml(rawPath)}</code>`
+        + ` <span class="other-req-broken-ref" data-tooltip="${escapeHtml(note)}">${tag}</span>`;
 }
 
 // Render a dotted path tail (``CurrentRun.UseRecord.<entity>``,
@@ -556,12 +924,19 @@ function _renderPathTailHtml(path, includeScope = true) {
 }
 
 // The run/last-run scope phrase for a path (``this run`` / ``last run``), or ''
-// when the path has no scope (GameState, current-room, or no gloss). Used to
-// place the scope at the end of a record clause (after the comparison / operand
-// list) rather than mid-sentence inside the path subject.
+// when the path has no scope (GameState or current-room). Used to place the
+// scope at the end of a record clause (after the comparison / operand list)
+// rather than mid-sentence inside the path subject. The scope is set by the
+// root alone, so it must resolve even when the field itself has no gloss (e.g.
+// a bare verb-object-field aggregation like ``CurrentRun.RoomsEntered`` with a
+// HasAny, whose gloss is null) - otherwise the "this run" is silently dropped.
 function _pathScopeOf(path) {
-    const gloss = _pathGloss(String(path).split('.'));
-    return gloss ? gloss.scope : '';
+    const segs = String(path).split('.');
+    const gloss = _pathGloss(segs);
+    if (gloss) return gloss.scope;
+    const root = segs[0];
+    return (Object.prototype.hasOwnProperty.call(pathScopeNames, root) && !segs.includes('CurrentRoom'))
+        ? pathScopeNames[root] : '';
 }
 
 // Strip a ``<ref:...>`` placeholder back to the bare identifier
@@ -653,16 +1028,24 @@ function _renderListItemHtml(v) {
         // name itself stays uncoloured so the "(actual)" reads as distinct from
         // the required value that follows the operator (e.g. ``field (Megaera) =
         // Hypnos``). An absent field reads "(unset)".
-        const a = _curActuals.get(v);
-        const acls = _metClass(a.met);
-        if (a.value == null) {
-            const attr = acls ? ` class="${acls}"` : '';
-            html += ` (<code${attr}>unset</code>)`;
-        } else {
-            html += ` (${_valueChip(a.value, acls)})`;
-        }
+        html += _actualTallyHtml(v);
     }
     return html;
+}
+
+// The save's actual-value tally for a gate ``field`` (``(Megaera)`` / ``(unset)``,
+// coloured green / red by whether it satisfies the gate), or '' when no save
+// actual is loaded for it. Shared by the generic operand renderer and the
+// curated friendly clauses so both surface the loaded save's current value.
+function _actualTallyHtml(field) {
+    if (!_curActuals || !_curActuals.has(field)) return '';
+    const a = _curActuals.get(field);
+    const acls = _metClass(a.met);
+    if (a.value == null) {
+        const attr = acls ? ` class="${acls}"` : '';
+        return ` (<code${attr}>unset</code>)`;
+    }
+    return ` (${_valueChip(a.value, acls)})`;
 }
 
 // Separator between items in a rendered operand list. A bullet (not a comma) so
@@ -737,6 +1120,163 @@ function _renderComparisonValue(rec, consumed) {
 // against a threshold; SumOf / UseLength / CountPathTrue reshaped into a
 // numeric subject) compared against a value, plus run/room decorators.
 // Returns null (caller falls back to raw JSON) if any key is unhandled.
+// H2 region codes (RoomSetName letters). Used to tell ClearedWithWeapons's dual
+// leaf apart: a region code means "weapons that cleared <region>", a Weapon* id
+// is a plain per-weapon clear flag.
+const _H2_REGION_CODES = new Set(['F', 'G', 'H', 'I', 'N', 'O', 'P', 'Q']);
+
+// Keepsake / Arcana rank tiers (rank 1 = Common ... 4 = Heroic; NOT vows). A
+// numeric Arcana ``.Level`` or a keepsake ``.Rarity`` maps onto this scale.
+const _RARITY_TIERS = ['Common', 'Rare', 'Epic', 'Heroic'];
+
+// Phrase for an ``IsAny`` rarity set that forms a contiguous top-range, e.g.
+// {Epic, Heroic} -> "at Epic rarity or higher" (the operand is IsAny, so it
+// means "one of", which for a top-range reads as "or higher"). Returns null for
+// an unknown or non-top-range set so the caller lists the rarities instead.
+function _rarityRangePhrase(list) {
+    if (!Array.isArray(list) || !list.length) return null;
+    const idx = list.map(r => _RARITY_TIERS.indexOf(r));
+    if (idx.some(i => i < 0)) return null;
+    const min = Math.min(...idx), max = Math.max(...idx);
+    if (max !== _RARITY_TIERS.length - 1 || new Set(idx).size !== max - min + 1) return null;
+    return min === max ? `at ${_RARITY_TIERS[min]} rarity` : `at ${_RARITY_TIERS[min]} rarity or higher`;
+}
+
+// Phrase for an Arcana-card ``.Level`` comparison, mapping the numeric rank to
+// its tier name ("at Epic rank or higher" for ``>= 3``); null when off-scale.
+function _arcanaRankClause(comparison, value) {
+    const tier = _RARITY_TIERS[Number(value) - 1];
+    if (!tier) return null;
+    return {
+        '>=': `is upgraded to ${tier} rank or higher`, '<=': `is upgraded to at most ${tier} rank`,
+        '==': `is upgraded to ${tier} rank`, '>': `is upgraded above ${tier} rank`, '<': `is below ${tier} rank`,
+    }[comparison] || null;
+}
+
+// Friendly name for an objective id (LastObjectiveFailedRun leaf), splitting a
+// camelCase internal id when no curated name exists.
+function _objectiveName(id) {
+    return entityNames[id] || String(id).replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+}
+
+// Dedicated clause for a Comparison record whose path is a leaf+sub-field or
+// value-path shape the generic renderer would otherwise leave partly raw.
+// Returns a finished clause (no scope suffix) or null to fall through.
+function _specialComparisonClause(rec) {
+    const p = rec.Path;
+    const parts = _pathFieldParts(p);
+    if (!parts) return null;
+    const { field, leafs } = parts;
+    const op = escapeHtml(String(rec.Comparison));
+    // MetaUpgradeState.<card>.Level -> that Arcana card's upgrade rank (rank
+    // 1 Common ... 4 Heroic).
+    if (field === 'MetaUpgradeState' && leafs.length === 2 && leafs[1] === 'Level') {
+        const card = _rephrasedPathChip(entityNames[leafs[0]] || leafs[0], p);
+        return `${card} Arcana ${_arcanaRankClause(rec.Comparison, rec.Value) || `rank ${op} ${_valueChip(rec.Value)}`}`;
+    }
+    // LifetimeTraitStats.<trait>.UseCount -> number of runs the trait was used in.
+    if (field === 'LifetimeTraitStats' && leafs.length === 2 && leafs[1] === 'UseCount') {
+        const trait = _rephrasedPathChip(entityNames[leafs[0]] || leafs[0], p);
+        return `Runs using ${trait} ${op} ${_valueChip(rec.Value)}`;
+    }
+    // LastObjectiveFailedRun.<obj> < CompletedRunsCache - N -> the objective's
+    // last-failed run index is more than N runs behind the current count, i.e.
+    // "last failed N+ runs ago".
+    if (field === 'LastObjectiveFailedRun' && leafs.length === 1 && rec.Comparison === '<'
+        && Array.isArray(rec.ValuePath)
+        && rec.ValuePath[rec.ValuePath.length - 1] === 'CompletedRunsCache') {
+        const obj = _rephrasedPathChip(_objectiveName(leafs[0]), p);
+        const add = Number(rec.ValuePathAddition);
+        const n = Number.isFinite(add) && add < 0 ? -add : 0;
+        return `${obj} last failed ${n > 0 ? `${escapeHtml(String(n))}+ runs ago` : 'this run or later'}`;
+    }
+    // GameState.BadgeRank -> the rank the player reached, resolved to its rank
+    // name via the per-game manager (H2 "Spirit Mixer"). == is exact, >= "or
+    // higher", <= "or lower".
+    if (field === 'BadgeRank' && leafs.length === 0) {
+        const bound = _badgeRankBound(rec.Comparison);
+        if (bound !== null) {
+            const clause = _badgeRankClause(rec.Value, bound);
+            if (clause !== null) return clause;
+        }
+    }
+    return null;
+}
+
+// Dedicated clause for a set-membership record on a path the generic renderer
+// leaves raw: keepsake rarity, and ClearedWithWeapons's region-keyed form.
+// Returns a finished clause (no scope suffix) or null to fall through.
+function _specialMembershipClause(path, opKey, operands) {
+    const segs = Array.isArray(path) ? path : String(path).split('.');
+    // Hero.TraitDictionary.<Keepsake>.1.Rarity -> the equipped keepsake's rarity
+    // (an IsAny top-range reads as "at <tier> rarity or higher").
+    const tdi = segs.indexOf('TraitDictionary');
+    if (tdi >= 0 && segs[segs.length - 1] === 'Rarity' && segs[tdi + 1]) {
+        const keepsake = segs[tdi + 1];
+        const chip = _rephrasedPathChip(entityNames[keepsake] || keepsake, path);
+        const range = (opKey === 'IsAny' || opKey === 'HasAny') ? _rarityRangePhrase(operands) : null;
+        return `Equipped ${chip} ${range || `at rarity: ${_renderOperandList(operands)}`}`;
+    }
+    // ClearedWithWeapons.<region> [weapons] (nested region form) -> the weapons
+    // that cleared that region.
+    const parts = _pathFieldParts(segs);
+    if (parts && parts.field === 'ClearedWithWeapons' && parts.leafs.length === 1
+        && _H2_REGION_CODES.has(parts.leafs[0])) {
+        const region = _rephrasedPathChip(entityNames[parts.leafs[0]] || parts.leafs[0], path);
+        const q = _AGG_VERB_QUANTIFIER[opKey] || 'any of';
+        return `Cleared ${region} with ${q}: ${_renderOperandList(operands)}`;
+    }
+    // QuestsCompleted HasAll <ref:QuestOrderData> = every Minor Prophecy.
+    if (parts && parts.field === 'QuestsCompleted' && opKey === 'HasAll'
+        && _strRefName(operands) === 'QuestOrderData') {
+        return 'Completed all Minor Prophecies';
+    }
+    // NextBiomeStateName is/isn't "Rain" -> the region's weather. Keep the
+    // field clause and only relabel the "Rain" value as "Raining" / "Not
+    // raining" (rather than collapsing the whole clause to a bare word).
+    if (parts && parts.field === 'NextBiomeStateName' && Array.isArray(operands)
+        && operands.length === 1 && operands[0] === 'Rain') {
+        const neg = (opKey === 'IsNone' || opKey === 'HasNone');
+        const headGloss = _capFirst(pathFieldNames.NextBiomeStateName || 'next region state');
+        return `${headGloss} is: ${neg ? 'Not raining' : 'Raining'}`;
+    }
+    return null;
+}
+
+// A count summed over the previous N runs / rooms reads as "In <quantifier> of
+// the last N runs: <clause>" (the window is explicit, so no trailing run-scope
+// is added). Covers CountPathTrue (per-run truthiness, any threshold) and a
+// plain scalar-count sum at a boundary (0/1) - the latter otherwise reads as a
+// contradictory "Never/Has <X> (over the last N runs)". A non-boundary scalar
+// sum is a total (not a per-run count), so it falls through. Returns null unless
+// the record is exactly this shape (a leftover key -> raw JSON fallback).
+function _perRunWindowClause(headHtml, rec, keys) {
+    const winKey = 'SumPrevRuns' in rec ? 'SumPrevRuns' : 'SumPrevRooms' in rec ? 'SumPrevRooms' : null;
+    if (!winKey) return null;
+    const unit = winKey === 'SumPrevRuns' ? 'runs' : 'rooms';
+    // A boolean per-run/room record counted via ``ValuesToCount: [true]`` counts
+    // the runs/rooms where the flag was set - i.e. the same truthy-occurrence
+    // count as CountPathTrue, just expressed as an explicit value list.
+    const isBoolCount = Array.isArray(rec.ValuesToCount)
+        && rec.ValuesToCount.length === 1 && rec.ValuesToCount[0] === true;
+    const isCount = 'CountPathTrue' in rec || isBoolCount;
+    const word = _countBoundaryWord(rec.Comparison, rec.Value);
+    if (!isCount && !word) return null;
+    const consumed = new Set(['Path', 'Comparison', 'Value', winKey]);
+    if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
+    if (isBoolCount) consumed.add('ValuesToCount');
+    let excl = '';
+    if ('IgnoreCurrentRun' in rec) {
+        consumed.add('IgnoreCurrentRun');
+        if (rec.IgnoreCurrentRun) excl = ', excluding the current run';
+    }
+    if (!_allConsumed(keys, consumed)) return null;
+    const q = word === 'none' ? 'none'
+        : word === 'any' ? 'at least one'
+        : `${_FN_CMP_WORDS[rec.Comparison] || escapeHtml(String(rec.Comparison))} ${escapeHtml(_formatScalar(rec.Value))}`;
+    return `In ${q} of the last ${escapeHtml(_formatScalar(rec[winKey]))} ${unit}: ${headHtml}${excl}`;
+}
+
 function _renderComparisonRecord(head, headHtml, rec, keys) {
     const consumed = new Set(['Comparison', 'Path']);
     const valueHtml = _renderComparisonValue(rec, consumed);
@@ -752,26 +1292,93 @@ function _renderComparisonRecord(head, headHtml, rec, keys) {
             // "count the truthy entries among these items"; the count
             // phrasing already conveys that, so consume it here.
             if ('CountPathTrue' in rec) consumed.add('CountPathTrue');
+            if (!_allConsumed(keys, consumed)) return null;
+            // A boundary threshold reads better as a quantifier word: "has none
+            // of" / "has any of" rather than "has at most 0 of" / "has at least
+            // 1 of". Fall back to the operator phrasing for non-boundary counts.
+            // A verb-style field reads as "Entered any of: X" / "Entered at least
+            // 3 of: X" instead of "<raw path> has ...".
+            const av = _aggVerb(rec.Path);
+            const verbChip = av ? _rephrasedPathChip(_capFirst(av), rec.Path) : null;
+            const word = _countBoundaryWord(rec.Comparison, rec.Value);
+            if (word) {
+                const lead = verbChip ? `${verbChip} ${word}` : `${headHtml} has ${word}`;
+                return `${lead} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
+            }
             const phrase = _COUNT_OP_PHRASING[rec.Comparison];
-            if (!phrase || !_allConsumed(keys, consumed)) return null;
-            return `${headHtml} ${phrase} ${valueHtml} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
+            if (!phrase) return null;
+            const lead = verbChip ? `${verbChip} ${phrase.replace(/^has /, '')}` : `${headHtml} ${phrase}`;
+            return `${lead} ${valueHtml} of: ${_renderOperandList(rec[ck])}${_renderAggregateHtml()}${suffix}`;
         }
     }
 
     // Aggregations that reshape the path value into a numeric subject.
     let subjectHtml = headHtml;
+    const aggV = _aggVerb(rec.Path);
     if ('UseLength' in rec) {
         consumed.add('UseLength');
-        subjectHtml = `Number of entries in ${headHtml}`;
+        // A length compared to a boundary reads as emptiness. For a verb-style
+        // field this is "Never <verb>" / "Has <verb>"; a noun field's record
+        // "is empty" / "is not empty".
+        const word = _countBoundaryWord(rec.Comparison, rec.Value);
+        if (word && _allConsumed(keys, consumed)) {
+            if (aggV) {
+                const prefix = word === 'none' ? 'Never' : 'Has';
+                return `${prefix} ${_rephrasedPathChip(aggV, rec.Path)}${_renderScalarHaveHtml()}${suffix}`;
+            }
+            const state = word === 'none' ? 'is empty' : 'is not empty';
+            return `${headHtml} ${state}${_renderScalarHaveHtml()}${suffix}`;
+        }
+        subjectHtml = aggV
+            ? `Number of distinct entries ${_rephrasedPathChip(aggV, rec.Path)}`
+            : `Number of distinct ${headHtml}`;
     } else if ('CountPathTrue' in rec) {
         consumed.add('CountPathTrue');
         subjectHtml = `Number of true entries in ${headHtml}`;
     } else if ('SumOf' in rec) {
         consumed.add('SumOf');
-        subjectHtml = `Sum of ${_renderOperandList(rec.SumOf)} in ${headHtml}`;
+        subjectHtml = aggV
+            ? `Number of times ${_rephrasedPathChip(aggV, rec.Path)}: ${_renderOperandList(rec.SumOf)}`
+            : `Sum of ${_renderOperandList(rec.SumOf)} in ${headHtml}`;
     }
 
     if (!_allConsumed(keys, consumed)) return null;
+    // A plain scalar count (no aggregation reshaped the subject) reads better at
+    // a boundary as a natural clause than "<subject> <op> N".
+    if (subjectHtml === headHtml) {
+        // Leaf+sub-field / value-path shapes (Arcana rank, lifetime trait use,
+        // objective last-failed delta) that read raw otherwise.
+        const special = _specialComparisonClause(rec);
+        if (special != null) return `${special}${suffix}`;
+        // Boss health-bar records: "Defeated X" / "Did not defeat X" at value 0,
+        // a remaining-health percentage otherwise (see _bossHealthClause). No
+        // scalar-have suffix - matches the player-health gate's clean phrasing.
+        const boss = _bossHealthClause(rec.Path, rec.Comparison, rec.Value, headHtml);
+        if (boss) return `${boss}${suffix}`;
+        const word = _countBoundaryWord(rec.Comparison, rec.Value);
+        if (word) {
+            // Curated success / possession counters read as a whole natural
+            // clause ("Has caught a fish by hand") rather than "<noun> >= 1".
+            const achieved = _scalarBoundaryClause(rec.Path, word);
+            if (achieved) return `${achieved}${_renderScalarHaveHtml()}${suffix}`;
+            // Known event / cumulative-count fields read as a natural clause at a
+            // boundary ("Never <did X>" / "No <noun>" / "Has <noun>"), but only
+            // when the gloss fully resolves so the lowercased head is clean.
+            const fam = _scalarCountFamily(rec.Path);
+            if (fam) {
+                const gloss = _pathGloss(Array.isArray(rec.Path) ? rec.Path : []);
+                if (gloss && gloss.full) {
+                    const lc = _lcFirstVisible(headHtml);
+                    const prefix = word === 'none' ? (fam === 'event' ? 'Never' : 'No') : 'Has';
+                    return `${prefix} ${lc}${_renderScalarHaveHtml()}${suffix}`;
+                }
+            }
+            // Resource / possession / lifetime-total fields: re-phrase from the
+            // trailing entity ("Does not have X" / "Has used X" / ...).
+            const leafClause = _scalarLeafClause(rec.Path, word);
+            if (leafClause) return `${leafClause}${_renderScalarHaveHtml()}${suffix}`;
+        }
+    }
     return `${subjectHtml}${_renderScalarHaveHtml()} ${escapeHtml(String(rec.Comparison))} ${valueHtml}${suffix}`;
 }
 
@@ -792,11 +1399,24 @@ function _renderPathRecord(head, rec) {
             const consumed = new Set([op, 'Path']);
             const suffix = _pathDecoratorSuffix(rec, consumed);
             if (!_allConsumed(keys, consumed)) return null;
-            return `${headHtml} ${verb}: ${_renderOperandList(rec[op])}${suffix}${scopeSuffix}`;
+            // Keepsake rarity / ClearedWithWeapons region form read specially.
+            const special = _specialMembershipClause(head, op, rec[op]);
+            if (special != null) return `${special}${suffix}${scopeSuffix}`;
+            // A verb-style object field addressed without a leaf reads as a verb
+            // clause ("Entered any of: X") rather than "<raw path> contains any of".
+            const av = _aggVerb(head);
+            const lead = av
+                ? `${_rephrasedPathChip(_capFirst(av), head)} ${_AGG_VERB_QUANTIFIER[op]}`
+                : `${headHtml} ${verb}`;
+            return `${lead}: ${_renderOperandList(rec[op])}${suffix}${scopeSuffix}`;
         }
     }
 
     if ('Comparison' in rec) {
+        // A count summed over previous runs/rooms reads as "in <quantifier> of
+        // the last N runs: <clause>" with no trailing run-scope (window explicit).
+        const perRun = _perRunWindowClause(headHtml, rec, keys);
+        if (perRun != null) return perRun;
         const cmp = _renderComparisonRecord(head, headHtml, rec, keys);
         return cmp === null ? null : `${cmp}${scopeSuffix}`;
     }
@@ -849,6 +1469,16 @@ function _fnRefOrList(v) {
     return _renderOperandList(v);
 }
 
+// Shared friendly gloss for the player-health-fraction gate. Both games gate on
+// the same 0..1 fraction but carry it differently: H2 as
+// FunctionName:RequiredHealthFraction (Comparison + Value), H1 as the bare
+// RequiredMin/MaxHealthFraction fields. Centralised here so both render
+// identically, e.g. "Health at most 33%".
+function _healthFractionGloss(word, fraction) {
+    const pct = Math.round((Number(fraction) || 0) * 100);
+    return `Health ${word} ${pct}%`;
+}
+
 const _FN_RENDERERS = {
     RequiredAlive(a) {
         return `${_fnAliveSubject(a)} must be ${a.Alive === false ? 'dead' : 'alive'}`;
@@ -857,9 +1487,8 @@ const _FN_RENDERERS = {
         return 'Vow of Rivals is active (boss fought in its unrivalled form)';
     },
     RequiredHealthFraction(a) {
-        const pct = Math.round((Number(a.Value) || 0) * 100);
         const w = _FN_CMP_WORDS[a.Comparison] || escapeHtml(String(a.Comparison));
-        return `Player health ${w} ${pct}%`;
+        return _healthFractionGloss(w, a.Value);
     },
     RequiredTraitNameInRoom(a) {
         return `This room offers the boon ${_valueChip(a.Name)}`;
@@ -879,7 +1508,7 @@ const _FN_RENDERERS = {
         return `Cleared ${_fnRooms(a)} ${escapeHtml(String(a.Count))} time${n === 1 ? '' : 's'} in a row`;
     },
     RequiredSellableGodTraits() {
-        return 'Player has god boons that can be sold';
+        return 'Has god boons that can be sold';
     },
     RequireQuestCount(a) {
         const st = _FN_QUEST_STATUS[a.Status] || escapeHtml(String(a.Status));
@@ -901,8 +1530,12 @@ const _FN_RENDERERS = {
         return `Boss is in phase ${escapeHtml(String(a.Phase))}`;
     },
     RequireAffordableGhostAdminItems(a) {
-        const items = Array.isArray(a.HasAny) && a.HasAny.length ? _renderOperandList(a.HasAny) : 'a Cauldron item';
-        return `Can afford a Cauldron item: ${items}`;
+        // The incantation name is a proper name, shown as plain text (not an
+        // operand code chip) after "Can afford incantation:".
+        const names = (Array.isArray(a.HasAny) && a.HasAny.length)
+            ? a.HasAny.map(x => escapeHtml(entityNames[x] || String(x))).join(', ')
+            : 'an incantation';
+        return `Can afford incantation: ${names}`;
     },
     RequiredQueuedTextLine(a) {
         return `No dialogue queued from: ${_fnRefOrList(a.IsNone)}`;
@@ -937,6 +1570,22 @@ function _renderFunctionRecord(fnName, rec) {
 // falls back to raw JSON.
 function _renderPathOpEntry(opKey, key, val) {
     if (!Array.isArray(val) || val.length === 0) return null;
+    // Malformed path: the operator keyword leaked into the path array as its
+    // root (a source-data typo, e.g. ``PathFalse: ["PathFalse", "RoomsEntered",
+    // ...]``). That root doesn't exist, so a "must be false" / "must be empty"
+    // gate is always satisfied and a "must be true" / "must be non-empty" one
+    // never is - either way it has no effect. Flag it like a broken requirement
+    // rather than rendering a bogus friendly path.
+    const p0 = val[0] && val[0][opKey];
+    if (Array.isArray(p0) && _PATH_OP_FRIENDLY_KEYS.has(p0[0])) {
+        return _renderBrokenPathHtml(key, opKey);
+    }
+    // Known broken save-record leaf (e.g. a UseRecord check keyed by a dialogue
+    // id, when UseRecord only ever holds entity keys): the record can never be
+    // set, so the gate has no effect. Flag it as a broken requirement rather
+    // than glossing the raw path with a misleading "(cut content)" note.
+    const brokenSeg = Array.isArray(p0) ? p0.find(seg => brokenPathRefs[seg]) : null;
+    if (brokenSeg) return _renderBrokenLeafRefHtml(key, opKey, brokenPathRefs[brokenSeg]);
     const friendlyKey = renderOtherReqKeyHtml(key);
     const parts = [];
     for (const rec of val) {
@@ -967,8 +1616,12 @@ function _renderBareKeyValueHtml(val, key) {
         if (objKeys.length === 1 && objKeys[0] === 'Count') {
             return `<code>${escapeHtml(_formatScalar(val.Count))}</code>`;
         }
-        // ``{Name, Count}`` threshold pair -> ``Name op Count``.
+        // ``{Name, Count}`` threshold pair -> ``Name op Count``. A minimum-of-1
+        // ("at least one") threshold is implied by the "Minimum ..." label, so
+        // the redundant ">= 1" is dropped and just the name shows.
         if (objKeys.length === 2 && 'Count' in val && 'Name' in val) {
+            const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+            if (_countBoundaryWord(kindOp, val.Count) === 'any') return _valueChip(val.Name);
             return `${_valueChip(val.Name)} ${op} <code>${escapeHtml(_formatScalar(val.Count))}</code>`;
         }
         // ``{Name, Min}`` / ``{Name, Max}`` threshold pair -> ``Name >= Min`` /
@@ -976,8 +1629,10 @@ function _renderBareKeyValueHtml(val, key) {
         // -> "PlayerKills >= 8" - the objective must have been completed at least
         // Min, or at most Max, times). The operator comes from the Min/Max key,
         // not the gate kind, so a single field key renders both senses correctly.
+        // A ``Min: 1`` ("at least one") threshold drops the redundant ">= 1".
         if (objKeys.length === 2 && 'Name' in val && ('Min' in val || 'Max' in val)) {
             const isMax = 'Max' in val;
+            if (!isMax && _countBoundaryWord('>=', val.Min) === 'any') return _valueChip(val.Name);
             return `${_valueChip(val.Name)} ${isMax ? '&lt;=' : '&gt;='} <code>${escapeHtml(_formatScalar(isMax ? val.Max : val.Min))}</code>`;
         }
         // Codex entry ``{EntryName, EntryIndex}`` -> the entry name plus how far
@@ -997,6 +1652,13 @@ function _renderBareKeyValueHtml(val, key) {
         // most> N of: items`` rather than dumping the array against an operator.
         const listKey = objKeys.find(k => Array.isArray(val[k]));
         if (listKey && 'Count' in val && objKeys.length === 2) {
+            // A boundary count reads better as "none of" / "any of" than "at
+            // most 0 of" / "at least 1 of".
+            const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+            const word = _countBoundaryWord(kindOp, val.Count);
+            if (word) {
+                return `${word} of: ${_renderOperandList(val[listKey])}${_renderAggregateHtml()}`;
+            }
             return `${_GATE_OF_PHRASE[kind]} <code>${escapeHtml(_formatScalar(val.Count))}</code> of: ${_renderOperandList(val[listKey])}${_renderAggregateHtml()}`;
         }
         // Scalar value map -> ``key op value`` per entry. The key is the
@@ -1007,9 +1669,19 @@ function _renderBareKeyValueHtml(val, key) {
         // gate's threshold, so it stays a plain chip.
         // ``op`` reflects the gate's real comparison: ``=`` for RequiredValues
         // (must equal), ``!=`` for RequiredFalseValues, ``<=`` for max
-        // thresholds, ``>=`` otherwise.
+        // thresholds, ``>=`` otherwise. A minimum-of-1 ("at least one") threshold
+        // is already implied by the gate's "Minimum ..." label, so the redundant
+        // ">= 1" is dropped and just the entity is shown - except for the
+        // ``_H1_COUNT_VERB_GATES`` fields, where an all-boundary gate is handled
+        // upstream as a "Has <verb> X" clause, so a bare-entity drop here would
+        // only ever hit a *mixed* gate and leave its ">= 1" entity reading as a
+        // stray name; those keep the explicit ">= 1".
+        const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+        const dropAnyOne = !_H1_COUNT_VERB_GATES[key];
         return Object.entries(val)
-            .map(([k, v]) => `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`)
+            .map(([k, v]) => (dropAnyOne && _countBoundaryWord(kindOp, v) === 'any'
+                ? _renderListItemHtml(k)
+                : `${_renderListItemHtml(k)} ${op} ${_valueChip(v)}`))
             .join(_OPERAND_SEP);
     }
     // Plain scalar threshold (number / string / boolean). For the single-scalar
@@ -1047,7 +1719,145 @@ const _GATE_OF_PHRASE = { min: 'at least', max: 'at most', eq: 'exactly', neq: '
 // with comma+space spacing and map values use the ``Name >= Count``
 // idiom rather than the raw JSON fallback.
 function _renderBareKeyEntry(key, val) {
-    return `${renderReqTypeHtml(key)}: ${_renderBareKeyValueHtml(val, key)}`;
+    const health = _renderHealthFractionEntry(key, val);
+    if (health !== null) return health;
+    const noneEntry = _renderMaxZeroNoneEntry(key, val);
+    if (noneEntry !== null) return noneEntry;
+    const gsValue = _renderGameStateValueEntry(key, val);
+    if (gsValue !== null) return gsValue;
+    // A boundary "count of an action on an entity" gate reads as "Has <verb> X"
+    // / "Never <verb> X" rather than the awkward "<label>: entity".
+    const countVerb = _renderCountVerbEntry(key, val);
+    if (countVerb !== null) return countVerb;
+    // A bare boolean-flag gate (always ``true`` in the data) states its whole
+    // condition in the label, so render just the label without a redundant
+    // ``: true`` - mirroring how H2 renders PathTrue / PathFalse gates, where the
+    // operator sense is baked into the friendly text and no true/false is shown.
+    if (val === true) return renderReqTypeHtml(key);
+    // A single-operand gate drops the ALL / ANY marker (meaningless for one item).
+    const operandCount = Array.isArray(val) ? val.length : null;
+    return `${renderReqTypeHtml(key, undefined, 'upstream', operandCount)}: ${_renderBareKeyValueHtml(val, key)}`;
+}
+
+// Curated friendly clauses for specific H1 ``GameState`` value-map gates that
+// otherwise render with a generic "GameState field ..." label + the raw field
+// name. Keyed by field; each is ``(kind, value) -> clause`` where ``kind`` is the
+// gate sense from ``_reqGateKind`` ('eq' / 'neq' / 'min' / 'max'). Returns null
+// to defer that field to the generic rendering.
+const _H1_VALUE_FIELD_CLAUSES = {
+    // The House "Employee of the Month" plaque; the value is a staff member.
+    CurrentEmployeeOfTheMonth: (kind, v) => {
+        const actual = _actualTallyHtml('CurrentEmployeeOfTheMonth');
+        if (kind === 'eq') return `Employee of the Month is ${_valueChip(v)}${actual}`;
+        if (kind === 'neq') return `Employee of the Month is not ${_valueChip(v)}${actual}`;
+        return null;
+    },
+    // Number of times the player has petted Cerberus.
+    NumCerberusPettings: (kind, v) => (kind === 'min'
+        ? `Petted Cerberus at least ${_valueChip(v)} times${_actualTallyHtml('NumCerberusPettings')}` : null),
+    // The Resources Director badge rank, resolved to its rank name.
+    BadgeRank: (kind, v) => {
+        const bound = kind === 'min' ? ' or higher' : kind === 'max' ? ' or lower' : kind === 'eq' ? '' : null;
+        if (bound === null) return null;
+        const clause = _badgeRankClause(v, bound);
+        return clause === null ? null : `${clause}${_actualTallyHtml('BadgeRank')}`;
+    },
+};
+
+// Friendly rendering of an H1 ``RequiredValues`` / ``RequiredFalseValues`` /
+// ``RequiredMinValues`` / ``RequiredMaxValues`` gate (a ``{field: value}`` map)
+// when every field has a curated clause in ``_H1_VALUE_FIELD_CLAUSES``. Returns
+// a self-contained clause (no generic "GameState field ..." header) or null so a
+// gate with any uncurated field keeps the existing generic rendering.
+function _renderGameStateValueEntry(key, val) {
+    if (key !== 'RequiredValues' && key !== 'RequiredFalseValues'
+        && key !== 'RequiredMinValues' && key !== 'RequiredMaxValues') return null;
+    if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+    const kind = _reqGateKind(key);
+    const clauses = [];
+    for (const [field, v] of Object.entries(val)) {
+        const fn = _H1_VALUE_FIELD_CLAUSES[field];
+        const clause = fn ? fn(kind, v) : null;
+        if (clause === null) return null;
+        clauses.push(clause);
+    }
+    return clauses.length ? clauses.join(_OPERAND_SEP) : null;
+}
+
+// H1 carries the player-health gate as a bare ``RequiredMaxHealthFraction`` /
+// ``RequiredMinHealthFraction`` field (a 0..1 fraction), which would otherwise
+// render as "Maximum health fraction : 0.5". H2 expresses the same gate through
+// ``FunctionName:RequiredHealthFraction``. Both go through the shared
+// ``_healthFractionGloss`` so they render identically ("Health at most
+// 33%"); this wraps it in the same func-gate span the H2 path uses. Returns
+// null for any other key/shape.
+function _renderHealthFractionEntry(key, val) {
+    if (key !== 'RequiredMaxHealthFraction' && key !== 'RequiredMinHealthFraction') return null;
+    if (typeof val !== 'number') return null;
+    const word = key === 'RequiredMaxHealthFraction' ? 'at most' : 'at least';
+    return `<span class="other-req-func-gate">${_healthFractionGloss(word, val)}</span>`;
+}
+
+// A "max threshold of 0" bare gate (e.g. H1 ``RequiredMaxLastStands: 0``) means
+// "at most 0" = "none", so render it as "No <thing>" rather than the awkward
+// "Maximum <thing>: 0". Only fires for a numeric-zero max-kind gate whose label
+// is a "Maximum <noun>" phrase (the H1 convention), yielding "No <noun>"; the
+// coloured save "(actual)" tally still trails when a save is loaded. Returns
+// null for any other shape so the normal "Label: value" rendering is used.
+function _renderMaxZeroNoneEntry(key, val) {
+    if (_reqGateKind(key) !== 'max' || val !== 0) return null;
+    const label = reqTypeLabels[key];
+    if (typeof label !== 'string' || !label.startsWith('Maximum ')) return null;
+    const noun = label.slice('Maximum '.length);
+    const tip = reqTypeTitleText(key);
+    const attr = tip !== null ? ` data-tooltip="${escapeHtml(tip)}"` : '';
+    return `<span class="req-type-name"${attr}>No ${escapeHtml(noun)}</span>${_renderScalarHaveHtml()}`;
+}
+
+// H1 "count of an action performed on a named entity" gates, whose value is a
+// ``{entity: threshold}`` map (e.g. ``RequiredMinNPCInteractions:
+// {NPC_Achilles_01: 1}``, ``RequiredKills: {Theseus: 1}``). At a boundary
+// threshold these read as a natural past-tense verb clause rather than the
+// awkward "<label>: entity" (which reads as if the entity *were* the minimum) -
+// matching how H2 renders its equivalent occurrence-count gates ("Has killed X"
+// / "Never interacted with X"). Each key maps to its action verb phrase; the
+// entity is the object of the verb.
+const _H1_COUNT_VERB_GATES = {
+    RequiredMinNPCInteractions:  'interacted with',
+    RequiredMaxNPCInteractions:  'interacted with',
+    RequiredMinItemInteractions: 'interacted with',
+    RequiredKills:               'killed',
+    RequiredMinWeaponKills:      'killed an enemy with',
+    RequiredMinRunsWithWeapons:  'completed a run with',
+    RequiredMaxRunsWithWeapons:  'completed a run with',
+    RequiredMinTimesSeenRoom:    'visited',
+    RequiredMaxTimesSeenRoom:    'visited',
+};
+
+// Render a boundary ``{entity: threshold}`` count gate from
+// ``_H1_COUNT_VERB_GATES`` as "Has <verb> X" (>= 1, the "any" boundary) or
+// "Never <verb> X" (<= 0 / == 0, the "none" boundary), mirroring H2's event
+// -count phrasing. Fires only when every entity sits at a boundary so the whole
+// gate becomes clean verb clauses; a gate with any non-boundary threshold
+// (>= 2, <= 12, ...) returns null and keeps the generic "<label>: entity op N"
+// rendering, which conveys the specific count. The verb lead carries the gate's
+// internal-name tooltip; each entity keeps its operand colour + save "(N)" tally.
+function _renderCountVerbEntry(key, val) {
+    const verb = _H1_COUNT_VERB_GATES[key];
+    if (!verb) return null;
+    if (!val || typeof val !== 'object' || Array.isArray(val)) return null;
+    const entries = Object.entries(val);
+    if (!entries.length) return null;
+    const kind = _reqGateKind(key);
+    const kindOp = { min: '>=', max: '<=', eq: '==', neq: '!=' }[kind];
+    const words = entries.map(([, n]) => _countBoundaryWord(kindOp, n));
+    if (words.some(w => w !== 'any' && w !== 'none')) return null;
+    const tip = reqTypeTitleText(key);
+    const attr = tip !== null ? ` data-tooltip="${escapeHtml(tip)}"` : '';
+    return entries.map(([entity], i) => {
+        const lead = words[i] === 'none' ? 'Never' : 'Has';
+        return `<span class="req-type-name"${attr}>${lead} ${escapeHtml(verb)}</span> ${_renderListItemHtml(entity)}`;
+    }).join(_OPERAND_SEP);
 }
 
 // Lua identifier check for the tooltip formatter: bare keys reproduce
@@ -1308,7 +2118,7 @@ function renderTraceEligibilityButtonHtml(name, tl) {
     if (!getDialogueStatus(name, tl)) return '';
     return `<div class="trace-eligibility-row">`
         + `<a class="trace-eligibility-btn" data-tooltip="Open the eligibility tracer to see what this dialogue still needs to play, based on your loaded save" onclick="navigateToEligibility(${jsAttr(name)})">`
-        + `Trace eligibility</a></div>`;
+        + `Check dialogue eligibility</a></div>`;
 }
 
 function renderAlternatesHtml(name) {
@@ -1466,9 +2276,18 @@ export function renderInfo(name) {
     // Dialogue + requirements: always rendered as a single block since
     // ``split_name_collisions`` (see src/graph.py) has already promoted
     // each collision variant to its own suffixed textline.
-    html += renderDialogueAndRequirementsHtml(tl, name);
+    const dialogueReqHtml = renderDialogueAndRequirementsHtml(tl, name);
+    html += dialogueReqHtml;
 
     html += renderAlternatesHtml(name);
+
+    // Dot key legend: pinned to the bottom of the details panel (below the
+    // requirements and the alternates) rather than above the requirements. Same
+    // gate as before - shown only when save-status dots are active and there is
+    // a requirements block whose dots it keys.
+    if (_saveDotsActive() && dialogueReqHtml.includes('class="requirements-group"')) {
+        html += renderStatusLegendHtml();
+    }
 
     html += `</div>`;
     container.innerHTML = html;
@@ -1517,23 +2336,79 @@ function computeChoiceLetters(choices) {
 // Each entry is speaker-prefixed like the main lines. A ``text`` entry shows its
 // subtitle (like the main lines); a ``cue``-only entry (a non-subtitled audio
 // cue, e.g. a sound effect) shows the trimmed cue id as a muted chip.
+//
+// A closing line may be conditional: the engine gates some voice-line groups on
+// game state (``GameStateRequirements``) and plays only the eligible one - e.g.
+// a different coda depending on whether another line was seen. Such lines carry
+// a per-group ``condGroup`` id plus the group's extracted ``requirements`` /
+// ``otherRequirements``; consecutive lines sharing a ``condGroup`` render under
+// a single "only plays when ..." note. (Choice-gated codas are routed to the
+// choice-child textline at extract time, so they appear as that branch's plain
+// closing lines rather than a condition here.)
 function _renderEndLinesHtml(endLines) {
     if (!Array.isArray(endLines) || endLines.length === 0) return '';
     let html = '<div class="end-lines">'
         + '<div class="end-lines-label" data-tooltip="Voicelines this dialogue plays after its main lines (EndCue / EndVoiceLines).">Closing voicelines</div>';
-    for (const line of endLines) {
-        const speaker = line.speaker
-            ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
-            : '';
-        if (line.text) {
-            html += `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
-        } else if (line.cue) {
-            html += `<div class="dialogue-line end-line">${speaker}`
-                + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
+    let i = 0;
+    while (i < endLines.length) {
+        const cond = endLines[i].condGroup;
+        if (cond === undefined) {
+            html += _renderEndLineHtml(endLines[i]);
+            i++;
+            continue;
         }
+        // Gather the run of consecutive lines sharing this conditional group.
+        const group = [];
+        while (i < endLines.length && endLines[i].condGroup === cond) {
+            group.push(endLines[i]);
+            i++;
+        }
+        html += `<div class="end-line-group">`
+            + _renderEndLineConditionHtml(group[0])
+            + group.map(_renderEndLineHtml).join('')
+            + `</div>`;
     }
     html += '</div>';
     return html;
+}
+
+// One closing line: speaker prefix + subtitle text, or a muted cue chip when the
+// line has no subtitle.
+function _renderEndLineHtml(line) {
+    const speaker = line.speaker
+        ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
+        : '';
+    if (line.text) {
+        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
+    }
+    if (line.cue) {
+        return `<div class="dialogue-line end-line">${speaker}`
+            + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
+    }
+    return '';
+}
+
+// The "only plays when ..." note heading a conditional closing-line group,
+// built from the group's extracted textline ``requirements`` (rendered as their
+// type pill + navigable names) and ``otherRequirements`` (rendered as the same
+// friendly clauses used in the Other Requirements section).
+function _renderEndLineConditionHtml(line) {
+    const parts = [];
+    for (const [type, names] of Object.entries(line.requirements || {})) {
+        if (!Array.isArray(names) || names.length === 0) continue;
+        const links = names.map(n => textlines[n]
+            ? `<a class="choice-link" onclick="navigateTo(${jsAttr(n)})">${escapeHtml(n)}</a>`
+            : escapeHtml(n)).join(', ');
+        parts.push(`${renderReqTypeHtml(type)}: ${links}`);
+    }
+    for (const [key, val] of Object.entries(line.otherRequirements || {})) {
+        parts.push(renderOtherReqEntryHtml(key, val));
+    }
+    if (parts.length === 0) return '';
+    return `<div class="end-line-cond-note" data-tooltip="This closing line only plays when the condition holds; the engine picks whichever gated group is eligible.">`
+        + `<span class="end-line-cond-tag">Only when</span> `
+        + parts.join(` <span class="other-req-and">AND</span> `)
+        + `</div>`;
 }
 
 // Render the dialogue lines + textline-typed requirements + other
@@ -1587,6 +2462,26 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                           + optionHtml
                           + `</div>`;
                 }
+            } else if (typeof line === 'object' && line.kind === 'randomGroup' && Array.isArray(line.options)) {
+                // A random-pick-one segment (a ``RandomRemaining`` voice-line
+                // group): the game plays exactly one of these options here, so
+                // render a collapsed section headed "one of these plays at
+                // random" listing the candidates. ``source`` marks options that
+                // come from a shared cross-dialogue set (HeroRepeatableTextLines).
+                const n = line.options.length;
+                const tip = 'The game generates a randomised dialogue by picking one line from each of these sets in turn. '
+                    + 'RandomRemaining: once a line has played, it will not play again until every other line in the set has been played.';
+                html += `<details class="random-group" open><summary class="random-group-header" data-tooltip="${escapeHtml(tip)}">`
+                      + `<span class="random-group-chevron" aria-hidden="true">\u25B6</span>`
+                      + `<span class="random-group-label">One of these plays at random</span>`
+                      + `<span class="random-group-count">${n}</span></summary>`
+                      + `<div class="random-group-options">`;
+                for (const o of line.options) {
+                    html += (o && o.speaker)
+                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(o.text)}</div>`
+                        : `<div class="dialogue-line">${escapeHtml((o && o.text) || '')}</div>`;
+                }
+                html += `</div></details>`;
             } else if (typeof line === 'object' && line.speaker) {
                 html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
             } else if (typeof line === 'object') {
@@ -1634,7 +2529,9 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     // branches.
     reqHtml += renderOtherRequirementsSectionHtml(requirements, otherRequirements, reqOptions);
 
-    if (reqHtml) html += `<div class="requirements-group">${reqHtml}</div>`;
+    if (reqHtml) {
+        html += `<div class="requirements-group">${reqHtml}</div>`;
+    }
 
     return html;
 }
@@ -1645,7 +2542,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
 // so both call sites use the exact same layout, branch numbering, and
 // collapse semantics. Returns an empty string when ``orBranches`` is
 // missing, not an array, or has no entries.
-function renderOrBranchesSectionHtml(orBranches, textlineName) {
+function renderOrBranchesSectionHtml(orBranches, textlineName, keepOpen = false) {
     const branches = Array.isArray(orBranches) ? orBranches : [];
     if (branches.length === 0) return '';
     const total = branches.length;
@@ -1653,26 +2550,22 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
     const showDots = _saveDotsActive();
     const ctx = showDots ? getSaveContext() : null;
     // Overall "alternates" verdict: met if any option's requirements hold.
-    let groupDot = '';
-    if (showDots) {
-        const gv = orGroupVerdict(branches, ctx, textlineName);
-        groupDot = statusDot(gv, groupStatusTooltip(gv));
-    }
+    const gv = showDots ? orGroupVerdict(branches, ctx, textlineName) : null;
+    const groupDot = gv ? statusDot(gv, kindTooltip(gv, 'aggregate'), 'aggregate') : '';
+    const [gChev, gExp] = metCollapse(gv, showDots, keepOpen);
     let html = `<div class="req-section req-type-or-group">`
-             + `<h4><span class="toggle">\u25BC</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
-             + `<div class="req-section-children expanded">`;
+             + `<h4><span class="toggle">${gChev}</span>${groupDot}${escapeHtml(groupLabel)}</h4>`
+             + `<div class="req-section-children${gExp}">`;
     for (let bi = 0; bi < branches.length; bi++) {
         const branch = branches[bi] || {};
         // Per-option verdict: this branch's combined requirement + GameState dot.
-        let branchDot = '';
-        if (showDots) {
-            const bv = orBranchVerdict(branch, ctx, textlineName);
-            branchDot = statusDot(bv, groupStatusTooltip(bv));
-        }
+        const bv = showDots ? orBranchVerdict(branch, ctx, textlineName) : null;
+        const branchDot = bv ? statusDot(bv, kindTooltip(bv, 'aggregate'), 'aggregate') : '';
+        const [bChev, bExp] = metCollapse(bv, showDots, keepOpen);
         html += `<div class="or-branch">`
-              + `<h5 class="or-branch-header"><span class="toggle">\u25BC</span>`
+              + `<h5 class="or-branch-header"><span class="toggle">${bChev}</span>`
               + `${branchDot}Option ${bi + 1} of ${total}</h5>`
-              + `<div class="or-branch-children expanded">`;
+              + `<div class="or-branch-children${bExp}">`;
         html += renderRequirementsAndOtherHtml(
             branch.requirements || {},
             branch.otherRequirements || {},
@@ -1680,6 +2573,7 @@ function renderOrBranchesSectionHtml(orBranches, textlineName) {
                 textlineName,
                 sourcesByType: {},
                 otherHeaderLabel: null,
+                keepOpen,
             }
         );
         html += renderChanceToPlayNoteHtml(branch.flags && branch.flags.chanceToPlay);
@@ -1747,29 +2641,33 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
     const sctx = showDots ? getSaveContext() : null;
     const hostOwner = (hostTextlineName && textlines[hostTextlineName])
         ? textlines[hostTextlineName].owner : undefined;
+    // A must-NOT-pass gate inverts: render its dots as 'inverted' (ring +
+    // slash) so an eligible child below reads as the blocker, not a paradox.
+    const nkind = key === 'NamedRequirementsFalse' ? 'inverted' : 'aggregate';
     let groupDot = '';
     if (showDots) {
         const g = namedRequirementGroupVerdict(key, names, sctx, hostOwner);
-        groupDot = statusDot(g, groupStatusTooltip(g));
+        groupDot = statusDot(g, kindTooltip(g, nkind), nkind);
     }
     let html = `<div class="other-req-item named-req-item">`
-             + `<div class="named-req-label">${groupDot}${renderOtherReqKeyHtml(key)}:</div>`
+             + `<div class="named-req-label">${groupDot}<span class="req-header-text">${renderOtherReqKeyHtml(key)}:</span></div>`
              + `<div class="named-req-list">`;
     for (const name of names) {
         const resolved = namedRequirements ? namedRequirements[name] : null;
         const safeName = escapeHtml(name);
         const safeSuffix = suffix ? ` <span class="named-req-suffix">(${escapeHtml(suffix)})</span>` : '';
-        let nameDot = '';
-        if (showDots) {
-            const s = namedRequirementHostVerdict(key, name, sctx, hostOwner);
-            nameDot = statusDot(s, groupStatusTooltip(s));
-        }
+        const s = showDots ? namedRequirementHostVerdict(key, name, sctx, hostOwner) : null;
+        const nameDot = s ? statusDot(s, kindTooltip(s, nkind), nkind) : '';
         if (_namedReqIsEmpty(resolved)) {
             html += `<div class="named-req-flat">`
                   + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
                   + `</div>`;
             continue;
         }
+        // When a must-NOT-pass gate is currently satisfied (its host verdict is
+        // 'unmet' = blocking), its satisfied content IS the blocker, so keep it
+        // expanded (don't let the met sub-groups auto-collapse) and flag it.
+        const keepBlockerOpen = nkind === 'inverted' && s === 'unmet';
         const inner = renderRequirementsAndOtherHtml(
             resolved.requirements || {},
             resolved.otherRequirements || {},
@@ -1777,14 +2675,19 @@ export function renderNamedReqExpansionsHtml(key, names, hostTextlineName) {
                 textlineName: hostTextlineName,
                 sourcesByType: {},
                 otherHeaderLabel: null,
+                keepOpen: keepBlockerOpen,
             }
-        ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName);
+        ) + renderOrBranchesSectionHtml(resolved.orBranches, hostTextlineName, keepBlockerOpen);
+        const blockerNote = keepBlockerOpen
+            ? ` <span class="named-req-blocker-note" data-tooltip="This must-NOT-pass gate is currently satisfied, which is exactly what blocks the dialogue. The satisfied requirement is shown expanded below.">satisfied below, so blocked</span>`
+            : '';
+        const [nChev, nExp] = metCollapse(s, showDots);
         html += `<div class="named-req-expand">`
               + `<h5 class="named-req-header">`
-              + `<span class="toggle">\u25BC</span>`
-              + `${nameDot}<code class="named-req-name">${safeName}</code>${safeSuffix}`
+              + `<span class="toggle">${nChev}</span>`
+              + `${nameDot}<span class="req-header-text"><code class="named-req-name">${safeName}</code>${safeSuffix}${blockerNote}</span>`
               + `</h5>`
-              + `<div class="named-req-children expanded">${inner}</div>`
+              + `<div class="named-req-children${nExp}">${inner}</div>`
               + `</div>`;
     }
     html += `</div></div>`;
@@ -1812,7 +2715,7 @@ function renderRequirementsAndOtherHtml(requirements, otherRequirements, options
 // with the matching requirement-section header. Reused verbatim by the
 // OR-branch and NamedRequirements call sites for identical markup.
 function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
-    const { textlineName, sourcesByType } = options;
+    const { textlineName, sourcesByType, keepOpen } = options;
     let html = '';
     const showDots = _saveDotsActive();
     const ctx = showDots ? getSaveContext() : null;
@@ -1839,15 +2742,16 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
         }
         // Group verdict dot (met / unmet / indeterminate / unobtainable),
         // shared with the dependency tree's group dots.
-        let groupDot = '';
-        if (showDots) {
-            const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
-            const v = requirementGroupVerdict(type, refs, ctx, cnt, textlineName);
-            groupDot = statusDot(v, groupStatusTooltip(v));
-        }
+        const cnt = (meta && typeof meta === 'object' && 'Count' in meta) ? meta.Count : 1;
+        const v = showDots ? requirementGroupVerdict(type, refs, ctx, cnt, textlineName) : null;
+        // Negative ("must not have played") and count-max ("at most N")
+        // groups are inverted gates: mark them so, else aggregate.
+        const gkind = (NEGATIVE_REQ_TYPES.has(type) || COUNT_MAX_REQ_TYPES.has(type)) ? 'inverted' : 'aggregate';
+        const groupDot = v ? statusDot(v, kindTooltip(v, gkind), gkind) : '';
+        const [tChev, tExp] = metCollapse(v, showDots, keepOpen);
         html += `<div class="req-section req-type-${type}">`
-              + `<h4><span class="toggle">\u25BC</span>${groupDot}${renderReqTypeHtml(type)}${countSuffix}</h4>`
-              + `<div class="req-section-children expanded">`;
+              + `<h4><span class="toggle">${tChev}</span>${groupDot}<span class="req-header-text">${renderReqTypeHtml(type)}${countSuffix}</span></h4>`
+              + `<div class="req-section-children${tExp}">`;
         const sources = (sourcesByType && sourcesByType[type]) || [];
         let i = 0;
         while (i < refs.length) {
@@ -1889,7 +2793,7 @@ function renderBaseRequirementsHtml(requirements, otherRequirements, options) {
 // expansion call sites, where the surrounding header already provides
 // scope).
 export function renderOtherRequirementsSectionHtml(requirements, otherRequirements, options) {
-    const { textlineName, otherHeaderLabel } = options;
+    const { textlineName, otherHeaderLabel, keepOpen } = options;
     if (Object.keys(otherRequirements).length === 0) return '';
 
     // With a matching save loaded, evaluate each non-textline gate against the
@@ -1966,10 +2870,11 @@ export function renderOtherRequirementsSectionHtml(requirements, otherRequiremen
 
     if (!otherHtml) return '';
     if (otherHeaderLabel) {
-        const headerDot = showDots ? statusDot(overallVerdict, groupStatusTooltip(overallVerdict)) : '';
+        const headerDot = showDots ? statusDot(overallVerdict, kindTooltip(overallVerdict, 'aggregate'), 'aggregate') : '';
+        const [oChev, oExp] = metCollapse(overallVerdict, showDots, keepOpen);
         return `<div class="req-section req-type-other">`
-              + `<h4><span class="toggle">\u25BC</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
-              + `<div class="req-section-children expanded">${otherHtml}</div>`
+              + `<h4><span class="toggle">${oChev}</span>${headerDot}${escapeHtml(otherHeaderLabel)}</h4>`
+              + `<div class="req-section-children${oExp}">${otherHtml}</div>`
               + `</div>`;
     }
     // Compact (OR-branch) mode: inline the items directly under the
@@ -1984,7 +2889,7 @@ function collisionTooltipText(tl) {
     return (
         `Renamed for Dialogue Explorer. The game's source data has ${tl.collisionTotal} distinct ` +
         `definitions sharing the name "${tl.collisionOriginalName}". The engine ` +
-        `keys CurrentRun.TextLinesRecord globally by name, so once any one of ` +
+        `records played lines globally by name, so once any one of ` +
         `these variants triggers, the others are blocked from ever playing in ` +
         `the same save - almost certainly a base-game bug.`
     );
@@ -2081,13 +2986,23 @@ export function initInfoPanel() {
             toggleSection(orBranchHeader, 'or-branch-children');
             return;
         }
-        // Outer collapse target: the requirement-section header (h4).
-        // Scoped to direct h4 children of .req-section so other h4s
-        // (Player Choices, Dialogue) stay non-collapsible.
-        const reqHeader = e.target.closest('.req-section > h4');
-        if (reqHeader && container.contains(reqHeader)) {
-            toggleSection(reqHeader, 'req-section-children');
-            return;
+        // Outer collapse target: the requirement-section header. Match the
+        // whole section (not only its h4) so a click anywhere on the header
+        // ROW toggles it - including the empty space to the right of the
+        // compact coloured pill, making the full row interactable rather than
+        // just the h4. The geometric check keeps toggling to the header line:
+        // a click below it (in the section body / its items) must not collapse
+        // the section. ``:scope > h4`` resolves to the innermost section when
+        // sections nest (per-type sections inside an OR branch). Other h4s
+        // (Player Choices, Dialogue) live outside .req-section and stay
+        // non-collapsible.
+        const reqSection = e.target.closest('.req-section');
+        if (reqSection && container.contains(reqSection)) {
+            const reqHeader = reqSection.querySelector(':scope > h4');
+            if (reqHeader && e.clientY <= reqHeader.getBoundingClientRect().bottom) {
+                toggleSection(reqHeader, 'req-section-children');
+                return;
+            }
         }
     });
 }

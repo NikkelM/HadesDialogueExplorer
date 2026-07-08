@@ -1,0 +1,203 @@
+<!--
+  Source for the Hades Dialogue Explorer social share image (static/og-image.png).
+  Mirrors the approach + styling of the nikkelm.dev site card
+  (NikkelM.github.io/scripts/og-image.html): an HTML file rendered at 1200x630
+  with headless Chrome.
+
+  Easiest: run scripts/social-card/generate.ps1 (captures the panel + renders).
+
+  Or the two steps by hand (see README.md):
+    1. Refresh the embedded tool screenshot (only when changing dialogue/save) -
+       needs Chrome on a CDP port + the viewer served at http://localhost:8000:
+         node capture-panel.mjs <dialogue> <save.sav> panel.png
+    2. Render this file to the shipped PNG. Pass ABSOLUTE paths - a bare
+       filename is treated as a hostname by Chrome:
+         & chrome --headless=new --disable-gpu --window-size=1200,630 `
+           --allow-file-access-from-files --virtual-time-budget=3000 `
+           --user-data-dir=$env:TEMP\hde-card `
+           --screenshot=<repo>\static\og-image.png <repo>\scripts\social-card\og-image.html
+
+  Tweak freely: the text, feature list, palette and layout are all just CSS/HTML
+  below; re-run step 2 to regenerate. panel.png is the tool screenshot embedded
+  in the browser frame on the right.
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+		/>
+		<style>
+			:root {
+				/* Shared with the nikkelm.dev site card + the viewer palette. */
+				--bg: #0f1115;
+				--fg: #e8e9ec;
+				--muted: #9aa1ab;
+				--line: #272c34;
+				--accent: #e8a33d;
+				--panel: #12151b;
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				width: 1200px;
+				height: 630px;
+				overflow: hidden;
+			}
+			body {
+				position: relative;
+				background-color: var(--bg);
+				color: var(--fg);
+				font-family: "IBM Plex Sans", sans-serif;
+			}
+
+			.card {
+				position: relative;
+				z-index: 1;
+				display: flex;
+				height: 100%;
+			}
+
+			/* ---- left: wordmark, title, tagline, feature list ---- */
+			.left {
+				flex: 0 0 632px;
+				width: 632px;
+				padding: 56px 20px 52px 74px;
+				display: flex;
+				flex-direction: column;
+			}
+			.wordmark {
+				font-family: "IBM Plex Mono", monospace;
+				font-size: 26px;
+				letter-spacing: -0.01em;
+				color: var(--fg);
+			}
+			.wordmark .dev {
+				color: var(--accent);
+			}
+			.title {
+				margin-top: 30px;
+				font-size: 66px;
+				font-weight: 700;
+				line-height: 1.02;
+				letter-spacing: -0.02em;
+				color: var(--accent);
+			}
+			.tagline {
+				margin-top: 20px;
+				max-width: 540px;
+				font-size: 25px;
+				font-weight: 400;
+				line-height: 1.4;
+				color: var(--muted);
+			}
+			.features {
+				margin-top: auto;
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+			}
+			.feature {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				font-size: 24px;
+				font-weight: 500;
+				color: var(--fg);
+			}
+			.feature .dot {
+				width: 9px;
+				height: 9px;
+				background: var(--accent);
+				flex: none;
+			}
+
+			/* ---- right: the tool screenshot in a browser frame ---- */
+			/* The frame bleeds off the right edge of the card: the panel is shown
+			   larger than the visible area so the long "other requirements" text
+			   flows off-screen, while the inset priority badges stay clear of the
+			   card edge (see capture-panel.mjs). */
+			.frame {
+				position: absolute;
+				top: 22px;
+				left: 656px;
+				width: 584px;
+				height: 586px;
+				border: 1px solid var(--line);
+				border-radius: 16px;
+				background: var(--panel);
+				overflow: hidden;
+				box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+			}
+			.bar {
+				height: 42px;
+				display: flex;
+				align-items: center;
+				gap: 9px;
+				padding: 0 18px;
+				border-bottom: 1px solid var(--line);
+				background: #171b22;
+			}
+			.tl {
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+			}
+			.tl.r { background: #ed6a5e; }
+			.tl.y { background: #f5bf4f; }
+			.tl.g { background: #62c554; }
+			.url {
+				margin-left: 12px;
+				font-family: "IBM Plex Mono", monospace;
+				font-size: 15px;
+				color: var(--muted);
+				background: var(--bg);
+				padding: 5px 14px;
+				border-radius: 11px;
+			}
+			.shot {
+				height: calc(100% - 42px);
+				overflow: hidden;
+			}
+			/* panel.png is the captured "Textline details" panel; fill the frame
+			   width and top-align so the name + eligibility badge lead. */
+			.shot img {
+				display: block;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="card">
+			<div class="left">
+				<div class="wordmark">nikkelm<span class="dev">.dev</span></div>
+				<div class="title">Hades Dialogue<br />Explorer</div>
+				<div class="tagline">
+					Explore all dialogues from Hades &amp; Hades II: what each one requires to
+					unlock, and where you are in your playthrough.
+				</div>
+				<div class="features">
+					<div class="feature"><span class="dot"></span>All dialogues from both games</div>
+					<div class="feature"><span class="dot"></span>Full dependency graphs</div>
+					<div class="feature"><span class="dot"></span>Non-dialogue requirements resolved</div>
+					<div class="feature"><span class="dot"></span>Save file analysis</div>
+				</div>
+			</div>
+			<div class="frame">
+				<div class="bar">
+					<span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+					<span class="url">nikkelm.dev/HadesDialogueExplorer</span>
+				</div>
+				<div class="shot"><img src="panel.png" alt="" /></div>
+			</div>
+		</div>
+	</body>
+</html>

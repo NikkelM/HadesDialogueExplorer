@@ -40,6 +40,21 @@ export function saveStatusTooltip(status) {
     return SAVE_STATUS_TOOLTIPS[status] || '';
 }
 
+// Tag every direct child of a responsive (``auto-fill``) grid that lands in an
+// even column with ``altClass``, so CSS can tint alternate columns as distinct
+// bands. CSS has no per-column selector and the column count is dynamic, so it
+// is read from the resolved grid tracks. Idempotent - toggles the class both
+// ways, so it is safe to call after every render and on resize.
+export function applyColumnStripes(listEl, altClass) {
+    if (!listEl || typeof getComputedStyle !== 'function') return;
+    const tracks = getComputedStyle(listEl).gridTemplateColumns.split(' ').filter(Boolean);
+    const cols = tracks.length || 1;
+    const items = listEl.children;
+    for (let i = 0; i < items.length; i++) {
+        items[i].classList.toggle(altClass, cols > 1 && (i % cols) % 2 === 1);
+    }
+}
+
 // Tooltip for a requirement-group / OR-option / "other requirements" dot.
 // Generalised over BOTH dialogue-line requirements and non-textline game-state
 // conditions, since a group dot can now reflect either (or a mix). Shared by
@@ -54,7 +69,7 @@ export function groupStatusTooltip(status) {
     case 'unobtainable':
         return 'Permanently locked: this can never be satisfied in this save (e.g. a one-time line already played or now past its run-count window, a max-count cap exceeded, or a required line that is itself unobtainable).';
     case 'unknown':
-        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve - depends on something this save can\u2019t resolve, such as state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined.';
+        return 'Can\u2019t be determined from your save: it depends on something the save doesn\u2019t resolve, such as the state of an ongoing encounter or room interactions, so eligibility can\u2019t be determined.';
     default:
         return '';
     }
@@ -141,9 +156,9 @@ export function renderSpeakerHtml(id, { clickable = true } = {}) {
     const cls = clickable ? 'speaker-name clickable' : 'speaker-name';
     const clickAttr = clickable ? ` onclick="event.stopPropagation(); navigateToSpeaker(${jsAttr(id)})"` : '';
     if (friendly && friendly !== id) {
-        const titleParts = [`${friendly} (${id})`];
+        const titleParts = [`Internal name: ${id}`];
         if (description) titleParts.push(description);
-        return `<span class="${cls}" data-tooltip="${escapeHtml(titleParts.join('\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
+        return `<span class="${cls}" data-tooltip="${escapeHtml(titleParts.join('\n\n'))}"${clickAttr}>${escapeHtml(friendly)}</span>`;
     }
     if (description) {
         return `<span class="${cls}" data-tooltip="${escapeHtml(description)}"${clickAttr}>${escapeHtml(id)}</span>`;
@@ -180,6 +195,25 @@ export function formatReqType(type, direction = 'upstream') {
         return reqTypeLabelsDependents[type] || reqTypeLabels[type] || type;
     }
     return reqTypeLabels[type] || type;
+}
+
+// Remove the ALL / ANY quantifier marker from a requirement label when the gate
+// checks a SINGLE operand: "all of" one item and "any of" one item mean the same
+// thing, so the marker carries no information ("Must NOT have flag (ALL)" -> "Must
+// NOT have flag"). Applied ONLY to the non-textline "Other Requirements" gates
+// (see ``_renderBareKeyEntry``); dialogue/textline requirement labels keep their
+// quantifier everywhere for consistency across the details panel, tree and tracer.
+// Only the trailing quantifier parenthetical is touched - a scope qualifier
+// sharing it is kept ("(ALL, this run)" -> "(this run)"), and a non-quantifier
+// gloss earlier in the label ("(boon or other upgrade)") is left intact. Returns
+// the label unchanged when it carries no trailing quantifier.
+export function stripSingleOperandQuantifier(label) {
+    if (!label) return label;
+    // "(ALL)" / "(ANY)" / "(ANY other)" alone -> drop the whole parenthetical.
+    const dropped = label.replace(/\s*\((?:ALL|ANY)(?: other)?\)$/, '');
+    if (dropped !== label) return dropped;
+    // "(ALL, <scope>)" / "(ANY, <scope>)" -> keep just the scope: "(<scope>)".
+    return label.replace(/\s*\((?:ALL|ANY),\s*([^)]+)\)$/, ' ($1)');
 }
 
 // Build the tooltip-attribute string for a requirement-type label. When
@@ -222,13 +256,16 @@ export function reqTypeTitleText(type, direction = 'upstream') {
 // Returns pre-escaped HTML. Do NOT pass through escapeHtml again at
 // the call site - both the friendly label and the tooltip text are
 // already routed through escapeHtml below.
-export function renderReqTypeHtml(type, extraClass, direction = 'upstream') {
-    const friendly = (direction === 'downstream'
+export function renderReqTypeHtml(type, extraClass, direction = 'upstream', operandCount = null) {
+    let friendly = (direction === 'downstream'
         ? (reqTypeLabelsDependents[type] || reqTypeLabels[type])
         : reqTypeLabels[type]);
     const cls = `req-type-name${extraClass ? ' ' + extraClass : ''}`;
     const titleText = reqTypeTitleText(type, direction);
     if (titleText !== null) {
+        // Drop the ALL / ANY marker from the visible label for a single-operand
+        // gate (the full quantifier wording stays in the hover tooltip's blurb).
+        if (operandCount === 1) friendly = stripSingleOperandQuantifier(friendly);
         return `<span class="${cls}" data-tooltip="${escapeHtml(titleText)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="${cls}">${escapeHtml(type)}</span>`;
@@ -250,7 +287,7 @@ export function renderReqTypeHtml(type, extraClass, direction = 'upstream') {
 export function renderSectionHtml(key) {
     const friendly = sectionKeyLabels[key];
     if (friendly && friendly !== key) {
-        return `<span class="section-name" data-tooltip="${escapeHtml(key)}">${escapeHtml(friendly)}</span>`;
+        return `<span class="section-name" data-tooltip="${escapeHtml('Internal name: ' + key)}">${escapeHtml(friendly)}</span>`;
     }
     return `<span class="section-name">${escapeHtml(key)}</span>`;
 }
@@ -278,10 +315,10 @@ export function renderChoiceNameHtml(internal, extraTooltipLine = null) {
     const friendly = choiceNames[internal];
     const hasFriendly = friendly && friendly !== internal;
     const tooltipParts = [];
-    if (hasFriendly) tooltipParts.push(internal);
+    if (hasFriendly) tooltipParts.push(`Internal name: ${internal}`);
     if (extraTooltipLine) tooltipParts.push(extraTooltipLine);
     const tooltipAttr = tooltipParts.length > 0
-        ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n'))}"`
+        ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n\n'))}"`
         : '';
     const visible = hasFriendly ? friendly : internal;
     return `<span class="choice-name"${tooltipAttr}>${escapeHtml(visible)}</span>`;

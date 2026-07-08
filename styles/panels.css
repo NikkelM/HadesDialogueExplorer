@@ -196,13 +196,67 @@ body.resizing-panels * { cursor: col-resize !important; }
    no per-axis control (``scrollbar-width`` hides both), so it keeps both bars -
    an acceptable fallback that never hides the horizontal one. Vertical scroll
    still works everywhere via wheel / trackpad / keyboard. */
-body.layout-dialogue .panel-body::-webkit-scrollbar { width: 0; height: 8px; }
+body.layout-dialogue .panel-body::-webkit-scrollbar { width: 0; height: 6px; }
 body.layout-dialogue .panel-body::-webkit-scrollbar-track { background: transparent; }
 body.layout-dialogue .panel-body::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 4px;
+    border-radius: 3px;
 }
 body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Scroll-shadow affordance for the horizontally scrollable prerequisite /
+   dependent trees (desktop). Wide rows get clipped at the column's right edge
+   with no hint they scroll sideways; a fade at each horizontal edge shows ONLY
+   when there is more content to scroll to that way (the ``can-scroll-*``
+   classes are toggled from the scroll position by tree-scroll-shadow.js).
+
+   The fade is an OVERLAY (``.panel::before`` / ``::after``) painted ON TOP of
+   the scrolling content, not a ``background`` on the scroll box. A background
+   sits behind the panel's own children, so opaque badges / priority pills at
+   the clipped edge cover it; an on-top overlay
+   dissolves whatever is under it - plain text and badges alike. It stays
+   layout-neutral: absolutely positioned + ``pointer-events: none``, so the
+   desktop layout and hit-testing are untouched.
+
+   ``.panel`` is already ``position: relative`` (collapse-button anchor, above)
+   and ``overflow: hidden``, so it is the overlay's containing block and clips
+   it to the column. z-index 5 sits below the header (``.panel h2``, z-index 10,
+   opaque ``--bg``) and the collapse button (z-index 11) but above the tree, so
+   the fade only shows across the body and never over the header chrome. */
+@media (min-width: 1025px) {
+    body.layout-dialogue #panel-upstream::before,
+    body.layout-dialogue #panel-upstream::after,
+    body.layout-dialogue #panel-downstream::before,
+    body.layout-dialogue #panel-downstream::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 34px;
+        z-index: 5;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+    body.layout-dialogue #panel-upstream::before,
+    body.layout-dialogue #panel-downstream::before {
+        left: 0;
+        background: linear-gradient(to right, var(--bg), transparent);
+    }
+    body.layout-dialogue #panel-upstream::after,
+    body.layout-dialogue #panel-downstream::after {
+        right: 0;
+        background: linear-gradient(to left, var(--bg), transparent);
+    }
+    body.layout-dialogue #panel-upstream.can-scroll-left::before,
+    body.layout-dialogue #panel-downstream.can-scroll-left::before { opacity: 1; }
+    body.layout-dialogue #panel-upstream.can-scroll-right::after,
+    body.layout-dialogue #panel-downstream.can-scroll-right::after { opacity: 1; }
+
+    /* A collapsed panel is a bare 34px rail with no body to fade over. */
+    body.layout-dialogue .panel.collapsed::before,
+    body.layout-dialogue .panel.collapsed::after { display: none; }
+}
 .textline-info {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -334,7 +388,7 @@ body.layout-dialogue .panel-body::-webkit-scrollbar-thumb:hover { background: va
 }
 
 .alternates-name {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-base);
     color: var(--text-color);
 }

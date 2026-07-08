@@ -21,7 +21,7 @@
 }
 .dialogue-line .speaker-name[data-tooltip] {
     cursor: help;
-    border-bottom: 1px dotted #e9456066;
+    border-bottom: 1px dotted color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 .dialogue-line .speaker-sep {
     font-style: normal;
@@ -86,10 +86,41 @@
     font-style: normal;
     font-size: var(--fs-xs);
     color: var(--text-muted);
-    background: var(--bg-elevated, #0d1b2e);
+    background: var(--border);
     padding: 1px 5px;
     border-radius: 3px;
     cursor: help;
+    font-family: var(--font-mono);
+}
+/* A conditional closing-line group: closing lines the engine plays only when a
+   GameStateRequirements gate is satisfied (e.g. a different coda depending on
+   whether another line was seen). The "Only when ..." note heads the group and
+   its lines sit just beneath it, tinted so the conditional block reads apart
+   from the unconditional closing lines around it. */
+.end-line-group {
+    /* Extra space above the group separates it from the preceding closing line
+       (or the previous conditional group), so the "only when" note reads as
+       heading the lines below it rather than trailing the ones above. */
+    margin: 14px 0 4px;
+}
+.end-line-cond-note {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    /* Indent to sit above the closing lines' text (past their accent border +
+       padding), so the note reads as a label for the indented lines beneath. */
+    padding-left: 13px;
+    margin: 0 0 2px;
+    cursor: help;
+    line-height: 1.5;
+}
+.end-line-cond-tag {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+}
+.end-line-group .dialogue-line.end-line {
+    opacity: 1;
 }
 
 .choice-name {
@@ -104,4 +135,51 @@
    regardless of cursor. */
 .choice-link .choice-name[data-tooltip] {
     cursor: pointer;
+}
+
+/* Random-pick-one segment (a ``RandomRemaining`` voice-line group): the game
+   plays exactly one of the listed options at this point in the dialogue. A
+   collapsed <details> block, styled like the other collapsible group headers,
+   makes clear the dialogue is assembled at random rather than read straight. */
+.random-group {
+    margin: 4px 0;
+    background: #1b1b2e;
+    border-left: 3px solid #6c5b7b;
+    border-radius: 0 4px 4px 0;
+}
+.random-group-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: var(--fs-sm);
+    color: #b8a5ff;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+.random-group-header::-webkit-details-marker { display: none; }
+.random-group-chevron {
+    color: #b8a5ff;
+    font-size: 10px;
+    transition: transform 0.15s ease;
+}
+.random-group[open] > .random-group-header > .random-group-chevron { transform: rotate(90deg); }
+.random-group-label { font-weight: 600; }
+.random-group-count {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    background: var(--border);
+    padding: 0 6px;
+    border-radius: 8px;
+}
+.random-group-options {
+    padding: 0 8px 6px 8px;
+}
+/* Option lines sit flush inside the box; drop their own background so they read
+   as members of the group rather than standalone lines. */
+.random-group-options .dialogue-line {
+    background: transparent;
+    border-left-color: color-mix(in srgb, #6c5b7b 55%, transparent);
+    margin-left: 8px;
 }

@@ -34,11 +34,11 @@
 }
 .unresolved-cat-reason {
     font-size: var(--fs-sm);
-    color: #cfcfcf;
+    color: var(--text-secondary);
 }
 .unresolved-cat-desc {
     font-size: var(--fs-xs);
-    color: #9aa0a6;
+    color: var(--text-muted);
     font-style: italic;
     padding: 0 4px;
 }
@@ -76,7 +76,7 @@
 }
 .blocked-reason strong {
     color: #fff;
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     font-weight: normal;
 }
 .blocked-ref {
@@ -168,7 +168,7 @@
     text-underline-offset: 2px;
 }
 .collision-banner-header code {
-    font-family: 'Consolas', monospace;
+    font-family: var(--font-mono);
     background: rgba(255, 255, 255, 0.06);
     padding: 0 4px;
     border-radius: 2px;

@@ -670,7 +670,7 @@ describe('renderBlockingGatesHtml: situational gates the prereq chain omits', ()
         // Seen played in the save (global) but not last run; Unseen never.
         const html = renderBlockingGatesHtml('Root', { played: new Set(['Seen']), lastRun: new Set() });
         // The near-miss option gets the distinct class + its own tooltip.
-        assert.match(html, /<span class="gate-ref-elsewhere" data-tooltip="[^"]*Played in your save[^"]*">- played in the save, but not last run<\/span>/);
+        assert.match(html, /<span class="gate-ref-elsewhere" data-tooltip="[^"]*Played in your save[^"]*">- played in your save, but not last run<\/span>/);
         // The never-played option stays a plain reason.
         assert.match(html, /Unseen<\/a> - not played last run/);
         // The gate head gains the near-miss explainer tooltip.

@@ -68,12 +68,16 @@ Format tags ({#Emph}, {#Prev}, {#PrevFormat}, ...) are stripped from
 the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 """
 
-from ...lua_parser import LuaTable
+from ...lua_parser import LuaTable, LuaIdentifier
 from ..textline_set import (
     build_synthetic_variants,
     walk_textline_sections,
     _collect_cue_choices,
     build_end_lines,
+    iter_voice_cues,
+    iter_top_segments,
+    _is_cue_entry,
+    _group_speaker,
     _FORMAT_TAG_RE,
 )
 from .req_extractor import (
@@ -89,6 +93,54 @@ from .req_extractor import (
 # ``Speaker = "PlayerUnit_Flashback"`` since it isn't the default).
 PLAYER_SPEAKER_ID = "PlayerUnit"
 
+# Prefix of the cross-file identifier references used by repeatable dialogues to
+# pull in a shared cue set, e.g. ``[2] = HeroRepeatableTextLines.BathHouseIntroTextLines``.
+_HERO_REPEATABLE_PREFIX = "HeroRepeatableTextLines."
+
+
+def extract_hero_repeatable_sets(parsed: dict) -> dict:
+    """Map ``{subset_name: LuaTable}`` for HeroData.lua's shared
+    ``HeroRepeatableTextLines`` cue sets (e.g. ``BathHouseIntroTextLines``).
+
+    Repeatable NPC dialogues splice these in by name via
+    ``[N] = HeroRepeatableTextLines.<Subset>``; the parser leaves that as an
+    unresolved identifier, so :func:`extract_textline` resolves it against this
+    map. Returns ``{}`` when the table isn't found (the refs then drop, matching
+    the previous behaviour)."""
+    def _find(node):
+        if isinstance(node, LuaTable):
+            hit = node.get("HeroRepeatableTextLines")
+            if isinstance(hit, LuaTable):
+                return hit
+            for v in node.named.values():
+                found = _find(v)
+                if found is not None:
+                    return found
+        return None
+    # ``HeroRepeatableTextLines = { ... }`` is a top-level global in HeroData.lua
+    # (a key of the parsed dict), so check that directly before recursing.
+    hrtl = (parsed or {}).get("HeroRepeatableTextLines")
+    if not isinstance(hrtl, LuaTable):
+        for value in (parsed or {}).values():
+            hrtl = _find(value)
+            if isinstance(hrtl, LuaTable):
+                break
+    if not isinstance(hrtl, LuaTable):
+        return {}
+    return {k: v for k, v in hrtl.named.items() if isinstance(v, LuaTable)}
+
+
+def _resolve_repeatable_ref(ident, hero_repeatable_sets):
+    """Resolve a ``HeroRepeatableTextLines.<Subset>`` identifier branch to its
+    shared cue-set table + subset name. Returns ``(None, None)`` when the ref
+    isn't a known HeroRepeatableTextLines subset (unknown refs drop)."""
+    name = getattr(ident, "name", None)
+    if not (hero_repeatable_sets and isinstance(name, str) and name.startswith(_HERO_REPEATABLE_PREFIX)):
+        return None, None
+    subset = name[len(_HERO_REPEATABLE_PREFIX):]
+    tbl = hero_repeatable_sets.get(subset)
+    return (tbl, subset) if isinstance(tbl, LuaTable) else (None, None)
+
 
 def extract_textline_sections(
     owner_name: str,
@@ -99,6 +151,7 @@ def extract_textline_sections(
     default_speaker: str = None,
     named_requirements: dict = None,
     force_play_once: bool = False,
+    hero_repeatable_sets: dict = None,
 ) -> dict:
     """Extract every textline-set section from a single H2 owner table.
 
@@ -145,6 +198,7 @@ def extract_textline_sections(
         return extract_textline(
             tl_name, tl_table, fallback_speaker, source_file,
             named_requirements=named_requirements,
+            hero_repeatable_sets=hero_repeatable_sets,
         )
 
     def extract_variants(tl_name, tl_table):
@@ -170,6 +224,7 @@ def extract_textline(
     source_file: str,
     *,
     named_requirements: dict = None,
+    hero_repeatable_sets: dict = None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single H2 textline table."""
     data = {
@@ -213,47 +268,94 @@ def extract_textline(
     if isinstance(partner_value, str) and partner_value:
         data["partner"] = partner_value
 
-    # Cue array -> dialogue lines (with optional choice-prompt attachment).
-    for entry in tl_table.array:
-        if not isinstance(entry, LuaTable):
-            continue
+    # Speaker for a cue, honouring per-cue attribution first, then the enclosing
+    # voice-line group's (a nested / ``[N] =`` group can attribute its cues via a
+    # group-level ``UsePlayerSource`` / ``Speaker`` / ``Source`` / ``ObjectType``),
+    # then the owner fallback. Shared by the main lines and the closing lines.
+    def _cue_speaker(entry, group):
+        own = _resolve_cue_speaker(entry, None)  # UsePlayerSource > Speaker > Source, else None
+        if own is not None:
+            return own
+        if isinstance(group, LuaTable) and group.get("UsePlayerSource") is True:
+            return PLAYER_SPEAKER_ID
+        return _group_speaker(group) or fallback_speaker
+
+    # Top-level segments -> dialogue lines, honouring the two "voice-line group"
+    # shapes. A segment is a flat cue (a normal line), a nested / positional
+    # group, or a cross-file ``HeroRepeatableTextLines.<X>`` reference. A group
+    # (or referenced set) flagged ``RandomRemaining`` plays ONE random line from
+    # its options, so it becomes a ``randomGroup`` segment the viewer renders as
+    # "one of these plays at random"; a non-random group's cues are sequential.
+    def _line_from_cue(entry, group):
         text = entry.get("Text")
         if not isinstance(text, str):
-            continue
-        text = _FORMAT_TAG_RE.sub("", text)
-        speaker = _resolve_cue_speaker(entry, fallback_speaker)
-        line = {"speaker": speaker, "text": text}
-        # Choice-prompt cue: attach the option metadata so the viewer
-        # can render the prompt as a structured choice block rather
-        # than a single dialogue line. Synthetic target name is
-        # ``<parent><ChoiceText>`` (matches the
-        # ``TextLinesChoiceRecord`` engine key) so the option's
-        # follow-up dialogue is reachable via click-through to the
-        # corresponding synthetic child textline produced by
-        # :func:`_extract_choice_variants`.
+            return None
+        line = {"speaker": _cue_speaker(entry, group), "text": _FORMAT_TAG_RE.sub("", text)}
+        # Choice-prompt cue: attach the option metadata so the viewer can render
+        # the prompt as a structured choice block. Synthetic target name is
+        # ``<parent><ChoiceText>`` (matches the ``TextLinesChoiceRecord`` key).
         choices = _collect_cue_choices(entry, tl_name)
         if choices is not None:
             line["kind"] = "choicePrompt"
             line["choices"] = choices
-        data["dialogueLines"].append(line)
+        return line
+
+    for seg in iter_top_segments(tl_table):
+        resolved, source = seg, None
+        if isinstance(seg, LuaIdentifier):
+            resolved, source = _resolve_repeatable_ref(seg, hero_repeatable_sets)
+            if resolved is None:
+                continue
+        if _is_cue_entry(resolved):
+            line = _line_from_cue(resolved, tl_table)
+            if line:
+                data["dialogueLines"].append(line)
+        elif isinstance(resolved, LuaTable) and resolved.get("RandomRemaining") is True:
+            options = [ln for ln, _g in
+                       ((_line_from_cue(c, g), g) for c, g in iter_voice_cues(resolved))
+                       if ln]
+            if options:
+                grp = {"kind": "randomGroup", "options": options}
+                if source:
+                    grp["source"] = source
+                data["dialogueLines"].append(grp)
+        elif isinstance(resolved, LuaTable):
+            for c, g in iter_voice_cues(resolved):
+                line = _line_from_cue(c, g)
+                if line:
+                    data["dialogueLines"].append(line)
 
     # Closing voicelines (EndVoiceLines; H2 has no EndCue). Resolve text +
-    # speaker the same way the main lines do. A table-level ``UsePlayerSource``
-    # routes every entry through the player's subtitle stream (Melinoe).
+    # speaker the same way the main lines do (``_cue_speaker`` handles the
+    # per-cue / group-level / owner attribution, including a group-level
+    # ``UsePlayerSource`` routing through the player's subtitle stream).
     def _end_text(entry):
         t = entry.get("Text")
         if not isinstance(t, str):
             return None
         return _FORMAT_TAG_RE.sub("", t)
 
-    def _end_speaker(entry, table):
-        if table.get("UsePlayerSource") is True and entry.get("Speaker") is None:
-            return PLAYER_SPEAKER_ID
-        return _resolve_cue_speaker(entry, fallback_speaker)
+    # Requirements on a conditional closing-line group: run each group's
+    # GameStateRequirements table(s) through the same RequirementSet extractor
+    # the main gates use, merging table-level + group-level records so the
+    # viewer can label a gated coda "plays if ...".
+    def _end_group_reqs(gsr_tables):
+        merged = {"requirements": {}, "otherRequirements": {}, "orBranches": [], "flags": {}}
+        for gsr in gsr_tables:
+            if isinstance(gsr, LuaTable):
+                _merge_requirement_result(merged, extract_requirements(gsr, named_requirements))
+        return merged
 
-    end_lines = build_end_lines(tl_table, _end_text, _end_speaker, lambda c: fallback_speaker)
+    end_lines, end_routed = build_end_lines(
+        tl_table, _end_text, _cue_speaker, lambda c: fallback_speaker,
+        parent_name=tl_name, extract_group_reqs=_end_group_reqs)
     if end_lines:
         data["endLines"] = end_lines
+    # Choice-gated codas set aside for the matching synthetic choice child;
+    # walk_textline_sections.merge_variants moves these onto that child and
+    # strips this temporary key from the parent.
+    if end_routed:
+        data["_choiceEndLines"] = end_routed
 
     # Drop empty containers so downstream code's
     # ``data.get("orBranches") or []`` idiom keeps working and merged

@@ -737,6 +737,63 @@ _CHOICE_OUTCOMES = ("Accept", "Decline")
 # the "true" sibling after, letting both play across a save's lifetime.
 _FIXED_PER_SAVE_FLAGS = frozenset({"HardMode"})
 
+# Manually-confirmed content-based alternate groups (issue #133): textlines
+# whose spoken content is identical (same ordered cue signature) but whose names
+# differ enough that the name-stem heuristic below misses them. Reviewed and
+# confirmed from a one-off cue-id content analysis. Each inner list is a set of
+# mutually-alternate textline names; ``build_alternates`` only links members
+# present in the game being processed, so the H1 and H2 groups coexist here.
+_CONTENT_ALTERNATE_GROUPS = [
+    # Hades 1
+    ["AchillesAboutMegAndThanRelationship01", "AchillesAboutMegaeraRelationship01", "AchillesAboutThanatosRelationship01"],
+    ["CharonFirstMeeting", "CharonFirstMeeting_Alt"],
+    ["MegaeraMeeting01", "MegaeraMeeting01_Alt", "MegaeraMeeting01_Alt_B", "MegaeraMeeting01_B"],
+    ["MinotaurFirstAppearance_MetTheseus", "MinotaurFirstAppearance_NotMetTheseus"],
+    ["OrpheusSingsAgain01", "OrpheusSingsAgain01_B", "OrpheusSingsAgain01_C", "OrpheusSingsAgain01_D"],
+    ["OrpheusSingsAgain03", "OrpheusSingsAgain03_B"],
+    ["PatroclusAboutAchilles01C_01", "PatroclusAboutAchilles01C_02"],
+    ["TheseusFirstAppearance_MetBeatMinotaur", "TheseusFirstAppearance_MetNotBeatMinotaur", "TheseusFirstAppearance_NotMetMinotaur"],
+    ["TheseusSecondEncounter01_IfYouLost", "TheseusSecondEncounter01_IfYouWon"],
+    # Hades 2
+    ["ErisAboutRelationship02", "ErisBossAboutRelationship02"],
+    ["HecateAboutChronos01", "HecateAboutChronosAnomaly01", "HecateAboutChronosBossEarlyL01"],
+    ["HecateAboutTyphonFight01", "HecateAboutTyphonFight01_B", "HecateBossAboutTyphonFight01", "HecateBossAboutTyphonFight01_B"],
+    ["HecateAboutUltimateProgress04", "HecateBossAboutEndingPath04"],
+    ["HecateBossFirstAppearance", "HecateBossFirstAppearanceAlt"],
+    ["HeraFirstPickUp", "HeraFirstPickUpAlt", "HeraFirstPickUpPostPalace", "HeraFirstPickUpPostPalaceAlt"],
+    ["IcarusAboutFlying01", "IcarusAboutFlying01_B", "IcarusHomeAboutFlying01", "IcarusHomeAboutFlying01_B"],
+    ["Inspect_Q_Boss01_03", "Inspect_Q_Boss02_03"],
+    ["ZagreusPastMeeting06", "ZagreusPastMeeting06_B"],
+    ["ZeusPalaceFirstMeeting", "ZeusPalaceFirstMeetingAlt"],
+]
+
+
+def _merge_overlapping_sets(sets: list) -> list:
+    """Union-find over a list of name sets: merge any that share a member into
+    one cluster. Lets a textline that belongs to both a name-based confirmed
+    group and a manual content group (or two content groups) land in a single
+    consistent alternate cluster. Returns clusters (as sets) with 2+ members."""
+    parent = {}
+
+    def find(x):
+        parent.setdefault(x, x)
+        root = x
+        while parent[root] != root:
+            root = parent[root]
+        while parent[x] != root:
+            parent[x], x = root, parent[x]
+        return root
+
+    for st in sets:
+        members = list(st)
+        for m in members[1:]:
+            parent[find(m)] = find(members[0])
+    clusters = {}
+    for st in sets:
+        for n in st:
+            clusters.setdefault(find(n), set()).add(n)
+    return [c for c in clusters.values() if len(c) >= 2]
+
 
 def _choice_complement(ref: str):
     """Return ``(prefix, outcome)`` if ``ref`` is a choice Accept/Decline line.
@@ -822,7 +879,7 @@ def build_alternates(textlines: dict) -> dict:
     _ANY_TYPES = {t for t in _CONFIRMING_TYPES if "Any" in t}
     _FALSE_TYPES = {t for t in _CONFIRMING_TYPES if "False" in t}
 
-    alternates = {}
+    confirmed_sets = []
     for stem, candidates in stem_groups.items():
         # Per-candidate "needs one of" and "needs none of" reference sets.
         any_refs = {}
@@ -862,7 +919,19 @@ def build_alternates(textlines: dict) -> dict:
                 confirmed.update((a, b))
 
         if len(confirmed) >= 2:
-            for name in confirmed:
-                alternates[name] = sorted(confirmed - {name})
+            confirmed_sets.append(confirmed)
 
+    # Manually-confirmed content-based alternates (issue #133): add each group
+    # whose members are present in this textline set. Overlapping sets (a member
+    # shared with a name-based group or another content group) are unioned so the
+    # cluster stays a single, symmetric alternate group.
+    for group in _CONTENT_ALTERNATE_GROUPS:
+        present = {n for n in group if n in textlines}
+        if len(present) >= 2:
+            confirmed_sets.append(present)
+
+    alternates = {}
+    for cluster in _merge_overlapping_sets(confirmed_sets):
+        for name in cluster:
+            alternates[name] = sorted(cluster - {name})
     return alternates

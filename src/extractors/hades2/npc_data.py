@@ -93,6 +93,7 @@ def extract_npc_data(
     offer_text_map: dict = None,
     preset_choices: dict = None,
     named_requirements: dict = None,
+    hero_repeatable_sets: dict = None,
 ) -> dict:
     """Extract H2 NPC dialogue data from a parsed Lua file.
 
@@ -145,6 +146,7 @@ def extract_npc_data(
             entry = _build_owner_entry(
                 owner_id, owner_table, source_label, source_file,
                 named_requirements=named_requirements,
+                hero_repeatable_sets=hero_repeatable_sets,
             )
             if entry is None:
                 continue
@@ -174,6 +176,7 @@ def extract_npc_data(
                 section_keys=HADES2_TEXTLINE_SECTION_KEYS,
                 default_speaker=owner_id,
                 named_requirements=named_requirements,
+                hero_repeatable_sets=hero_repeatable_sets,
             )
             # Skip container-level fields (GameStateRequirements,
             # Cooldowns, ObjectType, etc.) - they yield no textline
@@ -215,6 +218,7 @@ def _build_owner_entry(
     source_file: str,
     *,
     named_requirements: dict = None,
+    hero_repeatable_sets: dict = None,
 ):
     """Return the owner entry dict, or ``None`` if the owner has no textlines.
 
@@ -229,6 +233,7 @@ def _build_owner_entry(
         section_keys=HADES2_TEXTLINE_SECTION_KEYS,
         default_speaker=owner_id,
         named_requirements=named_requirements,
+        hero_repeatable_sets=hero_repeatable_sets,
     )
     if not any(sections.values()):
         return None

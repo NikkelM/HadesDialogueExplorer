@@ -18,7 +18,7 @@
 .textline-info .meta .speaker-name.clickable {
     color: var(--accent-color);
     cursor: pointer;
-    border-bottom-color: #e9456066;
+    border-bottom-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 .textline-info .meta .speaker-name.clickable::after {
     content: "\203a";
@@ -63,7 +63,8 @@
 .req-section h4 .req-type-name[data-tooltip] {
     cursor: help;
     border-bottom: 1px dotted currentColor;
-    opacity: 0.9;
+    /* Full opacity: a 0.9 dim dropped the red "must NOT" label to 4.43:1,
+       just under AA 4.5:1 on its dark-red pill. */
 }
 .blocked-banner .req-type-name.blocking-field {
     font-weight: bold;

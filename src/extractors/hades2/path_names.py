@@ -26,12 +26,11 @@ has no path vocabulary; these maps are H2-only.
 """
 
 # Root scope -> suffix appended to the gloss. GameState is the persistent
-# default and adds nothing; CurrentHubRoom is a present-tense context.
+# default and adds nothing.
 HADES2_PATH_SCOPE_NAMES = {
     "CurrentRun": "this run",
     "PrevRun": "last run",
     "GameState": "",
-    "CurrentHubRoom": "",
 }
 
 # Field key -> friendly label. Keys are the path segment after the root (or a
@@ -42,7 +41,7 @@ HADES2_PATH_FIELD_NAMES = {
     "UseRecord": "interacted with",
     "RoomsEntered": "entered",
     "RoomCountCache": "entered",
-    "BiomesReached": "reached biome",
+    "BiomesReached": "reached",
     "EnemyKills": "killed",
     "EncountersOccurredCache": "encounters occurred:",
     "WeaponsUnlocked": "weapons unlocked:",
@@ -60,7 +59,7 @@ HADES2_PATH_FIELD_NAMES = {
     "WorldUpgradesRevealed": "incantation/cosmetic revealed:",
     "ResourcesGained": "resources gained:",
     "Hero.TraitDictionary": "has equipped",
-    "Hero.Weapons": "equipped weapon",
+    "Hero.Weapons": "equipped",
     # ScreensViewed leaf ids are UI-screen names, not game entities (and several
     # collide with unrelated sjson ids), so they resolve through a dedicated
     # screen-name map (HADES2_PATH_FIELD_LEAF_NAMES) rather than entityNames.
@@ -83,7 +82,7 @@ HADES2_PATH_FIELD_NAMES = {
     "LastBossDifficultyRecord": "previous-encounter difficulty of",
     "CurrentRoom": "current room",
     "CurrentRoom.Name": "current room",
-    "CurrentRoom.RoomSetName": "current biome",
+    "CurrentRoom.RoomSetName": "current region",
     "CurrentRoom.UseRecord": "interactions in current room",
     "CurrentRoom.SpeechRecord": "voiceline played in current room",
     "CurrentRoom.FishingPointChoices": "current room has a fishing point",
@@ -92,15 +91,17 @@ HADES2_PATH_FIELD_NAMES = {
     "CurrentRoom.Encounter.Name": "current room encounter",
     "CurrentRoom.Encounter.Spawns": "current room spawns",
     "CurrentRoom.Encounter.PlayerTookDamage": "took damage in current room",
+    # A per-room record of whether Nemesis showed up at the shop that room; gated
+    # counted over a room window ("in none of the last N rooms: ...").
+    "Encounter.NemesisShopping": "Nemesis appeared at a shop",
     "Hero": "the player",
-    "Hero.IsDead": "is dead",
+    "Hero.IsDead": "the player is dead",
     "Hero.LastStands": "Death Defiances remaining",
     "Hero.MetGods": "gods encountered",
     "Hero.UpgradableHammerCount": "Upgradable Daedalus' Hammers equipped",
 
     # --- count / record GameState fields (terminal nouns; the comparison or
     # operand list carries the specifics) ---
-    "FamiliarsUnlocked": "familiars unlocked",
     "SpeechRecord": "voicelines played",
     "ClearedRunsCache": "cleared runs",
     "ClearedUnderworldRunsCache": "cleared Underworld runs",
@@ -115,15 +116,110 @@ HADES2_PATH_FIELD_NAMES = {
     "WeaponsFiredRecord": "weapons/effects used:",
     "EncountersCompletedCache": "encounters completed (all time):",
     "EncounterClearStats": "encounter clear stats",
-    "EncountersOccurredBiomeCache": "encounters seen (current biome)",
-    "BiomeDepthCache": "rooms entered (current biome)",
+    "EncountersOccurredBiomeCache": "encountered",
+    "BiomeDepthCache": "rooms entered (current region)",
     "HighestShrinePointClearUnderworldCache": "highest Fear cleared (Underworld)",
     "HighestShrinePointClearSurfaceCache": "highest Fear cleared (Surface)",
     "LastAwardTrait": "keepsake currently equipped",
     "WasRandomLoot": "was random shop boon",
+
+    # --- gathering-tool / familiar success counters (terminal counts; the
+    # comparison carries the magnitude, e.g. "fish caught by hand >= 5") ---
+    "FishingSuccessesManual": "fish caught by hand",
+    "FishingSuccessesFamiliar": "fish caught by Familiar",
+    "ShovelSuccesses": "successful digs",
+    "PickaxeSuccesses": "ore deposits mined",
+    "HarvestSuccesses": "successful harvests",
+    "ExorcismSuccessesFamiliar": "shades pacified by Familiar",
+    "ExorcismSuccessesManual": "shades pacified by hand",
+    "NightmaresOccurred": "Chronos' death taunts",
+    "SurfaceShopPurchases": "Shrine of Hermes purchases",
+    "FieldsRewardFindersActivated": "Golden Boughs used (Fields of Mourning)",
+    "ActiveBountyAttempts": "attempts on the active Chaos Trial",
+    "PackagedBountyClears": "Chaos Trials cleared",
+    "PackagedBountyAttempts": "Chaos Trial attempts",
+    "FishCaught": "fish caught",
+    # --- progress / cache counters (terminal) ---
+    "ClearedDreamRunsCache": "cleared Dream Dives",
+    "StoryResetCount": "story resets",
+    "CodexEntriesUnlockedCache": "Codex entries unlocked",
+    "MetaUpgradeMaxLevelCountCache": "Arcana Cards at max rank",
+    # --- value caches / settings (terminal; a raw threshold, not a count) ---
+    "MetaUpgradeCostCache": "Grasp spent on equipped Arcana",
+    "MoneySpentTowardCharonPoints": "Gold spent toward Charon's reward",
+    "RunDepthCache": "run depth (room number)",
+    "GameplayTime": "play time (seconds)",
+    "BadgeRank": "Spirit Mixer badge rank",
+    "NextBiomeStateName": "next region condition",
+    "LastReward.Name": "last reward taken",
+    # --- boolean flags (terminal; a scope suffix supplies "this run"/"last run") ---
+    "AnyMailboxReady": "Charon Crossroads reward is available for pickup",
+    "NewRecordClearTime": "set a new fastest-clear record",
+    "NightmareOccurred": "saw a Chronos death taunt",
+    # --- object fields keyed by an entity leaf (see HADES2_PATH_OBJECT_FIELDS).
+    # Verb style ("<verb> <entity>") unless the leaf is a value/name matched by
+    # IsAny. Value-cache object fields keep the raw operator. ---
+    # ShrineUpgrades.<vow> = that Oath of the Unseen vow's rank (value cache);
+    # vow id resolves via entityNames ("Vow of Rivals", ...).
+    "ShrineUpgrades": "rank of vow:",
+    # ConfigOptionCache.<option> = an engine setting value (value cache).
+    "ConfigOptionCache": "setting:",
+    "ProjectileRecord": "fired",
+    "SpecialInteractRecord": "saluted",
+    "TraitUses": "used",
+    "QuestsViewed": "viewed Minor Prophecy",
+    "QuestsCompleted": "completed Minor Prophecy",
+    # QuestStatus.<quest> value = status enum, matched via IsAny.
+    "QuestStatus": "Minor Prophecy status of",
+    "WorldUpgradesViewed": "viewed incantation(s)/cosmetic(s):",
+    "WorldUpgradesAffordable": "can afford incantation(s)/cosmetic(s):",
+    "LootTypeHistory": "interacted with",
+    "CodexEntriesViewed": "read the Codex entry on",
+    "WeaponsCache": "used",
+    "BiomeVisits": "visited",
+    "ResourcesSpent": "spent",
+    "ExorcisedNames": "pacified",
+    "DreamRunClearedWithWeapons": "cleared a Dream Dive with",
+    # TraitRarityCache.<trait> value = rarity enum, matched via IsAny.
+    "TraitRarityCache": "rarity of",
+    "AchievementsUnlocked": "unlocked achievement",
+    "Flags": "story flag:",
+    "FamiliarsUnlocked": "unlocked",
+    "NemesisTakeExitRecord": "Nemesis took an exit to",
+    "NemesisTakeRoomExitRecord": "Nemesis took an exit to",
+    # Handled by dedicated renderers in info-panel.js (the label here is a
+    # fallback if the special renderer declines): MetaUpgradeState.<card>.Level/
+    # .Unlocked/.Equipped -> Arcana rank/state; LifetimeTraitStats.<trait>.UseCount
+    # -> "runs using <trait>"; LastObjectiveFailedRun.<obj> -> "last failed N+ runs
+    # ago"; ClearedWithWeapons.<region|weapon> -> region-vs-weapon aware.
+    "MetaUpgradeState": "Arcana card state",
+    "LifetimeTraitStats": "lifetime stats for boon/trait",
+    "LastObjectiveFailedRun": "run when objective last failed:",
+    "ClearedWithWeapons": "cleared with weapon:",
     # Live-playback audio snapshot (root with no scope prefix).
     "AudioState.MusicName": "current music track",
     "AudioState.AmbientTrackName": "current ambient track",
+    # --- previously-unlabelled fields ---
+    # ``CurrentHubRoom`` is a top-level global holding the current hub room's
+    # internal name (a string), or nil when not in a hub - so a truthy value
+    # means the player is in a hub room. ``.Name`` is its room-name sub-field.
+    "CurrentHubRoom": "in a hub room",
+    "CurrentHubRoom.Name": "current hub room",
+    "AllSpellInvestedCache": "Hex fully upgraded",
+    "ArtemisHubSong": "Artemis singing in the Crossroads",
+    "BountyCleared": "Chaos Trial cleared",
+    "PendingSpellDrop": "Shrine of Hermes Hex delivery pending",
+    "UsedStoryReset": "performed Returning to a Real Possibility (story reset)",
+    "LastDreamRunCleared": "cleared the last Dream Dive",
+    "BiomeHarvestPointsSeen.PickaxePoint": "pickaxe resource point seen (this region)",
+    "BiomeHarvestPointsSeen.ShovelPoint": "shovel resource point seen (this region)",
+    "ScreenViewRecord.CosmeticsShop": "viewed any cosmetics screen",
+    "ShrineUpgradesDisabled.MinibossCountShrineUpgrade": "Vow of Shadow inactive",
+    "SessionMapState.CauldronWitchcraftOccurring": "Hecate is using the Cauldron",
+    "SessionMapState.OdysseusAtTaverna": "Odysseus is at the Taverna",
+    # Music-record fields take a track leaf resolved via the leaf-name map below.
+    "MusicRecord": "heard",
+    "ScyllaDefeatMusicRecord": "heard",
 }
 
 # Fields whose path carries a trailing entity-id object (a record keyed by an
@@ -156,6 +252,32 @@ HADES2_PATH_OBJECT_FIELDS = frozenset({
     "WeaponsFiredRecord",
     "ObjectivesCompleted",
     "CosmeticsPurchasedCountCache",
+    "ShrineUpgrades",
+    "ConfigOptionCache",
+    "ProjectileRecord",
+    "SpecialInteractRecord",
+    "TraitUses",
+    "QuestsViewed",
+    "QuestsCompleted",
+    "QuestStatus",
+    "WorldUpgradesViewed",
+    "WorldUpgradesAffordable",
+    "LootTypeHistory",
+    "CodexEntriesViewed",
+    "WeaponsCache",
+    "BiomeVisits",
+    "ResourcesSpent",
+    "ExorcisedNames",
+    "DreamRunClearedWithWeapons",
+    "TraitRarityCache",
+    "AchievementsUnlocked",
+    "Flags",
+    "FamiliarsUnlocked",
+    "NemesisTakeExitRecord",
+    "NemesisTakeRoomExitRecord",
+    "EncountersOccurredBiomeCache",
+    "MusicRecord",
+    "ScyllaDefeatMusicRecord",
 })
 
 # Per-field leaf-name maps: an object-taking field whose trailing leaf is NOT a
@@ -183,6 +305,30 @@ HADES2_PATH_FIELD_LEAF_NAMES = {
         "Total": "Total",
         "Tent": "Melinoe's Tent",
         "PreRun": "Training Grounds",
+    },
+    # Scylla band song tracks (the leaf is an internal ``/Music/...`` id), shown
+    # as the song's in-game title.
+    "MusicRecord": {
+        "/Music/IrisMusicScylla2_MC": '"I am Gonna Claw (Out Your Eyes)"',
+    },
+    "ScyllaDefeatMusicRecord": {
+        "/Music/IrisMusicScylla4_MC": '"Bewitching Eyes"',
+    },
+    # Engine config-option names (the leaf is an internal setting key), shown as
+    # a plain-language setting name.
+    "ConfigOptionCache": {
+        "MusicVolume": "music volume",
+    },
+    # Projectile ids (fired by the player, an enemy, or an ally - e.g. Artemis
+    # fires ArtemisSniperBolt); shown as a plain-language projectile name.
+    "ProjectileRecord": {
+        "ArtemisSniperBolt": "Artemis's sniper bolt",
+    },
+    # Story-flag ids have no systematic friendly form (splitting the camelCase is
+    # misleading), so curated names are kept here. Unlisted flags fall back to the
+    # raw id rather than a wrong guess.
+    "Flags": {
+        "AcquiredMixerForCirceQuest": "Acquired Pearl for Circe",
     },
 }
 

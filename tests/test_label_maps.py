@@ -218,7 +218,7 @@ class TestMetaUpgradeNames:
         # hub-room id resolves to a friendly name.
         h1 = _annotated("hades1")["entityNames"]
         assert h1.get("NPC_Achilles_01") == "Achilles"
-        assert h1.get("D_Hub") == "Temple of Styx (hub)"
+        assert h1.get("D_Hub") == "Temple of Styx (Hub)"
         h2 = _annotated("hades2")["entityNames"]
         assert h2.get("NPC_Artemis_01") == "Artemis"
         assert h2.get("Hub_PreRun") == "The Crossroads (Training Grounds)"

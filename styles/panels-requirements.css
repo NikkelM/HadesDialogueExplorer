@@ -7,6 +7,10 @@
     border-radius: 4px;
     border-left: 3px solid #555;
     background: rgba(255, 255, 255, 0.025);
+    /* The whole header row toggles the section (not just the coloured pill),
+       so the row-level cursor signals it's clickable; the body resets to
+       default below. Toggling is limited to the header line in info-panel.js. */
+    cursor: pointer;
 }
 /* Save-eligibility group dot in a requirement-section header (met / unmet /
    indeterminate / unobtainable), matching the dependency tree's group dots. */
@@ -24,12 +28,11 @@
     margin-right: 4px;
     vertical-align: middle;
 }
-/* Group dot in an OR-branch (alternates) option header. */
+/* Group dot in an OR-branch (alternates) option header. No overrides: it
+   inherits the same inline-block baseline placement and trailing-space spacing
+   as the other section headers (req-section / named-req), so all the section
+   headers read consistently. */
 .or-branch-header .group-status {
-    position: relative;
-    top: -1px;
-    vertical-align: middle;
-    margin-right: 3px;
     cursor: help;
 }
 .req-section h4 {
@@ -37,7 +40,10 @@
     margin: 0 0 6px;
     padding: 1px 6px;
     border-radius: 3px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     /* Whole pill acts as the collapse toggle. The colored bg per
@@ -48,19 +54,63 @@
 .req-section h4 .toggle {
     /* Inline chevron prepended inside the colored pill. Inline-block
        so margin-right stays consistent regardless of the surrounding
-       text run. */
+       text run. Full opacity: on the tightest per-type header (the red
+       "must NOT" pill) a dimming opacity dropped the chevron below AA
+       4.5:1; the type colour on its tinted pill already reads as
+       de-emphasised without it. */
     display: inline-block;
     font-size: var(--fs-2xs);
-    opacity: 0.7;
-    margin-right: 4px;
 }
 /* Collapsed by default + override via `.expanded` mirrors the
    tree-view children box (styles/tree.css) and the GameData inline
    group children (styles/panels-gamedata.css). Keeping the same
    idiom across all three collapse targets means the same `.expanded`
    class controls visibility everywhere in the details panel. */
-.req-section-children { display: none; }
+.req-section-children { display: none; cursor: default; }
 .req-section-children.expanded { display: block; }
+
+/* Status-dot key teaching the shape language (see .group-kind-* in tree.css).
+   Shown when a save is loaded, pinned to the bottom of the view it belongs to:
+   below the requirements + alternates in the dialogue details panel, and below
+   every tracer section in the eligibility tracer. The top margin separates it
+   from the content above; the bottom margin keeps it off the panel edge. */
+.status-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 14px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    font-size: var(--fs-2xs);
+    color: var(--text-muted);
+}
+.status-legend-title {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+.status-legend-set {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 11px;
+}
+.status-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+/* Each key entry has a hover tooltip (rendered by tooltip.js) explaining the
+   shape / colour it stands for, so flag it as hoverable with the help cursor. */
+.status-legend-item[data-tooltip] {
+    cursor: help;
+}
 .req-type-RequiredTextLines           { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
 .req-type-RequiredTextLinesThisRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
 .req-type-RequiredTextLinesLastRun    { border-left-color: #2d6a4f; background: rgba(45, 106, 79, 0.06); }
@@ -94,7 +144,7 @@
 .req-type-RequiredMaxAnyTextLines h4 { background: #2e2818; color: #d4b870; }
 .req-type-MinRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
 .req-type-MaxRunsSinceAnyTextLines h4 { background: #1e2e33; color: #7fc4d1; }
-.req-type-other h4 { background: #2b2d42; color: #8d99ae; }
+.req-type-other h4 { background: #2b2d42; color: var(--text-secondary); }
 .req-item {
     padding: 3px 8px;
     margin: 2px 0;
@@ -180,8 +230,8 @@
     padding: 3px 8px;
     margin: 2px 0;
     font-size: var(--fs-sm);
-    color: #8d99ae;
-    font-family: 'Consolas', monospace;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
 }
 /* Very light divider between consecutive rows so items that wrap
    across multiple lines stay visually distinguishable. Only applies
@@ -216,12 +266,20 @@
    words wrap instead of overflow. */
 .other-req-item:has(> .group-status) {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: 0.35rem;
 }
+/* Centre the dot on the FIRST text line via a top margin of half the leftover
+   line-box height. ``align-items: flex-start`` pins the dot to line 1's top, so
+   its placement is independent of how many lines the text wraps to; the margin
+   then drops it onto that line's optical centre. (``baseline`` shifted the dot
+   when the text wrapped to 2 lines; plain ``center`` centres it over the whole
+   wrapped block.) The +1px baseline nudge from the shared rule above is cancelled. */
 .other-req-item:has(> .group-status) > .group-status {
     flex-shrink: 0;
     margin-right: 0;
+    top: 0;
+    margin-top: calc((1lh - var(--dot-size)) / 2);
 }
 .other-req-item .other-req-text {
     min-width: 0;
@@ -230,7 +288,7 @@
    ``CurrentRun.Hero.IsDead``). Already monospace via the parent, but
    nudged slightly to read as a quoted identifier. */
 .other-req-item .other-req-path {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
     padding: 0 4px;
     border-radius: 3px;
@@ -239,21 +297,21 @@
    path pill (e.g. ``...ForceAphroditeBoonKeepsake (Beautiful Mirror)``). Muted
    + non-mono so the raw path the gate checks still reads as the primary text. */
 .other-req-item .other-req-path .other-req-friendly {
-    color: #8b949e;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
 }
 /* "(cut content)" note flagging a path gate whose reference was cut from the
    game (see brokenPathRefs). Amber + non-mono with the full explanation in the
    hover tooltip, so a reader knows the gate has no effect. */
 .other-req-item .other-req-broken-ref {
-    color: #d29922;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--accent-color);
+    font-family: var(--font-sans);
     cursor: help;
 }
 /* AND joiner between multiple comparison/membership records that share
    a Path:<head> key (engine AND-combines them). */
 .other-req-item .other-req-and {
-    color: #6b7280;
+    color: var(--text-dim);
     font-weight: 600;
     margin: 0 4px;
     letter-spacing: 0.5px;
@@ -261,7 +319,7 @@
 /* Aggregation modifier clause appended to a Path record (e.g.
    ``(over the last 2 runs)``). Muted so the core predicate reads first. */
 .other-req-item .other-req-mod {
-    color: #8b949e;
+    color: var(--text-muted);
     font-style: italic;
 }
 /* The function-call signature inside a rendered FunctionName:<name> entry
@@ -269,7 +327,7 @@
    `RequiredAlive(Ids=[42])` must evaluate to `true`"). Subtle tint + weight to
    separate the call from the surrounding prose. */
 .other-req-item .other-req-func {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     font-weight: 600;
 }
 
@@ -335,7 +393,10 @@
     margin: 0 0 4px;
     padding: 1px 6px;
     border-radius: 3px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     cursor: pointer;
@@ -346,7 +407,22 @@
     display: inline-block;
     font-size: var(--fs-2xs);
     opacity: 0.7;
-    margin-right: 4px;
+}
+/* Section headers lay their [chevron | dot | label] out with
+   ``align-items: flex-start`` (set per header rule), which pins the chevron and
+   dot to the TOP of the first text line. That makes their vertical placement
+   independent of how many lines a long label wraps to - unlike
+   ``align-items: baseline``/``center``, which shifted the dot by ~2px between a
+   single-line header (e.g. "OPTION 1 OF 2") and a wrapped one (e.g. "AT LEAST
+   ONE OF THESE 2 BRANCHES"). The dot is then dropped onto the first line's
+   optical centre with a top margin of half the leftover line height; the chevron
+   sits centred beside it. Same idiom as the resolved gate rows above. */
+.req-section h4 > .group-status,
+.or-branch-header > .group-status,
+.named-req-header > .group-status,
+.named-req-item .named-req-label > .group-status {
+    margin-top: calc((1lh - var(--dot-size)) / 2);
+    top: 0;
 }
 .or-branch-children { display: none; }
 .or-branch-children.expanded { display: block; }
@@ -363,14 +439,18 @@
    composition). */
 .named-req-item .named-req-label {
     font-weight: 600;
-    color: #c9d1d9;
+    color: var(--text-secondary);
     margin-bottom: 8px;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
 }
-/* The label's verdict dot sits inside the block label (not a flex row), so
-   centre it on the text rather than the baseline, which read a touch high. */
-.named-req-item .named-req-label .group-status {
-    top: 0;
-    vertical-align: middle;
+/* Label content after a section-header status dot, wrapped as one flex item so
+   multi-part labels (a name + count / suffix) keep a single, consistent gap and
+   can wrap as a block rather than splitting into separately-spaced items. */
+.req-header-text {
+    min-width: 0;
 }
 .named-req-list {
     margin-left: 8px;
@@ -386,15 +466,24 @@
     background: rgba(80, 160, 160, 0.03);
 }
 .named-req-name {
-    color: #c9d1d9;
+    color: var(--text-secondary);
     background: rgba(255, 255, 255, 0.04);
     padding: 0 4px;
     border-radius: 3px;
 }
 .named-req-suffix {
-    color: #6b7280;
+    color: var(--text-dim);
     font-size: var(--fs-xs);
     margin-left: 4px;
+}
+/* Inline flag on a must-NOT-pass gate that is currently satisfied (the
+   blocker): the satisfied requirement is kept expanded below it. */
+.named-req-blocker-note {
+    color: var(--danger);
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    margin-left: 6px;
+    cursor: help;
 }
 .named-req-header {
     font-size: var(--fs-xs);
@@ -404,7 +493,10 @@
     cursor: pointer;
     background: rgba(80, 160, 160, 0.10);
     color: #5dbfbf;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 6px;
+    max-width: 100%;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -415,7 +507,6 @@
     display: inline-block;
     font-size: var(--fs-2xs);
     opacity: 0.7;
-    margin-right: 4px;
 }
 .named-req-children { display: none; padding: 4px 0 2px 4px; }
 .named-req-children.expanded { display: block; }
