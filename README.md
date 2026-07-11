@@ -101,5 +101,7 @@ npm run serve   # -> http://localhost:8765 (python -m http.server 8765 --directo
 
 ## Disclaimer
 
+The in-browser save file parser is derived from [TheNormalnij](https://github.com/TheNormalnij)'s [Hades-SavesExtractor](https://github.com/TheNormalnij/Hades-SavesExtractor) project, which is distributed under the MIT licence.
+
 This tool was built with the assistance of generative AI.
 All game content belongs to Supergiant Games.
