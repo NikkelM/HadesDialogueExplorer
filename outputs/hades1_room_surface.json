@@ -1,0 +1,355 @@
+{
+  "alternates": {},
+  "dependents": {
+    "PersephoneFirstMeeting": [
+      {
+        "name": "Inspect_E_Intro_01_01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "ArtemisUpgrade": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "AthenaUpgrade": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "ChaosUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "CharProtag": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "Charon": {
+      "description": "Stygian Boatman",
+      "name": "Charon (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "DionysusUpgrade": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "Hades": {
+      "description": "God of the Dead",
+      "name": "Hades (Boss)"
+    },
+    "Harpy": {
+      "description": "First of the Furies",
+      "name": "Megaera (Boss)"
+    },
+    "Harpy2": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "Harpy3": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HermesUpgradeRare": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "Minotaur": {
+      "description": "Bull of Minos",
+      "name": "Asterius"
+    },
+    "MysteryUpgrade": {
+      "name": "? ? ? (Chaos)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Achilles_Story_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Bouldy"
+    },
+    "NPC_Cerberus_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Field)"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Eurydice_01": {
+      "description": "Carefree Muse",
+      "name": "Eurydice"
+    },
+    "NPC_FurySister_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_FurySister_02": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "NPC_FurySister_03": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "NPC_FurySister_Unnamed_02": {
+      "name": "? ? ? (Alecto)"
+    },
+    "NPC_FurySister_Unnamed_03": {
+      "name": "? ? ? (Tisiphone)"
+    },
+    "NPC_Hades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx (Field)"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Orpheus_Story_01": {
+      "description": "Court Musician",
+      "name": "Orpheus (with Eurydice)"
+    },
+    "NPC_Patroclus_01": {
+      "description": "Fallen Warrior",
+      "name": "Patroclus"
+    },
+    "NPC_Patroclus_Unnamed_01": {
+      "name": "? ? ? (Patroclus)"
+    },
+    "NPC_Persephone_01": {
+      "description": "Goddess of Verdure",
+      "name": "Persephone"
+    },
+    "NPC_Persephone_Home_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone (House)"
+    },
+    "NPC_Persephone_Unnamed_01": {
+      "name": "? ? ? (Persephone)"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_SisyphusAndBouldy_01": {
+      "name": "Sisyphus & Bouldy"
+    },
+    "NPC_Sisyphus_01": {
+      "description": "Tortured Soul",
+      "name": "Sisyphus"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Thanatos_Field_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos (Field)"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "PlayerUnit": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PlayerUnit_Intro": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Seas",
+      "name": "Poseidon"
+    },
+    "SkellyBackstory": {
+      "description": "Schelemeus, Former Captain",
+      "name": "Skelly"
+    },
+    "Storyteller": {
+      "name": "Narrator"
+    },
+    "Theseus": {
+      "description": "Hero of Athens",
+      "name": "Theseus"
+    },
+    "TrainingMelee": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "TrialUpgrade": {
+      "description": "Origin of Creation",
+      "name": "Chaos"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 1,
+    "totalSpeakers": 1,
+    "totalTextlines": 1,
+    "unresolvedRefs": [
+      "PersephoneFirstMeeting"
+    ]
+  },
+  "textlines": {
+    "Inspect_E_Intro_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "All manner of fruits and vegetables thrive within the hidden gardens of Persephone, the one-time Queen of all the Underworld. A world of life, far from the realm of death."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_4323",
+          "speaker": "CharProtag",
+          "text": "What are these things..."
+        }
+      ],
+      "name": "Inspect_E_Intro_01_01",
+      "nameCollision": true,
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PersephoneFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataSurface.lua",
+      "sourceLine": 357,
+      "variants": [
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "All manner of fruits and vegetables thrive within the hidden gardens of Persephone, the one-time Queen of all the Underworld. A world of life, far from the realm of death."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusField_4323",
+              "speaker": "CharProtag",
+              "text": "What are these things..."
+            }
+          ],
+          "otherRequirements": {},
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {
+            "RequiredTextLines": [
+              "PersephoneFirstMeeting"
+            ]
+          },
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataSurface.lua",
+          "sourceLine": 357
+        },
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "The surface, wind-swept, wracked by freezing cold, nonetheless instills within the prince a sense of awe, and the sublime. For it is unlike anything that he has seen."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusField_4322",
+              "speaker": "CharProtag",
+              "text": "It's... beautiful."
+            }
+          ],
+          "otherRequirements": {},
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {},
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataSurface.lua",
+          "sourceLine": 278
+        }
+      ]
+    }
+  }
+}

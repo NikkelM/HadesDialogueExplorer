@@ -1,0 +1,3400 @@
+{
+  "alternates": {},
+  "dependents": {
+    "AchillesTrueEnding01": [
+      {
+        "name": "HypnosPostTrueEnding02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "HypnosDreamAboutFates02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutDreamPoints01": [
+      {
+        "name": "HypnosDreamAboutDreamPoints02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutDreamPoints02": [
+      {
+        "name": "HypnosDreamAboutWorries01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HypnosDreamAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutLove01": [
+      {
+        "name": "HypnosDreamAboutLove02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutLove02": [
+      {
+        "name": "HypnosDreamAboutLove03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutMemories01": [
+      {
+        "name": "HypnosDreamAboutFates02",
+        "orBranchIndex": 2,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutRelationship01": [
+      {
+        "name": "HypnosDreamAboutJob01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HypnosDreamAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutSecrecy01": [
+      {
+        "name": "HypnosDreamAboutFates02",
+        "orBranchIndex": 2,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutWeaponsQuest01": [
+      {
+        "name": "HypnosDreamAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutWorries01": [
+      {
+        "name": "HypnosDreamAboutWorries02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamGift01": [
+      {
+        "name": "HypnosDreamAboutRelationship01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "HypnosDreamAboutLove01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamRunStart01": [
+      {
+        "name": "HypnosDreamGift01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosFinalDreamMeeting01": [
+      {
+        "name": "HypnosDreamAboutStoryReset01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "HypnosGift02": [
+      {
+        "name": "HypnosAboutPoppies01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosWakeUp01": [
+      {
+        "name": "HypnosDreamMeeting01",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "HypnosWakeUp02": [
+      {
+        "name": "HypnosDreamMeeting02",
+        "type": "RequiredTextLinesThisRun"
+      },
+      {
+        "name": "HypnosWakeUp02_B",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "HypnosWakeUp02_B": [
+      {
+        "name": "HypnosDreamMeeting02_B",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "HypnosWakeUp03": [
+      {
+        "name": "HypnosDreamMeeting03",
+        "type": "RequiredTextLinesThisRun"
+      },
+      {
+        "name": "HypnosWakeUp03_B",
+        "type": "RequiredTextLinesThisRun"
+      },
+      {
+        "name": "HypnosWakeUp03_C",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "HypnosWakeUp03_B": [
+      {
+        "name": "HypnosDreamMeeting03_B",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "HypnosWakeUp03_C": [
+      {
+        "name": "HypnosFinalDreamMeeting01",
+        "type": "RequiredTextLinesThisRun"
+      }
+    ],
+    "ZagreusPastFirstMeeting": [
+      {
+        "name": "HypnosAboutUltimateProgress01",
+        "type": "RequiredAnyTextLinesThisRun"
+      },
+      {
+        "name": "HypnosSleepingChat08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusPastMeeting02": [
+      {
+        "name": "HypnosAboutUltimateProgress01",
+        "type": "RequiredAnyTextLinesThisRun"
+      }
+    ],
+    "ZagreusPastMeeting03": [
+      {
+        "name": "HypnosAboutUltimateProgress01",
+        "type": "RequiredAnyTextLinesThisRun"
+      },
+      {
+        "name": "HypnosAboutUltimateProgress02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusPastMeeting04": [
+      {
+        "name": "HypnosAboutUltimateProgress01",
+        "type": "RequiredAnyTextLinesThisRun"
+      }
+    ],
+    "ZagreusPastMeeting05": [
+      {
+        "name": "HypnosAboutUltimateProgress01",
+        "type": "RequiredAnyTextLinesThisRun"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 34,
+    "totalSpeakers": 1,
+    "totalTextlines": 79,
+    "unresolvedRefs": [
+      "AchillesTrueEnding01",
+      "FatesEpilogue01",
+      "ZagreusPastFirstMeeting",
+      "ZagreusPastMeeting02",
+      "ZagreusPastMeeting03",
+      "ZagreusPastMeeting04",
+      "ZagreusPastMeeting05"
+    ]
+  },
+  "textlines": {
+    "HypnosAboutPoppies01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... hmm, zzzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, when I was in Tartarus, I found some seeds, which grew into Poppies... like the ones that line your bedding there. What if I used them with... <Gasp> I just had an idea...!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...I promise to be careful."
+        }
+      ],
+      "name": "HypnosAboutPoppies01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "Path:GameState.LifetimeResourcesGained.PlantIPoppy": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "PlantIPoppy"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.WorldUpgrades.WorldUpgradeWakeHypnos": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeWakeHypnos"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 102
+    },
+    "HypnosAboutStoryReset01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzzz, zzzzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, for a moment, I thought... I almost forgot you were still here, as though... I dreamt you had already woken up...? Augh, it's nonsense. I must be weary."
+        }
+      ],
+      "name": "HypnosAboutStoryReset01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "Path:GameState.StoryResetCount": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "StoryResetCount"
+            ],
+            "Value": 1
+          }
+        ],
+        "Path:UsedStoryReset": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "UsedStoryReset"
+            ],
+            "SumPrevRuns": 4,
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.AchievementsUnlocked.AchHelpHypnos": [
+          {
+            "PathTrue": [
+              "GameState",
+              "AchievementsUnlocked",
+              "AchHelpHypnos"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesRevealed.WorldUpgradeWakeHypnos": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesRevealed",
+              "WorldUpgradeWakeHypnos"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 251
+    },
+    "HypnosAboutUltimateProgress01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzzz... zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I mustn't speak of this, Lord Hypnos, but... I was able to descend to the abyss of the subconscious, and I found my brother there...! Thank you for sparking my fascination with dream. All that I've worked for... last night, it felt in reach!"
+        }
+      ],
+      "name": "HypnosAboutUltimateProgress01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLinesThisRun": [
+          "ZagreusPastFirstMeeting",
+          "ZagreusPastMeeting02",
+          "ZagreusPastMeeting03",
+          "ZagreusPastMeeting04",
+          "ZagreusPastMeeting05"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 147
+    },
+    "HypnosAboutUltimateProgress02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz... zzzzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I never could delve into the abyss of the subconscious with you, O Sleep. With my brother, the path was so clear...! Well we shall find another way."
+        }
+      ],
+      "name": "HypnosAboutUltimateProgress02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusPastMeeting03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 180
+    },
+    "HypnosDreamAboutCosmetics01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "I really thought you'd have your fill of Shiny Stars by now. I mean, you're out of stuff to trade for them, right? But you keep earning more, and more, and more!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Is that a problem, Lord Hypnos? I thought the Stars were mainly meant to indicate how accomplished I've become at these Dream Dives. Should I be holding back?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, no, keep going if you want. Besides, we won't be running out of Shiny Stars anytime soon, no matter how many you get. So if you still want more... be my guest!"
+        }
+      ],
+      "name": "HypnosDreamAboutCosmetics01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:GameState.WorldUpgradesAdded": [
+          {
+            "HasAll": [
+              "Cosmetic_SkellyFloor01c",
+              "Cosmetic_TrainingDummy01c",
+              "Cosmetic_DoraBench02",
+              "Cosmetic_ThanCutout",
+              "Cosmetic_AsteriusPlush",
+              "Cosmetic_DreamRug",
+              "Cosmetic_Poppies",
+              "Cosmetic_StarJar",
+              "Cosmetic_CollectableHypnos",
+              "Cosmetic_HypnosStatue",
+              "FamiliarCostume_FrogHell",
+              "FamiliarCostume_RavenHell",
+              "FamiliarCostume_CatChaos",
+              "FamiliarCostume_HoundCute",
+              "FamiliarCostume_PolecatMoon"
+            ],
+            "Path": [
+              "GameState",
+              "WorldUpgradesAdded"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2020
+    },
+    "HypnosDreamAboutDreamPoints01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wanted to ask, Lord Hypnos, what exactly are these Shiny Stars that I've procured from some of those strange stand-ins for the greatest threats I've had to overcome?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh those are little signs you're doing a great job! Making progress toward conquering your worst worries and being able to experience pure, uninterrupted, deep sleep."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That certainly is an enticing goal. And how many Stars would you say it requires? Perhaps you could at least approximate."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well normally it's thirty Shiny Stars, but looks like you already have that many, huh, which means... um, I will have to look that up and then get back to you!"
+        }
+      ],
+      "name": "HypnosDreamAboutDreamPoints01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:GameState.LifetimeResourcesGained.DreamPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "DreamPoints"
+            ],
+            "Value": 30
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1437
+    },
+    "HypnosDreamAboutDreamPoints02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mentioned something about needing thirty Shiny Stars, and then my worries would be cured. Am I supposed to feel any different in some way by now?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "For sure! You should experience a growing sense of accomplishment the more Shiny Stars you get. There's a one-to-one link! More Stars means more accomplishment, and that means better rest!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I suppose I do feel more at ease than I did before all this, when you were fast asleep within the Crossroads still..."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "See? It's working! And it can work even better if you get more you-know-whats. Now dive away!"
+        }
+      ],
+      "name": "HypnosDreamAboutDreamPoints02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutDreamPoints01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1483
+    },
+    "HypnosDreamAboutFamiliarCostumes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Whoa, I like what you've done with your pet! Those Shiny Stars that you've been racking up do come with certain perks! Though they're mostly for show."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "They do look beautiful. You know, it's quite amazing that you can connect with not just me through dream, but my Familiars as well! I've still so much to learn about all this."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, yeah. Learning all this took me practically forever! But every living thing has dreams... and dead things, too! Now, go get yourselves more Shiny Stars, OK?"
+        }
+      ],
+      "name": "HypnosDreamAboutFamiliarCostumes01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 23,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "FrogFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.FrogFamiliar": [
+              {
+                "IsAny": [
+                  "FamiliarCostume_FrogHell"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "FrogFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "RavenFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.RavenFamiliar": [
+              {
+                "IsAny": [
+                  "FamiliarCostume_RavenHell"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "RavenFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "CatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.CatFamiliar": [
+              {
+                "IsAny": [
+                  "FamiliarCostume_CatChaos"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "CatFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "HoundFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.HoundFamiliar": [
+              {
+                "IsAny": [
+                  "FamiliarCostume_HoundCute"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "HoundFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "PolecatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.PolecatFamiliar": [
+              {
+                "IsAny": [
+                  "FamiliarCostume_PolecatMoon"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "PolecatFamiliar"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1890
+    },
+    "HypnosDreamAboutFates01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, I know Dream Dives are exciting, and they're healthy for you, too, but... I just thought you'd like to know, some of the others in the House of Hades, they are getting pretty worried that the Fates haven't turned up!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Yes, well... I suppose it's not too likely that we'll find them in what seems to be my recurring dream here. I appreciate the gentle reminder."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Sure! These Dream Dives can always wait until after you've put more important matters to bed. But for now...? Let's do another one!"
+        }
+      ],
+      "name": "HypnosDreamAboutFates01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "ReachedEpilogue"
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1687
+    },
+    "HypnosDreamAboutFates02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, I heard the good news! The Fates are back! Wherever they are. Personally, I never see them, seeing as I don't get out too much. Unless you count this!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm just relieved your sisters are safe and sound. So there's talk about them at the House! What's the mood like over there? Is everybody still in good spirits?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh absolutely! But also they're still busy cleaning up after everything that happened, you know, while I was out. So, still plenty to worry about, which is why we're both here!"
+        }
+      ],
+      "name": "HypnosDreamAboutFates02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 23,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathTrue:HypnosDreamAboutFates01": [
+              {
+                "PathTrue": [
+                  "HypnosDreamAboutFates01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "requirements": {
+            "RequiredTextLines": [
+              "HypnosDreamAboutSecrecy01",
+              "HypnosDreamAboutMemories01"
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1720
+    },
+    "HypnosDreamAboutHypnosStatue01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, we've a beautiful sculpture in your honor now, right in our training grounds. It's like you're watching over me there during these Dream Drives."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, that old thing! Glad you found a place for it. We never could, here in the House I mean. They were going to throw it out, until I said, why not send it to you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But, that can't be...! Such a glorious depiction of Sleep Incarnate himself might have been simply cast aside! How utterly disrespectful..."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "That's what I said! Well, what I said was aw come on, but what you said is what I meant! I guess this means you saved both the real me and the statue version, too! Thanks!"
+        }
+      ],
+      "name": "HypnosDreamAboutHypnosStatue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.Cosmetic_HypnosStatue": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "Cosmetic_HypnosStatue"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1975
+    },
+    "HypnosDreamAboutJob01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mentioned you don't have many responsibilities right now. Have you been holding up all right? For me, when I don't have as many things to do, I start to worry, I suppose."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well I am glad you worry because that is why you end up here. And then so do I! And that's why I've been holding up just fine. Though... thanks for asking. So, um... bye!"
+        }
+      ],
+      "name": "HypnosDreamAboutJob01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutRelationship01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2382
+    },
+    "HypnosDreamAboutLove01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, I don't mean to make you feel uncomfortable but I was wondering, when you departed from the Crossroads, I remember that you said... I love you. So long. What did you mean by that...?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, haha, come on, what do you think I meant? I love you! I think that's pretty clear, right? It's only three words! And I wouldn't have said them if I didn't mean them."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But, how could you possibly love me? Even now it seems we're only starting to get to know each other. Love takes hold gradually, if at all... isn't that so?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Really? Look, you might know more about it than me, but... if not for you I wouldn't be here now! And not just anyone would do something like that!"
+        }
+      ],
+      "name": "HypnosDreamAboutLove01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.SpeechRecord./VO/Hypnos_0047": [
+          {
+            "PathTrue": [
+              "GameState",
+              "SpeechRecord",
+              "/VO/Hypnos_0047"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2259
+    },
+    "HypnosDreamAboutLove02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey um you don't mind the whole I-love-you thing, do you? Because you were acting pretty funny about it last time!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, well... I may be putting too much stock in the idea. Love isn't an uncommon feeling, more a range of feelings, really. But, it can be quite intense. Though, I'm grateful that you love me, and... I think I love you, too, Lord Hypnos! In a way."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Aw, thanks! I don't remember the last time anybody told me that! Though I figured as much, I mean, why else would you have gone to so much trouble just for me? And kept doing Dream Dives!"
+        }
+      ],
+      "name": "HypnosDreamAboutLove02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutLove01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2306
+    },
+    "HypnosDreamAboutLove03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Erm, Lord Hypnos, now that we've determined that we love one another... what do we do now?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "More Dream Dives, I don't know! What are we supposed to do about it? Look, can't somebody say I love you without making things weird?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I... I'm not certain either way, but... so you're saying this is love? There needn't be anything more to it than what we already have?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh we have something very special here, if you ask me, I mean, I don't do Dream Dives for just anyone! Now, let's not talk about this anymore, OK? It's making me feel funny!"
+        }
+      ],
+      "name": "HypnosDreamAboutLove03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutLove02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2339
+    },
+    "HypnosDreamAboutMemories01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, I wanted to ask... how much do you recall? About what happened to the House, and all of us."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, haha, you mean the whole dream-memories thing that none of us are supposed to talk about! Don't worry, I'm all caught up."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So then, you must remember me. That's all I truly wanted to confirm, because... well, I just wasn't certain either way."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "That is perfectly normal, especially since we're talking in a dream! You can never be too sure, and that's where worries come from! And that's where Dream Dives come in! Ready?"
+        }
+      ],
+      "name": "HypnosDreamAboutMemories01",
+      "narrativePriorityClusterMembers": [
+        "HypnosDreamAboutSiblings01",
+        "HypnosDreamAboutWorries02"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2161
+    },
+    "HypnosDreamAboutRelationship01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I must admit, Lord Hypnos... growing up in the Crossroads, with you there, peacefully asleep all the while... I wondered so often about you. And grew determined to see you wake."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Aw, thanks. I don't remember any of that stuff, myself. Just bits and pieces of a lot of scattered dreams! Most of them about my job, or my brother, or your brother, sometimes Dusa, Megaera once in a while... what was your question?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, I didn't have a question, I was just... reflecting on how grateful I am to have finally met, after all this time. And that you've been willing to visit me in my own job-related dreams."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "You bet! I like dreams! Having them, making them, you name it! But I don't get to talk about them much back at the House. When I'm awake — I'm technically still there."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "So then this works out well enough for both of us. You really don't mind if we keep on meeting like this then? I don't wish to pull you away from your responsibilities."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well, I... don't have too many responsibilities right now, seeing as the House is closed, so... I think this is great! But I can't stay forever so it's Dream Dive time, OK?"
+        }
+      ],
+      "name": "HypnosDreamAboutRelationship01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:GameState.ClearedDreamRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedDreamRunsCache"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2203
+    },
+    "HypnosDreamAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, um, things are starting to pick up a little at the House lately, which is a good thing, but... it kind of means I may not be around quite as much. Work comes first, haha!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I understand completely, Lord Hypnos. Does this mean I should forego these Dream Dives moving forward, or what do you suggest?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, I suggest a lot of things! But no, you can keep doing Dream Dives just as much as ever if you want, it's just I can't keep chatting with you like this for so long! Though I'll be seeing you around, OK? Thanks! Bye!"
+        }
+      ],
+      "name": "HypnosDreamAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutDreamPoints02",
+          "HypnosDreamAboutWeaponsQuest01",
+          "HypnosDreamAboutRelationship01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2410
+    },
+    "HypnosDreamAboutSecrecy01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, uh, you haven't told anybody we've been doing Dream Dives here, have you? Because dreams can be very, very personal. And also I'm supposed to be at work."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, you mean to say you're shirking your responsibilities to my father's House, if not the realm, just to administer these Dream Dives for me? I don't want that!"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "No no no no no, of course you don't! Who would? The work comes first, it's just... I really like getting to do these, too. So, forget you saw me here?"
+        }
+      ],
+      "name": "HypnosDreamAboutSecrecy01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1615
+    },
+    "HypnosDreamAboutSiblings01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "If only you didn't have to leave so soon, my lord. Several of your siblings reside with me at the Crossroads, or come visit us at least... Nemesis, Charon, Moros... even Eris. They would have liked to see you off, I'm sure."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, them! Yeah, I remember them, Charon at least. I don't know Nemesis that well, and Moros, I don't think we've met? Or maybe that was Eris. Sorry I missed them!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I keep having to remind myself you children of Nyx tend not to be that close. I suppose that's just the way it is with large families! I only met most of the Olympians not too long ago."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "I'm close with Thanatos! I know I've got other brothers and sisters, too, but he's probably my favorite. You must have favorites of your own! Mom had so many kids. Oh, Mom...!"
+        }
+      ],
+      "name": "HypnosDreamAboutSiblings01",
+      "narrativePriorityClusterMembers": [
+        "HypnosDreamAboutWorries02",
+        "HypnosDreamAboutMemories01"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1768
+    },
+    "HypnosDreamAboutStoryReset01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, you're... wait, you're awake...! But, you were fast asleep within the Crossroads still, I... oh. This is a dream. My dream, not yours."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "See, the thing about dreams is, sometimes, they just don't make any sense. Well, you can always make some sense out of them if you think about it long enough, but... I wouldn't do that if I were you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I suppose I'm just imagining what you might say to me. Although, I imagined you'd be quite different than this. Well, I look forward to meeting you for real, soon enough."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Me, too! Now how about we never speak of this again, because it's so confusing that it makes me feel funny, and I don't like that! But I do like sending you on Dream Dives!"
+        }
+      ],
+      "name": "HypnosDreamAboutStoryReset01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "HypnosFinalDreamMeeting01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1809
+    },
+    "HypnosDreamAboutTalking01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh I forgot to mention, whatever you do, if you happen to see someone you recognize during a Dream Dive, do not talk to them... OK?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What? I've encountered realistic visages of both my closest comrades and my greatest foes, and we've already exchanged words. What have I done...?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Um, probably nothing, it's just... there's not supposed to be much talking during Dream Dives. But, if you already started and you haven't lost your mind, I'm sure it's fine!"
+        }
+      ],
+      "name": "HypnosDreamAboutTalking01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:GameState.ClearedDreamRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedDreamRunsCache"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1648
+    },
+    "HypnosDreamAboutThanatosAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, my brother Thanatos, he has a scythe like that! Wait, maybe this is my dream after all? But then how come you're here rather than him?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wait, you're not certain if this even is my dream? I did wonder why the intervening spaces here remind me so much of when I was in your dreams trying to wake you up."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hm, come to think, Thanatos did mention someone borrowing his old scythe for a while. Though dreams can reflect our innermost desires, so seeing that thing kind of threw me off! But I am here to throw you off instead!"
+        }
+      ],
+      "name": "HypnosDreamAboutThanatosAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxePerfectCriticalAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxePerfectCriticalAspect"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1851
+    },
+    "HypnosDreamAboutTimePassing01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well look who finally showed up! I was beginning to think you didn't want to see this place again. Or me!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, Lord Hypnos, no it isn't that. I just have other responsibilities, the same as you. Perhaps you could visit the Crossroads again, and we could see each other there!"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh, maybe sometime, sure. But I was gone for long enough that I used up all of my vacation days-or-nights into the distant future, so... I'll probably just see you here. As long as you come back!"
+        }
+      ],
+      "name": "HypnosDreamAboutTimePassing01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:IsDreamRun": [
+          {
+            "Comparison": "<=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "IsDreamRun"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2077
+    },
+    "HypnosDreamAboutWeaponsQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Whoa, according to my list, you've already completed Dream Dives using every one of those secret weapons that my mom made that I'm not even supposed to know about. Good job!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You honor me, Lord Hypnos. The Arms of Night have served me well throughout my task, so I'm not surprised that they've been equally effective in my dreams."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Yeah! Though personally I am a bit surprised. This is a dream, so if I were you, I would have dreamed up weapons way stronger than those! I would have just killed everything at once! But hey, whatever works for you."
+        }
+      ],
+      "name": "HypnosDreamAboutWeaponsQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "Path:GameState.DreamRunClearedWithWeapons": [
+          {
+            "HasAll": [
+              "WeaponStaffSwing",
+              "WeaponDagger",
+              "WeaponTorch",
+              "WeaponAxe",
+              "WeaponLob",
+              "WeaponSuit"
+            ],
+            "Path": [
+              "GameState",
+              "DreamRunClearedWithWeapons"
+            ]
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2117
+    },
+    "HypnosDreamAboutWorries01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, I was wondering... quite a few things, really. But, if I conquered my worst worries at this point, how come I keep facing versions of my strongest adversaries here?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well that's easy: Because you're worrying your worries aren't gone! I mean, they aren't gone since they're still here! Maybe you like having worries! Just not the worst kind."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...I did fear that, once my task was complete and the House of Hades was restored, I might lack a sense of purpose anymore. You're suggesting I've manifested this?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Sure! I like suggesting things! Anyway, just because your worst worries are conquered already, doesn't mean you can't have more! And do more Dream Dives to get rid of them!"
+        }
+      ],
+      "name": "HypnosDreamAboutWorries01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutDreamPoints02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1529
+    },
+    "HypnosDreamAboutWorries02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, I know I'm not supposed to worry here, but... shall I ever dream again of anything other than the reality I've grown accustomed to? This can't be it..."
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Aw, I thought you said you liked Dream Dives! You know you can stop doing these whenever you want, right?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I do, it's just... dreams have no limits...! I want to explore them as fully as I can! Imagine the impossible, visit places I have never seen...!"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Whoa now, look, you'll probably have other dreams at some point, but you won't be needing me for those, just these! And I'm doing my best, OK? I'm just one guy! Now come on."
+        }
+      ],
+      "name": "HypnosDreamAboutWorries02",
+      "narrativePriorityClusterMembers": [
+        "HypnosDreamAboutSiblings01",
+        "HypnosDreamAboutMemories01"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamAboutWorries01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1571
+    },
+    "HypnosDreamGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Might I offer you this Nectar, as a symbol of our newfound connection and my gratitude for meeting with me thus? I hear you don't have much back at the House!"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Um, this is a dream? So even if you gave me something really good, it wouldn't be there after I wake up. And either I'd feel bad about that or forget the whole thing! So no thanks."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Well, we tried."
+        }
+      ],
+      "name": "HypnosDreamGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HypnosDreamRunStart01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2780
+    },
+    "HypnosDreamMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzzz... welcome to the how... zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He said how? He's... trying to communicate! Lord Hypnos, I'm Melinoë, daughter of Hades, and I mean to find a way to rouse you from your slumber! Can you hear me?"
+        },
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzzz... a wake I'm a wake I... haha hm, zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "How is it that you sleep, even in dream? What can I do to bring you back to us? Because we need you... your own sister tells me that your wisdom and knowledge are second to none!"
+        },
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzzz... so you walked... zzz... straight into... zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I walked straight into what? Lord Hypnos, I don't understand. You have to snap out of this! My time here runs short, and if this doesn't work, I... don't know what else to do..."
+        },
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzz... dream... come... true... zzz... thanks... zzz... for stopping... by... zzz..."
+        },
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzzz... hmm, tsk-tsk, hm... zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No, his consciousness, it... slipped away from me. How am I... augh. I need to think..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...Pleasant dreams, for now..."
+        }
+      ],
+      "name": "HypnosDreamMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 640
+    },
+    "HypnosDreamMeeting02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzz... welcome to the... thanks... for dying..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've something for you here, one moment please..."
+        }
+      ],
+      "name": "HypnosDreamMeeting02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 719
+    },
+    "HypnosDreamMeeting02_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_03",
+          "text": "Zzz... there is... no esc... hhnnn..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos? Lord Hypnos! Can you hear me? Answer me! Anything? A twitch of the eye? Oh, come on, please!"
+        },
+        {
+          "speaker": "NPC_Hypnos_03",
+          "text": "Zzz... won't catch... mmssllppnnhhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He's dreaming about... sleeping? Or about dreaming? This is beyond me still. How far has he descended...?"
+        },
+        {
+          "speaker": "NPC_Hypnos_03",
+          "text": "Zzz... good old... thanuhtose... busy... allatime..."
+        },
+        {
+          "speaker": "NPC_Hypnos_03",
+          "text": "Hnn...?! Hhnnnhh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Augh. Got farther that time, but... how many dreams are you having? But if you're dreaming of Death, perhaps... hm..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sleep well for now, my lord."
+        }
+      ],
+      "name": "HypnosDreamMeeting02_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_03",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp02_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 880
+    },
+    "HypnosDreamMeeting03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "It is past time for you to wake."
+        }
+      ],
+      "name": "HypnosDreamMeeting03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 748
+    },
+    "HypnosDreamMeeting03_B": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You are very stubborn, my lord..."
+        }
+      ],
+      "name": "HypnosDreamMeeting03_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_03",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp03_B"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 949
+    },
+    "HypnosDreamRunStart01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh! Hi, um, I wanted to say thanks again, for waking me up and all? I have a lot of catching up to do at work, but if not for you, I'd have way more!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, you're most welcome! I'm certain everything is better at the House now that you've finally returned. Wait, am I asleep? But now you're the one contacting me?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "You bet! I kept on wondering, what can I do to pay Master's daughter back for what she did? Give her my gratitude? Already done! My affection? Worthless. And then I thought, I can make sure she gets a good night's rest!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's... rather generous of you, as I suppose I could use one. So, a good night's rest involves my psyche being in this unusual place, and what else, exactly?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Well I sure am glad you asked, because you are about to find out: It's what I call Dream Dives! Have you tried conquering your worst worries? Well here, you can! Eventually. But first, here's a handy brochure that'll tell you all about it!"
+        }
+      ],
+      "name": "HypnosDreamRunStart01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1341
+    },
+    "HypnosDreamRunStart02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Your first Dream Dive must have worked out pretty well, because if not, you wouldn't have come back! A good night's rest deserves another, huh?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Hold a moment, Lord Hypnos. Last time we barely spoke before you whisked me off into some warped version of how my nights have gone. This is supposed to be restful?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Sure is, once you get used to it! At least it is for me! Although I get to stay here while you do the kill-everything part. But I think that's the most exciting part, don't you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I just... I can't believe these dreams of mine are so specific. Am I truly so caught up in my regular routine, that even my imagination and subconscious are obsessing over it?"
+        },
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "It happens! Though don't feel bad, because if you keep doing Dream Dives, you will conquer your worst worries, and feel refreshed like never before! Now, go on and get in there!"
+        }
+      ],
+      "name": "HypnosDreamRunStart02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 23,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1392
+    },
+    "HypnosDreamRunStartChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Got some lingering worries or nightmares getting you down? Well, not for long!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2453
+    },
+    "HypnosDreamRunStartChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Here comes your next Dive. Try not to die on this one, OK?"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2468
+    },
+    "HypnosDreamRunStartChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "I want to see you make it all the way to the end this time! Or die along the way!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat03",
+      "otherRequirements": {
+        "PathFalse:GameState.LastDreamRunCleared": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastDreamRunCleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2478
+    },
+    "HypnosDreamRunStartChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "No way this Dream Dive goes as well as your last one, if you ask me!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat04",
+      "otherRequirements": {
+        "PathTrue:GameState.LastDreamRunCleared": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastDreamRunCleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2500
+    },
+    "HypnosDreamRunStartChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Let's see you get an even better night's rest than last time, OK?"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat05",
+      "otherRequirements": {
+        "PathTrue:GameState.LastDreamRunCleared": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastDreamRunCleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2521
+    },
+    "HypnosDreamRunStartChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Up for another Dream Dive, huh? Well that's why I'm here! Why we're both here!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2542
+    },
+    "HypnosDreamRunStartChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "A good night's rest awaits! You just have to fight with everything you've got!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2556
+    },
+    "HypnosDreamRunStartChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Where will this Dream Dive start you off? Let's go find out!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2571
+    },
+    "HypnosDreamRunStartChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "...I better not be sleeping on the job right now. Anyway! Off you go!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2586
+    },
+    "HypnosDreamRunStartChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "A Dream Dive can take you anyplace! Or... maybe just eight places, I don't know!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2602
+    },
+    "HypnosDreamRunStartChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Looks like you are ready for another Dive! And I know I am!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2617
+    },
+    "HypnosDreamRunStartChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "You want a good night's rest, you've come to the right place! Which is here!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2632
+    },
+    "HypnosDreamRunStartChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "I'm glad you spend so much time asleep! Because I do, too!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2647
+    },
+    "HypnosDreamRunStartChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Your brother's my best friend, and he says hi! I say it too sometimes..."
+        }
+      ],
+      "name": "HypnosDreamRunStartChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2661
+    },
+    "HypnosDreamRunStartChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Hey, you still have my brother's scythe! He never lets me borrow it!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat16",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxePerfectCriticalAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxePerfectCriticalAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2671
+    },
+    "HypnosDreamRunStartChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Ooh, I can just tell that this one's going to be a scary dream...!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat17",
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 24
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2694
+    },
+    "HypnosDreamRunStartChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Back for more, huh? Well I can never get enough sleep either!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2713
+    },
+    "HypnosDreamRunStartChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Don't even worry, I dream about the same stuff all the time!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2727
+    },
+    "HypnosDreamRunStartChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Oh good, you're back. Let's get you on your way! Ready?"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2737
+    },
+    "HypnosDreamRunStartChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "You must really like this dream since you keep having it!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2747
+    },
+    "HypnosDreamRunStartChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_DreamRun",
+          "text": "Our dreams can take us anywhere! Or places that we've been!"
+        }
+      ],
+      "name": "HypnosDreamRunStartChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_DreamRun",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 2761
+    },
+    "HypnosFinalDreamMeeting01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "Zzz, hmhmhmhm... zzz, hmm, hmhmhm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Blast it, Lord Hypnos, what is this going to take? Though... what is this, some sort of note, it says... in childlike scrawl, it says... Have you tried saying wake up? Wait, what?"
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "<Gasp> <Yawwwn>"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He yawned. Lord Hypnos... wake up. Wake up!"
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "<Yawn> Welcome to the House of Ha— I, uh... wait. Where am I? What is this? Who are you?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Lord Hypnos, you're... you're here! These are the Crossroads between realms. I'm Melinoë, the daughter of Lord Hades and Persephone the Queen. Welcome!"
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "<Yawn> Wait, wait, wait, what do you mean you're Master's daughter, you're huge, I mean you grew up fast, I mean, you were just born! Unless... unless, I, uh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You've been in a deep slumber for... quite some time, my lord. Ever since the Titan Chronos took my father's House as I understand. We've been busy with that matter since."
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "...oh no! Aah! AAAAAH! Oh no! Oh no, oh no, they'll... where'd all this Nectar come from? Oh, I'll never be the featured Houseservant again, oh no...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wait, Lord Hypnos, calm yourself, please! Everything's all right! Especially now that you're back with us. The House is well again! Or getting there."
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "No no no you don't understand... I am so late for work. I am so late for work! I have to go! I have to go, thanks for the wake-up call, if you see Zagreus tell him I'll be right there!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "I love you! So long!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...What in blazes happened, he... that's it?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "...That's really it."
+        }
+      ],
+      "name": "HypnosFinalDreamMeeting01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_04",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp03_C"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 1061
+    },
+    "HypnosFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz, mm-hm, hmm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We'll find a way to wake you, O Sleep. I promise."
+        }
+      ],
+      "name": "HypnosFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 84
+    },
+    "HypnosGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "May you have pleasant dreams for as long as you slumber. And if and when you finally wake... know that this Nectar shall be waiting for you."
+        },
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzzz, welcome... to the haah, hm, zzzz..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Wait, welcome to the what...?"
+        }
+      ],
+      "name": "HypnosGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 5,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Hypnos_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Hypnos_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 542
+    },
+    "HypnosGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "So often has my sleep been wracked with nightmares... memories, perhaps, of when Headmistress took me in. If your dreams are troubled too, O Sleep... you show no sign of it, at least."
+        },
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz... have... zzz... you tried... zzzz..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Did he just... have I tried what...?"
+        }
+      ],
+      "name": "HypnosGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 5,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Hypnos_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Hypnos_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 573
+    },
+    "HypnosHideAndSeek01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz, zzzzz..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I bid you farewell for now, Lord Hypnos!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Where could she be..."
+        }
+      ],
+      "name": "HypnosHideAndSeek01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "Path:CurrentHubRoom.Name": [
+          {
+            "IsAny": [
+              "Flashback_Hub_Main"
+            ],
+            "Path": [
+              "CurrentHubRoom",
+              "Name"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 291
+    },
+    "HypnosPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... zzzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your mother and the rest are safe, Lord Hypnos! They'll surely be expecting your return, and presumed you'd wake after all this, but... you're still sound asleep. Well don't worry... I made you a promise, and I intend to keep it."
+        }
+      ],
+      "name": "HypnosPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 203
+    },
+    "HypnosPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... zzz... zzzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "My memories of you from that potential past I experienced in the House of Hades... you were... so different, Lord Hypnos. Who are you, truly...? How can I finally get through to you...?"
+        }
+      ],
+      "name": "HypnosPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "AchillesTrueEnding01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 225
+    },
+    "HypnosSleepingChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz, zzzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 344
+    },
+    "HypnosSleepingChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz, zzzzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 354
+    },
+    "HypnosSleepingChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... hm, hm, hm, hm, hm..."
+        }
+      ],
+      "name": "HypnosSleepingChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 364
+    },
+    "HypnosSleepingChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... hmm, zzzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 374
+    },
+    "HypnosSleepingChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... hm, zzzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 384
+    },
+    "HypnosSleepingChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Hm-hm, zzzz... hm, zzz, hmhmhm...."
+        }
+      ],
+      "name": "HypnosSleepingChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 395
+    },
+    "HypnosSleepingChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzz... zzzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat07",
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 405
+    },
+    "HypnosSleepingChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzzzz... zzz..."
+        }
+      ],
+      "name": "HypnosSleepingChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusPastFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 421
+    },
+    "HypnosWakeUp01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz... mm, hmm... zzz... hmhm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Please work... Lord Hypnos, you have slumbered long enough! I know you're lost in dream, but I shall do my best to lead you back here to reality. Now breathe in deep!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Is this...? Where am I?"
+        }
+      ],
+      "name": "HypnosWakeUp01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 5,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeWakeHypnos": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeWakeHypnos"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 441
+    },
+    "HypnosWakeUp02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Zzz... hmmm, hm-hm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "All right, Lord Hypnos, let's give this a new attempt. We have to get you out of there, but first, breathe deep."
+        }
+      ],
+      "name": "HypnosWakeUp02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 5,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeWakeHypnosT2": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeWakeHypnosT2"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 479
+    },
+    "HypnosWakeUp02_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzz... died... again... hm..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "If you are dreaming even here, then I must ask if I could see into your psyche deeper still, Lord Hypnos. Whether you let me in is up to you, but once again... breathe deep."
+        }
+      ],
+      "name": "HypnosWakeUp02_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp02"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 775
+    },
+    "HypnosWakeUp03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_01",
+          "text": "Hmmm... tsk, tsk, hm... zzz..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You know how it goes, Lord Hypnos, and you had better comply because, I'll admit, I'm growing just a bit impatient here. Now breathe deep!"
+        }
+      ],
+      "name": "HypnosWakeUp03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 5,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeWakeHypnosT3": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeWakeHypnosT3"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Hypnos_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 511
+    },
+    "HypnosWakeUp03_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Hypnos_02",
+          "text": "Zzz... my list it... never..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I must see deeper into your psyche once again, my lord, so forgive the intrusion, and... here we go."
+        }
+      ],
+      "name": "HypnosWakeUp03_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 2,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_02",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp03"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 809
+    },
+    "HypnosWakeUp03_C": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "...All right, Lord Hypnos, one more time. You're still hiding something from me and from yourself. You must be awake somewhere in your consciousness, so let's go find you there. Breathe deep once more!"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "No... no, he's.... ungh..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "There's nothing here..."
+        },
+        {
+          "speaker": "NPC_Hypnos_04",
+          "text": "Zzz... you keep... hm..."
+        }
+      ],
+      "name": "HypnosWakeUp03_C",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 1,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_03",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLinesThisRun": [
+          "HypnosWakeUp03"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 987
+    },
+    "MorosWithHypnos01": {
+      "dialogueLines": [],
+      "name": "MorosWithHypnos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "partner": "NPC_Moros_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 334
+    },
+    "NemesisWithHypnos01": {
+      "dialogueLines": [],
+      "name": "NemesisWithHypnos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 10,
+      "otherRequirements": {},
+      "owner": "NPC_Hypnos_01",
+      "partner": "NPC_Nemesis_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Hypnos.lua",
+      "sourceLine": 326
+    }
+  }
+}

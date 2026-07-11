@@ -1,0 +1,759 @@
+{
+  "alternates": {},
+  "dependents": {
+    "A_Boss_01_Inspect01": [
+      {
+        "name": "A_PostBoss_01_FirstInspect",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "A_PostBoss_01_GearsInspect01": [
+      {
+        "name": "A_PostBoss_01_FirstInspect",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CharonFirstMeeting": [
+      {
+        "name": "OpeningProcGenHint",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "CharonFirstMeeting_Alt": [
+      {
+        "name": "OpeningProcGenHint",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "Fury2FirstAppearance": [
+      {
+        "name": "A_Boss_01_Inspect01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "Fury3FirstAppearance": [
+      {
+        "name": "A_Boss_01_Inspect01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OpeningFirstInspect": [
+      {
+        "name": "OpeningProcGenHint",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PoseidonAboutFishing01": [
+      {
+        "name": "PoseidonFishQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PoseidonFirstPickUp": [
+      {
+        "name": "PoseidonWrathIntro01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PoseidonWrathIntro01": [
+      {
+        "name": "PoseidonFishQuest01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "PoseidonFishQuest01",
+        "type": "RequiredFalseTextLinesLastRun"
+      }
+    ],
+    "SisyphusFirstMeeting": [
+      {
+        "name": "Inspect_A_Story_01_01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "ArtemisUpgrade": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "AthenaUpgrade": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "ChaosUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "CharProtag": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "Charon": {
+      "description": "Stygian Boatman",
+      "name": "Charon (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "DionysusUpgrade": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "Hades": {
+      "description": "God of the Dead",
+      "name": "Hades (Boss)"
+    },
+    "Harpy": {
+      "description": "First of the Furies",
+      "name": "Megaera (Boss)"
+    },
+    "Harpy2": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "Harpy3": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HermesUpgradeRare": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "Minotaur": {
+      "description": "Bull of Minos",
+      "name": "Asterius"
+    },
+    "MysteryUpgrade": {
+      "name": "? ? ? (Chaos)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Achilles_Story_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Bouldy"
+    },
+    "NPC_Cerberus_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Field)"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Eurydice_01": {
+      "description": "Carefree Muse",
+      "name": "Eurydice"
+    },
+    "NPC_FurySister_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_FurySister_02": {
+      "description": "Tormentor of Passions",
+      "name": "Alecto"
+    },
+    "NPC_FurySister_03": {
+      "description": "Tormentor of Murder",
+      "name": "Tisiphone"
+    },
+    "NPC_FurySister_Unnamed_02": {
+      "name": "? ? ? (Alecto)"
+    },
+    "NPC_FurySister_Unnamed_03": {
+      "name": "? ? ? (Tisiphone)"
+    },
+    "NPC_Hades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx (Field)"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Orpheus_Story_01": {
+      "description": "Court Musician",
+      "name": "Orpheus (with Eurydice)"
+    },
+    "NPC_Patroclus_01": {
+      "description": "Fallen Warrior",
+      "name": "Patroclus"
+    },
+    "NPC_Patroclus_Unnamed_01": {
+      "name": "? ? ? (Patroclus)"
+    },
+    "NPC_Persephone_01": {
+      "description": "Goddess of Verdure",
+      "name": "Persephone"
+    },
+    "NPC_Persephone_Home_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone (House)"
+    },
+    "NPC_Persephone_Unnamed_01": {
+      "name": "? ? ? (Persephone)"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_SisyphusAndBouldy_01": {
+      "name": "Sisyphus & Bouldy"
+    },
+    "NPC_Sisyphus_01": {
+      "description": "Tortured Soul",
+      "name": "Sisyphus"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Thanatos_Field_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos (Field)"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "PlayerUnit": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PlayerUnit_Intro": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Seas",
+      "name": "Poseidon"
+    },
+    "SkellyBackstory": {
+      "description": "Schelemeus, Former Captain",
+      "name": "Skelly"
+    },
+    "Storyteller": {
+      "name": "Narrator"
+    },
+    "Theseus": {
+      "description": "Hero of Athens",
+      "name": "Theseus"
+    },
+    "TrainingMelee": {
+      "description": "Training Dummy",
+      "name": "Skelly"
+    },
+    "TrialUpgrade": {
+      "description": "Origin of Creation",
+      "name": "Chaos"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 12,
+    "totalSpeakers": 2,
+    "totalTextlines": 13,
+    "unresolvedRefs": [
+      "CharonFirstMeeting",
+      "CharonFirstMeeting_Alt",
+      "Fury2FirstAppearance",
+      "Fury3FirstAppearance",
+      "PoseidonAboutFishing01",
+      "PoseidonFirstPickUp",
+      "SisyphusFirstMeeting"
+    ]
+  },
+  "textlines": {
+    "A_Boss_01_Inspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The Erinyes; known also as the Furies, they are the trusted sentinels of Lord Hades, charged with torturing the worst of mortalkind... and ridding the Underworld of any fool enough to trespass where they do not belong."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_4673",
+          "speaker": "CharProtag",
+          "text": "They'll just have to try harder next time."
+        }
+      ],
+      "name": "A_Boss_01_Inspect01",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Fury2FirstAppearance",
+          "Fury3FirstAppearance"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 400
+    },
+    "A_MiniBoss03_01_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The most violent wretches of Tartarus are sealed away even from other condemned souls; their only visitors, those fool enough to attempt escape."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_3905",
+          "speaker": "CharProtag",
+          "text": "Let's do this again sometime!"
+        }
+      ],
+      "name": "A_MiniBoss03_01_FirstInspect",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 1
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 939
+    },
+    "A_MiniBoss04_01_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Damned, lost souls with nowhere left to turn congregate in deepest Tartarus, where they fuse together with the earth itself into odious forms which defy description."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_3904",
+          "speaker": "CharProtag",
+          "text": "They basically turn into big crystals."
+        }
+      ],
+      "name": "A_MiniBoss04_01_FirstInspect",
+      "otherRequirements": {
+        "RequiredFalseSeenRoomsThisRun": [
+          "A_MiniBoss01",
+          "A_MiniBoss02",
+          "A_MiniBoss03"
+        ],
+        "RequiredInactiveMetaUpgrade": "MinibossCountShrineUpgrade",
+        "RequiredSeenEncounter": "BossHarpy1"
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 989
+    },
+    "A_PostBoss_01_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The path from Tartarus is finally laid bare. Far above, the heat from Phlegethon, the river of flame, is faintly felt already... even as its dangers lie in wait."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0533",
+          "speaker": "CharProtag",
+          "text": "Lovely."
+        }
+      ],
+      "name": "A_PostBoss_01_FirstInspect",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 1
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "A_Boss_01_Inspect01"
+        ],
+        "RequiredTextLines": [
+          "A_PostBoss_01_GearsInspect01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 745
+    },
+    "A_PostBoss_01_GearsInspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "None, other than those in the trusted inner circle of Lord Hades, are authorized to enter the intricate chambers connecting the vast regions of the Underworld; but the Prince decides to barge in, anyway."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_4674",
+          "speaker": "CharProtag",
+          "text": "I barge where I please."
+        }
+      ],
+      "name": "A_PostBoss_01_GearsInspect01",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 766
+    },
+    "A_PreBoss_01_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Beyond the present chamber lies the outermost perimeter of Tartarus, promising terrifying dangers far beyond the Underworld Prince's reckoning."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0931",
+          "speaker": "CharProtag",
+          "text": "And I can reckon quite a bit."
+        }
+      ],
+      "name": "A_PreBoss_01_FirstInspect",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 184
+    },
+    "A_Reprieve_01_FirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "A place of calm and respite, whilst perhaps unimaginable in the Underworld, occasionally is to be found, in fact."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0532",
+          "speaker": "CharProtag",
+          "text": "And not a moment too soon."
+        }
+      ],
+      "name": "A_Reprieve_01_FirstInspect",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 1
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 1551
+    },
+    "CharonFirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "The infernal wares of the stygian boatman, Charon, lie sprawled about, available for sale to whomever would be willing to quench the boatman's great thirst for riches."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0674",
+          "speaker": "CharProtag",
+          "text": "That would be me."
+        }
+      ],
+      "name": "CharonFirstInspect",
+      "nameCollision": true,
+      "otherRequirements": {
+        "RequiredMaxBiomeDepth": 9,
+        "RequiredMinExits": 2
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 1604,
+      "variants": [
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "The infernal wares of the stygian boatman, Charon, lie sprawled about, available for sale to whomever would be willing to quench the boatman's great thirst for riches."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusField_0674",
+              "speaker": "CharProtag",
+              "text": "That would be me."
+            }
+          ],
+          "otherRequirements": {
+            "RequiredMaxBiomeDepth": 9,
+            "RequiredMinExits": 2
+          },
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {},
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataTartarus.lua",
+          "sourceLine": 1604
+        },
+        {
+          "dialogueLines": [
+            {
+              "speaker": "Storyteller",
+              "text": "The River Styx flows infamously through the Underworld, offering the boatman Charon expeditious travel from the realm of mortals to the lowest depths, where many of their shades reside forever."
+            }
+          ],
+          "endLines": [
+            {
+              "cue": "ZagreusField_1473",
+              "speaker": "CharProtag",
+              "text": "Too bad I can't just take the ferry to the surface."
+            }
+          ],
+          "otherRequirements": {
+            "RequiredMinRunsCleared": 1
+          },
+          "owner": "Storyteller",
+          "playOnce": true,
+          "requirements": {},
+          "section": "InteractTextLineSets",
+          "sourceFile": "RoomDataTartarus.lua",
+          "sourceLine": 1621
+        }
+      ]
+    },
+    "Inspect_A_Story_01_01": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Within the depths of Tartarus reside the most wretched of all the shades who linger for eternity within the Underworld, whose Lord and Master is especially unkind to those attempting to cheat death."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0935",
+          "speaker": "CharProtag",
+          "text": "Lots of wretchedness to go around, I guess."
+        }
+      ],
+      "name": "Inspect_A_Story_01_01",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "SisyphusFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 2453
+    },
+    "OpeningFirstInspect": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Composed of such innumerable ever-shifting interlocking chambers, the Underworld of Lord Hades all but guarantees the dead shall there remain until the end of time."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0530",
+          "speaker": "CharProtag",
+          "text": "Good thing I'm not dead."
+        }
+      ],
+      "name": "OpeningFirstInspect",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 1
+      },
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 2389
+    },
+    "OpeningProcGenHint": {
+      "dialogueLines": [
+        {
+          "speaker": "Storyteller",
+          "text": "Each time the Prince delves back into the Underworld, its ever-shifting chambers realign to frustrate his attempts to perhaps map it out."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "ZagreusField_0529",
+          "speaker": "CharProtag",
+          "text": "Built to ensure no one gets out. We'll see about that."
+        }
+      ],
+      "name": "OpeningProcGenHint",
+      "otherRequirements": {},
+      "owner": "Storyteller",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "CharonFirstMeeting",
+          "CharonFirstMeeting_Alt"
+        ],
+        "RequiredTextLines": [
+          "OpeningFirstInspect"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 2407
+    },
+    "PoseidonFishQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Poseidon_01",
+          "text": "Nephew! I'm mightily impressed with your ability to cull those rivers there of all the denizens of my domain! Your crusty father's not entitled to the bounties of the sea! But, on my limitless authority, you are! You have my Rod of Fishing... now have this!"
+        }
+      ],
+      "name": "PoseidonFishQuest01",
+      "otherRequirements": {
+        "RequiredMinTotalCaughtFish": 3
+      },
+      "owner": "PoseidonUpgrade",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PoseidonFishQuest01"
+        ],
+        "RequiredFalseTextLinesLastRun": [
+          "PoseidonWrathIntro01"
+        ],
+        "RequiredTextLines": [
+          "PoseidonAboutFishing01",
+          "PoseidonWrathIntro01"
+        ]
+      },
+      "section": "ForcedTextLines",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 1879
+    },
+    "PoseidonWrathIntro01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Poseidon_01",
+          "text": "I have to tell you something, little Hades: My relatives and I, we've been holding back one of our greatest gifts!! To see if you were worthy. And you are! My aid is yours, so call me if you need anything! Especially to smash your enemies to bits."
+        }
+      ],
+      "name": "PoseidonWrathIntro01",
+      "otherRequirements": {
+        "RequiredMinCompletedRuns": 4
+      },
+      "owner": "PoseidonUpgrade",
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "PoseidonWrathIntro01"
+        ],
+        "RequiredTextLines": [
+          "PoseidonFirstPickUp"
+        ]
+      },
+      "section": "ForcedTextLines",
+      "source": "Hades 1",
+      "sourceFile": "RoomDataTartarus.lua",
+      "sourceLine": 1840
+    }
+  }
+}
