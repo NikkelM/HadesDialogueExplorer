@@ -6,7 +6,9 @@
  *   2. LZ4 block decompression (inline implementation, no dependencies)
  *   3. Luabins decoding (Supergiant's Lua serialisation format)
  *
- * Format documentation derived from TheNormalnij/Hades-SavesExtractor (MIT).
+ * This is a JavaScript reimplementation of the .sav container format (SGB1
+ * header -> LZ4 block -> luabins) derived from TheNormalnij's Hades-SavesExtractor
+ * (MIT licensed): https://github.com/TheNormalnij/Hades-SavesExtractor
  */
 
 import { getActiveGame, games } from './data.js';

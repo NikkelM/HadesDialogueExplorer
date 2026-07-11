@@ -72,9 +72,16 @@
  * Let it wrap instead of overflowing, size the controls for touch, and on
  * phones give the search its own full-width row. No JS menu needed - the
  * header isn't sticky on mobile, so a wrapped header just scrolls away.
- * Desktop (> tablet) keeps the original single row.
+ *
+ * Uses a wider breakpoint than the rest of the responsive layout (1279px vs
+ * the usual 1024px tablet width): the header's fixed controls plus the save
+ * status pill stay too wide for a single row well into tablet-landscape widths
+ * (iPad Mini 6 @1133, Air @1180, Pro 11 @1194), where the raw desktop row wraps
+ * the save group into a stranded far-right button. Rather than a bespoke
+ * in-between layout, the same wrap-and-regroup treatment simply extends up to
+ * 1279px. Desktop (>= 1280px) keeps the original single row.
  * ====================================================================== */
-@media (max-width: 1024px) {
+@media (max-width: 1279px) {
     header {
         flex-wrap: wrap;
         row-gap: 8px;
@@ -126,7 +133,7 @@
        overlay under the base ``inline-grid`` layout; once these rules switch the
        button to ``inline-flex`` the twin becomes a real flex sibling beside the
        label and shoves the visible text off-centre. Width reservation isn't
-       needed here anyway - the search sits on its own row at <= 1024px, so a
+       needed here anyway - the search sits on its own row at <= 1279px, so a
        toggle-induced resize can't shift it - so drop the twin and let the label
        centre cleanly. */
     .game-toggle-btn::after { display: none; }
@@ -135,6 +142,20 @@
        cleared save status visible on mobile. Re-assert it. */
     .save-status[hidden] {
         display: none;
+    }
+}
+@media (min-width: 900px) and (max-width: 1279px) {
+    /* Wide tablet landscape: the fixed controls (brand, toggle, Cross-game
+       duplicates, Load save) comfortably fit the first row here, so order the
+       search LAST - it still takes its own full-width row, but the two trailing
+       buttons ride up onto row one with the brand + toggle instead of being
+       stranded on a third row below the search. A tidy two rows:
+       [brand + toggle + duplicates + save] / [search]. Below 900px the buttons
+       no longer fit beside the brand, so the layout above keeps the search in
+       the middle (buttons on their own row); phones (<600px) stay fully
+       stacked. */
+    .search-container {
+        order: 1;
     }
 }
 @media (max-width: 599px) {
