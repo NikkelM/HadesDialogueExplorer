@@ -24,7 +24,7 @@ import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
-import { canonicalSpeakerId, canonicalIdForSpeakerName, englishSpeakerName, resetSpeakerGroups } from './speaker-groups.js';
+import { canonicalSpeakerId, canonicalIdForSpeakerName, englishSpeakerName, resetSpeakerGroups, resetSpeakerGroupEntries } from './speaker-groups.js';
 import { renderGameToggle, updateFavicon } from './game-toggle.js';
 import { syncLanguagePicker } from './language-picker.js';
 import { refreshSaveStatus } from './save-upload.js';
@@ -524,11 +524,13 @@ export function rebuildSearchIndexes() {
 
 // Re-render after a dialogue-language change. Rebuilds the language-dependent
 // search indexes first (or the search dropdown would keep showing - and only
-// match - the previous language), then forces a re-render. The dialogue-text
-// index is English-only (the overlay never rewrites ``textlines``), so it is
-// deliberately not rebuilt.
+// match - the previous language) and clears the cached speaker-view entries
+// (which bake in the localised name/description), then forces a re-render. The
+// dialogue-text index is English-only (the overlay never rewrites
+// ``textlines``), so it is deliberately not rebuilt.
 export function refreshForLanguageChange() {
     rebuildSearchIndexes();
+    resetSpeakerGroupEntries();
     forceRefresh();
 }
 

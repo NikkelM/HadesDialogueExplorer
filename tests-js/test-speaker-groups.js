@@ -16,6 +16,7 @@ import {
     listCanonicalSpeakerIds,
     getSpeakerGroupEntry,
     resetSpeakerGroups,
+    resetSpeakerGroupEntries,
     similarSpeakers,
 } from '../templates/viewer/speaker-groups.js';
 import { loadData, setActiveLang, registerLocData, speakers } from '../templates/viewer/data.js';
@@ -302,6 +303,28 @@ test('multi-member groups expose all member ids via _members', () => {
     const entry = getSpeakerGroupEntry('HermesUpgrade');
     assert.equal(entry._canonicalId, 'HermesUpgrade');
     assert.deepEqual(entry._members, ['HermesUpgrade', 'NPC_Hermes_01']);
+});
+
+test('resetSpeakerGroupEntries re-derives the speaker-view name in the active language', () => {
+    registerLocData('hades1', 'de', {
+        text: {},
+        speakers: {
+            NPC_Hermes_01: { name: 'Hermes-DE', description: 'Bote-DE' },
+            HermesUpgrade: { name: 'Hermes-DE' },
+        },
+    });
+    // The aggregated speaker-view entry bakes in the (localised) display name.
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes');
+    // Switching language updates the overlay, but the entry stays cached...
+    setActiveLang('de');
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes');
+    // ...until the entry cache is cleared, then it re-derives in the new
+    // language while the language-neutral grouping stays intact.
+    resetSpeakerGroupEntries();
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes-DE');
+    assert.equal(canonicalIdForSpeakerName('Hermes'), 'HermesUpgrade');
+    setActiveLang('en');
+    resetSpeakerGroupEntries();
 });
 
 test('resetSpeakerGroups invalidates cached groups after a data swap', () => {

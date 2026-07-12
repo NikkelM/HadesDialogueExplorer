@@ -48,6 +48,16 @@ export function resetSpeakerGroups() {
     _groupEntryCache = null;
 }
 
+// Clear ONLY the cached aggregated speaker-view entries (which bake in the
+// localised name + description), keeping the language-neutral grouping maps.
+// Called on a dialogue-language change so the speaker overview re-derives its
+// display name and description in the new language - the grouping itself never
+// changes with language, so a full ``resetSpeakerGroups`` is neither needed nor
+// wanted (it would also drop the id<->name maps the URL hash resolves against).
+export function resetSpeakerGroupEntries() {
+    if (_groupEntryCache) _groupEntryCache = {};
+}
+
 function _ensureGroups() {
     if (_idToCanonical && _canonicalToMembers) return;
     _idToCanonical = {};
