@@ -56,6 +56,7 @@ from src.extractors.textline_set import (
     apply_cue_comment_texts,
 )
 from src.graph import build_graph_data
+from src.localization import build_localization
 
 # Each entry: (output filename, source label, lua filename, extractor function)
 HADES1_SOURCES = [
@@ -397,7 +398,7 @@ def main():
     # Restricted to the prefixes this script writes (``hades1_*``,
     # ``hades2_*``) so user-dropped diagnostic JSONs, saved queries, or
     # release notes in ``outputs/`` aren't wiped on rebuilds.
-    for stale_pattern in ("hades1_*.json", "hades2_*.json"):
+    for stale_pattern in ("hades1_*.json", "hades2_*.json", "loc-*.json"):
         for stale in OUTPUT_DIR.glob(stale_pattern):
             stale.unlink()
 
@@ -672,6 +673,24 @@ def main():
             print(f"  {owner_id}.{section_key}.{textline_name}")
         if len(orphan_priority_keys) > 10:
             print(f"  ... and {len(orphan_priority_keys) - 10} more")
+
+    # --- Dialogue localisation maps -------------------------------------
+    # Emit one ``loc-<game>-<lang>.json`` per non-English language from the
+    # games' ``Game/Text/<lang>`` sjson, filtered to the cue / text / choice /
+    # speaker ids this build references. Generated locally (the game text
+    # folders are absent in CI) alongside the extracted data; baked into
+    # ``dist/`` by build_viewer.py. English stays inline in the base data.
+    print("\n" + "=" * 60)
+    print("Localisation")
+    print("=" * 60)
+    for game, scripts_dir, speakers_en in (
+        ("hades1", hades1_scripts, HADES1_SPEAKERS),
+        ("hades2", hades2_scripts, HADES2_SPEAKERS),
+    ):
+        text_root = scripts_dir.parent / "Game" / "Text"
+        game_outputs = sorted(OUTPUT_DIR.glob(f"{game}_*.json"))
+        written = build_localization(text_root, OUTPUT_DIR, game, game_outputs, speakers_en)
+        print(f"  {game}: {len(written)} language file(s) -> {', '.join(written) or '(none)'}")
 
     print("\nDone!")
 
