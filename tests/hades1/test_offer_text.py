@@ -59,6 +59,7 @@ class TestExtractTextlineOfferTextSubstitution:
             {
                 "speaker": "NPC_Eurydice_01",
                 "text": "Eurydice offers several delectable treats.",
+                "textId": "Eurydice_OfferText02",
             }
         ]
 

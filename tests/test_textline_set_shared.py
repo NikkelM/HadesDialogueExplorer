@@ -119,7 +119,7 @@ def test_hades1_extracts_endcue_and_endvoicelines():
     # Storyteller owner), with the /VO/ scope stripped.
     assert end[0] == {"speaker": "CharProtag", "cue": "ZagreusHome_2389"}
     # EndVoiceLines entry with inline Text -> {speaker, text}; cue prefix Hades.
-    assert end[1] == {"speaker": "NPC_Hades_01", "text": "A closing remark."}
+    assert end[1] == {"speaker": "NPC_Hades_01", "text": "A closing remark.", "cue": "Hades_1055"}
     # Bare EndVoiceLines entry (no Text) -> cue-only, prefix-resolved speaker.
     assert end[2] == {"speaker": "CharProtag", "cue": "ZagreusHome_3245"}
 
@@ -132,7 +132,7 @@ def test_hades2_extracts_endvoicelines_with_player_source():
     )
     end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
     # Table-level UsePlayerSource routes entries through the player (Melinoe).
-    assert end[0] == {"speaker": "PlayerUnit", "text": "A player closing line."}
+    assert end[0] == {"speaker": "PlayerUnit", "text": "A player closing line.", "cue": "Melinoe_0001"}
     # Bare entry (no Text) -> cue-only; H2 has no cue-prefix resolver, so the
     # speaker still comes from UsePlayerSource.
     assert end[1] == {"speaker": "PlayerUnit", "cue": "Hecate_0002"}
@@ -166,7 +166,7 @@ def test_hades2_extracts_nested_endvoicelines_group():
     end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
     # The nested cue surfaces, attributed to the group-level ObjectType (Eris),
     # not the owner (Hecate).
-    assert end == [{"speaker": "NPC_Eris_01", "text": "Sure has!"}]
+    assert end == [{"speaker": "NPC_Eris_01", "text": "Sure has!", "cue": "Eris_0107"}]
 
 
 # EndVoiceLines groups each gated on a dialogue-choice outcome
@@ -224,11 +224,11 @@ def test_hades2_routes_choice_gated_endvoicelines_to_choice_children():
     # Decline coda lands on the Decline child, attributed per sub-cue, with the
     # now-implied choice gate dropped (no condGroup / requirements).
     assert section["Foo01Choice_Decline"]["endLines"] == [
-        {"speaker": "PlayerUnit", "text": "Please don't."},
-        {"speaker": "NPC_Eris_01", "text": "Aw..."},
+        {"speaker": "PlayerUnit", "text": "Please don't.", "cue": "Mel_1"},
+        {"speaker": "NPC_Eris_01", "text": "Aw...", "cue": "Eris_1"},
     ]
     assert section["Foo01Choice_Accept"]["endLines"] == [
-        {"speaker": "PlayerUnit", "text": "Whew..."},
+        {"speaker": "PlayerUnit", "text": "Whew...", "cue": "Mel_2"},
     ]
 
 
@@ -341,7 +341,7 @@ def test_hades2_extracts_indexed_positional_main_groups():
     # options; [2] has no RandomRemaining -> its cue is a plain sequential line.
     assert lines[0]["kind"] == "randomGroup"
     assert [o["text"] for o in lines[0]["options"]] == ["Line A.", "Line B."]
-    assert lines[1] == {"speaker": "NPC_Eris_01", "text": "Line C."}
+    assert lines[1] == {"speaker": "NPC_Eris_01", "text": "Line C.", "cue": "Eris_0300"}
 
 
 # A repeatable dialogue whose [2] branch splices in a shared
@@ -412,7 +412,7 @@ def test_hades1_extracts_nested_endvoicelines_group():
     )
     end = sections["InteractTextLineSets"]["Foo01"]["endLines"]
     # The nested cue surfaces, speaker recovered from the cue prefix (Hades).
-    assert end == [{"speaker": "NPC_Hades_01", "text": "A nested closing remark."}]
+    assert end == [{"speaker": "NPC_Hades_01", "text": "A nested closing remark.", "cue": "Hades_1055"}]
 
 
 def test_no_end_lines_field_when_textline_has_none():

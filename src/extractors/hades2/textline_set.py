@@ -79,6 +79,7 @@ from ..textline_set import (
     _is_cue_entry,
     _group_speaker,
     _FORMAT_TAG_RE,
+    _VO_PREFIX_RE,
 )
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
@@ -291,6 +292,11 @@ def extract_textline(
         if not isinstance(text, str):
             return None
         line = {"speaker": _cue_speaker(entry, group), "text": _FORMAT_TAG_RE.sub("", text)}
+        # Trimmed cue id (no ``/VO/``) is the localisation key: the per-language
+        # dialogue sjson keys each translated line by this id.
+        cue_val = entry.get("Cue")
+        if isinstance(cue_val, str) and cue_val:
+            line["cue"] = _VO_PREFIX_RE.sub("", cue_val)
         # Choice-prompt cue: attach the option metadata so the viewer can render
         # the prompt as a structured choice block. Synthetic target name is
         # ``<parent><ChoiceText>`` (matches the ``TextLinesChoiceRecord`` key).

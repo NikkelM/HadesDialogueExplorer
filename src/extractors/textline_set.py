@@ -448,11 +448,17 @@ def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker,
     def make_line(entry, group):
         text = resolve_text(entry)
         speaker = resolve_speaker(entry, group)
-        if isinstance(text, str) and text:
-            return {"speaker": speaker, "text": text}
         cue = entry.get("Cue")
-        if isinstance(cue, str) and cue:
-            return {"speaker": speaker, "cue": _VO_PREFIX_RE.sub("", cue)}
+        cue_id = _VO_PREFIX_RE.sub("", cue) if isinstance(cue, str) and cue else None
+        if isinstance(text, str) and text:
+            # Subtitle present: keep the trimmed cue id too (localisation key)
+            # so a closing line can also be swapped to the active language.
+            line = {"speaker": speaker, "text": text}
+            if cue_id:
+                line["cue"] = cue_id
+            return line
+        if cue_id:
+            return {"speaker": speaker, "cue": cue_id}
         return None
 
     def place(lines, gsr_tables):
@@ -957,9 +963,17 @@ def extract_textline(
         # to their flavour text before tag stripping. Substituted values
         # are already tag-stripped at load time, so the strip below is a
         # no-op for them; bare voice lines still get stripped normally.
-        if offer_text_map is not None:
-            text = offer_text_map.get(text, text)
+        # The original id is retained as ``textId`` so the viewer can
+        # re-localise the line from the per-language MiscText map.
+        text_id = None
+        if offer_text_map is not None and text in offer_text_map:
+            text_id = text
+            text = offer_text_map[text]
         text = _FORMAT_TAG_RE.sub("", text)
+        # Trimmed cue id (no ``/VO/``) is the localisation key for the
+        # per-language dialogue map (sjson ``Id`` == this value).
+        cue_val = entry.get("Cue")
+        cue_id = _VO_PREFIX_RE.sub("", cue_val) if isinstance(cue_val, str) and cue_val else None
         speaker = entry.get("Speaker")
         if isinstance(speaker, str):
             line: dict = {"speaker": speaker, "text": text}
@@ -971,6 +985,10 @@ def extract_textline(
                 # groups); fall back to it before the owner default.
                 derived = _group_speaker(group)
             line = {"speaker": derived or fallback_speaker, "text": text}
+        if cue_id:
+            line["cue"] = cue_id
+        if text_id is not None:
+            line["textId"] = text_id
         # Choice-prompt cue: when a cue declares a ``Choices = {...}``
         # table (or a ``Choices = PresetEventArgs.<Name>`` reference to
         # a vendored preset) the prompt isn't just narration, it's the
