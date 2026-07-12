@@ -15,7 +15,7 @@
 
 import {
     getAvailableLanguages, getActiveLang, setActiveLang, ensureLangLoaded,
-    getActiveGame, isLangLoaded,
+    getActiveGame, isLangLoaded, warmLangForGames,
 } from './data.js';
 import { refreshForLanguageChange, prepareLanguageChange } from './navigation.js';
 import { escapeHtml } from './utilities.js';
@@ -101,6 +101,10 @@ function renderLanguageOptions() {
 function applyLanguageChoice(lang, { persist = true } = {}) {
     const game = getActiveGame();
     if (persist) saveLangPref(lang);
+    // Warm this language's map for the OTHER games in the background so a later
+    // game switch under it is instant (no English-then-swap flash while the
+    // target game's map lazy-loads). The active game loads on the path below.
+    warmLangForGames(lang, game);
     if (lang === 'en') {
         setActiveLang('en');
         renderLanguageOptions();

@@ -10,7 +10,7 @@ import {
     loadData, setActiveGame, setActiveLang, getActiveLang, isLocalized,
     getAvailableLanguages, localizeText, isUntranslated,
     setLocLoader, ensureLangLoaded, registerLocData, isLangLoaded, getLocData,
-    speakers, locText,
+    warmLangForGames, speakers, locText,
 } from '../templates/viewer/data.js';
 
 function buildPayload() {
@@ -143,6 +143,28 @@ test('English needs no loader (always "loaded")', () => {
     setActiveGame('hades1');
     assert.equal(isLangLoaded('hades1', 'en'), true);
     assert.equal(isLangLoaded('hades2', 'ja'), false);
+});
+
+test('warmLangForGames background-loads a language for other offering games (deduped, English no-op)', async () => {
+    setActiveGame('hades1');
+    const requested = [];
+    setLocLoader((game, lang) => {
+        requested.push(`${game}:${lang}`);
+        registerLocData(game, lang, { text: {}, speakers: {} });
+        return Promise.resolve();
+    });
+    // hades2 offers 'de' and isn't loaded -> warmed; hades1 (exceptGame) skipped.
+    warmLangForGames('de', 'hades1');
+    await new Promise((r) => setTimeout(r, 20));
+    assert.deepEqual(requested, ['hades2:de']);
+    assert.equal(isLangLoaded('hades2', 'de'), true);
+    // Already loaded -> no-op; English is always a no-op.
+    warmLangForGames('de', 'hades1');
+    warmLangForGames('en', 'hades1');
+    // 'ja' is only offered by hades2, which is the exceptGame here -> nothing to warm.
+    warmLangForGames('ja', 'hades2');
+    await new Promise((r) => setTimeout(r, 20));
+    assert.deepEqual(requested, ['hades2:de']);
 });
 
 test('getLocData exposes a registered map and it survives loadData\'s reset via the payload', () => {

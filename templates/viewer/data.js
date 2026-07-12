@@ -310,6 +310,22 @@ export function getAvailableLanguages() {
     return (languages && languages[currentGame]) || [{ code: 'en', label: 'English' }];
 }
 
+// Background-warm the loc map of ``lang`` for every game that offers it and
+// hasn't loaded it yet, skipping ``exceptGame`` (typically the active game,
+// whose map loads on the normal path). Fire-and-forget and deduped via
+// ``ensureLangLoaded``'s in-flight tracking, so a game switch that fires
+// mid-flight simply awaits the same promise instead of flashing English then
+// swapping to the language once its map arrives. No-op for English (the inline
+// default) or when no loader is set (the bundle build inlines every map).
+export function warmLangForGames(lang, exceptGame) {
+    if (!lang || lang === 'en' || !_locLoader) return;
+    for (const g in languages) {
+        if (g === exceptGame) continue;
+        if (!(languages[g] || []).some((l) => l.code === lang)) continue;
+        if (!isLangLoaded(g, lang)) ensureLangLoaded(g, lang);
+    }
+}
+
 export function getActiveLang() {
     return currentLang;
 }

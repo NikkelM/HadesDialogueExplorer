@@ -3,7 +3,7 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame, setLocLoader, registerLocData, ensureLangLoaded, getLocData } from './data.js';
+import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame, setLocLoader, registerLocData, ensureLangLoaded, getLocData, warmLangForGames } from './data.js';
 import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
@@ -248,6 +248,12 @@ async function boot() {
                     if (!ok) console.warn('Background load of ' + gid + ' failed; will retry on demand');
                 });
             }
+            // Warm the saved dialogue language's map for the inactive game(s) too
+            // (using the saved preference, not the active one, which may have
+            // fallen back to English on a game that doesn't offer it), so a game
+            // switch under a non-English language is instant instead of flashing
+            // English while that game's map lazy-loads. Non-fatal / deduped.
+            warmLangForGames(getSavedLang(), initialGame);
         };
         // ``timeout`` guarantees the preload still runs on a page that never goes
         // idle; the setTimeout fallback covers browsers without requestIdleCallback.
