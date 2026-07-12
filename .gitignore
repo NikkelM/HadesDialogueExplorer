@@ -16,6 +16,10 @@ __pycache__/
 # node
 node_modules/
 
+# Cloudflare Worker local state (worker/)
+.wrangler/
+worker/.dev.vars
+
 # Local scratch / probe files (never committed)
 tmp-*
 *.tmp

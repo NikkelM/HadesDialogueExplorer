@@ -1,0 +1,40 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "hde-analytics"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# This Worker is reached only through the zone route below, never a
+# ``*.workers.dev`` subdomain (which would make the beacon cross-origin and
+# force a CSP + CORS change in the viewer). Keep it off.
+workers_dev = false
+
+# Same-origin route on the main site's zone. It is MORE SPECIFIC than the
+# main-site Worker's ``nikkelm.dev/*`` route, so Cloudflare dispatches
+# ``/HadesDialogueExplorer/api/*`` here while everything else still hits the
+# main-site Worker. Because the viewer is served from the same origin, its
+# relative ``api/event`` beacon lands here with no CSP or CORS changes.
+routes = [
+    { pattern = "nikkelm.dev/HadesDialogueExplorer/api/*", zone_name = "nikkelm.dev" }
+]
+
+# D1 counting store. Create it once, then paste the returned id here:
+#   wrangler d1 create hde-analytics
+[[d1_databases]]
+binding = "DB"
+database_name = "hde-analytics"
+database_id = "faf4181d-fe78-4970-889e-9cc8fa1ea14f"
+
+# The /api/stats dashboard is gated by Cloudflare Access. Configure an Access
+# application on the path .../HadesDialogueExplorer/api/stats in the Zero Trust
+# dashboard, then set these two (non-secret) values so the Worker also VERIFIES
+# the Access JWT (signature + audience + expiry) rather than trusting the edge
+# alone - a forged header then cannot open the dashboard:
+#   ACCESS_TEAM_DOMAIN = your team subdomain, i.e. <team>.cloudflareaccess.com
+#   ACCESS_AUD         = the Access application's Audience (AUD) tag
+[vars]
+ACCESS_TEAM_DOMAIN = "nikkelm-dev"
+ACCESS_AUD = "f55a60bc8cad3eb201b6d7c214a6ae821ee6016c6c379586f94b2c14d5a6fd61"
+#
+# For local ``wrangler dev`` (no Access in front), set a shared secret instead
+# and open ``/api/stats?key=<secret>``:
+#   wrangler secret put DASHBOARD_TOKEN

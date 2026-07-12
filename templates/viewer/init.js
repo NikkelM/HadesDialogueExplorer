@@ -24,6 +24,7 @@ import { startDuplicatesTourReplay } from './tour-duplicates.js';
 import { startEligibilityTourReplay } from './tour-eligibility.js';
 import { maybeStartSaveCallout } from './tour-callouts.js';
 import { parseUrlState } from './url.js';
+import { initAnalytics } from './analytics.js';
 
 function init(data) {
     loadData(data);
@@ -103,6 +104,11 @@ function init(data) {
             startDialogueTourReplay();
         }
     });
+    // Silent, aggregate usage beacon. Registered last so its hashchange /
+    // save-loaded listeners run after navigation has applied state, letting it
+    // read the already-resolved game. Self-guards to http(s) origins (the
+    // offline bundle stays silent) and honours Do-Not-Track.
+    initAnalytics();
 }
 
 // Render a load error into the stable #app-error mount instead of
