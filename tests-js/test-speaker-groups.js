@@ -422,3 +422,22 @@ test('similarSpeakers does NOT cross-link letterless placeholder names', () => {
         { id: 'NPC_Real_ErisBoss', name: 'Eris (Boss)' },
     ]);
 });
+
+test('similarSpeakers stays language-neutral (non-Latin localised names still cross-link)', () => {
+    // A Greek overlay renames both Hecate versions to a non-Latin script. Keyed
+    // off the localised name with a Latin-only letter check, the "Other
+    // versions" list would vanish; keyed off the English base it survives, shown
+    // with the Greek name. (Regression: user reported this for Eris in Greek.)
+    registerLocData('hades1', 'el', {
+        text: {},
+        speakers: {
+            NPC_Hecate_01: { name: '\u0395\u03ba\u03ac\u03c4\u03b7' },              // Εκάτη
+            NPC_HecateBoss_01: { name: '\u0395\u03ba\u03ac\u03c4\u03b7 (Boss)' },   // Εκάτη (Boss)
+        },
+    });
+    setActiveLang('el');
+    assert.deepEqual(similarSpeakers('NPC_Hecate_01'), [
+        { id: 'NPC_HecateBoss_01', name: '\u0395\u03ba\u03ac\u03c4\u03b7 (Boss)' },
+    ]);
+    setActiveLang('en');
+});

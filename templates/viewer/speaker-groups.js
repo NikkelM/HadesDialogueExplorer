@@ -168,7 +168,7 @@ export function listCanonicalSpeakerIds() {
 // parenthetical, so those must NOT cross-link to one another.
 function _baseCharacterKey(name) {
     const base = (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
-    if (!/[A-Za-z]/.test(base)) return null;
+    if (!/\p{L}/u.test(base)) return null;
     return base;
 }
 
@@ -181,15 +181,21 @@ export function similarSpeakers(speakerId) {
     if (!speakerId) return [];
     _ensureGroups();
     const canon = _idToCanonical[speakerId] || speakerId;
-    const key = _baseCharacterKey((speakers[canon] || {}).name);
+    // Key off the base ENGLISH character name so "same character" is
+    // language-neutral: the localised name can be a non-Latin script (Greek,
+    // Cyrillic, CJK) or fall back to English unevenly across versions, either of
+    // which would break matching if keyed off the overlay (the "Other versions"
+    // list would vanish in those languages). Display still uses the localised
+    // name from the overlay.
+    const base = getBaseSpeakers();
+    const key = _baseCharacterKey((base[canon] || {}).name);
     if (!key) return [];
     const out = [];
     for (const otherCanon of Object.keys(_canonicalToMembers)) {
         if (otherCanon === canon) continue;
+        if (_baseCharacterKey((base[otherCanon] || {}).name) !== key) continue;
         const e = speakers[otherCanon] || {};
-        if (_baseCharacterKey(e.name) === key) {
-            out.push({ id: otherCanon, name: e.name || otherCanon });
-        }
+        out.push({ id: otherCanon, name: e.name || otherCanon });
     }
     out.sort((a, b) => a.name.localeCompare(b.name));
     return out;
