@@ -511,16 +511,24 @@ export function forceRefresh() {
     applyHashFromUrl();
 }
 
-// Re-render after a dialogue-language change. The speaker- and name-search
-// indexes cache localised speaker names (``buildSpeakerIndex`` reads the
-// overlaid ``speakers`` map; ``buildNameIndex`` folds owner display names into
-// its tokens), so they must be rebuilt against the newly active language or the
-// search dropdown would keep showing - and only match - the previous language.
-// The dialogue-text index is English-only (the overlay never rewrites
-// ``textlines``), so it is deliberately not rebuilt here.
-export function refreshForLanguageChange() {
+// Rebuild the language-dependent search indexes against the currently active
+// language. ``buildSpeakerIndex`` caches localised speaker names and
+// ``buildNameIndex`` folds owner display names into its tokens, so both must be
+// rebuilt whenever the active language changes - on an in-session switch and at
+// boot (where ``switchToGame`` builds them before the saved language is applied,
+// so they'd otherwise stay English). Does not re-render.
+export function rebuildSearchIndexes() {
     buildNameIndex();
     buildSpeakerIndex();
+}
+
+// Re-render after a dialogue-language change. Rebuilds the language-dependent
+// search indexes first (or the search dropdown would keep showing - and only
+// match - the previous language), then forces a re-render. The dialogue-text
+// index is English-only (the overlay never rewrites ``textlines``), so it is
+// deliberately not rebuilt.
+export function refreshForLanguageChange() {
+    rebuildSearchIndexes();
     forceRefresh();
 }
 

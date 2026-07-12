@@ -17,7 +17,7 @@ import {
     getAvailableLanguages, getActiveLang, setActiveLang, ensureLangLoaded,
     getActiveGame, isLangLoaded,
 } from './data.js';
-import { refreshForLanguageChange } from './navigation.js';
+import { refreshForLanguageChange, rebuildSearchIndexes } from './navigation.js';
 import { escapeHtml } from './utilities.js';
 
 const LANG_STORAGE_KEY = 'hde:lang';
@@ -151,6 +151,11 @@ export function initLanguagePicker() {
     // the bundle inlines it); otherwise applyLanguageChoice kicks off the fetch.
     if (initial === 'en' || isLangLoaded(getActiveGame(), initial)) {
         setActiveLang(initial);
+        // ``switchToGame`` built the search indexes before this ran, while
+        // English was still active; rebuild them for a non-English boot language
+        // so speaker search matches and shows the localised names (not English).
+        // No re-render here - the first render (applyHashFromUrl) is still ahead.
+        if (initial !== 'en') rebuildSearchIndexes();
         renderLanguageOptions();
     } else {
         applyLanguageChoice(initial, { persist: false });
