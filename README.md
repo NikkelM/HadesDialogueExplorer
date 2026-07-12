@@ -11,7 +11,7 @@ You can use the hosted viewer at [https://nikkelm.dev/HadesDialogueExplorer](htt
 
 - Browse NPC dialogue from both Hades and Hades II, with full prerequisite chains.
 - Walk upstream prerequisites and downstream dependents as interactive trees.
-- Read all dialogue texts across both games.
+- Read all dialogue texts across both games, in all supported languages.
 - Load a save file to see your progress, then trace exactly what's blocking any given dialogue.
 - Spot mutually exclusive alternates - where only one can ever play in a save - and what differentiates them.
 - View dialogues that share an internal name across both games, and check out how they differ.
@@ -78,17 +78,24 @@ python build_viewer.py
 
 If no flag is provided, both are built.
 
+The split build always emits every per-language dialogue map (`loc-<game>-<lang>.json`), lazy-loaded when a language is picked.
+The offline bundle ships English only by default (to keep the single file small); embed extra languages with `--bundle-langs`:
+
+- `python build_viewer.py --bundle --bundle-langs de,ja` - embed German and Japanese.
+- `python build_viewer.py --bundle --bundle-langs all` - embed every language.
+
 Outputs in `dist/`:
 
-| File                       | Build  | Purpose                                               |
-| -------------------------- | ------ | ----------------------------------------------------- |
-| `index.html`               | split  | HTML shell                                            |
-| `viewer.js`                | split  | Viewer code                                           |
-| `viewer.css`               | split  | Concatenated styles                                   |
-| `data.json`                | split  | Shared metadata and index                             |
-| `data-hades1.json`         | split  | Hades graph data, fetched when the game is active     |
-| `data-hades2.json`         | split  | Hades II graph data, fetched when the game is active  |
-| `dialogue_explorer.html`   | bundle | Self-contained single file, no server needed          |
+| File                       | Build  | Purpose                                                      |
+| -------------------------- | ------ | ------------------------------------------------------------ |
+| `index.html`               | split  | HTML shell                                                   |
+| `viewer.js`                | split  | Viewer code                                                  |
+| `viewer.css`               | split  | Concatenated styles                                          |
+| `data.json`                | split  | Shared metadata and index                                    |
+| `data-hades1.json`         | split  | Hades graph data, fetched when the game is active            |
+| `data-hades2.json`         | split  | Hades II graph data, fetched when the game is active         |
+| `loc-<game>-<lang>.json`   | split  | Per-language dialogue map, fetched when a language is picked |
+| `dialogue_explorer.html`   | bundle | Self-contained single file, no server needed                 |
 
 ### Viewing the split build locally
 

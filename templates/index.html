@@ -143,7 +143,7 @@
             <div id="search-no-matches" class="search-no-matches" hidden role="status">No matches found</div>
         </div>
     </div>
-    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()" data-tooltip="Browse dialogue names that appear in both Hades and Hades II">Cross-game duplicates</a>
+    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()" data-tooltip="Browse dialogue names that appear in both Hades and Hades II"><span class="nav-dup-full">Cross-game duplicates</span><span class="nav-dup-short">Duplicates</span></a>
     <div class="header-right">
         <div class="save-upload" id="save-upload">
             <label class="save-upload-btn" for="save-file-input" role="button" tabindex="0" data-tooltip="Upload a ProfileX.sav file to visualise dialogue progress">
@@ -153,6 +153,41 @@
             <input type="file" id="save-file-input" accept=".sav,application/octet-stream" hidden>
             <span id="save-status" class="save-status" hidden></span>
         </div>
+        <!-- Dialogue-language picker. Pre-rendered with a placeholder <select>
+             (the saved / default language) so it reserves its space and shows
+             from the first paint like the game toggle above, instead of popping
+             in after viewer.js boots. language-picker.js then upgrades it with
+             the full per-game language list (and hides it if a game ships no
+             translations). Placed last so it sits at the far-right of the header. -->
+        <div id="language-picker" class="language-picker">
+            <label class="language-picker-label" for="language-select">
+                <span class="visually-hidden">Dialogue language</span>
+                <select id="language-select" class="language-select" data-tooltip="Show dialogue text, choices and speaker names in this language">
+                    <option>English</option>
+                </select>
+            </label>
+        </div>
+        <script>
+        // Inline pre-paint script: set the placeholder language label from the
+        // saved preference so a returning non-English user sees their language
+        // from the first paint (matching what language-picker.js renders) rather
+        // than a flash of "English". Mirrors the game-toggle script above. The
+        // label map duplicates build_viewer.py's _LANGUAGE_LABELS (keep in sync).
+        (function() {
+            var LABELS = {
+                en: 'English', de: 'Deutsch', el: '\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac',
+                es: 'Espa\u00f1ol', fr: 'Fran\u00e7ais', it: 'Italiano', ja: '\u65e5\u672c\u8a9e',
+                ko: '\ud55c\uad6d\uc5b4', pl: 'Polski', 'pt-BR': 'Portugu\u00eas (Brasil)',
+                ru: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439', tr: 'T\u00fcrk\u00e7e',
+                uk: '\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430',
+                'zh-CN': '\u7b80\u4f53\u4e2d\u6587', 'zh-TW': '\u7e41\u9ad4\u4e2d\u6587'
+            };
+            var lang = 'en';
+            try { lang = localStorage.getItem('hde:lang') || 'en'; } catch (e) { /* storage off */ }
+            var sel = document.getElementById('language-select');
+            if (sel && sel.options[0] && LABELS[lang]) sel.options[0].textContent = LABELS[lang];
+        })();
+        </script>
     </div>
 </header>
 <!-- Stable mount for viewer.js to render a load error into without

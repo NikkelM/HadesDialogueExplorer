@@ -91,6 +91,12 @@ def _clean(raw: str) -> str:
     """Strip runtime markup, unescape literal punctuation, collapse whitespace."""
     s = _TAG_RE.sub("", raw)
     s = _ESCAPED_PUNCT_RE.sub(r"\1", s)
+    # Subtitle line-break / tab escapes (SGG uses ``\n`` for manual wraps, common
+    # in the CJK translations) -> a space; the final whitespace collapse then
+    # matches how the inline-English lines render (real newlines fold to a space
+    # in HTML). These are literal two-char ``\n`` sequences, not real newlines,
+    # so the ``\s`` collapse below would not otherwise catch them.
+    s = s.replace("\\n", " ").replace("\\r", " ").replace("\\t", " ")
     s = s.replace('\\"', '"').replace("\\\\", "\\")
     return _WS_RE.sub(" ", s).strip()
 
@@ -275,7 +281,11 @@ def build_localization(text_root: Path, output_dir: Path, game: str,
         display, desc = _read_lang_text_map(_lang_dir(text_root, lang))
         if not display:
             continue
-        text_map = {tid: display[tid] for tid in text_ids if tid in display}
+        # Drop ids whose translation cleaned to empty (blank / pure-markup
+        # subtitles in this language): an empty value would otherwise render as
+        # a blank line in the viewer instead of falling back to the English
+        # text. Absent == untranslated == English fallback (+ the EN marker).
+        text_map = {tid: display[tid] for tid in text_ids if display.get(tid)}
         speakers = _localise_speakers(speakers_en, display, desc)
         payload = {"lang": lang, "text": text_map, "speakers": speakers}
         out_path = output_dir / f"loc-{game}-{lang}.json"

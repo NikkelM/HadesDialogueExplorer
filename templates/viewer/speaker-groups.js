@@ -25,7 +25,7 @@
 // Canonical id within a group is the alphabetically first member id.
 // Stable across rebuilds, deterministic from the dataset alone.
 
-import { speakers, textlines, dependents } from './data.js';
+import { speakers, textlines, dependents, getBaseSpeakers } from './data.js';
 
 // Built lazily on first access and reset on game switch via
 // ``resetSpeakerGroups``. Each per-game build is O(speakers) plus
@@ -34,6 +34,7 @@ import { speakers, textlines, dependents } from './data.js';
 let _idToCanonical = null;          // {memberId -> canonicalId}
 let _canonicalToMembers = null;     // {canonicalId -> [memberId, ...]}
 let _nameToCanonical = null;        // {friendlyName -> canonicalId}
+let _canonicalToName = null;        // {canonicalId -> friendlyName} (English)
 let _groupEntryCache = null;        // {canonicalId -> aggregated entry}
 
 // Clear the per-game caches. Called by ``navigation.js`` on game
@@ -43,6 +44,7 @@ export function resetSpeakerGroups() {
     _idToCanonical = null;
     _canonicalToMembers = null;
     _nameToCanonical = null;
+    _canonicalToName = null;
     _groupEntryCache = null;
 }
 
@@ -51,15 +53,26 @@ function _ensureGroups() {
     _idToCanonical = {};
     _canonicalToMembers = {};
     _nameToCanonical = {};
+    _canonicalToName = {};
     _groupEntryCache = {};
+
+    // Group by the BASE (English) friendly name, not the active language's
+    // localised overlay. The id<->name mapping must be language-invariant:
+    // the URL hash stores the English name (see ``navigateToSpeaker``) so it
+    // stays language-neutral and shareable, and name resolution must key off
+    // English regardless of the reader's active language. Grouping off the
+    // base map also keeps the buckets stable when the user switches language
+    // mid-session (these caches are only reset on a game switch, not a
+    // language change). Display code reads the localised name separately.
+    const base = getBaseSpeakers();
 
     // Bucket ids by trimmed friendly name. Empty / missing names go
     // straight into singletons so the * Upgrade speakers (which
     // share an empty friendly label across both games) stay
     // distinct.
     const byName = new Map();
-    for (const sid of Object.keys(speakers)) {
-        const entry = speakers[sid] || {};
+    for (const sid of Object.keys(base)) {
+        const entry = base[sid] || {};
         const name = (entry.name || '').trim();
         if (!name) {
             _idToCanonical[sid] = sid;
@@ -75,6 +88,7 @@ function _ensureGroups() {
         const canonical = members[0];
         _canonicalToMembers[canonical] = members;
         _nameToCanonical[name] = canonical;
+        _canonicalToName[canonical] = name;
         for (const mid of members) {
             _idToCanonical[mid] = canonical;
         }
@@ -95,13 +109,27 @@ export function canonicalSpeakerId(speakerId) {
 // group's canonical id within the active game, or ``null`` when no
 // speaker carries that name. Friendly names are unique per game - the
 // speaker overview buckets every id by friendly name - so the mapping
-// is unambiguous. This is the inverse of writing ``speakers[canonical].name``
-// into the hash: ``navigation.js`` stores the readable name in the URL and
-// resolves it back to the canonical id here when rendering.
+// is unambiguous. Names are keyed in English (language-neutral), matching
+// the English name ``navigateToSpeaker`` writes into the hash, so a shared
+// link resolves the same regardless of the reader's active language. This is
+// the inverse of ``englishSpeakerName``.
 export function canonicalIdForSpeakerName(name) {
     if (!name) return null;
     _ensureGroups();
     return _nameToCanonical[name] || null;
+}
+
+// The language-neutral (English/base) friendly name for a speaker id's group,
+// or ``null`` for an unnamed speaker. This is what ``navigateToSpeaker`` writes
+// into the URL hash so shared links stay language-neutral and round-trip back
+// to the canonical id via ``canonicalIdForSpeakerName`` no matter which
+// language the reader has active. The displayed name (localised) is resolved
+// separately from the live ``speakers`` overlay.
+export function englishSpeakerName(speakerId) {
+    if (!speakerId) return null;
+    _ensureGroups();
+    const canon = _idToCanonical[speakerId] || speakerId;
+    return _canonicalToName[canon] || null;
 }
 
 // Returns the sorted list of member ids in the same group as

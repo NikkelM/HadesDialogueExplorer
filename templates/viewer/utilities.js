@@ -19,6 +19,7 @@ import {
     unresolvedCategoryLabels,
     choiceNames,
     getActiveGame,
+    localizeText,
 } from './data.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 
@@ -321,7 +322,11 @@ export function renderChoiceNameHtml(internal, extraTooltipLine = null) {
         ? ` data-tooltip="${escapeHtml(tooltipParts.join('\n\n'))}"`
         : '';
     const visible = hasFriendly ? friendly : internal;
-    return `<span class="choice-name"${tooltipAttr}>${escapeHtml(visible)}</span>`;
+    // Localise the option label from the per-language map (choice-label ids -
+    // ChoiceText_* boon labels, Choice_* prompts - live in MiscText/ScreenText);
+    // falls back to the English friendly label / internal id when untranslated.
+    const shown = localizeText(internal, visible);
+    return `<span class="choice-name"${tooltipAttr}>${escapeHtml(shown)}</span>`;
 }
 
 // Returns the category id ('back-compatibility', 'typo-or-bug', 'cut-content')

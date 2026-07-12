@@ -35,6 +35,7 @@ import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from '
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
 import { badgeRankNames, badgeRankManager } from './data.js';
 import { cueTexts } from './data.js';
+import { localizeText, isUntranslated, isLocalized } from './data.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -2345,6 +2346,28 @@ function computeChoiceLetters(choices) {
 // a single "only plays when ..." note. (Choice-gated codas are routed to the
 // choice-child textline at extract time, so they appear as that branch's plain
 // closing lines rather than a condition here.)
+// --- Dialogue-line localisation helpers ----------------------------
+// The localisation key for a line is its offer/prompt text id (``textId``, the
+// MiscText/ScreenText id whose English was resolved inline) if present, else
+// its voice cue id (``cue``). ``localizeText`` returns the English fallback
+// under English or when the active language has no translation for that id.
+function _lineLocKey(line) {
+    return (line && (line.textId || line.cue)) || null;
+}
+
+function _localizedLineText(line) {
+    return localizeText(_lineLocKey(line), (line && line.text) || '');
+}
+
+// A small marker appended to a line the active (non-English) language has no
+// official translation for (so it is showing English): dev-comment-only H1
+// cues, no-cue narration, choice prompts without a shipped subtitle, etc.
+// Empty under English or when the line IS translated.
+function _untranslatedMarkHtml(line) {
+    if (!isLocalized() || !isUntranslated(_lineLocKey(line))) return '';
+    return ' <span class="untranslated-mark" data-tooltip="No official translation for this line in the selected language - showing the English text.">EN</span>';
+}
+
 function _renderEndLinesHtml(endLines) {
     if (!Array.isArray(endLines) || endLines.length === 0) return '';
     let html = '<div class="end-lines">'
@@ -2379,7 +2402,7 @@ function _renderEndLineHtml(line) {
         ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
         : '';
     if (line.text) {
-        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
+        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
     }
     if (line.cue) {
         return `<div class="dialogue-line end-line">${speaker}`
@@ -2443,7 +2466,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                 // follow-up dialogue, so the option renders as a plain
                 // friendly-label span (tooltip still surfaces the
                 // internal id).
-                html += `<div class="dialogue-line choice-prompt"><span class="choice-prompt-label">Choice:</span> ${escapeHtml(line.text)}</div>`;
+                html += `<div class="dialogue-line choice-prompt"><span class="choice-prompt-label">Choice:</span> ${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
                 const letters = computeChoiceLetters(line.choices);
                 for (let i = 0; i < line.choices.length; i++) {
                     const c = line.choices[i];
@@ -2478,14 +2501,14 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                       + `<div class="random-group-options">`;
                 for (const o of line.options) {
                     html += (o && o.speaker)
-                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(o.text)}</div>`
-                        : `<div class="dialogue-line">${escapeHtml((o && o.text) || '')}</div>`;
+                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(_localizedLineText(o))}${_untranslatedMarkHtml(o)}</div>`
+                        : `<div class="dialogue-line">${escapeHtml(_localizedLineText(o))}${_untranslatedMarkHtml(o)}</div>`;
                 }
                 html += `</div></details>`;
             } else if (typeof line === 'object' && line.speaker) {
-                html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
+                html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
             } else if (typeof line === 'object') {
-                html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;
+                html += `<div class="dialogue-line">${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
             } else {
                 html += `<div class="dialogue-line">${escapeHtml(line)}</div>`;
             }

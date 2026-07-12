@@ -24,8 +24,9 @@ import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
-import { canonicalSpeakerId, canonicalIdForSpeakerName, resetSpeakerGroups } from './speaker-groups.js';
+import { canonicalSpeakerId, canonicalIdForSpeakerName, englishSpeakerName, resetSpeakerGroups } from './speaker-groups.js';
 import { renderGameToggle, updateFavicon } from './game-toggle.js';
+import { syncLanguagePicker } from './language-picker.js';
 import { refreshSaveStatus } from './save-upload.js';
 import { getSaveProgress, saveMatchesActiveGame, getSaveGameId } from './save-parser.js';
 
@@ -90,11 +91,14 @@ export function navigateHome() {
 // ``HermesUpgrade`` or ``NPC_Hermes_01`` lands on ``speaker=Hermes``).
 // Friendly names are unique per game, so they identify the group
 // unambiguously while keeping the shared URL human-readable; the value
-// is resolved back to the canonical id in ``applyState``. An unnamed
-// speaker (none today) falls back to its id so the URL still resolves.
+// is resolved back to the canonical id in ``applyState``. The English
+// (base) name is used regardless of the active dialogue language so the
+// hash stays language-neutral and shared links resolve identically for
+// every reader. An unnamed speaker (none today) falls back to its id so
+// the URL still resolves.
 export function navigateToSpeaker(speakerId, opts) {
     const canonical = canonicalSpeakerId(speakerId);
-    const name = ((speakers[canonical] || {}).name || '').trim();
+    const name = englishSpeakerName(canonical) || '';
     const state = { view: 'speaker', speaker: name || canonical };
     if (opts && opts.priority) state.priority = opts.priority;
     if (opts && opts.eligibility) state.eligibility = opts.eligibility;
@@ -187,6 +191,9 @@ export function switchToGame(gameId) {
     buildNameIndex();
     buildSpeakerIndex();
     renderGameToggle();
+    // Re-sync the language dropdown: the offered languages differ per game, and
+    // a language the new game lacks falls back to English.
+    syncLanguagePicker();
     updateFavicon(gameId);
     refreshSaveStatus();
 }
@@ -502,6 +509,19 @@ export function clearSelection() {
 export function forceRefresh() {
     urlSelection = '';
     applyHashFromUrl();
+}
+
+// Re-render after a dialogue-language change. The speaker- and name-search
+// indexes cache localised speaker names (``buildSpeakerIndex`` reads the
+// overlaid ``speakers`` map; ``buildNameIndex`` folds owner display names into
+// its tokens), so they must be rebuilt against the newly active language or the
+// search dropdown would keep showing - and only match - the previous language.
+// The dialogue-text index is English-only (the overlay never rewrites
+// ``textlines``), so it is deliberately not rebuilt here.
+export function refreshForLanguageChange() {
+    buildNameIndex();
+    buildSpeakerIndex();
+    forceRefresh();
 }
 
 // On a freshly loaded save, switch the active game to the one the save
