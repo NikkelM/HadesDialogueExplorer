@@ -1,0 +1,4984 @@
+{
+  "alternates": {
+    "CirceAboutOdysseus01": [
+      "CirceAboutOdysseus01_B"
+    ],
+    "CirceAboutOdysseus01_B": [
+      "CirceAboutOdysseus01"
+    ]
+  },
+  "dependents": {
+    "CirceAboutArcana02": [
+      {
+        "name": "CirceAboutArcana03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceAboutArcana03",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "CirceAboutEris01": [
+      {
+        "name": "CirceAboutIcarus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutLearning01": [
+      {
+        "name": "CirceGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutMedea01": [
+      {
+        "name": "CirceAboutMedea02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutOdysseus01": [
+      {
+        "name": "CirceAboutOdysseus01_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "CirceAboutOdysseus01_B": [
+      {
+        "name": "CirceAboutOdysseus01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "CirceAboutOdysseusKeepsake01": [
+      {
+        "name": "CirceAboutOdysseusKeepsake02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutOdysseusQuest00": [
+      {
+        "name": "CirceAboutOdysseusKeepsake01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseusKeepsake02",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseusQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutOdysseusQuest01": [
+      {
+        "name": "CirceAboutOdysseusKeepsake01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseusKeepsake02",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseusQuest00",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseusQuest02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutOlympus01": [
+      {
+        "name": "CirceAboutPrometheus01",
+        "orBranchIndex": 1,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceAboutTyphon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutPrometheus01": [
+      {
+        "name": "CirceAboutPrometheus02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutPrometheus02": [
+      {
+        "name": "CirceAboutHope01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceAboutHope01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "CirceAboutScylla01": [
+      {
+        "name": "CirceAboutScylla02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutScylla02": [
+      {
+        "name": "CirceAboutScyllaQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutScyllaQuest01": [
+      {
+        "name": "CirceAboutScyllaQuestComplete01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutShrine01": [
+      {
+        "name": "CirceAboutShrine02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutTyphon01": [
+      {
+        "name": "CirceAboutTyphonW01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift01": [
+      {
+        "name": "CirceAboutBackstory01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift02": [
+      {
+        "name": "CirceAboutOdysseus01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift03": [
+      {
+        "name": "CirceAboutScyllaQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift06": [
+      {
+        "name": "CirceAboutLearning01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceGift07",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift07": [
+      {
+        "name": "CirceGift08",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGift08": [
+      {
+        "name": "CirceAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceGrantsHiddenAspect01": [
+      {
+        "name": "CirceAboutHiddenAspectProgress01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ErisAboutLoyalty01": [
+      {
+        "name": "CirceAboutEris01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ErisBossAboutRandomness01": [
+      {
+        "name": "CirceAboutEris01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "FatesEpilogue01": [
+      {
+        "name": "CircePostEpilogue01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "CirceAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HecateBathHouseEpilogue01": [
+      {
+        "name": "CircePostEpilogue01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "IcarusFirstMeeting": [
+      {
+        "name": "CirceAboutTransformation01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "MedeaAboutCirce01": [
+      {
+        "name": "CirceAboutMedea02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusBathHouse02": [
+      {
+        "name": "CirceAboutOdysseus01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "CirceAboutOdysseus01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusLooseEndsQuest02": [
+      {
+        "name": "CirceAboutOdysseusQuest00",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "PrometheusAboutMortals03": [
+      {
+        "name": "CirceAboutHope01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 45,
+    "totalSpeakers": 1,
+    "totalTextlines": 114,
+    "unresolvedRefs": [
+      "ErisAboutLoyalty01",
+      "ErisBossAboutRandomness01",
+      "FatesEpilogue01",
+      "HecateBathHouseEpilogue01",
+      "IcarusFirstMeeting",
+      "MedeaAboutCirce01",
+      "OdysseusBathHouse02",
+      "OdysseusLooseEndsQuest02",
+      "PrometheusAboutMortals03"
+    ]
+  },
+  "textlines": {
+    "CirceAboutArcana01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Our Lady Hecate would sometimes tell me of your progress, and let on that you attuned to the Altar of Ashes at long last, hoho! How marvelous... for the Arcana have so much to offer us."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I couldn't agree more. Through grasping the Arcana, I've discovered strength I never realized I had. To think I used to use our Altar merely to collect my thoughts."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Collecting one's thoughts is valuable enough! Mine own at least are prone to scattering. As for your innate strength and magickal acuity, perchance we shall discover even more."
+        }
+      ],
+      "name": "CirceAboutArcana01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamiliarCostumes01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.MaxMetaUpgradeCostCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MaxMetaUpgradeCostCache"
+            ],
+            "Value": 25
+          }
+        ],
+        "Path:GameState.MetaUpgradeUnlockedCountCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MetaUpgradeUnlockedCountCache"
+            ],
+            "Value": 18
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 597
+    },
+    "CirceAboutArcana02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Within your grasp of the Arcana is a power for which I myself am known. When I was closer to your age, oh how I longed to earn the title of Enchantress! Now here both of us are."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Your path always inspired me, Madame. For you did not accept things as they were; you learned to alter outcomes to your benefit. Made some big changes as I understand."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Seek not my path but yours! At first I sought to change the world, yes? For I quite hated much of what I saw. But through the teachings of Our Lady Hecate, I now seek to better understand... making adjustments here and there, hahaha!"
+        }
+      ],
+      "name": "CirceAboutArcana02",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutArcana03",
+        "CirceAboutSurfacePenalty01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.DoorRerollMetaUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "DoorRerollMetaUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 634
+    },
+    "CirceAboutArcana03": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Something I've wondered about the Arcana, Madame. You appear to be depicted on one of the Cards... except she has these wrathful eyes. That isn't really you, is it?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Who can say, little miss? Of course she isn't me, for I am here, and she is there! The Arcana are mere likenesses, reflecting your own inner strength. Perchance even your eyes..."
+        }
+      ],
+      "name": "CirceAboutArcana03",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutArcana02",
+        "CirceAboutSurfacePenalty01"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.MetaUpgradeState.DoorReroll.Level": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MetaUpgradeState",
+              "DoorReroll",
+              "Level"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:GameState.MetaUpgradeState.DoorReroll.Unlocked": [
+          {
+            "PathTrue": [
+              "GameState",
+              "MetaUpgradeState",
+              "DoorReroll",
+              "Unlocked"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "CirceAboutArcana02"
+        ],
+        "RequiredTextLines": [
+          "CirceAboutArcana02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 662
+    },
+    "CirceAboutBackstory01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You and I are much alike in that Our Lady Hecate discovered us when most we needed someone such as her, poppet. Perchance, her similar affinity for beasts made her take some pity on me then... a witch, amongst the polecats and the pigs!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Take pity on you, how? That doesn't sound like the Headmistress I know. She has always thought highly of you, and depends on you to be our eyes here at this key juncture."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I owe her this, and more. When I was a young outcast, practicing an art oft thought to be profane, it was our Lady who discovered me and showed me that my path led not to ruin, but to harmony. It veritably is a long and winding path, but one I shall not stray from anymore."
+        }
+      ],
+      "name": "CirceAboutBackstory01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutMedea01",
+        "CirceAboutMedea02",
+        "CirceAboutIcarus01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 430
+    },
+    "CirceAboutCatFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That little cat there, she must be with you! Poor thing must utterly detest the water everywhere, yet shows no signs of negativity... not more than usual for creatures of her kind."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, this is my Familiar, Toula. She may take to water more than most... I found her over at the docks of Ephyra, though she did seem eager to leave."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Hello, Toula! She's strong of spirit, that's immediately clear. And if she truly is a cat, then she'll soon make herself at home!"
+        }
+      ],
+      "name": "CirceAboutCatFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutCharybdis01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "CatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2106
+    },
+    "CirceAboutCharybdis01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, such a mess! I told Our Lady Hecate that relocating this whole isle likely would have certain side effects. But to have inadvertently brought cruel Charybdis here? Not here of course but close!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Now that you mention it, the giant whirlpool with tentacles and teeth did seem a little out of place in this channel."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "At least she still has no shortage of sailing-ships to crash into her maw! She hasn't troubled you, though, has she, poppet...?"
+        }
+      ],
+      "name": "CirceAboutCharybdis01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.RoomsEntered.O_MiniBoss01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "RoomsEntered",
+              "O_MiniBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1799
+    },
+    "CirceAboutChronos01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "What has the world come to, little miss? Uh! Living on my little isle, I must have been the last to learn calamity had spread all from the heavens to beneath the Earth!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And Chronos is responsible for all of it. Time apparently wishes to ruin everything eventually, though we are not about to let him have his way. We'll drive his forces from Olympus and unseat him from my father's throne."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, we immortals and our warring ways! What example do we set for mortalkind? But I know certain battles must be fought; and I remain committed to Our Lady Hecate, and you."
+        }
+      ],
+      "name": "CirceAboutChronos01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1005
+    },
+    "CirceAboutCirceAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How fares my marvelous Descura, little miss? I knew that you were next in line for her, though I still feel a bit emotional to see my favored staff again, hohoho. Our Lady Hecate had to do more than a bit of prodding to make me give her up, hehehoho!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've done my best to wield Descura with respect; to live up to those who possessed the Witch's Staff before me. And it... or rather she has served me well. My presence here is evidence to that. Do you... wish to hold her again?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, no, I mustn't! We had our time. Long had she grown heavy in my hands before I passed her on, besides. May she protect you just as fiercely as I know she can!"
+        }
+      ],
+      "name": "CirceAboutCirceAspect01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutPrometheus02",
+        "CirceAboutSelene01",
+        "CirceAboutEris01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.StaffClearCastAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "StaffClearCastAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2197
+    },
+    "CirceAboutCrystals01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Ah-ha, I knew you would arrive just now, poppet, haha! No innate gift of foresight required, merely intuition and my crystals hereabouts. Have you incorporated any into your routine?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well... I've learned to see into our Pitch-Black Stone! I used to think that it was there to help make us unseen, but it has other potent uses, too. Crystals! So full of potential."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Mother Gaia's multicolored bounty, oh! I sometimes envy that you live beneath the Earth where crystals and gemstones grow in abundance! How brilliant they all are!"
+        }
+      ],
+      "name": "CirceAboutCrystals01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ScreensViewed.BountyBoard": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ScreensViewed",
+              "BountyBoard"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1963
+    },
+    "CirceAboutEris01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You've seen by now how the black wings of spiteful Strife oft darken up these skies! She overlooks my little isle, though flies perilously close. What is the latest reason for her ire?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh Eris has seemed happier than usual if anything. At first I believed she was working for Chronos, but I think it's simply that she doesn't like when anyone succeeds. Other than her."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Well that's not a sound mode of thought at all. How I long for a world without Strife... yet I can scarce imagine one. She is a force that mustn't be ignored, but quelled."
+        }
+      ],
+      "name": "CirceAboutEris01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutPrometheus02",
+        "CirceAboutSelene01",
+        "CirceAboutCirceAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Value": 4
+          }
+        ],
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ErisAboutLoyalty01",
+          "ErisBossAboutRandomness01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1597
+    },
+    "CirceAboutFamiliarCostumes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Ah, I almost didn't recognize that Animal Familiar of yours, which means you've made good use of Alteration of Familiar Forms! Hah! Have your little beasts enjoyed the big change?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "They've issued no complaints! Though what changes I've seen only seem to affect their outward appearance. Is that the intended result?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Why, yes, of course! It's the Familiar's equivalent to a change of dress or style. Of late, we've little time for such indulgences ourselves, but at least we can pamper our friends!"
+        }
+      ],
+      "name": "CirceAboutFamiliarCostumes01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutArcana01"
+      ],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 35,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "FrogFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.FrogFamiliar": [
+              {
+                "IsNone": [
+                  "FamiliarCostume_FrogDefault"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "FrogFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "RavenFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.RavenFamiliar": [
+              {
+                "IsNone": [
+                  "FamiliarCostume_RavenDefault"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "RavenFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "CatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.CatFamiliar": [
+              {
+                "IsNone": [
+                  "FamiliarCostume_CatDefault"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "CatFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "HoundFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.HoundFamiliar": [
+              {
+                "IsNone": [
+                  "FamiliarCostume_HoundDefault"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "HoundFamiliar"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "PolecatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarCostumes.PolecatFamiliar": [
+              {
+                "IsNone": [
+                  "FamiliarCostume_PolecatDefault"
+                ],
+                "Path": [
+                  "GameState",
+                  "FamiliarCostumes",
+                  "PolecatFamiliar"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeFamiliarCostumeSystem": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeFamiliarCostumeSystem"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2492
+    },
+    "CirceAboutFamiliars01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Such a powerful connection you've formed with your Familiars, poppet! Nothing reflects more strongly on one's character than to be loved by beasts. What is your secret?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well... truthfully they all just seem to love Witch's Delight. It's a miraculous recipe passed down from Headmistress... or dare I to suggest, perhaps from you?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, hahahaha! I shall make no admissions to such claims; but here's a secret of my own: Witch's Delight is far less potent than you think. The love of your Familiars is the thing."
+        }
+      ],
+      "name": "CirceAboutFamiliars01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutShrine01",
+        "CirceAboutShrine02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 35,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "FrogFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllFrogFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "RavenFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllRavenFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "CatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllCatFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "HoundFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllHoundFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.EquippedFamiliar": [
+              {
+                "IsAny": [
+                  "PolecatFamiliar"
+                ],
+                "Path": [
+                  "GameState",
+                  "EquippedFamiliar"
+                ]
+              }
+            ],
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllPolecatFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2334
+    },
+    "CirceAboutFamily01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I oft forget, we share some kinship, do we not? My father is the shining Sun itself, the Titan Helios. Distant accomplice to the gods! Not close with anyone. But he is... brother to the Lady Demeter, my aunt, who is your grandmother, correct...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh Madame Circe, right you are! That makes us cousins once removed, I think. I don't know how any of us can keep all this genealogy straight! In any case, the bond matters more than the blood, does it not?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Quite veritably so! Though, you'll forgive me that I've shied from all of it. Amongst family, I was expected to act differently with each and every one. I scarcely understood how to be me! Things are much simpler on this isle here."
+        }
+      ],
+      "name": "CirceAboutFamily01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutMiracles01",
+        "CirceAboutStudies01",
+        "CirceAboutMagick01",
+        "CirceAboutTransformation01",
+        "CirceAboutTraining01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.DemeterUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "DemeterUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1865
+    },
+    "CirceAboutFrogFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You have an Animal Familiar there, poppet! How marvelous to see a beast and you thus bound! Each in kind, a source of safety and support! A cyclic pattern, as so many tend to be!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, this is Frinos, my dear friend in whom I always can confide. In all your knowledge of Familiars, is there something you most wish that you'd known early on?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, veritably yes! Although you mustn't try to skip through the experience of discovery along the journey you are on. But perchance there is something I might convey..."
+        }
+      ],
+      "name": "CirceAboutFrogFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutCharybdis01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "FrogFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2045
+    },
+    "CirceAboutHecate01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How lately is the temperament of Our Lady Hecate? Long has it been since last I basked in her wisdom; for I have wisdom of my own, she says! You must have needed her attention more than I..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, I... I did not mean to deny you her attention. Although Headmistress has been preoccupied not just with my training, but with leading the Unseen, warding the Crossroads against any harm, readying our plans to take back what's ours. She's counting on us... on you."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I know, I know... and I apologize that I insinuated any feelings of resentment on my part; for none exist towards you, let alone her! You have my word, poppet. It's just... she was like a mother to me! Oh, how she hated when I told her so, haha!"
+        }
+      ],
+      "name": "CirceAboutHecate01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutThessaly01",
+        "CirceAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 884
+    },
+    "CirceAboutHermes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You have arrived here swiftly, poppet! And I presume that it was not solely the work of winds and currents and the like. The messenger-god Hermes speeds you onward, yes?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have his Boon this night. The gods are not so embattled that they cannot aid me in my voyage, and our strength is greatest when we share it. Though, why do you ask?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It's simply that the gods have limited awareness of my whereabouts, and I would keep it thus! No room for many visitors! And the Olympians would surely be aghast to look upon so modest of a place."
+        }
+      ],
+      "name": "CirceAboutHermes01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutThessaly01",
+        "CirceAboutHecate01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.HermesUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "HermesUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 942
+    },
+    "CirceAboutHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How marvelous, you bear Descura in the Aspect that I witnessed in my dream! So then the message I relayed did resonate. What can you tell me of her newfound form?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "This is the Aspect of a god of the dead... not my father, but a being called Anubis. Distant to us either in place or time, but a protector of the Underworld in his own right. Thank you for leading me to this discovery."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Of course, of course, poppet! Anubis, was it then? To think that there are gods of the dead besides your father! But if the Fates charged him with the responsibility, perchance they charged others as well... or shall do so eventually."
+        }
+      ],
+      "name": "CirceAboutHiddenAspect01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutKeepsake01"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.StaffRaiseDeadAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "StaffRaiseDeadAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2307
+    },
+    "CirceAboutHiddenAspectProgress01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Have you yet spoken with Descura as I suggested, little miss? The words have lingered with me still: I see you guarding graves of mortals passed into the black beyond."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have been hesitant, Madame. What if this is a power for which I'm not sufficiently prepared? If Descura wanted to reveal to me this Aspect, then why the extra step?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Because some knowledge ought be passed along. Our time as bearers of Descura has an end, but our responsibility unto the realm of Night does not."
+        }
+      ],
+      "name": "CirceAboutHiddenAspectProgress01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.WorldUpgradesRevealed.StaffRaiseDeadAspect": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesRevealed",
+              "StaffRaiseDeadAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGrantsHiddenAspect01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2282
+    },
+    "CirceAboutHope01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Some nights ago you spoke about our great ability to harbor hope. It reminded me of something that Prometheus himself had said, but I dismissed him at the time..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I realize that hope is simply not enough for one who studied with such rigor as you did! Yet even you, I sense, approach each night with openness to it going your way..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But I make plans for every possibility, and am prepared to improvise when things inevitably don't unfold the way I want. Preparation and anticipation, not mere hope."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Call it whatever you prefer. But at the heart of what you describe exists a grain of something more; the source of all that drives us. Like a flame, it must be nurtured, lest it die."
+        }
+      ],
+      "name": "CirceAboutHope01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        }
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "CirceAboutPrometheus02"
+        ],
+        "RequiredTextLines": [
+          "CirceAboutPrometheus02",
+          "PrometheusAboutMortals03"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1893
+    },
+    "CirceAboutHoundFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Why, if it isn't prim and proper Hecuba there by your side! I've yet to meet a hound so poised. Our Lady Hecate permitted you to travel side-by-side!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Looks like Hecuba remembers you as well, Madame. Have you always had such a strong connection to beasts, or did Headmistress help you learn?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh ho ho, both! If not for my innate affinity, perchance I would have been unworthy of Our Lady's teachings. And you, in turn, have clearly earned her deepest trust!"
+        }
+      ],
+      "name": "CirceAboutHoundFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutCharybdis01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "HoundFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2136
+    },
+    "CirceAboutHut01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Welcome, poppet! Though, forgive me that I've not invited you inside my little hut. Such hospitality I don't extend to anyone, hmhm! And I make no exceptions, not even for you!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, that is perfectly all right. There's no need to explain! We all live in seclusion in our own way; what other way is there? With privacy comes peace of mind."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I'm grateful that you understand. Of late, I share my simple home with beasts but that is all! This Isle of Aiaia is not mine of course; rather, it's my dear companion, and can be yours. So please, help yourself to anything you need whilst here."
+        }
+      ],
+      "name": "CirceAboutHut01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 539
+    },
+    "CirceAboutIcarus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I lately hear the beating of so many different wings. The Harpies, soaring to the mountain siege; black-feathered Strife, who roils the currents of the air and sea; and even that boy Icarus, who has been flitting on, unmoored!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He's trying to help our cause... though I think also enjoying a level of freedom he never had in life, nor as a Shade residing in the Underworld. For now, he can go where he pleases."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Yet he wishes to be here! That veritably speaks to his commitment. How like his ever-toiling father he turned out to be! Well, may he enjoy the wings of freedom whilst they last!"
+        }
+      ],
+      "name": "CirceAboutIcarus01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutMedea01",
+        "CirceAboutMedea02",
+        "CirceAboutBackstory01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Icarus_01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "SpawnRecord",
+              "NPC_Icarus_01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutEris01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 972
+    },
+    "CirceAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Ahh, you brought with you my Crystal Figurine! It ought provide a bit of vigor on such dire nights as we have had of late; and catches moonlight rather beautifully, I think!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It does, thank you, Madame. Where I come from, the beasts and flora are quite different than here. Having a symbol of those differences is valuable to me."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, beasts and flora make for fine companions, yes? They listen! And they speak with their souls, not with duplicitous words. Ah, though come, let's get you on your way!"
+        }
+      ],
+      "name": "CirceAboutKeepsake01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutHiddenAspect01"
+      ],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossMetaUpgradeKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2013
+    },
+    "CirceAboutLearning01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You always had such talent for our craft! I wondered how it'd change you over time, for the temptations on the path are numerous! But you had the greatest teacher possible!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Headmistress Hecate would say the greatest teacher is out there... referring probably to your isle, Madame Circe. What do you mean by temptations?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I mean power, little miss. Once you can manifest your desires, what's to stop you? Lessons learned the hard way, if at all. You have your left hand there as but one reminder..."
+        }
+      ],
+      "name": "CirceAboutLearning01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutScyllaQuest01",
+        "CirceAboutOdysseus01",
+        "CirceAboutOdysseus01_B"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.MaxMetaUpgradeCostCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MaxMetaUpgradeCostCache"
+            ],
+            "Value": 30
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGift06"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 701
+    },
+    "CirceAboutMagick01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "By the way, what are those incantations you've been working at night after night, Madame? Fortifying inner strength, concealing the island, nourishing the soil, and so on?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, I'm mostly making supper for the piggies over there! I'd ask you dine with us at some point, though such meals are not to everybody's taste; and you have more important matters to resolve!"
+        }
+      ],
+      "name": "CirceAboutMagick01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutMiracles01",
+        "CirceAboutStudies01",
+        "CirceAboutTransformation01",
+        "CirceAboutTraining01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1990
+    },
+    "CirceAboutMedea01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I have seen neither hide nor hair of that Medea as of late! Her charge was far less pleasant than my own, having to watch over that ghastly town. I worry she's developing bad habits, practicing in such a place!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I've seen Lady Medea recently. She seems rather comfortable in Ephyra, in spite of what's happened there. Though, has she always had such a singular interest in curses and the necromantic arts?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Since she was old enough to think for herself, yes, heh. To fend for herself, I should say. She may be my niece yet she was always far more interested in our blood's other properties. At least she hasn't put a curse on me, haha. Ah! As far as I can tell!"
+        }
+      ],
+      "name": "CirceAboutMedea01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutMedea02",
+        "CirceAboutBackstory01",
+        "CirceAboutIcarus01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1037
+    },
+    "CirceAboutMedea02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "The aura here turned for the worse as you arrived. You have been working with Medea, haven't you? Being holed up in that necropolis cannot be good for her psyche..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I did see her earlier tonight. Did something happen between the two of you? I got the impression you haven't been in contact much at all."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It's likely I remind Medea of too many incidents from long ago, which are not mine to share! One needn't live in the past, poppet. Perhaps some ages hence, she'll break free from hers... but she must take her time."
+        }
+      ],
+      "name": "CirceAboutMedea02",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutMedea01",
+        "CirceAboutBackstory01",
+        "CirceAboutIcarus01"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutMedea01",
+          "MedeaAboutCirce01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1064
+    },
+    "CirceAboutMiracles01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I foresaw within the facets of my crystals that you were headed here again... or through here, I should say. Is there a salve, potion, or poultice that might ease your passage?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Most certainly, and thank you, Madame Circe. I don't suppose you have anything that renders me invulnerable, or lets me find vast quantities of rare reagents on my way?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Heavens no, poppet, hah! The greater the effect, the greater the unintended consequence, that much we know is true. Erm, there is a balance to creating miracles! Shall one of these suffice?"
+        }
+      ],
+      "name": "CirceAboutMiracles01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutStudies01",
+        "CirceAboutMagick01",
+        "CirceAboutTransformation01",
+        "CirceAboutTraining01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 458
+    },
+    "CirceAboutMoly01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Something felt different, just as you arrived. It's Moly, isn't it? And quite a lot, as I perceive! You need no such protection in this place. A miracle it does not interfere with your own craft!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have been gathering what Moly I can find in Erebus. It has its uses to be sure, though in my purse it doesn't bother me, and remains fresh. You have an aversion to it? And here I thought that every plant and herb had earned your love."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Some earn my caution sooner than my love! Moly has a stifling effect I care for not at all! So much so, that I have learned to negate it. As you have no need of its powers here, it shall do neither of us any harm! Though, do be careful, little miss."
+        }
+      ],
+      "name": "CirceAboutMoly01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutCharybdis01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.Resources.PlantFMoly": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "Resources",
+              "PlantFMoly"
+            ],
+            "Value": 15
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1929
+    },
+    "CirceAboutOdysseus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I wonder, does Our Lady Hecate as yet consort with that Tactician Shade of hers, heh? Not of surpassing stature, prone to talk. Oh, what was his name again...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean Odysseus? He remains indispensable to our cause. What knowledge I possess of this route and the dangers along it are thanks largely to him. Why do you ask?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh! No reason at all! It's merely that he was a flighty sort as I recall, quite prone to wandering about! So his continued service is a bit of a surprise. A pleasant one, mind you!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Did you use to know him? I don't recall you interacting at the Crossroads. Not that I was paying much heed to anything besides my studies then. I was so little last you visited!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Once I relocated this isle, the journey to the Crossroads became much more arduous. As for Odysseus, yes, him I've met before. Him and his pig-headed crew! A different age, poppet, haha! Perchance he's learned a bit since then."
+        }
+      ],
+      "name": "CirceAboutOdysseus01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutScyllaQuest01",
+        "CirceAboutOdysseus01_B",
+        "CirceAboutLearning01"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "OdysseusBathHouse02",
+          "CirceAboutOdysseus01_B"
+        ],
+        "RequiredTextLines": [
+          "CirceGift01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1271
+    },
+    "CirceAboutOdysseus01_B": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I wonder, does Our Lady Hecate as yet consort with that Tactician Shade of hers, heh? Not of surpassing stature, prone to talk. Oh, what was his name again...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mean Odysseus? He remains indispensable to our cause. What knowledge I possess of this route and the dangers along it are thanks largely to him. Why do you ask?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh! No reason at all! It's merely that he was a flighty sort as I recall, quite prone to wandering about! So his continued service is a bit of a surprise. A pleasant one, mind you!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I don't recall you interacting at the Crossroads. Not that I was paying much heed to anything besides my studies then. I was so little last you visited!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Once I relocated this isle, the journey to the Crossroads became much more arduous. As for Odysseus and his pig-headed crew... perchance he's learned a bit since then."
+        }
+      ],
+      "name": "CirceAboutOdysseus01_B",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutScyllaQuest01",
+        "CirceAboutOdysseus01",
+        "CirceAboutLearning01"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "CirceAboutOdysseus01"
+        ],
+        "RequiredTextLines": [
+          "OdysseusBathHouse02",
+          "CirceGift02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1310
+    },
+    "CirceAboutOdysseusKeepsake01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "What is it that you have there, little miss? Uh, mm, some old accursed Knuckle Bones, it seems... I ask you quickly get them hence! They're interfering with the energy about this place!"
+        }
+      ],
+      "name": "CirceAboutOdysseusKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "CirceAboutOdysseusQuest00",
+          "CirceAboutOdysseusQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1351
+    },
+    "CirceAboutOdysseusKeepsake02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You brought that artifact with you again, those Knuckle Bones...! We'll keep this very short, then, poppet, for I simply cannot tolerate them here!"
+        }
+      ],
+      "name": "CirceAboutOdysseusKeepsake02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "CirceAboutOdysseusQuest00",
+          "CirceAboutOdysseusQuest01"
+        ],
+        "RequiredTextLines": [
+          "CirceAboutOdysseusKeepsake01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1380
+    },
+    "CirceAboutOdysseusQuest00": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You bring with you ill presence, little miss. I do not welcome it at all! It's those old Knuckle Bones I sense you have, they... they first visited this isle long ago..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Please, Madame. I got these from Odysseus himself, and they've only served me well. He's asked if you would speak with him through them. I don't know what you have to discuss, but can tell it burdens you both."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How strange to be entreated thus! You've far more urgent matters than to be his messenger! He could have voyaged here himself if he had anything of use to say, hoho! But no."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We need our Great Tactician at his post. Look, if you can sense those Bones at all, then surely you can sense no negative intent. I'm sorry to disturb you nonetheless."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh it's all right, it's not your fault, poppet. But I am not prepared for conversation with him now. When next you bring those Bones here, though... eugh... perchance I shall."
+        }
+      ],
+      "name": "CirceAboutOdysseusQuest00",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "CirceAboutOdysseusQuest01"
+        ],
+        "RequiredTextLines": [
+          "OdysseusLooseEndsQuest02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1413
+    },
+    "CirceAboutOdysseusQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Again those Knuckle Bones. Then very well, I'm an enchantress of my word, poppet. You may invoke our old friend the Tactician Shade; I would hear what he has to say."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Very well, Madame. Heed now my voice, Odysseus; one whom you sought is here!"
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "Lady Circe. I shall not take more than a moment of your time. I see you still are taking care of pigs!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I've found they're quite obedient. But I take it you're not here for them, Odysseus. The purpose of your visit is...?"
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "Is there a place where we might briefly talk? The goddess by my side probably can't project me here for long."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Whatever you wish to say, do say it here and now. I distinctly recall we had together decided that no further discussion between us was wise, having reached an impasse, akin to obstacles you met at sea!"
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "A recollection I share, but... look, I've never reached an impasse that I couldn't cross, and you yourself have mastered change. Rather than leave our past to rot, I thought perhaps we could... return it to the earth, as you might say."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That is a precarious position, for neither of us shall apologize and neither shall forget! We've been over this subject at length. I've studied it more than enough!"
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "And I'm done studying it, too, my lady. It was a very different time for both of us, and now... we're close to those whom we both care about. I'd like to move on for their sake if not our own."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "We have moved on, or so I thought at least. I harbor no ill will toward you, sailor! I said it when we met, and I am saying it again. We had our moment, but it has no power anymore."
+        },
+        {
+          "speaker": "NPC_Odysseus_01",
+          "text": "Then let's agree on that. Now you be well, my lady. All I truly wanted to say was, my existence and memories are richer having met... I know myself better. And I'm grateful you are aiding us."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "...And there he goes, getting the last word in as always was his wont. Go on, poppet, I've done far too much talking for one night."
+        }
+      ],
+      "name": "CirceAboutOdysseusQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutOdysseusQuest00"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1464
+    },
+    "CirceAboutOdysseusQuest02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I wished to thank you for when last we spoke. And for delivering Odysseus to me. At first I... felt a great unease, but then, after you left... that sentiment did, too. He is a Shade; perchance he had been haunting me a bit."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What happens now between you two, Madame? Is there something I can communicate on your behalf?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "No need. I realize that we were bound to drift apart, for he is not the sort to remain still! But, if a memory of something must linger, a peaceful one is best."
+        }
+      ],
+      "name": "CirceAboutOdysseusQuest02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutOdysseusQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1564
+    },
+    "CirceAboutOlympus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "So what is even happening there at the mountain of the gods? Some nights, great plumes of flame appear on the horizon, and storm clouds, terrible as ever I have seen!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "The source of these phenomena is a two-pronged assault on Mount Olympus: the Titan Prometheus and his raiders, and the monster Typhon himself. I'm headed to face them."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Good heavens, you mean face them all, poppet? Although perchance the perils you confront beneath the Earth are even worse! Let me protect you then, as best I can...!"
+        }
+      ],
+      "name": "CirceAboutOlympus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.Q_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "Q_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1830
+    },
+    "CirceAboutPalmistry01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Might I have another look at your hands, little miss? Mm, oh, hmm... still nothing after all this time. At least, not the one on the left. Perchance my knack for palmistry is merely insufficient..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame, I can practically see clear through my left hand. It's resisted your readings as long as it's been this way. Why would anything have changed?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I know, I know, it's just... I've not met someone whose palms reveal nothing of their future in this way! The Fates must have had something in store for you, but I can see no trace!"
+        }
+      ],
+      "name": "CirceAboutPalmistry01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutMiracles01",
+        "CirceAboutStudies01",
+        "CirceAboutMagick01",
+        "CirceAboutTransformation01",
+        "CirceAboutTraining01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2614
+    },
+    "CirceAboutPolecatFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Well, if it isn't little Gale skittering about your feet! I've seldom met such crafty little creatures as that one. Our Lady Hecate assigned her to you, then?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Sort of! I found Gale all the way on Olympus where I'm headed anyway. Is this little polecat truly as mischievous as you imply? She's been on good behavior with me!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Consider yourself blessed, poppet. That one is rather wild still! Perchance calmed down a bit with age is all."
+        }
+      ],
+      "name": "CirceAboutPolecatFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutRavenFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutCharybdis01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2166
+    },
+    "CirceAboutPrometheus01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How regrettable to know Prometheus rebels against the gods... surely he must see that his pursuit of vengeance shall not bring him any peace! Is there no reasoning with him?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "He isn't much for talk, but then lately who is? We end up clashing just beneath the summit. Apparently he always knows who's going to be the victor... even if it's me."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, he's foreseen his own defeat before. Can you imagine, poppet? To know of each and every ill awaiting you. I doubt if any punishment he has endured is worse than that."
+        }
+      ],
+      "name": "CirceAboutPrometheus01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 35,
+      "orBranches": [
+        {
+          "requirements": {
+            "RequiredTextLines": [
+              "CirceAboutOlympus01"
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:GameState.ReachedTrueEnding": [
+              {
+                "PathTrue": [
+                  "GameState",
+                  "ReachedTrueEnding"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1639
+    },
+    "CirceAboutPrometheus02": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Do you believe the Titan of Foresight can truly see into the future, Madame? Prometheus is quite insistent about it. I'd sooner think you had such capability yourself."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Of that which shall transpire, I can sometimes see brief glimpses, little miss; provided I devote a lot of resources and time. Prometheus, I think, may see the future uncontrollably."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "But if you knew precisely what would happen, could you not simply change it? For example, if I knew we'd have this conversation, I could have avoided the subject..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "But then your knowledge of the future would be wrong. Such knowledge can be dangerous, besides! Our great ability to harbor hope depends upon not knowing what's to come..."
+        }
+      ],
+      "name": "CirceAboutPrometheus02",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutSelene01",
+        "CirceAboutEris01",
+        "CirceAboutCirceAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered.P_Boss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "P_Boss01"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutPrometheus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1685
+    },
+    "CirceAboutRavenFamiliar01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Such a magnificent raven you have! Not many sea-birds venture quite this far, and I oft ward the rest of them away."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame, this is Raki, who I'm certain feels more comfortable within the woods of Erebus, but has proved willing to explore."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Raki, is it? How do you do, then, little bird? This isle ought to make the perfect feasting-grounds until you're ready to depart. Oh, you each take care!"
+        }
+      ],
+      "name": "CirceAboutRavenFamiliar01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFrogFamiliar01",
+        "CirceAboutCatFamiliar01",
+        "CirceAboutHoundFamiliar01",
+        "CirceAboutPolecatFamiliar01",
+        "CirceAboutCharybdis01",
+        "CirceAboutMoly01"
+      ],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.EquippedFamiliar": [
+          {
+            "IsAny": [
+              "RavenFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "EquippedFamiliar"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2076
+    },
+    "CirceAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It's grown more peaceful lately, hasn't it? For what this matter is, with all the ghastly sailing-ships and such. But there exists a pleasant rhythm to it now. Creates a sense of quietude..."
+        }
+      ],
+      "name": "CirceAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "CirceGift08"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2792
+    },
+    "CirceAboutScylla01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "All of this sea-water must feel very disconcerting, little miss. For me, though, it feels rather much like home! Even the depths of Oceanus bring a sense of comfort, more than fear!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I'm getting used to it. My path into the Underworld requires me to skirt the edge of Oceanus. The water's beautiful, though I could do without the sea-monsters. Particularly Scylla and her Siren friends... perhaps you know of them?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, yes! I do indeed. I grew up underneath the sea, and Scylla I remember from my youth. Always yelping about this or that! Was deafening! Perchance why I prefer the silence now."
+        }
+      ],
+      "name": "CirceAboutScylla01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutScylla02"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "G_Boss01",
+              "G_Boss02"
+            ],
+            "Value": 10
+          }
+        ],
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "G_Boss01",
+              "G_Boss02"
+            ],
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1099
+    },
+    "CirceAboutScylla02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How is old Scylla lately anyhow? I hadn't heard that she descended to your depths. You said she's banded with some Sirens, yes? For what, to sing their songs?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, yes. She longs for fame above all else, and to drown things. I've had to put a stop to her performances now more than a few times. The Book of Shadows I possess states she's the victim of a witch's curse... do you know whose?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, what an interesting Book that one must be! I do not curse, poppet. My practice is about revealing the true nature of a thing. When last I checked, Scylla had made hers clear."
+        }
+      ],
+      "name": "CirceAboutScylla02",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutScylla01"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "G_Boss01",
+              "G_Boss02"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathTrue:GameState.CodexEntriesViewed.Scylla": [
+          {
+            "PathTrue": [
+              "GameState",
+              "CodexEntriesViewed",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutScylla01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1140
+    },
+    "CirceAboutScyllaQuest01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I've been thinking, poppet, if that Scylla has been posing problems for you during your descent, perchance I can be of some benefit? But I require something first: a special Pearl."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Truly? I happen to have more than a few Pearls from her here, so take your pick. Although, first tell me more of what you have in mind."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, none of these shall do! One must be taken from her with particular intent, under a dark and fearful night, to drown her ambitions, as a Siren would a sailor...! Can you do that for me?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Perhaps, but... what shall become of Scylla if I do? She's hindered me but does provide some entertainment for the Shades of Oceanus at least."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "She shall no longer pose a threat. Whilst the influence of Night is strong, claim one of Scylla's precious Pearls, and declare: May your ambitions drown. Consider it at least?"
+        }
+      ],
+      "name": "CirceAboutScyllaQuest01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutOdysseus01",
+        "CirceAboutOdysseus01_B",
+        "CirceAboutLearning01"
+      ],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.Resources.MixerGBoss": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "Resources",
+              "MixerGBoss"
+            ],
+            "Value": 4
+          }
+        ],
+        "PathTrue:GameState.ScreensViewed.Shrine": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ScreensViewed",
+              "Shrine"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGift03",
+          "CirceAboutScylla02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1178
+    },
+    "CirceAboutScyllaQuestComplete01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I have a Pearl here from Scylla, Madame, although not imbued with your intent. You said your practice is about revealing the true nature of things. Hers is already plain."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Hence the reason I suggested we subdue her. But you've no taste for such enchantments, I see... which means you passed another test, hahaha! Congratulations, poppet!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "What? Did Headmistress put you up to this? To see if I'd resort to cursing an inconsequential foe merely because I could...?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "To see if you would blindly do the bidding of an elder merely because you were asked. Our craft is most effective with restraint; a hard lesson we all eventually learn. Of course if Scylla should become a greater threat, hm... do seek me out."
+        }
+      ],
+      "name": "CirceAboutScyllaQuestComplete01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.Flags.AcquiredMixerForCirceQuest": [
+          {
+            "PathTrue": [
+              "GameState",
+              "Flags",
+              "AcquiredMixerForCirceQuest"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutScyllaQuest01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1226
+    },
+    "CirceAboutSelene01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You've one of great Selene's precious blessings on this eve, that I can tell, poppet! Even from afar, the Moon has always kept me company. Her light can be so utterly transformative!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And may Selene's light ever shine for us, Madame. I'd likely not have found my way to you if not for her. As for her magick... sometimes I wonder if it isn't transforming me, so much as revealing who I really am."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That may well be so! Who is to say where our true nature lies? A spell of transformation is a spell of revelation; when we change, we become more like ourselves. Not less!"
+        }
+      ],
+      "name": "CirceAboutSelene01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutPrometheus02",
+        "CirceAboutEris01",
+        "CirceAboutCirceAspect01"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "SpellTransformTrait"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 910
+    },
+    "CirceAboutShrine01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Tell me poppet, do my senses yet ring true? The dark and moody skies of such an eve, the energy in the air, it all suggests deliberate intent... the Testament of Night herself."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're sensing Fear in the air, Madame, for I have said the Vows. Nyx has such a strong connection to the Underworld, yet her work is best known on the surface, isn't it?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Indeed, and may you soon enact her will! The mysteries within the dark of course originate from your realm not this one. May that darkness ever guide you forth."
+        }
+      ],
+      "name": "CirceAboutShrine01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutShrine02",
+        "CirceAboutFamiliars01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.TextLinesRecord": [
+          {
+            "HasNone": "<ref:GameData.AboutShrineEvents>",
+            "Path": [
+              "CurrentRun",
+              "TextLinesRecord"
+            ]
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 22
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 744
+    },
+    "CirceAboutShrine02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Ooh, how the seas are roiling! I've not experienced an eve as dark and brooding since I relocated here! The Testament of Night must be demanding much of you, poppet."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "We serve the Night at will. But yes, my Vows have made the voyage treacherous. I know all creatures respond differently to the effect... are your piggies all right?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, why, look at all of them, they're fine! Oblivious to all the perils of this world, delighting in each other's company and all the bounties that this isle can provide!"
+        }
+      ],
+      "name": "CirceAboutShrine02",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutShrine01",
+        "CirceAboutFamiliars01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:CurrentRun.TextLinesRecord": [
+          {
+            "HasNone": "<ref:GameData.AboutShrineEvents>",
+            "Path": [
+              "CurrentRun",
+              "TextLinesRecord"
+            ]
+          }
+        ],
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 32
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutShrine01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 780
+    },
+    "CirceAboutStudies01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "How you were always at your studies, little miss! That you are here suggests how much you have achieved. I always wanted you to visit me; you used to say it was impossible!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It turns out even prophecies of the Three Fates are circumventable. Though, I still have much to learn... or so I keep reminding myself night after night. How about you? You must have perfect mastery over our craft by now!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Now it's my turn to say something is impossible! I've been practicing enchantment for three quarters of my life, and have yet to ever change the essence of a thing! Only the form. But the pursuit I find is fascinating without end!"
+        }
+      ],
+      "name": "CirceAboutStudies01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutMiracles01",
+        "CirceAboutMagick01",
+        "CirceAboutTransformation01",
+        "CirceAboutTraining01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 484
+    },
+    "CirceAboutSurfacePenalty01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "...I had been meaning to inquire, how in all the heavens is it possible you've traveled so far from your home-realm, little miss? I'd understood that you could scarcely breathe this air!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, you know what we say, Madame: There's an incantation for practically everything. This one in particular felt almost as though I was lifting a curse."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I see! But all of us perchance are cursed in some odd way; either we learn to live with it, or discover how to overcome it."
+        }
+      ],
+      "name": "CirceAboutSurfacePenalty01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutArcana02",
+        "CirceAboutArcana03"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 566
+    },
+    "CirceAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Fie on that never-ending fleet of ghastly sailing-ships, all headed for the mountain of the gods, hah! My little isle sometimes gets right in the way! No hospitality awaits their boorish crews, ahaha! Whilst I replenish my supply of firewood."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "You must long for the days when your island was more secluded, and had much less unwanted company. I hope I'm not disturbing your peace, Madame!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, heavens no! In actuality, it could be rather all too quiet with only the rustle of the vegetation, and the snuffle of my piggies, and the like. I more than welcome your returns!"
+        }
+      ],
+      "name": "CirceAboutThessaly01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutHecate01",
+        "CirceAboutHermes01"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 511
+    },
+    "CirceAboutTraining01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "For all the rigors of these evenings, little miss, at least your studies must be finally complete! Now you're learning from the greatest teacher of all, as Our Lady Hecate might say."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "That's mostly true, Madame, except Headmistress still is prone to testing me herself night after night, just as I'm ready to depart from Erebus. Though not when I head here!"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I scarce imagine that the trials you face upon the surface are less rigorous than those you face below! And look how far you've come with what you've learned!"
+        }
+      ],
+      "name": "CirceAboutTraining01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutMiracles01",
+        "CirceAboutStudies01",
+        "CirceAboutMagick01",
+        "CirceAboutTransformation01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:GameState.ClearedSurfaceRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedSurfaceRunsCache"
+            ],
+            "Value": 2
+          }
+        ],
+        "Path:GameState.ClearedUnderworldRunsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "ClearedUnderworldRunsCache"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 850
+    },
+    "CirceAboutTransformation01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I oft consider turning you into a bird to ease your journey, but you'd abandon your Night-given weaponry and reagents... you'd arrive upon the mountain of the gods naked, and cold..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh! No thank you, then, Madame. While I sometimes grow envious of my considerable number of flight-capable acquaintances, I'm comfortable making my way on foot."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That is as clear as crystal to me, little miss! Though, should you ever change your mind and wish to live a little as a beast, do summon me without delay then, yes?"
+        }
+      ],
+      "name": "CirceAboutTransformation01",
+      "narrativePriorityClusterMembers": [
+        "CirceAboutFamily01",
+        "CirceAboutMiracles01",
+        "CirceAboutStudies01",
+        "CirceAboutMagick01",
+        "CirceAboutTraining01",
+        "CirceAboutPalmistry01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.RoomsEntered.O_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "O_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "IcarusFirstMeeting"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 819
+    },
+    "CirceAboutTyphon01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "So you have seen the great monstrosity with your own eyes, have you, poppet? Typhon, I mean, of course! Oft have I wondered about his deep connection to the natural world..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "And what connection would that be? He's a monster, just as you said! A thing that does not belong in our world."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Yet there he is, where you'll be going soon! Who only knows the limits of our world, and that which it contains...? Veritably not you or I, poppet! All that is here belongs, is what I say."
+        }
+      ],
+      "name": "CirceAboutTyphon01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered"
+            ],
+            "SumPrevRuns": 3,
+            "TableValuesToCount": [
+              "Q_Boss01",
+              "Q_Boss02"
+            ],
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutOlympus01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1721
+    },
+    "CirceAboutTyphonW01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That awful storm enveloping the mountain of the gods, why just the other night, it cleared, all brilliant moonlight in its place! I thought perchance you had achieved what you'd set out to do, hah! Oh, but now you're back, and... so's the storm."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "It turns out the Father of All Monsters is not particularly easy to dissuade... I don't know who wants his vengeance against Lord Zeus more; Typhon, Prometheus, or Chronos. "
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Our Lady Hecate and you seek vengeance of your own. You've met Charybdis in the Rift here, yes? An all-consuming force! When I imagine vengeance, all I see is that engulfing maw..."
+        }
+      ],
+      "name": "CirceAboutTyphonW01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "Path:EnemyKills.TyphonHead": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "EnemyKills",
+              "TyphonHead"
+            ],
+            "SumPrevRuns": 3,
+            "Value": 1
+          }
+        ],
+        "PathFalse:GameState.TyphonDefeatedWithStormStop": [
+          {
+            "PathFalse": [
+              "GameState",
+              "TyphonDefeatedWithStormStop"
+            ]
+          }
+        ],
+        "PathTrue:GameState.RoomsEntered.O_MiniBoss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomsEntered",
+              "O_MiniBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutTyphon01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 1758
+    },
+    "CirceChat01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Whilst I could turn you into almost anything, I think you're very nearly perfect as you are!"
+        }
+      ],
+      "name": "CirceChat01",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2818
+    },
+    "CirceChat02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I bid you make yourself at home, although I know you cannot stay for very long. Your palms?"
+        }
+      ],
+      "name": "CirceChat02",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2831
+    },
+    "CirceChat03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh! I ought to have some sort of salve, potion, or poultice here that suits you very well indeed!"
+        }
+      ],
+      "name": "CirceChat03",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2844
+    },
+    "CirceChat04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Do remember that we cannot change who we are, poppet. Only what. Now, then: your palms."
+        }
+      ],
+      "name": "CirceChat04",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2858
+    },
+    "CirceChat05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Ohh, how fortuitous that we have met again on an enchanting evening such as this!"
+        }
+      ],
+      "name": "CirceChat05",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2871
+    },
+    "CirceChat06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "My existence here is quite a peaceful one. I highly recommend it once your warring is complete!"
+        }
+      ],
+      "name": "CirceChat06",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2882
+    },
+    "CirceChat07": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "There is no need for words whilst on the Isle of Aiaia, little miss. A look from you already says it all!"
+        }
+      ],
+      "name": "CirceChat07",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2895
+    },
+    "CirceChat08": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I would invite you to stay for tea, yet know you have to hurry on your way. Some other circumstance?"
+        }
+      ],
+      "name": "CirceChat08",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2908
+    },
+    "CirceChat09": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "My piggies all were squealing with delight when I foretold you would be visiting again this eve!"
+        }
+      ],
+      "name": "CirceChat09",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2919
+    },
+    "CirceChat10": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It's not so oft my piggies and I welcome visitors, as this little isle's practically impossible to find!"
+        }
+      ],
+      "name": "CirceChat10",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2931
+    },
+    "CirceChat11": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You are welcome here and safe, little miss! Breathe deeply, and relax your shoulders and your mind..."
+        }
+      ],
+      "name": "CirceChat11",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2944
+    },
+    "CirceChat12": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "We cannot change ourselves entirely, poppet, but: We can change our fortunes up a bit! Hahaha, haha!"
+        }
+      ],
+      "name": "CirceChat12",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2957
+    },
+    "CirceChat13": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "My, but you are turning into such an enchanting young goddess, night upon night!"
+        }
+      ],
+      "name": "CirceChat13",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2969
+    },
+    "CirceChat14": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I'd not change a thing about you, poppet. But I can! We'll make it temporary just in case!"
+        }
+      ],
+      "name": "CirceChat14",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2983
+    },
+    "CirceChat15": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "The mountain of the gods is not so very far beyond! Let's make you ready for that brutal climb!"
+        }
+      ],
+      "name": "CirceChat15",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2996
+    },
+    "CirceChat16": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "To live is but to undergo a constant series of small transformations, little miss."
+        }
+      ],
+      "name": "CirceChat16",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3007
+    },
+    "CirceChat17": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Your thoughts and choices make you who you are, but I could make you something more!"
+        }
+      ],
+      "name": "CirceChat17",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3020
+    },
+    "CirceChat18": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "We all seek to find our true selves, yet oft the search is long and difficult! So let us go prepared."
+        }
+      ],
+      "name": "CirceChat18",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3032
+    },
+    "CirceChat19": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "My little hut is just embarrassingly unpresentable! Not that anyone shall know, other than me."
+        }
+      ],
+      "name": "CirceChat19",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3045
+    },
+    "CirceChat20": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Within my crystals I foresaw your voyaging this eve, and am so pleased you took my invitation to return!"
+        }
+      ],
+      "name": "CirceChat20",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3058
+    },
+    "CirceChat21": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "A welcome sight upon a ghastly night! But we shall change it for the better here."
+        }
+      ],
+      "name": "CirceChat21",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3069
+    },
+    "CirceChat22": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "We are by nature not immutable, and to transform ourselves is to become who we are..."
+        }
+      ],
+      "name": "CirceChat22",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3080
+    },
+    "CirceChat23": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "As much as I have come to prefer solitude, I welcome your arrival even more."
+        }
+      ],
+      "name": "CirceChat23",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3093
+    },
+    "CirceChat24": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Perchance this night you may make use of an enchantment I've prepared?"
+        }
+      ],
+      "name": "CirceChat24",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3106
+    },
+    "CirceChat25": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "That mountain over there still needs you even now, doesn't it, little miss?"
+        }
+      ],
+      "name": "CirceChat25",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3119
+    },
+    "CirceChat26": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "The journey can be strenuous, so please, do rest from all your seafaring whilst here."
+        }
+      ],
+      "name": "CirceChat26",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3132
+    },
+    "CirceChat27": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Which of my various enchantments is of greatest benefit to you tonight, poppet?"
+        }
+      ],
+      "name": "CirceChat27",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3145
+    },
+    "CirceChat28": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I told my piggies that I thought you would arrive again this eve, ahah! And here you are!"
+        }
+      ],
+      "name": "CirceChat28",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3158
+    },
+    "CirceChat29": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I've my enchantments at the ready so as not to stall your voyage longer than you wish."
+        }
+      ],
+      "name": "CirceChat29",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3172
+    },
+    "CirceChat30": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "We are well-hidden and protected here, poppet. On that you have my word."
+        }
+      ],
+      "name": "CirceChat30",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3185
+    },
+    "CirceChat31": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Our Lady Hecate has prepared you to fend well for yourself in the wilds!"
+        }
+      ],
+      "name": "CirceChat31",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3198
+    },
+    "CirceChat32": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I sometimes miss the Crossroads, but plainly my piggies need me here."
+        }
+      ],
+      "name": "CirceChat32",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3211
+    },
+    "CirceChat33": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I cannot change who or what you are, but assuredly most anything else!"
+        }
+      ],
+      "name": "CirceChat33",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3224
+    },
+    "CirceChat34": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Few troubles reach this isle, but I know the gods of Olympus have their share."
+        }
+      ],
+      "name": "CirceChat34",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3237
+    },
+    "CirceChat35": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It has been far too many nights since last you visited, poppet! Do come back soon!"
+        }
+      ],
+      "name": "CirceChat35",
+      "otherRequirements": {
+        "Path:SpawnRecord.NPC_Circe_01": [
+          {
+            "Comparison": "<=",
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "SpawnRecord",
+              "NPC_Circe_01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3251
+    },
+    "CirceChat36": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "May this night's outcome prove just as fortuitous as was the one before!"
+        }
+      ],
+      "name": "CirceChat36",
+      "otherRequirements": {
+        "PathTrue:PrevRun.Cleared": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "Cleared"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3276
+    },
+    "CirceChat37": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Please, rest here for a moment prior to returning to those ghastly ships out there!"
+        }
+      ],
+      "name": "CirceChat37",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3297
+    },
+    "CirceChat38": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You found me once again, poppet, and for that feat I owe you an enchanting prize!"
+        }
+      ],
+      "name": "CirceChat38",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3310
+    },
+    "CirceChat39": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "The climb you have to make is difficult but let us see to it that you are well-prepared."
+        }
+      ],
+      "name": "CirceChat39",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3323
+    },
+    "CirceChat40": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Welcome to my little isle, little miss! And show to me your palms."
+        }
+      ],
+      "name": "CirceChat40",
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3336
+    },
+    "CirceDreamRun": {
+      "dialogueLines": [],
+      "name": "CirceDreamRun",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.IsDreamRun": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "IsDreamRun"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3351
+    },
+    "CirceFirstMeeting": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh, well, isn't this marvelous! How you've grown, little miss! Do you remember Circe the Enchantress still? Ah? Oh, no matter, hahaha. Not the circumstances for small talk! Show me your palms."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Of course I remember you, Madame Circe! So this is your famous island! Such a relief to be here rather than another drowned ship. I take it we're not meeting by chance?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Wise to our ways as ever! Our Lady Hecate and I decided I had best relocate for a while, and survey events as near the mountain of the gods as possible. Then tonight within my crystals, I saw you! Now, how may we make you better?"
+        }
+      ],
+      "name": "CirceFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 393
+    },
+    "CirceGift01": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, I'm grateful that we had a chance to meet again after all this time. Your kindness to me always meant a lot, and I wanted to give you this small token in return."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Nectar! Ohh, thank you, little miss! I've made attempts to brew my own but never get it right! Though why don't you take this in kind? Think of it as a little island souvenir!"
+        }
+      ],
+      "name": "CirceGift01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3373
+    },
+    "CirceGift02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Good heavens! More, for me? I'm unaccustomed to receiving gifts here on my little isle. Though I'm pleased to try and get more used to it, ahaha! If you must so insist!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Insist is a strong word, Madame, but I would like for you to have this, yes. Perhaps it will help you perfect your own recipe... or while away a pleasant night, should one arise."
+        }
+      ],
+      "name": "CirceGift02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3400
+    },
+    "CirceGift03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Not all divinities require offerings, you know. Our Olympian relatives... they have come to expect this type of giving, but not I! Do not presume to spoil me!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Olympus is well-accustomed to receiving offerings from all across the land. Living here on this remote island, I don't think you're at risk of getting quite as used to it as that!"
+        }
+      ],
+      "name": "CirceGift03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3427
+    },
+    "CirceGift04": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Well, this is marvelous! I'm grateful, little miss! Our kind oft lack for company; to have another such as you to visit me from time to time, it's been a welcome turn, despite the ghastly work that is at hand, hahahaha!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Even if and when all this is over at some point, I still would like if we kept meeting up like this. Your island is a wonderful place, and I truly admire your commitment to our craft."
+        }
+      ],
+      "name": "CirceGift04",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3450
+    },
+    "CirceGift05": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "At times I worry that your heart must have grown cold... hardened to all the turmoil. But then, you show me kindness such as this! You have learned much, though this propensity appears to be innate!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, I... it's just Nectar, which must not be too easy to come by here. They're even lacking for it on Olympus recently! But, I'm grateful that you see in me whatever it is you think is there."
+        }
+      ],
+      "name": "CirceGift05",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3475
+    },
+    "CirceGift06": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh why thank you so much, little miss, again! The Nectar you bring tastes so sweet and yet, my feelings for it are becoming clouded recently... so let this be the last for now...?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Madame Circe, was it something I did or said? You're left to your own devices on your island here, and so I thought perhaps you might enjoy a bit of an exotic good..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "And that I do! But I'm reminded, with each bottle, of a life I led filled with great luxuries... most all of which I've left behind. And I shall not go back."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I fully understand. But thank you truly, Madame. For all your wisdom, and for making me your guest."
+        }
+      ],
+      "name": "CirceGift06",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {
+        "PathTrue:GameState.UseRecord.NPC_Circe_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Circe_01"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3499
+    },
+    "CirceGift07": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "I know you have no want of Nectar at the moment, Madame, but I thought perhaps you might be interested in this? For your enchantments, or even your animal companions."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh! Why if it isn't Ambrosia! A precious gift, even a source of marvelous light during these darker evenings! What is occasion for this, for it must have slipped my mind?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, seeing as you've taught me more of how to manifest my will... I figure this can become a special occasion through the act itself, can't it?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "It veritably can, thank you! Then, to the fortune of our meetings, here and hence! As to whether I shall keep this or share it with my piggies, I shall have to ponder for a while..."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "Please enjoy it!"
+        }
+      ],
+      "name": "CirceGift07",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGift06",
+          "CirceAboutLearning01"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3536
+    },
+    "CirceGift08": {
+      "dialogueLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You mentioned that you weren't certain whether to keep the previous Ambrosia or share it with your piggies. Please, allow me to alleviate this impossible dilemma."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh well then this one must be for keeping, naturally! Because last time my piggies definitely had their fill. I never realized Our Lady Hecate taught you to be so generous!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Headmistress taught me to protect myself, to stay focused, and much more. But what I know of generosity is certainly in no small part because of you, Madame. There was always more warmth at the Crossroads when you were around."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Well, that is kind of you to say... but I'm not widely known for my warmth, you know. You merely brought it out in me, as you have done again just now! So... thank you very much."
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": "PlayerUnit",
+          "text": "You're most welcome."
+        }
+      ],
+      "name": "CirceGift08",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 8,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceGift07"
+        ]
+      },
+      "section": "GiftTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 3590
+    },
+    "CirceGrantsFamiliarCostumes01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "I am impressed with how you've cared for your Familiars, poppet! By the will of Our Lady Hecate, I possess certain knowledge of the subject I now shall yield to you."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Oh, thank you Madame! Which sort of knowledge do you have in mind? You must know beasts better than anyone."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You'll see, you'll see! This is a favorite of mine, and so it's not my wish to spoil the surprise!"
+        }
+      ],
+      "name": "CirceGrantsFamiliarCostumes01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 35,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllFrogFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllRavenFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllCatFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllHoundFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.FamiliarUpgrades": [
+              {
+                "HasAll": "<ref:GameData.AllPolecatFamiliarUpgrades>",
+                "Path": [
+                  "GameState",
+                  "FamiliarUpgrades"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.FamiliarsUnlocked": [
+          {
+            "HasAll": [
+              "FrogFamiliar",
+              "RavenFamiliar",
+              "CatFamiliar",
+              "HoundFamiliar",
+              "PolecatFamiliar"
+            ],
+            "Path": [
+              "GameState",
+              "FamiliarsUnlocked"
+            ]
+          }
+        ],
+        "Path:GameState.LifetimeResourcesGained.FamiliarPoints": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LifetimeResourcesGained",
+              "FamiliarPoints"
+            ],
+            "Value": 20
+          }
+        ],
+        "Path:GameState.MaxMetaUpgradeCostCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "MaxMetaUpgradeCostCache"
+            ],
+            "Value": 30
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2417
+    },
+    "CirceGrantsHiddenAspect01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "You have been a worthy mother to Descura, I can tell. Nurtured her appetite with many souls! I therefore wish to share with you a dream I vividly recall..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "A dream concerning me and the Staff of Dusk, Madame? That seems rather specific. Though dreams do get that way at times..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "In said dream, I saw what first I thought to be a jackal, all surrounded by the dead. The sight of him was marvelous, as words reverberated in my mind: I see you guarding graves of mortals passed into the black beyond."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "I see you guarding graves of mortals passed into the black beyond. That sounds like it could be a waking-phrase. So if I speak it to Descura by the Silver Pool..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "...Then I foresee she shall reveal to you an Aspect of herself! As her former bearer, your connection with me cannot be coincidence! Thus this knowledge ought be yours."
+        }
+      ],
+      "name": "CirceGrantsHiddenAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "DaggerHiddenAspectRevealInProgress",
+          "TorchHiddenAspectRevealInProgress",
+          "AxeHiddenAspectRevealInProgress",
+          "LobHiddenAspectRevealInProgress",
+          "SuitHiddenAspectRevealInProgress"
+        ],
+        "Path:GameState.WeaponsUnlocked": [
+          {
+            "HasAll": [
+              "WeaponStaffSwing",
+              "WeaponDagger",
+              "WeaponTorch",
+              "WeaponAxe",
+              "WeaponLob",
+              "WeaponSuit"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAll": [
+              "StaffClearCastAspect",
+              "StaffSelfHitAspect"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          },
+          {
+            "HasAny": [
+              "StaffClearCastAspect5",
+              "StaffSelfHitAspect5"
+            ],
+            "Path": [
+              "GameState",
+              "WeaponsUnlocked"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2226
+    },
+    "CirceLowHealth01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Eugh, what a ghastly aura that you have, if I'm to be candid here, poppet! Such suffering you've already endured this eve; forgive me, but you mustn't stay for long..."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Forgive my wretched state, Madame. The waters have been disagreeable, to say nothing of the vast necropolis I'm forced to navigate. But all this merely is excuse-making..."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Well let me offer you what aid I may, but heavens, do not wallow anymore! You haven't time enough for it! Worse comes to worst, return to shadow, rest, and then press on."
+        }
+      ],
+      "name": "CirceLowHealth01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:CurrentRun.Hero.LastStands": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "LastStands"
+            ],
+            "UseLength": true,
+            "Value": 1
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2573
+    },
+    "CircePostEpilogue01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Our Lady Hecate informs me of a marvelous development... you had a brush with the Three Fates? Scarce few are able to lay claim to that, hah! Ooh... did you happen to see their palms?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "No, unfortunately, Madame, as they were rather shrouded in the darkness where I encountered them. What do you make of this new prophecy of theirs...?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "What, that the times eventually shall change? Hah! I find it to be not their boldest prediction, since you asked! Live long enough, and you shall see that times do not change, so much as turn like a wheel."
+        }
+      ],
+      "name": "CircePostEpilogue01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {},
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "FatesEpilogue01",
+          "HecateBathHouseEpilogue01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2757
+    },
+    "CircePostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Where have you been for all these nights, poppet? So many oddities took place, each stranger than the last! Those ghastly sailing-ships out there all seemed to lose their course, for one. I know not what occurred!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Chronos is defeated, Madame... and I mean for good! That's likely why his forces have been notably disorganized, although they're not gone, and neither is he. Has Headmistress not communicated this?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Good heavens, why, why, why, why, no!  Unless... well, I can be very isolated here, perchance I missed some message she relayed, I... oh! So then you mean to tell me you're victorious?"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Well, yes! What now remains is to ensure he'll not rise up against the gods again, ever. He or Typhon."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh! Ah, oh, my... hah, oh my, this is, oh! I must confer with Our Lady Hecate at once! But first, please, quickly, make your choice!"
+        }
+      ],
+      "name": "CircePostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2642
+    },
+    "CircePostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Our Lady Hecate confirmed each detail of what you have achieved, although with far less modesty than you! Oh... such an accomplishment, poppet...!"
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Thank you, Madame Circe. If not for your enchantments I might never have gained the summit of Olympus, which was a necessary step. You don't mind if we keep on like this?"
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "Oh I would mind if we no longer did! So long as you have more to do, you can veritably count on my contribution!"
+        }
+      ],
+      "name": "CircePostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2692
+    },
+    "CircePostTrueEnding03": {
+      "dialogueLines": [
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "The weather on Olympus has been better recently, as I oft see it clear! No trace of the monstrosity you faced before."
+        },
+        {
+          "speaker": "PlayerUnit",
+          "text": "Traces of Typhon do remain, though they are nearly imperceptible. But they can be destroyed."
+        },
+        {
+          "speaker": "NPC_Circe_01",
+          "text": "And you are headed to the mountain to achieve just that. Typhon was not exactly a natural being; that is what distinguishes a monster from a beast! So I shall not lament his passing, nor shall anybody, I expect."
+        }
+      ],
+      "name": "CircePostTrueEnding03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 35,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "NPC_Circe_01",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "NPCData_Circe.lua",
+      "sourceLine": 2724
+    }
+  }
+}
