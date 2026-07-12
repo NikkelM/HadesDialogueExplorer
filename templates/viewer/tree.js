@@ -178,12 +178,44 @@ function handleMobileDoubleTap(name) {
     if (lastTapName === name && now - lastTapTime < DOUBLE_TAP_MS) {
         lastTapName = null;
         lastTapTime = 0;
+        cancelMobileScroll();
         navigateTo(name);
         return true;
     }
     lastTapName = name;
     lastTapTime = now;
     return false;
+}
+
+// The mobile expand auto-scroll is deferred (see ``scrollExpandedIntoView``) so
+// it can't slide a row sideways between the two taps of a double-tap; a
+// completed double-tap cancels any pending scroll before re-rooting.
+let mobileScrollTimer = null;
+function cancelMobileScroll() {
+    if (mobileScrollTimer !== null) {
+        clearTimeout(mobileScrollTimer);
+        mobileScrollTimer = null;
+    }
+}
+
+// Bring a freshly expanded row's indented content into view. Desktop scrolls
+// immediately; mobile DEFERS it past the double-tap window. A first tap that
+// expands a row must not horizontally auto-scroll it mid-gesture - that moves
+// the row on screen, so the second tap of a double-tap lands elsewhere and the
+// "two taps on the same row" re-root gesture silently fails. Expanding only
+// inserts children *below* the row (the row itself doesn't move vertically), so
+// deferring this horizontal scroll keeps the row stationary while the second
+// tap can land; on a genuine single tap the scroll still runs a beat later.
+function scrollExpandedIntoView(rowEl) {
+    if (!treeIsMobileLayout()) {
+        ensureExpandedContentVisible(rowEl);
+        return;
+    }
+    cancelMobileScroll();
+    mobileScrollTimer = setTimeout(() => {
+        mobileScrollTimer = null;
+        ensureExpandedContentVisible(rowEl);
+    }, DOUBLE_TAP_MS + 40);
 }
 
 export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) {
@@ -437,7 +469,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
                     childContainer.classList.add('expanded');
                     toggle.textContent = '\u25BC';
                     label.setAttribute('aria-expanded', 'true');
-                    ensureExpandedContentVisible(label);
+                    scrollExpandedIntoView(label);
                 }
                 return childContainer;
             }
@@ -450,7 +482,7 @@ export function createNodeEl(name, edgeType, direction, ancestorPath, edgeOpts) 
             node.appendChild(childContainer);
             toggle.textContent = '\u25BC';
             label.setAttribute('aria-expanded', 'true');
-            ensureExpandedContentVisible(label);
+            scrollExpandedIntoView(label);
             return childContainer;
         };
 
