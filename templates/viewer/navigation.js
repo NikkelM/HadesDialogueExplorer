@@ -522,15 +522,24 @@ export function rebuildSearchIndexes() {
     buildSpeakerIndex();
 }
 
-// Re-render after a dialogue-language change. Rebuilds the language-dependent
-// search indexes first (or the search dropdown would keep showing - and only
-// match - the previous language) and clears the cached speaker-view entries
-// (which bake in the localised name/description), then forces a re-render. The
-// dialogue-text index is English-only (the overlay never rewrites
-// ``textlines``), so it is deliberately not rebuilt.
-export function refreshForLanguageChange() {
+// Rebuild the language-dependent search indexes + clear the cached speaker-view
+// entries for the active language, WITHOUT re-rendering. Split out of
+// ``refreshForLanguageChange`` for callers that will render themselves anyway -
+// notably a game switch, whose ``applyState`` render lands after ``switchToGame``
+// (and whose URL hash isn't written until then, so forcing a render mid-switch
+// would re-read the stale hash and bounce the game back).
+export function prepareLanguageChange() {
     rebuildSearchIndexes();
     resetSpeakerGroupEntries();
+}
+
+// Re-render after a dialogue-language change. Rebuilds the language-dependent
+// search indexes + clears the cached speaker-view entries (or the search
+// dropdown / speaker overview would keep showing the previous language), then
+// forces a re-render. The dialogue-text index is English-only (the overlay
+// never rewrites ``textlines``), so it is deliberately not rebuilt.
+export function refreshForLanguageChange() {
+    prepareLanguageChange();
     forceRefresh();
 }
 

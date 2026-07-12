@@ -17,7 +17,7 @@ import {
     getAvailableLanguages, getActiveLang, setActiveLang, ensureLangLoaded,
     getActiveGame, isLangLoaded,
 } from './data.js';
-import { refreshForLanguageChange, rebuildSearchIndexes } from './navigation.js';
+import { refreshForLanguageChange, prepareLanguageChange } from './navigation.js';
 import { escapeHtml } from './utilities.js';
 
 const LANG_STORAGE_KEY = 'hde:lang';
@@ -152,10 +152,11 @@ export function initLanguagePicker() {
     if (initial === 'en' || isLangLoaded(getActiveGame(), initial)) {
         setActiveLang(initial);
         // ``switchToGame`` built the search indexes before this ran, while
-        // English was still active; rebuild them for a non-English boot language
-        // so speaker search matches and shows the localised names (not English).
-        // No re-render here - the first render (applyHashFromUrl) is still ahead.
-        if (initial !== 'en') rebuildSearchIndexes();
+        // English was still active; rebuild them (and clear cached speaker-view
+        // entries) for a non-English boot language so speaker search matches and
+        // shows the localised names. No re-render here - the first render
+        // (applyHashFromUrl) is still ahead.
+        if (initial !== 'en') prepareLanguageChange();
         renderLanguageOptions();
     } else {
         applyLanguageChoice(initial, { persist: false });
@@ -170,15 +171,30 @@ export function initLanguagePicker() {
 // meanwhile.
 export function syncLanguagePicker() {
     if (!langPickerMount) return;
+    const game = getActiveGame();
     const codes = availableLangCodes();
     const saved = getSavedLang();
     const want = codes.includes(saved) ? saved : 'en';
     const active = getActiveLang();
-    if (want !== active) {
-        applyLanguageChoice(want, { persist: false });
-    } else if (want !== 'en' && !isLangLoaded(getActiveGame(), want)) {
-        applyLanguageChoice(want, { persist: false });
-    } else {
+    const loaded = want === 'en' || isLangLoaded(game, want);
+    // switchToGame is ALWAYS followed by an applyState render (toggle click,
+    // deep link, back/forward), and on a toggle click the new URL hash isn't
+    // written until switchToGame returns. So apply the language WITHOUT forcing a
+    // synchronous re-render here: forceRefresh would re-read the stale pre-switch
+    // hash and bounce the active game back, making the toggle need a second click.
+    if (loaded) {
+        if (want !== active) {
+            setActiveLang(want);
+            prepareLanguageChange();
+        }
         renderLanguageOptions();
+    } else {
+        // The new game offers ``want`` but its map isn't loaded: show English for
+        // the imminent render, then lazy-load and re-render on completion (which
+        // lands after the switch's render, so its forceRefresh is safe).
+        if (active !== 'en') setActiveLang('en');
+        prepareLanguageChange();
+        renderLanguageOptions();
+        applyLanguageChoice(want, { persist: false });
     }
 }
