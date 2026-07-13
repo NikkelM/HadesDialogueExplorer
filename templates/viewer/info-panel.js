@@ -2378,10 +2378,15 @@ function _localizedLineText(line) {
 
 // A small marker appended to a line the active (non-English) language has no
 // official translation for (so it is showing English): dev-comment-only H1
-// cues, no-cue narration, choice prompts without a shipped subtitle, etc.
-// Empty under English or when the line IS translated.
+// cues, choice prompts with a textId but no shipped subtitle, etc. Empty under
+// English, when the line IS translated, or when the line is id-less. An id-less
+// line has no localisation key at all, so it can never carry a translation -
+// Bouldy's language-neutral "." punctuation lines and the choice-prompt
+// internal-id fallbacks - and the "EN" badge (which flags a missing but
+// *possible* translation) would just be misleading noise there.
 function _untranslatedMarkHtml(line) {
-    if (!isLocalized() || !isUntranslated(_lineLocKey(line))) return '';
+    const key = _lineLocKey(line);
+    if (!key || !isLocalized() || !isUntranslated(key)) return '';
     return ' <span class="untranslated-mark" data-tooltip="No official translation for this line in the selected language - showing the English text.">EN</span>';
 }
 

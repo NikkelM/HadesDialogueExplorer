@@ -129,6 +129,37 @@ def test_read_lang_text_map_cleans_triple_quoted_values(tmp_path):
     assert display["Multi_01"] == "Prima riga seconda riga"
 
 
+def test_read_sjson_maps_triple_quote_close_tolerates_trailing_brace(tmp_path):
+    """A multi-line triple-quoted value whose closing ``\"\"\"`` is followed by the
+    block-close ``}`` on the same line (as HelpText writes signoff blurbs) must
+    end AT the close - not run on and swallow the following ``Id`` entry."""
+    src = (
+        '{\n  Texts = [\n'
+        '    {\n      Id = "Blurb_01"\n'
+        '      DisplayName = """From Persephone; you share a\n'
+        '        Growing Bond.\n'
+        '      """    }\n'
+        '    {\n      Id = "After_01"\n'
+        '      DisplayName = "survived"\n'
+        '    }\n'
+        '  ]\n}\n'
+    )
+    p = _write(tmp_path, "HelpText.de.sjson", src)
+    display, _desc, _inh = loc.read_sjson_maps(p)
+    assert display["Blurb_01"] == "From Persephone; you share a\n        Growing Bond.\n      "
+    # The entry after the trailing-brace close must not be swallowed.
+    assert display["After_01"] == "survived"
+
+
+def test_read_sjson_maps_single_line_triple_quote_trailing_brace(tmp_path):
+    """Single-line ``\"\"\"value\"\"\"  }`` (close + brace on one line) captures just
+    the value, not the trailing brace."""
+    src = '{\n  Texts = [\n    {\n      Id = "X"\n      DisplayName = """Hello"""  }\n  ]\n}\n'
+    p = _write(tmp_path, "HelpText.de.sjson", src)
+    display, _desc, _inh = loc.read_sjson_maps(p)
+    assert display["X"] == "Hello"
+
+
 _SJSON_MULTILINE_NORMAL = (
     '{\n  Texts = [\n'
     '    {\n      Id = "Wrapped_01"\n'
@@ -239,6 +270,31 @@ def test_collect_used_ids_gathers_cuetext_ids(tmp_path):
     p.write_text(json.dumps(meta), encoding="utf-8")
     text_ids = loc.collect_used_ids([p])
     assert text_ids == {"HadesField_0584", "ZagreusHome_2930"}
+
+
+def test_collect_used_ids_gathers_variant_line_ids(tmp_path):
+    """Name-collision variants are promoted to their own rendered textlines, so
+    the ids that appear only on a variant's lines must still be collected - else
+    those lines ship an English string with no translation to swap in."""
+    data = {
+        "textlines": {
+            "Collide01": {
+                "dialogueLines": [{"speaker": "A", "cue": "Base_0001", "text": "base"}],
+                "variants": [
+                    {"dialogueLines": [{"speaker": "B", "cue": "Var_0001", "text": "v1"}],
+                     "endLines": [{"speaker": "B", "cue": "VarEnd_0001", "text": "e1"}]},
+                    {"dialogueLines": [{"speaker": "C", "textId": "Var_Offer01", "text": "v2",
+                                        "choices": [{"internal": "Var_Choice01"}]}]},
+                ],
+            }
+        }
+    }
+    p = tmp_path / "hades1_npc.json"
+    p.write_text(json.dumps(data), encoding="utf-8")
+    text_ids = loc.collect_used_ids([p])
+    assert text_ids == {
+        "Base_0001", "Var_0001", "VarEnd_0001", "Var_Offer01", "Var_Choice01",
+    }
 
 
 # --- speaker localisation -------------------------------------------

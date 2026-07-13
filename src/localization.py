@@ -61,7 +61,14 @@ _INHERIT_RE = re.compile(r'^\s*InheritFrom\s*=\s*"((?:[^"\\]|\\.)*)"')
 # may itself span lines). All three previously dropped the translation, sending
 # the cue to its English fallback.
 _FIELD_OPEN_RE = re.compile(r'^\s*(DisplayName|Description)\s*=\s*(.*)$')
-_TRIPLE_CLOSE_RE = re.compile(r'^(.*)"""\s*$')
+# The closing ``"""`` of a triple-quoted value, greedy to the last one on the
+# line. It tolerates trailing sjson structure on the same line (``"""    }`` -
+# the block-close brace after the value, as HelpText writes multi-line signoff
+# blurbs) so the parser stops AT the close instead of running on and swallowing
+# the following ``Id`` entries (which ``\s*$`` anchoring did). Mirrors how the
+# normal-string path (``_find_closing_quote``) stops at the quote regardless of
+# trailing content.
+_TRIPLE_CLOSE_RE = re.compile(r'^(.*)"""[\s}\],]*$')
 
 # Trailing narrative-context qualifier the tool appends to a speaker display
 # name (``Hades (Boss)``, ``Cerberus (Field)``, ``? ? ? (Chaos)``). Localisation
@@ -307,10 +314,17 @@ def collect_used_ids(output_files: list[Path]) -> set:
         except (OSError, json.JSONDecodeError):
             continue
         for tl in (data.get("textlines") or {}).values():
-            for line in (tl.get("dialogueLines") or []):
-                _visit_line(line)
-            for line in (tl.get("endLines") or []):
-                _visit_line(line)
+            # Name-collision variants (promoted to their own top-level textlines
+            # by split_name_collisions, so the viewer renders their lines) carry
+            # ids that need a translation too - mirror apply_cue_comment_texts /
+            # drop_textless_end_cues, which likewise walk ``variants``.
+            for container in (tl, *(tl.get("variants") or [])):
+                if not isinstance(container, dict):
+                    continue
+                for line in (container.get("dialogueLines") or []):
+                    _visit_line(line)
+                for line in (container.get("endLines") or []):
+                    _visit_line(line)
         # ``cueTexts`` (in the metadata payloads) keys spoken voicelines by cue
         # id - the same id space as ``line.cue`` - so the translation is the
         # cue's shipped subtitle. Collect them so the "played"-gate quote maps.
