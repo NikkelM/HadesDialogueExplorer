@@ -301,6 +301,7 @@ def generate_hades2_source(
     narrative_priorities: dict,
     attached_priority_keys: set,
     hero_repeatable_sets: dict = None,
+    game_data_lists: dict = None,
 ) -> tuple[str, dict]:
     """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
 
@@ -323,6 +324,7 @@ def generate_hades2_source(
         source_label=source_label,
         source_file=lua_path.name,
         named_requirements=named_requirements,
+        game_data_lists=game_data_lists,
         **extra,
     )
     print(f"  Owners: {len(owners)}")
@@ -570,6 +572,21 @@ def main():
     # ``textlines`` key, which is the signal build_viewer uses to
     # route it as metadata.
     gamedata_refs = extract_gamedata_refs(hades2_scripts)
+    # Filter the registry down to the pure textline-name lists (string
+    # arrays) - the ``GameData.X`` tables that ``HasNone`` / ``HasAny`` /
+    # ``IsNone`` textline gates reference (e.g. ``GameData.GodAboutGodEvents``,
+    # ``GameData.AboutShrineEvents``). Passing this map into the requirement
+    # extractor lets it resolve those bare identifiers into real dialogue
+    # edges instead of dropping them to a ``<ref:...>`` placeholder. Non-list
+    # registry entries (aspect / bounty name sets that only appear on
+    # non-textline paths, nested dicts) are excluded, so they stay as
+    # ``otherRequirements`` state gates untouched.
+    h2_game_data_lists = {
+        name: value for name, value in gamedata_refs.items()
+        if isinstance(value, list) and all(isinstance(s, str) for s in value)
+    }
+    if h2_game_data_lists:
+        print(f"  GameData textline lists (edge-resolvable): {len(h2_game_data_lists)}")
     # Pre-resolve every named requirement into the same normalised
     # ``{requirements, otherRequirements, orBranches, flags}`` shape
     # the per-textline extractor produces, so the viewer can render
@@ -577,7 +594,7 @@ def main():
     # textline's requirements block. Recursion is bounded by the
     # walker's built-in ``_visited`` cycle guard.
     named_req_resolved = {
-        name: extract_requirements(table, named_reqs)
+        name: extract_requirements(table, named_reqs, game_data_lists=h2_game_data_lists)
         for name, table in named_reqs.items()
     }
     metadata_payload = {}
@@ -621,6 +638,7 @@ def main():
                 named_reqs, narrative_priorities,
                 attached_priority_keys,
                 hero_repeatable_sets=hero_repeatable_sets,
+                game_data_lists=h2_game_data_lists,
             )
             _collect_h2_speech_cues(data.get("textlines"), h2_referenced_cues)
             # Skip writing per-source JSONs that hold zero textlines.

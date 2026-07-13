@@ -101,11 +101,11 @@ def extract_deathloop_data(
     for hub_table in hub_root.named.values():
         if not isinstance(hub_table, LuaTable):
             continue
-        _collect_inspect_points(hub_table, narrator_sections, source_file, named_requirements)
-        _collect_on_load_events(hub_table, narrator_sections, source_file, named_requirements)
+        _collect_inspect_points(hub_table, narrator_sections, source_file, named_requirements, game_data_lists)
+        _collect_on_load_events(hub_table, narrator_sections, source_file, named_requirements, game_data_lists)
         _collect_event_textline_sets(
             hub_table, narrator_sections, rerouted,
-            source_file, named_requirements,
+            source_file, named_requirements, game_data_lists,
         )
 
     result: dict = {}
@@ -128,6 +128,7 @@ def _collect_inspect_points(
     collapsed: dict,
     source_file: str,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> None:
     """Walk one hub's ``InspectPoints`` map and merge each inspect point's
     textline sections into the collapsed owner dict."""
@@ -143,8 +144,9 @@ def _collect_inspect_points(
             default_speaker=HUB_NARRATOR_SPEAKER,
             named_requirements=named_requirements,
             force_play_once=True,
+            game_data_lists=game_data_lists,
         )
-        _lift_and_collapse(sections, inspect_point, collapsed, named_requirements)
+        _lift_and_collapse(sections, inspect_point, collapsed, named_requirements, game_data_lists)
 
 
 def _collect_on_load_events(
@@ -152,6 +154,7 @@ def _collect_on_load_events(
     collapsed: dict,
     source_file: str,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> None:
     """Walk a hub's ``OnLoadEvents`` list and merge each event's nested
     ``PostPortraitTextLines`` (under ``Args.PresentationFunctionArgs``)
@@ -176,8 +179,9 @@ def _collect_on_load_events(
             section_keys=HADES2_TEXTLINE_SECTION_KEYS,
             default_speaker=HUB_NARRATOR_SPEAKER,
             named_requirements=named_requirements,
+            game_data_lists=game_data_lists,
         )
-        _lift_and_collapse(sections, event, collapsed, named_requirements)
+        _lift_and_collapse(sections, event, collapsed, named_requirements, game_data_lists)
 
 
 def _collect_event_textline_sets(
@@ -186,6 +190,7 @@ def _collect_event_textline_sets(
     rerouted: list,
     source_file: str,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> None:
     """Walk a hub's ``StartUnthreadedEvents`` and ``UnthreadedEvents``
     lists, picking up any ``Args.TextLineSet`` entries (rare inline
@@ -217,12 +222,13 @@ def _collect_event_textline_sets(
                 section_keys={"TextLineSet"},
                 default_speaker=HUB_NARRATOR_SPEAKER,
                 named_requirements=named_requirements,
+                game_data_lists=game_data_lists,
             )
             tl_map = sections.get("TextLineSet")
             if not tl_map:
                 continue
             for tl_data in tl_map.values():
-                merge_ancestor_requirements_h2(tl_data, event, named_requirements)
+                merge_ancestor_requirements_h2(tl_data, event, named_requirements, game_data_lists)
             for tl_name in list(tl_map.keys()):
                 tl_data = tl_map.pop(tl_name)
                 override = TEXTLINE_OWNER_OVERRIDES.get(tl_name)
@@ -249,6 +255,7 @@ def _lift_and_collapse(
     ancestor: LuaTable,
     collapsed: dict,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> None:
     """Lift ancestor-level requirements onto each textline in ``sections``
     and merge into ``collapsed`` (insert-if-absent so the first
@@ -257,7 +264,7 @@ def _lift_and_collapse(
         if not tl_map:
             continue
         for tl_data in tl_map.values():
-            merge_ancestor_requirements_h2(tl_data, ancestor, named_requirements)
+            merge_ancestor_requirements_h2(tl_data, ancestor, named_requirements, game_data_lists)
         existing = collapsed.setdefault(section_key, {})
         for tl_name, tl_data in tl_map.items():
             if tl_name not in existing:

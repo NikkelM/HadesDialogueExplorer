@@ -147,6 +147,7 @@ def extract_npc_data(
                 owner_id, owner_table, source_label, source_file,
                 named_requirements=named_requirements,
                 hero_repeatable_sets=hero_repeatable_sets,
+                game_data_lists=game_data_lists,
             )
             if entry is None:
                 continue
@@ -177,6 +178,7 @@ def extract_npc_data(
                 default_speaker=owner_id,
                 named_requirements=named_requirements,
                 hero_repeatable_sets=hero_repeatable_sets,
+                game_data_lists=game_data_lists,
             )
             # Skip container-level fields (GameStateRequirements,
             # Cooldowns, ObjectType, etc.) - they yield no textline
@@ -219,6 +221,7 @@ def _build_owner_entry(
     *,
     named_requirements: dict = None,
     hero_repeatable_sets: dict = None,
+    game_data_lists: dict = None,
 ):
     """Return the owner entry dict, or ``None`` if the owner has no textlines.
 
@@ -234,6 +237,7 @@ def _build_owner_entry(
         default_speaker=owner_id,
         named_requirements=named_requirements,
         hero_repeatable_sets=hero_repeatable_sets,
+        game_data_lists=game_data_lists,
     )
     if not any(sections.values()):
         return None

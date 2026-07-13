@@ -84,6 +84,7 @@ from ..textline_set import (
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
+    _extend_requirements,
 )
 
 
@@ -153,6 +154,7 @@ def extract_textline_sections(
     named_requirements: dict = None,
     force_play_once: bool = False,
     hero_repeatable_sets: dict = None,
+    game_data_lists: dict = None,
 ) -> dict:
     """Extract every textline-set section from a single H2 owner table.
 
@@ -200,12 +202,14 @@ def extract_textline_sections(
             tl_name, tl_table, fallback_speaker, source_file,
             named_requirements=named_requirements,
             hero_repeatable_sets=hero_repeatable_sets,
+            game_data_lists=game_data_lists,
         )
 
     def extract_variants(tl_name, tl_table):
         return _extract_choice_variants(
             tl_name, tl_table, fallback_speaker, source_file,
             named_requirements=named_requirements,
+            game_data_lists=game_data_lists,
         )
 
     return walk_textline_sections(
@@ -226,6 +230,7 @@ def extract_textline(
     *,
     named_requirements: dict = None,
     hero_repeatable_sets: dict = None,
+    game_data_lists: dict = None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single H2 textline table."""
     data = {
@@ -251,7 +256,7 @@ def extract_textline(
         req_set = tl_table.get(field)
         if not isinstance(req_set, LuaTable):
             continue
-        result = extract_requirements(req_set, named_requirements)
+        result = extract_requirements(req_set, named_requirements, game_data_lists=game_data_lists)
         _merge_requirement_result(data, result)
 
     # Set-level engine flag that hard-caps the textline to one play
@@ -355,7 +360,7 @@ def extract_textline(
         merged = {"requirements": {}, "otherRequirements": {}, "orBranches": [], "flags": {}}
         for gsr in gsr_tables:
             if isinstance(gsr, LuaTable):
-                _merge_requirement_result(merged, extract_requirements(gsr, named_requirements))
+                _merge_requirement_result(merged, extract_requirements(gsr, named_requirements, game_data_lists=game_data_lists))
         return merged
 
     end_lines, end_routed = build_end_lines(
@@ -447,13 +452,9 @@ def _merge_requirement_result(data: dict, result: dict) -> None:
     pathological case where two RequirementSet fields both set
     ``Skip = true``, in which case the value is the same anyway).
     """
+    result_sources = result.get("requirementSources", {})
     for key, names in result.get("requirements", {}).items():
-        existing = data["requirements"].setdefault(key, [])
-        seen = set(existing)
-        for name in names:
-            if name not in seen:
-                existing.append(name)
-                seen.add(name)
+        _extend_requirements(data, key, names, result_sources.get(key))
     for key, value in result.get("otherRequirements", {}).items():
         existing = data["otherRequirements"].get(key)
         if existing is None:
@@ -479,6 +480,7 @@ def merge_ancestor_requirements_h2(
     tl_data: dict,
     ancestor: LuaTable,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> None:
     """Lift RequirementSet-bearing fields from an ancestor container onto
     a single extracted textline.
@@ -515,7 +517,7 @@ def merge_ancestor_requirements_h2(
         req_set = ancestor.get(field)
         if not isinstance(req_set, LuaTable):
             continue
-        result = extract_requirements(req_set, named_requirements)
+        result = extract_requirements(req_set, named_requirements, game_data_lists=game_data_lists)
         _merge_requirement_result(tl_data, result)
 
     if not tl_data["orBranches"] and not had_or_branches:
@@ -553,6 +555,7 @@ def _extract_choice_variants(
     source_file: str,
     *,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ) -> dict:
     """Find every inline ``Choices = {...}`` block nested in the
     parent's cues and materialise each option as a synthetic child
@@ -569,7 +572,7 @@ def _extract_choice_variants(
     drives the cue-choice loop and the synthetic naming / parent-dep /
     metadata bookkeeping; this wrapper only binds the H2
     :func:`extract_textline` (structured RequirementSets, no
-    ``game_data_lists`` / ``offer_text_map``) as the per-choice child
+    ``offer_text_map``) as the per-choice child
     builder. Each synthetic textline:
 
     * reuses :func:`extract_textline` on the choice item so any
@@ -590,6 +593,7 @@ def _extract_choice_variants(
         return extract_textline(
             synthetic_name, choice_item, fallback_speaker, source_file,
             named_requirements=named_requirements,
+            game_data_lists=game_data_lists,
         )
 
     return build_synthetic_variants(parent_name, tl_table, build_child)

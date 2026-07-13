@@ -654,3 +654,57 @@ class TestInlineChoices:
         line = section["Prompt01"]["dialogueLines"][0]
         assert "kind" not in line
         assert "choices" not in line
+
+
+class TestGameDataListThreading:
+    """``game_data_lists`` threads from the section walker down into the
+    requirement extractor, so a textline gated on ``HasNone = GameData.X``
+    surfaces the resolved dialogue edge + ``requirementSources`` provenance
+    on its data dict (the viewer's GameData-group grouping consumes it)."""
+
+    GDL = {"GameData.GodAboutGodEvents": ["ZeusAboutHera01", "HeraAboutZeus01"]}
+
+    def test_extract_textline_threads_game_data_lists(self):
+        tl = _parse_textline('''{
+            GameStateRequirements = {
+                { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.GodAboutGodEvents },
+            },
+        }''')
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua", game_data_lists=self.GDL)
+        assert data["requirements"] == {
+            "RequiredFalseTextLinesThisRun": ["ZeusAboutHera01", "HeraAboutZeus01"],
+        }
+        assert data["requirementSources"] == {
+            "RequiredFalseTextLinesThisRun": ["GameData.GodAboutGodEvents"] * 2,
+        }
+
+    def test_extract_textline_sections_threads_game_data_lists(self):
+        owner = _parse_owner('''{
+            InteractTextLineSets = {
+                Chat01 = {
+                    GameStateRequirements = {
+                        { Path = { "GameState", "TextLinesRecord" }, HasAny = GameData.GodAboutGodEvents },
+                    },
+                },
+            },
+        }''')
+        sections = extract_textline_sections(
+            "NPC_Owner_01", owner, "Test.lua",
+            section_keys={"InteractTextLineSets"},
+            game_data_lists=self.GDL,
+        )
+        data = sections["InteractTextLineSets"]["Chat01"]
+        assert data["requirements"]["RequiredAnyTextLines"] == ["ZeusAboutHera01", "HeraAboutZeus01"]
+        assert data["requirementSources"]["RequiredAnyTextLines"] == ["GameData.GodAboutGodEvents"] * 2
+
+    def test_no_map_leaves_no_edge(self):
+        """Without the map the identifier stays unresolved - no edge, no
+        requirementSources on the textline (backward compatible)."""
+        tl = _parse_textline('''{
+            GameStateRequirements = {
+                { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.GodAboutGodEvents },
+            },
+        }''')
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        assert data["requirements"] == {}
+        assert "requirementSources" not in data

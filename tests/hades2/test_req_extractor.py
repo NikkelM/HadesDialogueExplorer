@@ -683,3 +683,110 @@ class TestFunctionTextlineRouting:
         result = extract_requirements(_parse_req_set(lua))
         assert result["requirements"] == {}
         assert "FunctionName:RequiredAlive" in result["otherRequirements"]
+
+
+class TestGameDataListResolution:
+    """A ``HasNone`` / ``HasAny`` / ``IsNone`` gate (or a textline
+    ``FunctionName`` handler) whose value is a bare ``GameData.X``
+    identifier naming a textline list resolves to the underlying textline
+    names - real dialogue edges - with 1:1 ``requirementSources``
+    provenance so the viewer can render a collapsible GameData group
+    (mirrors H1). Unknown identifiers keep the old behaviour: no edge,
+    surfaced as an ``otherRequirements`` ``<ref:...>`` placeholder rather
+    than a bogus edge."""
+
+    GDL = {
+        "GameData.GodAboutGodEvents": ["ZeusAboutHera01", "HeraAboutZeus01"],
+        "GameData.OdysseusTavernaEvents": ["OdysseusTavernaChat01", "OdysseusTavernaChat02"],
+    }
+
+    def test_container_hasnone_gamedata_resolves_with_sources(self):
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.GodAboutGodEvents } }'
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {
+            "RequiredFalseTextLinesThisRun": ["ZeusAboutHera01", "HeraAboutZeus01"],
+        }
+        assert result["requirementSources"] == {
+            "RequiredFalseTextLinesThisRun": ["GameData.GodAboutGodEvents"] * 2,
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_container_hasany_gamedata_resolves(self):
+        lua = '{ { Path = { "GameState", "TextLinesRecord" }, HasAny = GameData.GodAboutGodEvents } }'
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {"RequiredAnyTextLines": ["ZeusAboutHera01", "HeraAboutZeus01"]}
+        assert result["requirementSources"]["RequiredAnyTextLines"] == ["GameData.GodAboutGodEvents"] * 2
+
+    def test_function_queued_isnone_gamedata_resolves_with_sources(self):
+        lua = '''
+        { {
+            FunctionName = "RequiredQueuedTextLine",
+            FunctionArgs = { IsNone = GameData.OdysseusTavernaEvents },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {
+            "RequiredFalseQueuedTextLines": ["OdysseusTavernaChat01", "OdysseusTavernaChat02"],
+        }
+        assert result["requirementSources"] == {
+            "RequiredFalseQueuedTextLines": ["GameData.OdysseusTavernaEvents"] * 2,
+        }
+        assert result["otherRequirements"] == {}
+
+    def test_function_runs_since_textlines_gamedata_resolves_with_sources(self):
+        lua = '''
+        { {
+            FunctionName = "RequireRunsSinceTextLines",
+            FunctionArgs = { TextLines = GameData.GodAboutGodEvents, Min = 3 },
+        } }
+        '''
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {"MinRunsSinceAnyTextLines": ["ZeusAboutHera01", "HeraAboutZeus01"]}
+        assert result["requirementSources"]["MinRunsSinceAnyTextLines"] == ["GameData.GodAboutGodEvents"] * 2
+        assert result["otherRequirements"] == {"MinRunsSinceAnyTextLines": {"Count": 3}}
+
+    def test_unresolved_identifier_falls_through_to_other(self):
+        """A textline-path gate on an unknown identifier keeps the old
+        behaviour: no dialogue edge, no requirementSources, surfaced as an
+        otherRequirements placeholder (no bogus edge)."""
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.UnknownList } }'
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {}
+        assert "requirementSources" not in result
+        assert result["otherRequirements"]  # the record landed here
+
+    def test_no_map_means_no_resolution(self):
+        """Without a game_data_lists map (the default), a bare identifier
+        op-value stays unresolved and falls through - backward compatible
+        with callers that don't pass the map."""
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.GodAboutGodEvents } }'
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {}
+        assert "requirementSources" not in result
+
+    def test_literal_list_has_no_sources(self):
+        """Inline literal lists resolve as before and carry NO
+        requirementSources (provenance is only for GameData expansions)."""
+        lua = '{ { Path = { "GameState", "TextLinesRecord" }, HasAll = { "A", "B" } } }'
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"] == {"RequiredTextLines": ["A", "B"]}
+        assert "requirementSources" not in result
+
+    def test_sources_stay_aligned_when_literal_and_gamedata_merge(self):
+        """When a literal record and a GameData record feed the same
+        synthetic key, requirementSources stays 1:1 with the de-duplicated
+        requirements list (``None`` for literal names, the group name for
+        the expanded ones)."""
+        lua = '''
+        {
+            { Path = { "GameState", "TextLinesRecord" }, HasAny = { "LiteralA" } },
+            { Path = { "GameState", "TextLinesRecord" }, HasAny = GameData.GodAboutGodEvents },
+        }
+        '''
+        result = extract_requirements(_parse_req_set(lua), game_data_lists=self.GDL)
+        assert result["requirements"]["RequiredAnyTextLines"] == [
+            "LiteralA", "ZeusAboutHera01", "HeraAboutZeus01",
+        ]
+        assert result["requirementSources"]["RequiredAnyTextLines"] == [
+            None, "GameData.GodAboutGodEvents", "GameData.GodAboutGodEvents",
+        ]

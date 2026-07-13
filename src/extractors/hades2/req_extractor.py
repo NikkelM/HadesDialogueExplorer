@@ -76,6 +76,7 @@ these prefixes).
 """
 
 from ...lua_parser import LuaTable, LuaIdentifier, LuaExpression
+from ..textline_set import _to_string_list
 
 
 # RequirementSet-bearing fields - the only fields on a parent table whose
@@ -220,7 +221,7 @@ _INHERITANCE_DIRECTIVES = frozenset({
 })
 
 
-def extract_requirements(req_set, named_requirements=None, *, _visited=frozenset()):
+def extract_requirements(req_set, named_requirements=None, *, game_data_lists=None, _visited=frozenset()):
     """Walk a single H2 ``RequirementSet`` value and return classified output.
 
     ``req_set`` is a :class:`LuaTable` whose ``named`` carries set-level
@@ -281,7 +282,8 @@ def extract_requirements(req_set, named_requirements=None, *, _visited=frozenset
             _add_other(result, "NamedRequirements", name)
             continue
         nested = extract_requirements(
-            target, named_requirements, _visited=_visited | {name})
+            target, named_requirements, game_data_lists=game_data_lists,
+            _visited=_visited | {name})
         _merge(result, nested)
 
     # --- Set-level NamedRequirementsFalse (surfaced, NOT inlined) ----------
@@ -297,7 +299,8 @@ def extract_requirements(req_set, named_requirements=None, *, _visited=frozenset
         for branch in or_reqs.array:
             if isinstance(branch, LuaTable):
                 branch_result = extract_requirements(
-                    branch, named_requirements, _visited=_visited)
+                    branch, named_requirements, game_data_lists=game_data_lists,
+                    _visited=_visited)
                 # Drop empty branches (no constraints expressed).
                 if (branch_result["requirements"]
                         or branch_result["otherRequirements"]
@@ -316,12 +319,12 @@ def extract_requirements(req_set, named_requirements=None, *, _visited=frozenset
     # --- Per-record array entries ------------------------------------------
     for record in req_set.array:
         if isinstance(record, LuaTable):
-            _classify_record(record, result)
+            _classify_record(record, result, game_data_lists)
 
     return result
 
 
-def _classify_record(record, result):
+def _classify_record(record, result, game_data_lists=None):
     """Bucket a single record into ``requirements`` or ``otherRequirements``.
 
     Tries the dialogue-edge mappings first (container-form Path then
@@ -336,9 +339,23 @@ def _classify_record(record, result):
         prefix_map = _TEXTLINE_PATH_PREFIXES.get(prefix)
         if prefix_map is not None:
             for op_name, syn_key in prefix_map.items():
-                names = _string_list(record.named.get(op_name))
+                raw = record.named.get(op_name)
+                # Resolve textline names from either an inline list literal
+                # (a ``LuaTable`` - the original behaviour) or a bare
+                # ``GameData.X`` identifier that names a known textline list
+                # (the resolver expansion this fix adds). Anything else - an
+                # unresolved identifier, an expression, a scalar - falls
+                # through to the ``otherRequirements`` ``<ref:...>``
+                # placeholder rather than becoming a bogus dialogue edge.
+                resolvable = isinstance(raw, LuaTable) or (
+                    isinstance(raw, LuaIdentifier)
+                    and game_data_lists and raw.name in game_data_lists)
+                if not resolvable:
+                    continue
+                sources = []
+                names = _to_string_list(raw, game_data_lists, sources_out=sources)
                 if names:
-                    _extend_requirements(result, syn_key, names)
+                    _extend_requirements(result, syn_key, names, sources)
                     return
         # Path matched a TextLines prefix but no recognised container op
         # (e.g. Comparison/SumPrevRuns aggregator), or the prefix isn't a
@@ -365,7 +382,7 @@ def _classify_record(record, result):
 
     # FunctionName-based predicates with textline semantics route to
     # dialogue edges (see ``_TEXTLINE_FUNCTION_HANDLERS``).
-    if _try_classify_textline_function(record, result):
+    if _try_classify_textline_function(record, result, game_data_lists):
         return
 
     # Everything else goes to otherRequirements as a structured blob.
@@ -444,7 +461,26 @@ _COUNT_META_STRICT = {
 }
 
 
-def _try_classify_textline_function(record, result):
+def _resolve_textline_arg(value, game_data_lists=None):
+    """Resolve a ``FunctionArgs`` textline-list value into ``(names, sources)``.
+
+    Accepts an inline list literal (a ``LuaTable``) or a bare
+    ``GameData.X`` identifier naming a known textline list (resolved via
+    the shared :func:`_to_string_list`, which also records per-name
+    provenance in ``sources``). Any other value - an unresolved
+    identifier, an expression, a scalar - yields ``([], [])`` so the
+    caller falls through to the ``otherRequirements`` ``<ref:...>``
+    placeholder rather than emitting a bogus dialogue edge."""
+    if isinstance(value, LuaTable) or (
+            isinstance(value, LuaIdentifier)
+            and game_data_lists and value.name in game_data_lists):
+        sources: list = []
+        names = _to_string_list(value, game_data_lists, sources_out=sources)
+        return names, sources
+    return [], []
+
+
+def _try_classify_textline_function(record, result, game_data_lists=None):
     """Re-route a ``FunctionName`` record into the dialogue-edge graph
     when its semantics gate on textline records. Returns ``True`` if
     the record was consumed (no otherRequirements fallthrough)."""
@@ -466,18 +502,19 @@ def _try_classify_textline_function(record, result):
         # H1 analogues:
         #   Min -> MinRunsSinceAnyTextLines (Count = N)
         #   Max -> MaxRunsSinceAnyTextLines (Count = N)
-        textlines = _string_list(args_table.named.get("TextLines"))
+        textlines, textlines_src = _resolve_textline_arg(
+            args_table.named.get("TextLines"), game_data_lists)
         if not textlines:
             return False
         consumed = False
         min_val = args_table.named.get("Min")
         if isinstance(min_val, (int, float)):
-            _extend_requirements(result, "MinRunsSinceAnyTextLines", textlines)
+            _extend_requirements(result, "MinRunsSinceAnyTextLines", textlines, textlines_src)
             _set_count_extreme(result, "MinRunsSinceAnyTextLines", int(min_val), max)
             consumed = True
         max_val = args_table.named.get("Max")
         if isinstance(max_val, (int, float)):
-            _extend_requirements(result, "MaxRunsSinceAnyTextLines", textlines)
+            _extend_requirements(result, "MaxRunsSinceAnyTextLines", textlines, textlines_src)
             _set_count_extreme(result, "MaxRunsSinceAnyTextLines", int(max_val), min)
             consumed = True
         return consumed
@@ -492,14 +529,14 @@ def _try_classify_textline_function(record, result):
         # H1 analogues:
         #   IsAny  -> RequiredAnyQueuedTextLines
         #   IsNone -> RequiredFalseQueuedTextLines
-        is_any = _string_list(args_table.named.get("IsAny"))
-        is_none = _string_list(args_table.named.get("IsNone"))
+        is_any, is_any_src = _resolve_textline_arg(args_table.named.get("IsAny"), game_data_lists)
+        is_none, is_none_src = _resolve_textline_arg(args_table.named.get("IsNone"), game_data_lists)
         consumed = False
         if is_any:
-            _extend_requirements(result, "RequiredAnyQueuedTextLines", is_any)
+            _extend_requirements(result, "RequiredAnyQueuedTextLines", is_any, is_any_src)
             consumed = True
         if is_none:
-            _extend_requirements(result, "RequiredFalseQueuedTextLines", is_none)
+            _extend_requirements(result, "RequiredFalseQueuedTextLines", is_none, is_none_src)
             consumed = True
         return consumed
 
@@ -571,18 +608,34 @@ def _synth_other_key(normalised):
     return "Requirement"
 
 
-def _extend_requirements(result, syn_key, names):
+def _extend_requirements(result, syn_key, names, sources=None):
     """Append textline names under a synthetic key, preserving order &
     de-duplicating so multiple AND'd records into the same key compose
     cleanly (the engine reads ``valueToCheck[name]`` so duplicates are
-    no-ops; storing one copy keeps the graph clean)."""
+    no-ops; storing one copy keeps the graph clean).
+
+    ``sources`` (optional) is a per-name list aligned 1:1 with ``names``
+    naming the ``GameData.X`` list each textline was hoisted from (or
+    ``None`` for inline literals). When any name carries a non-None
+    source, a parallel ``requirementSources[syn_key]`` list is maintained
+    1:1 with the de-duplicated ``requirements[syn_key]`` so the viewer can
+    render the collapsible provenance group (mirrors H1's
+    ``requirementSources``)."""
     existing = result["requirements"].setdefault(syn_key, [])
     seen = set(existing)
-    for n in names:
+    src_map = result.get("requirementSources")
+    have_src = (src_map is not None and syn_key in src_map) or (
+        sources is not None and any(s is not None for s in sources))
+    for i, n in enumerate(names):
         if n in seen:
             continue
         seen.add(n)
         existing.append(n)
+        if have_src:
+            if src_map is None:
+                src_map = result["requirementSources"] = {}
+            src_list = src_map.setdefault(syn_key, [None] * (len(existing) - 1))
+            src_list.append(sources[i] if sources is not None and i < len(sources) else None)
 
 
 def _add_other(result, key, value):
@@ -600,8 +653,9 @@ def _add_other(result, key, value):
 def _merge(into, other):
     """Merge a nested walker result into a parent's result (used when
     expanding NamedRequirements)."""
+    other_sources = other.get("requirementSources", {})
     for syn_key, names in other["requirements"].items():
-        _extend_requirements(into, syn_key, names)
+        _extend_requirements(into, syn_key, names, other_sources.get(syn_key))
     for key, val in other["otherRequirements"].items():
         # Count-meta keys stay ``{Count: N}`` dicts, composed by their strict
         # rule - never list-wrapped (see _COUNT_META_STRICT).

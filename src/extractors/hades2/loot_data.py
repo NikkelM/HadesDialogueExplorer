@@ -121,6 +121,7 @@ def extract_loot_data(
             entry = _build_owner_entry(
                 owner_id, owner_table, source_label, source_file,
                 named_requirements=named_requirements,
+                game_data_lists=game_data_lists,
             )
             if entry is None:
                 continue
@@ -135,6 +136,7 @@ def _build_owner_entry(
     source_file: str,
     *,
     named_requirements: dict = None,
+    game_data_lists: dict = None,
 ):
     """Return the owner entry dict, or ``None`` if it has no textlines."""
     sections = extract_textline_sections(
@@ -142,6 +144,7 @@ def _build_owner_entry(
         section_keys=HADES2_TEXTLINE_SECTION_KEYS,
         default_speaker=LOOT_DEFAULT_SPEAKERS.get(owner_id),
         named_requirements=named_requirements,
+        game_data_lists=game_data_lists,
     )
     if not any(sections.values()):
         return None

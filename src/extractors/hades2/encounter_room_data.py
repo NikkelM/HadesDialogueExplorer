@@ -120,6 +120,7 @@ def extract_encounter_room_data(
                 default_speaker=default_speaker,
                 named_requirements=named_requirements,
                 force_play_once=is_inspect,
+                game_data_lists=game_data_lists,
             )
 
             # Re-route per-textline overrides onto their target owner
@@ -146,9 +147,9 @@ def extract_encounter_room_data(
             if ancestor is not None:
                 for tl_map in sections.values():
                     for tl in tl_map.values():
-                        merge_ancestor_requirements_h2(tl, ancestor, named_requirements)
+                        merge_ancestor_requirements_h2(tl, ancestor, named_requirements, game_data_lists)
                 for _override_owner, _sk, _name, tl in rerouted:
-                    merge_ancestor_requirements_h2(tl, ancestor, named_requirements)
+                    merge_ancestor_requirements_h2(tl, ancestor, named_requirements, game_data_lists)
 
             for override_owner, section_key, tl_name, tl_data in rerouted:
                 override_entry = result.setdefault(override_owner, {"source": source_label})
