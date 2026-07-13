@@ -22,7 +22,7 @@ globalThis.localStorage = {
 };
 globalThis.window = { location: { hash: '' }, addEventListener() {} };
 
-const { applyFirstVisitLanding, eligibilityRedirectTarget } = await import('../templates/viewer/navigation.js');
+const { applyFirstVisitLanding, eligibilityRedirectTarget, restoreDetailPanelFocus } = await import('../templates/viewer/navigation.js');
 
 beforeEach(() => {
     _store.clear();
@@ -59,4 +59,49 @@ test('eligibilityRedirectTarget redirects to the active dialogue when the save i
 
 test('eligibilityRedirectTarget falls back to the home state when no dialogue is active', () => {
     assert.deepEqual(eligibilityRedirectTarget(false, null), {});
+});
+
+
+// --- restoreDetailPanelFocus (WCAG 2.4.3 focus restoration) ---
+// ``selectTextline``'s full path renders live tree DOM the unit tests can't
+// stub, so the focus-restoration half is pinned here directly.
+
+test('restoreDetailPanelFocus focuses the panel heading when focus was inside the panel', () => {
+    let focused = null;
+    const heading = {
+        _attrs: {},
+        hasAttribute(a) { return a in this._attrs; },
+        setAttribute(a, v) { this._attrs[a] = v; },
+        focus() { focused = this; },
+    };
+    globalThis.document = { getElementById: (id) => (id === 'panel-info-heading' ? heading : null) };
+    try {
+        assert.equal(restoreDetailPanelFocus(true), true);
+        assert.equal(focused, heading, 'heading was focused');
+        assert.equal(heading._attrs.tabindex, '-1', 'heading made programmatically focusable');
+    } finally {
+        delete globalThis.document;
+    }
+});
+
+test('restoreDetailPanelFocus does nothing when focus was NOT inside the panel (tree/search)', () => {
+    let focused = null;
+    const heading = { hasAttribute: () => false, setAttribute() {}, focus() { focused = this; } };
+    globalThis.document = { getElementById: () => heading };
+    try {
+        assert.equal(restoreDetailPanelFocus(false), false);
+        assert.equal(focused, null, 'focus untouched for out-of-panel navigations');
+    } finally {
+        delete globalThis.document;
+    }
+});
+
+test('restoreDetailPanelFocus is a no-op (no throw) when the heading is absent', () => {
+    globalThis.document = { getElementById: () => null };
+    try {
+        assert.doesNotThrow(() => restoreDetailPanelFocus(true));
+        assert.equal(restoreDetailPanelFocus(true), false);
+    } finally {
+        delete globalThis.document;
+    }
 });

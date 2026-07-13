@@ -56,9 +56,37 @@ let _lastDialogue = null;
 // panels) for the given textline. Pure render side-effect; does not
 // touch the URL or the search box.
 export function selectTextline(name) {
+    // WCAG 2.4.3 (Focus Order): an inline link inside the details panel is the
+    // element the user activated; ``renderInfo``'s ``#info-content`` innerHTML
+    // replace below destroys it, dropping focus to <body> and losing the
+    // keyboard user's place. Capture whether focus was inside the panel BEFORE
+    // the re-render, then move it to the panel heading afterwards. Tree / search
+    // navigations focus a target OUTSIDE #info-content, so they keep their own
+    // focus (this is a no-op for them).
+    const infoContent = document.getElementById('info-content');
+    const focusWasInPanel = !!(infoContent && document.activeElement
+        && infoContent.contains(document.activeElement));
     renderInfo(name);
     renderUpstream(name);
     renderDownstream(name);
+    restoreDetailPanelFocus(focusWasInPanel);
+}
+
+// Move keyboard focus to the details-panel heading after a ``selectTextline``
+// re-render that destroyed the element the user had focused inside the panel
+// (WCAG 2.4.3). The heading (an ``<h2>``) is made programmatically focusable
+// (``tabindex="-1"``, once) so a screen reader announces "Textline Details" and
+// the user can Tab onward into the freshly-rendered content instead of being
+// dropped to the top of the document. Returns true when focus was moved.
+// Exported for tests: ``selectTextline``'s full path renders live DOM (the tree
+// panels build real elements) that the unit tests can't stub.
+export function restoreDetailPanelFocus(focusWasInPanel) {
+    if (!focusWasInPanel) return false;
+    const heading = document.getElementById('panel-info-heading');
+    if (!heading) return false;
+    if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
+    if (typeof heading.focus === 'function') heading.focus();
+    return true;
 }
 
 // Convenience entry point used by every inline ``onclick`` in the
