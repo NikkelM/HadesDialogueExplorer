@@ -395,6 +395,11 @@ def build_split(payload: dict) -> dict:
         "defaultGame": payload.get("defaultGame"),
         "defaultDialogue": payload.get("defaultDialogue", {}),
         "duplicates": payload.get("duplicates", []),
+        # Per-game data fingerprint (see the payload assembly in ``main``): lets
+        # the save-slice cache drop itself on a data-only rebuild the integer
+        # schema misses. Shipped in the meta so ``init.js`` can register it
+        # before the pre-blob early-restore runs.
+        "dataFingerprints": payload.get("dataFingerprints", {}),
         # Dialogue-localisation picker manifest. English is the inline default;
         # each other language is lazy-fetched from ``loc-<game>-<lang>.json``.
         "languages": _language_manifest(games.keys(), loc_langs),
@@ -849,6 +854,21 @@ def main(argv=None):
         },
         "gameLabels": {gid: _GAME_LABELS[gid] for gid in games_payload},
         "duplicates": duplicates,
+    }
+    # Per-game data fingerprint: a content hash of each game's serialized graph
+    # blob, so the client save-slice cache (save-parser.js) can detect a
+    # data-only rebuild the integer ``SAVE_STORAGE_SCHEMA`` misses - a new
+    # dialogue referencing a GameState path the data-driven slice prune didn't
+    # previously capture - and drop a now-stale cache instead of silently
+    # reading a false 0/absent verdict. Uses the same deterministic
+    # serialization (sort_keys + compact separators) the split build hashes for
+    # its cache-bust version, so the value is stable across identical-input
+    # builds and identical between the split and bundle outputs.
+    payload["dataFingerprints"] = {
+        gid: hashlib.sha256(
+            json.dumps(blob, separators=(",", ":"), sort_keys=True).encode("utf-8")
+        ).hexdigest()[:16]
+        for gid, blob in games_payload.items()
     }
 
     if args.mode in ("split", "all"):

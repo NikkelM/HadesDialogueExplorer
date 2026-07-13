@@ -3,7 +3,7 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame, setLocLoader, registerLocData, ensureLangLoaded, getLocData, warmLangForGames } from './data.js';
+import { loadData, resolveGame, registerGameData, registerDataFingerprints, setGameLoader, preloadGame, setLocLoader, registerLocData, ensureLangLoaded, getLocData, warmLangForGames } from './data.js';
 import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
@@ -182,6 +182,12 @@ async function boot() {
         setLocLoader((gid, lang) => fetchJson(_locFile(gid, lang)).then((blob) => registerLocData(gid, lang, blob)));
 
         const meta = await fetchJson('data.json', pre && pre.meta);
+        // Register the per-game data fingerprints before the early save restore
+        // below (``earlyRenderSaveStatus``), so a data-only rebuild the integer
+        // schema misses drops a now-stale cache instead of painting a wrong
+        // pill from it. ``loadData`` (init() further down) won't clobber this -
+        // the split init() payload omits fingerprints.
+        registerDataFingerprints(meta.dataFingerprints);
         // Decide which game to load first from the URL (shared deep links land
         // in the right game), else the build-time default.
         const want = parseUrlState(window.location.hash).game;

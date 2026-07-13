@@ -32,7 +32,7 @@ import {
     validateSaveFilename,
     getSaveContext,
 } from '../templates/viewer/save-parser.js';
-import { loadData, registerGameData } from '../templates/viewer/data.js';
+import { loadData, registerGameData, registerDataFingerprints } from '../templates/viewer/data.js';
 
 // Build an LZ4 block of `n` literal bytes (0,1,2,... mod 256), no matches.
 function literalBlock(n) {
@@ -629,6 +629,73 @@ test('restoreSaveProgress rejects a tampered gameId and returns null', () => {
         assert.equal(store.getItem('hde.save'), null);
     } finally {
         clearSaveProgress();
+        uninstallMockLocalStorage();
+    }
+});
+
+test('persist stamps the build data fingerprint and restore accepts a match', () => {
+    const store = installMockLocalStorage();
+    registerDataFingerprints({ hades2: 'fp-abc123' });
+    try {
+        clearSaveProgress();
+        parseSaveFile(buildSGB1({
+            gameVersion: GAME_VERSION_HADES2,
+            completedRuns: 2,
+            luaState: { GameState: { TextLinesRecord: { LineA01: true } } },
+        }));
+        assert.equal(persistSaveProgress('P.sav'), true);
+        const cached = JSON.parse(store.getItem('hde.save'));
+        assert.equal(cached.dataFingerprint, 'fp-abc123', 'persist stamps the current fingerprint');
+        clearSaveProgress();
+        assert.ok(restoreSaveProgress(), 'a matching fingerprint restores');
+        assert.equal(getSaveGameId(), 'hades2');
+    } finally {
+        clearSaveProgress();
+        registerDataFingerprints({});
+        uninstallMockLocalStorage();
+    }
+});
+
+test('restoreSaveProgress drops a cache whose data fingerprint no longer matches the build', () => {
+    const store = installMockLocalStorage();
+    registerDataFingerprints({ hades2: 'fp-OLD' });
+    try {
+        clearSaveProgress();
+        parseSaveFile(buildSGB1({
+            gameVersion: GAME_VERSION_HADES2,
+            luaState: { GameState: { TextLinesRecord: { LineA01: true } } },
+        }));
+        persistSaveProgress('P.sav'); // stamped with fp-OLD
+        clearSaveProgress();
+        // A data-only rebuild bumps the fingerprint without bumping the schema.
+        registerDataFingerprints({ hades2: 'fp-NEW' });
+        assert.equal(restoreSaveProgress(), null, 'mismatched fingerprint -> drop');
+        assert.equal(store.getItem('hde.save'), null, 'stale cache purged');
+    } finally {
+        clearSaveProgress();
+        registerDataFingerprints({});
+        uninstallMockLocalStorage();
+    }
+});
+
+test('restoreSaveProgress keeps a cache when the build ships no fingerprint (best-effort)', () => {
+    const store = installMockLocalStorage();
+    registerDataFingerprints({ hades2: 'fp-abc' });
+    try {
+        clearSaveProgress();
+        parseSaveFile(buildSGB1({
+            gameVersion: GAME_VERSION_HADES2,
+            luaState: { GameState: { TextLinesRecord: { LineA01: true } } },
+        }));
+        persistSaveProgress('P.sav'); // stamped fp-abc
+        clearSaveProgress();
+        // Current build exposes no fingerprint for the game (bundle / test).
+        registerDataFingerprints({});
+        assert.ok(restoreSaveProgress(), 'no expected fingerprint -> check skipped');
+        assert.equal(getSaveGameId(), 'hades2');
+    } finally {
+        clearSaveProgress();
+        registerDataFingerprints({});
         uninstallMockLocalStorage();
     }
 });

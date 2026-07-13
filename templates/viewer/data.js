@@ -27,6 +27,15 @@
 // hash key is present.
 export let games, gameIds, gameLabels, defaultGame, defaultDialogue;
 
+// Per-game data fingerprint {gameId: hash} from the build (meta payload). The
+// save-slice cache (save-parser.js) stamps the active game's fingerprint into
+// the persisted cache and drops it on mismatch, so a data-only rebuild the
+// integer ``SAVE_STORAGE_SCHEMA`` misses can't leave a stale slice yielding a
+// silently-wrong eligibility verdict. Registered early (init.js) so it's set
+// before the pre-blob save restore, and re-set by ``loadData`` for the bundle /
+// test paths.
+export let dataFingerprints = {};
+
 // Cross-game duplicate textline names. Populated once by ``loadData``
 // from the top-level ``duplicates`` array in the JSON payload. Each
 // entry is ``{name, hades1: {owner, section}, hades2: {owner, section}}``.
@@ -115,6 +124,12 @@ function _normalizePayload(DATA) {
     };
 }
 
+// Register the per-game data fingerprints early - before the pre-blob save
+// restore in the split boot - separately from the full ``loadData`` payload.
+export function registerDataFingerprints(map) {
+    if (map && typeof map === 'object') dataFingerprints = map;
+}
+
 // One-time boot. Populates the multi-game registry but does NOT pick
 // an active game - the caller (``init.js``) decides which game to
 // activate based on the URL hash, then calls ``setActiveGame``.
@@ -131,6 +146,10 @@ export function loadData(DATA) {
     defaultDialogue = norm.defaultDialogue;
     duplicates = (DATA && DATA.duplicates) || [];
     languages = (DATA && DATA.languages) || {};
+    // Only overwrite when the payload carries fingerprints (the split build's
+    // init() payload omits them - they were already registered early), so a
+    // fingerprint-less reload can't clobber the early registration.
+    if (DATA && DATA.dataFingerprints) dataFingerprints = DATA.dataFingerprints;
     // A fresh load resets the localisation registry + live overlay bindings so
     // stale language maps from a previous dataset can't leak in.
     _resetLocalizations();

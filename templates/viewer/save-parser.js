@@ -11,7 +11,7 @@
  * (MIT licensed): https://github.com/TheNormalnij/Hades-SavesExtractor
  */
 
-import { getActiveGame, games } from './data.js';
+import { getActiveGame, games, dataFingerprints } from './data.js';
 import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask } from './gamestate-eval.js';
 import { H1_GAMESTATE_SLICE_KEYS, H1_CURRENTRUN_SLICE_KEYS, collectH1GlobalRefs } from './gamestate-eval-h1.js';
 import { directSatisfaction } from './requirements.js';
@@ -1123,7 +1123,13 @@ const SAVE_STORAGE_KEY = 'hde.save';
 // per-run EnemyKills. Resolves ported H1 kill / interaction gates (RequiredKills,
 // RequiredKillsThisRun / LastRun, ...). An older cache lacks these merged fields,
 // so the bump forces a re-parse rather than silently reading 0.
-export const SAVE_STORAGE_SCHEMA = 23;
+// v24 adds a per-game data fingerprint (``dataFingerprint``) alongside ``v``:
+// the integer schema only catches slice SHAPE changes (mask code), so a
+// data-only rebuild - a new dialogue referencing a GameState path the
+// data-driven slice prune didn't previously capture - leaves ``v`` unchanged
+// yet can make the restored slice miss a now-referenced path (evaluator reads a
+// false 0/absent -> silently wrong verdict). The fingerprint drops such a cache.
+export const SAVE_STORAGE_SCHEMA = 24;
 
 // Safe accessor: localStorage is absent under Node (tests) and can throw
 // on access in sandboxed iframes or when storage is disabled.
@@ -1150,6 +1156,7 @@ export function persistSaveProgress(filename) {
   try {
     store.setItem(SAVE_STORAGE_KEY, JSON.stringify({
       v: SAVE_STORAGE_SCHEMA,
+      dataFingerprint: (_saveGameId && dataFingerprints[_saveGameId]) || null,
       gameId: _saveGameId,
       runs: _saveRuns,
       biomesMod: _saveHasBiomesMod,
@@ -1200,6 +1207,20 @@ export function restoreSaveProgress() {
 
   if (!data || data.v !== SAVE_STORAGE_SCHEMA || !Array.isArray(data.played)
       || typeof data.gameId !== 'string' || !_VALID_GAME_IDS.has(data.gameId)) {
+    _removePersistedSave(store);
+    return null;
+  }
+
+  // Data-fingerprint guard: ``data.v`` only catches slice SHAPE changes (mask
+  // code). A data-only rebuild can leave ``v`` unchanged yet make the pruned
+  // slice miss a now-referenced GameState path, so the evaluator would read a
+  // false 0/absent and show a silently-wrong verdict. Drop the cache when this
+  // build's per-game fingerprint no longer matches the persisted one, forcing a
+  // re-parse. Skipped when either side lacks a fingerprint (a bundle / test
+  // build that shipped none) - best-effort, as before this guard existed.
+  const expectedFingerprint = dataFingerprints[data.gameId];
+  if (expectedFingerprint && typeof data.dataFingerprint === 'string'
+      && data.dataFingerprint !== expectedFingerprint) {
     _removePersistedSave(store);
     return null;
   }
