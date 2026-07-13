@@ -281,6 +281,53 @@ def apply_cue_comment_texts(textlines: dict, comment_map: dict) -> None:
                 _fill(variant.get("endLines"))
 
 
+def drop_textless_end_cues(textlines: dict) -> int:
+    """Remove cue-only closing voicelines that carry no subtitle text, in place.
+
+    After :func:`apply_cue_comment_texts` (dev-comment + subtitle-CSV fallback)
+    has had every chance to recover a subtitle, an ``endLines`` entry that still
+    has a ``cue`` but no ``text`` - and no condition group - is an audio-only
+    *sound* cue (e.g. Cerberus's ``CerberusWhineSad`` whimper), not a spoken
+    closing line; showing it as a bare cue chip is misleading. Drop such entries.
+    When a textline's ``endLines`` becomes empty it is removed entirely, matching
+    the convention that textlines with no closing voiceline omit the key. Returns
+    the number of entries dropped.
+    """
+    dropped = 0
+
+    def _keep(entry) -> bool:
+        if not isinstance(entry, dict):
+            return True
+        if entry.get("text"):
+            return True
+        # A conditional closing group still carries display info without text.
+        if entry.get("requirements") or entry.get("otherRequirements") or entry.get("condGroup"):
+            return True
+        # A pure ``{cue, speaker}`` audio cue has nothing to show.
+        return not entry.get("cue")
+
+    def _filter(container):
+        nonlocal dropped
+        end_lines = container.get("endLines")
+        if not end_lines:
+            return
+        kept = [e for e in end_lines if _keep(e)]
+        dropped += len(end_lines) - len(kept)
+        if kept:
+            container["endLines"] = kept
+        else:
+            container.pop("endLines", None)
+
+    for tl in textlines.values():
+        if not isinstance(tl, dict):
+            continue
+        _filter(tl)
+        for variant in tl.get("variants") or []:
+            if isinstance(variant, dict):
+                _filter(variant)
+    return dropped
+
+
 # A cue entry is a table carrying an inline ``Cue`` and/or ``Text``.
 _NUM_KEY_RE = re.compile(r"^\d+$")
 

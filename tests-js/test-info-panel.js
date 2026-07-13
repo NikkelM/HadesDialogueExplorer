@@ -1870,7 +1870,8 @@ test('closing voicelines (endLines) render speaker-prefixed after the main dialo
         endLines: [
             // Resolved-from-comment: subtitle text plus the cue id for provenance.
             { speaker: 'CharProtag', cue: 'ZagreusHome_2389', text: 'The job\u2019s number one perk... no thanks.' },
-            // Non-subtitled audio cue (no text) -> muted cue chip.
+            // Non-subtitled audio cue (no text): dropped at build time, so the
+            // renderer emits nothing for it (no bare cue chip).
             { speaker: 'NPC_Cerberus_01', cue: 'CerberusWhineSad' },
         ],
         requirements: {},
@@ -1884,8 +1885,10 @@ test('closing voicelines (endLines) render speaker-prefixed after the main dialo
     assert.match(lastHtml, /<div class="dialogue-line end-line">.*The job\u2019s number one perk\.\.\. no thanks\.<\/div>/);
     // No cue-id glyph / provenance marker is shown for resolved lines.
     assert.doesNotMatch(lastHtml, /ZagreusHome_2389/);
-    // A non-subtitled audio cue shows the trimmed cue id as a muted chip.
-    assert.match(lastHtml, /<code class="end-line-cue"[^>]*>CerberusWhineSad<\/code>/);
+    // A non-subtitled audio cue renders nothing (no muted cue chip): text-less
+    // closing lines are removed at build time, so the viewer never shows them.
+    assert.doesNotMatch(lastHtml, /CerberusWhineSad/);
+    assert.doesNotMatch(lastHtml, /end-line-cue/);
 });
 
 

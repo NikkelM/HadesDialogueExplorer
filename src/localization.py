@@ -26,6 +26,7 @@ Generated locally (the game text folders are not available in CI) into
 
 from __future__ import annotations
 
+import csv
 import json
 import re
 from pathlib import Path
@@ -39,9 +40,18 @@ _ESCAPED_PUNCT_RE = re.compile(r"\\([\[\]{}])")
 _WS_RE = re.compile(r"\s+")
 
 _ID_RE = re.compile(r'^\s*Id\s*=\s*"((?:[^"\\]|\\.)*)"')
-_DISPLAY_NAME_RE = re.compile(r'^\s*DisplayName\s*=\s*"((?:[^"\\]|\\.)*)"')
-_DESCRIPTION_RE = re.compile(r'^\s*Description\s*=\s*"((?:[^"\\]|\\.)*)"')
 _INHERIT_RE = re.compile(r'^\s*InheritFrom\s*=\s*"((?:[^"\\]|\\.)*)"')
+
+# The value-bearing text fields; ``_read_quoted_value`` parses whatever follows
+# ``= `` (group 2), which SGG writes in several forms the naive per-line
+# ``"..."`` regex mishandles: a plain ``"..."``; a value spanning several
+# physical lines (a real newline mid-string, so the closing ``"`` is on a later
+# line); and a TRIPLE-quoted ``"""..."""`` block (used when the value contains
+# literal double quotes - common in the it / pl / es / pt-BR quotations - which
+# may itself span lines). All three previously dropped the translation, sending
+# the cue to its English fallback.
+_FIELD_OPEN_RE = re.compile(r'^\s*(DisplayName|Description)\s*=\s*(.*)$')
+_TRIPLE_CLOSE_RE = re.compile(r'^(.*)"""\s*$')
 
 # The dialogue-bearing sjson prefixes (per language). HelpText / MiscText /
 # ScreenText are read separately (speaker names + choice/offer labels).
@@ -107,38 +117,104 @@ def _clean(raw: str) -> str:
     return _WS_RE.sub(" ", s).strip()
 
 
+def _find_closing_quote(s: str) -> int | None:
+    """Index of the first unescaped ``"`` in ``s`` (the close of a normal SGG
+    string), or ``None`` when the string continues onto the next physical line
+    (a value with a real newline mid-string). ``\\`` escapes the next char."""
+    j, length = 0, len(s)
+    while j < length:
+        c = s[j]
+        if c == "\\":
+            j += 2
+            continue
+        if c == '"':
+            return j
+        j += 1
+    return None
+
+
+def _read_quoted_value(rest: str, lines: list[str], i: int) -> tuple[str | None, int]:
+    """Parse a (possibly multi-line) SGG string value that begins at ``rest``
+    (the text after ``Field = `` on ``lines[i]``). Handles the normal
+    double-quoted form and the triple-double-quoted form (used when the value
+    contains literal double quotes); either may span several physical lines.
+    Returns ``(raw_value, next_i)`` - ``raw_value`` is ``None`` when ``rest`` is
+    not a quoted value (e.g. a bare number / reference), leaving the caller to
+    skip it. The value is returned raw (escapes intact) so ``InheritFrom``
+    resolution and ``_clean`` run identically to the single-line path."""
+    n = len(lines)
+    if rest.startswith('"""'):
+        body = rest[3:]
+        cm = _TRIPLE_CLOSE_RE.match(body)
+        if cm is not None:
+            return cm.group(1), i + 1
+        parts = [body]
+        i += 1
+        while i < n:
+            cm = _TRIPLE_CLOSE_RE.match(lines[i])
+            if cm is not None:
+                parts.append(cm.group(1))
+                return "\n".join(parts), i + 1
+            parts.append(lines[i])
+            i += 1
+        return "\n".join(parts), i
+    if rest.startswith('"'):
+        body = rest[1:]
+        end = _find_closing_quote(body)
+        if end is not None:
+            return body[:end], i + 1
+        parts = [body]
+        i += 1
+        while i < n:
+            end = _find_closing_quote(lines[i])
+            if end is not None:
+                parts.append(lines[i][:end])
+                return "\n".join(parts), i + 1
+            parts.append(lines[i])
+            i += 1
+        return "\n".join(parts), i
+    return None, i + 1
+
+
 def read_sjson_maps(path: Path) -> tuple[dict, dict, dict]:
     """Scan one sjson text file, returning ``(raw_display, raw_desc, inherit)``.
 
     Entries list ``Id`` first, then ``DisplayName`` / ``Description`` /
     ``InheritFrom`` within the block, so the most-recent ``Id`` owns them. Values
     are the *raw* (un-cleaned) capture so ``InheritFrom`` can be resolved before
-    cleaning. The first definition of an id wins.
+    cleaning. The first definition of an id wins. ``DisplayName`` / ``Description``
+    values are read via :func:`_read_quoted_value`, which follows multi-line and
+    triple-quoted strings the naive per-line regex would drop.
     """
     raw_display: dict = {}
     raw_desc: dict = {}
     inherit: dict = {}
     if not path.exists():
         return raw_display, raw_desc, inherit
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     pending = None
-    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+    i, n = 0, len(lines)
+    while i < n:
+        line = lines[i]
         m = _ID_RE.match(line)
         if m:
             pending = m.group(1)
+            i += 1
             continue
         if pending is None:
+            i += 1
             continue
-        m = _DISPLAY_NAME_RE.match(line)
+        m = _FIELD_OPEN_RE.match(line)
         if m:
-            raw_display.setdefault(pending, m.group(1))
-            continue
-        m = _DESCRIPTION_RE.match(line)
-        if m:
-            raw_desc.setdefault(pending, m.group(1))
+            value, i = _read_quoted_value(m.group(2), lines, i)
+            if value is not None:
+                target = raw_display if m.group(1) == "DisplayName" else raw_desc
+                target.setdefault(pending, value)
             continue
         m = _INHERIT_RE.match(line)
         if m:
             inherit.setdefault(pending, m.group(1))
+        i += 1
     return raw_display, raw_desc, inherit
 
 
@@ -282,6 +358,45 @@ def _localise_speakers(speakers_en: dict, display: dict, desc: dict) -> dict:
     return out
 
 
+# Column indices in the Hades 1 subtitle CSVs (see ``read_subtitles_map``):
+# ``Status, IdPrefix, IdNumber, FullId, _, _, _, Line, ...``.
+_CSV_CUE_COL = 3
+_CSV_LINE_COL = 7
+
+
+def read_subtitles_map(subtitles_lang_dir: Path) -> dict:
+    """Parse a language's Hades 1 voiceline subtitle CSVs into ``{cueId: line}``.
+
+    Hades 1 ships per-speaker voiceline subtitles as CSV files under
+    ``Content/Subtitles/<lang>/`` - a SEPARATE, more complete source than the
+    ``Game/Text/<lang>/*.sjson`` dialogue text: it covers the spoken lines the
+    sjson omits (closing / end voicelines, "played"-gate quotes, barks and
+    alternate takes), keyed by the same cue id. Each data row is
+    ``Status, IdPrefix, IdNumber, FullId, _, _, _, Line, ...`` (a header row and
+    ``Unused`` rows with a blank Line are skipped). Values are cleaned like the
+    sjson subtitles. Hades 2 has no such directory, so this returns ``{}`` there.
+    """
+    out: dict = {}
+    if not subtitles_lang_dir.exists():
+        return out
+    for path in sorted(subtitles_lang_dir.glob("*.csv")):
+        try:
+            with open(path, encoding="utf-8", errors="replace", newline="") as fh:
+                for row in csv.reader(fh):
+                    if len(row) <= _CSV_LINE_COL:
+                        continue
+                    cue = row[_CSV_CUE_COL].strip()
+                    raw = row[_CSV_LINE_COL]
+                    if not cue or not raw:
+                        continue
+                    cleaned = _clean(raw)
+                    if cleaned:
+                        out.setdefault(cue, cleaned)
+        except OSError:
+            continue
+    return out
+
+
 def build_localization(text_root: Path, output_dir: Path, game: str,
                        output_files: list[Path], speakers_en: dict) -> list[str]:
     """Generate ``loc-<game>-<lang>.json`` for every non-English language.
@@ -290,16 +405,24 @@ def build_localization(text_root: Path, output_dir: Path, game: str,
     """
     text_ids, _speaker_ids = collect_used_ids(output_files)
     langs = available_languages(text_root)
+    # Hades 1 voiceline subtitle CSVs live at ``Content/Subtitles`` (a sibling of
+    # ``Content/Game``); ``text_root`` is ``Content/Game/Text``. Absent for H2.
+    subtitles_root = text_root.parent.parent / "Subtitles"
     written = []
     for lang in langs:
         display, desc = _read_lang_text_map(_lang_dir(text_root, lang))
         if not display:
             continue
-        # Drop ids whose translation cleaned to empty (blank / pure-markup
-        # subtitles in this language): an empty value would otherwise render as
-        # a blank line in the viewer instead of falling back to the English
-        # text. Absent == untranslated == English fallback (+ the EN marker).
-        text_map = {tid: display[tid] for tid in text_ids if display.get(tid)}
+        # The subtitle CSVs fill referenced cues the dialogue sjson lacks (H1
+        # closing voicelines, played-gate quotes, barks). Prefer the sjson
+        # translation, fall back to the CSV; both are dropped when empty (an
+        # empty value would render blank instead of falling back to English).
+        csv_map = read_subtitles_map(subtitles_root / lang)
+        text_map = {}
+        for tid in text_ids:
+            value = display.get(tid) or csv_map.get(tid)
+            if value:
+                text_map[tid] = value
         speakers = _localise_speakers(speakers_en, display, desc)
         payload = {"lang": lang, "text": text_map, "speakers": speakers}
         out_path = output_dir / f"loc-{game}-{lang}.json"

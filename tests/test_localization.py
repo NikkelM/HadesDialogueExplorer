@@ -77,6 +77,84 @@ def test_read_sjson_maps_missing_file_is_empty(tmp_path):
     assert display == {} and desc == {} and inherit == {}
 
 
+_SJSON_TRIPLE = (
+    '{\n  Texts = [\n'
+    '    {\n      Id = "Quoted_01"\n'
+    '      DisplayName = """Perché del \\"nanerottolo\\" mi ferisce. È alto quanto me!"""\n'
+    '    }\n'
+    '    {\n      Id = "Multi_01"\n'
+    '      DisplayName = """Prima riga\n      seconda riga"""\n'
+    '    }\n'
+    '    {\n      Id = "Normal_01"\n'
+    '      DisplayName = "plain value"\n'
+    '    }\n'
+    '  ]\n}\n'
+)
+
+
+def test_read_sjson_maps_captures_triple_quoted_values(tmp_path):
+    """SJSON wraps values containing literal double quotes (or spanning lines) in
+    triple quotes; the single-quote regex would capture an empty string and drop
+    the translation, so these must be recovered (raw, escapes intact)."""
+    p = _write(tmp_path, "_EnemyData.it.sjson", _SJSON_TRIPLE)
+    display, _desc, _inh = loc.read_sjson_maps(p)
+    # Single-line triple-quote: inner escaped quotes preserved in the raw capture.
+    assert display["Quoted_01"] == r'Perché del \"nanerottolo\" mi ferisce. È alto quanto me!'
+    # Multi-line triple-quote: body accumulated across lines.
+    assert display["Multi_01"] == "Prima riga\n      seconda riga"
+    # Normal single-quoted values still work.
+    assert display["Normal_01"] == "plain value"
+
+
+def test_read_lang_text_map_cleans_triple_quoted_values(tmp_path):
+    """End-to-end: cleaning unescapes the inner ``\\"`` and folds the multi-line
+    body to a single space, so the surfaced translation reads naturally."""
+    lang_dir = tmp_path / "it"
+    lang_dir.mkdir()
+    _write(lang_dir, "_EnemyData.it.sjson", _SJSON_TRIPLE)
+    display, _desc = loc._read_lang_text_map(lang_dir)
+    assert display["Quoted_01"] == 'Perché del "nanerottolo" mi ferisce. È alto quanto me!'
+    assert display["Multi_01"] == "Prima riga seconda riga"
+
+
+_SJSON_MULTILINE_NORMAL = (
+    '{\n  Texts = [\n'
+    '    {\n      Id = "Wrapped_01"\n'
+    '      DisplayName = "Boss, maybe you thought: {#Italic}Hermes is fast!\n'
+    '      {#Prev}I cannot tell you. But know this: I am never late."\n'
+    '    }\n'
+    '    {\n      Id = "After_01"\n'
+    '      DisplayName = "next entry"\n'
+    '    }\n'
+    '  ]\n}\n'
+)
+
+
+def test_read_sjson_maps_reads_multiline_normal_string(tmp_path):
+    """A normal (single-``"``) value can span physical lines - the closing quote
+    is on a later line. The naive per-line regex drops it (no closing ``"`` on
+    the opening line); the value must be accumulated across lines, and the entry
+    after it must still be read correctly."""
+    p = _write(tmp_path, "_LootData.ru.sjson", _SJSON_MULTILINE_NORMAL)
+    display, _desc, _inh = loc.read_sjson_maps(p)
+    assert display["Wrapped_01"] == (
+        'Boss, maybe you thought: {#Italic}Hermes is fast!\n'
+        '      {#Prev}I cannot tell you. But know this: I am never late.'
+    )
+    # Parsing the multi-line value must not swallow the following entry.
+    assert display["After_01"] == "next entry"
+
+
+def test_read_lang_text_map_cleans_multiline_normal_string(tmp_path):
+    """Cleaning folds the real newline (and the leading indent) to one space and
+    strips the format tags, matching how the English inline line renders."""
+    lang_dir = tmp_path / "ru"
+    lang_dir.mkdir()
+    _write(lang_dir, "_LootData.ru.sjson", _SJSON_MULTILINE_NORMAL)
+    display, _desc = loc._read_lang_text_map(lang_dir)
+    assert display["Wrapped_01"] == "Boss, maybe you thought: Hermes is fast! I cannot tell you. But know this: I am never late."
+
+
 def test_read_lang_text_map_resolves_inherit_and_cleans(tmp_path):
     lang_dir = tmp_path / "de"
     lang_dir.mkdir()
@@ -274,3 +352,80 @@ def test_build_localization_drops_empty_translations(tmp_path):
     payload = json.loads((out_dir / "loc-hades1-de.json").read_text(encoding="utf-8"))
     # Only the non-empty translation survives; empty + pure-markup are dropped.
     assert payload["text"] == {"Real_0001": "Echt."}
+
+
+# --- Hades 1 subtitle CSVs ------------------------------------------
+
+def test_read_subtitles_map_parses_cue_lines(tmp_path):
+    d = tmp_path / "ru"
+    d.mkdir()
+    # Header row, a real line, an Unused (blank Line) row, and a tagged line.
+    csv_text = (
+        '"Speaker","ID","ID","ID","","","","Line","","",""\n'
+        '"Integrated","HadesField_","0584","HadesField_0584","","","","Do not be prideful, boy.","","",""\n'
+        '"Unused","HadesField_","0007","HadesField_0007","","","","","","",""\n'
+        '"Darren","Hades_","0002","Hades_0002","","","","{#Prev}Hello there","","",""\n'
+    )
+    (d / "HadesField.csv").write_text(csv_text, encoding="utf-8")
+    m = loc.read_subtitles_map(d)
+    assert m["HadesField_0584"] == "Do not be prideful, boy."
+    assert "HadesField_0007" not in m           # Unused / blank Line is skipped
+    assert m["Hades_0002"] == "Hello there"     # runtime tag stripped by _clean
+    # A missing directory (e.g. Hades 2, which has no Subtitles) yields {}.
+    assert loc.read_subtitles_map(tmp_path / "nope") == {}
+
+
+def test_build_localization_fills_missing_cues_from_subtitles_csv(tmp_path):
+    # The subtitle CSV supplies a referenced cue the dialogue sjson lacks (the
+    # closing / played-gate voicelines that only live in Content/Subtitles).
+    content = tmp_path / "Content"
+    text_root = content / "Game" / "Text"
+    de = text_root / "de"
+    de.mkdir(parents=True)
+    (text_root / "en").mkdir()
+    _write(de, "_NPCData.de.sjson", _SJSON)  # sjson translates Hades_0089
+    sub_de = content / "Subtitles" / "de"
+    sub_de.mkdir(parents=True)
+    (sub_de / "Hades.csv").write_text(
+        '"Speaker","ID","ID","ID","","","","Line","","",""\n'
+        '"Integrated","Hades_","1101","Hades_1101","","","","Nur aus dem Untergrund.","","",""\n',
+        encoding="utf-8")
+    out_dir = tmp_path / "out"
+    out_dir.mkdir()
+    graph = {"textlines": {"A": {"dialogueLines": [
+        {"speaker": "NPC_Hades_01", "text": "Go.", "cue": "Hades_0089"},
+        {"speaker": "NPC_Hades_01", "text": "Only from below.", "cue": "Hades_1101"}]}}}
+    gf = out_dir / "hades1_npc.json"
+    gf.write_text(json.dumps(graph), encoding="utf-8")
+
+    written = loc.build_localization(text_root, out_dir, "hades1", [gf], {"NPC_Hades_01": {"name": "Hades"}})
+    assert written == ["de"]
+    payload = json.loads((out_dir / "loc-hades1-de.json").read_text(encoding="utf-8"))
+    # The sjson cue AND the CSV-filled cue are both translated.
+    assert payload["text"]["Hades_0089"] == "Geh nur."       # from sjson
+    assert payload["text"]["Hades_1101"] == "Nur aus dem Untergrund."  # from CSV
+
+
+def test_build_localization_prefers_sjson_over_csv(tmp_path):
+    # When both sources translate a cue, the sjson wins (it's what we've always
+    # shipped and matches the inline English); the CSV only fills gaps.
+    content = tmp_path / "Content"
+    text_root = content / "Game" / "Text"
+    de = text_root / "de"
+    de.mkdir(parents=True)
+    (text_root / "en").mkdir()
+    _write(de, "_NPCData.de.sjson", _SJSON)  # Hades_0089 -> "Geh nur."
+    sub_de = content / "Subtitles" / "de"
+    sub_de.mkdir(parents=True)
+    (sub_de / "Hades.csv").write_text(
+        '"Integrated","Hades_","0089","Hades_0089","","","","CSV-Variante.","","",""\n',
+        encoding="utf-8")
+    out_dir = tmp_path / "out"
+    out_dir.mkdir()
+    graph = {"textlines": {"A": {"dialogueLines": [
+        {"speaker": "NPC_Hades_01", "text": "Go.", "cue": "Hades_0089"}]}}}
+    gf = out_dir / "hades1_npc.json"
+    gf.write_text(json.dumps(graph), encoding="utf-8")
+    loc.build_localization(text_root, out_dir, "hades1", [gf], {"NPC_Hades_01": {"name": "Hades"}})
+    payload = json.loads((out_dir / "loc-hades1-de.json").read_text(encoding="utf-8"))
+    assert payload["text"]["Hades_0089"] == "Geh nur."  # sjson, not "CSV-Variante."

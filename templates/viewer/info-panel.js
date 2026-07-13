@@ -2412,20 +2412,15 @@ function _renderEndLinesHtml(endLines) {
     return html;
 }
 
-// One closing line: speaker prefix + subtitle text, or a muted cue chip when the
-// line has no subtitle.
+// One closing line: speaker prefix + subtitle text. Closing voicelines with no
+// subtitle (audio-only sound cues, e.g. CerberusWhineSad) are dropped at build
+// time by drop_textless_end_cues, so a text-less line renders nothing here.
 function _renderEndLineHtml(line) {
+    if (!line.text) return '';
     const speaker = line.speaker
         ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
         : '';
-    if (line.text) {
-        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
-    }
-    if (line.cue) {
-        return `<div class="dialogue-line end-line">${speaker}`
-            + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
-    }
-    return '';
+    return `<div class="dialogue-line end-line">${speaker}${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
 }
 
 // The "only plays when ..." note heading a conditional closing-line group,

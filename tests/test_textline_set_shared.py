@@ -463,6 +463,89 @@ def test_cue_comment_map_recovers_subtitles_from_source_comments():
     assert "text" not in el[2]  # no comment for a non-/VO/ sound cue
 
 
+def test_cue_comment_map_misses_cue_with_intervening_property_line():
+    """The ``--`` heuristic only reads the line directly above the ``EndCue``,
+    so a cue with an intervening property line (e.g. ``EndWait``) is missed -
+    this is the gap the en-subtitle-CSV fallback in generate_source fills."""
+    from src.extractors.textline_set import build_cue_comment_map
+    source = '\n'.join([
+        '    AchillesGrantsCodex = {',
+        "        -- I'm grateful.",
+        '        EndWait = 0.45,',
+        '        EndCue = "/VO/ZagreusHome_0329",',
+        '    },',
+    ])
+    cmap = build_cue_comment_map(source)
+    assert "ZagreusHome_0329" not in cmap
+
+
+def test_en_subtitle_fallback_fills_missed_end_cue_via_apply():
+    """generate_source applies ``apply_cue_comment_texts`` a second time with the
+    shipped English voiceline subtitle map as a fallback: it fills end cues the
+    ``--`` comment pass missed, keeps comment-recovered text (comment-first
+    precedence), and leaves genuinely audio-only barks (absent from the map) as
+    bare cue chips."""
+    from src.extractors.textline_set import apply_cue_comment_texts
+    textlines = {
+        "AchillesGrantsCodex": {"endLines": [
+            {"speaker": "CharProtag", "cue": "ZagreusHome_0329"},
+        ]},
+        "CerberusGift06": {"endLines": [
+            {"speaker": "NPC_Cerberus_01", "cue": "CerberusWhineSad"},
+        ]},
+        "Foo01": {"endLines": [
+            {"speaker": "CharProtag", "cue": "ZagreusHome_2389", "text": "From the dev comment."},
+        ]},
+    }
+    en_subtitles = {
+        "ZagreusHome_0329": "I'm grateful.",
+        "ZagreusHome_2389": "A different subtitle text.",
+        # CerberusWhineSad deliberately absent (audio-only bark).
+    }
+    apply_cue_comment_texts(textlines, en_subtitles)
+    assert textlines["AchillesGrantsCodex"]["endLines"][0]["text"] == "I'm grateful."
+    assert "text" not in textlines["CerberusGift06"]["endLines"][0]
+    # Comment-first: the earlier comment pass already set this, so the CSV
+    # fallback must not overwrite it.
+    assert textlines["Foo01"]["endLines"][0]["text"] == "From the dev comment."
+
+
+def test_drop_textless_end_cues_removes_audio_only_closing_lines():
+    """A cue-only closing voiceline with no subtitle text (an audio-only sound
+    cue such as CerberusWhineSad) is dropped; when it was the textline's only end
+    line, the ``endLines`` key is removed entirely (matching the convention that
+    textlines with no closing voiceline omit the key)."""
+    from src.extractors.textline_set import drop_textless_end_cues
+    textlines = {
+        # Only end line is the audio-only bark -> key removed.
+        "CerberusGift06": {
+            "dialogueLines": [{"cue": "ZagreusHome_2849", "speaker": "CharProtag", "text": "..."}],
+            "endLines": [{"speaker": "NPC_Cerberus_01", "cue": "CerberusWhineSad"}],
+        },
+        # Mixed: the text-less cue is dropped, the spoken line stays.
+        "Mixed01": {"endLines": [
+            {"speaker": "NPC_X", "cue": "Bark_01"},
+            {"speaker": "NPC_X", "cue": "Real_01", "text": "A real closing line."},
+        ]},
+        # A conditional closing group without inline text is kept (it still shows
+        # its condition + cue).
+        "Cond01": {"endLines": [
+            {"speaker": "NPC_X", "cue": "Cond_01", "requirements": {"RequiredTextLines": ["Y"]}},
+        ]},
+        # Variant end lines are filtered too.
+        "Variant01": {"variants": [
+            {"endLines": [{"speaker": "NPC_X", "cue": "VBark_01"}]},
+        ]},
+    }
+    dropped = drop_textless_end_cues(textlines)
+    assert dropped == 3
+    assert "endLines" not in textlines["CerberusGift06"]
+    assert textlines["CerberusGift06"]["dialogueLines"]  # dialogue untouched
+    assert [e["cue"] for e in textlines["Mixed01"]["endLines"]] == ["Real_01"]
+    assert textlines["Cond01"]["endLines"][0]["cue"] == "Cond_01"  # kept
+    assert "endLines" not in textlines["Variant01"]["variants"][0]
+
+
 def test_h2_cue_text_map_recovers_inline_text():
     from src.extractors.textline_set import build_h2_cue_text_map
     source = '\n'.join([
