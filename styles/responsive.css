@@ -582,9 +582,7 @@
  * The desktop footer is a single ``1fr auto 1fr`` row (copyright | disclaimer |
  * links). At tablet width and below the three items no longer share that row
  * comfortably (the copyright starts wrapping while the links stay put), so
- * stack them in a centred column instead. Asymmetric right padding (4rem) keeps
- * the centred content clear of the bottom-right help FAB, exactly as the
- * desktop links' right margin does.
+ * stack them in a centred column instead.
  * ==================================================================== */
 @media (max-width: 1024px) {
     .site-footer {
@@ -594,17 +592,27 @@
             "links"
             "disclaimer";
         justify-items: center;
-        row-gap: 4px;
-        padding: 8px 4rem 8px 20px;
+        row-gap: 10px;
+        padding: 8px 20px;
     }
     .site-footer-copy,
-    .site-footer-links,
     .site-footer-disclaimer {
         justify-self: center;
         text-align: center;
     }
+    /* Fill the column and centre the links row so every item - including the
+       Replay Tutorials link - stays on screen and centres. Wrapping is enabled
+       only here (mobile), where the footer is stacked and full-width, so the
+       widest item drops onto its own centred line on narrow phones instead of
+       overflowing off the right edge; desktop keeps them on one line. The 10px
+       flex row-gap (for the wrapped line) matches the 10px grid row-gap
+       above/below, so a wrapped item is evenly spaced. */
     .site-footer-links {
-        margin-right: 0;
+        justify-self: stretch;
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+        row-gap: 10px;
     }
 }
 

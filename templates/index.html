@@ -226,10 +226,11 @@
     <span class="site-footer-copy">&copy; <span data-current-year>2026</span> Nikkel Mollenhauer</span>
     <div class="site-footer-disclaimer">Built with the assistance of generative AI. All game content belongs to Supergiant Games. Anonymous, aggregate usage statistics are collected; saves are never uploaded.</div>
     <span class="site-footer-links">
-        <a href="https://github.com/NikkelM" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/NikkelM/HadesDialogueExplorer" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.linkedin.com/in/nikkel-mollenhauer/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="https://nikkelm.dev/contact" target="_blank" rel="noopener noreferrer">Contact</a>
         <a href="https://ko-fi.com/nikkelm" target="_blank" rel="noopener noreferrer">Support</a>
+        <a onclick="replayTours()">Replay Tutorials</a>
     </span>
 </footer>
 <script>
@@ -240,26 +241,6 @@
     if (y) y.textContent = String(new Date().getFullYear());
 })();
 </script>
-<!-- Floating help menu (wired in init.js / fab-menu.js). The "?" toggle folds
-     out two action bubbles upward - replay the tutorials and open the GitHub
-     repo - and turns into an X while open. Floating rather than in the header
-     so it doesn't disturb the header's packed, responsive layout. -->
-<div id="fab-menu" class="fab-menu">
-    <a id="fab-github" class="fab-action" href="https://github.com/NikkelM/HadesDialogueExplorer"
-       target="_blank" rel="noopener noreferrer" tabindex="-1"
-       aria-label="Open the GitHub repository" data-tooltip="View on GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-    </a>
-    <button id="fab-tour" class="fab-action" type="button" tabindex="-1"
-            aria-label="Replay the tutorials" data-tooltip="Replay the tutorials">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-    </button>
-    <button id="tour-help" class="tour-help-btn" type="button"
-            aria-label="Open help menu" aria-expanded="false" aria-controls="fab-tour fab-github"
-            data-tooltip="Help &amp; links">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-    </button>
-</div>
 <script>
 // Pre-paint fixup: now that the panel + search DOM exists, mirror what
 // applyState/applyLayoutMode (navigation.js) will render so a deep link shows

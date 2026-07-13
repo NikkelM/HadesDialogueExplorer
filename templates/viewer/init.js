@@ -17,8 +17,7 @@ import { initResizePanels, resetPanels } from './resize-panels.js';
 import { initMobileAccordion } from './mobile-accordion.js';
 import { initTreeScrollShadow } from './tree-scroll-shadow.js';
 import { initTreeDragScroll } from './tree-drag-scroll.js';
-import { replayTours, setReplayDispatcher } from './tours.js';
-import { initFabMenu } from './fab-menu.js';
+import { setReplayDispatcher } from './tours.js';
 import { startDialogueTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
@@ -86,13 +85,11 @@ function init(data) {
     // the status badges (this listener is registered after forceRefresh, so it
     // runs second on the same event).
     window.addEventListener('save-loaded', maybeStartSaveCallout);
-    // The floating "?" control folds out a help menu; one bubble re-runs the
-    // onboarding tour for the current view, another links to GitHub.
-    initFabMenu(replayTours);
-    // Onboarding: the replay control re-runs the tour matching the current
-    // view. The per-view tours auto-start (once) from their own render hooks
-    // in applyState, so first-time visitors are covered whether they land on
-    // the bare page or arrive via a deep link.
+    // Onboarding: the replay control (the footer "Replay Tutorials" link, which
+    // fires ``replayTours()`` via inline onclick) re-runs the tour matching the
+    // current view. The per-view tours auto-start (once) from their own render
+    // hooks in applyState, so first-time visitors are covered whether they land
+    // on the bare page or arrive via a deep link.
     setReplayDispatcher(() => {
         const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
         if (view === 'speaker') startSpeakerTourReplay();

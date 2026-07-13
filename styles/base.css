@@ -550,12 +550,9 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
    viewport bottom for short content. A single row: copyright (left),
    disclaimer (page-centred), links (right). The three columns are a
    ``1fr auto 1fr`` grid so the disclaimer stays centred on the page regardless
-   of the differing side widths; the links carry their own right margin to clear
-   the floating help FAB (40px + 14px) rather than padding the whole footer,
-   which would push the disclaimer off-centre. The row is only one line tall, but
-   the footer is sized to fully contain that bottom-right FAB with even
-   breathing room: 40px FAB + 2x12px clearance = 64px min-height (see tour.css).
-   Mobile stacks these (see responsive.css). */
+   of the differing side widths. The row is only one line tall; the 64px
+   min-height gives the row comfortable breathing room. Mobile stacks these
+   (see responsive.css). */
 .site-footer {
     flex-shrink: 0;
     border-top: 1px solid var(--border);
@@ -578,16 +575,16 @@ body.layout-speaker #info-content .panel-skeleton { padding-top: 0.5rem; }
 .site-footer-links {
     grid-area: links;
     justify-self: end;
-    /* Clear the floating bottom-right help FAB (40px + 14px offset) so the links
-       aren't overlapped by it, without padding the whole footer (which would
-       shift the centred disclaimer). */
-    margin-right: calc(4rem - 20px);
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
     gap: 20px;
 }
 .site-footer-links a {
     color: var(--text-muted);
     text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
     transition: color 0.12s ease;
 }
 .site-footer-links a:hover {
