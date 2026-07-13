@@ -12,7 +12,7 @@
 // substring) is enough to produce intuitive ordering for the few
 // dozen names per game.
 
-import { speakers } from './data.js';
+import { speakers, getBaseSpeakers } from './data.js';
 import { passesSpeakerFilters } from './query-filters.js';
 import { listCanonicalSpeakerIds, speakerGroupMembers } from './speaker-groups.js';
 
@@ -50,6 +50,7 @@ export function tokeniseSpeakerId(id) {
 // search for the friendly name (``Hermes``).
 export function buildSpeakerIndex() {
     speakerIndex = [];
+    const base = getBaseSpeakers();
     for (const id of listCanonicalSpeakerIds()) {
         const entry = speakers[id] || {};
         const friendly = entry.name || id;
@@ -57,6 +58,12 @@ export function buildSpeakerIndex() {
         const idLower = id.toLowerCase();
         const tokens = new Set([
             ...tokeniseSpeakerLabel(friendly),
+            // The English BASE name (language-neutral) so a speaker stays
+            // findable by its English/Greek name under a non-English UI - the
+            // localised overlay would otherwise be the only searchable label
+            // (e.g. Melinoe / Selene / the Fates would vanish from search).
+            // Mirrors buildOtherSpeakerIndex (search-cross-game.js).
+            ...tokeniseSpeakerLabel((base[id] && base[id].name) || ''),
             ...tokeniseSpeakerId(id),
         ]);
         // Also include every other member id's tokens so users can

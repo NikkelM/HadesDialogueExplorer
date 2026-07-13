@@ -5,7 +5,7 @@
 // ``search-ui.js`` for the synchronous-on-every-keystroke top
 // section of the dropdown.
 
-import { textlines, allNames, speakers } from './data.js';
+import { textlines, allNames, speakers, getBaseSpeakers } from './data.js';
 import { computeIdf, candidateTokenWeight } from './idf.js';
 import { passesTextlineFilters } from './query-filters.js';
 import { computeDialogueKeywords, keywordSetMatches } from './search-keywords.js';
@@ -107,6 +107,7 @@ export function buildNameIndex() {
     nameTokens = new Map();
     nameSegments = new Map();
     nameKeywords = new Map();
+    const base = getBaseSpeakers();
     for (const name of allNames) {
         const tl = textlines[name];
         if (!tl) continue;
@@ -115,6 +116,13 @@ export function buildNameIndex() {
         const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
         if (ownerDisplay) {
             for (const t of tokeniseOwnerDisplay(ownerDisplay)) tokens.push(t);
+        }
+        // English base owner name too, so a name search still finds a textline
+        // by its owner's English name under a non-English UI (``speakers`` is the
+        // localised overlay). Deduped by the Set-of-tokens the caller builds.
+        const ownerBase = base[tl.owner] && base[tl.owner].name;
+        if (ownerBase && ownerBase !== ownerDisplay) {
+            for (const t of tokeniseOwnerDisplay(ownerBase)) tokens.push(t);
         }
         nameTokens.set(name, tokens);
         const keywords = computeDialogueKeywords(name, tl.section);

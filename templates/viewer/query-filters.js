@@ -21,7 +21,7 @@
 // comparisons stay case-insensitive without re-lowercasing per
 // call.
 
-import { speakers, sectionKeyLabels } from './data.js';
+import { speakers, getBaseSpeakers, sectionKeyLabels } from './data.js';
 
 // Split an identifier string into lowercase tokens for matching.
 // Boundaries are whitespace, underscore, and parens - enough to
@@ -58,6 +58,10 @@ function speakerIdentifiers(tl) {
         push(tl.owner);
         const friendly = speakers[tl.owner] && speakers[tl.owner].name;
         if (friendly) push(friendly);
+        // English base name too, so a ``speaker:`` filter matches the English
+        // name under a non-English UI (``speakers`` is the localised overlay).
+        const base = getBaseSpeakers()[tl.owner] && getBaseSpeakers()[tl.owner].name;
+        if (base) push(base);
     }
     if (Array.isArray(tl.dialogueLines)) {
         for (const line of tl.dialogueLines) {
@@ -167,6 +171,9 @@ function speakerOnlyIdentifiers(speakerId) {
     push(speakerId);
     const friendly = speakers[speakerId] && speakers[speakerId].name;
     if (friendly) push(friendly);
+    // English base name too (findable by the English name under any language).
+    const base = getBaseSpeakers()[speakerId] && getBaseSpeakers()[speakerId].name;
+    if (base) push(base);
     return out;
 }
 

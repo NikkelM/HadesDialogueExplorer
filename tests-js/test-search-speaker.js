@@ -15,6 +15,8 @@ import {
 } from '../templates/viewer/search-speaker.js';
 import { parseQuery } from '../templates/viewer/query-parser.js';
 import { loadFixtureData } from './fixtures.js';
+import { registerLocData, setActiveLang } from '../templates/viewer/data.js';
+import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
 
 before(loadFixtureData);
 
@@ -102,6 +104,28 @@ test('searchSpeakerMatches honours -speaker negative filters via exact-token mat
     assert.equal(filtered.some((m) => m.id === 'NPC_Zeus_01'), false);
     // Other speakers still survive.
     assert.ok(filtered.length > 0);
+});
+
+test('a speaker stays findable by its English name (and speaker: filter) under a non-English language', () => {
+    loadFixtureData();
+    // Rename Zeus in the live overlay to a non-Latin name so "zeus" is NOT a
+    // substring of the localised label (guards against a false pass).
+    registerLocData('hades1', 'de', { text: {}, speakers: { NPC_Zeus_01: { name: '\u0417\u0435\u0432\u0441' } } }); // Зевс
+    setActiveLang('de');
+    resetSpeakerGroups();
+    buildSpeakerIndex();
+    // The overlay is live (guards against a silent no-op false pass).
+    const byLoc = searchSpeakerMatches(parseQuery('\u0417\u0435\u0432\u0441'), 5);
+    assert.ok(byLoc.some((m) => m.id === 'NPC_Zeus_01'), 'expected to find Zeus by its localised name');
+    // Regression: the English base tokens are folded, so Zeus stays findable by
+    // its English name (and via the speaker: filter) under German.
+    const byEn = searchSpeakerMatches(parseQuery('zeus'), 5);
+    assert.ok(byEn.some((m) => m.id === 'NPC_Zeus_01'), 'Zeus must stay findable by its English name under German');
+    const byFilter = searchSpeakerMatches(parseQuery('npc speaker:zeus'), 100);
+    assert.ok(byFilter.some((m) => m.id === 'NPC_Zeus_01'), 'speaker:zeus must still match under German');
+    setActiveLang('en'); // restore for later tests
+    resetSpeakerGroups();
+    buildSpeakerIndex();
 });
 
 test('searchSpeakerMatches passes a filter-only query through every speaker', () => {
