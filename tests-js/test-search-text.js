@@ -882,3 +882,49 @@ test('buildLinesIndex indexes the ACTIVE language so text search matches localis
     setActiveLang('en');
     loadFixtureData();
 });
+
+test('searchTextLines: -word negative filter matches the LOCALISED line, not the English source', () => {
+    // Greeting01's line is English "greetings mortal", Russian "привет смертный".
+    // Under RU, a negative filter must scan the shown (Russian) text: excluding
+    // the visible Russian word works, and the invisible English source word does
+    // not (regression for the negative filter reading English while the positive
+    // index reads the localised text).
+    loadData({
+        games: {
+            hades1: {
+                textlines: {
+                    Greeting01: {
+                        owner: 'NPC_Hades_01',
+                        section: 'InteractTextLineSets',
+                        dialogueLines: [{ speaker: 'NPC_Hades_01', text: 'greetings mortal', cue: 'Hades_0001' }],
+                        requirements: {},
+                    },
+                },
+                speakers: { NPC_Hades_01: { name: 'Hades' } },
+                dependents: {}, stats: {}, reqTypeLabels: {}, reqTypeTooltips: {},
+                reqTypeLabelsDependents: {}, reqTypeTooltipsDependents: {}, reqTypeOrder: [],
+                sectionKeyLabels: {}, gameDataRefs: {}, choiceNames: {}, metaUpgradeNames: {},
+            },
+        },
+        gameIds: ['hades1'], gameLabels: { hades1: 'Hades' }, defaultGame: 'hades1',
+        languages: { hades1: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }] },
+        localization: {
+            hades1: { ru: { text: { Hades_0001: '\u043f\u0440\u0438\u0432\u0435\u0442 \u0441\u043c\u0435\u0440\u0442\u043d\u044b\u0439' }, speakers: {} } }, // "привет смертный"
+        },
+    });
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    buildLinesIndex();
+    const PRIVET = '\u043f\u0440\u0438\u0432\u0435\u0442';               // "привет" (hello)
+    const SMERTNYY = '\u0441\u043c\u0435\u0440\u0442\u043d\u044b\u0439'; // "смертный" (mortal)
+    const inc = (ms) => ms.map((m) => m.entry.name).includes('Greeting01');
+    // Baseline: the localised positive token surfaces the line.
+    assert.ok(inc(searchTextLines(_q([PRIVET]), new Set(), 50)), 'localised positive matches');
+    // A negative filter on the VISIBLE (Russian) word excludes it...
+    assert.ok(!inc(searchTextLines({ ..._q([PRIVET]), negative: [SMERTNYY] }, new Set(), 50)), 'localised negative excludes');
+    // ...while a negative on the INVISIBLE English source word does NOT (proving
+    // the scan reads the shown text, and the exclusion above wasn't spurious).
+    assert.ok(inc(searchTextLines({ ..._q([PRIVET]), negative: ['mortal'] }, new Set(), 50)), 'English source word is not scanned under RU');
+    setActiveLang('en');
+    loadFixtureData();
+});

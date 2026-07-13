@@ -204,12 +204,21 @@ export function phraseExistsInLine(textLower, phrase) {
 // whole textline - matches user intent when they type ``-joking``
 // (they want the textline gone, not just the joking line). Cached
 // per call by the caller so each textline is scanned at most once.
-export function textlineHasNegativeContent(tl, negative, negativePhrases) {
+export function textlineHasNegativeContent(tl, negative, negativePhrases, localizeLine) {
     if (!tl || !Array.isArray(tl.dialogueLines)) return false;
     if (negative.length === 0 && negativePhrases.length === 0) return false;
     for (const line of tl.dialogueLines) {
-        if (!line || !line.text) continue;
-        const lower = line.text.toLowerCase();
+        if (!line) continue;
+        // Match against the line as the user SEES it (active language),
+        // mirroring the positive index (buildLinesIndex localises each line).
+        // Without this, ``-word`` would exclude on the invisible English text
+        // and ignore the visible localised words under a non-English language.
+        // ``localizeLine`` is the caller's per-line resolver: the active-game
+        // ``localizeText`` for same-game search, or the other game's map for
+        // the cross-game section; absent, it falls back to the English text.
+        const text = localizeLine ? localizeLine(line) : line.text;
+        if (!text) continue;
+        const lower = text.toLowerCase();
         for (const t of negative) {
             if (t && findWordPositions(lower, t).length > 0) return true;
         }
@@ -261,6 +270,10 @@ export function searchTextLines(query, excludeNames, limit) {
     // per textline even when the index has multiple lines per name.
     const tlPassCache = new Map();
     const tlNegCache = new Map();
+    // Negative filters must match the line as shown (active language), same as
+    // the positive index below; resolve each line through the active-game
+    // overlay before scanning.
+    const localizeLine = (line) => localizeText(line.textId || line.cue, line.text);
     for (const entry of linesIndex) {
         if (excludeNames.has(entry.name)) continue;
         if (seen.has(entry.name)) continue;
@@ -276,6 +289,7 @@ export function searchTextLines(query, excludeNames, limit) {
                 textlines[entry.name],
                 negative,
                 negativePhrases,
+                localizeLine,
             );
             tlNegCache.set(entry.name, tlNeg);
         }

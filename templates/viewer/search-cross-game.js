@@ -208,6 +208,9 @@ export function searchCrossGameText(query, excludeNames, limit) {
     const speakers = gd.speakers || {};
     const sectionKeyLabels = gd.sectionKeyLabels || {};
     const loc = getLocData(otherId, getActiveLang());
+    // Match negative filters against this (non-active) game's active-language
+    // subtitle, mirroring firstLineSnippet's ``loc`` use for positive matching.
+    const localizeLine = (line) => otherLineText(loc, line);
 
     const matches = [];
     for (const name of Object.keys(textlines).sort()) {
@@ -215,7 +218,7 @@ export function searchCrossGameText(query, excludeNames, limit) {
         if (excludeNames && excludeNames.has(name)) continue;
         const tl = textlines[name];
         if (!tl) continue;
-        if (textlineHasNegativeContent(tl, negative, negativePhrases)) continue;
+        if (textlineHasNegativeContent(tl, negative, negativePhrases, localizeLine)) continue;
         const hit = firstLineSnippet(tl, positive, phrases, loc);
         if (!hit) continue;
         matches.push({
