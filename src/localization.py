@@ -53,13 +53,6 @@ _INHERIT_RE = re.compile(r'^\s*InheritFrom\s*=\s*"((?:[^"\\]|\\.)*)"')
 _FIELD_OPEN_RE = re.compile(r'^\s*(DisplayName|Description)\s*=\s*(.*)$')
 _TRIPLE_CLOSE_RE = re.compile(r'^(.*)"""\s*$')
 
-# The dialogue-bearing sjson prefixes (per language). HelpText / MiscText /
-# ScreenText are read separately (speaker names + choice/offer labels).
-_DIALOGUE_PREFIXES = (
-    "_NPCData", "_EnemyData", "_LootData", "_DeathLoopData",
-    "_RoomData", "_EncounterData", "_HeroData", "_QuestData",
-)
-
 # Trailing narrative-context qualifier the tool appends to a speaker display
 # name (``Hades (Boss)``, ``Cerberus (Field)``, ``? ? ? (Chaos)``). Localisation
 # translates the base character name and re-appends this tool-authored suffix.
@@ -273,18 +266,15 @@ def _read_lang_text_map(lang_dir: Path) -> tuple[dict, dict]:
     return display, desc
 
 
-def collect_used_ids(output_files: list[Path]) -> tuple[set, set]:
-    """Walk a game's per-source output JSONs, returning ``(text_ids, speaker_ids)``:
-
-    * ``text_ids`` - every id the viewer can swap for a translation: dialogue /
-      closing cue ids (``line.cue``), offer / choice-prompt ids (``line.textId``),
-      choice option label ids (``choice.internal``) and the ``cueTexts`` cue ids
-      (voicelines quoted in "played"-family requirement gates - the viewer shows
-      their spoken line, so it must localise too).
-    * ``speaker_ids`` - every speaker id referenced by a line (for name lookup).
+def collect_used_ids(output_files: list[Path]) -> set:
+    """Walk a game's per-source output JSONs, returning the set of ``text_ids``:
+    every id the viewer can swap for a translation - dialogue / closing cue ids
+    (``line.cue``), offer / choice-prompt ids (``line.textId``), choice option
+    label ids (``choice.internal``) and the ``cueTexts`` cue ids (voicelines
+    quoted in "played"-family requirement gates - the viewer shows their spoken
+    line, so it must localise too).
     """
     text_ids: set = set()
-    speaker_ids: set = set()
 
     def _visit_line(line):
         if not isinstance(line, dict):
@@ -293,8 +283,6 @@ def collect_used_ids(output_files: list[Path]) -> tuple[set, set]:
             text_ids.add(line["cue"])
         if isinstance(line.get("textId"), str):
             text_ids.add(line["textId"])
-        if isinstance(line.get("speaker"), str):
-            speaker_ids.add(line["speaker"])
         for opt in (line.get("choices") or []):
             if isinstance(opt, dict) and isinstance(opt.get("internal"), str):
                 text_ids.add(opt["internal"])
@@ -318,7 +306,7 @@ def collect_used_ids(output_files: list[Path]) -> tuple[set, set]:
         for cue_id in (data.get("cueTexts") or {}):
             if isinstance(cue_id, str):
                 text_ids.add(cue_id)
-    return text_ids, speaker_ids
+    return text_ids
 
 
 def _localise_speakers(speakers_en: dict, display: dict, desc: dict) -> dict:
@@ -403,7 +391,7 @@ def build_localization(text_root: Path, output_dir: Path, game: str,
 
     Returns the list of language codes written.
     """
-    text_ids, _speaker_ids = collect_used_ids(output_files)
+    text_ids = collect_used_ids(output_files)
     langs = available_languages(text_root)
     # Hades 1 voiceline subtitle CSVs live at ``Content/Subtitles`` (a sibling of
     # ``Content/Game``); ``text_root`` is ``Content/Game/Text``. Absent for H2.

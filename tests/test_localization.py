@@ -187,7 +187,7 @@ def test_available_languages_excludes_en_and_substitutions(tmp_path):
 
 # --- used-id collection ---------------------------------------------
 
-def test_collect_used_ids_gathers_cue_textid_choice_speaker(tmp_path):
+def test_collect_used_ids_gathers_cue_textid_choice(tmp_path):
     data = {
         "textlines": {
             "A": {
@@ -208,12 +208,11 @@ def test_collect_used_ids_gathers_cue_textid_choice_speaker(tmp_path):
     }
     p = tmp_path / "hades2_npc.json"
     p.write_text(json.dumps(data), encoding="utf-8")
-    text_ids, speaker_ids = loc.collect_used_ids([p])
+    text_ids = loc.collect_used_ids([p])
     assert text_ids == {
         "Hades_0001", "Zag_OfferText01", "Choice_Yes", "Choice_No",
         "Rand_0001", "Hades_0009", "Hades_0010",
     }
-    assert speaker_ids == {"NPC_Hades_01", "NPC_Zag_01", "S"}
 
 
 def test_collect_used_ids_gathers_cuetext_ids(tmp_path):
@@ -226,9 +225,8 @@ def test_collect_used_ids_gathers_cuetext_ids(tmp_path):
     }}
     p = tmp_path / "hades1_metadata.json"
     p.write_text(json.dumps(meta), encoding="utf-8")
-    text_ids, speaker_ids = loc.collect_used_ids([p])
+    text_ids = loc.collect_used_ids([p])
     assert text_ids == {"HadesField_0584", "ZagreusHome_2930"}
-    assert speaker_ids == set()
 
 
 # --- speaker localisation -------------------------------------------
