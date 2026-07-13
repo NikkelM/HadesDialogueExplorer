@@ -274,12 +274,18 @@ def extract_textline(
     # group-level ``UsePlayerSource`` / ``Speaker`` / ``Source`` / ``ObjectType``),
     # then the owner fallback. Shared by the main lines and the closing lines.
     def _cue_speaker(entry, group):
-        own = _resolve_cue_speaker(entry, None)  # UsePlayerSource > Speaker > Source, else None
+        own = _resolve_cue_speaker(entry, None)  # Speaker > UsePlayerSource > Source, else None
         if own is not None:
             return own
+        # Group-level attribution mirrors the per-cue precedence: an explicit
+        # group ``Speaker`` / ``Source`` / ``ObjectType`` (``_group_speaker``)
+        # wins over a group-level ``UsePlayerSource`` audio-positioning flag.
+        grp = _group_speaker(group)
+        if grp is not None:
+            return grp
         if isinstance(group, LuaTable) and group.get("UsePlayerSource") is True:
             return PLAYER_SPEAKER_ID
-        return _group_speaker(group) or fallback_speaker
+        return fallback_speaker
 
     # Top-level segments -> dialogue lines, honouring the two "voice-line group"
     # shapes. A segment is a flat cue (a normal line), a nested / positional
@@ -380,20 +386,23 @@ def _resolve_cue_speaker(cue: LuaTable, fallback_speaker: str) -> str:
     Resolution precedence (matches H2 engine behaviour for the subtitle
     label):
 
-    1. ``UsePlayerSource = true`` -> ``PlayerUnit`` (Melinoe). Wins
-       over an explicit ``Speaker = ...`` on the same cue because the
-       engine routes the line through the player's subtitle stream
-       regardless of what's declared. ``Speaker = "PlayerUnit_Flashback"``
-       is the documented way to override this for the young-Melinoe
-       variant (the explicit speaker would still be returned here
-       because the engine doesn't override it when the speaker is
-       explicitly a PlayerUnit variant - but in current data this is
-       always paired with ``UsePlayerSource = true`` so the
-       precedence simplifies to "UsePlayerSource wins" without losing
-       fidelity).
-    2. Explicit ``Speaker = "..."`` field. May be a bare name string
+    1. Explicit ``Speaker = "..."`` field. An explicit subtitle speaker
+       wins over everything, including a co-declared
+       ``UsePlayerSource = true``: 28 cues in the current data set both,
+       and in every case the cue-id prefix / portrait / subtitle colour
+       match the ``Speaker``, not Melinoe (e.g. ``/VO/Hades_0019`` in
+       ``NyxNightmare01`` declares ``Speaker = "NPC_LordHades_01"``).
+       ``UsePlayerSource`` is an audio-positioning flag (route the line
+       through the player's spatial source), NOT a subtitle-label
+       override; ``Speaker = "PlayerUnit_Flashback"`` is likewise a
+       distinct speaker (young Melinoe) that must survive rather than
+       collapse to the base ``PlayerUnit``. May be a bare name string
        (``"Artemis"``) which will need a bare-name-to-id map in a
        follow-up; for now the literal flows through.
+    2. ``UsePlayerSource = true`` with no explicit ``Speaker`` ->
+       ``PlayerUnit`` (Melinoe). The common case: the ~3,485 cues that
+       set ``UsePlayerSource`` without a ``Speaker`` are all Melinoe's
+       own ``/VO/Melinoe*`` lines.
     3. Explicit ``Source = "<NPC_X_01>"`` field. The engine uses this
        to attach the cue to a non-owner actor's entity (commonly a
        second NPC sharing a scene, e.g. Chronos cues inside the Hecate
@@ -412,11 +421,11 @@ def _resolve_cue_speaker(cue: LuaTable, fallback_speaker: str) -> str:
     needed (multi-speaker rooms); NPC files don't need it because the
     owner fallback already covers the unattributed cues.
     """
-    if cue.get("UsePlayerSource") is True:
-        return PLAYER_SPEAKER_ID
     speaker = cue.get("Speaker")
     if isinstance(speaker, str) and speaker:
         return speaker
+    if cue.get("UsePlayerSource") is True:
+        return PLAYER_SPEAKER_ID
     source = cue.get("Source")
     if isinstance(source, str) and source:
         return source

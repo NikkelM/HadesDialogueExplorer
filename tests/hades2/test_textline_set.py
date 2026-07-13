@@ -8,8 +8,8 @@ Covers the per-textline output contract that the graph builder consumes:
 * ``Partner = "..."`` -> ``partner`` field (Hades II still uses the
   ``Partner`` declaration on the canonical side).
 * Cue array -> ``dialogueLines`` with format tags stripped.
-* Cue speaker resolution precedence: ``UsePlayerSource`` ->
-  ``PlayerUnit`` > explicit ``Speaker`` > owner fallback.
+* Cue speaker resolution precedence: explicit ``Speaker`` >
+  ``UsePlayerSource`` -> ``PlayerUnit`` > ``Source`` > owner fallback.
 * Empty ``orBranches`` / ``flags`` containers are dropped (so the
   output stays clean for the common-case textline that has no OR or
   flags).
@@ -152,14 +152,25 @@ class TestSpeakerResolution:
         data = extract_textline("Foo", tl, "NPC_Artemis_01", "Test.lua")
         assert data["dialogueLines"][0]["speaker"] == "NPC_Artemis_01"
 
-    def test_player_source_wins_over_explicit_speaker(self):
-        # Engine routes through the player subtitle stream regardless
-        # of the explicit Speaker field on the same cue.
+    def test_explicit_speaker_wins_over_player_source(self):
+        # An explicit Speaker is the subtitle label and beats a co-declared
+        # UsePlayerSource (an audio-positioning flag, not a label override).
+        # Real H2 data: /VO/Hades_0019 in NyxNightmare01 sets both and must
+        # render as Hades, not Melinoe (finding: 28 such cues, 2 cross-character).
         tl = _parse_textline("""{
-            { Cue = "/VO/X_0001", UsePlayerSource = true, Speaker = "Hermes", Text = "Hi." },
+            { Cue = "/VO/X_0001", UsePlayerSource = true, Speaker = "NPC_LordHades_01", Text = "Hi." },
         }""")
         data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
-        assert data["dialogueLines"][0]["speaker"] == PLAYER_SPEAKER_ID
+        assert data["dialogueLines"][0]["speaker"] == "NPC_LordHades_01"
+
+    def test_flashback_speaker_survives_use_player_source(self):
+        # Speaker="PlayerUnit_Flashback" (young Melinoe, a distinct speaker)
+        # alongside UsePlayerSource must NOT collapse to the base PlayerUnit.
+        tl = _parse_textline("""{
+            { Cue = "/VO/Mel_0001", UsePlayerSource = true, Speaker = "PlayerUnit_Flashback", Text = "Hi." },
+        }""")
+        data = extract_textline("Foo", tl, "NPC_Owner_01", "Test.lua")
+        assert data["dialogueLines"][0]["speaker"] == "PlayerUnit_Flashback"
 
     def test_source_field_overrides_owner_fallback(self):
         # Engine attaches the cue to the entity named by ``Source``,
