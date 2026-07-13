@@ -377,6 +377,11 @@ def _classify_record(record, result, game_data_lists=None):
         prefix = tuple(path_segs)
         prefix_map = _TEXTLINE_PATH_PREFIXES.get(prefix)
         if prefix_map is not None:
+            # A single record may legally carry more than one op on the same
+            # textline path (e.g. HasAll + HasNone); process EVERY op that
+            # resolves to names rather than returning on the first, so no
+            # sibling gate is dropped. No current record does this - latent.
+            matched = False
             for op_name, syn_key in prefix_map.items():
                 raw = record.named.get(op_name)
                 # Resolve textline names from either an inline list literal
@@ -397,12 +402,15 @@ def _classify_record(record, result, game_data_lists=None):
                 names = _to_string_list(raw, game_data_lists, sources_out=sources)
                 if names:
                     _extend_requirements(result, syn_key, names, sources)
-                    return
+                    matched = True
+            if matched:
+                return
         # Path matched a TextLines prefix but no recognised container op
         # (e.g. Comparison/SumPrevRuns aggregator), or the prefix isn't a
         # textline path - fall through to otherRequirements.
 
     # Direct-path form: PathTrue/PathFalse = { prefix..., TextLinesRecord, "Name" }
+    direct_matched = False
     for direct_op, container_op in _DIRECT_PATH_OP_TO_CONTAINER_OP.items():
         path = _string_path(record.named.get(direct_op))
         if path is None or len(path) < 2:
@@ -413,7 +421,9 @@ def _classify_record(record, result, game_data_lists=None):
         if prefix_map is not None and container_op in prefix_map:
             syn_key = prefix_map[container_op]
             _extend_requirements(result, syn_key, [leaf])
-            return
+            direct_matched = True
+    if direct_matched:
+        return
 
     # Choice-record form: Path = { GameState, TextLinesChoiceRecord, <parent> },
     # IsAny / IsNone = { "Choice_X", ... } -> dependency on the synthetic

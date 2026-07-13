@@ -835,3 +835,43 @@ class TestUnresolvedTextlineOpAudit:
         assert get_unresolved_textline_op_refs()  # populated
         reset_unresolved_textline_op_audit()
         assert get_unresolved_textline_op_refs() == []
+
+
+class TestMultiOpRecordAccumulation:
+    """A single record carrying more than one op on the same textline path
+    (container-form ``HasAll`` + ``HasNone``, or direct-path ``PathTrue`` +
+    ``PathFalse``) contributes EVERY op's dialogue edge - the classifier no
+    longer returns after the first matching op, which would silently drop the
+    siblings. No current source record does this (latent), but it's a
+    correctness guard."""
+
+    def test_container_form_two_ops_both_captured(self):
+        lua = '{ { Path = { "GameState", "TextLinesRecord" }, HasAll = { "A" }, HasNone = { "B" } } }'
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredTextLines": ["A"],
+            "RequiredFalseTextLines": ["B"],
+        }
+
+    def test_container_form_three_ops_all_captured(self):
+        lua = '{ { Path = { "GameState", "TextLinesRecord" }, HasAll = { "A" }, HasAny = { "B" }, HasNone = { "C" } } }'
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredTextLines": ["A"],
+            "RequiredAnyTextLines": ["B"],
+            "RequiredFalseTextLines": ["C"],
+        }
+
+    def test_direct_path_true_and_false_both_captured(self):
+        lua = '{ { PathTrue = { "GameState", "TextLinesRecord", "X" }, PathFalse = { "GameState", "TextLinesRecord", "Y" } } }'
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {
+            "RequiredTextLines": ["X"],
+            "RequiredFalseTextLines": ["Y"],
+        }
+
+    def test_container_single_op_unchanged(self):
+        # The common single-op case is unaffected by the accumulation change.
+        lua = '{ { Path = { "GameState", "TextLinesRecord" }, HasNone = { "B" } } }'
+        result = extract_requirements(_parse_req_set(lua))
+        assert result["requirements"] == {"RequiredFalseTextLines": ["B"]}
