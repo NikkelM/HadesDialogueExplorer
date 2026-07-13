@@ -6,7 +6,7 @@ import { strict as assert } from 'node:assert';
 
 import { renderDuplicates, getSelectedDuplicateSpeaker, ALL_SPEAKERS } from '../templates/viewer/duplicates-view.js';
 import { renderInfo, resetDuplicateNameSet } from '../templates/viewer/info-panel.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, setActiveGame, setActiveLang } from '../templates/viewer/data.js';
 
 let lastHtml = '';
 
@@ -176,4 +176,52 @@ test('renderInfo shows cross-game badge for a duplicate textline', () => {
 test('renderInfo does NOT show cross-game badge for a non-duplicate textline', () => {
     renderInfo('OnlyH1Dialogue');
     assert.doesNotMatch(lastHtml, /cross-game-badge/);
+});
+
+// --- localization: display localized, identity/URL stays English ---
+
+function buildLocalizedDuplicatesFixture() {
+    const base = buildDuplicatesFixture();
+    base.languages = {
+        hades1: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+        hades2: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+    };
+    // Both games translate the shared ``ZeusUpgrade`` owner to a localized name.
+    base.localization = {
+        hades1: { ru: { text: {}, speakers: { ZeusUpgrade: { name: '\u0417\u0435\u0432\u0441' } } } }, // Зевс
+        hades2: { ru: { text: {}, speakers: { ZeusUpgrade: { name: '\u0417\u0435\u0432\u0441' } } } },
+    };
+    return base;
+}
+
+test('duplicates master list shows the localized speaker name while the dup key stays English', () => {
+    loadData(buildLocalizedDuplicatesFixture());
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    renderDuplicates({ q: '' });
+    // Master list shows the localized display name...
+    assert.match(lastHtml, /duplicates-speaker-name">\u0417\u0435\u0432\u0441</);
+    // ...but the selection/URL key stays the English identity name.
+    assert.match(lastHtml, /selectDuplicateSpeaker\(&quot;Zeus&quot;\)/);
+    // Selecting by the English key still resolves and shows the localized title.
+    renderDuplicates({ q: '', dup: 'Zeus' });
+    assert.equal(getSelectedDuplicateSpeaker(), 'Zeus');
+    assert.match(lastHtml, /duplicates-detail-title">\u0417\u0435\u0432\u0441</);
+    setActiveLang('en');
+    loadData(buildDuplicatesFixture());
+});
+
+test('duplicates search matches the localized speaker name too', () => {
+    loadData(buildLocalizedDuplicatesFixture());
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    // Query the localized name -> the shared dialogue still matches.
+    renderDuplicates({ q: '\u0417\u0435\u0432\u0441' });
+    assert.match(lastHtml, /SharedDialogue01/);
+    assert.doesNotMatch(lastHtml, /duplicates-empty/);
+    // The English name still matches as well (identity preserved).
+    renderDuplicates({ q: 'zeus' });
+    assert.match(lastHtml, /SharedDialogue01/);
+    setActiveLang('en');
+    loadData(buildDuplicatesFixture());
 });

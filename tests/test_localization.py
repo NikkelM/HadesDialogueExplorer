@@ -138,6 +138,21 @@ def test_collect_used_ids_gathers_cue_textid_choice_speaker(tmp_path):
     assert speaker_ids == {"NPC_Hades_01", "NPC_Zag_01", "S"}
 
 
+def test_collect_used_ids_gathers_cuetext_ids(tmp_path):
+    # ``cueTexts`` (in the metadata payloads) keys voicelines quoted in
+    # "played"-family requirement gates by cue id; those ids must be collected
+    # so their subtitle translation ships (the viewer localises the quote).
+    meta = {"cueTexts": {
+        "HadesField_0584": {"speaker": "Hades", "text": "Do not become too prideful."},
+        "ZagreusHome_2930": {"speaker": "Zagreus", "text": "Right, then."},
+    }}
+    p = tmp_path / "hades1_metadata.json"
+    p.write_text(json.dumps(meta), encoding="utf-8")
+    text_ids, speaker_ids = loc.collect_used_ids([p])
+    assert text_ids == {"HadesField_0584", "ZagreusHome_2930"}
+    assert speaker_ids == set()
+
+
 # --- speaker localisation -------------------------------------------
 
 def test_localise_speakers_preserves_qualifier_and_resolves_aliases():

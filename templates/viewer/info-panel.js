@@ -35,7 +35,8 @@ import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from '
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
 import { badgeRankNames, badgeRankManager } from './data.js';
 import { cueTexts } from './data.js';
-import { localizeText, isUntranslated, isLocalized } from './data.js';
+import { localizeText, isUntranslated, isLocalized, speakers } from './data.js';
+import { canonicalIdForSpeakerName } from './speaker-groups.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -702,6 +703,16 @@ function _renderScalarHaveHtml() {
     return ` (<code${attr}>${escapeHtml(_formatScalar(_curScalar))}</code>)`;
 }
 
+// Localise the speaker of a ``/VO/`` quoted voiceline. ``cueTexts`` bakes the
+// speaker as an English character name (the cue-id prefix); resolve it to that
+// character's localised name via the group name->id mapping + the localised
+// ``speakers`` overlay. English active / unresolved name -> the English name.
+function _localizedCueSpeaker(name) {
+    if (!name || !isLocalized()) return name;
+    const id = canonicalIdForSpeakerName(name);
+    return (id && speakers[id] && speakers[id].name) || name;
+}
+
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
 // game-entity id (boon/trait, keepsake, companion, weapon aspect, god boon,
 // enemy, item, ...) to its friendly DisplayName via ``entityNames`` and keeping
@@ -715,10 +726,16 @@ function _valueChip(v, cls) {
         // quoted line with its speaker in parens, keeping the cue id in the
         // tooltip.
         if (v.startsWith('/VO/')) {
-            const cue = cueTexts[v.slice(4)];
+            const cueId = v.slice(4);
+            const cue = cueTexts[cueId];
             if (cue && cue.text) {
-                const who = cue.speaker ? ` (${escapeHtml(cue.speaker)})` : '';
-                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + v.slice(4))}">\"${escapeHtml(cue.text)}\"${who}</code>`;
+                // Localise the quoted spoken line (the cue id is a loc key) and
+                // its speaker (an English character name -> its localised name
+                // via the group mapping); both fall back to English.
+                const text = localizeText(cueId, cue.text);
+                const spk = _localizedCueSpeaker(cue.speaker);
+                const who = spk ? ` (${escapeHtml(spk)})` : '';
+                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + cueId)}">\"${escapeHtml(text)}\"${who}</code>`;
             }
         }
         const friendly = entityNames[v];

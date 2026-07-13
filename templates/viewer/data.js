@@ -335,6 +335,20 @@ export function isLocalized() {
     return currentLang !== 'en';
 }
 
+// Localized display name for a speaker id in a SPECIFIC game (which may differ
+// from the active game). Returns null under English, when that game's loc map
+// isn't loaded, or when the id has no translation. Used by cross-game surfaces
+// (the duplicates view) that render a speaker owned in a game that may not be
+// active; same-game display uses the overlaid ``speakers`` map instead. The
+// active game reads the live ``locSpeakers`` binding; another game reads its
+// registered map via ``getLocData``.
+export function localizedSpeakerName(game, speakerId) {
+    if (currentLang === 'en' || !game || !speakerId) return null;
+    const spk = (game === currentGame) ? locSpeakers : (getLocData(game, currentLang) || {}).speakers;
+    const tr = spk && spk[speakerId];
+    return (tr && tr.name) || null;
+}
+
 // Wire the active game+language localisation into the live bindings:
 // ``locText`` / ``locSpeakers`` for render-time lookups, and an overlaid
 // ``speakers`` map so every existing ``speakers[id].name`` read shows the

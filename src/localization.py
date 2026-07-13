@@ -201,8 +201,10 @@ def collect_used_ids(output_files: list[Path]) -> tuple[set, set]:
     """Walk a game's per-source output JSONs, returning ``(text_ids, speaker_ids)``:
 
     * ``text_ids`` - every id the viewer can swap for a translation: dialogue /
-      closing cue ids (``line.cue``), offer / choice-prompt ids (``line.textId``)
-      and choice option label ids (``choice.internal``).
+      closing cue ids (``line.cue``), offer / choice-prompt ids (``line.textId``),
+      choice option label ids (``choice.internal``) and the ``cueTexts`` cue ids
+      (voicelines quoted in "played"-family requirement gates - the viewer shows
+      their spoken line, so it must localise too).
     * ``speaker_ids`` - every speaker id referenced by a line (for name lookup).
     """
     text_ids: set = set()
@@ -234,6 +236,12 @@ def collect_used_ids(output_files: list[Path]) -> tuple[set, set]:
                 _visit_line(line)
             for line in (tl.get("endLines") or []):
                 _visit_line(line)
+        # ``cueTexts`` (in the metadata payloads) keys spoken voicelines by cue
+        # id - the same id space as ``line.cue`` - so the translation is the
+        # cue's shipped subtitle. Collect them so the "played"-gate quote maps.
+        for cue_id in (data.get("cueTexts") or {}):
+            if isinstance(cue_id, str):
+                text_ids.add(cue_id)
     return text_ids, speaker_ids
 
 
