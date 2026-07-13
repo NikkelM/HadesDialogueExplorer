@@ -6,7 +6,7 @@
 // section. Used by ``search-ui.js`` behind a 120 ms debounce because
 // it touches every dialogue line.
 
-import { textlines, allNames, choiceNames } from './data.js';
+import { textlines, allNames, choiceNames, localizeText } from './data.js';
 import { renderSpeakerHtml, renderSectionHtml, escapeHtml } from './utilities.js';
 import { computeIdf, idfWeight } from './idf.js';
 import { passesTextlineFilters } from './query-filters.js';
@@ -75,12 +75,16 @@ export function buildLinesIndex() {
             const line = lines[i];
             if (!line) continue;
             if (line.text) {
+                // Index the line in the active language (English is the inline
+                // default, so this is a no-op under English). The loc key is the
+                // line's offer-text id or voice cue, matching the dialogue panel.
+                const shown = localizeText(line.textId || line.cue, line.text);
                 out.push({
                     name,
                     lineIdx: i,
                     speaker: line.speaker || '',
-                    textOriginal: line.text,
-                    textLower: line.text.toLowerCase(),
+                    textOriginal: shown,
+                    textLower: shown.toLowerCase(),
                 });
             }
             if (line.kind === 'choicePrompt' && Array.isArray(line.choices)) {
@@ -88,13 +92,15 @@ export function buildLinesIndex() {
                     if (!c || !c.internal) continue;
                     const friendly = choiceNames[c.internal] || c.internal;
                     if (!friendly) continue;
+                    // Choice labels localise via their ChoiceText id too.
+                    const shown = localizeText(c.internal, friendly);
                     out.push({
                         name,
                         lineIdx: i,
                         speaker: '',
                         isChoiceOption: true,
-                        textOriginal: friendly,
-                        textLower: friendly.toLowerCase(),
+                        textOriginal: shown,
+                        textLower: shown.toLowerCase(),
                     });
                 }
             }
@@ -104,14 +110,25 @@ export function buildLinesIndex() {
     linesIdf = computeIdf(out, (entry) => tokeniseLineText(entry.textLower));
 }
 
-// Test whether a character code is alphanumeric (a-z, A-Z, 0-9).
-// Used to detect word boundaries for the text-content search so that
-// ``I`` matches the word ``I`` (and ``I`` in ``I'm``, where ``'`` is
-// non-word) but not the letter ``i`` inside ``his``.
+// Test whether a character code is a "word" character for text-content search
+// word-boundary detection, so ``I`` matches the word ``I`` (and ``I`` in
+// ``I'm``, where ``'`` is non-word) but not the ``i`` inside ``his``.
+//
+// ASCII takes a fast range path (the overwhelming majority of chars). Non-ASCII
+// falls back to a Unicode letter/number/mark test so LOCALISED dialogue text
+// (Cyrillic, Greek, accented Latin, CJK, ...) tokenises and word-boundary
+// matches the same way English does - otherwise those scripts would be treated
+// as all-boundaries and never tokenise. Surrogate halves (astral CJK / emoji)
+// count as word chars so a surrogate pair stays a single token.
+const _UNICODE_WORD_RE = /[\p{L}\p{N}\p{M}]/u;
 export function _isWordCharCode(code) {
-    return (code >= 97 && code <= 122)
-        || (code >= 65 && code <= 90)
-        || (code >= 48 && code <= 57);
+    if (code < 128) {
+        return (code >= 97 && code <= 122)
+            || (code >= 65 && code <= 90)
+            || (code >= 48 && code <= 57);
+    }
+    if (code >= 0xD800 && code <= 0xDFFF) return true;
+    return _UNICODE_WORD_RE.test(String.fromCharCode(code));
 }
 
 // Find every position where ``token`` appears as a whole word in

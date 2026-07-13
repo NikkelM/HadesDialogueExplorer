@@ -9,7 +9,7 @@
 import { test, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { loadData, setActiveGame, getActiveGame } from '../templates/viewer/data.js';
+import { loadData, setActiveGame, getActiveGame, setActiveLang } from '../templates/viewer/data.js';
 import { emptyQuery } from '../templates/viewer/query-parser.js';
 import {
     otherGameId,
@@ -189,4 +189,92 @@ test('cross-game speaker search works in the other direction (hades2 active find
     assert.equal(res.gameId, 'hades1');
     assert.equal(res.matches[0].id, 'NPC_Zeus_01');
     assert.equal(res.matches[0].friendly, 'Zeus');
+});
+
+// --- localisation: cross-game results follow the active language ---
+
+function localizedTwoGamePayload() {
+    const p = twoGamePayload();
+    // Give one H2 line a cue so its text can carry a translation.
+    p.games.hades2.textlines.HecateAboutMoros01.dialogueLines[0].cue = 'Hecate_0001';
+    p.languages = {
+        hades1: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+        hades2: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+    };
+    p.localization = {
+        hades2: {
+            ru: {
+                text: { Hecate_0001: '\u041c\u043e\u0440\u043e\u0441 \u0431\u0434\u0438\u0442 \u043d\u0430\u0434 \u043d\u0430\u043c\u0438' }, // "Морос бдит над нами"
+                speakers: { NPC_Hecate_01: { name: '\u0413\u0435\u043a\u0430\u0442\u0430' }, HecateUpgrade: { name: '\u0413\u0435\u043a\u0430\u0442\u0430' } }, // Геката
+            },
+        },
+    };
+    return p;
+}
+
+test('cross-game speaker search shows + matches the localised other-game name', () => {
+    loadData(localizedTwoGamePayload());
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    // Matches the localised name and displays it...
+    const byRu = searchCrossGameSpeakers(_q(['\u0433\u0435\u043a\u0430\u0442\u0430']), 6); // "геката"
+    assert.ok(byRu, 'expected a cross-game result for the localised name');
+    assert.equal(byRu.matches[0].friendly, '\u0413\u0435\u043a\u0430\u0442\u0430'); // Геката
+    // ...and is still findable by the English name (English tokens kept).
+    const byEn = searchCrossGameSpeakers(_q(['hecate']), 6);
+    assert.ok(byEn);
+    assert.equal(byEn.matches[0].friendly, '\u0413\u0435\u043a\u0430\u0442\u0430');
+    setActiveLang('en');
+    loadData(twoGamePayload());
+});
+
+test('cross-game name search localises the owner label', () => {
+    loadData(localizedTwoGamePayload());
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    const res = searchCrossGameNames(_q(['hecate']), 6);
+    assert.ok(res);
+    const m = res.matches.find((x) => x.name === 'HecateWeaponUpgrade01');
+    assert.equal(m.ownerLabel, '\u0413\u0435\u043a\u0430\u0442\u0430'); // Геката
+    setActiveLang('en');
+    loadData(twoGamePayload());
+});
+
+test('cross-game text search matches + snippets the active language', () => {
+    loadData(localizedTwoGamePayload());
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    // Query the Russian word ("Морос") -> the translated line matches and the
+    // snippet is the Russian text with the localised owner label.
+    const res = searchCrossGameText(_q(['\u041c\u043e\u0440\u043e\u0441'.toLowerCase()]), new Set(), 6);
+    assert.ok(res, 'expected a localised cross-game text match');
+    const m = res.matches.find((x) => x.name === 'HecateAboutMoros01');
+    assert.ok(m, 'expected the translated line to match its Russian word');
+    assert.ok(/\u041c\u043e\u0440\u043e\u0441/.test(m.snippetHtml)); // snippet is Russian
+    assert.equal(m.ownerLabel, '\u0413\u0435\u043a\u0430\u0442\u0430');
+    // The English word no longer matches (index is the active language).
+    assert.equal(searchCrossGameText(_q(['moros']), new Set(), 6), null);
+    setActiveLang('en');
+    loadData(twoGamePayload());
+});
+
+test('cross-game speaker search localises via a sibling when the canonical id lacks a translation', () => {
+    // A group whose canonical (alphabetically-first) id has no translation but a
+    // sibling does - like Melinoe (story-id untranslated, PlayerUnit translated).
+    const p = twoGamePayload();
+    p.games.hades2.speakers = { AaaHero_01: { name: 'Hero' }, ZzzHeroUpgrade: { name: 'Hero' } };
+    p.languages = {
+        hades1: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+        hades2: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }],
+    };
+    // Only the sibling (ZzzHeroUpgrade) carries the localised name.
+    p.localization = { hades2: { ru: { text: {}, speakers: { ZzzHeroUpgrade: { name: '\u0413\u0435\u0440\u043e\u0439' } } } } }; // Герой
+    loadData(p);
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    const res = searchCrossGameSpeakers(_q(['\u0433\u0435\u0440\u043e\u0439']), 6); // "герой"
+    assert.ok(res, 'sibling translation should make the group findable + localised');
+    assert.equal(res.matches[0].friendly, '\u0413\u0435\u0440\u043e\u0439'); // Герой
+    setActiveLang('en');
+    loadData(twoGamePayload());
 });

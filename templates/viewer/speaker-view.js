@@ -24,7 +24,7 @@
 // The bucket keys stay ``priority`` / ``plain`` for URL and CSS
 // stability; see ``priorityScheme`` below.
 
-import { textlines, speakers, sectionKeyLabels, getActiveGame, alternates, dependents } from './data.js';
+import { textlines, speakers, sectionKeyLabels, getActiveGame, alternates, dependents, localizeText } from './data.js';
 import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers, listCanonicalSpeakerIds, speakerGroupMembers } from './speaker-groups.js';
 import {
     escapeHtml,
@@ -582,11 +582,14 @@ function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
 
 // True when any of the textline's dialogue lines contains ``query`` (already
 // lower-cased) in its spoken text. Lets the in-speaker filter match on line
-// content, not just the internal name.
+// content, not just the internal name. Matches the ACTIVE language's text so a
+// query in the shown language finds its lines (English is the inline default).
 function textlineTextMatches(tl, query) {
     const lines = (tl && tl.dialogueLines) || [];
-    return lines.some(l => l && typeof l.text === 'string'
-        && l.text.toLowerCase().includes(query));
+    return lines.some((l) => {
+        if (!l || typeof l.text !== 'string') return false;
+        return localizeText(l.textId || l.cue, l.text).toLowerCase().includes(query);
+    });
 }
 
 // Render the section-grouped list body from the stashed context, applying the

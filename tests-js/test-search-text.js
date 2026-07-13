@@ -21,7 +21,7 @@ import {
     linesIndex,
     renderTextMatchHtml,
 } from '../templates/viewer/search-text.js';
-import { loadData, textlines } from '../templates/viewer/data.js';
+import { loadData, textlines, setActiveGame, setActiveLang } from '../templates/viewer/data.js';
 import { emptyQuery } from '../templates/viewer/query-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
@@ -46,6 +46,23 @@ test('_isWordCharCode covers a-z, A-Z, 0-9 and rejects whitespace and punctuatio
     assert.equal(_isWordCharCode("'".charCodeAt(0)), false);
     assert.equal(_isWordCharCode('.'.charCodeAt(0)), false);
     assert.equal(_isWordCharCode('-'.charCodeAt(0)), false);
+});
+
+test('_isWordCharCode recognises non-ASCII letters (localised text tokenises)', () => {
+    // Cyrillic, Greek and accented Latin letters must count as word chars, or
+    // localised dialogue text would never tokenise / word-boundary match.
+    assert.equal(_isWordCharCode('\u0417'.charCodeAt(0)), true); // З (Cyrillic)
+    assert.equal(_isWordCharCode('\u03b1'.charCodeAt(0)), true); // α (Greek)
+    assert.equal(_isWordCharCode('\u00e9'.charCodeAt(0)), true); // é (Latin-1)
+    assert.equal(_isWordCharCode('\u4e16'.charCodeAt(0)), true); // 世 (CJK)
+    // Non-letter punctuation stays a boundary.
+    assert.equal(_isWordCharCode('\u2014'.charCodeAt(0)), false); // em dash
+    assert.equal(_isWordCharCode('\u3001'.charCodeAt(0)), false); // 、 CJK comma
+});
+
+test('tokeniseLineText splits Cyrillic text on whitespace/punctuation', () => {
+    assert.deepEqual(tokeniseLineText('\u043f\u0440\u0438\u0432\u0435\u0442, \u043c\u0438\u0440'),
+        ['\u043f\u0440\u0438\u0432\u0435\u0442', '\u043c\u0438\u0440']); // ["привет","мир"]
 });
 
 test('findWordPositions matches whole-word tokens only, not substrings', () => {
@@ -822,4 +839,46 @@ test('searchTextLines: negative -section:GiftTextLineSets (full internal key) al
     const matches = searchTextLines(q, new Set(), 50);
     const names = matches.map((m) => m.entry.name);
     assert.ok(!names.includes('ZeusWithAphrodite01'));
+});
+
+test('buildLinesIndex indexes the ACTIVE language so text search matches localised text', () => {
+    // A minimal dataset whose one line has a Russian translation. Searching the
+    // localised word must find the line, and the snippet is the localised text.
+    loadData({
+        games: {
+            hades1: {
+                textlines: {
+                    Greeting01: {
+                        owner: 'NPC_Hades_01',
+                        section: 'InteractTextLineSets',
+                        dialogueLines: [{ speaker: 'NPC_Hades_01', text: 'Hello there', cue: 'Hades_0001' }],
+                        requirements: {},
+                    },
+                },
+                speakers: { NPC_Hades_01: { name: 'Hades' } },
+                dependents: {}, stats: {}, reqTypeLabels: {}, reqTypeTooltips: {},
+                reqTypeLabelsDependents: {}, reqTypeTooltipsDependents: {}, reqTypeOrder: [],
+                sectionKeyLabels: {}, gameDataRefs: {}, choiceNames: {}, metaUpgradeNames: {},
+            },
+        },
+        gameIds: ['hades1'], gameLabels: { hades1: 'Hades' }, defaultGame: 'hades1',
+        languages: { hades1: [{ code: 'en', label: 'English' }, { code: 'ru', label: 'RU' }] },
+        localization: {
+            hades1: { ru: { text: { Hades_0001: '\u041f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435' }, speakers: {} } }, // "Привет тебе"
+        },
+    });
+    setActiveGame('hades1');
+    setActiveLang('ru');
+    buildLinesIndex();
+    // The index entry now carries the localised text, not the English.
+    const entry = linesIndex.find((e) => e.name === 'Greeting01');
+    assert.equal(entry.textOriginal, '\u041f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435');
+    // Searching the localised token finds the line; the English word does not.
+    const ruMatches = searchTextLines(_q(['\u043f\u0440\u0438\u0432\u0435\u0442']), new Set(), 50); // "привет"
+    assert.ok(ruMatches.map((m) => m.entry.name).includes('Greeting01'));
+    const enMatches = searchTextLines(_q(['hello']), new Set(), 50);
+    assert.ok(!enMatches.map((m) => m.entry.name).includes('Greeting01'));
+    // Restore the shared fixture for any later tests.
+    setActiveLang('en');
+    loadFixtureData();
 });
