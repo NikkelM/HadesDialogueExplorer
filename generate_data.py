@@ -54,8 +54,10 @@ from src.extractors.textline_set import (
     build_cue_comment_map,
     build_h2_cue_text_map,
     apply_cue_comment_texts,
+    drop_textless_end_cues,
 )
 from src.graph import build_graph_data
+from src.localization import build_localization, read_subtitles_map
 
 # Each entry: (output filename, source label, lua filename, extractor function)
 HADES1_SOURCES = [
@@ -190,6 +192,7 @@ def generate_source(
     extractor,
     game_data_lists: dict,
     hades1_scripts: Path,
+    en_subtitles: dict | None = None,
 ) -> dict:
     """Parse one Lua source file and return its graph dataset (or None)."""
     lua_path = hades1_scripts / lua_name
@@ -219,6 +222,21 @@ def generate_source(
         graph_data["textlines"],
         build_cue_comment_map(lua_path.read_text(encoding="utf-8", errors="replace")),
     )
+    # Fallback for cue-only closing voicelines the ``--`` comment heuristic
+    # misses (it only reads the line directly above the ``EndCue``, so a cue
+    # with an intervening property line - e.g. ``EndWait = 0.45,`` between the
+    # comment and ``ZagreusHome_0329`` - stays text-less). The shipped English
+    # voiceline subtitle CSV is the authoritative source; genuinely audio-only
+    # barks (absent from it, e.g. ``CerberusWhineSad``) stay a bare cue chip.
+    if en_subtitles:
+        apply_cue_comment_texts(graph_data["textlines"], en_subtitles)
+
+    # Any closing voiceline still without subtitle text after both fallbacks is an
+    # audio-only sound cue (e.g. CerberusWhineSad), not a spoken line - drop it so
+    # it isn't shown as a bare cue chip.
+    removed = drop_textless_end_cues(graph_data["textlines"])
+    if removed:
+        print(f"  Dropped {removed} audio-only (subtitle-less) closing voiceline(s)")
 
     stats = graph_data["stats"]
     print(f"  Textlines: {stats['totalTextlines']}")
@@ -319,6 +337,9 @@ def generate_hades2_source(
         owners,
         speakers=HADES2_SPEAKERS,
     )
+    # Drop any audio-only (subtitle-less) closing voiceline; keeps the H2 pipeline
+    # consistent with H1 (currently a no-op - all H2 end cues carry text).
+    drop_textless_end_cues(graph_data["textlines"])
 
     stats = graph_data["stats"]
     print(f"  Textlines: {stats['totalTextlines']}")
@@ -397,7 +418,7 @@ def main():
     # Restricted to the prefixes this script writes (``hades1_*``,
     # ``hades2_*``) so user-dropped diagnostic JSONs, saved queries, or
     # release notes in ``outputs/`` aren't wiped on rebuilds.
-    for stale_pattern in ("hades1_*.json", "hades2_*.json"):
+    for stale_pattern in ("hades1_*.json", "hades2_*.json", "loc-*.json"):
         for stale in OUTPUT_DIR.glob(stale_pattern):
             stale.unlink()
 
@@ -406,6 +427,13 @@ def main():
     print("Hades 1")
     print("=" * 60)
     game_data_lists = load_game_data_lists(hades1_scripts)
+
+    # Shipped English voiceline subtitles (Content/Subtitles/en) - the fallback
+    # source for closing-voiceline text the in-source ``--`` comment heuristic
+    # misses (see generate_source). Absent in CI, where this is an empty no-op.
+    h1_subtitles_en = read_subtitles_map(hades1_scripts.parent / "Subtitles" / "en")
+    if h1_subtitles_en:
+        print(f"  English voiceline subtitles: {len(h1_subtitles_en)} cues (end-cue text fallback)")
 
     reset_section_key_audit()
     reset_unrecognised_textline_key_audit()
@@ -417,7 +445,7 @@ def main():
     for output_name, source_label, lua_name, extractor in HADES1_SOURCES:
         data = generate_source(
             output_name, source_label, lua_name, extractor,
-            game_data_lists, hades1_scripts,
+            game_data_lists, hades1_scripts, h1_subtitles_en,
         )
         if data is None:
             continue
@@ -672,6 +700,24 @@ def main():
             print(f"  {owner_id}.{section_key}.{textline_name}")
         if len(orphan_priority_keys) > 10:
             print(f"  ... and {len(orphan_priority_keys) - 10} more")
+
+    # --- Dialogue localisation maps -------------------------------------
+    # Emit one ``loc-<game>-<lang>.json`` per non-English language from the
+    # games' ``Game/Text/<lang>`` sjson, filtered to the cue / text / choice /
+    # speaker ids this build references. Generated locally (the game text
+    # folders are absent in CI) alongside the extracted data; baked into
+    # ``dist/`` by build_viewer.py. English stays inline in the base data.
+    print("\n" + "=" * 60)
+    print("Localisation")
+    print("=" * 60)
+    for game, scripts_dir, speakers_en in (
+        ("hades1", hades1_scripts, HADES1_SPEAKERS),
+        ("hades2", hades2_scripts, HADES2_SPEAKERS),
+    ):
+        text_root = scripts_dir.parent / "Game" / "Text"
+        game_outputs = sorted(OUTPUT_DIR.glob(f"{game}_*.json"))
+        written = build_localization(text_root, OUTPUT_DIR, game, game_outputs, speakers_en)
+        print(f"  {game}: {len(written)} language file(s) -> {', '.join(written) or '(none)'}")
 
     print("\nDone!")
 

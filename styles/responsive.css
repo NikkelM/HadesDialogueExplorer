@@ -105,6 +105,7 @@
     #search,
     .header-nav-link,
     .save-upload-btn,
+    .language-select,
     .game-toggle-btn {
         min-height: var(--tap-min);
     }
@@ -132,10 +133,10 @@
        bold ``::after`` twin (game-toggle.css). That twin only works as an
        overlay under the base ``inline-grid`` layout; once these rules switch the
        button to ``inline-flex`` the twin becomes a real flex sibling beside the
-       label and shoves the visible text off-centre. Width reservation isn't
-       needed here anyway - the search sits on its own row at <= 1279px, so a
-       toggle-induced resize can't shift it - so drop the twin and let the label
-       centre cleanly. */
+       label and shoves the visible text off-centre, so drop it and let the label
+       centre cleanly. (At 1025-1279px the search shares row one with the toggle,
+       so a game-switch can nudge its width by the bold-label delta - a few px the
+       flexible search absorbs; not worth reintroducing the centring bug for.) */
     .game-toggle-btn::after { display: none; }
     /* The display overrides above (needed for sizing / glyph alignment)
        beat the UA ``[hidden] { display: none }`` rule, which would leave a
@@ -144,18 +145,37 @@
         display: none;
     }
 }
-@media (min-width: 900px) and (max-width: 1279px) {
-    /* Wide tablet landscape: the fixed controls (brand, toggle, Cross-game
-       duplicates, Load save) comfortably fit the first row here, so order the
-       search LAST - it still takes its own full-width row, but the two trailing
-       buttons ride up onto row one with the brand + toggle instead of being
-       stranded on a third row below the search. A tidy two rows:
-       [brand + toggle + duplicates + save] / [search]. Below 900px the buttons
-       no longer fit beside the brand, so the layout above keeps the search in
-       the middle (buttons on their own row); phones (<600px) stay fully
-       stacked. */
+@media (min-width: 1025px) and (max-width: 1279px) {
+    /* Small desktop: unlike narrower widths (which drop the search onto its own
+       full-width row), there's room for the search on the first row beside the
+       brand + game toggle here. Override the <=1279 full-width rule so the search
+       flows inline and grows to fill row one, letting the duplicates + save +
+       language controls wrap to a tidy second row instead of stranding an
+       almost-empty first row above a lone search row. */
     .search-container {
-        order: 1;
+        flex-basis: 0;
+        max-width: none;
+    }
+}
+@media (min-width: 600px) and (max-width: 1024px) {
+    /* Tablet: flatten the save + language group to direct header items so the
+       compact language picker can ride on the "Cross-game duplicates" row.
+       Ordering the picker BEFORE the (long) save-status pill is what keeps it
+       safe: the status - never the picker - is the item that wraps to a new row
+       when the trailing controls don't all fit, so the picker can't be pushed
+       off-screen (the bug this block originally fixed). Where there's room (wider
+       tablet, e.g. ~980px+), Load save + status share the duplicates + language
+       row; where there isn't, only the status wraps to its own row beneath. */
+    .header-right,
+    .save-upload {
+        display: contents;
+    }
+    #nav-duplicates { order: 2; }
+    #language-picker { order: 3; }
+    .save-upload-btn { order: 4; }
+    #save-status {
+        order: 5;
+        min-width: 0;
     }
 }
 @media (max-width: 599px) {
@@ -189,6 +209,11 @@
         flex: 1 1 0;
         min-width: 0;
     }
+    /* Swap the descriptive label for the short "Duplicates" so it fits the
+       half-width button instead of overflowing (the full text is ~180px, wider
+       than the button's ~half of a phone viewport). */
+    .nav-dup-full { display: none; }
+    .nav-dup-short { display: inline; }
     .save-upload-btn {
         order: 2;
         flex: 1 1 0;
@@ -212,6 +237,20 @@
         min-width: 0;
         white-space: normal;
         max-width: 100%;
+    }
+    /* Dialogue-language picker: give it its own full-width row (like the search
+       box and save-status) instead of crowding a third control onto the
+       duplicates + Load-save pair. ``order: 4`` places it after that row
+       (duplicates 1 / Load save 2 / gated break 3) and before the save-status
+       strip (5); ``flex-basis: 100%`` forces the row on its own even with no
+       save loaded (when the break is absent). */
+    #language-picker {
+        order: 4;
+        flex-basis: 100%;
+    }
+    .language-picker-label,
+    .language-select {
+        width: 100%;
     }
 }
 
@@ -543,9 +582,7 @@
  * The desktop footer is a single ``1fr auto 1fr`` row (copyright | disclaimer |
  * links). At tablet width and below the three items no longer share that row
  * comfortably (the copyright starts wrapping while the links stay put), so
- * stack them in a centred column instead. Asymmetric right padding (4rem) keeps
- * the centred content clear of the bottom-right help FAB, exactly as the
- * desktop links' right margin does.
+ * stack them in a centred column instead.
  * ==================================================================== */
 @media (max-width: 1024px) {
     .site-footer {
@@ -555,17 +592,27 @@
             "links"
             "disclaimer";
         justify-items: center;
-        row-gap: 4px;
-        padding: 8px 4rem 8px 20px;
+        row-gap: 10px;
+        padding: 8px 20px;
     }
     .site-footer-copy,
-    .site-footer-links,
     .site-footer-disclaimer {
         justify-self: center;
         text-align: center;
     }
+    /* Fill the column and centre the links row so every item - including the
+       Replay Tutorials link - stays on screen and centres. Wrapping is enabled
+       only here (mobile), where the footer is stacked and full-width, so the
+       widest item drops onto its own centred line on narrow phones instead of
+       overflowing off the right edge; desktop keeps them on one line. The 10px
+       flex row-gap (for the wrapped line) matches the 10px grid row-gap
+       above/below, so a wrapped item is evenly spaced. */
     .site-footer-links {
-        margin-right: 0;
+        justify-self: stretch;
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+        row-gap: 10px;
     }
 }
 

@@ -20,7 +20,7 @@
 // resolve labels against the active bindings); a filtered query simply
 // shows no cross-game section.
 
-import { games, gameIds, gameLabels, getActiveGame } from './data.js';
+import { games, gameIds, gameLabels, getActiveGame, getLocData, getActiveLang, localizedSpeakerName } from './data.js';
 import { rankSearchToken } from './search-name.js';
 import { computeDialogueKeywords } from './search-keywords.js';
 import { findWordPositions, buildSnippetHtml, phraseExistsInLine, textlineHasNegativeContent } from './search-text.js';
@@ -43,9 +43,26 @@ function hasFilterClauses(query) {
         || (query.negativeSections && query.negativeSections.length > 0);
 }
 
-function ownerLabel(speakers, ownerId) {
+// The other game's owner display name, LOCALISED to the active language when
+// that game's loc map is loaded (warmed on language select / boot), else the
+// base English name, else the raw id. Cross-game surfaces render a speaker from
+// a game that isn't active, so they resolve the translation via ``getLocData``
+// rather than the active-game overlay.
+function ownerLabel(otherId, speakers, ownerId) {
+    const loc = localizedSpeakerName(otherId, ownerId);
+    if (loc) return loc;
     const entry = speakers[ownerId];
     return (entry && entry.name) ? entry.name : (ownerId || '');
+}
+
+// The active-language subtitle for a line in ``otherId``'s data (from its loaded
+// loc map), or the inline English text when English is active / the map isn't
+// loaded / the line has no translation. Mirrors ``localizeText`` but against a
+// specific (non-active) game's map.
+function otherLineText(loc, line) {
+    const key = line && (line.textId || line.cue);
+    const tr = (loc && loc.text && key) ? loc.text[key] : null;
+    return (typeof tr === 'string' && tr !== '') ? tr : ((line && line.text) || '');
 }
 
 function sectionLabel(sectionKeyLabels, key) {
@@ -96,7 +113,9 @@ export function searchCrossGameNames(query, limit) {
         if (!tl) continue;
         const nameLower = name.toLowerCase();
         const ownerIdLower = (tl.owner || '').toLowerCase();
-        const ownerDisplay = speakers[tl.owner] && speakers[tl.owner].name;
+        // Match against (and later display) the LOCALISED owner name so typing a
+        // speaker's name in the active language finds their other-game dialogues.
+        const ownerDisplay = ownerLabel(otherId, speakers, tl.owner);
         const ownerDisplayLower = ownerDisplay ? ownerDisplay.toLowerCase() : '';
 
         if (nameNegativeHit(nameLower, ownerIdLower, ownerDisplayLower, negative, negativePhrases)) continue;
@@ -119,7 +138,7 @@ export function searchCrossGameNames(query, limit) {
         ranked.push({
             name,
             tier: tierSum,
-            ownerLabel: ownerLabel(speakers, tl.owner),
+            ownerLabel: ownerDisplay,
             sectionLabel: sectionLabel(sectionKeyLabels, tl.section),
         });
     }
@@ -143,12 +162,15 @@ export function searchCrossGameNames(query, limit) {
 // all tokens on one line is slightly stricter than the active text
 // engine (which ranks partial matches) but keeps this capped secondary
 // section free of weak hits.
-function firstLineSnippet(tl, positive, phrases) {
+function firstLineSnippet(tl, positive, phrases, loc) {
     const lines = tl.dialogueLines;
     if (!Array.isArray(lines)) return null;
     for (const line of lines) {
         if (!line || !line.text) continue;
-        const lower = line.text.toLowerCase();
+        // Match + snippet against the active-language text so a query in the
+        // shown language finds the line and the snippet reads in that language.
+        const shown = otherLineText(loc, line);
+        const lower = shown.toLowerCase();
         const positionsByToken = positive.map((t) => findWordPositions(lower, t));
         if (positionsByToken.some((p) => p.length === 0)) continue;
         let phrasesOk = true;
@@ -157,7 +179,7 @@ function firstLineSnippet(tl, positive, phrases) {
         }
         if (!phrasesOk) continue;
         const anchor = positionsByToken[0][0];
-        return { snippetHtml: buildSnippetHtml(line.text, positive, positionsByToken, anchor) };
+        return { snippetHtml: buildSnippetHtml(shown, positive, positionsByToken, anchor) };
     }
     return null;
 }
@@ -185,6 +207,7 @@ export function searchCrossGameText(query, excludeNames, limit) {
     const textlines = gd.textlines || {};
     const speakers = gd.speakers || {};
     const sectionKeyLabels = gd.sectionKeyLabels || {};
+    const loc = getLocData(otherId, getActiveLang());
 
     const matches = [];
     for (const name of Object.keys(textlines).sort()) {
@@ -193,11 +216,11 @@ export function searchCrossGameText(query, excludeNames, limit) {
         const tl = textlines[name];
         if (!tl) continue;
         if (textlineHasNegativeContent(tl, negative, negativePhrases)) continue;
-        const hit = firstLineSnippet(tl, positive, phrases);
+        const hit = firstLineSnippet(tl, positive, phrases, loc);
         if (!hit) continue;
         matches.push({
             name,
-            ownerLabel: ownerLabel(speakers, tl.owner),
+            ownerLabel: ownerLabel(otherId, speakers, tl.owner),
             sectionLabel: sectionLabel(sectionKeyLabels, tl.section),
             snippetHtml: hit.snippetHtml,
         });
@@ -218,7 +241,12 @@ export function searchCrossGameText(query, excludeNames, limit) {
 // into the group's token set so typing any member id still matches.
 // Returns ``[{id, friendly, friendlyLower, idLower, tokens}]`` in the
 // shape ``rankSpeakerToken`` expects.
-function buildOtherSpeakerIndex(speakers) {
+//
+// Grouping stays keyed on the ENGLISH base name (language-neutral identity),
+// but the displayed ``friendly`` is the LOCALISED name for ``otherId`` and its
+// tokens include BOTH the localised and English name tokens, so the row shows
+// the translated name yet is findable by typing either language.
+function buildOtherSpeakerIndex(speakers, otherId) {
     const byName = new Map();
     const groups = [];
     for (const sid of Object.keys(speakers)) {
@@ -232,8 +260,21 @@ function buildOtherSpeakerIndex(speakers) {
         groups.push([members[0], members]);
     }
     return groups.map(([canon, members]) => {
-        const friendly = (speakers[canon] && speakers[canon].name) || canon;
-        const tokens = new Set([...tokeniseSpeakerLabel(friendly), ...tokeniseSpeakerId(canon)]);
+        const baseFriendly = (speakers[canon] && speakers[canon].name) || canon;
+        // Resolve the localised name from ANY member that has one, not just the
+        // canonical id: a group's canonical (alphabetically-first) id may lack a
+        // translation while a sibling carries it (e.g. Melinoe's story-id has no
+        // HelpText name but ``PlayerUnit`` does). Falls back to the English name.
+        let friendly = baseFriendly;
+        for (const mid of members) {
+            const loc = localizedSpeakerName(otherId, mid);
+            if (loc) { friendly = loc; break; }
+        }
+        const tokens = new Set([
+            ...tokeniseSpeakerLabel(friendly),
+            ...tokeniseSpeakerLabel(baseFriendly),
+            ...tokeniseSpeakerId(canon),
+        ]);
         for (const mid of members) {
             if (mid === canon) continue;
             for (const t of tokeniseSpeakerId(mid)) tokens.add(t);
@@ -262,7 +303,7 @@ export function searchCrossGameSpeakers(query, limit) {
     if (positive.length === 0) return null;
 
     const gd = games[otherId] || {};
-    const index = buildOtherSpeakerIndex(gd.speakers || {});
+    const index = buildOtherSpeakerIndex(gd.speakers || {}, otherId);
 
     const ranked = [];
     for (const sp of index) {

@@ -281,6 +281,53 @@ def apply_cue_comment_texts(textlines: dict, comment_map: dict) -> None:
                 _fill(variant.get("endLines"))
 
 
+def drop_textless_end_cues(textlines: dict) -> int:
+    """Remove cue-only closing voicelines that carry no subtitle text, in place.
+
+    After :func:`apply_cue_comment_texts` (dev-comment + subtitle-CSV fallback)
+    has had every chance to recover a subtitle, an ``endLines`` entry that still
+    has a ``cue`` but no ``text`` - and no condition group - is an audio-only
+    *sound* cue (e.g. Cerberus's ``CerberusWhineSad`` whimper), not a spoken
+    closing line; showing it as a bare cue chip is misleading. Drop such entries.
+    When a textline's ``endLines`` becomes empty it is removed entirely, matching
+    the convention that textlines with no closing voiceline omit the key. Returns
+    the number of entries dropped.
+    """
+    dropped = 0
+
+    def _keep(entry) -> bool:
+        if not isinstance(entry, dict):
+            return True
+        if entry.get("text"):
+            return True
+        # A conditional closing group still carries display info without text.
+        if entry.get("requirements") or entry.get("otherRequirements") or entry.get("condGroup"):
+            return True
+        # A pure ``{cue, speaker}`` audio cue has nothing to show.
+        return not entry.get("cue")
+
+    def _filter(container):
+        nonlocal dropped
+        end_lines = container.get("endLines")
+        if not end_lines:
+            return
+        kept = [e for e in end_lines if _keep(e)]
+        dropped += len(end_lines) - len(kept)
+        if kept:
+            container["endLines"] = kept
+        else:
+            container.pop("endLines", None)
+
+    for tl in textlines.values():
+        if not isinstance(tl, dict):
+            continue
+        _filter(tl)
+        for variant in tl.get("variants") or []:
+            if isinstance(variant, dict):
+                _filter(variant)
+    return dropped
+
+
 # A cue entry is a table carrying an inline ``Cue`` and/or ``Text``.
 _NUM_KEY_RE = re.compile(r"^\d+$")
 
@@ -448,11 +495,17 @@ def build_end_lines(tl_table, resolve_text, resolve_speaker, end_cue_speaker,
     def make_line(entry, group):
         text = resolve_text(entry)
         speaker = resolve_speaker(entry, group)
-        if isinstance(text, str) and text:
-            return {"speaker": speaker, "text": text}
         cue = entry.get("Cue")
-        if isinstance(cue, str) and cue:
-            return {"speaker": speaker, "cue": _VO_PREFIX_RE.sub("", cue)}
+        cue_id = _VO_PREFIX_RE.sub("", cue) if isinstance(cue, str) and cue else None
+        if isinstance(text, str) and text:
+            # Subtitle present: keep the trimmed cue id too (localisation key)
+            # so a closing line can also be swapped to the active language.
+            line = {"speaker": speaker, "text": text}
+            if cue_id:
+                line["cue"] = cue_id
+            return line
+        if cue_id:
+            return {"speaker": speaker, "cue": cue_id}
         return None
 
     def place(lines, gsr_tables):
@@ -957,9 +1010,17 @@ def extract_textline(
         # to their flavour text before tag stripping. Substituted values
         # are already tag-stripped at load time, so the strip below is a
         # no-op for them; bare voice lines still get stripped normally.
-        if offer_text_map is not None:
-            text = offer_text_map.get(text, text)
+        # The original id is retained as ``textId`` so the viewer can
+        # re-localise the line from the per-language MiscText map.
+        text_id = None
+        if offer_text_map is not None and text in offer_text_map:
+            text_id = text
+            text = offer_text_map[text]
         text = _FORMAT_TAG_RE.sub("", text)
+        # Trimmed cue id (no ``/VO/``) is the localisation key for the
+        # per-language dialogue map (sjson ``Id`` == this value).
+        cue_val = entry.get("Cue")
+        cue_id = _VO_PREFIX_RE.sub("", cue_val) if isinstance(cue_val, str) and cue_val else None
         speaker = entry.get("Speaker")
         if isinstance(speaker, str):
             line: dict = {"speaker": speaker, "text": text}
@@ -971,6 +1032,10 @@ def extract_textline(
                 # groups); fall back to it before the owner default.
                 derived = _group_speaker(group)
             line = {"speaker": derived or fallback_speaker, "text": text}
+        if cue_id:
+            line["cue"] = cue_id
+        if text_id is not None:
+            line["textId"] = text_id
         # Choice-prompt cue: when a cue declares a ``Choices = {...}``
         # table (or a ``Choices = PresetEventArgs.<Name>`` reference to
         # a vendored preset) the prompt isn't just narration, it's the

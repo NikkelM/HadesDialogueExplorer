@@ -143,7 +143,7 @@
             <div id="search-no-matches" class="search-no-matches" hidden role="status">No matches found</div>
         </div>
     </div>
-    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()" data-tooltip="Browse dialogue names that appear in both Hades and Hades II">Cross-game duplicates</a>
+    <a id="nav-duplicates" class="header-nav-link" onclick="navigateToDuplicates()" data-tooltip="Browse dialogue names that appear in both Hades and Hades II"><span class="nav-dup-full">Cross-game duplicates</span><span class="nav-dup-short">Duplicates</span></a>
     <div class="header-right">
         <div class="save-upload" id="save-upload">
             <label class="save-upload-btn" for="save-file-input" role="button" tabindex="0" data-tooltip="Upload a ProfileX.sav file to visualise dialogue progress">
@@ -153,6 +153,41 @@
             <input type="file" id="save-file-input" accept=".sav,application/octet-stream" hidden>
             <span id="save-status" class="save-status" hidden></span>
         </div>
+        <!-- Dialogue-language picker. Pre-rendered with a placeholder <select>
+             (the saved / default language) so it reserves its space and shows
+             from the first paint like the game toggle above, instead of popping
+             in after viewer.js boots. language-picker.js then upgrades it with
+             the full per-game language list (and hides it if a game ships no
+             translations). Placed last so it sits at the far-right of the header. -->
+        <div id="language-picker" class="language-picker">
+            <label class="language-picker-label" for="language-select">
+                <span class="visually-hidden">Dialogue language</span>
+                <select id="language-select" class="language-select" data-tooltip="Show dialogue text, choices and speaker names in this language">
+                    <option>English</option>
+                </select>
+            </label>
+        </div>
+        <script>
+        // Inline pre-paint script: set the placeholder language label from the
+        // saved preference so a returning non-English user sees their language
+        // from the first paint (matching what language-picker.js renders) rather
+        // than a flash of "English". Mirrors the game-toggle script above. The
+        // label map duplicates build_viewer.py's _LANGUAGE_LABELS (keep in sync).
+        (function() {
+            var LABELS = {
+                en: 'English', de: 'Deutsch', el: '\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac',
+                es: 'Espa\u00f1ol', fr: 'Fran\u00e7ais', it: 'Italiano', ja: '\u65e5\u672c\u8a9e',
+                ko: '\ud55c\uad6d\uc5b4', pl: 'Polski', 'pt-BR': 'Portugu\u00eas (Brasil)',
+                ru: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439', tr: 'T\u00fcrk\u00e7e',
+                uk: '\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430',
+                'zh-CN': '\u7b80\u4f53\u4e2d\u6587', 'zh-TW': '\u7e41\u9ad4\u4e2d\u6587'
+            };
+            var lang = 'en';
+            try { lang = localStorage.getItem('hde:lang') || 'en'; } catch (e) { /* storage off */ }
+            var sel = document.getElementById('language-select');
+            if (sel && sel.options[0] && LABELS[lang]) sel.options[0].textContent = LABELS[lang];
+        })();
+        </script>
     </div>
 </header>
 <!-- Stable mount for viewer.js to render a load error into without
@@ -191,10 +226,11 @@
     <span class="site-footer-copy">&copy; <span data-current-year>2026</span> Nikkel Mollenhauer</span>
     <div class="site-footer-disclaimer">Built with the assistance of generative AI. All game content belongs to Supergiant Games. Anonymous, aggregate usage statistics are collected; saves are never uploaded.</div>
     <span class="site-footer-links">
-        <a href="https://github.com/NikkelM" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/NikkelM/HadesDialogueExplorer" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.linkedin.com/in/nikkel-mollenhauer/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="https://nikkelm.dev/contact" target="_blank" rel="noopener noreferrer">Contact</a>
         <a href="https://ko-fi.com/nikkelm" target="_blank" rel="noopener noreferrer">Support</a>
+        <a onclick="replayTours()">Replay Tutorials</a>
     </span>
 </footer>
 <script>
@@ -205,26 +241,6 @@
     if (y) y.textContent = String(new Date().getFullYear());
 })();
 </script>
-<!-- Floating help menu (wired in init.js / fab-menu.js). The "?" toggle folds
-     out two action bubbles upward - replay the tutorials and open the GitHub
-     repo - and turns into an X while open. Floating rather than in the header
-     so it doesn't disturb the header's packed, responsive layout. -->
-<div id="fab-menu" class="fab-menu">
-    <a id="fab-github" class="fab-action" href="https://github.com/NikkelM/HadesDialogueExplorer"
-       target="_blank" rel="noopener noreferrer" tabindex="-1"
-       aria-label="Open the GitHub repository" data-tooltip="View on GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-    </a>
-    <button id="fab-tour" class="fab-action" type="button" tabindex="-1"
-            aria-label="Replay the tutorials" data-tooltip="Replay the tutorials">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-    </button>
-    <button id="tour-help" class="tour-help-btn" type="button"
-            aria-label="Open help menu" aria-expanded="false" aria-controls="fab-tour fab-github"
-            data-tooltip="Help &amp; links">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-    </button>
-</div>
 <script>
 // Pre-paint fixup: now that the panel + search DOM exists, mirror what
 // applyState/applyLayoutMode (navigation.js) will render so a deep link shows

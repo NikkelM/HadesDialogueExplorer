@@ -87,6 +87,28 @@ _SPLIT_OUTPUT_NAMES = (
 )
 _BUNDLE_OUTPUT_NAME = "dialogue_explorer.html"
 
+# Human-readable labels for the dialogue-localisation language picker, keyed by
+# the ``Game/Text/<lang>`` folder code. Endonyms (each language in its own
+# script) - standard language-picker UX. ``en`` is the inline default and is
+# always offered first. Unknown codes fall back to the raw code.
+_LANGUAGE_LABELS = {
+    "en": "English",
+    "de": "Deutsch",
+    "el": "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",
+    "es": "Espa\u00f1ol",
+    "fr": "Fran\u00e7ais",
+    "it": "Italiano",
+    "ja": "\u65e5\u672c\u8a9e",
+    "ko": "\ud55c\uad6d\uc5b4",
+    "pl": "Polski",
+    "pt-BR": "Portugu\u00eas (Brasil)",
+    "ru": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+    "tr": "T\u00fcrk\u00e7e",
+    "uk": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
+    "zh-CN": "\u7b80\u4f53\u4e2d\u6587",
+    "zh-TW": "\u7e41\u9ad4\u4e2d\u6587",
+}
+
 # Absolute deploy URL. Social scrapers (Open Graph / Twitter cards) don't
 # reliably resolve *relative* image URLs, so og:image / twitter:image must be
 # absolute. The hosted split build lives here; the offline single-file bundle
@@ -207,6 +229,40 @@ def _ensure_clean_dist() -> None:
     # blob behind.
     for stale in DIST_DIR.glob("data-*.json"):
         stale.unlink()
+    # Per-language localisation files (``loc-<game>-<lang>.json``) are likewise
+    # dynamic; clear stale ones so a dropped language can't linger in dist/.
+    for stale in DIST_DIR.glob("loc-*.json"):
+        stale.unlink()
+
+
+def _discover_loc_langs() -> dict:
+    """Return ``{game: [lang, ...]}`` for the per-language localisation files
+    present in ``outputs/`` (``loc-<game>-<lang>.json``), sorted by language."""
+    loc_langs: dict = {}
+    for f in sorted(OUTPUT_DIR.glob("loc-*.json")):
+        stem = f.stem[len("loc-"):]  # ``<game>-<lang>`` (game has no hyphen)
+        game, _, lang = stem.partition("-")
+        if lang:
+            loc_langs.setdefault(game, []).append(lang)
+    return loc_langs
+
+
+def _language_manifest(game_ids, loc_langs: dict, restrict: set | None = None) -> dict:
+    """Build the picker manifest ``{game: [{code, label}, ...]}``.
+
+    English is always first (the inline default); each game then lists its
+    available localisation languages. ``restrict``, when given, limits the
+    non-English languages to that set (used by the bundle, which only ships the
+    languages it embedded).
+    """
+    manifest = {}
+    for gid in game_ids:
+        langs = ["en"]
+        for lang in loc_langs.get(gid, []):
+            if restrict is None or lang in restrict:
+                langs.append(lang)
+        manifest[gid] = [{"code": c, "label": _LANGUAGE_LABELS.get(c, c)} for c in langs]
+    return manifest
 
 
 def _build_split_index_html(version: str) -> str:
@@ -323,6 +379,7 @@ def build_split(payload: dict) -> dict:
     source_map = build_source_map(js_data, js_blocks, "viewer.js")
 
     games = payload.get("games", {})
+    loc_langs = _discover_loc_langs()
     # Heavy per-game blobs, one file each.
     per_game_json = {
         gid: json.dumps(blob, separators=(",", ":")) for gid, blob in games.items()
@@ -335,6 +392,9 @@ def build_split(payload: dict) -> dict:
         "defaultGame": payload.get("defaultGame"),
         "defaultDialogue": payload.get("defaultDialogue", {}),
         "duplicates": payload.get("duplicates", []),
+        # Dialogue-localisation picker manifest. English is the inline default;
+        # each other language is lazy-fetched from ``loc-<game>-<lang>.json``.
+        "languages": _language_manifest(games.keys(), loc_langs),
     }
     meta_json = json.dumps(meta, separators=(",", ":"))
 
@@ -372,6 +432,13 @@ def build_split(payload: dict) -> dict:
     # never references.
     shutil.copyfile(STATIC_DIR / OG_IMAGE_NAME, DIST_DIR / OG_IMAGE_NAME)
 
+    # Copy the per-language localisation maps verbatim so the viewer can
+    # lazy-fetch ``loc-<game>-<lang>.json`` when a language is picked. English
+    # stays inline in the per-game data (no file, no fetch).
+    loc_files = sorted(OUTPUT_DIR.glob("loc-*.json"))
+    for loc_file in loc_files:
+        shutil.copyfile(loc_file, DIST_DIR / loc_file.name)
+
     # Copy the self-hosted fonts into dist/fonts/ (referenced by fonts.css as
     # ``fonts/<name>.woff2`` relative to viewer.css). Copy per-file with
     # overwrite and prune only stale ``*.woff2`` - removing the whole directory
@@ -405,6 +472,13 @@ def build_split(payload: dict) -> dict:
         f"data.json (meta) {sizes['data.json']/1024:.0f} KB, "
         f"{game_report}"
     )
+    if loc_files:
+        loc_kb = sum((DIST_DIR / f.name).stat().st_size for f in loc_files) / 1024
+        all_langs = sorted(set().union(*loc_langs.values())) if loc_langs else []
+        print(
+            f"  + {len(loc_files)} localisation file(s) "
+            f"({', '.join(all_langs)}) -> {loc_kb:.0f} KB total, lazy-loaded"
+        )
     return sizes
 
 
@@ -423,7 +497,7 @@ def _inline_data_for_bundle(json_text: str) -> str:
     return json_text.replace("<", "\\u003C")
 
 
-def build_bundle(payload: dict) -> None:
+def build_bundle(payload: dict, bundle_langs=None) -> None:
     """Stitch the split outputs into a single ``dialogue_explorer.html``.
 
     Reads the viewer.js / viewer.css artifacts produced by :func:`build_split`
@@ -431,6 +505,12 @@ def build_bundle(payload: dict) -> None:
     build's ``data.json`` is only a meta index now, so the bundle inlines every
     game's data instead), so the result opens directly from ``file://`` with no
     network fetches.
+
+    ``bundle_langs`` selects which dialogue-localisation languages to embed
+    inline (the offline file cannot lazy-fetch them): the string ``"all"``, an
+    iterable of language codes, or ``None`` / empty for English-only (the
+    default - keeps the single file lean). Embedded languages appear in the
+    picker; English is always available inline.
     """
     # Read the *template* (not dist/index.html, which build_split has
     # rewritten with cache-busting query strings) so the exact-match inlining
@@ -443,9 +523,33 @@ def build_bundle(payload: dict) -> None:
     viewer_js = (DIST_DIR / "viewer.js").read_text(encoding="utf-8")
     viewer_js = re.sub(r"\n//# sourceMappingURL=viewer\.js\.map\n?$", "\n", viewer_js)
     viewer_css = (DIST_DIR / "viewer.css").read_text(encoding="utf-8")
+
+    # Resolve which localisation languages to embed inline, then fold them into
+    # a bundle-specific payload copy (the offline file has no network, so any
+    # language it offers must ship inside it).
+    loc_langs = _discover_loc_langs()
+    if bundle_langs == "all":
+        selected = {lang for langs in loc_langs.values() for lang in langs}
+    else:
+        selected = set(bundle_langs or ())
+    localization = {}
+    for gid, langs in loc_langs.items():
+        for lang in langs:
+            if lang in selected:
+                loc_path = OUTPUT_DIR / f"loc-{gid}-{lang}.json"
+                if loc_path.exists():
+                    localization.setdefault(gid, {})[lang] = json.loads(
+                        loc_path.read_text(encoding="utf-8"))
+    bundle_payload = dict(payload)
+    # Restrict the picker manifest to English + the languages actually embedded.
+    bundle_payload["languages"] = _language_manifest(
+        payload.get("games", {}).keys(), loc_langs, restrict=selected)
+    if localization:
+        bundle_payload["localization"] = localization
+
     # The bundle ships every game inline (no background loading), so embed the
     # whole payload rather than the split build's meta-only data.json.
-    json_text = json.dumps(payload, separators=(",", ":"))
+    json_text = json.dumps(bundle_payload, separators=(",", ":"))
 
     css_link = '<link rel="stylesheet" href="viewer.css">'
     if css_link not in index_html:
@@ -498,7 +602,11 @@ def build_bundle(payload: dict) -> None:
 
     out = DIST_DIR / _BUNDLE_OUTPUT_NAME
     out.write_text(bundled, encoding="utf-8")
-    print(f"Bundle build -> {out} ({out.stat().st_size/1024:.0f} KB)")
+    lang_note = (
+        f", {len(selected)} embedded language(s): {', '.join(sorted(selected))}"
+        if selected else ", English only"
+    )
+    print(f"Bundle build -> {out} ({out.stat().st_size/1024:.0f} KB{lang_note})")
 
 
 def _parse_args(argv):
@@ -517,6 +625,14 @@ def _parse_args(argv):
     mode.add_argument(
         "--all", dest="mode", action="store_const", const="all",
         help="Run --split then --bundle (default).",
+    )
+    parser.add_argument(
+        "--bundle-langs", dest="bundle_langs", default=None,
+        help=(
+            "Comma-separated dialogue-localisation language codes to embed in the "
+            "offline bundle (e.g. 'de,ja'), or 'all'. Default: English only. The "
+            "split build always emits every language for lazy-loading regardless."
+        ),
     )
     parser.set_defaults(mode="all")
     return parser.parse_args(argv)
@@ -651,7 +767,10 @@ def _compute_cross_game_duplicates(games_payload):
 def main(argv=None):
     args = _parse_args(argv if argv is not None else sys.argv[1:])
 
-    json_files = sorted(OUTPUT_DIR.glob("*.json"))
+    json_files = [
+        f for f in sorted(OUTPUT_DIR.glob("*.json"))
+        if not f.name.startswith("loc-")
+    ]
     if not json_files:
         print("ERROR: No JSON files found in outputs/. Run generate_data.py first.")
         sys.exit(1)
@@ -726,7 +845,14 @@ def main(argv=None):
             # Bundle-only run still needs the split outputs to stitch
             # from; refresh them so we don't bundle stale content.
             build_split(payload)
-        build_bundle(payload)
+        raw = (args.bundle_langs or "").strip()
+        if raw.lower() == "all":
+            bundle_langs = "all"
+        elif raw:
+            bundle_langs = {s.strip() for s in raw.split(",") if s.strip()}
+        else:
+            bundle_langs = None
+        build_bundle(payload, bundle_langs)
 
 
 if __name__ == "__main__":

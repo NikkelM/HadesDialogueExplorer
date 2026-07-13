@@ -9,7 +9,7 @@ import { test, before, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
 import { renderInfo, renderOtherReqEntryHtml, setOperandMarks, renderStatusLegendHtml } from '../templates/viewer/info-panel.js';
-import { loadData, getActiveGame } from '../templates/viewer/data.js';
+import { loadData, getActiveGame, setActiveLang, registerLocData } from '../templates/viewer/data.js';
 import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 import { loadFixtureData, buildFixtureData } from './fixtures.js';
 
@@ -1870,7 +1870,8 @@ test('closing voicelines (endLines) render speaker-prefixed after the main dialo
         endLines: [
             // Resolved-from-comment: subtitle text plus the cue id for provenance.
             { speaker: 'CharProtag', cue: 'ZagreusHome_2389', text: 'The job\u2019s number one perk... no thanks.' },
-            // Non-subtitled audio cue (no text) -> muted cue chip.
+            // Non-subtitled audio cue (no text): dropped at build time, so the
+            // renderer emits nothing for it (no bare cue chip).
             { speaker: 'NPC_Cerberus_01', cue: 'CerberusWhineSad' },
         ],
         requirements: {},
@@ -1884,8 +1885,42 @@ test('closing voicelines (endLines) render speaker-prefixed after the main dialo
     assert.match(lastHtml, /<div class="dialogue-line end-line">.*The job\u2019s number one perk\.\.\. no thanks\.<\/div>/);
     // No cue-id glyph / provenance marker is shown for resolved lines.
     assert.doesNotMatch(lastHtml, /ZagreusHome_2389/);
-    // A non-subtitled audio cue shows the trimmed cue id as a muted chip.
-    assert.match(lastHtml, /<code class="end-line-cue"[^>]*>CerberusWhineSad<\/code>/);
+    // A non-subtitled audio cue renders nothing (no muted cue chip): text-less
+    // closing lines are removed at build time, so the viewer never shows them.
+    assert.doesNotMatch(lastHtml, /CerberusWhineSad/);
+    assert.doesNotMatch(lastHtml, /end-line-cue/);
+});
+
+
+test('id-less lines show no EN untranslated marker (only keyed-untranslated lines do)', () => {
+    const data = buildFixtureData();
+    data.textlines.LocMarkerDemo = {
+        owner: 'NPC_Zeus_01', section: 'GiftTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [
+            // Id-less (no cue/textId): Bouldy-style "." punctuation and choice-prompt
+            // internal-id fallbacks have no localisation key, so they can never be
+            // translated - the EN badge would be misleading noise.
+            { speaker: 'NPC_Zeus_01', text: 'BeatOfSilence' },
+            // Keyed but untranslated in the active language -> EN badge.
+            { speaker: 'NPC_Zeus_01', cue: 'Untrans_0001', text: 'English only.' },
+            // Keyed and translated -> localised text, no badge.
+            { speaker: 'NPC_Zeus_01', cue: 'Trans_0001', text: 'English.' },
+        ],
+        requirements: {}, otherRequirements: {},
+    };
+    loadData(data);
+    const game = getActiveGame();
+    registerLocData(game, 'de', { text: { Trans_0001: 'Deutsch.' }, speakers: {} });
+    setActiveLang('de');
+    renderInfo('LocMarkerDemo');
+    const html = lastHtml;
+    setActiveLang('en'); // restore for later tests before asserting
+
+    // Exactly one EN badge - on the keyed-untranslated line, NOT the id-less line.
+    assert.equal((html.match(/untranslated-mark/g) || []).length, 1);
+    assert.match(html, /BeatOfSilence/);   // id-less line still rendered
+    assert.match(html, /Deutsch\./);       // translated line localised
+    assert.match(html, /English only\./);  // untranslated line shows English
 });
 
 

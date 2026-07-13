@@ -35,6 +35,8 @@ import { metaUpgradeNames, entityNames, gameDataRefs, namedRequirements } from '
 import { pathScopeNames, pathFieldNames, pathObjectFields, pathFieldLeafNames, pathLiteralLeafFields, brokenPathRefs, brokenReqFields } from './data.js';
 import { badgeRankNames, badgeRankManager } from './data.js';
 import { cueTexts } from './data.js';
+import { localizeText, isUntranslated, isLocalized, speakers } from './data.js';
+import { canonicalIdForSpeakerName } from './speaker-groups.js';
 import { getDialogueStatus, getSaveProgress, getSaveContext, saveMatchesActiveGame } from './save-parser.js';
 import { evaluateOtherRequirements, buildOtherReqSlices, gateClausePermanentlyUnmet, evaluateOtherReqUnit, h2OperandMarks } from './gamestate-eval.js';
 import { h1OperandMarks } from './gamestate-eval-h1.js';
@@ -701,6 +703,16 @@ function _renderScalarHaveHtml() {
     return ` (<code${attr}>${escapeHtml(_formatScalar(_curScalar))}</code>)`;
 }
 
+// Localise the speaker of a ``/VO/`` quoted voiceline. ``cueTexts`` bakes the
+// speaker as an English character name (the cue-id prefix); resolve it to that
+// character's localised name via the group name->id mapping + the localised
+// ``speakers`` overlay. English active / unresolved name -> the English name.
+function _localizedCueSpeaker(name) {
+    if (!name || !isLocalized()) return name;
+    const id = canonicalIdForSpeakerName(name);
+    return (id && speakers[id] && speakers[id].name) || name;
+}
+
 // Render a scalar operand value as a ``<code>`` chip, resolving an internal
 // game-entity id (boon/trait, keepsake, companion, weapon aspect, god boon,
 // enemy, item, ...) to its friendly DisplayName via ``entityNames`` and keeping
@@ -714,10 +726,16 @@ function _valueChip(v, cls) {
         // quoted line with its speaker in parens, keeping the cue id in the
         // tooltip.
         if (v.startsWith('/VO/')) {
-            const cue = cueTexts[v.slice(4)];
+            const cueId = v.slice(4);
+            const cue = cueTexts[cueId];
             if (cue && cue.text) {
-                const who = cue.speaker ? ` (${escapeHtml(cue.speaker)})` : '';
-                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + v.slice(4))}">\"${escapeHtml(cue.text)}\"${who}</code>`;
+                // Localise the quoted spoken line (the cue id is a loc key) and
+                // its speaker (an English character name -> its localised name
+                // via the group mapping); both fall back to English.
+                const text = localizeText(cueId, cue.text);
+                const spk = _localizedCueSpeaker(cue.speaker);
+                const who = spk ? ` (${escapeHtml(spk)})` : '';
+                return `<code${klass} data-tooltip="${escapeHtml('Voiceline: ' + cueId)}">\"${escapeHtml(text)}\"${who}</code>`;
             }
         }
         const friendly = entityNames[v];
@@ -2345,6 +2363,33 @@ function computeChoiceLetters(choices) {
 // a single "only plays when ..." note. (Choice-gated codas are routed to the
 // choice-child textline at extract time, so they appear as that branch's plain
 // closing lines rather than a condition here.)
+// --- Dialogue-line localisation helpers ----------------------------
+// The localisation key for a line is its offer/prompt text id (``textId``, the
+// MiscText/ScreenText id whose English was resolved inline) if present, else
+// its voice cue id (``cue``). ``localizeText`` returns the English fallback
+// under English or when the active language has no translation for that id.
+function _lineLocKey(line) {
+    return (line && (line.textId || line.cue)) || null;
+}
+
+function _localizedLineText(line) {
+    return localizeText(_lineLocKey(line), (line && line.text) || '');
+}
+
+// A small marker appended to a line the active (non-English) language has no
+// official translation for (so it is showing English): dev-comment-only H1
+// cues, choice prompts with a textId but no shipped subtitle, etc. Empty under
+// English, when the line IS translated, or when the line is id-less. An id-less
+// line has no localisation key at all, so it can never carry a translation -
+// Bouldy's language-neutral "." punctuation lines and the choice-prompt
+// internal-id fallbacks - and the "EN" badge (which flags a missing but
+// *possible* translation) would just be misleading noise there.
+function _untranslatedMarkHtml(line) {
+    const key = _lineLocKey(line);
+    if (!key || !isLocalized() || !isUntranslated(key)) return '';
+    return ' <span class="untranslated-mark" data-tooltip="No official translation for this line in the selected language - showing the English text.">EN</span>';
+}
+
 function _renderEndLinesHtml(endLines) {
     if (!Array.isArray(endLines) || endLines.length === 0) return '';
     let html = '<div class="end-lines">'
@@ -2372,20 +2417,15 @@ function _renderEndLinesHtml(endLines) {
     return html;
 }
 
-// One closing line: speaker prefix + subtitle text, or a muted cue chip when the
-// line has no subtitle.
+// One closing line: speaker prefix + subtitle text. Closing voicelines with no
+// subtitle (audio-only sound cues, e.g. CerberusWhineSad) are dropped at build
+// time by drop_textless_end_cues, so a text-less line renders nothing here.
 function _renderEndLineHtml(line) {
+    if (!line.text) return '';
     const speaker = line.speaker
         ? `${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> `
         : '';
-    if (line.text) {
-        return `<div class="dialogue-line end-line">${speaker}${escapeHtml(line.text)}</div>`;
-    }
-    if (line.cue) {
-        return `<div class="dialogue-line end-line">${speaker}`
-            + `<code class="end-line-cue" data-tooltip="Voiceline cue - plays as audio with no subtitle text.">${escapeHtml(line.cue)}</code></div>`;
-    }
-    return '';
+    return `<div class="dialogue-line end-line">${speaker}${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
 }
 
 // The "only plays when ..." note heading a conditional closing-line group,
@@ -2443,7 +2483,7 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                 // follow-up dialogue, so the option renders as a plain
                 // friendly-label span (tooltip still surfaces the
                 // internal id).
-                html += `<div class="dialogue-line choice-prompt"><span class="choice-prompt-label">Choice:</span> ${escapeHtml(line.text)}</div>`;
+                html += `<div class="dialogue-line choice-prompt"><span class="choice-prompt-label">Choice:</span> ${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
                 const letters = computeChoiceLetters(line.choices);
                 for (let i = 0; i < line.choices.length; i++) {
                     const c = line.choices[i];
@@ -2478,14 +2518,14 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
                       + `<div class="random-group-options">`;
                 for (const o of line.options) {
                     html += (o && o.speaker)
-                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(o.text)}</div>`
-                        : `<div class="dialogue-line">${escapeHtml((o && o.text) || '')}</div>`;
+                        ? `<div class="dialogue-line">${renderSpeakerHtml(o.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(_localizedLineText(o))}${_untranslatedMarkHtml(o)}</div>`
+                        : `<div class="dialogue-line">${escapeHtml(_localizedLineText(o))}${_untranslatedMarkHtml(o)}</div>`;
                 }
                 html += `</div></details>`;
             } else if (typeof line === 'object' && line.speaker) {
-                html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(line.text)}</div>`;
+                html += `<div class="dialogue-line">${renderSpeakerHtml(line.speaker)}<span class="speaker-sep">:</span> ${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
             } else if (typeof line === 'object') {
-                html += `<div class="dialogue-line">${escapeHtml(line.text || '')}</div>`;
+                html += `<div class="dialogue-line">${escapeHtml(_localizedLineText(line))}${_untranslatedMarkHtml(line)}</div>`;
             } else {
                 html += `<div class="dialogue-line">${escapeHtml(line)}</div>`;
             }

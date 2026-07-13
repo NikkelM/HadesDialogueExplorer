@@ -82,16 +82,6 @@
     border-left-color: #6b7a8d;
     opacity: 0.92;
 }
-.dialogue-line.end-line .end-line-cue {
-    font-style: normal;
-    font-size: var(--fs-xs);
-    color: var(--text-muted);
-    background: var(--border);
-    padding: 1px 5px;
-    border-radius: 3px;
-    cursor: help;
-    font-family: var(--font-mono);
-}
 /* A conditional closing-line group: closing lines the engine plays only when a
    GameStateRequirements gate is satisfied (e.g. a different coda depending on
    whether another line was seen). The "Only when ..." note heads the group and

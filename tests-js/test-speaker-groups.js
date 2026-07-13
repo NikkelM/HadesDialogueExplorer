@@ -11,13 +11,15 @@ import { strict as assert } from 'node:assert';
 import {
     canonicalSpeakerId,
     canonicalIdForSpeakerName,
+    englishSpeakerName,
     speakerGroupMembers,
     listCanonicalSpeakerIds,
     getSpeakerGroupEntry,
     resetSpeakerGroups,
+    resetSpeakerGroupEntries,
     similarSpeakers,
 } from '../templates/viewer/speaker-groups.js';
-import { loadData } from '../templates/viewer/data.js';
+import { loadData, setActiveLang, registerLocData, speakers } from '../templates/viewer/data.js';
 
 // Two same-named Hermes speakers + a singleton Zeus + a Hecate
 // pair where one carries the "(Boss)" disambiguator so they MUST
@@ -190,6 +192,40 @@ test('canonicalIdForSpeakerName returns null for unknown / empty names', () => {
     assert.equal(canonicalIdForSpeakerName(null), null);
 });
 
+test('englishSpeakerName maps an id to its group\'s English friendly name', () => {
+    // Any member id resolves to the group's canonical English name.
+    assert.equal(englishSpeakerName('NPC_Hermes_01'), 'Hermes');
+    assert.equal(englishSpeakerName('HermesUpgrade'), 'Hermes');
+    assert.equal(englishSpeakerName('NPC_HecateBoss_01'), 'Hecate (Boss)');
+    // A nameless speaker (empty friendly label) has no URL-facing name.
+    assert.equal(englishSpeakerName('UnnamedUpgrade'), null);
+    assert.equal(englishSpeakerName(''), null);
+});
+
+test('speaker id<->name mapping is language-neutral (URL hash unaffected by localisation)', () => {
+    // A German overlay renames the Hermes group in the live ``speakers`` map...
+    registerLocData('hades1', 'de', {
+        text: {},
+        speakers: {
+            NPC_Hermes_01: { name: 'Hermes-DE' },
+            HermesUpgrade: { name: 'Hermes-DE' },
+        },
+    });
+    setActiveLang('de');
+    resetSpeakerGroups(); // rebuild while German is active - must still key off English
+    // The overlay IS live (guards against a false pass if it silently no-ops).
+    assert.equal(speakers.NPC_Hermes_01.name, 'Hermes-DE');
+    // ...but the hash-facing mapping must not follow the translation: the name
+    // navigation.js writes into the URL stays English, and the English name
+    // still resolves back - so a shared link is identical in every language.
+    assert.equal(englishSpeakerName('NPC_Hermes_01'), 'Hermes');
+    assert.equal(englishSpeakerName('HermesUpgrade'), 'Hermes');
+    assert.equal(canonicalIdForSpeakerName('Hermes'), 'HermesUpgrade');
+    // The localised name must NOT resolve - it never appears in a URL.
+    assert.equal(canonicalIdForSpeakerName('Hermes-DE'), null);
+    setActiveLang('en'); // restore for later tests
+});
+
 test('empty friendly names never group (each stays a singleton)', () => {
     assert.equal(canonicalSpeakerId('UnnamedUpgrade'), 'UnnamedUpgrade');
     assert.deepEqual(speakerGroupMembers('UnnamedUpgrade'), ['UnnamedUpgrade']);
@@ -267,6 +303,28 @@ test('multi-member groups expose all member ids via _members', () => {
     const entry = getSpeakerGroupEntry('HermesUpgrade');
     assert.equal(entry._canonicalId, 'HermesUpgrade');
     assert.deepEqual(entry._members, ['HermesUpgrade', 'NPC_Hermes_01']);
+});
+
+test('resetSpeakerGroupEntries re-derives the speaker-view name in the active language', () => {
+    registerLocData('hades1', 'de', {
+        text: {},
+        speakers: {
+            NPC_Hermes_01: { name: 'Hermes-DE', description: 'Bote-DE' },
+            HermesUpgrade: { name: 'Hermes-DE' },
+        },
+    });
+    // The aggregated speaker-view entry bakes in the (localised) display name.
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes');
+    // Switching language updates the overlay, but the entry stays cached...
+    setActiveLang('de');
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes');
+    // ...until the entry cache is cleared, then it re-derives in the new
+    // language while the language-neutral grouping stays intact.
+    resetSpeakerGroupEntries();
+    assert.equal(getSpeakerGroupEntry('HermesUpgrade').name, 'Hermes-DE');
+    assert.equal(canonicalIdForSpeakerName('Hermes'), 'HermesUpgrade');
+    setActiveLang('en');
+    resetSpeakerGroupEntries();
 });
 
 test('resetSpeakerGroups invalidates cached groups after a data swap', () => {
@@ -363,4 +421,23 @@ test('similarSpeakers does NOT cross-link letterless placeholder names', () => {
     assert.deepEqual(similarSpeakers('NPC_Real_Eris'), [
         { id: 'NPC_Real_ErisBoss', name: 'Eris (Boss)' },
     ]);
+});
+
+test('similarSpeakers stays language-neutral (non-Latin localised names still cross-link)', () => {
+    // A Greek overlay renames both Hecate versions to a non-Latin script. Keyed
+    // off the localised name with a Latin-only letter check, the "Other
+    // versions" list would vanish; keyed off the English base it survives, shown
+    // with the Greek name. (Regression: user reported this for Eris in Greek.)
+    registerLocData('hades1', 'el', {
+        text: {},
+        speakers: {
+            NPC_Hecate_01: { name: '\u0395\u03ba\u03ac\u03c4\u03b7' },              // Εκάτη
+            NPC_HecateBoss_01: { name: '\u0395\u03ba\u03ac\u03c4\u03b7 (Boss)' },   // Εκάτη (Boss)
+        },
+    });
+    setActiveLang('el');
+    assert.deepEqual(similarSpeakers('NPC_Hecate_01'), [
+        { id: 'NPC_HecateBoss_01', name: '\u0395\u03ba\u03ac\u03c4\u03b7 (Boss)' },
+    ]);
+    setActiveLang('en');
 });

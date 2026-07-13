@@ -39,6 +39,24 @@ export let duplicates;
 // semantics.
 export let currentGame;
 
+// --- Dialogue localisation state -----------------------------------
+//
+// Dialogue text, choice labels and speaker names can be shown in any of the
+// languages the games ship (English is the inline default). ``languages`` is
+// the per-game picker manifest ``{game: [{code,label}]}`` from the meta; the
+// active selection is ``currentLang`` (``'en'`` = the inline default, no
+// overlay). ``locText`` maps an id (cue / offer-text / choice-label) to its
+// translation for the active game+language; ``locSpeakers`` maps a speaker id
+// to its localised ``{name, description}``. Both are ``{}`` under English.
+//
+// Split build: each ``loc-<game>-<lang>.json`` is lazy-fetched on first use.
+// Bundle: the selected languages are inlined in the payload's ``localization``
+// and pre-registered at boot. English needs neither - it is already inline.
+export let languages = {};
+export let currentLang = 'en';
+export let locText = {};
+export let locSpeakers = {};
+
 // Per-game bindings: every read from another module resolves against
 // whichever game's blob ``setActiveGame`` last wired in. Initialised
 // empty so unit tests that exercise pure helpers without a
@@ -112,6 +130,20 @@ export function loadData(DATA) {
     defaultGame = norm.defaultGame;
     defaultDialogue = norm.defaultDialogue;
     duplicates = (DATA && DATA.duplicates) || [];
+    languages = (DATA && DATA.languages) || {};
+    // A fresh load resets the localisation registry + live overlay bindings so
+    // stale language maps from a previous dataset can't leak in.
+    _resetLocalizations();
+    // Bundle build inlines the selected languages under ``localization``
+    // (``{game: {lang: {text, speakers}}}``); pre-register them so no fetch is
+    // needed offline. The split build omits this key and lazy-fetches instead.
+    if (DATA && DATA.localization) {
+        for (const g in DATA.localization) {
+            for (const l in DATA.localization[g]) {
+                registerLocData(g, l, DATA.localization[g][l]);
+            }
+        }
+    }
     currentGame = null;
     // Activate a game whose blob is actually present. In the full-payload and
     // single-game-fixture cases the default game is always loaded, so this is
@@ -208,6 +240,170 @@ export function registerGameData(gameId, blob) {
     }
 }
 
+// --- Dialogue localisation registry + lazy loading -----------------
+//
+// Mirrors the per-game load machinery above. ``_localizations`` holds
+// ``{game: {lang: {text, speakers}}}``; split-build language maps are fetched
+// on demand via ``_locLoader`` (set by the boot code), bundle maps are
+// pre-registered from the inline payload. English is never stored - it is the
+// inline default.
+const _localizations = {};
+const _pendingLocLoads = {};
+let _locLoader = null;
+
+// Clear the localisation registry + reset the active-language state. Called by
+// ``loadData`` so a fresh dataset starts from a clean slate (English default).
+function _resetLocalizations() {
+    for (const k in _localizations) delete _localizations[k];
+    for (const k in _pendingLocLoads) delete _pendingLocLoads[k];
+    currentLang = 'en';
+    locText = {};
+    locSpeakers = {};
+}
+
+export function setLocLoader(fn) {
+    _locLoader = (typeof fn === 'function') ? fn : null;
+}
+
+// Install a fetched (or inlined) language map. Idempotent.
+export function registerLocData(game, lang, blob) {
+    if (!_localizations[game]) _localizations[game] = {};
+    _localizations[game][lang] = blob || { text: {}, speakers: {} };
+    delete _pendingLocLoads[game + ':' + lang];
+    // If this is the language currently being shown for the active game, wire
+    // it into the live bindings so an in-flight selection takes effect.
+    if (game === currentGame && lang === currentLang) _applyLocalization();
+}
+
+// True once a language map is available for a game (English is always ready:
+// it is the inline default with no overlay).
+export function isLangLoaded(game, lang) {
+    return lang === 'en' || !!(_localizations[game] && _localizations[game][lang]);
+}
+
+// The registered localisation blob for a game+language, or null. Boot uses this
+// to carry a language it preloaded (before ``loadData``) into the payload's
+// ``localization`` so ``loadData``'s ``_resetLocalizations`` doesn't drop it and
+// force a redundant re-fetch. English has no blob (inline default).
+export function getLocData(game, lang) {
+    return (_localizations[game] && _localizations[game][lang]) || null;
+}
+
+// Start (or reuse) a language-map load; resolves to whether it is now loaded.
+// Never rejects - a failed fetch clears its slot so a later retry re-fetches.
+export function ensureLangLoaded(game, lang) {
+    if (isLangLoaded(game, lang)) return Promise.resolve(true);
+    const key = game + ':' + lang;
+    if (_pendingLocLoads[key]) return _pendingLocLoads[key];
+    if (!_locLoader) return Promise.resolve(false);
+    const pr = Promise.resolve()
+        .then(() => _locLoader(game, lang))
+        .then(() => isLangLoaded(game, lang))
+        .catch(() => false);
+    _pendingLocLoads[key] = pr;
+    pr.then((ok) => { if (!ok && _pendingLocLoads[key] === pr) delete _pendingLocLoads[key]; });
+    return pr;
+}
+
+// The picker manifest for the active game (defaults to English-only).
+export function getAvailableLanguages() {
+    return (languages && languages[currentGame]) || [{ code: 'en', label: 'English' }];
+}
+
+// Background-warm the loc map of ``lang`` for every game that offers it and
+// hasn't loaded it yet, skipping ``exceptGame`` (typically the active game,
+// whose map loads on the normal path). Fire-and-forget and deduped via
+// ``ensureLangLoaded``'s in-flight tracking, so a game switch that fires
+// mid-flight simply awaits the same promise instead of flashing English then
+// swapping to the language once its map arrives. No-op for English (the inline
+// default) or when no loader is set (the bundle build inlines every map).
+export function warmLangForGames(lang, exceptGame) {
+    if (!lang || lang === 'en' || !_locLoader) return;
+    for (const g in languages) {
+        if (g === exceptGame) continue;
+        if (!(languages[g] || []).some((l) => l.code === lang)) continue;
+        if (!isLangLoaded(g, lang)) ensureLangLoaded(g, lang);
+    }
+}
+
+export function getActiveLang() {
+    return currentLang;
+}
+
+// True when a non-English language is active (so render code should localise).
+export function isLocalized() {
+    return currentLang !== 'en';
+}
+
+// Localized display name for a speaker id in a SPECIFIC game (which may differ
+// from the active game). Returns null under English, when that game's loc map
+// isn't loaded, or when the id has no translation. Used by cross-game surfaces
+// (the duplicates view) that render a speaker owned in a game that may not be
+// active; same-game display uses the overlaid ``speakers`` map instead. The
+// active game reads the live ``locSpeakers`` binding; another game reads its
+// registered map via ``getLocData``.
+export function localizedSpeakerName(game, speakerId) {
+    if (currentLang === 'en' || !game || !speakerId) return null;
+    const spk = (game === currentGame) ? locSpeakers : (getLocData(game, currentLang) || {}).speakers;
+    const tr = spk && spk[speakerId];
+    return (tr && tr.name) || null;
+}
+
+// Wire the active game+language localisation into the live bindings:
+// ``locText`` / ``locSpeakers`` for render-time lookups, and an overlaid
+// ``speakers`` map so every existing ``speakers[id].name`` read shows the
+// localised character name (and description) without per-call-site changes.
+// Reverts to the base (English) speakers under English or a missing map.
+function _applyLocalization() {
+    const loc = (currentLang !== 'en' && _localizations[currentGame])
+        ? _localizations[currentGame][currentLang]
+        : null;
+    locText = (loc && loc.text) || {};
+    locSpeakers = (loc && loc.speakers) || {};
+    const base = (games && games[currentGame] && games[currentGame].speakers) || {};
+    if (currentLang === 'en' || !loc) {
+        speakers = base;
+        return;
+    }
+    const overlaid = {};
+    for (const id in base) {
+        const tr = locSpeakers[id];
+        overlaid[id] = tr ? { ...base[id], ...tr } : base[id];
+    }
+    speakers = overlaid;
+}
+
+// Set the active language and re-apply the localisation overlay. The caller
+// persists the choice and triggers a re-render; the map must already be loaded
+// (via ``ensureLangLoaded``) for a non-English language to actually show.
+export function setActiveLang(lang) {
+    currentLang = lang || 'en';
+    _applyLocalization();
+}
+
+// Translated text for an id (cue / offer-text / choice-label), or ``fallback``
+// (the English text) when English is active or the id has no usable translation.
+// A translation that cleaned to an empty string (some shipped subtitles are
+// blank / pure-markup in a given language) counts as "no translation": it
+// falls back to English rather than rendering an empty line.
+export function localizeText(id, fallback) {
+    if (currentLang === 'en' || !id) return fallback;
+    const t = locText[id];
+    return (typeof t === 'string' && t !== '') ? t : fallback;
+}
+
+// True when a non-English language is active but the given id has no usable
+// translation (a dev-comment-only line, a cue with no shipped subtitle, or a
+// subtitle that is blank in this language), so the viewer can mark the
+// English-fallback line. A line with no id at all (pure inline narration /
+// choice prompt) is also untranslated. Kept in lock-step with ``localizeText``
+// so a line is flagged EN iff it actually shows the English fallback.
+export function isUntranslated(id) {
+    if (currentLang === 'en') return false;
+    const t = id ? locText[id] : undefined;
+    return !(typeof t === 'string' && t !== '');
+}
+
 // Swap every per-game binding to the requested game's blob. Throws on
 // an unknown id so a bug surfaces at the call site instead of
 // silently presenting an empty viewer.
@@ -255,12 +451,26 @@ export function setActiveGame(gameId) {
 
     _reqTypeOrderIndex = {};
     reqTypeOrder.forEach((t, i) => { _reqTypeOrderIndex[t] = i; });
+
+    // Overlay the active language onto the freshly-wired ``speakers`` map (and
+    // refresh ``locText`` for the new game) so a game switch keeps the chosen
+    // language. No-op under English.
+    _applyLocalization();
 }
 
 // Returns the currently-active game id (``null`` before
 // ``setActiveGame`` is first called).
 export function getActiveGame() {
     return currentGame;
+}
+
+// The active game's UNMODIFIED (English) speakers map. The localisation
+// overlay reassigns the exported ``speakers`` binding to a translated copy but
+// never touches ``games[currentGame].speakers``, so this always yields the
+// language-neutral names. Used for anything that must stay stable across
+// languages - notably the speaker id<->name mapping written into the URL hash.
+export function getBaseSpeakers() {
+    return (games && games[currentGame] && games[currentGame].speakers) || {};
 }
 
 // The build-time "featured" dialogue for the active game - shown on the

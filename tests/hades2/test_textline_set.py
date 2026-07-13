@@ -102,7 +102,7 @@ class TestDialogueLines:
         }""")
         data = extract_textline("Foo", tl, "NPC_Artemis_01", "Test.lua")
         assert data["dialogueLines"] == [
-            {"speaker": "NPC_Artemis_01", "text": "Hello there."},
+            {"speaker": "NPC_Artemis_01", "text": "Hello there.", "cue": "Artemis_0001"},
         ]
 
     def test_cue_without_text_skipped(self):
@@ -529,7 +529,7 @@ class TestInlineChoices:
         # Follow-up cue's dialogue carried with proper speaker
         # resolution (UsePlayerSource -> PlayerUnit).
         assert syn["dialogueLines"] == [
-            {"speaker": PLAYER_SPEAKER_ID, "text": "Yes."},
+            {"speaker": PLAYER_SPEAKER_ID, "text": "Yes.", "cue": "X_0002"},
         ]
 
     def test_synthetic_preserves_choice_level_requirements(self):

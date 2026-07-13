@@ -26,8 +26,13 @@ def annotate_choice_prompt_text(graph_data: dict, offer_text_map: dict) -> None:
     if offer_text_map:
         for tl in graph_data.get("textlines", {}).values():
             for line in tl.get("dialogueLines") or []:
-                display = offer_text_map.get(line.get("text"))
+                key = line.get("text")
+                display = offer_text_map.get(key)
                 if display is not None:
+                    # Retain the original ScreenText/MiscText id as the
+                    # localisation key before overwriting with English display
+                    # text, so the viewer can re-resolve it per language.
+                    line["textId"] = key
                     line["text"] = display
                     resolved += 1
     graph_data.setdefault("stats", {})["choicePromptTextResolved"] = resolved

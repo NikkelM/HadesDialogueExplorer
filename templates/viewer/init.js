@@ -3,12 +3,13 @@
 // is the final top-level statement, executing after every top-level
 // ``let`` declaration in the other modules has been initialised.
 
-import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame } from './data.js';
+import { loadData, resolveGame, registerGameData, setGameLoader, preloadGame, setLocLoader, registerLocData, ensureLangLoaded, getLocData, warmLangForGames } from './data.js';
 import { switchToGame, applyHashFromUrl, forceRefresh, applyFirstVisitLanding, syncActiveGameToSave } from './navigation.js';
 import { initSearch } from './search-ui.js';
 import { initInfoPanel } from './info-panel.js';
 import { initTooltip } from './tooltip.js';
 import { initGameToggle } from './game-toggle.js';
+import { initLanguagePicker, getSavedLang } from './language-picker.js';
 import { initSaveUpload, restoreSavedSave, earlyRenderSaveStatus } from './save-upload.js';
 import { initKeyboardA11y } from './keyboard-a11y.js';
 import { initTreeKeyboard } from './tree-keyboard.js';
@@ -16,8 +17,7 @@ import { initResizePanels, resetPanels } from './resize-panels.js';
 import { initMobileAccordion } from './mobile-accordion.js';
 import { initTreeScrollShadow } from './tree-scroll-shadow.js';
 import { initTreeDragScroll } from './tree-drag-scroll.js';
-import { replayTours, setReplayDispatcher } from './tours.js';
-import { initFabMenu } from './fab-menu.js';
+import { setReplayDispatcher } from './tours.js';
 import { startDialogueTourReplay } from './tour-home.js';
 import { startSpeakerTourReplay } from './tour-speaker.js';
 import { startDuplicatesTourReplay } from './tour-duplicates.js';
@@ -39,6 +39,10 @@ function init(data) {
     initInfoPanel();
     initTooltip();
     initGameToggle();
+    // Dialogue-language dropdown. Set up before the first render (applyHashFromUrl
+    // below) so the saved language - preloaded during boot - is already applied
+    // when the panels first paint, avoiding an English-then-swap flash.
+    initLanguagePicker();
     initSaveUpload();
     // Make inline-onclick controls keyboard-operable (focusable + Enter/Space).
     // Set up before the first render so the controls it draws are covered too.
@@ -81,13 +85,11 @@ function init(data) {
     // the status badges (this listener is registered after forceRefresh, so it
     // runs second on the same event).
     window.addEventListener('save-loaded', maybeStartSaveCallout);
-    // The floating "?" control folds out a help menu; one bubble re-runs the
-    // onboarding tour for the current view, another links to GitHub.
-    initFabMenu(replayTours);
-    // Onboarding: the replay control re-runs the tour matching the current
-    // view. The per-view tours auto-start (once) from their own render hooks
-    // in applyState, so first-time visitors are covered whether they land on
-    // the bare page or arrive via a deep link.
+    // Onboarding: the replay control (the footer "Replay Tutorials" link, which
+    // fires ``replayTours()`` via inline onclick) re-runs the tour matching the
+    // current view. The per-view tours auto-start (once) from their own render
+    // hooks in applyState, so first-time visitors are covered whether they land
+    // on the bare page or arrive via a deep link.
     setReplayDispatcher(() => {
         const view = (parseUrlState(window.location.hash).view || '').toLowerCase();
         if (view === 'speaker') startSpeakerTourReplay();
@@ -172,6 +174,9 @@ async function boot() {
         // below and any on-demand retry (e.g. a toggle after a failed preload)
         // go through the same fetch + cache-busting.
         setGameLoader((gid) => fetchJson(_gameFile(gid)).then((blob) => registerGameData(gid, blob)));
+        // Register how to fetch a per-language localisation map on demand. Only
+        // fired when a non-English language is selected (English is inline).
+        setLocLoader((gid, lang) => fetchJson(_locFile(gid, lang)).then((blob) => registerLocData(gid, lang, blob)));
 
         const meta = await fetchJson('data.json', pre && pre.meta);
         // Decide which game to load first from the URL (shared deep links land
@@ -190,6 +195,22 @@ async function boot() {
         // (a deep link to the non-default game warmed the wrong file).
         const warmedBlob = (pre && pre.game === initialGame) ? pre.blob : null;
         const initialBlob = await fetchJson(_gameFile(initialGame), warmedBlob);
+        // Preload the saved dialogue language for the initial game (if any and
+        // offered) BEFORE the first render, so a returning user whose language
+        // is not English sees localised text from the first paint instead of an
+        // English-then-swap flash. Non-fatal: a failed/absent map just renders
+        // English (the picker keeps the selection and retries on demand).
+        const savedLang = getSavedLang();
+        const initialLangs = (meta.languages && meta.languages[initialGame]) || [];
+        let preloadedLoc = null;
+        if (savedLang && savedLang !== 'en' && initialLangs.some((l) => l.code === savedLang)) {
+            await ensureLangLoaded(initialGame, savedLang).catch(() => {});
+            // Capture the fetched map so it can ride into ``loadData`` via the
+            // payload: ``loadData`` calls ``_resetLocalizations`` (clearing the
+            // registry), so without this the preload would be dropped and the
+            // picker would re-fetch the same file and flash English-then-swap.
+            preloadedLoc = getLocData(initialGame, savedLang);
+        }
         // Keep the skeleton up for its minimum visible time before the first
         // render swaps in the real content.
         await holdSkeleton();
@@ -200,6 +221,11 @@ async function boot() {
             defaultGame: meta.defaultGame,
             defaultDialogue: meta.defaultDialogue,
             duplicates: meta.duplicates,
+            languages: meta.languages,
+            // Re-seed the preloaded language so ``loadData``'s reset keeps it
+            // (mirrors how the bundle build inlines ``localization``); omitted
+            // when nothing was preloaded (English or an unoffered saved lang).
+            localization: preloadedLoc ? { [initialGame]: { [savedLang]: preloadedLoc } } : undefined,
         });
 
         // Background-load the remaining game(s) so switching is instant, but
@@ -219,6 +245,12 @@ async function boot() {
                     if (!ok) console.warn('Background load of ' + gid + ' failed; will retry on demand');
                 });
             }
+            // Warm the saved dialogue language's map for the inactive game(s) too
+            // (using the saved preference, not the active one, which may have
+            // fallen back to English on a game that doesn't offer it), so a game
+            // switch under a non-English language is instant instead of flashing
+            // English while that game's map lazy-loads. Non-fatal / deduped.
+            warmLangForGames(getSavedLang(), initialGame);
         };
         // ``timeout`` guarantees the preload still runs on a page that never goes
         // idle; the setTimeout fallback covers browsers without requestIdleCallback.
@@ -236,6 +268,12 @@ async function boot() {
 // Per-game data file name in the split build (paired with the meta data.json).
 function _gameFile(gameId) {
     return 'data-' + gameId + '.json';
+}
+
+// Per-language localisation file name in the split build (lazy-fetched when a
+// non-English language is picked).
+function _locFile(gameId, lang) {
+    return 'loc-' + gameId + '-' + lang + '.json';
 }
 
 // Minimum time the loading skeleton stays visible once painted. On a fast load
