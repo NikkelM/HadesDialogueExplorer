@@ -679,7 +679,7 @@ test('restoreSaveProgress drops a cache whose data fingerprint no longer matches
 });
 
 test('restoreSaveProgress keeps a cache when the build ships no fingerprint (best-effort)', () => {
-    const store = installMockLocalStorage();
+    installMockLocalStorage();
     registerDataFingerprints({ hades2: 'fp-abc' });
     try {
         clearSaveProgress();
