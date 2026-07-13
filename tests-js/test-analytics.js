@@ -147,6 +147,47 @@ test('a bare "#dialogue=X" (no view key) still counts as a dialogue_view', async
     assert.deepEqual(views.map((v) => v.body.id), ['Bare01']);
 });
 
+// --- first-visit landing exclusion -------------------------------
+
+test('skipLandingView swallows the automatic first-visit featured-dialogue landing', async () => {
+    // Post-redirect state: applyFirstVisitLanding has already written the
+    // featured dialogue into the hash before analytics inits.
+    const win = makeWindow({ hash: '#game=hades2&view=dialogue&dialogue=Featured01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())({ skipLandingView: true });
+    // The redirect's own async hashchange (hash is still the featured dialogue).
+    win.fire('hashchange');
+    const events = await readBeacons(win);
+    assert.equal(_typed(events, 'session_start').length, 1);   // the visit still counts
+    assert.equal(_typed(events, 'dialogue_view').length, 0);   // the default landing does not
+});
+
+test('after the swallowed landing, a genuine visit to the same dialogue still counts', async () => {
+    let t = 1000; Date.now = () => t;
+    const win = makeWindow({ hash: '#game=hades2&view=dialogue&dialogue=Featured01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())({ skipLandingView: true });
+    win.fire('hashchange');                                   // redirect hashchange -> swallowed
+    t = 3000;                                                 // >1s later, real user navigation
+    win.setHash('#game=hades2&view=dialogue&dialogue=Other01'); win.fire('hashchange');
+    win.setHash('#game=hades2&view=dialogue&dialogue=Featured01'); win.fire('hashchange');
+    const ids = _typed(await readBeacons(win), 'dialogue_view').map((e) => e.body.id);
+    assert.deepEqual(ids, ['Other01', 'Featured01']);        // landing excluded, real visits counted
+});
+
+test('the landing guard is one-shot and keyed to the landed dialogue', async () => {
+    let t = 1000; Date.now = () => t;
+    const win = makeWindow({ hash: '#game=hades2&view=dialogue&dialogue=Featured01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())({ skipLandingView: true });
+    // A first hashchange to a DIFFERENT dialogue must not be swallowed, and it
+    // clears the guard so a later visit to the featured dialogue also counts.
+    win.setHash('#game=hades2&view=dialogue&dialogue=Other01'); win.fire('hashchange');
+    t = 3000; win.setHash('#game=hades2&view=dialogue&dialogue=Featured01'); win.fire('hashchange');
+    const ids = _typed(await readBeacons(win), 'dialogue_view').map((e) => e.body.id);
+    assert.deepEqual(ids, ['Other01', 'Featured01']);
+});
+
 // --- speaker_view ------------------------------------------------
 
 test('counts a speaker_view keyed by the canonical speaker id', async () => {

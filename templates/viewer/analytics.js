@@ -41,6 +41,13 @@
 // the "share of visits that had a save" without any per-user identifier.
 // A "visit" is one browser-tab session: it spans in-page navigation AND
 // reloads, and ends when the tab is closed.
+//
+// First-visit exception: a brand-new visitor is auto-redirected from the bare
+// home page to the build-time featured dialogue (navigation.js
+// applyFirstVisitLanding). That single automatic landing is NOT counted as a
+// ``dialogue_view`` - it is a default, not a choice - so ``initAnalytics`` is
+// told to swallow it. Genuine later visits to that dialogue, including a shared
+// deep link straight to it, still count normally.
 
 import { parseUrlState } from './url.js';
 import { getActiveGame } from './data.js';
@@ -76,12 +83,22 @@ let _analyticsLastViewAt = 0;
 // registered listeners can early-out cheaply on a later opt-out edge case.
 let _analyticsActive = false;
 
+// One-shot guard for the automatic first-visit landing on the featured
+// dialogue. When ``initAnalytics`` is told the boot performed that redirect
+// (navigation.js applyFirstVisitLanding), it stores the landed dialogue id
+// here. The first dialogue_view processed after init - the async ``hashchange``
+// the redirect emits - reads and clears this guard; if the id matches, that one
+// view is swallowed instead of counted. Clearing on the first view means a
+// genuine later visit to the same dialogue can never be swallowed. Null the
+// rest of the time.
+let _analyticsSkipLandingDialogueId = null;
+
 // Wire up the beacon. No-op (registers nothing) when analytics is disabled for
 // this environment - the offline bundle or a Do-Not-Track browser - so those
 // users never emit a single request. Safe to call exactly once, at the end of
 // boot (see init.js), after navigation has registered its own hashchange /
 // save-loaded listeners so this one runs last and reads already-applied state.
-export function initAnalytics() {
+export function initAnalytics(opts) {
     if (!_analyticsEnabled()) return;
     _analyticsActive = true;
 
@@ -93,9 +110,20 @@ export function initAnalytics() {
     // the "had a save" share reflects returning users too - not just fresh
     // uploads. Deduped once per visit alongside the active-upload path below.
     _analyticsCountSaveIfPresent();
-    // Count the view the user actually landed on (deep link or featured
-    // dialogue); the bare home state emits nothing beyond session_start.
-    _analyticsTrackHash();
+    if (opts && opts.skipLandingView) {
+        // First-ever visit: the boot redirected the bare home page to the
+        // build-time featured dialogue and wrote it into the hash, which also
+        // queues an async ``hashchange`` our listener below will receive. That
+        // automatic landing is a default, not a user choice, so arm a one-shot
+        // guard to swallow exactly that single ``dialogue_view`` rather than
+        // let the featured dialogue out-count everything on new arrivals alone.
+        _analyticsSkipLandingDialogueId = parseUrlState(_analyticsHash()).dialogue || null;
+    } else {
+        // Count the view the user actually landed on (a shared deep link, or a
+        // returning visitor's restored hash); the bare home state emits nothing
+        // beyond session_start.
+        _analyticsTrackHash();
+    }
 
     window.addEventListener('hashchange', _analyticsTrackHash);
     // Active upload: the save is parsed into memory before ``save-loaded`` is
@@ -178,6 +206,13 @@ function _analyticsTrackHash() {
             // Per-dialogue tracer-open total (which dialogues get traced most).
             if (state.dialogue) _analyticsTrackView('eligibility_view', game, state.dialogue);
         } else if (state.dialogue) {
+            // The first-visit landing guard is one-shot: it only ever applies to
+            // the first dialogue_view processed after init (the async hashchange
+            // the auto-redirect emits). Reading AND clearing it here means a
+            // genuine later visit to the featured dialogue can never be swallowed.
+            const skipId = _analyticsSkipLandingDialogueId;
+            _analyticsSkipLandingDialogueId = null;
+            if (skipId && state.dialogue === skipId) return;
             _analyticsTrackView('dialogue_view', game, state.dialogue);
         }
     } catch {

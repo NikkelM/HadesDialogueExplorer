@@ -71,7 +71,8 @@ function init(data) {
     // First-ever visit to the bare home page lands on the featured
     // dialogue (and writes it into the URL); return visits fall through
     // to the normal hash apply, which shows the genuine empty state.
-    if (!applyFirstVisitLanding()) {
+    const landedOnFeatured = applyFirstVisitLanding();
+    if (!landedOnFeatured) {
         applyHashFromUrl();
     }
     window.addEventListener('hashchange', applyHashFromUrl);
@@ -109,8 +110,10 @@ function init(data) {
     // Silent, aggregate usage beacon. Registered last so its hashchange /
     // save-loaded listeners run after navigation has applied state, letting it
     // read the already-resolved game. Self-guards to http(s) origins (the
-    // offline bundle stays silent) and honours Do-Not-Track.
-    initAnalytics();
+    // offline bundle stays silent) and honours Do-Not-Track. ``skipLandingView``
+    // tells it not to count the automatic first-visit featured-dialogue landing
+    // (a default, not a user choice).
+    initAnalytics({ skipLandingView: landedOnFeatured });
 }
 
 // Render a load error into the stable #app-error mount instead of
