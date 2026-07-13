@@ -233,6 +233,14 @@ function resolveTextLineList(v) {
 //   both set  -> pass iff Min <= r <= Max; never-played PASSES (no early-exit).
 //   Min only  -> pass iff r >= Min;        never-played PASSES.
 //   Max only  -> pass iff r <  Max (Max exclusive); never-played FAILS.
+//
+// DO NOT UNIFY with ``runsSinceStatus`` in ``requirements.js``: that is a
+// SEPARATE run-count evaluator (for the ``Min/MaxRunsSinceAnyTextLines``
+// requirement-field form) with the OPPOSITE Max convention - Max INCLUSIVE and
+// never-played PASSES. This one (the raw ``RequireRunsSinceTextLines``
+// FunctionName gate) is Max EXCLUSIVE and never-played FAILS per
+// RequirementsLogic.lua:1095. Both are correct for their respective engine
+// paths; merging them would silently flip one path's verdicts.
 function evalRunsSince(rec, root) {
     const runsAgo = root._runsAgo;
     if (!runsAgo) return _MET('unknown', 'Counts runs since a textline last played, which needs run history this save didn\u2019t carry.');

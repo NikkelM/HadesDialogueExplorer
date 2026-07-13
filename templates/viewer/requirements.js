@@ -158,6 +158,15 @@ export function requiredCount(textlineData, reqType) {
  *     played set is treated as "too long ago" (the game keeps enough run
  *     history to resolve this; see ``RUNS_AGO_DEPTH``).
  * Returns 'unknown' only when no recent-run data is available at all.
+ *
+ * DO NOT UNIFY with ``evalRunsSince`` in ``gamestate-eval.js``: that is a
+ * SEPARATE run-count evaluator (for the raw ``RequireRunsSinceTextLines``
+ * FunctionName gate) with the OPPOSITE Max convention - Max EXCLUSIVE
+ * (``r < Max``) and never-played FAILS, matching RequirementsLogic.lua's
+ * early-exit for that gate. This one (the ``Min/MaxRunsSinceAnyTextLines``
+ * requirement-field form) is Max INCLUSIVE and never-played PASSES. Both are
+ * correct for their respective engine paths; merging them would silently flip
+ * one path's verdicts.
  */
 function runsSinceStatus(reqType, refs, ctx, count, selfName) {
     const runsAgo = ctx.runsAgo;
