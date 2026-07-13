@@ -173,6 +173,18 @@ def test_localise_speakers_omits_untranslated():
     assert out == {}
 
 
+def test_localise_speakers_resolves_charprotag_via_playerunit():
+    # The protagonist's translated DisplayName is keyed under ``PlayerUnit`` in
+    # HelpText, but ``CharProtag`` is the speaker id on most of Zagreus's H1
+    # lines. It must alias to PlayerUnit so those lines localise (Russian
+    # "Загрей" here) instead of always showing the English "Zagreus".
+    assert "PlayerUnit" in list(loc._speaker_lookup_ids("CharProtag"))
+    speakers_en = {"CharProtag": {"name": "Zagreus", "description": None}}
+    display = {"PlayerUnit": "\u0417\u0430\u0433\u0440\u0435\u0439"}  # Загрей
+    out = loc._localise_speakers(speakers_en, display, {})
+    assert out.get("CharProtag", {}).get("name") == "\u0417\u0430\u0433\u0440\u0435\u0439"
+
+
 # --- end-to-end file emission ---------------------------------------
 
 def test_build_localization_emits_filtered_files(tmp_path):

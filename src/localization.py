@@ -69,7 +69,13 @@ _SPEAKER_ID_ALIASES = {
     "Harpy": "NPC_FurySister_01", "Harpy2": "NPC_FurySister_02",
     "Harpy3": "NPC_FurySister_03", "TrainingMelee": "NPC_Skelly_01",
     "SkellyBackstory": "NPC_Skelly_01",
-    "PlayerUnit": "CharProtag", "PlayerUnit_Intro": "CharProtag",
+    # The protagonist's translated DisplayName is keyed under ``PlayerUnit`` /
+    # ``PlayerUnit_Intro`` in HelpText, NOT ``CharProtag`` - yet ``CharProtag``
+    # is the speaker id on the vast majority of Zagreus's H1 lines (~2700 of
+    # them). Alias it to ``PlayerUnit`` so those lines localise instead of always
+    # showing the English "Zagreus" (only visible in transliterating languages -
+    # e.g. Russian "Загрей" - since it stays "Zagreus" in Latin scripts).
+    "CharProtag": "PlayerUnit",
     "TrialUpgrade": "NPC_Chaos_01", "ChaosUpgrade": "NPC_Chaos_01",
 }
 
