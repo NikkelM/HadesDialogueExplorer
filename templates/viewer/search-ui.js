@@ -306,10 +306,15 @@ export function initSearch() {
         for (const m of result.matches) {
             const id = optionId('crossspeaker', m.id);
             const friendly = m.friendly && m.friendly !== m.id ? m.friendly : m.id;
+            // The URL/navigation key must be the language-neutral English name -
+            // the localised ``friendly`` doesn't resolve via
+            // canonicalIdForSpeakerName after the game swap (it would dead-end on
+            // "Unknown speaker"). Display stays localised.
+            const navName = m.baseFriendly && m.baseFriendly !== m.id ? m.baseFriendly : m.id;
             const idSuffix = (m.friendly && m.friendly !== m.id)
                 ? `<span class="npc">(${escapeHtml(m.id)})</span>`
                 : '';
-            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-speaker-name="${escapeHtml(friendly)}" data-game="${escapeHtml(result.gameId)}"><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span>${escapeHtml(friendly)}${idSuffix}</div>`);
+            parts.push(`<div class="search-item search-item-speaker search-item-cross" role="option" id="${escapeHtml(id)}" aria-selected="false" data-speaker="${escapeHtml(m.id)}" data-speaker-name="${escapeHtml(navName)}" data-game="${escapeHtml(result.gameId)}"><span class="cross-game-badge cross-game-${escapeHtml(result.gameId)}">${escapeHtml(result.gameLabel)}</span>${escapeHtml(friendly)}${idSuffix}</div>`);
         }
         crossSpeakersList.innerHTML = parts.join('');
     }
@@ -405,9 +410,10 @@ export function initSearch() {
         if (!target) return;
         if (target.dataset.speaker && target.dataset.game) {
             // Cross-game speaker: switch to the other game, then open its
-            // speaker overview. The URL carries the friendly name (unique in
-            // the target game), resolved back to the canonical id after the
-            // game swap by ``applyState``.
+            // speaker overview. The URL carries the language-neutral English
+            // name (data-speaker-name), resolved back to the canonical id after
+            // the game swap by ``applyState`` (the localised name would not
+            // resolve).
             navigateToState({ game: target.dataset.game, view: 'speaker', speaker: target.dataset.speakerName || target.dataset.speaker });
         } else if (target.dataset.speaker) {
             navigateToSpeaker(target.dataset.speaker);

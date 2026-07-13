@@ -279,7 +279,7 @@ function buildOtherSpeakerIndex(speakers, otherId) {
             if (mid === canon) continue;
             for (const t of tokeniseSpeakerId(mid)) tokens.add(t);
         }
-        return { id: canon, friendly, friendlyLower: friendly.toLowerCase(), idLower: canon.toLowerCase(), tokens };
+        return { id: canon, friendly, baseFriendly, friendlyLower: friendly.toLowerCase(), idLower: canon.toLowerCase(), tokens };
     });
 }
 
@@ -289,8 +289,10 @@ function buildOtherSpeakerIndex(speakers, otherId) {
 // freshly-built index of the other game's canonical speaker groups - the
 // per-game set is tiny (~65-90 speakers) so an un-cached per-keystroke
 // build is negligible. Returns ``{ gameId, gameLabel, matches: [{id,
-// friendly}] }`` or null when there is no other game, the query carries
-// filters, or there is no positive signal.
+// friendly, baseFriendly}] }`` or null when there is no other game, the query
+// carries filters, or there is no positive signal. ``friendly`` is the
+// localised display name; ``baseFriendly`` is the language-neutral English name
+// the URL/navigation must key off (the localised name doesn't resolve).
 export function searchCrossGameSpeakers(query, limit) {
     const active = getActiveGame();
     const otherId = otherGameId(active);
@@ -327,7 +329,7 @@ export function searchCrossGameSpeakers(query, limit) {
             tiers.push(r);
         }
         if (!allMatched) continue;
-        ranked.push({ id: sp.id, friendly: sp.friendly, tiers });
+        ranked.push({ id: sp.id, friendly: sp.friendly, baseFriendly: sp.baseFriendly, tiers });
     }
     if (ranked.length === 0) return null;
     ranked.sort((a, b) => {
@@ -341,7 +343,7 @@ export function searchCrossGameSpeakers(query, limit) {
     return {
         gameId: otherId,
         gameLabel: gameLabels[otherId] || otherId,
-        matches: ranked.slice(0, limit).map((m) => ({ id: m.id, friendly: m.friendly })),
+        matches: ranked.slice(0, limit).map((m) => ({ id: m.id, friendly: m.friendly, baseFriendly: m.baseFriendly })),
     };
 }
 

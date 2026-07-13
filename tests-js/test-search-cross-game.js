@@ -220,10 +220,15 @@ test('cross-game speaker search shows + matches the localised other-game name', 
     const byRu = searchCrossGameSpeakers(_q(['\u0433\u0435\u043a\u0430\u0442\u0430']), 6); // "геката"
     assert.ok(byRu, 'expected a cross-game result for the localised name');
     assert.equal(byRu.matches[0].friendly, '\u0413\u0435\u043a\u0430\u0442\u0430'); // Геката
+    // ...but the NAVIGATION key stays the language-neutral English name: the
+    // localised name would dead-end on "Unknown speaker" (canonicalIdForSpeakerName
+    // is English-keyed). Regression for the cross-game click dead-end.
+    assert.equal(byRu.matches[0].baseFriendly, 'Hecate');
     // ...and is still findable by the English name (English tokens kept).
     const byEn = searchCrossGameSpeakers(_q(['hecate']), 6);
     assert.ok(byEn);
     assert.equal(byEn.matches[0].friendly, '\u0413\u0435\u043a\u0430\u0442\u0430');
+    assert.equal(byEn.matches[0].baseFriendly, 'Hecate');
     setActiveLang('en');
     loadData(twoGamePayload());
 });
