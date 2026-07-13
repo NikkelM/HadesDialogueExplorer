@@ -380,9 +380,12 @@ def build_split(payload: dict) -> dict:
 
     games = payload.get("games", {})
     loc_langs = _discover_loc_langs()
-    # Heavy per-game blobs, one file each.
+    # Heavy per-game blobs, one file each. ``sort_keys`` keeps the serialized
+    # bytes deterministic across builds (dict/set insertion order otherwise
+    # varies with CPython's randomized hash seed) so the cache-bust hash below
+    # only changes when the data actually changes.
     per_game_json = {
-        gid: json.dumps(blob, separators=(",", ":")) for gid, blob in games.items()
+        gid: json.dumps(blob, separators=(",", ":"), sort_keys=True) for gid, blob in games.items()
     }
     # Small meta entry point: everything the viewer needs to render the toggle
     # and the cross-game duplicates view before (or without) the per-game blobs.
@@ -396,7 +399,7 @@ def build_split(payload: dict) -> dict:
         # each other language is lazy-fetched from ``loc-<game>-<lang>.json``.
         "languages": _language_manifest(games.keys(), loc_langs),
     }
-    meta_json = json.dumps(meta, separators=(",", ":"))
+    meta_json = json.dumps(meta, separators=(",", ":"), sort_keys=True)
 
     # Cache-busting: a short content hash appended to the asset URLs so a
     # plain browser refresh always fetches a changed build instead of serving a
@@ -549,7 +552,9 @@ def build_bundle(payload: dict, bundle_langs=None) -> None:
 
     # The bundle ships every game inline (no background loading), so embed the
     # whole payload rather than the split build's meta-only data.json.
-    json_text = json.dumps(bundle_payload, separators=(",", ":"))
+    # ``sort_keys`` for deterministic bytes (see per-game blob note above): the
+    # offline bundle must be reproducible across builds of identical inputs.
+    json_text = json.dumps(bundle_payload, separators=(",", ":"), sort_keys=True)
 
     css_link = '<link rel="stylesheet" href="viewer.css">'
     if css_link not in index_html:
