@@ -404,12 +404,21 @@ def build_split(payload: dict) -> dict:
     # Cache-busting: a short content hash appended to the asset URLs so a
     # plain browser refresh always fetches a changed build instead of serving a
     # stale viewer.js / viewer.css / data file. The hash covers every artifact
-    # (js, css, meta, and each per-game blob in a stable order), so any change
-    # bumps the version. The token is exposed via the ``viewer-version`` meta
-    # tag so the split-build data fetches (init.js) bust their own cache too.
+    # (js, css, meta, each per-game blob, and each lazy-loaded loc file), so any
+    # change bumps the version. The token is exposed via the ``viewer-version``
+    # meta tag so the split-build data fetches (init.js) bust their own cache too.
+    # Fold each loc file's content hash in too: the loc files ship under the same
+    # ``?v=<version>`` token (init.js), so a translation-only regen (no js / css /
+    # data change) must still bump the token, else returning users get the stale
+    # cached translation. Hashing each file's bytes keeps this cheap vs.
+    # concatenating ~46 MB of loc content.
+    loc_files = sorted(OUTPUT_DIR.glob("loc-*.json"))
+    loc_fingerprint = "".join(
+        f"{f.name}:{hashlib.sha256(f.read_bytes()).hexdigest()}" for f in loc_files
+    )
     hash_src = js_data + css_data + meta_json + "".join(
         per_game_json[gid] for gid in sorted(per_game_json)
-    )
+    ) + loc_fingerprint
     version = hashlib.sha256(hash_src.encode("utf-8")).hexdigest()[:10]
     index_html = _build_split_index_html(version)
 
@@ -437,8 +446,8 @@ def build_split(payload: dict) -> dict:
 
     # Copy the per-language localisation maps verbatim so the viewer can
     # lazy-fetch ``loc-<game>-<lang>.json`` when a language is picked. English
-    # stays inline in the per-game data (no file, no fetch).
-    loc_files = sorted(OUTPUT_DIR.glob("loc-*.json"))
+    # stays inline in the per-game data (no file, no fetch). ``loc_files`` was
+    # already collected above for the cache-bust fingerprint.
     for loc_file in loc_files:
         shutil.copyfile(loc_file, DIST_DIR / loc_file.name)
 
