@@ -44,7 +44,11 @@ from src.extractors.hades2 import (
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.god_traits import extract_god_trait_metadata
 from src.extractors.hades2.named_requirements import extract_named_requirements
-from src.extractors.hades2.req_extractor import extract_requirements
+from src.extractors.hades2.req_extractor import (
+    extract_requirements,
+    reset_unresolved_textline_op_audit,
+    get_unresolved_textline_op_refs,
+)
 from src.extractors.hades2.textline_set import extract_hero_repeatable_sets
 from src.extractors.textline_set import (
     reset_section_key_audit,
@@ -404,6 +408,33 @@ def report_unrecognised_textline_keys(game_label: str) -> None:
         print(f"  ... and {len(unknown) - 10} more")
 
 
+def report_unresolved_textline_op_refs(game_label: str) -> None:
+    """Surface bare identifiers used as textline-semantics requirement op
+    values (``HasNone`` / ``HasAny`` / ``IsNone`` on a ``TextLinesRecord``
+    path, or a textline ``FunctionName`` arg) that did not resolve to a
+    known ``GameData.X`` textline list - each one silently drops the
+    dialogue edges it implies to an ``otherRequirements`` ``<ref:...>``
+    placeholder. Populated during the game's requirement-extraction pass
+    by :func:`src.extractors.hades2.req_extractor._note_unresolved_textline_op_ref`;
+    silent once every textline-list ref resolves. The H2 analogue of the
+    section-key / eligibility-gate audits above - it would have caught the
+    GameData.X textline-list drop this resolver map fixes.
+    """
+    refs = get_unresolved_textline_op_refs()
+    if not refs:
+        return
+    print(
+        f"\nWARNING ({game_label}): {len(refs)} textline-list requirement "
+        f"ref(s) did not resolve to textline names - the dialogue edges they "
+        f"imply were dropped. Wire the list's defining source file into "
+        f"HADES2_GAMEDATA_REF_SOURCE_FILES, or confirm the exclusion is intended."
+    )
+    for ref_name, context in refs[:10]:
+        print(f"  {ref_name}  (under {context})")
+    if len(refs) > 10:
+        print(f"  ... and {len(refs) - 10} more")
+
+
 def main():
     try:
         cfg = load_config()
@@ -587,6 +618,11 @@ def main():
     }
     if h2_game_data_lists:
         print(f"  GameData textline lists (edge-resolvable): {len(h2_game_data_lists)}")
+    # Reset the unresolved-textline-op audit before any H2 requirement
+    # resolution (the named requirements below + the per-source loop) so a
+    # textline-list ref that fails to resolve surfaces as a build warning
+    # instead of silently dropping its dialogue edges.
+    reset_unresolved_textline_op_audit()
     # Pre-resolve every named requirement into the same normalised
     # ``{requirements, otherRequirements, orBranches, flags}`` shape
     # the per-textline extractor produces, so the viewer can render
@@ -661,6 +697,7 @@ def main():
             print(f"  Skipped {skipped_empty} empty-textlines file(s) in this family.")
     report_unlisted_section_keys("hades2")
     report_unrecognised_textline_keys("hades2")
+    report_unresolved_textline_op_refs("hades2")
 
     # Resolve the H2 voice-line cues referenced by SpeechRecord "played" gates to
     # their spoken line (inline ``Text`` next to the cue) + speaker (cue-id

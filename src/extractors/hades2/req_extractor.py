@@ -221,6 +221,45 @@ _INHERITANCE_DIRECTIVES = frozenset({
 })
 
 
+# --- Unresolved textline-op audit (see generate_data.py) -------------
+# When a textline-semantics requirement op - a ``HasNone`` / ``HasAny``
+# / ``IsNone`` on a ``TextLinesRecord`` path, or a textline
+# ``FunctionName`` arg (``RequiredQueuedTextLine`` /
+# ``RequireRunsSinceTextLines``) - carries a bare identifier value that
+# does NOT resolve to a known ``GameData.X`` textline list, the walker
+# cannot hoist the textlines it implies: the dialogue edges are silently
+# lost (the record falls through to an ``otherRequirements``
+# ``<ref:...>`` placeholder). This module-level accumulator records
+# every such ref so the generator can surface it as a build warning - a
+# new / renamed textline-list needs wiring into the resolver map (its
+# defining source file added to ``HADES2_GAMEDATA_REF_SOURCE_FILES``)
+# rather than quietly dropping edges. Mirrors the section-key "audits
+# over silent skips" doctrine, and is module-level for the same reason:
+# threading an accumulator through every per-source extractor would be
+# far more invasive than reset-then-read around the H2 pass.
+_unresolved_textline_op_refs: dict = {}
+
+
+def reset_unresolved_textline_op_audit() -> None:
+    """Clear the accumulated unresolved-textline-op records. Call once
+    before the H2 extraction pass (and in tests for isolation)."""
+    _unresolved_textline_op_refs.clear()
+
+
+def _note_unresolved_textline_op_ref(ref_name, context) -> None:
+    """Record a bare identifier used as a textline-semantics op value
+    that did not resolve to a known textline list. ``context`` is the op
+    or function name it appeared under (for build-warning triage)."""
+    if isinstance(ref_name, str):
+        _unresolved_textline_op_refs.setdefault(ref_name, context)
+
+
+def get_unresolved_textline_op_refs() -> list:
+    """Return the recorded unresolved textline-op refs as a sorted
+    ``[(ref_name, context), ...]`` list."""
+    return sorted(_unresolved_textline_op_refs.items())
+
+
 def extract_requirements(req_set, named_requirements=None, *, game_data_lists=None, _visited=frozenset()):
     """Walk a single H2 ``RequirementSet`` value and return classified output.
 
@@ -351,6 +390,8 @@ def _classify_record(record, result, game_data_lists=None):
                     isinstance(raw, LuaIdentifier)
                     and game_data_lists and raw.name in game_data_lists)
                 if not resolvable:
+                    if isinstance(raw, LuaIdentifier):
+                        _note_unresolved_textline_op_ref(raw.name, op_name)
                     continue
                 sources = []
                 names = _to_string_list(raw, game_data_lists, sources_out=sources)
@@ -461,7 +502,7 @@ _COUNT_META_STRICT = {
 }
 
 
-def _resolve_textline_arg(value, game_data_lists=None):
+def _resolve_textline_arg(value, game_data_lists=None, context=None):
     """Resolve a ``FunctionArgs`` textline-list value into ``(names, sources)``.
 
     Accepts an inline list literal (a ``LuaTable``) or a bare
@@ -470,13 +511,18 @@ def _resolve_textline_arg(value, game_data_lists=None):
     provenance in ``sources``). Any other value - an unresolved
     identifier, an expression, a scalar - yields ``([], [])`` so the
     caller falls through to the ``otherRequirements`` ``<ref:...>``
-    placeholder rather than emitting a bogus dialogue edge."""
+    placeholder rather than emitting a bogus dialogue edge. An
+    unresolved identifier is recorded for the build-time
+    unresolved-textline-op audit (``context`` names the op / function it
+    appeared under)."""
     if isinstance(value, LuaTable) or (
             isinstance(value, LuaIdentifier)
             and game_data_lists and value.name in game_data_lists):
         sources: list = []
         names = _to_string_list(value, game_data_lists, sources_out=sources)
         return names, sources
+    if isinstance(value, LuaIdentifier):
+        _note_unresolved_textline_op_ref(value.name, context)
     return [], []
 
 
@@ -503,7 +549,7 @@ def _try_classify_textline_function(record, result, game_data_lists=None):
         #   Min -> MinRunsSinceAnyTextLines (Count = N)
         #   Max -> MaxRunsSinceAnyTextLines (Count = N)
         textlines, textlines_src = _resolve_textline_arg(
-            args_table.named.get("TextLines"), game_data_lists)
+            args_table.named.get("TextLines"), game_data_lists, fn)
         if not textlines:
             return False
         consumed = False
@@ -529,8 +575,8 @@ def _try_classify_textline_function(record, result, game_data_lists=None):
         # H1 analogues:
         #   IsAny  -> RequiredAnyQueuedTextLines
         #   IsNone -> RequiredFalseQueuedTextLines
-        is_any, is_any_src = _resolve_textline_arg(args_table.named.get("IsAny"), game_data_lists)
-        is_none, is_none_src = _resolve_textline_arg(args_table.named.get("IsNone"), game_data_lists)
+        is_any, is_any_src = _resolve_textline_arg(args_table.named.get("IsAny"), game_data_lists, fn)
+        is_none, is_none_src = _resolve_textline_arg(args_table.named.get("IsNone"), game_data_lists, fn)
         consumed = False
         if is_any:
             _extend_requirements(result, "RequiredAnyQueuedTextLines", is_any, is_any_src)

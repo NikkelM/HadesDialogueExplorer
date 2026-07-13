@@ -24,6 +24,8 @@ from src.lua_parser import LuaParser, LuaTable
 from src.extractors.hades2.req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
+    reset_unresolved_textline_op_audit,
+    get_unresolved_textline_op_refs,
 )
 
 
@@ -790,3 +792,46 @@ class TestGameDataListResolution:
         assert result["requirementSources"]["RequiredAnyTextLines"] == [
             None, "GameData.GodAboutGodEvents", "GameData.GodAboutGodEvents",
         ]
+
+
+class TestUnresolvedTextlineOpAudit:
+    """Build-time tripwire: a bare identifier used as a textline-semantics
+    op value (``HasNone``/``HasAny``/``IsNone`` on a ``TextLinesRecord``
+    path, or a textline ``FunctionName`` arg) that does NOT resolve to a
+    known textline list is recorded so a new / renamed ``GameData.X`` list
+    surfaces as a build warning instead of silently dropping its dialogue
+    edges. Each test resets the module-level accumulator first for
+    isolation."""
+
+    def test_unresolved_container_op_recorded(self):
+        reset_unresolved_textline_op_audit()
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.UnknownList } }'
+        extract_requirements(_parse_req_set(lua), game_data_lists={})
+        assert get_unresolved_textline_op_refs() == [("GameData.UnknownList", "HasNone")]
+
+    def test_resolved_container_op_not_recorded(self):
+        reset_unresolved_textline_op_audit()
+        gdl = {"GameData.KnownList": ["A01"]}
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.KnownList } }'
+        extract_requirements(_parse_req_set(lua), game_data_lists=gdl)
+        assert get_unresolved_textline_op_refs() == []
+
+    def test_unresolved_function_arg_recorded(self):
+        reset_unresolved_textline_op_audit()
+        lua = '{ { FunctionName = "RequiredQueuedTextLine", FunctionArgs = { IsNone = GameData.UnknownQueued } } }'
+        extract_requirements(_parse_req_set(lua), game_data_lists={})
+        assert get_unresolved_textline_op_refs() == [("GameData.UnknownQueued", "RequiredQueuedTextLine")]
+
+    def test_literal_list_not_recorded(self):
+        reset_unresolved_textline_op_audit()
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = { "A01" } } }'
+        extract_requirements(_parse_req_set(lua), game_data_lists={})
+        assert get_unresolved_textline_op_refs() == []
+
+    def test_reset_clears_accumulator(self):
+        reset_unresolved_textline_op_audit()
+        lua = '{ { Path = { "CurrentRun", "TextLinesRecord" }, HasNone = GameData.UnknownList } }'
+        extract_requirements(_parse_req_set(lua), game_data_lists={})
+        assert get_unresolved_textline_op_refs()  # populated
+        reset_unresolved_textline_op_audit()
+        assert get_unresolved_textline_op_refs() == []
