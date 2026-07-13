@@ -290,12 +290,22 @@ export async function applyHashFromUrl() {
     state.game = resolvedGame;
     const key = urlStateKey(state);
     if (key === urlSelection) return;
-    urlSelection = key;
     if (resolvedGame !== getActiveGame()) {
         // Load/retry the target game's data (it may still be streaming in, or a
         // prior background load failed); abort with a message if it can't load.
         if (!await _switchGameOrNotify(resolvedGame)) return;
+        // A newer back/forward may have landed during the async load; if the
+        // live hash no longer resolves to this state, let the newer one win
+        // rather than clobbering it with this stale render.
+        const live = parseUrlState(window.location.hash);
+        live.game = resolveGame(live.game);
+        if (urlStateKey(live) !== key) return;
     }
+    // Set the dedup guard only now (mirrors navigateToState), i.e. after a
+    // successful/current switch - so a failed or superseded load leaves
+    // urlSelection pointing at the actually-rendered state and a later retry of
+    // the same URL isn't deduped away and never rendered.
+    urlSelection = key;
     applyState(state);
 }
 
@@ -577,7 +587,14 @@ export function syncActiveGameToSave() {
             target.view = 'duplicates';
             if (prev.dup) target.dup = prev.dup;
             if (prev.q) target.q = prev.q;
-        } else if (prev.speaker && targetData.speakers && targetData.speakers[prev.speaker]) {
+        } else if (prev.speaker && targetData.speakers
+                   && Object.values(targetData.speakers).some((s) => s && (s.name || '').trim() === prev.speaker)) {
+            // The URL ``speaker`` is the English base NAME (englishSpeakerName),
+            // but ``speakers`` is keyed by internal id - a direct
+            // ``speakers[prev.speaker]`` lookup misses for ~every named speaker
+            // (name !== id). Carry over only when the target game actually has a
+            // speaker with that base name, which canonicalIdForSpeakerName then
+            // resolves to the canonical id after the switch.
             target.view = 'speaker';
             target.speaker = prev.speaker;
             if (prev.priority) target.priority = prev.priority;
