@@ -443,6 +443,26 @@ function evalAudioState(rec, path, root) {
     return _MET('unknown', 'Unrecognised AudioState condition shape.');
 }
 
+// Save-resolvable ``FunctionName`` gates: each reads state a static save DOES
+// carry (run / room history, quest counts, hero health / equipped traits), so
+// its verdict can be computed client-side. Any ``FunctionName`` NOT in this map
+// is evaluated in-engine from live run / room / combat state a save doesn't
+// snapshot, so it resolves to 'unknown'. Exported (as the key set below) so the
+// resolver-parity test can assert every ``FunctionName`` present in the data is
+// either resolved here or on its intentionally-unknown allowlist - catching a
+// new H2 gate silently degrading save coverage as the game grows.
+const _H2_FUNCTION_EVALS = {
+    RequireRunsSinceTextLines: evalRunsSince,
+    RequireQuestCount: evalQuestCount,
+    IsBossDifficultyShrineUpgradeActive: evalBossDifficulty,
+    RequiredHealthFraction: evalHealthFraction,
+    RequiredConsecutiveClearsOfRoom: evalConsecutiveClears,
+    RequiredConsecutiveDeathsInRoom: evalConsecutiveDeaths,
+    RequiredSellableGodTraits: evalSellableGodTraits,
+    RequireUnrestrictedBoonChoices: evalUnrestrictedBoonChoices,
+};
+export const H2_RESOLVED_FUNCTION_NAMES = new Set(Object.keys(_H2_FUNCTION_EVALS));
+
 // Evaluate a single clause record against ``root`` (the resolution base, an
 // object exposing ``GameState`` and the runs slice ``_runs``). Returns
 // { status, reason? }. ``status`` is 'met' | 'unmet' | 'unknown'; 'unknown'
@@ -452,14 +472,8 @@ function evalClause(rec, root) {
         return _MET('unknown', 'Unrecognised condition shape.');
     }
     if (rec.FunctionName) {
-        if (rec.FunctionName === 'RequireRunsSinceTextLines') return evalRunsSince(rec, root);
-        if (rec.FunctionName === 'RequireQuestCount') return evalQuestCount(rec, root);
-        if (rec.FunctionName === 'IsBossDifficultyShrineUpgradeActive') return evalBossDifficulty(rec, root);
-        if (rec.FunctionName === 'RequiredHealthFraction') return evalHealthFraction(rec, root);
-        if (rec.FunctionName === 'RequiredConsecutiveClearsOfRoom') return evalConsecutiveClears(rec, root);
-        if (rec.FunctionName === 'RequiredConsecutiveDeathsInRoom') return evalConsecutiveDeaths(rec, root);
-        if (rec.FunctionName === 'RequiredSellableGodTraits') return evalSellableGodTraits(rec, root);
-        if (rec.FunctionName === 'RequireUnrestrictedBoonChoices') return evalUnrestrictedBoonChoices(rec, root);
+        const fn = _H2_FUNCTION_EVALS[rec.FunctionName];
+        if (fn) return fn(rec, root);
         return _MET('unknown', `Calls the game function ${rec.FunctionName}() - evaluated in-engine from live run / room / combat state a static save doesn\u2019t store.`);
     }
     if (rec.PathFromSource || rec.PathFromArgs) {
