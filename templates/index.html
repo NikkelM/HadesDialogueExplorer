@@ -294,7 +294,23 @@
     // immediately - no flash of an internal id before the data loads.
     var search = document.getElementById('search');
     if (search) {
-        if (view === 'speaker') search.value = speaker;
+        if (view === 'speaker') {
+            // The URL carries the language-neutral English speaker name. Under a
+            // non-English saved language that would flash English and then swap to
+            // the localised name once viewer.js loads the loc map, so restore the
+            // localised name navigation.js cached on the last speaker render
+            // (keyed by language + the same English ref); fall back to empty
+            // rather than the wrong-language name when nothing matches.
+            var slang = 'en';
+            try { slang = localStorage.getItem('hde:lang') || 'en'; } catch (e) { slang = 'en'; }
+            if (slang === 'en') {
+                search.value = speaker;
+            } else {
+                var cachedSpk = null;
+                try { cachedSpk = JSON.parse(localStorage.getItem('hde:spk') || 'null'); } catch (e) { cachedSpk = null; }
+                search.value = (cachedSpk && cachedSpk.l === slang && cachedSpk.r === speaker) ? cachedSpk.n : '';
+            }
+        }
         else if (view === 'duplicates') search.value = '';
         else search.value = dialogue;
     }

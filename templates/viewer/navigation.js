@@ -20,7 +20,7 @@ import { renderSpeaker, canonicalisePriority, canonicaliseEligibility } from './
 import { renderDuplicates, ALL_SPEAKERS, getSelectedDuplicateSpeaker } from './duplicates-view.js';
 import { renderEligibility } from './eligibility-view.js';
 import { parseUrlState, serializeUrlState, urlStateKey } from './url.js';
-import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, textlines, isGameLoaded, ensureGameLoaded, gameLabels } from './data.js';
+import { setActiveGame, getActiveGame, resolveGame, speakers, getDefaultDialogue, games, textlines, isGameLoaded, ensureGameLoaded, gameLabels, getActiveLang } from './data.js';
 import { buildLinesIndex } from './search-text.js';
 import { buildNameIndex } from './search-name.js';
 import { buildSpeakerIndex } from './search-speaker.js';
@@ -421,7 +421,16 @@ function applyState(state) {
         const searchInput = document.getElementById('search');
         if (searchInput) {
             const entry = speakerId ? speakers[speakerId] : null;
-            searchInput.value = (entry && entry.name) || ref || '';
+            const shown = (entry && entry.name) || ref || '';
+            searchInput.value = shown;
+            // Cache the displayed (possibly localised) speaker name, keyed by the
+            // active language + the URL's language-neutral English ref, so the
+            // index.html pre-paint script can restore it on a reload / deep link
+            // instead of flashing the English URL name and then swapping to the
+            // localised one once viewer.js loads the loc map.
+            try {
+                localStorage.setItem('hde:spk', JSON.stringify({ l: getActiveLang(), r: ref, n: shown }));
+            } catch { /* storage unavailable - the pre-paint just falls back */ }
         }
         setDocumentTitle((speakerId && speakers[speakerId] && speakers[speakerId].name) || ref);
         // Onboarding: first time a speaker overview actually renders, offer
