@@ -34,8 +34,18 @@ from pathlib import Path
 # Runtime markup that never belongs in displayed text: ``{#Format}`` colour /
 # emphasis tags, ``{$Macro.Ref}`` substitutions, ``{!Icons.X}`` glyphs.
 _TAG_RE = re.compile(r"\{[^}]*\}")
-# SGG escapes literal brackets/braces in sjson strings (choice labels wrap the
-# text in ``\[ ... \]``); unescape them so the label reads naturally.
+# A presentational bracket glyph: an escaped ``\[`` / ``\]`` immediately styled
+# by a ``{#...Format}`` colour tag - SGG's choice-option labels wrap the text in
+# ``{#ChoiceBracketFormat}\[ ... {#ChoiceBracketFormat}\]`` (codex / stat labels
+# similarly). The bracket is decoration, not label text: the English UI curates
+# it out (the ``choiceNames`` friendly labels carry no brackets), so it is
+# stripped whole here too, else the localised label reads "[ Ease Off ]" where
+# English reads "Ease Off". Runs before ``_TAG_RE`` (which would otherwise strip
+# the tag and leave the bare escaped bracket for ``_ESCAPED_PUNCT_RE`` to keep).
+_DECOR_BRACKET_RE = re.compile(r"\{#\w*Format\}\s*\\[\[\]]")
+# SGG escapes literal brackets/braces in sjson strings; unescape any that remain
+# after the decoration strip above (genuine content brackets) so they read
+# naturally.
 _ESCAPED_PUNCT_RE = re.compile(r"\\([\[\]{}])")
 _WS_RE = re.compile(r"\s+")
 
@@ -98,7 +108,8 @@ def _speaker_lookup_ids(sid: str):
 
 def _clean(raw: str) -> str:
     """Strip runtime markup, unescape literal punctuation, collapse whitespace."""
-    s = _TAG_RE.sub("", raw)
+    s = _DECOR_BRACKET_RE.sub("", raw)
+    s = _TAG_RE.sub("", s)
     s = _ESCAPED_PUNCT_RE.sub(r"\1", s)
     # Subtitle line-break / tab escapes (SGG uses ``\n`` for manual wraps, common
     # in the CJK translations) -> a space; the final whitespace collapse then

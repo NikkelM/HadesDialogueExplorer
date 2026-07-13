@@ -29,6 +29,18 @@ def test_clean_unescapes_brackets_and_folds_newlines():
     assert loc._clean(r"a\n\nb") == "a b"
 
 
+def test_clean_strips_choice_bracket_decoration():
+    # SGG wraps choice-option labels in a presentational bracket glyph styled by
+    # ``{#ChoiceBracketFormat}`` - it is decoration, not label text, and English
+    # curates it out (choiceNames), so the localised label must too.
+    raw = r"{#ChoiceBracketFormat}\[ {#ChoiceFormat}Ease Off {#ChoiceBracketFormat}\]"
+    assert loc._clean(raw) == "Ease Off"
+    # Codex / stat labels use the same format-tagged-bracket decoration pattern.
+    assert loc._clean(r"{#CodexStandardFormat}\[ {#TitleFormat}Boons {#CodexStandardFormat}\]") == "Boons"
+    # A bare escaped bracket (no styling format tag) is genuine content - keep it.
+    assert loc._clean(r"a \[ b \] c") == "a [ b ] c"
+
+
 def test_clean_collapses_whitespace_and_trims():
     assert loc._clean("  spaced   out \n text ") == "spaced out text"
 
