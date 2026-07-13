@@ -14,7 +14,7 @@ textline's top-level ``requirements`` as well as from each ``orBranches`` clause
 so a gate expressed only inside an OR branch still confirms.
 """
 
-from src.graph import build_alternates
+from src.graph import build_alternates, audit_content_alternate_drift, _CONTENT_ALTERNATE_GROUPS
 
 
 def _tl(reqs=None):
@@ -280,3 +280,32 @@ class TestBuildAlternates:
         alt = build_alternates({m: _tl() for m in members})
         for m in members:
             assert set(alt[m]) == members - {m}
+
+
+class TestContentAlternateDrift:
+    """``audit_content_alternate_drift`` surfaces curated content-alternate
+    groups whose members no longer exist across the extracted data (a rename /
+    removal in a game update), so a silently-dropped alternate link is noticed."""
+
+    def _all_members(self):
+        return {n for group in _CONTENT_ALTERNATE_GROUPS for n in group}
+
+    def test_no_drift_when_every_member_present(self):
+        warnings = []
+        drift = audit_content_alternate_drift(self._all_members(), warn=warnings.append)
+        assert drift == []
+        assert warnings == []
+
+    def test_drift_detected_and_warned_when_a_member_is_missing(self):
+        victim = _CONTENT_ALTERNATE_GROUPS[0][0]
+        names = self._all_members() - {victim}
+        warnings = []
+        drift = audit_content_alternate_drift(names, warn=warnings.append)
+        flagged = [missing for _g, _present, missing in drift if victim in missing]
+        assert flagged, "the drifted group was not flagged"
+        assert any("_CONTENT_ALTERNATE_GROUPS" in w for w in warnings)
+
+    def test_full_union_is_clean_no_cross_game_false_trigger(self):
+        # The union of ALL groups' members (both games) must audit clean - a
+        # group whose members belong to the other game still counts as present.
+        assert audit_content_alternate_drift(self._all_members(), warn=lambda m: None) == []

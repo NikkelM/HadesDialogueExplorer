@@ -154,3 +154,32 @@ def annotate_blocked_textlines(graph_data: dict) -> None:
             f"INFO: {blocked_count} textline(s) can never play due to "
             f"unresolved requirement references."
         )
+
+
+def audit_impossible_seen_room_drift(textlines_iter, warn=print):
+    """Warn when a curated ``_IMPOSSIBLE_SEEN_ROOM_TOKENS`` entry is no longer
+    referenced by any textline's ``RequiredSeenRooms`` gate.
+
+    Each token flags a specific content-author bug (a textline name mis-filed
+    into a RequiredSeenRooms list). Once that line is removed or the mis-file is
+    corrected in a game update, the token becomes dead curation. ``textlines_iter``
+    iterates every textline dict across all games. Emits a build-time WARNING
+    listing any unreferenced token so it gets pruned, mirroring the section-key /
+    manual-override "surface curated drift" doctrine. Returns the sorted stale
+    tokens for tests.
+    """
+    referenced = set()
+    for tl in textlines_iter:
+        rooms = (tl.get("otherRequirements") or {}).get("RequiredSeenRooms") or []
+        for r in rooms:
+            if r in _IMPOSSIBLE_SEEN_ROOM_TOKENS:
+                referenced.add(r)
+    stale = sorted(_IMPOSSIBLE_SEEN_ROOM_TOKENS - referenced)
+    if stale:
+        warn(
+            f"\nWARNING: {len(stale)} curated impossible-seen-room token(s) in "
+            f"_IMPOSSIBLE_SEEN_ROOM_TOKENS are no longer referenced by any "
+            f"RequiredSeenRooms gate - dead curation to prune from "
+            f"src/blocked_textlines.py: {stale}."
+        )
+    return stale

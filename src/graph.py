@@ -935,3 +935,38 @@ def build_alternates(textlines: dict) -> dict:
         for name in cluster:
             alternates[name] = sorted(cluster - {name})
     return alternates
+
+
+def audit_content_alternate_drift(all_names, warn=print):
+    """Warn when a curated ``_CONTENT_ALTERNATE_GROUPS`` group has member(s)
+    that no longer exist in the extracted data.
+
+    :func:`build_alternates` only links a content-alternate group's members
+    that are present, and only once >=2 remain - so a rename or removal in a
+    game update silently drops the alternate relationship (for the missing
+    member, and entirely once fewer than two survive). ``all_names`` is the set
+    of every textline name across all games, so a group's other-game members
+    count as present and don't false-trigger. Emits a build-time WARNING per
+    group with a missing member, mirroring the section-key / manual-override
+    "surface curated drift" doctrine - a warning, not a hard failure, since
+    content updates legitimately rename lines and the maintainer reconciles the
+    list. Returns the drifted ``[(group, present, missing), ...]`` for tests.
+    """
+    drift = []
+    for group in _CONTENT_ALTERNATE_GROUPS:
+        missing = [n for n in group if n not in all_names]
+        if missing:
+            present = [n for n in group if n in all_names]
+            drift.append((list(group), present, missing))
+    if drift:
+        warn(
+            f"\nWARNING: {len(drift)} curated content-alternate group(s) in "
+            f"_CONTENT_ALTERNATE_GROUPS have member(s) missing from the extracted "
+            f"data - the alternate link is silently dropped. Reconcile the group "
+            f"in src/graph.py (a renamed / removed line), or confirm the drop."
+        )
+        for _group, present, missing in drift[:10]:
+            warn(f"  present {present} | MISSING {missing}")
+        if len(drift) > 10:
+            warn(f"  ... and {len(drift) - 10} more")
+    return drift

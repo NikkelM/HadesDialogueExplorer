@@ -62,7 +62,8 @@ from pathlib import Path
 from src.graph_merge import merge_graph_data
 from viewer_bundle import assemble_viewer_js, build_js, build_source_map
 from src.known_unresolved import annotate_known_unresolved
-from src.blocked_textlines import annotate_blocked_textlines
+from src.blocked_textlines import annotate_blocked_textlines, audit_impossible_seen_room_drift
+from src.graph import audit_content_alternate_drift
 from src.manual_overrides import apply_manual_overrides
 from src.label_maps import annotate_label_maps
 from src.section_key_audit import audit_section_keys
@@ -839,6 +840,20 @@ def main(argv=None):
     duplicates = _compute_cross_game_duplicates(games_payload)
     if duplicates:
         print(f"\nCross-game duplicates: {len(duplicates)} textline names appear in both games")
+
+    # Curated-list drift audit: surface content-alternate groups and
+    # impossible-seen-room tokens whose members no longer exist in the extracted
+    # data (checked across all games together), so a game update's rename doesn't
+    # silently drop an alternate link or leave dead curation. Mirrors the
+    # section-key / manual-override "surface curated drift" doctrine.
+    _all_names = set()
+    _all_textlines = []
+    for _blob in games_payload.values():
+        _tls = _blob.get("textlines", {})
+        _all_names |= set(_tls.keys())
+        _all_textlines.extend(_tls.values())
+    audit_content_alternate_drift(_all_names)
+    audit_impossible_seen_room_drift(_all_textlines)
 
     # Final wire-up: a single payload with both games' graphs plus the
     # UI hints (default game + display labels) the viewer needs to

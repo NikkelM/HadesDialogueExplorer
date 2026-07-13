@@ -5,7 +5,11 @@ which dialogues a given unresolved ref blocks."""
 
 import pytest
 
-from src.blocked_textlines import annotate_blocked_textlines
+from src.blocked_textlines import (
+    annotate_blocked_textlines,
+    audit_impossible_seen_room_drift,
+    _IMPOSSIBLE_SEEN_ROOM_TOKENS,
+)
 
 
 def _tl(reqs=None, other=None):
@@ -281,3 +285,23 @@ class TestSemanticsValidator:
         )
         for sem in _VIEWER_KNOWN_SEMANTICS:
             _assert_viewer_knows_semantics([{"semantics": sem}], "x")
+
+
+class TestImpossibleSeenRoomDrift:
+    """``audit_impossible_seen_room_drift`` surfaces a curated impossible
+    seen-room token that no textline references any more (dead curation)."""
+
+    def test_no_drift_when_token_is_still_referenced(self):
+        token = next(iter(_IMPOSSIBLE_SEEN_ROOM_TOKENS))
+        tls = [_tl(other={"RequiredSeenRooms": [token, "RealRoom"]})]
+        warnings = []
+        stale = audit_impossible_seen_room_drift(tls, warn=warnings.append)
+        assert stale == []
+        assert warnings == []
+
+    def test_drift_when_no_textline_references_the_token(self):
+        tls = [_tl(other={"RequiredSeenRooms": ["RealRoom"]}), _tl()]
+        warnings = []
+        stale = audit_impossible_seen_room_drift(tls, warn=warnings.append)
+        assert set(stale) == set(_IMPOSSIBLE_SEEN_ROOM_TOKENS)
+        assert any("_IMPOSSIBLE_SEEN_ROOM_TOKENS" in w for w in warnings)
