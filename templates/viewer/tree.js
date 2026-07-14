@@ -113,12 +113,18 @@ export function hasChildren(name, direction) {
             r => r.some(ref => ref !== name)
         );
         if (baseHas) return true;
-        // Any OrRequirements branches at all count as expandable - even
-        // branches without textline-typed children render as
-        // placeholder rows in the OR group, so users can see the
-        // alternative count and the pointer to the details panel.
+        // Mirror getChildren's OrRequirements handling: a branch only yields a
+        // tree child (and thus expandability) when it carries a textline
+        // requirement. Branches gated purely on non-textline conditions (Path /
+        // FunctionName) produce no children and no OR group (see
+        // appendChildrenWithTypeGrouping), so they must NOT mark the node
+        // expandable - otherwise the row shows a chevron that opens to nothing.
         const orBranches = Array.isArray(tl.orBranches) ? tl.orBranches : [];
-        return orBranches.length > 0;
+        return orBranches.some(
+            b => Object.values((b && b.requirements) || {}).some(
+                r => r.some(ref => ref !== name)
+            )
+        );
     }
     return (dependents[name] || []).some(d => d.name !== name);
 }

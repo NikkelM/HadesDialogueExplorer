@@ -10,7 +10,7 @@
 import { test, before } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { getChildren } from '../templates/viewer/tree.js';
+import { getChildren, hasChildren } from '../templates/viewer/tree.js';
 import { loadData } from '../templates/viewer/data.js';
 
 // Minimal fixture: TextlineA has two dependents pointing back at it.
@@ -104,4 +104,40 @@ test('getChildren downstream still emits OR-routed deps even when no base AND de
     assert.equal(kids[0].name, 'Dep_Soft');
     assert.equal(kids[0].orBranchIndex, 2);
     assert.equal(kids[0].orBranchTotal, 3);
+});
+
+// Upstream expandability must mirror getChildren: an OrRequirements branch only
+// yields a tree child (and a chevron) when it carries a textline requirement.
+// A dialogue whose every branch is gated purely on non-textline conditions
+// (Path / FunctionName - modelled here as branches with empty requirements)
+// contributes no children and no OR group, so it must render as a LEAF. This
+// pins the fix for PalaceBoonExit01/02, where such a node used to show a chevron
+// that expanded to an all-placeholder OR group (and re-appended it on each
+// click). A node with a textline requirement in at least one branch stays
+// expandable, and its non-dialogue siblings still render as placeholders.
+function fixtureOrBranchExpandability() {
+    const base = fixtureWithOrDeps();
+    base.textlines.NonDialogueOr = {
+        owner: 'NPC_X_01', section: 'InteractTextLineSets',
+        dialogueLines: [], requirements: {}, otherRequirements: {},
+        orBranches: [{ requirements: {} }, { requirements: {} }],
+    };
+    base.textlines.DialogueOr = {
+        owner: 'NPC_X_01', section: 'InteractTextLineSets',
+        dialogueLines: [], requirements: {}, otherRequirements: {},
+        orBranches: [{ requirements: {} }, { requirements: { RequiredTextLines: ['TextlineA'] } }],
+    };
+    return base;
+}
+
+test('hasChildren upstream: a node whose only OR branches carry no textline requirement is a leaf', () => {
+    loadData(fixtureOrBranchExpandability());
+    assert.equal(hasChildren('NonDialogueOr', 'upstream'), false);
+    assert.equal(getChildren('NonDialogueOr', 'upstream').length, 0);
+});
+
+test('hasChildren upstream: a node with a textline requirement inside an OR branch is expandable', () => {
+    loadData(fixtureOrBranchExpandability());
+    assert.equal(hasChildren('DialogueOr', 'upstream'), true);
+    assert.ok(getChildren('DialogueOr', 'upstream').length > 0);
 });

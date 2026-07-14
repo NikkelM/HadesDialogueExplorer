@@ -85,13 +85,19 @@ export function renderUpstream(name) {
     const rootNode = createNodeEl(name, null, 'upstream', rootPath);
     rootNode.classList.add('root');
     rootNode.querySelector('.tree-label').classList.add('active');
-    // Auto-expand root's children
-    const kids = getChildren(name, 'upstream');
-    if (kids.length > 0) {
-        const childContainer = document.createElement('div');
-        childContainer.className = 'tree-children expanded';
-        const newPath = new Set([name]);
-        appendChildrenWithTypeGrouping(childContainer, kids, 'upstream', newPath, name);
+    // Auto-expand root's children. Build the container first, then keep it only
+    // if it actually produced rows. An upstream node can be expandable
+    // (hasChildren) on OrRequirements alone: getChildren yields no textline kids,
+    // yet appendChildrenWithTypeGrouping still renders the OR group's placeholder
+    // rows. Gating on ``kids.length`` here would both drop that content AND leave
+    // the (still-expandable) root with a ``.tree-empty-note`` instead of a
+    // ``.tree-children`` as its next sibling - which broke the lazy toggle's
+    // dedup guard (it looks for ``.tree-children``), so every click on the root
+    // row appended a fresh OR group at the bottom.
+    const childContainer = document.createElement('div');
+    childContainer.className = 'tree-children expanded';
+    appendChildrenWithTypeGrouping(childContainer, getChildren(name, 'upstream'), 'upstream', new Set([name]), name);
+    if (childContainer.children.length > 0) {
         rootNode.appendChild(childContainer);
         rootNode.querySelector('.toggle').textContent = '\u25BC';
         rootNode.querySelector('.tree-label').setAttribute('aria-expanded', 'true');
@@ -158,16 +164,19 @@ export function appendChildrenWithTypeGrouping(container, kids, direction, ances
         appendByReqTypeGroups(container, baseKids, direction, ancestorPath, parentName);
     }
     if (direction === 'upstream') {
-        // Surface the full OR group even when zero branches contributed
-        // textline kids. A branch can be gated entirely on non-textline
-        // conditions (Path checks, FunctionName checks) and would
-        // otherwise be invisible in the tree even though it is a real
-        // alternative the engine evaluates. Each empty branch renders
-        // as a compact placeholder row directing the user to the
-        // details panel for the full content.
-        const parent = parentName ? textlines[parentName] : null;
-        const parentOrBranches = (parent && Array.isArray(parent.orBranches)) ? parent.orBranches : [];
-        if (orKids.length > 0 || parentOrBranches.length > 0) {
+        // Render the OR group only when at least one branch actually contributes
+        // a dialogue (textline) child. A dialogue whose every OrRequirements
+        // branch is gated purely on non-textline conditions (Path / FunctionName
+        // checks) contributes no ``orKids`` at all - showing an OR group there
+        // (all "non-dialogue - see details" placeholders) is noise in a tree that
+        // exists to chart dialogue prerequisites, so it is suppressed. When at
+        // least one branch DOES reference a dialogue, the full group renders and
+        // any sibling non-dialogue branches still show as placeholders for
+        // completeness. ``parentOrBranches`` (the full branch list) is still
+        // needed to render those placeholders and the correct branch total.
+        if (orKids.length > 0) {
+            const parent = parentName ? textlines[parentName] : null;
+            const parentOrBranches = (parent && Array.isArray(parent.orBranches)) ? parent.orBranches : [];
             appendOrAlternatives(container, orKids, direction, ancestorPath, parentName, parentOrBranches);
         }
     } else if (orKids.length > 0) {
