@@ -12,8 +12,10 @@ const SAVE_SAVER_URL = 'https://thunderstore.io/c/hades-ii/p/ReadEmAndWeep/Save_
 // softlock; the popup links straight to it.
 const SOFTLOCK_DIALOGUE = 'ZagreusPastMeeting06';
 
-// Guard so a single load can't stack duplicate modals (restore + a re-render
-// both calling in), and so dismissing it keeps it closed for the session.
+// Guard so a single load can't stack duplicate modals (a restore + a re-render
+// both calling in). Reset when the modal closes so a DIFFERENT softlocked save
+// loaded later in the same session re-triggers the warning (each save is judged
+// on its own; dismissing one doesn't suppress warnings for the next).
 let _open = false;
 
 // Show the softlock warning modal. No-op if one is already open. The modal is a
@@ -54,6 +56,8 @@ export function showSoftlockWarning() {
         if (!overlay.parentNode) return;
         overlay.remove();
         document.removeEventListener('keydown', onKey);
+        // Allow a later-loaded softlocked save to re-open the warning.
+        _open = false;
     };
     const onKey = (e) => { if (e.key === 'Escape') close(); };
 

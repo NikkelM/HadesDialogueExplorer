@@ -501,7 +501,8 @@ function applyState(state) {
     const name = state.dialogue || null;
     if (name) {
         selectTextline(name);
-        document.getElementById('search').value = name;
+        const searchInput = document.getElementById('search');
+        if (searchInput) searchInput.value = name;
         setDocumentTitle(name);
         // Onboarding: first time a dialogue detail renders, offer the home
         // tour - covers both the first-visit landing and a deep link to a

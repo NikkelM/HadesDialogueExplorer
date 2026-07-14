@@ -204,6 +204,27 @@ test('buildSnippetHtml: no matches -> escaped text unchanged', () => {
     assert.equal(html, 'plain &amp; simple');
 });
 
+test('buildSnippetHtml: length-changing lowercase (Turkish dotted-I) keeps the mark aligned', () => {
+    // 'İ' (U+0130) lowercases to 'i' + combining dot (U+0307), so the lowercased
+    // text is one char LONGER than the original. Match offsets are computed
+    // against the lowercased text; without mapping them back, the <mark> slice
+    // would drift by one and wrap "ord" instead of "word".
+    const original = '\u0130z word';            // "İz word"
+    const lower = original.toLowerCase();        // "i̇z word" (len +1)
+    const pos = lower.indexOf('word');           // offset in the LOWERCASED text
+    const html = buildSnippetHtml(original, ['word'], [[pos]], pos);
+    assert.match(html, /<mark>word<\/mark>/);
+    assert.doesNotMatch(html, /<mark>ord<\/mark>/);
+    // The un-marked prefix is the correct original text.
+    assert.ok(html.startsWith('\u0130z '));
+});
+
+test('buildSnippetHtml: pure-ASCII path is byte-identical (identity offset map)', () => {
+    // Regression guard that the offset mapping is a no-op for ASCII text.
+    const html = buildSnippetHtml('the quick brown fox', ['brown'], [[10]], 10);
+    assert.equal(html, 'the quick <mark>brown</mark> fox');
+});
+
 // ---- IDF-weighted ranking ----
 
 test('tokeniseLineText splits on non-word characters and keeps alphanumerics', () => {

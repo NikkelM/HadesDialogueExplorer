@@ -419,12 +419,35 @@ export function renderTextMatchHtml(match, tokens, optionId) {
 // anchored ~60 chars before ``anchorPos`` (the start of the longest
 // contiguous run when one exists, otherwise the first token match)
 // and extends ~140 chars after.
+// Map every offset in ``textOriginal.toLowerCase()`` back to the corresponding
+// offset in ``textOriginal``. ``toLowerCase`` is per-character but can change
+// LENGTH (e.g. Turkish 'I with dot' U+0130 -> 'i' + combining dot U+0307: one
+// char -> two), so match offsets - computed against the lowercased text - would
+// otherwise drift when sliced out of the original, mis-highlighting the snippet.
+// For pure-ASCII text this is the identity map (``map[i] === i``), so the common
+// path is unchanged. The trailing sentinel maps the one-past-the-end offset.
+function _lowerToOrigOffsets(textOriginal) {
+    const map = [];
+    for (let oi = 0; oi < textOriginal.length; oi++) {
+        const lc = textOriginal[oi].toLowerCase();
+        for (let k = 0; k < lc.length; k++) map.push(oi);
+    }
+    map.push(textOriginal.length);
+    return map;
+}
+
 export function buildSnippetHtml(textOriginal, tokens, positionsByToken, anchorPos) {
+    // Match / anchor offsets are computed against the LOWERCASED text; map them
+    // back to original-string offsets so every slice below lands on the right
+    // characters even when lowercasing changed length (see _lowerToOrigOffsets).
+    const off = _lowerToOrigOffsets(textOriginal);
+    const toOrig = (i) => ((i >= 0 && i < off.length) ? off[i] : textOriginal.length);
+
     const matches = [];
     for (let i = 0; i < tokens.length; i++) {
         const tlen = tokens[i].length;
         for (const pos of positionsByToken[i]) {
-            matches.push({ start: pos, end: pos + tlen });
+            matches.push({ start: toOrig(pos), end: toOrig(pos + tlen) });
         }
     }
     if (matches.length === 0) return escapeHtml(textOriginal);
@@ -441,7 +464,7 @@ export function buildSnippetHtml(textOriginal, tokens, positionsByToken, anchorP
     const SNIPPET_BEFORE = 60;
     const SNIPPET_AFTER = 140;
     const anchor = (typeof anchorPos === 'number' && anchorPos >= 0)
-        ? anchorPos
+        ? toOrig(anchorPos)
         : merged[0].start;
     const winStart = Math.max(0, anchor - SNIPPET_BEFORE);
     const winEnd = Math.min(textOriginal.length, anchor + SNIPPET_AFTER);
