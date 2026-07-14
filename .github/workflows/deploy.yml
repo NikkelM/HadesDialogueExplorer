@@ -74,7 +74,12 @@ jobs:
 
   release:
     name: release
-    needs: build
+    # Sequential gate: tests + build (build job) -> deploy -> release. Depending
+    # on ``deploy`` (not ``build``) means a failed Pages deploy blocks the
+    # release, so the downloadable offline bundle can never be published newer
+    # than the live site. The offline-bundle artifact from the build job stays
+    # available to download here regardless of the needs graph.
+    needs: deploy
     runs-on: ubuntu-latest
     # Scoped write access just for this job so the build + deploy jobs keep the
     # read-only default from the workflow-level permissions above.
