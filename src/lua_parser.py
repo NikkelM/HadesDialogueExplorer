@@ -96,6 +96,19 @@ T_EOF = 'EOF'
 class Tokenizer:
     """Single-pass tokenizer for Lua data files."""
 
+    # Single-char Lua string escapes that produce *displayable* whitespace /
+    # literals. The rare control-only escapes (``\a`` ``\b`` ``\f`` ``\v``) are
+    # deliberately NOT decoded: this is a text extractor, and injecting a raw
+    # control byte into displayed dialogue / metadata is worse than keeping the
+    # author's letter (e.g. a dev-junk ``"Dev\blank_invisible"`` icon id reads
+    # cleaner as ``Devblank_invisible`` than with an embedded backspace). They
+    # fall through to the verbatim-char passthrough below. The quote escapes
+    # (``\"`` / ``\'``) are handled dynamically against the active quote;
+    # ``\<newline>`` (line continuation) yields a literal newline.
+    _SIMPLE_ESCAPES = {
+        'n': '\n', 'r': '\r', 't': '\t', '\\': '\\', '\n': '\n',
+    }
+
     def __init__(self, text: str):
         self.text = text
         self.pos = 0
@@ -200,22 +213,44 @@ class Tokenizer:
                 self.advance()
                 if self.pos < self.length:
                     esc = self.advance()
-                    if esc == 'n':
-                        parts.append('\n')
-                    elif esc == 't':
-                        parts.append('\t')
-                    elif esc == 'r':
-                        parts.append('\r')
-                    elif esc == '\\':
-                        parts.append('\\')
-                    elif esc == quote:
+                    if esc == quote:
                         parts.append(quote)
+                    elif esc in self._SIMPLE_ESCAPES:
+                        parts.append(self._SIMPLE_ESCAPES[esc])
+                    elif esc == 'x':
+                        # ``\xNN`` - up to two hex digits -> one byte.
+                        digits = ''
+                        while len(digits) < 2 and self.pos < self.length \
+                                and self.text[self.pos] in '0123456789abcdefABCDEF':
+                            digits += self.advance()
+                        parts.append(chr(int(digits, 16)) if digits else 'x')
+                    elif esc.isdigit():
+                        # ``\ddd`` - up to three decimal digits -> one byte.
+                        digits = esc
+                        while len(digits) < 3 and self.pos < self.length \
+                                and self.text[self.pos].isdigit():
+                            digits += self.advance()
+                        parts.append(chr(int(digits) & 0xFF))
+                    elif esc == 'u' and self.pos < self.length and self.text[self.pos] == '{':
+                        # ``\u{XXX}`` - hex codepoint in braces.
+                        self.advance()  # consume '{'
+                        digits = ''
+                        while self.pos < self.length and self.text[self.pos] != '}':
+                            digits += self.advance()
+                        if self.pos < self.length:
+                            self.advance()  # consume '}'
+                        try:
+                            parts.append(chr(int(digits, 16)))
+                        except (ValueError, OverflowError):
+                            parts.append('u{' + digits + '}')
+                    elif esc == 'z':
+                        # ``\z`` - skip the following run of whitespace.
+                        while self.pos < self.length and self.text[self.pos] in ' \t\r\n':
+                            self.advance()
                     else:
-                        # Numeric (``\065``), hex (``\xNN``), unicode
-                        # (``\u{...}``) and ``\z`` escapes are passed through
-                        # without their leading backslash rather than decoded:
-                        # none occur in either game's Lua, so decoding them
-                        # would be dead code.
+                        # Unrecognised escape: keep the escaped char verbatim
+                        # (dropping only the backslash), matching the old
+                        # passthrough behaviour for anything not decoded above.
                         parts.append(esc)
             elif ch == quote:
                 self.advance()
@@ -752,7 +787,12 @@ class LuaParser:
 
 def parse_lua_file(filepath: str) -> dict:
     """Parse a Lua data file and return top-level assignments as a dict."""
-    with open(filepath, 'r', encoding='utf-8') as f:
+    # ``errors="replace"`` mirrors the raw reads in generate_data.py (the
+    # cue-comment / subtitle passes): a single malformed byte substitutes the
+    # replacement char instead of aborting the whole build. Both game trees are
+    # clean UTF-8 today, so this is defensive alignment rather than an active
+    # need.
+    with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
         text = f.read()
     if text.startswith('\ufeff'):
         text = text.lstrip('\ufeff')

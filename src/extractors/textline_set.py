@@ -1213,9 +1213,15 @@ def build_synthetic_variants(parent_name: str, tl_table: LuaTable, build_child) 
     textline.
     """
     variants = {}
-    for cue in tl_table.array:
-        if not isinstance(cue, LuaTable):
-            continue
+    # Iterate cues the same way the choice-TARGET loop does (via
+    # ``iter_voice_cues``): it flattens numeric-index (``[N] =``) keys and nested
+    # voice-line groups. Using the bare ``tl_table.array`` here instead would
+    # miss an inline-``Choices`` cue sitting in one of those positions, so it
+    # would get a ``targetTextline`` reference from the target loop but no
+    # synthetic child here (a dangling link). No current cue triggers this -
+    # defensive alignment. (No string-``Text`` filter: unlike the target loop we
+    # also synthesise children for Cue-only choice cues, a harmless superset.)
+    for cue, _group in iter_voice_cues(tl_table):
         choices = cue.get("Choices")
         if not isinstance(choices, LuaTable):
             continue

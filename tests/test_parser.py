@@ -379,3 +379,40 @@ class TestExpressionContinuations:
         result = parse_file(text)
         assert isinstance(result["X"], LuaIdentifier)
         assert result["Y"] == "after"
+
+
+class TestStringEscapes:
+    """String-escape decoding in ``Tokenizer._read_string``. The common
+    whitespace / literal / quote escapes decode; numeric / hex / unicode
+    escapes decode to their codepoint; control-only single escapes
+    (``\\a \\b \\f \\v``) intentionally pass through as their letter (a text
+    extractor should not inject raw control bytes into displayed text)."""
+
+    def test_common_whitespace_and_literal_escapes(self):
+        assert parse_file(r'X = "a\nb\tc\\d"') == {"X": "a\nb\tc\\d"}
+
+    def test_escaped_quote(self):
+        assert parse_file(r'X = "say \"hi\""') == {"X": 'say "hi"'}
+
+    def test_decimal_byte_escape(self):
+        # \65 -> 'A', \233 -> the Latin-1 'é' codepoint.
+        assert parse_file(r'X = "\65\66\67"') == {"X": "ABC"}
+        assert parse_file(r'X = "\233"') == {"X": "\u00e9"}
+
+    def test_hex_byte_escape(self):
+        assert parse_file(r'X = "\x41\x42"') == {"X": "AB"}
+
+    def test_unicode_brace_escape(self):
+        assert parse_file(r'X = "\u{48}\u{49}"') == {"X": "HI"}
+
+    def test_z_skips_following_whitespace(self):
+        assert parse_file('X = "a\\z   \n  b"') == {"X": "ab"}
+
+    def test_control_single_escapes_pass_through_as_letter(self):
+        # \b is NOT decoded to backspace - it stays the letter 'b', so a
+        # dev-junk id like "Dev\blank_invisible" reads cleanly.
+        assert parse_file(r'X = "Dev\blank_invisible"') == {"X": "Devblank_invisible"}
+        assert parse_file(r'X = "a\bc\fd\ve"') == {"X": "abcfdve"}
+
+    def test_unknown_escape_drops_backslash(self):
+        assert parse_file(r'X = "a\qb"') == {"X": "aqb"}

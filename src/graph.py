@@ -692,7 +692,7 @@ def build_dependents(textlines: dict) -> dict:
     """
     dependents = defaultdict(list)
     for tl_name, tl_data in textlines.items():
-        for req_type, req_list in tl_data["requirements"].items():
+        for req_type, req_list in (tl_data.get("requirements") or {}).items():
             for dep in req_list:
                 if dep == tl_name:
                     continue
