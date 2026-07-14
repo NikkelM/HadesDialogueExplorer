@@ -2578,3 +2578,69 @@ test('renderStatusLegendHtml gives every dot-key entry a hover tooltip', () => {
     assert.match(html, /Not satisfied by your save/);
     assert.match(html, /Permanently locked/);
 });
+
+
+test('renderInfo skips a null entry in dialogueLines without throwing', () => {
+    // ``typeof null === 'object'`` would send a null entry into the object
+    // branches and throw on ``line.kind``. A null line must be skipped, and the
+    // surrounding real lines must still render.
+    const data = buildFixtureData();
+    data.textlines.NullLineDemo = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets',
+        sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [
+            { speaker: 'NPC_Orpheus_01', text: 'Before null.' },
+            null,
+            { speaker: 'NPC_Orpheus_01', text: 'After null.' },
+        ],
+        requirements: {}, otherRequirements: {},
+    };
+    loadData(data);
+    assert.doesNotThrow(() => renderInfo('NullLineDemo'));
+    assert.match(lastHtml, /Before null\./);
+    assert.match(lastHtml, /After null\./);
+});
+
+
+test('synthetic-child banner: fallback scan is gated on the parent having a choice prompt', () => {
+    const data = buildFixtureData();
+    // Parent WITH a choice prompt whose listed choices do NOT name the synthetic
+    // child (so the prompt walk misses it); the gated fallback scan must still
+    // surface it in the "Choices:" banner.
+    data.textlines.ParentWithPrompt = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [
+            { kind: 'choicePrompt', text: 'Pick', speaker: 'NPC_Orpheus_01',
+              choices: [{ internal: 'Other', targetTextline: 'SomethingElse' }] },
+        ],
+        requirements: {}, otherRequirements: {},
+    };
+    data.textlines.ParentWithPromptOrphanChild = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        isSynthetic: true, parentTextline: 'ParentWithPrompt', choiceText: 'OrphanPick',
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'child' }],
+        requirements: { RequiredTextLines: ['ParentWithPrompt'] }, otherRequirements: {},
+    };
+    // Parent WITHOUT any choice prompt but with a synthetic child pointing at
+    // it: the gate skips the scan, so the child is NOT surfaced. (Documents the
+    // invariant that a synthetic child always has a choice-prompt parent, so
+    // this shape does not occur in real data - verified against dist.)
+    data.textlines.ParentNoPrompt = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'no prompt here' }],
+        requirements: {}, otherRequirements: {},
+    };
+    data.textlines.ParentNoPromptChild = {
+        owner: 'NPC_Orpheus_01', section: 'InteractTextLineSets', sourceFile: 'X.lua', sourceLine: 1,
+        isSynthetic: true, parentTextline: 'ParentNoPrompt', choiceText: 'Ghost',
+        dialogueLines: [{ speaker: 'NPC_Orpheus_01', text: 'ghost' }],
+        requirements: { RequiredTextLines: ['ParentNoPrompt'] }, otherRequirements: {},
+    };
+    loadData(data);
+
+    renderInfo('ParentWithPrompt');
+    assert.match(lastHtml, /navigateTo\(&quot;ParentWithPromptOrphanChild&quot;\)/);
+
+    renderInfo('ParentNoPrompt');
+    assert.doesNotMatch(lastHtml, /ParentNoPromptChild/);
+});

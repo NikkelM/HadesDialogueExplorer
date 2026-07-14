@@ -2267,8 +2267,10 @@ export function renderInfo(name) {
     // fallback so synthetic children never silently disappear.
     const childChoices = [];
     const seenTargets = new Set();
+    let hasChoicePrompt = false;
     for (const line of (tl.dialogueLines || [])) {
         if (line && line.kind === 'choicePrompt' && Array.isArray(line.choices)) {
+            hasChoicePrompt = true;
             for (const c of line.choices) {
                 if (textlines[c.targetTextline] && !seenTargets.has(c.targetTextline)) {
                     childChoices.push({ name: c.targetTextline, choice: c.internal });
@@ -2277,10 +2279,18 @@ export function renderInfo(name) {
             }
         }
     }
-    for (const [n, t] of Object.entries(textlines)) {
-        if (t.isSynthetic && t.parentTextline === name && !seenTargets.has(n)) {
-            childChoices.push({ name: n, choice: t.choiceText });
-            seenTargets.add(n);
+    // Defensive fallback for a synthetic child not referenced by any prompt.
+    // Synthetic children are ONLY generated from a parent's inline ``Choices``
+    // cues, which always also emit a ``choicePrompt`` dialogue line - so a
+    // textline with no choice prompt can have no synthetic children. Gate the
+    // full ~6.6k-textline scan on that, skipping it for the vast majority of
+    // textlines (those without choices) instead of running it every navigation.
+    if (hasChoicePrompt) {
+        for (const [n, t] of Object.entries(textlines)) {
+            if (t.isSynthetic && t.parentTextline === name && !seenTargets.has(n)) {
+                childChoices.push({ name: n, choice: t.choiceText });
+                seenTargets.add(n);
+            }
         }
     }
     if (childChoices.length > 0) {
@@ -2464,6 +2474,10 @@ function renderDialogueAndRequirementsHtml(src, textlineName) {
     if (hasDialogue || hasEndLines) {
         html += `<div class="dialogue-section"><h4>Dialogue</h4>`;
         for (const line of (src.dialogueLines || [])) {
+            // ``typeof null === 'object'`` in JS, so a null/undefined entry
+            // would fall into the object branches below and throw on
+            // ``line.kind``. Skip nullish lines (they carry no content).
+            if (line == null) continue;
             if (typeof line === 'object' && line.kind === 'choicePrompt' && Array.isArray(line.choices)
                 && line.choices.length > 0) {
                 // Structured choice-prompt rendering. ``renderChoiceNameHtml``
