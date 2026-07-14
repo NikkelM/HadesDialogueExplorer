@@ -471,8 +471,36 @@ function _disableAll() {
     if (disable) disable();
 }
 
-// Keep focus inside the card (so Tab can't reach the dimmed page) and let
-// Esc skip the tour.
+// The tabbable elements inside the current interactive step's spotlighted
+// target(s). On interactive steps the Tab loop is extended into these so a
+// keyboard user can reach the row / badge / link the step invites them to try -
+// mouse users reach it via the overlay's ``pointerEvents: none``. Visible,
+// enabled, tabbable elements only (roving-tabindex widgets like the trees expose
+// their single tabbable entry, from which their own arrow-key handling takes
+// over). Empty on non-interactive steps, so the loop stays card-only there.
+function _targetFocusables() {
+    const step = _steps[_index];
+    if (!step || !step.interactive) return [];
+    const sel = 'a[href],button:not([disabled]),input:not([disabled]),'
+        + 'select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+    const out = [];
+    for (const t of _resolveAllTargets(step.target)) {
+        if (t.matches && t.matches(sel)) out.push(t);
+        if (t.querySelectorAll) {
+            for (const el of t.querySelectorAll(sel)) out.push(el);
+        }
+    }
+    // De-duplicate and keep only rendered elements (offsetParent is null for
+    // display:none / detached nodes).
+    return [...new Set(out)].filter((el) => el.offsetParent !== null);
+}
+
+// Manage the Tab focus cycle. On non-interactive steps this confines focus to
+// the card's buttons (so Tab can't wander onto the dimmed page). On interactive
+// steps the cycle also includes the spotlighted target's tabbable elements, so a
+// keyboard user gets the same reach a mouse user has - while focus stays
+// contained to card + target and never escapes to unrelated page chrome. Esc
+// skips the tour.
 function _onKeydown(e) {
     if (e.key === 'Escape') {
         e.preventDefault();
@@ -480,17 +508,27 @@ function _onKeydown(e) {
         return;
     }
     if (e.key !== 'Tab') return;
-    const focusable = _card.querySelectorAll('button:not([disabled])');
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
+    const cardBtns = Array.from(_card.querySelectorAll('button:not([disabled])'));
+    if (cardBtns.length === 0) return;
+    // Ordered cycle: card buttons first (Back / Next / Skip / ...), then the
+    // interactive target's tabbable elements. querySelectorAll yields DOM order,
+    // so for card-only steps this matches the browser's natural Tab order.
+    const loop = cardBtns.concat(_targetFocusables());
+    const active = document.activeElement;
+    const idx = loop.indexOf(active);
+    if (idx === -1) {
+        // Focus is outside the loop (drifted onto the page, or first Tab after a
+        // programmatic focus that left the set) - snap back to a card edge.
         e.preventDefault();
-        last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
+        loop[e.shiftKey ? loop.length - 1 : 0].focus();
+        return;
     }
+    // Drive the cycle ourselves so focus wraps within [card + target] instead of
+    // following DOM order out of the set (the card is appended after the panels,
+    // so their orders differ).
+    e.preventDefault();
+    const nextIdx = (idx + (e.shiftKey ? -1 : 1) + loop.length) % loop.length;
+    loop[nextIdx].focus();
 }
 
 function _end() {
