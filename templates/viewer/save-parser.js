@@ -85,7 +85,12 @@ export function decompressLz4Block(input, initialSize) {
       out[op++] = input[ip++];
     }
 
-    if (ip >= input.length) break;
+    // A valid block's final sequence is literals-only with no match. The match
+    // offset that follows is a 2-byte LE field, so stop cleanly if fewer than
+    // two bytes remain - a normal end-of-block, or a stream truncated mid-offset
+    // (reading input[ip + 1] below would otherwise pull in an undefined byte as
+    // 0 and fabricate a bogus match offset).
+    if (ip + 1 >= input.length) break;
 
     // Match offset (2 bytes LE)
     const offset = input[ip] | (input[ip + 1] << 8);

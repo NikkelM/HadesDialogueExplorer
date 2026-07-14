@@ -83,6 +83,17 @@ test('handles a block exactly at the initial capacity boundary', () => {
     assert.deepEqual([...out], [...expectedLiterals(14)]);
 });
 
+test('stops cleanly on a stream truncated mid match-offset (only 1 of 2 bytes)', () => {
+    // token literalLen=4, then "ABCD", then a SINGLE partial match-offset byte
+    // (0x02). A valid offset is 2 bytes; with only one present the block is
+    // truncated, so decoding must stop after the literals. Without the 2-byte
+    // bounds check the missing byte would read as 0 (offset 0x02), fabricating a
+    // match (matchPos = 4 - 2 = 2 >= 0) and emitting extra bytes "ABCDCDCD".
+    const block = new Uint8Array([0x40, 0x41, 0x42, 0x43, 0x44, 0x02]);
+    const out = decompressLz4Block(block, 64);
+    assert.equal(String.fromCharCode(...out), 'ABCD');
+});
+
 
 // --- Synthetic SGB1 save builder (encode side of the round-trip) ---
 //
