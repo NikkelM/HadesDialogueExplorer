@@ -86,21 +86,37 @@
         flex-wrap: wrap;
         row-gap: 8px;
     }
-    /* Search drops to its own full-width row so it stays prominent and
-       easily tappable rather than being squeezed thin between the other
-       controls. (DOM order puts it after the title + toggle, so it lands
-       on the second row.) */
+    /* Search drops to its own full-width row (``order: 100`` -> the header's last
+       row), and ``min-width: 0`` lets it shrink to the viewport on a narrow phone
+       instead of keeping the desktop 260px floor (base.css) and overflowing the
+       header. It's the most important control, sitting closest to the content
+       and the thumb. Desktop (>= 1280px) keeps it inline in DOM order. */
     .search-container {
         flex-basis: 100%;
         max-width: none;
+        min-width: 0;
+        order: 100;
     }
-    /* When the row wraps, let the save controls flow inline instead of
-       being shoved to the far edge by their desktop margin-left:auto. */
-    .header-right {
-        margin-left: 0;
-        flex-wrap: wrap;
-        row-gap: 8px;
+    /* Flatten the save + language wrapper boxes (header-right held the save
+       group + language picker; save-upload held the Load-save button + status
+       pill) to direct header flex items at every wrapped width, so the language
+       picker keeps its natural far-right position here and the phone block can
+       reorder it above the game toggle. */
+    .header-right,
+    .save-upload {
+        display: contents;
     }
+    /* On tablet / landscape the controls stay in DOM order (brand, title, game
+       toggle, duplicates, Load save, status, language), and ``margin-left: auto``
+       on the picker pushes it to the RIGHT edge of whichever row it lands on -
+       so it sits at the top-right (its usual desktop place), never to the left
+       of the game buttons and never orphaned at the left when it wraps. Only the
+       phone block (<= 599px) lifts it above the game toggle, where its
+       full-width row makes the auto margin inert. */
+    #language-picker {
+        margin-left: auto;
+    }
+    #save-status { min-width: 0; }
     /* Touch-sized header controls. */
     #search,
     .header-nav-link,
@@ -134,9 +150,7 @@
        overlay under the base ``inline-grid`` layout; once these rules switch the
        button to ``inline-flex`` the twin becomes a real flex sibling beside the
        label and shoves the visible text off-centre, so drop it and let the label
-       centre cleanly. (At 1025-1279px the search shares row one with the toggle,
-       so a game-switch can nudge its width by the bold-label delta - a few px the
-       flexible search absorbs; not worth reintroducing the centring bug for.) */
+       centre cleanly. */
     .game-toggle-btn::after { display: none; }
     /* The display overrides above (needed for sizing / glyph alignment)
        beat the UA ``[hidden] { display: none }`` rule, which would leave a
@@ -145,69 +159,134 @@
         display: none;
     }
 }
-@media (min-width: 1025px) and (max-width: 1279px) {
-    /* Small desktop: unlike narrower widths (which drop the search onto its own
-       full-width row), there's room for the search on the first row beside the
-       brand + game toggle here. Override the <=1279 full-width rule so the search
-       flows inline and grows to fill row one, letting the duplicates + save +
-       language controls wrap to a tidy second row instead of stranding an
-       almost-empty first row above a lone search row. */
-    .search-container {
-        flex-basis: 0;
-        max-width: none;
-    }
-}
-@media (min-width: 600px) and (max-width: 1024px) {
-    /* Tablet: flatten the save + language group to direct header items so the
-       compact language picker can ride on the "Cross-game duplicates" row.
-       Ordering the picker BEFORE the (long) save-status pill is what keeps it
-       safe: the status - never the picker - is the item that wraps to a new row
-       when the trailing controls don't all fit, so the picker can't be pushed
-       off-screen (the bug this block originally fixed). Where there's room (wider
-       tablet, e.g. ~980px+), Load save + status share the duplicates + language
-       row; where there isn't, only the status wraps to its own row beneath. */
-    .header-right,
-    .save-upload {
-        display: contents;
+@media (min-width: 600px) and (max-width: 720px) {
+    /* Below the split's 720px floor the language picker can't fit beside the game
+       toggle, so the whole secondary group (duplicates + Load save + picker)
+       belongs on the second row (as at ~629px). Force a line break right after
+       the game toggle so the duplicates button can't creep onto the FIRST row at
+       the top of this range (~716-719px), where it happens to just fit beside the
+       toggle: that fit is knife-edge, and the vertical scrollbar appearing on
+       load shaves a few px off the width and flipped duplicates between rows (a
+       visible flicker on load). The forced break keeps the second row stable
+       regardless of the exact width / scrollbar.
+       The ceiling is ``max-width: 720px`` (not 719): it deliberately shares the
+       720px boundary with the split block below so a FRACTIONAL viewport width
+       (e.g. 719.2px from display scaling / browser zoom) can't fall through the
+       gap between ``max-width: 719px`` and ``min-width: 720px`` and revert to the
+       natural layout (which put duplicates back on the first row). At exactly
+       720px both blocks match and the later one (the split) wins, so it must stay
+       ordered after this block.
+       ``margin-left: auto`` (from the <= 1279px block) still right-aligns the
+       picker; a loaded save's status pill (order 5) wraps to its own row so the
+       picker stays with the buttons. */
+    header::after {
+        content: "";
+        order: 1;
+        flex-basis: 100%;
+        height: 0;
     }
     #nav-duplicates { order: 2; }
-    #language-picker { order: 3; }
-    .save-upload-btn { order: 4; }
-    #save-status {
-        order: 5;
-        min-width: 0;
+    .save-upload-btn { order: 3; }
+    #language-picker { order: 4; }
+    #save-status { order: 5; }
+}
+@media (min-width: 720px) and (max-width: 1079px) {
+    /* Tablet: keep the language picker on the top row with the game toggle and
+       drop the SECONDARY controls (duplicates + Load save + status) to a second
+       row, rather than letting the picker be the item that wraps. A zero-height,
+       full-width ``header::after`` (order 2) forces a line break right after the
+       picker (order 1, still right-aligned by the <= 1279px ``margin-left: auto``),
+       giving:
+         row 1: brand + title + game toggle ... language (top-right)
+         row 2: duplicates + Load save + status
+         row 3: search
+       Bounds: the 720px floor is ~where the fixed-width picker (168px, sized for
+       the widest label) first fits beside the brand + title + game toggle; below
+       it the picker can't share that row, so it is left to flow onto the
+       duplicates + Load-save row instead of being stranded alone on its own row
+       (the natural <= 1279px layout handles that). The 1079px ceiling is ~where
+       everything fits on one row again, so above it the single-row layout
+       applies without a jarring language row1<->row2 swap. */
+    #language-picker { order: 1; }
+    header::after {
+        content: "";
+        order: 2;
+        flex-basis: 100%;
+        height: 0;
     }
+    #nav-duplicates { order: 3; }
+    .save-upload-btn { order: 4; }
+    #save-status { order: 5; }
+}
+@media (min-width: 1080px) and (max-width: 1279px) {
+    /* Above the split's 1079px ceiling everything but the save group fits on the
+       first row (brand + title + game toggle + duplicates + language picker), so
+       the natural <= 1279px layout already reads well WITHOUT a save. But once a
+       save is loaded its status pill is long ("Hades: 2220 dialogues played, 95
+       runs, House of Hades save"); left inline it wraps to the second row and,
+       because the picker follows it in DOM order, drags the picker down with it.
+       So while a save is present (``:has`` on the un-hidden status), drop the
+       Load-save button together with its status pill onto their own row via a
+       zero-height full-width break (order 80, between the row-1 items at order 0
+       and the save group at order 90), keeping the picker top-right on row 1:
+         row 1: brand + title + game toggle + duplicates ... language (top-right)
+         row 2: Load save + status pill
+         row 3: search (order 100)
+       Without a save the ``:has`` fails, no break is emitted, and the Load-save
+       button stays inline on row 1 as before. */
+    header:has(#save-status:not([hidden]))::after {
+        content: "";
+        order: 80;
+        flex-basis: 100%;
+        height: 0;
+    }
+    header:has(#save-status:not([hidden])) .save-upload-btn { order: 90; }
+    header:has(#save-status:not([hidden])) #save-status { order: 90; }
+}
+@media (min-width: 1280px) {
+    /* Desktop: a loaded save's status pill widens the trailing group; when the
+       row runs out of space .header-right - which holds the save group AND the
+       language picker and wraps as ONE unit - drops to a second row, dragging
+       the picker down with it. Instead, let the save group wrap on its own while
+       the picker stays put: flatten .header-right so the picker and save group
+       are independent header items, right-align the picker (``margin-left: auto``
+       - the wrapper's own auto margin is lost under display: contents), and
+       ORDER the picker before the save group. Now the picker is placed first and
+       the save group is what wraps when the row is full:
+         wide  (fits):  ... duplicates | picker | Load save | status  (one row)
+         tight (wraps): ... duplicates ............... picker  (row 1)
+                        Load save | status                     (row 2)
+       This self-adjusts to the pill's width (which varies a lot - a vanilla
+       "Hades: ... House of Hades save" vs a "Hades II with Zagreus' Journey: ..."
+       biomes pill differ by ~200px), so there is no fixed breakpoint to keep in
+       sync. The flexible search box (flex: 1, max 500px) absorbs the slack. Gated
+       on ``:has`` so a save-less header keeps its original inline order. */
+    header:has(#save-status:not([hidden])) .header-right { display: contents; }
+    header:has(#save-status:not([hidden])) #language-picker {
+        order: 1;
+        margin-left: auto;
+    }
+    header:has(#save-status:not([hidden])) .save-upload { order: 2; }
 }
 @media (max-width: 599px) {
-    /* Phone: regroup the header controls into two predictable rows rather
-       than letting them wrap purely by width. The desktop single-row DOM
-       order is locked, so this is pure CSS ``order`` (no DOM change):
-         row A: Cross-game duplicates + Load save
-         row B: save status   (only present once a save is loaded)
-       Both wrapper boxes are flattened with display:contents so their
-       children become direct header flex items and can be ordered apart
-       from their desktop grouping (header-right held the save group;
-       save-upload held the Load-save button and the status pill). */
-    .header-right,
-    .save-upload {
-        display: contents;
-    }
-    /* Align every control row to the search box's full-width edges so the
-       stacked header reads as one tidy column instead of ragged rows with
-       independent widths. The search box + save status already span the full
-       width; here the two button pairs (game toggle; duplicates + Load save)
-       each fill their row and split it evenly (50/50), so all rows share the
-       same left / right edges. ``min-width: 0`` lets the long "Cross-game
-       duplicates" label shrink to its half rather than overflow. */
+    /* Phone: each control row spans the search box's full-width edges so the
+       stacked header reads as one tidy column. The game toggle and the
+       duplicates + Load-save pair each fill their row; the latter's two buttons
+       split it 50/50 (``flex: 1 1 0``). Unlike tablet (where the language picker
+       stays top-right), here there is no room beside the full-width game
+       buttons, so ``order`` lifts the picker onto its own row ABOVE them; the
+       rest run top-to-bottom (game toggle 2, duplicates + Load save 3/4, status
+       5) with search last (order 100 from the <= 1279px block). */
     .game-toggle {
         display: flex;
         flex-basis: 100%;
+        order: 2;
     }
     .game-toggle-btn { flex: 1 1 0; }
     #nav-duplicates {
-        order: 1;
         flex: 1 1 0;
         min-width: 0;
+        order: 3;
     }
     /* Swap the descriptive label for the short "Duplicates" so it fits the
        half-width button instead of overflowing (the full text is ~180px, wider
@@ -215,38 +294,28 @@
     .nav-dup-full { display: none; }
     .nav-dup-short { display: inline; }
     .save-upload-btn {
-        order: 2;
         flex: 1 1 0;
         min-width: 0;
-    }
-    #save-status { order: 5; }
-    /* Forced full-width break between the two rows, gated on a loaded save
-       (the status pill becomes visible) via :has so the no-save header carries
-       no trailing empty line. */
-    header:has(#save-status:not([hidden]))::after {
-        content: "";
-        order: 3;
-        flex-basis: 100%;
-        height: 0;
+        order: 4;
     }
     /* Save status spans the full width (its own row); its text can be long
        (e.g. "Hades II with Zagreus' Journey: 1234 dialogues") so let it wrap
-       rather than overflow. */
+       rather than overflow. ``flex-basis: 100%`` puts it on its own row after the
+       duplicates + Load-save pair (no explicit break needed - a full-basis item
+       always wraps). */
     #save-status {
         flex-basis: 100%;
         min-width: 0;
         white-space: normal;
         max-width: 100%;
+        order: 5;
     }
-    /* Dialogue-language picker: give it its own full-width row (like the search
-       box and save-status) instead of crowding a third control onto the
-       duplicates + Load-save pair. ``order: 4`` places it after that row
-       (duplicates 1 / Load save 2 / gated break 3) and before the save-status
-       strip (5); ``flex-basis: 100%`` forces the row on its own even with no
-       save loaded (when the break is absent). */
+    /* Dialogue-language picker: full-width on its own row, ordered (1) just
+       before the game toggle so - where the game buttons already fill their row
+       - it lands on the row directly ABOVE them. */
     #language-picker {
-        order: 4;
         flex-basis: 100%;
+        order: 1;
     }
     .language-picker-label,
     .language-select {
