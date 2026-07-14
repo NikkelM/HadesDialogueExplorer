@@ -1,0 +1,3239 @@
+{
+  "alternates": {
+    "ZagreusBossAboutHypnosWakeUp01": [
+      "ZagreusBossAboutHypnosWakeUp01_B"
+    ],
+    "ZagreusBossAboutHypnosWakeUp01_B": [
+      "ZagreusBossAboutHypnosWakeUp01"
+    ]
+  },
+  "dependents": {
+    "AchillesTrueEnding01": [
+      {
+        "name": "ZagreusBossAboutThanatosAspect01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ZagreusBossAboutHouse01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HadesWithPersephone01": [
+      {
+        "name": "ZagreusBossAboutHouse01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HadesWithPersephoneGift06": [
+      {
+        "name": "ZagreusBossAboutParents01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosDreamAboutMemories01": [
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01",
+        "type": "RequiredFalseTextLines"
+      },
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HypnosFinalDreamMeeting01": [
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NeoChronosAboutOlympus01_B": [
+      {
+        "name": "ZagreusBossMiscDefeat05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NeoChronosAboutOlympus02": [
+      {
+        "name": "ZagreusBossMiscDefeat05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NeoChronosAboutTartarus01_B": [
+      {
+        "name": "ZagreusBossMiscDefeat05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NeoChronosAboutTartarus02": [
+      {
+        "name": "ZagreusBossMiscDefeat05",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "SkellyAboutPast04": [
+      {
+        "name": "ZagreusBossAboutSkelly01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossAboutCrossroads01": [
+      {
+        "name": "ZagreusBossAboutSkelly01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossAboutGigaros01": [
+      {
+        "name": "ZagreusBossAboutGigaros02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossAboutHypnosWakeUp01": [
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ZagreusBossAboutHypnosWakeUp01_B": [
+      {
+        "name": "ZagreusBossAboutHypnosWakeUp01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ZagreusBossAboutParents01": [
+      {
+        "name": "ZagreusBossAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossAboutRelationships01": [
+      {
+        "name": "ZagreusBossAboutSayingLittle01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossAboutSupportiveShade01": [
+      {
+        "name": "ZagreusBossAboutSupportiveShade02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ZagreusBossGrantsKeepsakeOutro01": [
+      {
+        "name": "ZagreusBossGrantsBondForged01",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 23,
+    "totalSpeakers": 1,
+    "totalTextlines": 87,
+    "unresolvedRefs": [
+      "AchillesTrueEnding01",
+      "HadesWithPersephone01",
+      "HadesWithPersephoneGift06",
+      "HypnosDreamAboutMemories01",
+      "HypnosFinalDreamMeeting01",
+      "NeoChronosAboutOlympus01_B",
+      "NeoChronosAboutOlympus02",
+      "NeoChronosAboutTartarus01_B",
+      "NeoChronosAboutTartarus02",
+      "SkellyAboutPast04"
+    ]
+  },
+  "textlines": {
+    "ZagreusBossAboutCirce01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0409",
+          "speaker": "Zagreus",
+          "text": "What happened to you, one of your incantations backfire or something? Last time I remember you being this small it was potentially all just a dream of mine."
+        },
+        {
+          "cue": "MelinoeField_4990",
+          "speaker": "PlayerUnit",
+          "text": "This is the work of the Enchantress Circe, and I'll have you know, it is entirely intentional! You won't be ridiculing me when you see how elusive I've become."
+        },
+        {
+          "cue": "Zagreus_0410",
+          "speaker": "Zagreus",
+          "text": "I didn't mean to ridicule you to begin with, although I think the Shades around here would probably enjoy a bit of verbal hostility before the main event. Come on then, Little Sister!"
+        }
+      ],
+      "name": "ZagreusBossAboutCirce01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceShrinkTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceShrinkTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1016
+    },
+    "ZagreusBossAboutCirce02": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0406",
+          "speaker": "Zagreus",
+          "text": "Sister, you... erm... look, you're causing me to feel a little insecure about my height. How did you get to such a stature, or more importantly, how can I?"
+        },
+        {
+          "cue": "MelinoeField_4989",
+          "speaker": "PlayerUnit",
+          "text": "Well, you'd have to pay a visit to the Enchantress Circe over on her remote isle, so it might be far out of your way. The effect is only temporary, though."
+        },
+        {
+          "cue": "Zagreus_0407",
+          "speaker": "Zagreus",
+          "text": "Even your voice is changed! Well, at least it's good to know I'll only feel humiliated here for the time being. Let's see what you've got, Little Sister."
+        }
+      ],
+      "name": "ZagreusBossAboutCirce02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.CirceEnlargeTrait": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "CirceEnlargeTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1046
+    },
+    "ZagreusBossAboutCrossroads01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0118",
+          "speaker": "Zagreus",
+          "text": "So where exactly are these Crossroads where you're from? I feel as though, as Security Specialist, I ought to have been fully disclosed by this point."
+        },
+        {
+          "cue": "MelinoeField_4603",
+          "speaker": "PlayerUnit",
+          "text": "Well the Crossroads are in Erebus, but simply knowing that won't help with locating the place. Have Mother and Father not informed you?"
+        },
+        {
+          "cue": "Zagreus_0119",
+          "speaker": "Zagreus",
+          "text": "No. They're probably concerned that if I ever went, I'd want to stay, if you like it so much. That, or they're trying to protect your secrecy. Oh well! We can see each other here."
+        }
+      ],
+      "name": "ZagreusBossAboutCrossroads01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 836
+    },
+    "ZagreusBossAboutGigaros01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0120",
+          "speaker": "Zagreus",
+          "text": "Not yet accustomed to the weight of Gigaros... I used to have a much wider variety of Arms at my disposal, you know! But now it seems they've been picked through."
+        },
+        {
+          "cue": "MelinoeField_4604",
+          "speaker": "PlayerUnit",
+          "text": "I'm quite familiar with a couple of their current bearers, at least. The Blade of the Underworld is in the capable hands of Nemesis, while the Rail of Adamant is in the... hands of Eris."
+        },
+        {
+          "cue": "Zagreus_0121",
+          "speaker": "Zagreus",
+          "text": "I happen to miss those! But I was using their Aspects for a while, so perhaps it's all as it should be. They better be well taken care of, better than this old spear."
+        }
+      ],
+      "name": "ZagreusBossAboutGigaros01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:GameState.EnemyKills.Zagreus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EnemyKills",
+              "Zagreus"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 858
+    },
+    "ZagreusBossAboutGigaros02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4605",
+          "speaker": "PlayerUnit",
+          "text": "How did you get Gigaros anyhow? You never told me. Father truly just handed it over as a gift?"
+        },
+        {
+          "cue": "Zagreus_0122",
+          "speaker": "Zagreus",
+          "text": "I persuaded him like you suggested! Father, if I'm to command respect in my role as Security Specialist, I ought to wield the authority of the House of Hades! He had a lot of bad memories attached to this thing, besides."
+        },
+        {
+          "cue": "MelinoeField_4606",
+          "speaker": "PlayerUnit",
+          "text": "From fighting against you...? While I was growing up Headmistress Hecate told me all about how you did that."
+        },
+        {
+          "cue": "Zagreus_0123",
+          "speaker": "Zagreus",
+          "text": "Now she is quite the cagey one, must have served Mother in secrecy way back when. Well if she taught you all your magick and whatnot, then she must know plenty!"
+        }
+      ],
+      "name": "ZagreusBossAboutGigaros02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusBossAboutGigaros01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 884
+    },
+    "ZagreusBossAboutHomer01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0496",
+          "speaker": "Zagreus",
+          "text": "The Princess of the Dead again confronts her willful brother Zagreus, who has unlearned some of his finer fighting-skills whilst trapped in the clutches of the Titan of Time."
+        },
+        {
+          "cue": "Zagreus_0147",
+          "speaker": "Zagreus",
+          "text": "Hey it's you, old man! I was beginning to wonder where you wound up. Abandoned me for my dear sister, is that it?"
+        },
+        {
+          "cue": "MelinoeField_4550",
+          "speaker": "PlayerUnit",
+          "text": "Wait, what? Homer's been with me all this time. How do you know each other? What did I miss...?"
+        },
+        {
+          "cue": "Zagreus_0148",
+          "speaker": "Zagreus",
+          "text": "I can't even begin trying to answer that right now. Homer, you say? I should have figured he'd have such a silly name. Well let's give him another tale to tell!"
+        }
+      ],
+      "name": "ZagreusBossAboutHomer01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Zagreus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Zagreus"
+            ],
+            "Value": 2
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1289
+    },
+    "ZagreusBossAboutHouse01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_5173",
+          "speaker": "PlayerUnit",
+          "text": "How are the Houseservants recovering, everybody back on their feet by now? I have fond memories of them... glimpses all through my childhood and growing up."
+        },
+        {
+          "cue": "Zagreus_0483",
+          "speaker": "Zagreus",
+          "text": "They have similarly kind things to say, whenever they're not bewildered by what happened. But yes, everybody's back on their feet, thanks... besides Dusa who doesn't have any."
+        },
+        {
+          "cue": "MelinoeField_5174",
+          "speaker": "PlayerUnit",
+          "text": "I'm glad to hear it, besides the bewilderment part. You're not officially supposed to speak of what happened, are you? But please tell Dusa and the rest I said hello."
+        },
+        {
+          "cue": "Zagreus_0484",
+          "speaker": "Zagreus",
+          "text": "You got it. And officially or not, you're getting quite the terrifying reputation! Our rumor-spreading court musician Orpheus especially enjoys the tales of dark Melinoë. I take it you're about to show off your daemonic prowess here!"
+        }
+      ],
+      "name": "ZagreusBossAboutHouse01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HadesWithPersephone01",
+          "AchillesTrueEnding01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1075
+    },
+    "ZagreusBossAboutHypnosWakeUp01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0129",
+          "speaker": "Zagreus",
+          "text": "Hypnos recently returned to us! You've no idea how grateful he was to be back. Practically jumped right into my arms, although that might have been from abject fear."
+        },
+        {
+          "cue": "MelinoeField_4544",
+          "speaker": "PlayerUnit",
+          "text": "I'm uncertain whether he realized the House of Hades was out of commission for most of the time he was asleep. He left before I could explain. Do you know if he remembers the other past we saw...?"
+        },
+        {
+          "cue": "Zagreus_0485",
+          "speaker": "Zagreus",
+          "text": "I think so? He's still a bit frazzled from everything... perhaps keyed up from having overslept a bit. He still loves when I return to the House in failure, keeping track of all my deaths. So if you'd like to do him another favor, here's your shot!"
+        }
+      ],
+      "name": "ZagreusBossAboutHypnosWakeUp01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ZagreusBossAboutHypnosWakeUp01_B",
+          "HypnosDreamAboutMemories01"
+        ],
+        "RequiredTextLines": [
+          "HypnosFinalDreamMeeting01",
+          "AchillesTrueEnding01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1188
+    },
+    "ZagreusBossAboutHypnosWakeUp01_B": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0129",
+          "speaker": "Zagreus",
+          "text": "Hypnos recently returned to us! You've no idea how grateful he was to be back. Practically jumped right into my arms, although that might have been from abject fear."
+        },
+        {
+          "cue": "MelinoeField_5292",
+          "speaker": "PlayerUnit",
+          "text": "He left in a bit of a rush, yes. I've seldom met someone so dedicated to their work. Has he been managing all right now that he's back?"
+        },
+        {
+          "cue": "Zagreus_0485",
+          "speaker": "Zagreus",
+          "text": "I think so? He's still a bit frazzled from everything... perhaps keyed up from having overslept a bit. He still loves when I return to the House in failure, keeping track of all my deaths. So if you'd like to do him another favor, here's your shot!"
+        }
+      ],
+      "name": "ZagreusBossAboutHypnosWakeUp01_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ZagreusBossAboutHypnosWakeUp01"
+        ],
+        "RequiredTextLines": [
+          "HypnosFinalDreamMeeting01",
+          "HypnosDreamAboutMemories01",
+          "AchillesTrueEnding01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1221
+    },
+    "ZagreusBossAboutKeepsake01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0135",
+          "speaker": "Zagreus",
+          "text": "I know that gleam... you brought my Calling Card along! So has Olympus still been as forthcoming with Boons and such now that things have cooled off a bit?"
+        },
+        {
+          "cue": "MelinoeField_4608",
+          "speaker": "PlayerUnit",
+          "text": "Oh, I think our relatives are quite eager to ensure things remain as-is. Which seems a little strange since it's all still quite a mess... though perhaps not to the previous extent."
+        },
+        {
+          "cue": "Zagreus_0136",
+          "speaker": "Zagreus",
+          "text": "Having things remain familiar for a while sounds like quite a pleasant change of pace, now that you mention it. Hey, these vicious battles can be part of our routine!"
+        }
+      ],
+      "name": "ZagreusBossAboutKeepsake01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.LastAwardTrait": [
+          {
+            "IsAny": [
+              "RarifyKeepsake"
+            ],
+            "Path": [
+              "GameState",
+              "LastAwardTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 989
+    },
+    "ZagreusBossAboutParents01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4548",
+          "speaker": "PlayerUnit",
+          "text": "How have Mother and Father been, and Nyx? All this must be quite an adjustment for them."
+        },
+        {
+          "cue": "Zagreus_0143",
+          "speaker": "Zagreus",
+          "text": "Oh they're all right. You're seeing Mother and Father not too infrequently yourself, as far as I've gathered. They're keeping an eye on things in Tartarus, probably in part to see you."
+        },
+        {
+          "cue": "MelinoeField_4549",
+          "speaker": "PlayerUnit",
+          "text": "Or have some time alone I suppose. Meanwhile your current charge is here in Elysium, entertaining all these Shades?"
+        },
+        {
+          "cue": "Zagreus_0144",
+          "speaker": "Zagreus",
+          "text": "I'd like to think of it as inspiring moreso than entertaining, but if you must ask so pointedly, then... yes. Keeping the Shades of the Underworld happy is our highest priority! Next to keeping them from getting out, of course."
+        }
+      ],
+      "name": "ZagreusBossAboutParents01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:RoomsEntered.I_Story01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "RoomsEntered",
+              "I_Story01"
+            ],
+            "SumPrevRuns": 6,
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HadesWithPersephoneGift06"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1111
+    },
+    "ZagreusBossAboutRelationships01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0145",
+          "speaker": "Zagreus",
+          "text": "How is it in those Crossroads, anyway? Do you have friends, more-than-friends, that sort of thing? Do tell."
+        },
+        {
+          "cue": "MelinoeField_4611",
+          "speaker": "PlayerUnit",
+          "text": "Oh, I suppose so, yes. Some of each. It's peaceful there. And I can see the Moon and stars under a canopy of trees... it even rains every so often."
+        },
+        {
+          "cue": "Zagreus_0491",
+          "speaker": "Zagreus",
+          "text": "Mm, getting rained on. Perhaps at some point I can brave the unpleasant weather and come visit, meet your friends or more-than-friends and all. We have eternity! Unless we somehow manage to kill each other here first."
+        }
+      ],
+      "name": "ZagreusBossAboutRelationships01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.TextLinesRecord": [
+          {
+            "Comparison": ">=",
+            "CountOf": [
+              "MorosBecomingCloser01",
+              "MorosBecomingCloser01_B",
+              "ErisBecomingCloser01",
+              "NemesisPostCombatBecomingCloser01",
+              "IcarusBecomingCloser01"
+            ],
+            "Path": [
+              "GameState",
+              "TextLinesRecord"
+            ],
+            "Value": 2
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1149
+    },
+    "ZagreusBossAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0155",
+          "speaker": "Zagreus",
+          "text": "You know I'm starting to worry all these Shades here think we truly get along, and that you're not the terrifying harbinger of the Underworld's vengeance you're cracked up to be."
+        },
+        {
+          "cue": "MelinoeField_4616",
+          "speaker": "PlayerUnit",
+          "text": "What if I glower at you like this, and demand your head, if not your soul...?"
+        },
+        {
+          "cue": "Zagreus_0156",
+          "speaker": "Zagreus",
+          "text": "That works, and we can always keep our cordial little conversations nice and brief. Now face me, daemon-sister!"
+        }
+      ],
+      "name": "ZagreusBossAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusBossAboutParents01",
+          "ZagreusBossAboutRelationships01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1501
+    },
+    "ZagreusBossAboutSecurity01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4539",
+          "speaker": "PlayerUnit",
+          "text": "So you're back to being Security Specialist! It must be easier trying to break out of the Underworld when the gates are still flung open."
+        },
+        {
+          "cue": "Zagreus_0116",
+          "speaker": "Zagreus",
+          "text": "As a matter of fact, it is, yes! Particularly that very last part where I previously had to get past Cerberus and worse. For now it's more about surveying than escape."
+        },
+        {
+          "cue": "MelinoeField_4540",
+          "speaker": "PlayerUnit",
+          "text": "You call this surveying? We're in a battle nearly to the death, all for the entertainment of these bloodthirsty Shades."
+        },
+        {
+          "cue": "Zagreus_0117",
+          "speaker": "Zagreus",
+          "text": "Now, now, Sister, the Shades of Elysium are some of our most valuable and influential residents! If spilling a little blood will satisfy them, that seems like a worthy sacrifice."
+        }
+      ],
+      "name": "ZagreusBossAboutSecurity01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 809
+    },
+    "ZagreusBossAboutShrine01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0411",
+          "speaker": "Zagreus",
+          "text": "Fair warning, Sister, I am feeling very spry right now. You must have done something to the Mirror of Night. It's always made me feel more capable, but this is something else."
+        },
+        {
+          "cue": "MelinoeField_4991",
+          "speaker": "PlayerUnit",
+          "text": "It isn't from the Mirror, I don't think, but I can safely say it is Night-related. You make a fearsome adversary, Zagreus... imbued with the dark strength of Nyx herself."
+        },
+        {
+          "cue": "Zagreus_0412",
+          "speaker": "Zagreus",
+          "text": "Oh, you did this somehow. Well fine! One of these days or nights I ought to fire up Father's old Pact of Punishment, and make you immensely strong, and we'll see how you like it!"
+        }
+      ],
+      "name": "ZagreusBossAboutShrine01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 32
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1335
+    },
+    "ZagreusBossAboutSkelly01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0131",
+          "speaker": "Zagreus",
+          "text": "Didn't you mention that a certain Schelemeus was residing with you, wherever your secret witch encampment is? How's he doing?"
+        },
+        {
+          "cue": "MelinoeField_4545",
+          "speaker": "PlayerUnit",
+          "text": "He's as resolute as ever, teaching our loyal Shades our ways. He also serves as a practice partner of sorts. Though, I realize I'm not supposed to speak of him..."
+        },
+        {
+          "cue": "Zagreus_0132",
+          "speaker": "Zagreus",
+          "text": "Uh-huh. He probably just stands indulging in his twisted desire to be savaged by a variety of powerful weapons. Which I... now realize has started to rub off on me..."
+        }
+      ],
+      "name": "ZagreusBossAboutSkelly01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusBossAboutCrossroads01",
+          "SkellyAboutPast04"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1257
+    },
+    "ZagreusBossAboutSupportiveShade01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4617",
+          "speaker": "PlayerUnit",
+          "text": "There's this one Shade I found in the Mourning Fields who I believe resided in Elysium before. Sounds like you may have met."
+        },
+        {
+          "cue": "Zagreus_0139",
+          "speaker": "Zagreus",
+          "text": "Certainly possible, I've run into many Shades, Elysian and not. Can you be more specific? Name, disposition, attire?"
+        },
+        {
+          "cue": "MelinoeField_4618",
+          "speaker": "PlayerUnit",
+          "text": "Name, unknown; disposition, rather encouraging; attire, entirely in red. From what I gathered, this one used to watch your many battles here."
+        },
+        {
+          "cue": "Zagreus_0140",
+          "speaker": "Zagreus",
+          "text": "Wait I think I know who you mean! You're talking about my biggest fan. Tell my good Shade I said cheers, will you?"
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_4619",
+          "speaker": "PlayerUnit",
+          "text": "Sure thing, but first...!"
+        }
+      ],
+      "name": "ZagreusBossAboutSupportiveShade01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:GameState.ExorcisedNames.DieHardFanShade": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ExorcisedNames",
+              "DieHardFanShade"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1364
+    },
+    "ZagreusBossAboutSupportiveShade02": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0141",
+          "speaker": "Zagreus",
+          "text": "My biggest fan is in the audience again! Cheers for mentioning I'm back to doing what I do best... defending the title of Champion of Elysium all for the sake of show."
+        },
+        {
+          "cue": "MelinoeField_4620",
+          "speaker": "PlayerUnit",
+          "text": "What makes you think that one particular Shade is your biggest fan? Perhaps it's me and I'm not letting on."
+        },
+        {
+          "cue": "Zagreus_0142",
+          "speaker": "Zagreus",
+          "text": "Come on, would my biggest fan attempt to slaughter me before these droves of onlookers? Only a fearsome daemon born of nightmare would do such an unconscionable thing!"
+        }
+      ],
+      "name": "ZagreusBossAboutSupportiveShade02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:GameState.SpeechRecord./VO/Melinoe_5525": [
+          {
+            "PathTrue": [
+              "GameState",
+              "SpeechRecord",
+              "/VO/Melinoe_5525"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusBossAboutSupportiveShade01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1407
+    },
+    "ZagreusBossAboutSurfacePenalty01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0127",
+          "speaker": "Zagreus",
+          "text": "So you can just... go to the surface, and head all the way up to Olympus, and not die? I could never get very far."
+        },
+        {
+          "cue": "MelinoeField_4607",
+          "speaker": "PlayerUnit",
+          "text": "I owe it to a complicated incantation called Unraveling a Fateful Bond. Without that, I could not get very far either. You must have longed to see Olympus for yourself... I wonder if..."
+        },
+        {
+          "cue": "Zagreus_0128",
+          "speaker": "Zagreus",
+          "text": "Hey, no need to defy the Fates on my account, Sister! I'd rather leave things be. Perhaps once the Underworld's back in business, I'll feel a stronger urge to see the mountain in all its glory, but... for now, the glory of Elysium's enough!"
+        }
+      ],
+      "name": "ZagreusBossAboutSurfacePenalty01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.BiomesReached.N": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "BiomesReached",
+              "N"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 954
+    },
+    "ZagreusBossAboutThanatosAspect01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0486",
+          "speaker": "Zagreus",
+          "text": "Say, I know the son of Nyx and incarnate of Death to whom that rather sinister scythe belongs. As do you, in a way! I could give it back to him, rather than getting sliced?"
+        },
+        {
+          "cue": "MelinoeField_5175",
+          "speaker": "PlayerUnit",
+          "text": "Thank you for the generous offer, but I have need of it right now. Besides, Nyx knows where to find me if her son ever needs it back. How are you and Thanatos doing lately anyhow?"
+        },
+        {
+          "cue": "Zagreus_0487",
+          "speaker": "Zagreus",
+          "text": "Oh we're good. Much better now that we're not frozen in time, same for Megaera. They miss you! She says hello, while he says tell the Princess that she has my gratitude."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_4547",
+          "speaker": "PlayerUnit",
+          "text": "Tell him I'm grateful for the scythe!"
+        }
+      ],
+      "name": "ZagreusBossAboutThanatosAspect01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.TraitDictionary.AxePerfectCriticalAspect": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary",
+              "AxePerfectCriticalAspect"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "AchillesTrueEnding01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 915
+    },
+    "ZagreusBossFirstMeeting": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0099",
+          "speaker": "Zagreus",
+          "text": "Well this is awkward. Melinoë, what are you doing here? I was just basking in the adulation of the crowd. They never tire of seeing the Champion or Champions of Elysium fall."
+        },
+        {
+          "cue": "MelinoeField_4237",
+          "speaker": "PlayerUnit",
+          "text": "Erm, hello Zagreus! Wow, this is Elysium, but I don't know what I'm doing here. Last I recall I'd picked up some sort of burning parchment from Charon's shop..."
+        },
+        {
+          "cue": "Zagreus_0100",
+          "speaker": "Zagreus",
+          "text": "Oh gods... you really accepted an Infernal Contract. Read all the fine print, and still thought it was a good idea?"
+        },
+        {
+          "cue": "MelinoeField_4238",
+          "speaker": "PlayerUnit",
+          "text": "I... can't exactly say I read all the fine print, I mean, there seemed an awful lot, and... could you perhaps summarize what I consented to?"
+        },
+        {
+          "cue": "Zagreus_0101",
+          "speaker": "Zagreus",
+          "text": "A free trip to Elysium, for one...! And an exhibition match with its present Champion or Champions for another. Though exhibition does mean deadly battle in this case. You ready?"
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "Zagreus_0102",
+          "speaker": "Zagreus",
+          "text": "Let's give these Shades a show!"
+        },
+        {
+          "cue": "MelinoeField_4239",
+          "speaker": "PlayerUnit",
+          "text": "If you insist!"
+        },
+        {
+          "cue": "Zagreus_0103",
+          "speaker": "Zagreus",
+          "text": "Meet the Princess of the Underworld, everyone!"
+        }
+      ],
+      "name": "ZagreusBossFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 626
+    },
+    "ZagreusBossGrantsBondForged01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4541",
+          "speaker": "PlayerUnit",
+          "text": "Will I ever see you again beyond the confines of this crowded competitive arena? We ought to be sharing Ambrosia, rather than trying to kill one another for sport."
+        },
+        {
+          "cue": "Zagreus_0124",
+          "speaker": "Zagreus",
+          "text": "Nobody knows but the Fates, and from what I've recently been hearing, perhaps not even them! As for the Ambrosia, you've already got a Keepsake from me, so no need!"
+        },
+        {
+          "cue": "MelinoeField_4542",
+          "speaker": "PlayerUnit",
+          "text": "What? Nectar and Ambrosia aren't just for barter! You of everyone must understand the value of forging strong bonds with relatives, comrades, and loved ones."
+        },
+        {
+          "cue": "Zagreus_0125",
+          "speaker": "Zagreus",
+          "text": "Of course, but... we've been through quite a bit together at this point! And I've known you since before you were born. But here, we can make it official if you like!"
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_4543",
+          "speaker": "PlayerUnit",
+          "text": "Well all right then! Now to the death?"
+        },
+        {
+          "cue": "Zagreus_0126",
+          "speaker": "Zagreus",
+          "text": "To the death! Or close enough!"
+        }
+      ],
+      "name": "ZagreusBossGrantsBondForged01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZagreusBossGrantsKeepsakeOutro01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1442
+    },
+    "ZagreusBossGrantsKeepsakeOutro01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0321",
+          "speaker": "Zagreus",
+          "text": "Augh... congratulations, Melinoë, for I have deemed you Blasted Strong. Well above Rather Strong on my scale."
+        },
+        {
+          "cue": "MelinoeField_4551",
+          "speaker": "PlayerUnit",
+          "text": "Thank you, Brother, I try. Do you normally even win anything when you prevail in this place?"
+        },
+        {
+          "cue": "Zagreus_0322",
+          "speaker": "Zagreus",
+          "text": "...Usually just Darkness, but... I do have something for you here. I've always wanted to give somebody one of these..."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_4552",
+          "speaker": "PlayerUnit",
+          "text": "A Keepsake of some sort? Thank you!"
+        }
+      ],
+      "name": "ZagreusBossGrantsKeepsakeOutro01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2166
+    },
+    "ZagreusBossLostAgainstHim01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0149",
+          "speaker": "Zagreus",
+          "text": "Got you quite decisively last time as I recall, Sister, so I am mildly surprised you'd dare to show your face again in such a competitive environment."
+        },
+        {
+          "cue": "MelinoeField_4612",
+          "speaker": "PlayerUnit",
+          "text": "I'm accustomed to the occasional setback here and there. What about you? You've been trapped in Time. That can't be good for your physical and mental acuity."
+        },
+        {
+          "cue": "Zagreus_0150",
+          "speaker": "Zagreus",
+          "text": "I don't know, it's like I didn't miss a beat! Though why don't you be the judge of my physical and mental acuity in just a moment here."
+        }
+      ],
+      "name": "ZagreusBossLostAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0.25
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 695
+    },
+    "ZagreusBossLostAgainstHim02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4613",
+          "speaker": "PlayerUnit",
+          "text": "You're as swift and strong as I've heard, though much more talkative. You're not taking this seriously, are you?"
+        },
+        {
+          "cue": "Zagreus_0151",
+          "speaker": "Zagreus",
+          "text": "How dare you, Sister! Although perhaps it's your own seriousness holding you back, you ever think on that?"
+        }
+      ],
+      "name": "ZagreusBossLostAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 726
+    },
+    "ZagreusBossMiscDefeat01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0329",
+          "speaker": "Zagreus",
+          "text": "Augh...! All right, all right, you win this round... and I should go!"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat01",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2226
+    },
+    "ZagreusBossMiscDefeat02": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0330",
+          "speaker": "Zagreus",
+          "text": "Guh...! Well, I think it's time I made my dramatic exit... heh..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat02",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2233
+    },
+    "ZagreusBossMiscDefeat03": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0331",
+          "speaker": "Zagreus",
+          "text": "Ungh...! Would you... look at the time..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat03",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2240
+    },
+    "ZagreusBossMiscDefeat04": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0332",
+          "speaker": "Zagreus",
+          "text": "Augh...! I forgot... something I need... back at the House..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat04",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2247
+    },
+    "ZagreusBossMiscDefeat05": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0333",
+          "speaker": "Zagreus",
+          "text": "Eugh... well go get Chronos then... or Typhon... either one..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat05",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NeoChronosAboutTartarus01_B",
+          "NeoChronosAboutOlympus01_B",
+          "NeoChronosAboutTartarus02",
+          "NeoChronosAboutOlympus02"
+        ]
+      },
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2254
+    },
+    "ZagreusBossMiscDefeat06": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0334",
+          "speaker": "Zagreus",
+          "text": "Augh...! Enjoy... the many benefits... of membership..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat06",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2273
+    },
+    "ZagreusBossMiscDefeat07": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0335",
+          "speaker": "Zagreus",
+          "text": "Guh... the Shades... they love... a bit of drama... heh."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat07",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2280
+    },
+    "ZagreusBossMiscDefeat08": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0336",
+          "speaker": "Zagreus",
+          "text": "Augh, I'm fine, I'm... just a little winded... that's all...!"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat08",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2287
+    },
+    "ZagreusBossMiscDefeat09": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0337",
+          "speaker": "Zagreus",
+          "text": "Augh... I ought to... learn some magick... for myself..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat09",
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.UseRecord.SpellDrop": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "UseRecord",
+                  "SpellDrop"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathTrue:CurrentRun.Hero.TraitDictionary.SuitHexAspect": [
+              {
+                "PathTrue": [
+                  "CurrentRun",
+                  "Hero",
+                  "TraitDictionary",
+                  "SuitHexAspect"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2294
+    },
+    "ZagreusBossMiscDefeat10": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0338",
+          "speaker": "Zagreus",
+          "text": "Ow, you are a nightmare, let me tell you... not a witch..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat10",
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Zagreus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Zagreus"
+            ],
+            "Value": 8
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2317
+    },
+    "ZagreusBossMiscDefeat11": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0325",
+          "speaker": "Zagreus",
+          "text": "Rngh, I... didn't so much as... put a scratch on you...!"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat11",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.EncounterClearStats.BossZagreus01.TookDamage": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01",
+              "TookDamage"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.EncounterClearStats.BossZagreus01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2332
+    },
+    "ZagreusBossMiscDefeat12": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0326",
+          "speaker": "Zagreus",
+          "text": "Augh, I must have hit you at some point back there... right?"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat12",
+      "otherRequirements": {
+        "PathFalse:CurrentRun.EncounterClearStats.BossZagreus01.TookDamage": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01",
+              "TookDamage"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.EncounterClearStats.BossZagreus01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2350
+    },
+    "ZagreusBossMiscDefeat13": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0327",
+          "speaker": "Zagreus",
+          "text": "Augh, how did you... beat me so blasted quick...?"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat13",
+      "otherRequirements": {
+        "Path:CurrentRun.EncounterClearStats.BossZagreus01.ClearTime": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01",
+              "ClearTime"
+            ],
+            "Value": 30.0
+          }
+        ],
+        "PathTrue:CurrentRun.EncounterClearStats.BossZagreus01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2368
+    },
+    "ZagreusBossMiscDefeat14": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0328",
+          "speaker": "Zagreus",
+          "text": "Ow, what happened, you... destroyed me in no time at all..."
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat14",
+      "otherRequirements": {
+        "Path:CurrentRun.EncounterClearStats.BossZagreus01.ClearTime": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01",
+              "ClearTime"
+            ],
+            "Value": 30.0
+          }
+        ],
+        "PathTrue:CurrentRun.EncounterClearStats.BossZagreus01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "EncounterClearStats",
+              "BossZagreus01"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2388
+    },
+    "ZagreusBossMiscDefeat15": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0329",
+          "speaker": "Zagreus",
+          "text": "Augh, all right, all right, you win this round... and I should go!"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat15",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2408
+    },
+    "ZagreusBossMiscDefeat16": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0339",
+          "speaker": "Zagreus",
+          "text": "Guh, well would you look at that... we're out of time!"
+        }
+      ],
+      "name": "ZagreusBossMiscDefeat16",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2415
+    },
+    "ZagreusBossMiscStart01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0176",
+          "speaker": "Zagreus",
+          "text": "All right, Little Sister, let's give these Shades of Elysium a match to remember!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart01",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1536
+    },
+    "ZagreusBossMiscStart02": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0177",
+          "speaker": "Zagreus",
+          "text": "Know that if you do beat me it's because I'm going easy on you, all right?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart02",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1545
+    },
+    "ZagreusBossMiscStart03": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0178",
+          "speaker": "Zagreus",
+          "text": "As much as I'm glad to see you, this attempt was going so well till you showed up..."
+        }
+      ],
+      "name": "ZagreusBossMiscStart03",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Name": "C_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1564
+    },
+    "ZagreusBossMiscStart04": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0179",
+          "speaker": "Zagreus",
+          "text": "We're much alike in that you, too, seem to enjoy accepting Contracts without reading them."
+        }
+      ],
+      "name": "ZagreusBossMiscStart04",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1587
+    },
+    "ZagreusBossMiscStart05": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0180",
+          "speaker": "Zagreus",
+          "text": "Your magick against my spear. Father's spear. You know what I mean."
+        }
+      ],
+      "name": "ZagreusBossMiscStart05",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1596
+    },
+    "ZagreusBossMiscStart06": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0181",
+          "speaker": "Zagreus",
+          "text": "We'll have to catch up sometime without all the violence, but for now?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart06",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1605
+    },
+    "ZagreusBossMiscStart07": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0182",
+          "speaker": "Zagreus",
+          "text": "I've fought through Elysium way too many times to back down now."
+        }
+      ],
+      "name": "ZagreusBossMiscStart07",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1614
+    },
+    "ZagreusBossMiscStart08": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0183",
+          "speaker": "Zagreus",
+          "text": "Our paths have crossed again, Sister! And our weapons are about to."
+        }
+      ],
+      "name": "ZagreusBossMiscStart08",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1624
+    },
+    "ZagreusBossMiscStart09": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0184",
+          "speaker": "Zagreus",
+          "text": "Brothers and sisters often fight like this as far as I'm aware."
+        }
+      ],
+      "name": "ZagreusBossMiscStart09",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1634
+    },
+    "ZagreusBossMiscStart10": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0186",
+          "speaker": "Zagreus",
+          "text": "Don't hold back against me now. The crowd won't have it!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart10",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1643
+    },
+    "ZagreusBossMiscStart11": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0187",
+          "speaker": "Zagreus",
+          "text": "Just be thankful you're not fighting the previous Champion."
+        }
+      ],
+      "name": "ZagreusBossMiscStart11",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1652
+    },
+    "ZagreusBossMiscStart12": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0188",
+          "speaker": "Zagreus",
+          "text": "Well, Shades? Looks like we have a special exhibition match!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart12",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1661
+    },
+    "ZagreusBossMiscStart13": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0189",
+          "speaker": "Zagreus",
+          "text": "How do you always show up right in my moment of glory?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart13",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1670
+    },
+    "ZagreusBossMiscStart14": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0190",
+          "speaker": "Zagreus",
+          "text": "Oh hey Melinoë, how you're looking well! Though not for long perhaps, sorry..."
+        }
+      ],
+      "name": "ZagreusBossMiscStart14",
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": ">=",
+              "Value": 0.75
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0.2
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1680
+    },
+    "ZagreusBossMiscStart15": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0191",
+          "speaker": "Zagreus",
+          "text": "You're worse than fighting Father! Don't tell him I said that."
+        }
+      ],
+      "name": "ZagreusBossMiscStart15",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1703
+    },
+    "ZagreusBossMiscStart16": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0193",
+          "speaker": "Zagreus",
+          "text": "Bring it on, Sister, I can do this all day. Night? Whenever!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart16",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1722
+    },
+    "ZagreusBossMiscStart17": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0194",
+          "speaker": "Zagreus",
+          "text": "Come show me what the esteemed Schelemeus taught you."
+        }
+      ],
+      "name": "ZagreusBossMiscStart17",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1732
+    },
+    "ZagreusBossMiscStart18": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0195",
+          "speaker": "Zagreus",
+          "text": "Always a welcome break from my routine, Sister! Mostly."
+        }
+      ],
+      "name": "ZagreusBossMiscStart18",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1742
+    },
+    "ZagreusBossMiscStart19": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0203",
+          "speaker": "Zagreus",
+          "text": "Always a pleasure, Sister! Especially when I don't lose."
+        }
+      ],
+      "name": "ZagreusBossMiscStart19",
+      "otherRequirements": {
+        "PathTrue:GameState.EnemyKills.Zagreus": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EnemyKills",
+              "Zagreus"
+            ]
+          }
+        ],
+        "PathTrue:GameState.SpeechRecord./VO/Zagreus_0104": [
+          {
+            "PathTrue": [
+              "GameState",
+              "SpeechRecord",
+              "/VO/Zagreus_0104"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1752
+    },
+    "ZagreusBossMiscStart20": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0204",
+          "speaker": "Zagreus",
+          "text": "Far be it from me to disappoint all these expectant Shades, Sister!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart20",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1771
+    },
+    "ZagreusBossMiscStart21": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0185",
+          "speaker": "Zagreus",
+          "text": "Hey, you have way more Boons than I do at the moment..."
+        }
+      ],
+      "name": "ZagreusBossMiscStart21",
+      "otherRequirements": {
+        "Path:CurrentRun.LootTypeHistory": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "CurrentRun",
+              "LootTypeHistory"
+            ],
+            "UseLength": true,
+            "Value": 8
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1781
+    },
+    "ZagreusBossMiscStart22": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0192",
+          "speaker": "Zagreus",
+          "text": "So, what awful curses and such you have in store this time?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart22",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1801
+    },
+    "ZagreusBossMiscStart23": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0194",
+          "speaker": "Zagreus",
+          "text": "Come show me what the esteemed Schelemeus taught you."
+        }
+      ],
+      "name": "ZagreusBossMiscStart23",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1818
+    },
+    "ZagreusBossMiscStart24": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0195",
+          "speaker": "Zagreus",
+          "text": "Always a welcome break from my routine, Sister! Mostly."
+        }
+      ],
+      "name": "ZagreusBossMiscStart24",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1828
+    },
+    "ZagreusBossMiscStart25": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0196",
+          "speaker": "Zagreus",
+          "text": "That staff may have some reach, but my spear has this nasty pointy bit."
+        }
+      ],
+      "name": "ZagreusBossMiscStart25",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponStaffSwing": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponStaffSwing"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1838
+    },
+    "ZagreusBossMiscStart26": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0197",
+          "speaker": "Zagreus",
+          "text": "Ooh I like those blades of yours! Just let me keep my limbs."
+        }
+      ],
+      "name": "ZagreusBossMiscStart26",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponDagger": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponDagger"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1854
+    },
+    "ZagreusBossMiscStart27": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0198",
+          "speaker": "Zagreus",
+          "text": "Those torches. Huh. You know I'm flame-resistant, don't you?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart27",
+      "otherRequirements": {
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponTorch": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponTorch"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1870
+    },
+    "ZagreusBossMiscStart28": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0199",
+          "speaker": "Zagreus",
+          "text": "You're not the first to cross through here with a gigantic axe, you know."
+        }
+      ],
+      "name": "ZagreusBossMiscStart28",
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasNone": [
+              "AxePerfectCriticalAspect",
+              "AxeRallyAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponAxe": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponAxe"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1886
+    },
+    "ZagreusBossMiscStart29": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0200",
+          "speaker": "Zagreus",
+          "text": "I don't much care for how that skull of yours is looking at me right now."
+        }
+      ],
+      "name": "ZagreusBossMiscStart29",
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasNone": [
+              "LobCloseAttackAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.Hero.Weapons.WeaponLob": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "Hero",
+              "Weapons",
+              "WeaponLob"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1906
+    },
+    "ZagreusBossMiscStart30": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0201",
+          "speaker": "Zagreus",
+          "text": "Oh, you're using that thing again. Well all right, fire at will."
+        }
+      ],
+      "name": "ZagreusBossMiscStart30",
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasNone": [
+              "LobCloseAttackAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ],
+        "Path:CurrentRun.Hero.Weapons": [
+          {
+            "HasAny": [
+              "WeaponLob",
+              "WeaponSuit"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "Weapons"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1926
+    },
+    "ZagreusBossMiscStart31": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0202",
+          "speaker": "Zagreus",
+          "text": "Thanatos is going to want that scythe back at some point!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart31",
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "AxePerfectCriticalAspect"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1947
+    },
+    "ZagreusBossMiscStart32": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0205",
+          "speaker": "Zagreus",
+          "text": "How good of you to visit once again, Melinoë! Now, to the death!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart32",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1965
+    },
+    "ZagreusBossMiscStart33": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0206",
+          "speaker": "Zagreus",
+          "text": "This is, more or less, exactly what I thought having a sibling would be like."
+        }
+      ],
+      "name": "ZagreusBossMiscStart33",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1975
+    },
+    "ZagreusBossMiscStart34": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0207",
+          "speaker": "Zagreus",
+          "text": "Come to pay me back for last time? Well I accept Obols and that's it."
+        }
+      ],
+      "name": "ZagreusBossMiscStart34",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 1985
+    },
+    "ZagreusBossMiscStart35": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0208",
+          "speaker": "Zagreus",
+          "text": "I already know you don't give up easily, no need to keep this up on my account!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart35",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2004
+    },
+    "ZagreusBossMiscStart36": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0209",
+          "speaker": "Zagreus",
+          "text": "So this is how Father must have felt driving me back again and again."
+        }
+      ],
+      "name": "ZagreusBossMiscStart36",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2023
+    },
+    "ZagreusBossMiscStart37": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0210",
+          "speaker": "Zagreus",
+          "text": "You beat our old decrepit grandfather, surely you can beat me?"
+        }
+      ],
+      "name": "ZagreusBossMiscStart37",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2042
+    },
+    "ZagreusBossMiscStart38": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0211",
+          "speaker": "Zagreus",
+          "text": "My body and my ego both are well-accustomed to defeat, so come on!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart38",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2061
+    },
+    "ZagreusBossMiscStart39": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0212",
+          "speaker": "Zagreus",
+          "text": "Just be thankful I don't fight as fancy as I used to recently."
+        }
+      ],
+      "name": "ZagreusBossMiscStart39",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2079
+    },
+    "ZagreusBossMiscStart40": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0213",
+          "speaker": "Zagreus",
+          "text": "I'm used to losing repeatedly but this is getting a bit much."
+        }
+      ],
+      "name": "ZagreusBossMiscStart40",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 3,
+              "Name": "C_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2097
+    },
+    "ZagreusBossMiscStart41": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0214",
+          "speaker": "Zagreus",
+          "text": "I'll likely get you back at some point. Perhaps even this time!"
+        }
+      ],
+      "name": "ZagreusBossMiscStart41",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Name": "C_Boss01"
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2115
+    },
+    "ZagreusBossMiscStart42": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0215",
+          "speaker": "Zagreus",
+          "text": "Being trapped in a temporal prison for a while has not helped my fighting skills at all..."
+        }
+      ],
+      "name": "ZagreusBossMiscStart42",
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2133
+    },
+    "ZagreusBossOutro01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0106",
+          "speaker": "Zagreus",
+          "text": "...Oof! You did not hold back at all, there. Blast..."
+        },
+        {
+          "cue": "MelinoeField_4241",
+          "speaker": "PlayerUnit",
+          "text": "Zagreus, are you all right? I wasn't certain whether this was meant to be more for show or for real."
+        },
+        {
+          "cue": "Zagreus_0107",
+          "speaker": "Zagreus",
+          "text": "...I have to assume you decided for real was the way to go. Anyway, if anybody asks, I went easy on my little sister! Now if you'll excuse me, I, erm, lost a little blood..."
+        }
+      ],
+      "name": "ZagreusBossOutro01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2148
+    },
+    "ZagreusBossOutro03": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0323",
+          "speaker": "Zagreus",
+          "text": "Oof... I didn't... bring you any other prizes... for your victory..."
+        },
+        {
+          "cue": "MelinoeField_4553",
+          "speaker": "PlayerUnit",
+          "text": "That's all right. I still have the Contract as an added benefit. Free goods from Charon's Shop is nothing to scoff at!"
+        },
+        {
+          "cue": "Zagreus_0324",
+          "speaker": "Zagreus",
+          "text": "...I'm glad... you feel... that way, I... ought to head on back..."
+        }
+      ],
+      "name": "ZagreusBossOutro03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 3,
+      "otherRequirements": {},
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossOutroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 2206
+    },
+    "ZagreusBossWonAgainstHim01": {
+      "dialogueLines": [
+        {
+          "cue": "Zagreus_0152",
+          "speaker": "Zagreus",
+          "text": "There came a point in my Security Specialist career where my victories became too numerous to count! So... thanks for last time, reminding me about defeat!"
+        },
+        {
+          "cue": "MelinoeField_4614",
+          "speaker": "PlayerUnit",
+          "text": "You're very welcome. And likewise have my own defeats become a little less common recently. Though I don't know where that leaves us... somebody always has to lose here?"
+        },
+        {
+          "cue": "Zagreus_0153",
+          "speaker": "Zagreus",
+          "text": "The Shades would never tolerate it any other way. Well let's make this a victory-or-defeat to never forget!"
+        }
+      ],
+      "name": "ZagreusBossWonAgainstHim01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 752
+    },
+    "ZagreusBossWonAgainstHim02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4615",
+          "speaker": "PlayerUnit",
+          "text": "Got you again last time, Big Brother! Think you can get me back, or shall the Champion of Elysium title transfer to me?"
+        },
+        {
+          "cue": "Zagreus_0154",
+          "speaker": "Zagreus",
+          "text": "I do think I can get you back, and that title is not up for transfer, no. You should see how much of a pain it was to claim from the last guy!"
+        }
+      ],
+      "name": "ZagreusBossWonAgainstHim02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 26,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Zagreus": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Zagreus"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Zagreus",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Zagreus.lua",
+      "sourceLine": 784
+    }
+  }
+}
