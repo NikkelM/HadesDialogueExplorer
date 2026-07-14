@@ -31,7 +31,18 @@
  * section below, which gives those panels their own horizontal scroller.
  * ====================================================================== */
 @media (max-width: 1024px) {
+    /* Floor the app width so it never compresses below a usable minimum; below
+       320px the viewport scrolls horizontally instead of cramming the fixed-size
+       chrome (the ``white-space: nowrap`` title, the game toggle, the save pill)
+       into an unreadable sliver. ``overflow-x: auto`` on the root makes the
+       viewport the horizontal scroll owner once ``body``'s ``min-width`` exceeds
+       it; overflow-y is left alone so the mobile document keeps scrolling
+       vertically (below, body is height:auto / overflow:visible). Desktop
+       (>= 1025px) is untouched: it never reaches these widths and keeps its
+       fixed-height internal-scroll shell. */
+    html { overflow-x: auto; }
     body {
+        min-width: 320px;
         height: auto;
         min-height: 100vh;
         min-height: 100svh;
