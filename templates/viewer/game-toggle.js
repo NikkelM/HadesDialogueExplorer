@@ -48,7 +48,7 @@ export function initGameToggle() {
         toggleMount.innerHTML = gameIds.map(gid => {
             const label = gameLabels && gameLabels[gid] ? gameLabels[gid] : gid;
             return (
-                '<button type="button" class="game-toggle-btn" role="tab" data-game="'
+                '<button type="button" class="game-toggle-btn" aria-pressed="false" data-game="'
                 + escapeHtml(gid) + '">' + escapeHtml(label) + '</button>'
             );
         }).join('');
@@ -76,7 +76,7 @@ export function renderGameToggle() {
     for (const btn of buttons) {
         const isActive = btn.dataset.game === active;
         btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     }
 }
 

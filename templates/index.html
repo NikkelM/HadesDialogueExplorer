@@ -92,9 +92,9 @@
 <header>
     <a class="site-wordmark" href="https://nikkelm.dev/" data-tooltip="Back to nikkelm.dev">nikkelm<span class="site-wordmark-tld">.dev</span></a>
     <h1><a class="app-title-link" onclick="navigateHome()">Hades Dialogue Explorer</a></h1>
-    <div id="game-toggle" class="game-toggle" role="tablist" aria-label="Game">
-        <button type="button" class="game-toggle-btn" role="tab" data-game="hades1" data-label="Hades" aria-selected="false" data-tooltip="Show dialogue from Hades">Hades</button>
-        <button type="button" class="game-toggle-btn active" role="tab" data-game="hades2" data-label="Hades II" aria-selected="true" data-tooltip="Show dialogue from Hades II">Hades II</button>
+    <div id="game-toggle" class="game-toggle" role="group" aria-label="Game">
+        <button type="button" class="game-toggle-btn" data-game="hades1" aria-pressed="false" data-tooltip="Show dialogue from Hades">Hades</button>
+        <button type="button" class="game-toggle-btn active" data-game="hades2" aria-pressed="true" data-tooltip="Show dialogue from Hades II">Hades II</button>
     </div>
     <script>
     // Inline pre-paint script: highlight the game-toggle button matching the
@@ -118,7 +118,7 @@
         for (var j = 0; j < btns.length; j++) {
             var on = btns[j] === target;
             btns[j].classList.toggle('active', on);
-            btns[j].setAttribute('aria-selected', on ? 'true' : 'false');
+            btns[j].setAttribute('aria-pressed', on ? 'true' : 'false');
         }
     })();
     </script>
