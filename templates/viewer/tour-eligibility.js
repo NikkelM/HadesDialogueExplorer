@@ -93,16 +93,38 @@ function runEligibilityTour(starter) {
     const steps = ELIGIBILITY_TOUR_STEPS.map((s, i) => (i === 0
         ? { ...s, body: `${s.body} We're using this dialogue to show you all of its features now; it returns to yours when the tour ends.` }
         : s));
-    return starter('eligibility', steps, {
+    let swapped = false;
+    // Restore the user's own dialogue. Guarded so it only navigates when the
+    // example swap actually happened - idempotent across the tour-end callbacks
+    // and the start-failure path below.
+    const revert = () => {
+        if (!swapped) return;
+        swapped = false;
+        navigateToState({ view: 'eligibility', dialogue: original });
+    };
+    const started = starter('eligibility', steps, {
         onBeforeStart() {
+            // Suppress the render hook's auto-start while we swap in the example
+            // (its re-render would otherwise re-enter and start a second tour
+            // before this one opens). try/finally so a throw mid-swap can't leave
+            // the flag stuck true and permanently disable the auto-tour.
             _suppressAutoStart = true;
-            navigateToState({ view: 'eligibility', dialogue: example });
-            _suppressAutoStart = false;
+            try {
+                navigateToState({ view: 'eligibility', dialogue: example });
+                swapped = true;
+            } finally {
+                _suppressAutoStart = false;
+            }
         },
-        onDone: () => navigateToState({ view: 'eligibility', dialogue: original }),
-        onSkip: () => navigateToState({ view: 'eligibility', dialogue: original }),
-        onDisableAll: () => navigateToState({ view: 'eligibility', dialogue: original }),
+        onDone: revert,
+        onSkip: revert,
+        onDisableAll: revert,
     });
+    // The tour didn't open (e.g. another tour was already on screen) - the swap
+    // ran but no tour-end callback will fire, so put the user back on their own
+    // dialogue rather than stranding them on the example.
+    if (!started) revert();
+    return started;
 }
 
 // First-open auto-start. Gated by tours.js (once-only, respects the global

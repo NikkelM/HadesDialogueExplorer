@@ -62,14 +62,16 @@ function activeDialogueExists() {
 }
 
 // Navigate to the build-time featured dialogue (in its own game), so the tour
-// has real targets. Guarded against re-navigating to the same state.
-function swapToFeaturedDialogue() {
+// has real targets. Guarded against re-navigating to the same state. Async: the
+// swap can change games (an async data load), so callers that then read the
+// rendered DOM must await it.
+async function swapToFeaturedDialogue() {
     const game = defaultGame;
     const name = (defaultDialogue && game) ? defaultDialogue[game] : null;
     if (!name) return false;
     const cur = parseUrlState(window.location.hash);
     if (cur.dialogue === name && cur.game === game) return false;
-    navigateToState({ game, view: 'dialogue', dialogue: name });
+    await navigateToState({ game, view: 'dialogue', dialogue: name });
     return true;
 }
 
@@ -104,8 +106,11 @@ export function maybeStartHomeTour() {
 // game) land on the featured dialogue first. Force-starts regardless of the
 // seen / disabled flags. Registered as the dialogue-view replay so the floating
 // "?" control re-runs the combined walkthrough.
-export function startDialogueTourReplay() {
-    if (!activeDialogueExists()) swapToFeaturedDialogue();
+export async function startDialogueTourReplay() {
+    // Await the swap: it may switch games (an async data load) before the
+    // featured dialogue renders, and buildSaveCalloutSteps below reads the
+    // rendered DOM (status badges / tree dots) to decide the callout steps.
+    if (!activeDialogueExists()) await swapToFeaturedDialogue();
     const saveSteps = buildSaveCalloutSteps();
     const steps = saveSteps.length
         ? HOME_TOUR_STEPS.filter(s => s.target !== SAVE_UPLOAD_TARGET).concat(saveSteps)

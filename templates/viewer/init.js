@@ -72,9 +72,12 @@ function init(data) {
     // dialogue (and writes it into the URL); return visits fall through
     // to the normal hash apply, which shows the genuine empty state.
     const landedOnFeatured = applyFirstVisitLanding();
-    if (!landedOnFeatured) {
-        applyHashFromUrl();
-    }
+    // Apply the URL state unconditionally. After a first-visit landing this
+    // dedups to a no-op (applyFirstVisitLanding already wrote the hash and
+    // rendered through navigateToState), so drawing the initial view no longer
+    // relies on that navigate having applied state synchronously; on a return
+    // visit it renders whatever the hash names.
+    applyHashFromUrl();
     window.addEventListener('hashchange', applyHashFromUrl);
     // On a freshly loaded save, switch to the save's game (so its progress is
     // visible right away); that switch re-renders, so only fall back to a
