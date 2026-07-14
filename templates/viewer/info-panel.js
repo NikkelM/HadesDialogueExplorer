@@ -1499,7 +1499,7 @@ function _healthFractionGloss(word, fraction) {
 
 const _FN_RENDERERS = {
     RequiredAlive(a) {
-        return `${_fnAliveSubject(a)} must ${a.Alive === false ? 'not' : ''} be alive`;
+        return `${_fnAliveSubject(a)} must ${a.Alive === false ? 'not ' : ''}be alive`;
     },
     IsBossDifficultyShrineUpgradeActive() {
         return 'Vow of Rivals is active (boss fought in its unrivalled form)';
