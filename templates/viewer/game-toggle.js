@@ -1,14 +1,13 @@
 // Game toggle UI: two side-by-side buttons in the page header that
-// swap the viewer's active game (Hades / Hades II). Clicks read the
-// current URL state, replace only the ``game`` key, and forward
-// everything else (view, dialogue, speaker, filters, etc.) so the
-// selection carries across. If the target entity doesn't exist in the
-// other game the viewer's existing not-found / unresolved-ref
-// handling takes care of it.
+// swap the viewer's active game (Hades / Hades II). A click hands off
+// to ``switchGameRestoringDialogue``: from a dialogue view it reopens
+// the target game's last-viewed dialogue (or the empty view), and from
+// any other view (speaker / duplicates / eligibility) it carries the
+// current selection across, letting the viewer's not-found handling
+// cover an entity the other game lacks.
 
 import { gameIds, gameLabels, getActiveGame } from './data.js';
-import { navigateToState } from './navigation.js';
-import { parseUrlState } from './url.js';
+import { switchGameRestoringDialogue } from './navigation.js';
 import { escapeHtml } from './utilities.js';
 
 let toggleMount = null;
@@ -58,9 +57,7 @@ export function initGameToggle() {
         if (!btn || !toggleMount.contains(btn)) return;
         const gameId = btn.dataset.game;
         if (!gameId || gameId === getActiveGame()) return;
-        const current = parseUrlState(window.location.hash);
-        current.game = gameId;
-        navigateToState(current);
+        switchGameRestoringDialogue(gameId);
     });
     renderGameToggle();
 }

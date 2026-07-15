@@ -45,12 +45,15 @@ import { getSaveProgress, saveMatchesActiveGame, getSaveGameId } from './save-pa
 export let urlSelection = '';
 
 // The most recent dialogue shown in a dialogue-focused view (the 3-panel
-// dialogue detail or the eligibility tracer), so the header title can restore
-// where the user last was (see ``navigateHome``). ``navigateHome`` validates it
-// against the active game before use - textline names aren't unique across
-// games, so a dialogue remembered in one game falls back to the empty view when
-// it doesn't exist in the game that's active at click time.
-let _lastDialogue = null;
+// dialogue detail or the eligibility tracer), tracked PER GAME so a game switch
+// can reopen where the user last was in the game they're switching to. Keyed by
+// game id; a game with no entry yet (nothing opened there this session) restores
+// the empty dialogue view. Consumers (``navigateHome`` for the active game, the
+// ``switchGameRestoringDialogue`` helper for the target game) validate the
+// remembered name against that game's textlines before use - names aren't unique
+// across games and can drift between builds, so a stale/absent one falls back to
+// the empty view.
+const _lastDialogueByGame = Object.create(null);
 
 // Render the dialogue detail view (info + upstream + downstream
 // panels) for the given textline. Pure render side-effect; does not
@@ -105,8 +108,31 @@ export function navigateTo(name) {
 // time (it was viewed in the other game, whose names don't carry over). Gives
 // the header title the "home" affordance without leaving the tool.
 export function navigateHome() {
-    const dialogue = (_lastDialogue && textlines && textlines[_lastDialogue]) ? _lastDialogue : null;
+    const last = _lastDialogueByGame[getActiveGame()];
+    const dialogue = (last && textlines && textlines[last]) ? last : null;
     navigateToState(dialogue ? { view: 'dialogue', dialogue } : {});
+}
+
+// Switch to ``targetGame`` from a game-switch affordance (the header toggle or
+// the wrong-game save pill). When the user is currently in a dialogue view,
+// reopen the dialogue they last viewed in ``targetGame`` (or the empty dialogue
+// view when they haven't opened one there yet) instead of carrying the current
+// game's dialogue name across: textline names rarely exist in both games, so the
+// carry almost always dead-ended in a not-found panel. Any other view (speaker
+// overview, duplicates, eligibility tracer) keeps its existing carry-across
+// behaviour so a shared entity (e.g. a god who appears in both games) follows
+// the switch. ``navigateToState`` loads the target game's data before rendering.
+export function switchGameRestoringDialogue(targetGame) {
+    const current = parseUrlState(window.location.hash);
+    const view = (current.view || (current.dialogue ? 'dialogue' : '')).toLowerCase();
+    if (view === 'dialogue' || view === '') {
+        const last = _lastDialogueByGame[targetGame];
+        const target = { game: targetGame };
+        if (last) target.dialogue = last;
+        navigateToState(target);
+        return;
+    }
+    navigateToState(Object.assign({}, current, { game: targetGame }));
 }
 
 // Convenience entry point for navigating to a speaker overview.
@@ -432,8 +458,9 @@ function setDocumentTitle(...segments) {
 function applyState(state) {
     const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
     // Remember the dialogue behind any dialogue-focused view (detail or
-    // eligibility tracer) so the header title can restore it (see navigateHome).
-    if (state.dialogue) _lastDialogue = state.dialogue;
+    // eligibility tracer), keyed by the now-active game, so navigateHome and a
+    // later game switch can restore it (see _lastDialogueByGame).
+    if (state.dialogue) _lastDialogueByGame[getActiveGame()] = state.dialogue;
     if (view === 'speaker') {
         applyLayoutMode('speaker');
         // The URL carries the friendly speaker name; resolve it back to the

@@ -17,7 +17,7 @@ import {
     detectH2Softlock,
 } from './save-parser.js';
 import { gameLabels } from './data.js';
-import { syncActiveGameToSave } from './navigation.js';
+import { switchGameRestoringDialogue } from './navigation.js';
 import { showSoftlockWarning } from './softlock-warning.js';
 
 // A genuine ProfileX.sav is only a few MB; reject larger files outright rather
@@ -82,11 +82,12 @@ export function initSaveUpload() {
 
     // The "wrong game" mismatch pill doubles as a game-switch shortcut:
     // activating it switches to the game the loaded save belongs to, exactly
-    // like the header game toggle. Only the mismatch state carries the button
+    // like the header game toggle (reopening that game's last-viewed dialogue
+    // when in a dialogue view). Only the mismatch state carries the button
     // affordance (``showStatus`` sets role/tabindex for it), so gate on that
     // class - a click on the loaded/error pill does nothing.
     const activateMismatch = () => {
-        if (status.classList.contains('save-mismatch')) syncActiveGameToSave();
+        if (status.classList.contains('save-mismatch')) switchGameRestoringDialogue(getSaveGameId());
     };
     status.addEventListener('click', activateMismatch);
     status.addEventListener('keydown', (e) => {
