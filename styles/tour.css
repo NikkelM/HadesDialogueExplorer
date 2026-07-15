@@ -155,6 +155,10 @@ body.tour-open #custom-tooltip {
 .tour-btn-next:hover {
     background: color-mix(in srgb, var(--accent-color) 86%, #fff);
     border-color: color-mix(in srgb, var(--accent-color) 86%, #fff);
+    /* Keep the dark ink on the amber fill; the base ``.tour-btn:hover`` rule
+       (equal specificity, earlier in source) would otherwise recolour the text
+       to the accent, leaving amber text on an amber fill. */
+    color: var(--accent-contrast);
 }
 
 .tour-btn:disabled {
