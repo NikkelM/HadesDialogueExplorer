@@ -495,12 +495,24 @@ export function buildAdjacencyDetail(ownedTextlines) {
     for (const aName of ownedTextlines) {
         const tl = textlines[aName];
         if (!tl) continue;
-        for (const refList of Object.values(tl.requirements || {})) {
-            if (!Array.isArray(refList)) continue;
-            for (const ref of refList) {
-                const refTl = textlines[ref];
-                if (!refTl || !refTl.owner) continue;
-                _recordAdjacencyLink(up, canonicalSpeakerId(refTl.owner), aName, ref);
+        // Upstream links come from BOTH the flat requirements and any H2
+        // orBranches alternative-set requirements, so "Depends on" mirrors the
+        // downstream "Required by" side (built from the dependents index, which
+        // includes orBranch edges) and the prerequisite tree (which surfaces
+        // orBranch refs). Kept in lock-step with the Python adjacencyUpstream
+        // count in speaker_overview.py so the chip and this detail always agree.
+        const upReqSets = [tl.requirements || {}];
+        for (const branch of (Array.isArray(tl.orBranches) ? tl.orBranches : [])) {
+            if (branch && branch.requirements) upReqSets.push(branch.requirements);
+        }
+        for (const reqSet of upReqSets) {
+            for (const refList of Object.values(reqSet)) {
+                if (!Array.isArray(refList)) continue;
+                for (const ref of refList) {
+                    const refTl = textlines[ref];
+                    if (!refTl || !refTl.owner) continue;
+                    _recordAdjacencyLink(up, canonicalSpeakerId(refTl.owner), aName, ref);
+                }
             }
         }
         const deps = dependents[aName];

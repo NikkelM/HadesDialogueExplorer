@@ -166,14 +166,21 @@ def annotate_speaker_aggregates(graph_data: dict) -> None:
         owner = tl.get("owner")
         if not owner:
             continue
-        # Adjacency upstream: this textline references some refs;
-        # collect the unique set of OTHER-SPEAKER OWNERS those refs
-        # resolve to, then increment ``adjacencyUpstream[owner][otherId]``
+        # Adjacency upstream: this textline references some refs (both its flat
+        # ``requirements`` and any H2 ``orBranches`` alternative-set
+        # requirements); collect the unique set of OTHER-SPEAKER OWNERS those
+        # refs resolve to, then increment ``adjacencyUpstream[owner][otherId]``
         # by 1 for each distinct other-speaker reference. This textline
-        # therefore contributes 1 vote per (this-owner, other-owner)
-        # pair, regardless of how many refs land on that other owner.
+        # therefore contributes 1 vote per (this-owner, other-owner) pair,
+        # regardless of how many refs land on that other owner. OR-branch refs
+        # are included so the upstream side mirrors the downstream side (built
+        # from the ``dependents`` index, which graph.py populates from orBranches
+        # too) and the prerequisite tree (which surfaces orBranch refs).
         referenced_owners: set[str] = set()
-        for refs in (tl.get("requirements") or {}).values():
+        req_sources = list((tl.get("requirements") or {}).values())
+        for branch in tl.get("orBranches") or []:
+            req_sources.extend(((branch or {}).get("requirements") or {}).values())
+        for refs in req_sources:
             for ref in refs:
                 ref_tl = textlines.get(ref)
                 if not ref_tl:

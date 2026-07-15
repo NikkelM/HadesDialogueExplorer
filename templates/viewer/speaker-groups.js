@@ -214,13 +214,24 @@ function _deriveGroupUpstream(ownedTextlines) {
         const tl = textlines[name];
         if (!tl) continue;
         const referencedGroups = new Set();
-        const reqs = tl.requirements || {};
-        for (const refList of Object.values(reqs)) {
-            if (!Array.isArray(refList)) continue;
-            for (const ref of refList) {
-                const refTl = textlines[ref];
-                if (!refTl || !refTl.owner) continue;
-                referencedGroups.add(_idToCanonical[refTl.owner] || refTl.owner);
+        // Scan the flat requirements AND any H2 orBranches alternative-set
+        // requirements, so an orBranch-only cross-group reference is counted
+        // here too. Kept in lock-step with ``buildAdjacencyDetail`` (the detail
+        // rows), the Python ``adjacencyUpstream`` baked count, and the
+        // prerequisite tree (all of which surface orBranch refs) - otherwise the
+        // count chip would disagree with its own expanded detail list.
+        const reqSets = [tl.requirements || {}];
+        for (const branch of (Array.isArray(tl.orBranches) ? tl.orBranches : [])) {
+            if (branch && branch.requirements) reqSets.push(branch.requirements);
+        }
+        for (const reqs of reqSets) {
+            for (const refList of Object.values(reqs)) {
+                if (!Array.isArray(refList)) continue;
+                for (const ref of refList) {
+                    const refTl = textlines[ref];
+                    if (!refTl || !refTl.owner) continue;
+                    referencedGroups.add(_idToCanonical[refTl.owner] || refTl.owner);
+                }
             }
         }
         for (const g of referencedGroups) {

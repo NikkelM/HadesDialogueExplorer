@@ -204,6 +204,23 @@ def test_adjacency_upstream_counts_distinct_dependent_textlines_per_other_speake
     assert g["speakers"]["Zag"]["adjacencyUpstream"] == {}
 
 
+def test_adjacency_upstream_includes_orbranch_references():
+    # A textline that references another speaker's line via an H2 ``orBranches``
+    # alternative requirement set must count towards upstream adjacency too,
+    # mirroring the downstream side (built from the dependents index, which
+    # includes orBranch edges) and the prerequisite tree (which surfaces them).
+    g = _make_graph_data()
+    # MegGift10 has no flat Than requirement; it gains an orBranch requiring a
+    # Than line, so ONLY the orBranch scan can surface this edge.
+    g["textlines"]["MegGift10"]["orBranches"] = [
+        {"requirements": {"RequiredTextLines": ["ThanGreets01"]}},
+    ]
+    annotate_speaker_aggregates(g)
+    # Meg now votes towards Than from BOTH MegInteract01 (flat) and MegGift10
+    # (orBranch) -> 2 distinct Meg textlines reference a Than line.
+    assert g["speakers"]["Meg"]["adjacencyUpstream"] == {"Than": 2}
+
+
 def test_adjacency_downstream_counts_distinct_dependent_textlines_per_other_speaker():
     g = _make_graph_data()
     annotate_speaker_aggregates(g)

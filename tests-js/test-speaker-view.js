@@ -1151,6 +1151,29 @@ test('buildAdjacencyDetail maps each edge to its dependent -> required links', (
     assert.deepEqual([...down.get('NPC_C_01').get('C1')], ['A1']);
 });
 
+test('buildAdjacencyDetail includes upstream links routed via orBranches', () => {
+    // A1 references B1 ONLY through an H2 orBranch (no flat requirement), so the
+    // "Depends on" detail must still surface the A1 -> B1 link - matching the
+    // Python adjacencyUpstream count (which also scans orBranches) and the
+    // downstream side (which includes orBranch edges via the dependents index).
+    loadData({
+        textlines: {
+            A1: {
+                owner: 'NPC_A_01', section: 'X', requirements: {},
+                orBranches: [{ requirements: { RequiredTextLines: ['B1'] } }],
+            },
+            B1: { owner: 'NPC_B_01', section: 'X', requirements: {} },
+        },
+        speakers: { NPC_A_01: { name: 'A' }, NPC_B_01: { name: 'B' } },
+        dependents: { B1: [{ name: 'A1', type: 'RequiredTextLines', orBranchIndex: 1, orBranchTotal: 1 }] },
+    });
+    resetSpeakerGroups();
+    const { up } = buildAdjacencyDetail(['A1']);
+    const toB = up.get('NPC_B_01');
+    assert.ok(toB, 'expected an upstream edge to B routed via the orBranch');
+    assert.deepEqual([...toB.get('A1')], ['B1']);
+});
+
 test('renderAdjacencyDetailRows renders clickable dependent -> required rows', () => {
     const linkMap = new Map([['A1', new Set(['B2', 'B1'])]]);
     const html = renderAdjacencyDetailRows(linkMap);

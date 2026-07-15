@@ -283,6 +283,24 @@ test('getSpeakerGroupEntry adjacency upstream collapses to one count per dest gr
     assert.equal(entry.adjacencyUpstream.ZeusUpgrade, undefined);
 });
 
+test('getSpeakerGroupEntry adjacency upstream includes orBranch references', () => {
+    // A Hecate textline references a Zeus line ONLY via an H2 orBranch (no flat
+    // requirement); the group upstream re-derive must still count the Hecate ->
+    // Zeus edge, matching the detail list (buildAdjacencyDetail), the Python
+    // baked count, and the prerequisite tree - otherwise the count chip would
+    // disagree with its own expanded detail.
+    const fixture = buildGroupFixture();
+    fixture.games.hades1.textlines.HecateMeeting01 = {
+        owner: 'NPC_Hecate_01',
+        requirements: {},
+        orBranches: [{ requirements: { RequiredTextLines: ['ZeusGifted01'] } }],
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    const entry = getSpeakerGroupEntry('NPC_Hecate_01');
+    assert.equal(entry.adjacencyUpstream.NPC_Zeus_01, 1);
+});
+
 test('getSpeakerGroupEntry adjacency downstream maps deps through canonical', () => {
     // Zeus group owns ZeusGifted01 + ZeusUpgrade01, both depended on
     // by the same Hermes-group textline (HermesCourier01). After the
