@@ -86,6 +86,13 @@ export function noOrphanDelims(text) {
 function showFor(target, clientX, clientY) {
     const text = target.getAttribute('data-tooltip');
     if (!text) return;
+    // Suppress while a native ``<select>`` is focused - i.e. its dropdown is
+    // open. The OS renders the option list over the trigger, and this
+    // cursor-following popup would otherwise float on top of / just below the
+    // open list (the ``focusin`` handler in ``initTooltip`` hides an
+    // already-visible one the moment the dropdown opens; this guard stops
+    // ``mousemove`` from re-showing it while the select stays focused).
+    if (target.tagName === 'SELECT' && document.activeElement === target) return;
     currentTarget = target;
     tooltipEl.textContent = noOrphanDelims(text);
     tooltipEl.classList.add('visible');
@@ -241,5 +248,14 @@ export function initTooltip() {
     // trigger - matches the convention for transient overlays.
     document.addEventListener('keydown', (e) => {
         if (currentTarget && e.key === 'Escape') hide();
+    });
+
+    // Opening a native ``<select>`` focuses it; hide any visible tooltip so it
+    // can't sit over the OS-rendered option list. ``showFor``'s matching guard
+    // keeps it from re-appearing on ``mousemove`` while the select stays
+    // focused (the dropdown is open). Closing the select blurs it, so hovering
+    // the trigger again shows the tooltip as normal.
+    document.addEventListener('focusin', (e) => {
+        if (e.target && e.target.tagName === 'SELECT') hide();
     });
 }
