@@ -550,6 +550,26 @@ def transfer_orphan_annotations(kept: dict, dropped: dict) -> None:
       ``dropped`` reflects its original annotation state; the transfer
       onto ``kept`` is a separate concern from preserving the dropped
       entry as a distinct-content sibling.
+
+    Known quirk (cross-owner ``xWithY`` banter, ~4 Icarus lines): when the
+    kept and dropped sides have DIFFERENT owners, the transferred priority
+    ordinal is scoped to the *dropped* owner's NarrativeData list, so the
+    kept entry can show a badge whose ``narrativePrioritySectionSize`` is a
+    foreign owner's total. E.g. ``IcarusWithOdysseus01`` is data-owned by
+    Icarus (the ``IcarusHome`` variant, cue-bearing so it wins the partner
+    rule) but has no ordinal in Icarus's *extracted* list - the game ranks it
+    in Icarus's ``HomePriorities`` list, which the extractor skips because the
+    key doesn't match the ``<Stem>TextLinePriorities`` convention
+    (``narrative_data._section_key_for``). The only ordinal the tool sees is
+    the partner Odysseus's (``#54/84``), which this transfer grafts onto the
+    Icarus entry - hence the Icarus interaction rows mixing ``/39`` (native)
+    with ``/44`` / ``/83`` / ``/84`` (partner lists). This is a display quirk,
+    not fabricated data: each ordinal is a real ranking, just from the
+    partner's list rather than Icarus's own. Left as-is deliberately - a full
+    fix needs per-variant priority lists (the game feeds one merged
+    ``(owner, section)`` from two independent lists), which isn't worth it for
+    4 lines. See the session notes / hades2-knowledge write-up for the full
+    NarrativeData structure.
     """
     for key in _TRANSFERABLE_ORPHAN_FIELDS:
         if key not in kept and key in dropped:

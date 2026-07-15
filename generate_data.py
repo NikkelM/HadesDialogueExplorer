@@ -488,7 +488,7 @@ def main():
                     for ref in rv:
                         h1_referenced_cues.add(str(ref).replace("/VO/", ""))
         out_path = OUTPUT_DIR / output_name
-        with open(out_path, "w", encoding="utf-8") as f:
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {out_path}")
@@ -571,7 +571,7 @@ def main():
         )
     if h1_metadata:
         meta_out = OUTPUT_DIR / "hades1_metadata.json"
-        with open(meta_out, "w", encoding="utf-8") as f:
+        with open(meta_out, "w", encoding="utf-8", newline="\n") as f:
             json.dump(h1_metadata, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {meta_out}")
@@ -653,7 +653,7 @@ def main():
         print(f"  NamedRequirements (resolved): {len(named_req_resolved)} entries")
     if metadata_payload:
         metadata_path = OUTPUT_DIR / "hades2_metadata.json"
-        with open(metadata_path, "w", encoding="utf-8") as f:
+        with open(metadata_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(metadata_payload, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {metadata_path}")
@@ -689,7 +689,7 @@ def main():
                 skipped_empty += 1
                 continue
             out_path = OUTPUT_DIR / output_name
-            with open(out_path, "w", encoding="utf-8") as f:
+            with open(out_path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
                 f.write("\n")
             print(f"  Written to: {out_path}")
@@ -727,7 +727,7 @@ def main():
     )
     if h2_cue_texts:
         cuetext_path = OUTPUT_DIR / "hades2_cuetext.json"
-        with open(cuetext_path, "w", encoding="utf-8") as f:
+        with open(cuetext_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump({"cueTexts": h2_cue_texts}, f, indent=2, sort_keys=True, ensure_ascii=False)
             f.write("\n")
         print(f"  Written to: {cuetext_path}")

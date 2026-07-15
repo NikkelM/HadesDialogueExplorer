@@ -439,7 +439,7 @@ def build_localization(text_root: Path, output_dir: Path, game: str,
         speakers = _localise_speakers(speakers_en, display, desc)
         payload = {"lang": lang, "text": text_map, "speakers": speakers}
         out_path = output_dir / f"loc-{game}-{lang}.json"
-        with open(out_path, "w", encoding="utf-8") as f:
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(payload, f, separators=(",", ":"), sort_keys=True, ensure_ascii=False)
             f.write("\n")
         written.append(lang)

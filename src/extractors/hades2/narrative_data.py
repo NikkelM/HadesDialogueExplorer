@@ -95,6 +95,7 @@ from typing import Dict, Optional
 from src.lua_parser import LuaTable
 
 from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
+from .owner_overrides import TEXTLINE_OWNER_OVERRIDES
 
 
 # Suffix attached to every priority-list key in NarrativeData.lua.
@@ -260,23 +261,40 @@ def find_unattached_priority_groups(
     priority records whose entire cluster failed to attach to any
     source.
 
-    Cluster sub-entries are expected orphans when their cluster leader
-    has a dialogue body but they don't (a pure ordering hint). Filtering
-    those out keeps the surfaced list focused on records that likely
-    indicate real drift between NarrativeData and the per-source
-    extractors (renamed owner, renamed section key, renamed textline,
-    or extractor not yet wired).
+    Two classes of expected orphan are filtered out so the surfaced list
+    focuses on records that likely indicate real drift between
+    NarrativeData and the per-source extractors (renamed owner, renamed
+    section key, renamed textline, or extractor not yet wired):
+
+    * **Cluster sub-entries** whose cluster leader attached but they
+      didn't (a pure ordering hint with no dialogue body of its own).
+    * **Variant/alias re-declarations.** A variant owner
+      (``NPC_Arachne_Home_01``, ``NPC_Hecate_Story_01``,
+      ``NPC_Narcissus_Field_01`` - each ``InheritFrom`` a canonical
+      ``NPC_*_01``) re-lists a priority list its canonical unit already
+      owns; the variant has no own copy of that section (it inherits it),
+      so the record orphans on the variant while the identical list
+      attaches under the canonical owner. Textline names are globally
+      unique, so if this exact ``(section_key, textline_name)`` attached
+      under ANY owner the textline already received its ordinal - the
+      variant record is a benign duplicate, not drift. (Interact
+      priorities a variant declares itself attach directly and never
+      reach this filter.)
 
     Sorted for deterministic build output. Returns an empty list when
-    every priority record is accounted for either directly or via a
-    cluster sibling.
+    every priority record is accounted for either directly, via a
+    cluster sibling, or via a canonical-owner attach of the same
+    textline.
     """
     unattached = []
+    attached_section_textlines = {(s, t) for (_o, s, t) in attached_keys}
     for owner_id, sections in priorities.items():
         for section_key, textline_map in sections.items():
             for textline_name, record in textline_map.items():
                 key = (owner_id, section_key, textline_name)
                 if key in attached_keys:
+                    continue
+                if (section_key, textline_name) in attached_section_textlines:
                     continue
                 cluster_members = record.get("narrativePriorityClusterMembers") or []
                 if any(
@@ -332,14 +350,24 @@ def apply_narrative_priorities(
     """
     attached = 0
     for owner_id, sections in priorities.items():
-        owner_data = owners_data.get(owner_id)
-        if not isinstance(owner_data, dict):
-            continue
         for section_key, textline_map in sections.items():
-            section_data = owner_data.get(section_key)
-            if not isinstance(section_data, dict):
-                continue
             for textline_name, priority_record in textline_map.items():
+                # A textline re-homed by ``TEXTLINE_OWNER_OVERRIDES`` lives under
+                # its override owner, not its NarrativeData owner - e.g. the
+                # ``EndRunBoon`` obstacle's ``PalaceBoonExit*`` lines are
+                # re-homed to ``PlayerUnit`` (Melinoë speaks them). Resolve the
+                # effective owner by textline name so the priority still attaches;
+                # the audit key below stays the original NarrativeData
+                # ``owner_id`` so ``find_unattached_priority_groups`` records it
+                # as consumed.
+                override = TEXTLINE_OWNER_OVERRIDES.get(textline_name)
+                effective_owner = override["owner"] if override else owner_id
+                owner_data = owners_data.get(effective_owner)
+                if not isinstance(owner_data, dict):
+                    continue
+                section_data = owner_data.get(section_key)
+                if not isinstance(section_data, dict):
+                    continue
                 textline_data = section_data.get(textline_name)
                 if not isinstance(textline_data, dict):
                     continue

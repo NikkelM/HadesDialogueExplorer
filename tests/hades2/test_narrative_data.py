@@ -304,6 +304,40 @@ class TestApply:
         assert count == 1
         assert owners["NPC_Hecate_01"]["InteractTextLineSets"]["HecateA"]["narrativePriorityOrdinal"] == 1
 
+    def test_apply_attaches_via_textline_owner_override(self):
+        # NarrativeData keys ``PalaceBoonExit01``'s priority under the
+        # ``EndRunBoon`` obstacle, but the textline is re-homed to
+        # ``PlayerUnit`` by ``TEXTLINE_OWNER_OVERRIDES`` (Melinoë speaks it).
+        # The priority must still attach to the PlayerUnit-owned line, and the
+        # recorded audit key must stay the ORIGINAL NarrativeData owner so the
+        # orphan check registers the record as consumed. (Couples intentionally
+        # to the real override table - PalaceBoonExit01 -> PlayerUnit.)
+        priorities = {
+            "EndRunBoon": {
+                "InteractTextLineSets": {
+                    "PalaceBoonExit01": {
+                        "narrativePriorityOrdinal": 1,
+                        "narrativePrioritySectionSize": 1,
+                        "narrativePriorityClusterMembers": [],
+                    },
+                },
+            },
+        }
+        owners = {
+            "PlayerUnit": {
+                "source": "Hades 2",
+                "InteractTextLineSets": {
+                    "PalaceBoonExit01": {"dialogueLines": [], "requirements": {}},
+                },
+            },
+        }
+        attached_keys = set()
+        count = apply_narrative_priorities(owners, priorities, attached_keys=attached_keys)
+        assert count == 1
+        tl = owners["PlayerUnit"]["InteractTextLineSets"]["PalaceBoonExit01"]
+        assert tl["narrativePriorityOrdinal"] == 1
+        assert ("EndRunBoon", "InteractTextLineSets", "PalaceBoonExit01") in attached_keys
+
 
 class TestOrphanPriorityAudit:
     """Cross-source orphan-priority audit primitives.
@@ -492,6 +526,37 @@ class TestFindUnattachedPriorityGroups:
         }
         assert find_unattached_priority_groups(priorities, attached) == [
             ("NPC_X_01", "InteractTextLineSets", "Lead"),
+        ]
+
+    def test_variant_duplicate_orphan_suppressed_when_canonical_attached(self):
+        # A variant owner (NPC_Arachne_Home_01) re-lists a gift priority its
+        # canonical unit (NPC_Arachne_01) already owns; the variant inherits the
+        # section so has no own copy, and the identical (section, textline)
+        # attached under the canonical owner. That makes it a benign duplicate,
+        # not drift - it must be filtered from the audit.
+        priorities = {
+            "NPC_Arachne_Home_01": {
+                "GiftTextLineSets": {
+                    "ArachneGift01": {"narrativePriorityClusterMembers": []},
+                },
+            },
+        }
+        attached = {("NPC_Arachne_01", "GiftTextLineSets", "ArachneGift01")}
+        assert find_unattached_priority_groups(priorities, attached) == []
+
+    def test_real_gap_surfaces_when_textline_never_attached(self):
+        # A textline whose priority attached NOWHERE is a genuine gap and must
+        # still surface - the benign-duplicate filter only hides textlines that
+        # DID attach under some owner.
+        priorities = {
+            "NPC_Arachne_Home_01": {
+                "GiftTextLineSets": {
+                    "ArachneGiftMissing01": {"narrativePriorityClusterMembers": []},
+                },
+            },
+        }
+        assert find_unattached_priority_groups(priorities, set()) == [
+            ("NPC_Arachne_Home_01", "GiftTextLineSets", "ArachneGiftMissing01"),
         ]
 
     def test_returns_deterministic_order(self):
