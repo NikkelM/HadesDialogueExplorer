@@ -61,6 +61,19 @@
     background: var(--bg);
     color: #c4b47e;
     border: 1px solid var(--border);
+    /* Interactive: clicking switches to the save's game (see save-upload.js). */
+    cursor: pointer;
+    transition: border-color 0.12s ease, color 0.12s ease;
+}
+
+.save-status.save-mismatch:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.save-status.save-mismatch:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
 }
 
 /* Progress badges on textlines in tree views */

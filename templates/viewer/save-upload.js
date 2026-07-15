@@ -17,6 +17,7 @@ import {
     detectH2Softlock,
 } from './save-parser.js';
 import { gameLabels } from './data.js';
+import { syncActiveGameToSave } from './navigation.js';
 import { showSoftlockWarning } from './softlock-warning.js';
 
 // A genuine ProfileX.sav is only a few MB; reject larger files outright rather
@@ -78,6 +79,22 @@ export function initSaveUpload() {
             }
         });
     }
+
+    // The "wrong game" mismatch pill doubles as a game-switch shortcut:
+    // activating it switches to the game the loaded save belongs to, exactly
+    // like the header game toggle. Only the mismatch state carries the button
+    // affordance (``showStatus`` sets role/tabindex for it), so gate on that
+    // class - a click on the loaded/error pill does nothing.
+    const activateMismatch = () => {
+        if (status.classList.contains('save-mismatch')) syncActiveGameToSave();
+    };
+    status.addEventListener('click', activateMismatch);
+    status.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            activateMismatch();
+        }
+    });
 }
 
 // Re-hydrate a previously cached save on page load. Sets the in-memory
@@ -110,6 +127,16 @@ function showStatus(type, text) {
     status.hidden = false;
     status.textContent = text;
     status.className = 'save-status save-' + type;
+    // Only the mismatch pill is interactive (a shortcut to switch to the save's
+    // game); expose the button role + keyboard focus for it and strip them from
+    // the non-interactive loaded/error states.
+    if (type === 'mismatch') {
+        status.setAttribute('role', 'button');
+        status.setAttribute('tabindex', '0');
+    } else {
+        status.removeAttribute('role');
+        status.removeAttribute('tabindex');
+    }
 }
 
 // Called by navigation when game switches to update mismatch state.
