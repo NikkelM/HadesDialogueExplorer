@@ -190,49 +190,6 @@ def test_priority_bucket_helper_treats_h2_ordinal_as_priority():
     ) == "super"
 
 
-def test_adjacency_upstream_counts_distinct_dependent_textlines_per_other_speaker():
-    g = _make_graph_data()
-    annotate_speaker_aggregates(g)
-    # MegInteract01 references ThanGreets01 -> Meg has 1 upstream
-    # vote towards Than.
-    assert g["speakers"]["Meg"]["adjacencyUpstream"] == {"Than": 1}
-    # ThanGreets01 references MegHello01 + MegHello02 -> Than has 1
-    # upstream vote towards Meg (NOT 2; the per-textline dedup keeps
-    # the count from doubling on multi-ref edges).
-    assert g["speakers"]["Than"]["adjacencyUpstream"] == {"Meg": 1}
-    # Zag owns nothing -> no upstream edges.
-    assert g["speakers"]["Zag"]["adjacencyUpstream"] == {}
-
-
-def test_adjacency_upstream_includes_orbranch_references():
-    # A textline that references another speaker's line via an H2 ``orBranches``
-    # alternative requirement set must count towards upstream adjacency too,
-    # mirroring the downstream side (built from the dependents index, which
-    # includes orBranch edges) and the prerequisite tree (which surfaces them).
-    g = _make_graph_data()
-    # MegGift10 has no flat Than requirement; it gains an orBranch requiring a
-    # Than line, so ONLY the orBranch scan can surface this edge.
-    g["textlines"]["MegGift10"]["orBranches"] = [
-        {"requirements": {"RequiredTextLines": ["ThanGreets01"]}},
-    ]
-    annotate_speaker_aggregates(g)
-    # Meg now votes towards Than from BOTH MegInteract01 (flat) and MegGift10
-    # (orBranch) -> 2 distinct Meg textlines reference a Than line.
-    assert g["speakers"]["Meg"]["adjacencyUpstream"] == {"Than": 2}
-
-
-def test_adjacency_downstream_counts_distinct_dependent_textlines_per_other_speaker():
-    g = _make_graph_data()
-    annotate_speaker_aggregates(g)
-    # MegHello01 + MegHello02 are both depended on by ThanGreets01,
-    # so Meg has 2 downstream votes towards Than (one per Meg
-    # textline that has a Than-owned dependent).
-    assert g["speakers"]["Meg"]["adjacencyDownstream"] == {"Than": 2}
-    # ThanGreets01 is depended on by MegInteract01 -> Than has 1
-    # downstream vote towards Meg.
-    assert g["speakers"]["Than"]["adjacencyDownstream"] == {"Meg": 1}
-
-
 def test_unknown_owner_auto_registered_with_fallback_friendly_name():
     g = _make_graph_data()
     annotate_speaker_aggregates(g)

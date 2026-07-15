@@ -18,6 +18,7 @@ import {
     resetSpeakerGroups,
     resetSpeakerGroupEntries,
     similarSpeakers,
+    forEachUpstreamRef,
 } from '../templates/viewer/speaker-groups.js';
 import { loadData, setActiveLang, registerLocData, speakers } from '../templates/viewer/data.js';
 
@@ -286,9 +287,9 @@ test('getSpeakerGroupEntry adjacency upstream collapses to one count per dest gr
 test('getSpeakerGroupEntry adjacency upstream includes orBranch references', () => {
     // A Hecate textline references a Zeus line ONLY via an H2 orBranch (no flat
     // requirement); the group upstream re-derive must still count the Hecate ->
-    // Zeus edge, matching the detail list (buildAdjacencyDetail), the Python
-    // baked count, and the prerequisite tree - otherwise the count chip would
-    // disagree with its own expanded detail.
+    // Zeus edge, matching the detail list (buildAdjacencyDetail, which shares the
+    // forEachUpstreamRef scanner) and the prerequisite tree - otherwise the
+    // count chip would disagree with its own expanded detail.
     const fixture = buildGroupFixture();
     fixture.games.hades1.textlines.HecateMeeting01 = {
         owner: 'NPC_Hecate_01',
@@ -299,6 +300,29 @@ test('getSpeakerGroupEntry adjacency upstream includes orBranch references', () 
     resetSpeakerGroups();
     const entry = getSpeakerGroupEntry('NPC_Hecate_01');
     assert.equal(entry.adjacencyUpstream.NPC_Zeus_01, 1);
+});
+
+test('forEachUpstreamRef yields flat requirement AND orBranch refs, skips non-arrays', () => {
+    // The shared scanner that both the count re-derive and the detail builder
+    // use. It must surface refs from the flat requirements and from every
+    // orBranch requirement set, and tolerate a missing/empty textline.
+    const tl = {
+        requirements: { RequiredTextLines: ['Flat1', 'Flat2'], Count: 3 },
+        orBranches: [
+            { requirements: { RequiredTextLines: ['Or1'] } },
+            null,
+            { requirements: {} },
+            { requirements: { RequiredAnyTextLines: ['Or2', 'Or3'] } },
+        ],
+    };
+    const seen = [];
+    forEachUpstreamRef(tl, (ref) => seen.push(ref));
+    // ``Count: 3`` is a non-array field and must be ignored, not iterated.
+    assert.deepEqual(seen.sort(), ['Flat1', 'Flat2', 'Or1', 'Or2', 'Or3']);
+    // A missing textline is a no-op (no throw).
+    let n = 0;
+    forEachUpstreamRef(null, () => { n += 1; });
+    assert.equal(n, 0);
 });
 
 test('getSpeakerGroupEntry adjacency downstream maps deps through canonical', () => {

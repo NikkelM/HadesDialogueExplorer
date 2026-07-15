@@ -25,7 +25,7 @@
 // stability; see ``priorityScheme`` below.
 
 import { textlines, speakers, sectionKeyLabels, getActiveGame, alternates, dependents, localizeText } from './data.js';
-import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers, listCanonicalSpeakerIds, speakerGroupMembers } from './speaker-groups.js';
+import { canonicalSpeakerId, getSpeakerGroupEntry, similarSpeakers, listCanonicalSpeakerIds, speakerGroupMembers, forEachUpstreamRef } from './speaker-groups.js';
 import {
     escapeHtml,
     jsAttr,
@@ -495,26 +495,17 @@ export function buildAdjacencyDetail(ownedTextlines) {
     for (const aName of ownedTextlines) {
         const tl = textlines[aName];
         if (!tl) continue;
-        // Upstream links come from BOTH the flat requirements and any H2
-        // orBranches alternative-set requirements, so "Depends on" mirrors the
-        // downstream "Required by" side (built from the dependents index, which
-        // includes orBranch edges) and the prerequisite tree (which surfaces
-        // orBranch refs). Kept in lock-step with the Python adjacencyUpstream
-        // count in speaker_overview.py so the chip and this detail always agree.
-        const upReqSets = [tl.requirements || {}];
-        for (const branch of (Array.isArray(tl.orBranches) ? tl.orBranches : [])) {
-            if (branch && branch.requirements) upReqSets.push(branch.requirements);
-        }
-        for (const reqSet of upReqSets) {
-            for (const refList of Object.values(reqSet)) {
-                if (!Array.isArray(refList)) continue;
-                for (const ref of refList) {
-                    const refTl = textlines[ref];
-                    if (!refTl || !refTl.owner) continue;
-                    _recordAdjacencyLink(up, canonicalSpeakerId(refTl.owner), aName, ref);
-                }
-            }
-        }
+        // Upstream links use ``forEachUpstreamRef`` (flat requirements + H2
+        // orBranches) - the SAME scanner the count chip re-derives from
+        // (``_deriveGroupUpstream`` in speaker-groups.js) - so "Depends on" and
+        // its expanded detail can't disagree on which refs to include. The
+        // downstream "Required by" side mirrors this via the dependents index
+        // (which graph.py builds from requirements + orBranches).
+        forEachUpstreamRef(tl, (ref) => {
+            const refTl = textlines[ref];
+            if (!refTl || !refTl.owner) return;
+            _recordAdjacencyLink(up, canonicalSpeakerId(refTl.owner), aName, ref);
+        });
         const deps = dependents[aName];
         if (!Array.isArray(deps)) continue;
         for (const dep of deps) {

@@ -1154,8 +1154,8 @@ test('buildAdjacencyDetail maps each edge to its dependent -> required links', (
 test('buildAdjacencyDetail includes upstream links routed via orBranches', () => {
     // A1 references B1 ONLY through an H2 orBranch (no flat requirement), so the
     // "Depends on" detail must still surface the A1 -> B1 link - matching the
-    // Python adjacencyUpstream count (which also scans orBranches) and the
-    // downstream side (which includes orBranch edges via the dependents index).
+    // count chip (``_deriveGroupUpstream``, which shares the ``forEachUpstreamRef``
+    // scanner) and the downstream side (orBranch edges via the dependents index).
     loadData({
         textlines: {
             A1: {

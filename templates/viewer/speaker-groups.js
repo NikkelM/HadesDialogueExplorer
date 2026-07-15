@@ -201,39 +201,49 @@ export function similarSpeakers(speakerId) {
     return out;
 }
 
+// The single definition of "what counts as an upstream dependency reference"
+// for a textline: its flat ``requirements`` AND every H2 ``orBranches``
+// alternative-set requirement. Invokes ``cb(refName)`` once per reference.
+// Shared by the adjacency count re-derive (``_deriveGroupUpstream`` below) and
+// the adjacency detail builder (``buildAdjacencyDetail`` in speaker-view.js) so
+// the count chip and its expanded detail list can never disagree on which
+// references to include - they previously diverged on orBranch-only refs (the
+// chip omitted them while the detail listed them). The prerequisite tree
+// (``getChildren`` in tree.js) walks the same two sources.
+export function forEachUpstreamRef(tl, cb) {
+    if (!tl) return;
+    const reqSets = [tl.requirements || {}];
+    for (const branch of (Array.isArray(tl.orBranches) ? tl.orBranches : [])) {
+        if (branch && branch.requirements) reqSets.push(branch.requirements);
+    }
+    for (const reqs of reqSets) {
+        for (const refList of Object.values(reqs)) {
+            if (!Array.isArray(refList)) continue;
+            for (const ref of refList) cb(ref);
+        }
+    }
+}
+
 // Re-derive the upstream adjacency for a collapsed group: count of
 // owned textlines (across all members) that reference at least one
 // textline owned by any member of another group. Mapped back through
 // ``_idToCanonical`` so the OTHER axis is also collapsed - so e.g.
 // the Hermes group's upstream to the Zeus group counts each Hermes
 // textline once even when it references both ``NPC_Zeus_01`` and
-// ``ZeusUpgrade``.
+// ``ZeusUpgrade``. References are enumerated via ``forEachUpstreamRef``
+// (requirements + orBranches), the same scanner the detail builder uses.
 function _deriveGroupUpstream(ownedTextlines) {
     const counts = {};
     for (const name of ownedTextlines) {
         const tl = textlines[name];
         if (!tl) continue;
         const referencedGroups = new Set();
-        // Scan the flat requirements AND any H2 orBranches alternative-set
-        // requirements, so an orBranch-only cross-group reference is counted
-        // here too. Kept in lock-step with ``buildAdjacencyDetail`` (the detail
-        // rows), the Python ``adjacencyUpstream`` baked count, and the
-        // prerequisite tree (all of which surface orBranch refs) - otherwise the
-        // count chip would disagree with its own expanded detail list.
-        const reqSets = [tl.requirements || {}];
-        for (const branch of (Array.isArray(tl.orBranches) ? tl.orBranches : [])) {
-            if (branch && branch.requirements) reqSets.push(branch.requirements);
-        }
-        for (const reqs of reqSets) {
-            for (const refList of Object.values(reqs)) {
-                if (!Array.isArray(refList)) continue;
-                for (const ref of refList) {
-                    const refTl = textlines[ref];
-                    if (!refTl || !refTl.owner) continue;
-                    referencedGroups.add(_idToCanonical[refTl.owner] || refTl.owner);
-                }
+        forEachUpstreamRef(tl, (ref) => {
+            const refTl = textlines[ref];
+            if (refTl && refTl.owner) {
+                referencedGroups.add(_idToCanonical[refTl.owner] || refTl.owner);
             }
-        }
+        });
         for (const g of referencedGroups) {
             counts[g] = (counts[g] || 0) + 1;
         }

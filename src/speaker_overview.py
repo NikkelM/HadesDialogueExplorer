@@ -25,38 +25,14 @@ the speaker overview view:
                          keys (zero counts inclusive) so the viewer
                          can render the filter UI without guarding
                          every lookup.
-* ``adjacencyUpstream``  ``{otherSpeakerId: count}`` of owned
-                         textlines that depend on at least one
-                         textline owned by ``otherSpeakerId``. Counts
-                         distinct dependent textlines, NOT distinct
-                         requirement refs - one of this speaker's
-                         textlines counts once towards each other
-                         speaker it references, regardless of how
-                         many of that speaker's textlines it gates
-                         on. Self-loops (speaker depends on its own
-                         textlines) are included.
-* ``adjacencyDownstream`` ``{otherSpeakerId: count}`` of textlines
-                         owned by ``otherSpeakerId`` that depend on
-                         at least one textline owned by this speaker.
-                         Mirror of ``adjacencyUpstream``: if
-                         ``A.adjacencyUpstream[B] = N`` then
-                         ``B.adjacencyDownstream[A] = N`` is NOT
-                         guaranteed - they count from opposite sides
-                         so the per-edge dedup differs. (Specifically,
-                         ``A.adjacencyUpstream[B]`` counts how many of
-                         A's textlines reference at least one of B's;
-                         ``B.adjacencyDownstream[A]`` counts how many
-                         of B's textlines are referenced by at least
-                         one of A's.) Both are useful and they are
-                         intentionally NOT symmetric.
 
 Speakers absent from any owned-textline are still annotated (with
 empty / zero fields) so the viewer can present a consistent shape
 regardless of which speaker the user navigates to.
 
-This pass is purely additive: it reads ``graph_data['textlines']``,
-``graph_data['dependents']``, and ``graph_data['speakers']`` and
-mutates each speaker entry in place.
+This pass is purely additive: it reads ``graph_data['textlines']``
+and ``graph_data['speakers']`` and mutates each speaker entry in
+place.
 """
 
 
@@ -107,7 +83,6 @@ def annotate_speaker_aggregates(graph_data: dict) -> None:
     ``graph_data`` produces the same result (each pass overwrites
     the previously-computed aggregate fields)."""
     textlines = graph_data.get("textlines") or {}
-    dependents = graph_data.get("dependents") or {}
     speakers = graph_data.get("speakers")
     if speakers is None:
         speakers = {}
@@ -159,64 +134,6 @@ def annotate_speaker_aggregates(graph_data: dict) -> None:
             if speaker and speaker != owner:
                 spoken_by[speaker].add(name)
 
-    adjacency_upstream: dict[str, dict[str, int]] = {sid: {} for sid in speakers}
-    adjacency_downstream: dict[str, dict[str, int]] = {sid: {} for sid in speakers}
-
-    for name, tl in textlines.items():
-        owner = tl.get("owner")
-        if not owner:
-            continue
-        # Adjacency upstream: this textline references some refs (both its flat
-        # ``requirements`` and any H2 ``orBranches`` alternative-set
-        # requirements); collect the unique set of OTHER-SPEAKER OWNERS those
-        # refs resolve to, then increment ``adjacencyUpstream[owner][otherId]``
-        # by 1 for each distinct other-speaker reference. This textline
-        # therefore contributes 1 vote per (this-owner, other-owner) pair,
-        # regardless of how many refs land on that other owner. OR-branch refs
-        # are included so the upstream side mirrors the downstream side (built
-        # from the ``dependents`` index, which graph.py populates from orBranches
-        # too) and the prerequisite tree (which surfaces orBranch refs).
-        referenced_owners: set[str] = set()
-        req_sources = list((tl.get("requirements") or {}).values())
-        for branch in tl.get("orBranches") or []:
-            req_sources.extend(((branch or {}).get("requirements") or {}).values())
-        for refs in req_sources:
-            for ref in refs:
-                ref_tl = textlines.get(ref)
-                if not ref_tl:
-                    continue
-                ref_owner = ref_tl.get("owner")
-                if ref_owner:
-                    referenced_owners.add(ref_owner)
-        for other in referenced_owners:
-            bucket = adjacency_upstream[owner]
-            bucket[other] = bucket.get(other, 0) + 1
-
-    for name, deps in dependents.items():
-        ref_tl = textlines.get(name)
-        if not ref_tl:
-            continue
-        ref_owner = ref_tl.get("owner")
-        if not ref_owner:
-            continue
-        # Adjacency downstream: dedup dependents by owner once per
-        # depended-on textline, then bump the count. This mirrors the
-        # upstream "1 vote per pair" semantics: each owned textline of
-        # the depended-on speaker counts once towards each dependent
-        # speaker that references it.
-        dependent_owners: set[str] = set()
-        for dep in deps:
-            dep_name = dep.get("name") if isinstance(dep, dict) else dep
-            dep_tl = textlines.get(dep_name) if dep_name else None
-            if not dep_tl:
-                continue
-            dep_owner = dep_tl.get("owner")
-            if dep_owner:
-                dependent_owners.add(dep_owner)
-        for other in dependent_owners:
-            bucket = adjacency_downstream[ref_owner]
-            bucket[other] = bucket.get(other, 0) + 1
-
     for sid, entry in speakers.items():
         owned = sorted(owned_by.get(sid, []))
         as_speaker = sorted(spoken_by.get(sid, set()))
@@ -224,5 +141,3 @@ def annotate_speaker_aggregates(graph_data: dict) -> None:
         entry["asSpeakerTextlines"] = as_speaker
         entry["sectionCounts"] = dict(section_counts.get(sid, {}))
         entry["priorityCounts"] = dict(priority_counts.get(sid, {b: 0 for b in _PRIORITY_BUCKETS}))
-        entry["adjacencyUpstream"] = dict(adjacency_upstream.get(sid, {}))
-        entry["adjacencyDownstream"] = dict(adjacency_downstream.get(sid, {}))
