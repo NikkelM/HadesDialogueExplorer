@@ -11,12 +11,36 @@
 import { test, beforeEach, afterEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 
-import { loadFixtureData } from './fixtures.js';
+import { loadData } from '../templates/viewer/data.js';
+import { resetSpeakerGroups } from '../templates/viewer/speaker-groups.js';
 import { restoreSaveProgress, clearSaveProgress, SAVE_STORAGE_SCHEMA } from '../templates/viewer/save-parser.js';
 
-// Populate the shared dataset once so ``canonicalIdForSpeakerName`` can map a
-// friendly name ('Zeus') back to its canonical id ('NPC_Zeus_01').
-loadFixtureData();
+// A two-game dataset so the game-scoped validity gate in analytics.js has real
+// entities to check: only dialogues/speakers that exist in the event's target
+// game are counted. hades1 owns First01/Second01/Foo/Bar + speaker Zeus; hades2
+// owns Bare01/Featured01/Other01 + speaker Hecate. loadData activates hades1
+// (the default), so canonicalIdForSpeakerName maps 'Zeus' -> 'NPC_Zeus_01'.
+function _tl(names) {
+    const out = {};
+    for (const n of names) out[n] = { owner: null, dialogueLines: [] };
+    return out;
+}
+loadData({
+    gameIds: ['hades1', 'hades2'],
+    gameLabels: { hades1: 'Hades', hades2: 'Hades II' },
+    defaultGame: 'hades1',
+    games: {
+        hades1: {
+            textlines: _tl(['First01', 'Second01', 'Foo', 'Bar']),
+            speakers: { NPC_Zeus_01: { name: 'Zeus' } },
+        },
+        hades2: {
+            textlines: _tl(['Bare01', 'Featured01', 'Other01']),
+            speakers: { NPC_Hecate_01: { name: 'Hecate' } },
+        },
+    },
+});
+resetSpeakerGroups();
 
 let _modCounter = 0;
 async function freshInitAnalytics() {
@@ -198,6 +222,42 @@ test('counts a speaker_view keyed by the canonical speaker id', async () => {
     win.fire('hashchange');
     const sv = _typed(await readBeacons(win), 'speaker_view');
     assert.deepEqual(sv.map((e) => e.body), [{ type: 'speaker_view', game: 'hades1', id: 'NPC_Zeus_01' }]);
+});
+
+// --- game-scoped validity gate -----------------------------------
+
+test('does not count a dialogue that is absent from the hash game (cross-game leak)', async () => {
+    // Bare01 exists only in hades2; opened under hades1 (as a stale link or a
+    // carried-over name after a game switch) it must not be counted - the exact
+    // "one hit in the wrong game" leak this gate fixes.
+    const win = makeWindow({ hash: '#game=hades1&view=dialogue&dialogue=Bare01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())();
+    assert.equal(_typed(await readBeacons(win), 'dialogue_view').length, 0);
+});
+
+test('counts the same dialogue under the game that actually has it', async () => {
+    // Positive control: Bare01 IS in hades2, so it counts there.
+    const win = makeWindow({ hash: '#game=hades2&view=dialogue&dialogue=Bare01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())();
+    assert.deepEqual(_typed(await readBeacons(win), 'dialogue_view').map((e) => e.body.id), ['Bare01']);
+});
+
+test('does not count an eligibility_view for a dialogue absent from the hash game', async () => {
+    const win = makeWindow({ hash: '#game=hades1&view=eligibility&dialogue=Bare01' });
+    globalThis.window = win;
+    (await freshInitAnalytics())();
+    assert.equal(_typed(await readBeacons(win), 'eligibility_view').length, 0);
+});
+
+test('does not count a speaker_view for a speaker absent from the hash game', async () => {
+    // Hecate exists only in hades2; under hades1 it must not be counted.
+    const win = makeWindow();
+    globalThis.window = win;
+    (await freshInitAnalytics())();
+    win.setHash('#game=hades1&view=speaker&speaker=Hecate'); win.fire('hashchange');
+    assert.equal(_typed(await readBeacons(win), 'speaker_view').length, 0);
 });
 
 // --- session-scoped once-per-game events -------------------------

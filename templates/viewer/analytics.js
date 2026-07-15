@@ -42,6 +42,13 @@
 // A "visit" is one browser-tab session: it spans in-page navigation AND
 // reloads, and ends when the tab is closed.
 //
+// Game-scoped validity: a ``dialogue_view`` / ``speaker_view`` / ``eligibility_view``
+// is only emitted when the entity actually exists in the event's target game.
+// A stale cross-game deep link, browser back/forward across a game switch, or a
+// carried-over selection can put another game's dialogue/speaker name in the
+// hash under the wrong ``game=``; those are dropped rather than logged against a
+// game they don't belong to (see _analyticsDialogueInGame / _analyticsSpeakerInGame).
+//
 // First-visit exception: a brand-new visitor is auto-redirected from the bare
 // home page to the build-time featured dialogue (navigation.js
 // applyFirstVisitLanding). That single automatic landing is NOT counted as a
@@ -50,7 +57,7 @@
 // deep link straight to it, still count normally.
 
 import { parseUrlState } from './url.js';
-import { getActiveGame } from './data.js';
+import { games, getActiveGame } from './data.js';
 import { canonicalIdForSpeakerName } from './speaker-groups.js';
 import { getSaveProgress, getSaveGameId } from './save-parser.js';
 
@@ -183,6 +190,34 @@ function _analyticsGameFor(state) {
     return (state && state.game) || getActiveGame() || '';
 }
 
+// True when ``dialogue`` is a real textline in ``game``'s dataset. Events are
+// keyed to the hash's target game, which - via a stale cross-game deep link,
+// browser back/forward across a game switch, or a carried-over entity - can name
+// a dialogue that doesn't exist in that game. Validating against the target
+// game's own blob (``games[game]``, not the active-game bindings, which lag an
+// in-flight async switch) keeps the counts to dialogues that game actually has.
+function _analyticsDialogueInGame(game, dialogue) {
+    const blob = games && games[game];
+    return !!(blob && blob.textlines && blob.textlines[dialogue]);
+}
+
+// True when ``ref`` (the URL's language-neutral English speaker name) names a
+// speaker in ``game``'s dataset. Reads the raw ``games[game].speakers`` blob,
+// whose ``name`` values stay English even when a localisation overlay has
+// translated the active game's live ``speakers`` map, so it matches the English
+// URL ref under any language. The ref is a group's friendly name, which is
+// always one of its members' ``name`` values (see speaker-groups _ensureGroups).
+function _analyticsSpeakerInGame(game, ref) {
+    const blob = games && games[game];
+    const map = blob && blob.speakers;
+    if (!map) return false;
+    for (const id in map) {
+        const s = map[id];
+        if (s && (s.name || '').trim() === ref) return true;
+    }
+    return false;
+}
+
 // Map the current hash to an event and emit it. Wrapped so a malformed hash or
 // a helper hiccup can never bubble into the page's hashchange handling.
 function _analyticsTrackHash() {
@@ -193,7 +228,9 @@ function _analyticsTrackHash() {
         const view = (state.view || (state.dialogue ? 'dialogue' : '')).toLowerCase();
         if (view === 'speaker') {
             const ref = state.speaker;
-            if (!ref) return;
+            // Only count a speaker the target game actually has - a stale link or
+            // a cross-game switch can name a speaker absent from this game.
+            if (!ref || !_analyticsSpeakerInGame(game, ref)) return;
             // Key by the stable canonical speaker id, not the friendly display
             // name (which localisation can change), so counts stay comparable
             // across builds. Falls back to the raw ref for unknown speakers.
@@ -203,8 +240,11 @@ function _analyticsTrackHash() {
             // Cross-game duplicates view: not tracked. Explicit branch so a
             // duplicates hash never falls through to a dialogue_view.
         } else if (view === 'eligibility') {
-            // Per-dialogue tracer-open total (which dialogues get traced most).
-            if (state.dialogue) _analyticsTrackView('eligibility_view', game, state.dialogue);
+            // Per-dialogue tracer-open total (which dialogues get traced most),
+            // gated to dialogues that exist in the target game.
+            if (state.dialogue && _analyticsDialogueInGame(game, state.dialogue)) {
+                _analyticsTrackView('eligibility_view', game, state.dialogue);
+            }
         } else if (state.dialogue) {
             // The first-visit landing guard is one-shot: it only ever applies to
             // the first dialogue_view processed after init (the async hashchange
@@ -213,6 +253,9 @@ function _analyticsTrackHash() {
             const skipId = _analyticsSkipLandingDialogueId;
             _analyticsSkipLandingDialogueId = null;
             if (skipId && state.dialogue === skipId) return;
+            // Only count a dialogue the target game actually has, so a name
+            // carried onto the wrong game (or a stale link) isn't miscounted.
+            if (!_analyticsDialogueInGame(game, state.dialogue)) return;
             _analyticsTrackView('dialogue_view', game, state.dialogue);
         }
     } catch {
