@@ -61,6 +61,19 @@
     main {
         flex-direction: column;
         overflow: visible;
+        /* Reserve at least one full viewport for the content area so the footer
+           is pushed just past the bottom of the screen. The default view then
+           shows the header + content with the footer off-screen; scrolling the
+           header up leaves the content filling the entire screen (header AND
+           footer both out of view); scrolling further brings the footer up from
+           the bottom. ``dvh`` tracks the live viewport as the mobile browser
+           chrome shows/hides, so the content fills the screen exactly in every
+           state; ``vh`` is the pre-``dvh`` fallback. For content already taller
+           than a screen this floor is inert (the content sizes ``main``).
+           Desktop (>= 1025px) is untouched - it keeps its fixed-height,
+           internally-scrolling shell where the footer is always in view. */
+        min-height: 100vh;
+        min-height: 100dvh;
     }
     /* Panels stack vertically and flow to their natural height (the page
        scrolls, not each panel). The right divider becomes a bottom one. */
