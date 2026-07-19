@@ -70,8 +70,10 @@
            chrome shows/hides, so the content fills the screen exactly in every
            state; ``vh`` is the pre-``dvh`` fallback. For content already taller
            than a screen this floor is inert (the content sizes ``main``).
-           Desktop (>= 1025px) is untouched - it keeps its fixed-height,
-           internally-scrolling shell where the footer is always in view. */
+           Wider screens (>= 1025px) split by input: a touch tablet in landscape
+           gets the same scrolling shell via the ``pointer: coarse`` block below,
+           while a mouse desktop/laptop keeps its fixed-height, internally-
+           scrolling shell where the footer is always in view. */
         min-height: 100vh;
         min-height: 100dvh;
     }
@@ -87,6 +89,42 @@
     .panel-body {
         flex: initial;
         overflow: visible;
+    }
+}
+
+/* === Foundation: touch tablets WIDER than the mobile breakpoint =========
+ * A touch tablet in landscape (e.g. iPad Air / Pro, ~1080-1366px CSS px) is
+ * wider than the 1024px mobile breakpoint, so it keeps the desktop 3-panel
+ * side-by-side layout (which is wanted at that width) - including each panel's
+ * own internal scroll. But the desktop shell is a fixed-height (100dvh),
+ * overflow-hidden column with the footer pinned in view. On a touch device that
+ * outer shell should instead be a scrolling document: the header scrolls away,
+ * the content area is one full viewport tall (so the footer sits just past the
+ * bottom and is reached by scrolling down), and scrolling the header off leaves
+ * the three panels filling the screen exactly.
+ *
+ * Only the OUTER shell changes; the panels keep flex-direction:row and their
+ * internal scroll from the desktop base. Gated on ``pointer: coarse`` so it
+ * targets touch tablets only - a mouse desktop/laptop, or an iPad driven by a
+ * trackpad (which reports a fine pointer), at these same widths keeps the fixed
+ * desktop shell.
+ * ==================================================================== */
+@media (min-width: 1025px) and (pointer: coarse) {
+    body {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: visible;
+    }
+    /* One full viewport tall so header + content exceed the screen: the footer
+       is pushed just past the bottom (scroll down to reach it) and scrolling the
+       header away leaves the content filling the screen exactly. ``dvh`` tracks
+       the live viewport as the browser chrome shows/hides. Only the shell
+       changes - ``main`` keeps its desktop flex-direction:row and the panels
+       keep their own internal scroll, so the 3-panel layout is preserved. */
+    main {
+        min-height: 100vh;
+        min-height: 100dvh;
     }
 }
 
