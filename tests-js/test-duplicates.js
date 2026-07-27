@@ -87,6 +87,7 @@ function buildDuplicatesFixture() {
                 name: 'SharedDialogue01',
                 hades1: { owner: 'ZeusUpgrade', section: 'PriorityPickupTextLineSets' },
                 hades2: { owner: 'ZeusUpgrade', section: 'InteractTextLineSets' },
+                category: 'NPC interaction',
             },
         ],
     };
@@ -136,6 +137,39 @@ test('renderDuplicates shows an "All" entry first, active and default', () => {
     const allIdx = lastHtml.indexOf('>All<');
     assert.ok(allIdx >= 0 && allIdx < lastHtml.indexOf('>Zeus<'),
         'All entry must come before the first speaker');
+});
+
+// --- category grouping ---
+
+test('renderDuplicates groups dialogues under a textline-set category heading', () => {
+    renderDuplicates({ q: '' });
+    // The fixture duplicate is filed under its Hades II group (NPC interaction),
+    // rendered as a titled sub-section with a count badge.
+    assert.match(lastHtml, /duplicates-category-title/);
+    assert.match(lastHtml, /NPC interaction<span class="duplicates-category-count">1<\/span>/);
+});
+
+test('renderDuplicates orders categories by the speaker overview section rank', () => {
+    const fixture = buildDuplicatesFixture();
+    fixture.duplicates = [
+        { name: 'AgreeGift01', hades1: { owner: 'ZeusUpgrade', section: 'GiftTextLineSets' }, hades2: { owner: 'ZeusUpgrade', section: 'GiftTextLineSets' }, category: 'NPC gifting' },
+        { name: 'PickupA01', hades1: { owner: 'ZeusUpgrade', section: 'PriorityPickupTextLineSets' }, hades2: { owner: 'ZeusUpgrade', section: 'DuoPickupTextLines' }, category: 'Duo boon pickup' },
+        { name: 'AgreeChat01', hades1: { owner: 'ZeusUpgrade', section: 'InteractTextLineSets' }, hades2: { owner: 'ZeusUpgrade', section: 'InteractTextLineSets' }, category: 'NPC interaction' },
+    ];
+    loadData(fixture);
+    resetDuplicateNameSet();
+    renderDuplicates({ q: '' });
+    const duo = lastHtml.indexOf('Duo boon pickup');
+    const gifting = lastHtml.indexOf('NPC gifting');
+    const interaction = lastHtml.indexOf('NPC interaction');
+    assert.ok(duo >= 0 && gifting >= 0 && interaction >= 0, 'all three category headings present');
+    // Locked section rank (not alphabetical): NPC interaction (Interact, 1)
+    // before NPC gifting (Gift, 3) before Duo boon pickup (DuoPickup, 5).
+    assert.ok(interaction < gifting, 'NPC interaction before NPC gifting');
+    assert.ok(gifting < duo, 'NPC gifting before Duo boon pickup');
+    // Restore the shared fixture for subsequent tests.
+    loadData(buildDuplicatesFixture());
+    resetDuplicateNameSet();
 });
 
 // --- dup URL key (selected-speaker persistence) ---

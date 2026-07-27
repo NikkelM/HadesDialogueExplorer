@@ -36,7 +36,7 @@ import {
     applyColumnStripes,
 } from './utilities.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
-import { mergedSectionKey, playRank } from './play-order.js';
+import { mergedSectionKey, playRank, sectionOrderRank } from './play-order.js';
 
 // Priority filter scheme. Both games slice a speaker's owned dialogues
 // on the same axis - repeatability (the ``playOnce`` flag) - matching
@@ -156,55 +156,10 @@ function sectionDisplay(sectionKey) {
 // Priority order within a merged group is preserved via
 // ``narrativePrioritySectionTier`` (see ``compareWithinSection``). These
 // keys are H1-only (absent in H2), so the map is a no-op there.
-// Locked display order for the owner view's sections, by relevance /
-// in-game flow rather than dialogue counts, so the order never changes
-// when the repeatability or eligibility filters shrink a section. Keyed
-// on the (merged) section key; both games' keys are listed because an
-// owner only ever belongs to one game, so the H1 / H2 variants of a
-// concept can safely share a rank. Sections not listed fall to the
-// default rank and order alphabetically by label (a stable tiebreak).
-//
-// Grouping: conversational core -> gifting -> god-boon flow -> the
-// "Trial of the Gods" / "Family Dispute" pair -> boss/combat encounter
-// flow (intro -> combat intro -> phase change -> outro -> death) ->
-// misc / edge tables.
-const _SECTION_ORDER = {
-    // Conversational core
-    InteractTextLineSets: 1,                       // NPC interaction
-    OnHitTextLineSets: 2,                           // NPC interaction (on hit)
-    GiftTextLineSets: 3,                            // NPC gifting
-    // God-boon flow
-    PickupTextLineSets: 4,                          // God boon pickup
-    DuoPickupTextLineSets: 5,                        // Duo boon pickup (H1)
-    DuoPickupTextLines: 5,                           // Duo boon pickup (H2)
-    BoughtTextLines: 6,                              // God boon shop purchase
-    // Trial of the Gods (H1) / Family Dispute (H2) pair
-    RejectionTextLines: 7,                           // ... Displeased
-    MakeUpTextLines: 8,                              // ... Completion
-    // Boss / combat encounter flow
-    BossPresentationIntroTextLineSets: 9,            // Boss introduction (H1)
-    BossIntroTextLineSets: 9,                        // Boss introduction (H2)
-    CombatIntroTextLineSets: 10,                     // Combat introduction (H2)
-    BossPresentationNextStageTextLineSets: 11,       // Boss phase transition (H1)
-    BossPhaseChangeTextLineSets: 11,                 // Boss phase transition (H2)
-    BossPresentationOutroTextLineSets: 12,           // Boss outro (H1)
-    BossOutroTextLineSets: 12,                        // Boss outro (H2)
-    DeathPresentationTextLineSets: 13,               // Death presentation (H2)
-    // Misc / edge
-    TextLineSet: 14,                                 // Misc. interaction / Event narrative
-    ForcedTextLines: 15,                             // Forced room dialogue (H1)
-    PostPortraitTextLines: 16,                        // Post-portrait dialogue (H2)
-};
-const _SECTION_ORDER_DEFAULT = 100;
-
-function sectionOrderRank(key) {
-    // Every explicit rank is >= 1, so ``||`` safely supplies the default.
-    return _SECTION_ORDER[key] || _SECTION_ORDER_DEFAULT;
-}
-
 // Order two (merged) section keys for display by the locked relevance
-// rank, then label. Deliberately independent of dialogue counts so the
-// section order stays put when filters / eligibility change them.
+// rank (``sectionOrderRank``, single-sourced in play-order.js), then label.
+// Deliberately independent of dialogue counts so the section order stays put
+// when filters / eligibility change them.
 function compareSections(keyA, keyB) {
     const ra = sectionOrderRank(keyA);
     const rb = sectionOrderRank(keyB);

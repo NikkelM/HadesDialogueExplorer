@@ -734,6 +734,20 @@ def _build_game(game: str, datasets: list[dict]) -> dict:
     return graph_data
 
 
+def _duplicate_category_label(section, section_key_labels):
+    """Friendly textline-set category for one game's section key.
+
+    Resolves the section key to its human label (``sectionKeyLabels``) and drops
+    a trailing parenthetical qualifier (e.g. ``"NPC interaction (repeatable)"``
+    -> ``"NPC interaction"``) so the internal priority / fallback variants
+    collapse into their base category. This mirrors the viewer's
+    ``mergedSectionKey`` collapse using only each game's own baked label map, so
+    it needs no separate merge table. Falls back to the raw key when unlabeled.
+    """
+    label = section_key_labels.get(section, section) or ""
+    return re.sub(r"\s*\([^)]*\)$", "", label).strip()
+
+
 def _compute_cross_game_duplicates(games_payload):
     """Find textline names that exist in both games.
 
@@ -741,11 +755,19 @@ def _compute_cross_game_duplicates(games_payload):
 
         {"name": "...", "hades1": {"owner": "...", "section": "..."},
                         "hades2": {"owner": "...", "section": "..."},
-         "speaker": "..."}
+         "speaker": "...", "category": "..."}
 
-    ``speaker`` is the friendly display name for the master-list buttons,
-    resolved here so the duplicates view (which renders from the meta payload,
-    before/without the per-game blobs) never falls back to the raw owner id.
+    ``speaker`` is the friendly display name for the master-list buttons, and
+    ``category`` is the textline-set group the dialogue is filed under. It is the
+    Hades II grouping (where the dialogue actually plays in the tool's primary
+    game) when the two games file the name under a different internal set, e.g. a
+    boon "About" line is a boon-pickup line in Hades but an NPC-interaction line
+    in Hades II. When both games use the *same* internal set but label it
+    differently (Hades' "Trial of the Gods" is Hades II's "Family Dispute"), the
+    category is ``"<Hades 1>/<Hades II>"`` so neither name is lost. Both fields
+    are resolved here so the duplicates view (which renders from the meta
+    payload, before/without the per-game blobs) never falls back to the raw owner
+    id or has to read a section-label map that may not be loaded yet.
 
     Returns an empty list when fewer than two games are loaded (the
     feature only makes sense with a cross-game comparison).
@@ -760,6 +782,8 @@ def _compute_cross_game_duplicates(games_payload):
     tl2 = games_payload[g2].get("textlines", {})
     sp1 = games_payload[g1].get("speakers", {})
     sp2 = games_payload[g2].get("speakers", {})
+    lbl1 = games_payload[g1].get("sectionKeyLabels", {})
+    lbl2 = games_payload[g2].get("sectionKeyLabels", {})
     shared = sorted(set(tl1) & set(tl2))
     results = []
     for name in shared:
@@ -780,6 +804,20 @@ def _compute_cross_game_duplicates(games_payload):
             or o1
             or o2
         )
+        # Categorise by the Hades II (``g2``) textline-set group. Where the two
+        # games file the same name under a different internal set, Hades II's
+        # grouping wins since it reflects where the dialogue plays in the tool's
+        # primary game. But where both games use the *same* internal set yet give
+        # it a different friendly name (e.g. Hades' "Trial of the Gods" is Hades
+        # II's "Family Dispute"), show both as ``"<Hades 1>/<Hades II>"`` so
+        # neither game's naming is lost. Fall back to the Hades 1 group only if
+        # Hades II has no label for the section.
+        cat1 = _duplicate_category_label(entry[g1]["section"], lbl1)
+        cat2 = _duplicate_category_label(entry[g2]["section"], lbl2)
+        if entry[g1]["section"] == entry[g2]["section"] and cat1 and cat2 and cat1 != cat2:
+            entry["category"] = f"{cat1}/{cat2}"
+        else:
+            entry["category"] = cat2 or cat1
         results.append(entry)
     return results
 

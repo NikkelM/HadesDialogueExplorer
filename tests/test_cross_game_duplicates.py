@@ -30,6 +30,73 @@ def test_detects_shared_names():
     assert result[0]["hades2"] == {"owner": "C", "section": "S3"}
 
 
+def test_category_uses_shared_group_when_both_games_agree():
+    payload = {
+        "hades1": {
+            "textlines": {"Shared01": {"owner": "A", "section": "GiftTextLineSets"}},
+            "sectionKeyLabels": {"GiftTextLineSets": "NPC gifting"},
+        },
+        "hades2": {
+            "textlines": {"Shared01": {"owner": "C", "section": "GiftTextLineSets"}},
+            "sectionKeyLabels": {"GiftTextLineSets": "NPC gifting"},
+        },
+    }
+    result = _compute_cross_game_duplicates(payload)
+    assert result[0]["category"] == "NPC gifting"
+
+
+def test_category_collapses_parenthetical_variant():
+    # A repeatable-fallback variant ("... (repeatable)") is the same category
+    # as its base once the parenthetical qualifier is dropped, so the two games
+    # agree rather than landing in the reclassified bucket.
+    payload = {
+        "hades1": {
+            "textlines": {"Shared01": {"owner": "A", "section": "RepeatableTextLineSets"}},
+            "sectionKeyLabels": {"RepeatableTextLineSets": "NPC interaction (repeatable)"},
+        },
+        "hades2": {
+            "textlines": {"Shared01": {"owner": "C", "section": "InteractTextLineSets"}},
+            "sectionKeyLabels": {"InteractTextLineSets": "NPC interaction"},
+        },
+    }
+    result = _compute_cross_game_duplicates(payload)
+    assert result[0]["category"] == "NPC interaction"
+
+
+def test_category_uses_hades2_group_when_games_disagree():
+    # A boon "About" line is a boon-pickup line in Hades 1 but an NPC-interaction
+    # line in Hades II; the internal sets differ, so the Hades II grouping wins.
+    payload = {
+        "hades1": {
+            "textlines": {"Shared01": {"owner": "A", "section": "PriorityPickupTextLineSets"}},
+            "sectionKeyLabels": {"PriorityPickupTextLineSets": "God boon pickup"},
+        },
+        "hades2": {
+            "textlines": {"Shared01": {"owner": "C", "section": "InteractTextLineSets"}},
+            "sectionKeyLabels": {"InteractTextLineSets": "NPC interaction"},
+        },
+    }
+    result = _compute_cross_game_duplicates(payload)
+    assert result[0]["category"] == "NPC interaction"
+
+
+def test_category_shows_both_labels_when_same_set_named_differently():
+    # Both games file the name under the same internal set (RejectionTextLines)
+    # but label it differently, so both friendly names are shown as "<H1>/<H2>".
+    payload = {
+        "hades1": {
+            "textlines": {"Shared01": {"owner": "A", "section": "RejectionTextLines"}},
+            "sectionKeyLabels": {"RejectionTextLines": '"Trial of the Gods" - Displeased'},
+        },
+        "hades2": {
+            "textlines": {"Shared01": {"owner": "C", "section": "RejectionTextLines"}},
+            "sectionKeyLabels": {"RejectionTextLines": '"Family Dispute" - Displeased'},
+        },
+    }
+    result = _compute_cross_game_duplicates(payload)
+    assert result[0]["category"] == '"Trial of the Gods" - Displeased/"Family Dispute" - Displeased'
+
+
 def test_results_are_sorted_by_name():
     payload = {
         "hades1": {"textlines": {

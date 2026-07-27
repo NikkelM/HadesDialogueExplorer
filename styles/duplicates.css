@@ -113,6 +113,40 @@
     font-size: var(--fs-xl);
 }
 
+/* Each textline-set category (Interact, Gift, ...) is its own titled
+   sub-section within the detail pane, so the dialogues read grouped by
+   where they play (the Hades II grouping), ordered alphabetically. */
+.duplicates-category-group {
+    margin-bottom: 1rem;
+}
+
+.duplicates-category-group:last-child {
+    margin-bottom: 0;
+}
+
+.duplicates-category-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.duplicates-category-count {
+    font-size: var(--fs-sm);
+    font-weight: normal;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.1rem 0.45rem;
+    border-radius: 8px;
+}
+
 .duplicates-detail-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(405px, 1fr));

@@ -7,6 +7,24 @@
 
 import { duplicates, games, gameLabels, localizedSpeakerName, getActiveGame } from './data.js';
 import { escapeHtml, jsAttr, applyColumnStripes } from './utilities.js';
+import { mergedSectionKey, sectionOrderRank } from './play-order.js';
+
+// The textline-set category a duplicate is filed under (baked by
+// ``_compute_cross_game_duplicates`` as the Hades II grouping). Defaults to
+// empty for a (theoretical) entry the build left uncategorised, which then
+// sorts last (unranked sections fall to the default rank).
+function entryCategory(d) {
+    return d.category || '';
+}
+
+// Relevance rank for a duplicate's category, keyed on its Hades II textline-set
+// (the section the baked category label comes from) so the duplicates view lists
+// categories in the same locked order as the speaker overview's dialogue
+// sections. Unlisted sections fall to the default rank (last).
+function entryCategoryRank(d) {
+    const h2 = (d.hades2 && d.hades2.section) || '';
+    return sectionOrderRank(mergedSectionKey(h2));
+}
 
 // Sentinel master-list entry that shows every speaker's shared dialogues at
 // once. Keyed with a control char so it can never collide with a real
@@ -56,8 +74,11 @@ function speakerLabel(d) {
 // The detail grid uses ``auto-fill``, so its column count is dynamic and
 // unbounded on wide screens. Tag every entry in an even grid column with
 // ``dup-col-alt`` (see applyColumnStripes) and let the stylesheet tint it.
+// Each category renders its own grid, so stripe every list in the pane.
 function stripeDuplicateColumns() {
-    applyColumnStripes(document.querySelector('.duplicates-detail-list'), 'dup-col-alt');
+    if (typeof document.querySelectorAll !== 'function') return;
+    const lists = document.querySelectorAll('.duplicates-detail-list');
+    for (const list of lists) applyColumnStripes(list, 'dup-col-alt');
 }
 
 // Re-stripe after each render and whenever the detail pane resizes (which
@@ -207,7 +228,6 @@ function renderBody(items, h1Label, h2Label) {
     const detailTitle = showingAll
         ? 'All speakers'
         : (selectedGroup ? selectedGroup.label : selectedSpeaker);
-    const entries = dupes.map(d => renderEntry(d, h1Label, h2Label)).join('');
     // Size the name column to the longest name across all duplicates
     // (monospace, one ``ch`` per character) so the game pills start at
     // the same point for every speaker rather than shifting on switch.
@@ -217,9 +237,40 @@ function renderBody(items, h1Label, h2Label) {
         + `<div class="duplicates-speakers">${speakerList}</div>`
         + `<div class="duplicates-detail">`
         + `<h4 class="duplicates-detail-title">${escapeHtml(detailTitle)}</h4>`
-        + `<div class="duplicates-detail-list" style="--dup-name-col: ${nameCols}ch">${entries}</div>`
+        + renderCategoryGroups(dupes, nameCols, h1Label, h2Label)
         + `</div>`
         + `</div>`;
+}
+
+// Group the shown duplicates by their textline-set category and render each as
+// its own titled sub-section (heading + tiled grid). Categories are ordered
+// alphabetically; each grid is striped independently (see
+// stripeDuplicateColumns). ``nameCols`` pins the monospace name column so
+// entries align across every category.
+function renderCategoryGroups(dupes, nameCols, h1Label, h2Label) {
+    const byCategory = new Map();
+    const rankByCategory = new Map();
+    for (const d of dupes) {
+        const cat = entryCategory(d);
+        let list = byCategory.get(cat);
+        if (!list) { list = []; byCategory.set(cat, list); rankByCategory.set(cat, entryCategoryRank(d)); }
+        list.push(d);
+    }
+    // Order categories by the speaker overview's locked section rank, then label
+    // (matching ``compareSections``) so both surfaces present sections alike.
+    const cats = [...byCategory.keys()].sort((a, b) => {
+        const dr = rankByCategory.get(a) - rankByCategory.get(b);
+        return dr !== 0 ? dr : a.localeCompare(b);
+    });
+    return cats.map(cat => {
+        const list = byCategory.get(cat);
+        const entries = list.map(d => renderEntry(d, h1Label, h2Label)).join('');
+        return `<section class="duplicates-category-group">`
+            + `<h5 class="duplicates-category-title">${escapeHtml(cat)}`
+            + `<span class="duplicates-category-count">${list.length}</span></h5>`
+            + `<div class="duplicates-detail-list" style="--dup-name-col: ${nameCols}ch">${entries}</div>`
+            + `</section>`;
+    }).join('');
 }
 
 function renderEntry(d, h1Label, h2Label) {
