@@ -1,0 +1,1643 @@
+{
+  "alternates": {},
+  "dependents": {
+    "Inspect_N_Hub_01": [
+      {
+        "name": "Inspect_N_Hub_02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_02",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "Inspect_N_Hub_02": [
+      {
+        "name": "Inspect_N_Hub_04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_04",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_05",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_05",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "Inspect_N_Hub_04": [
+      {
+        "name": "Inspect_N_Hub_03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_03",
+        "type": "MinRunsSinceAnyTextLines"
+      },
+      {
+        "name": "Inspect_N_Hub_05",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "Inspect_N_Hub_05": [
+      {
+        "name": "Inspect_N_Hub_04",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "Inspect_N_PostBoss01_01": [
+      {
+        "name": "Inspect_N_PostBoss01_02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 11,
+    "totalSpeakers": 1,
+    "totalTextlines": 20,
+    "unresolvedRefs": []
+  },
+  "textlines": {
+    "Inspect_N_Boss01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0270",
+          "speaker": "Speaker_Homer",
+          "text": "There is an old adage which goes, one would be wise never to strike a sleeping Cyclops, and instead carefully walk by; but at times, exceptions must be made."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1955",
+          "speaker": "PlayerUnit",
+          "text": "I might make one of those exceptions now..."
+        }
+      ],
+      "name": "Inspect_N_Boss01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2294
+    },
+    "Inspect_N_Boss01_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0271",
+          "speaker": "Speaker_Homer",
+          "text": "If once this was a pasture in which livestock grazed and roamed, now little evidence of this remains; only the mud, and half-burnt vestiges of a more-peaceful time."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1956",
+          "speaker": "PlayerUnit",
+          "text": "Polyphemus should be tending to this place..."
+        }
+      ],
+      "name": "Inspect_N_Boss01_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2320
+    },
+    "Inspect_N_Boss02_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0423",
+          "speaker": "Speaker_Homer",
+          "text": "The noxious, death-strewn field beyond the city of Ephyra now lies still once more, although a sense of rising Fear yet lingers with the many restless souls that there reside."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_3616",
+          "speaker": "PlayerUnit",
+          "text": "Lady Medea certainly transformed this place."
+        }
+      ],
+      "name": "Inspect_N_Boss02_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2486
+    },
+    "Inspect_N_Boss02_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0458",
+          "speaker": "Speaker_Homer",
+          "text": "On such particularly fearsome nights, the Witch of Shadows is believed to haunt this awfully putrescent field, whilst conducting her profane experiments upon the dead."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_3656",
+          "speaker": "PlayerUnit",
+          "text": "Still feel a little nauseous after that..."
+        }
+      ],
+      "name": "Inspect_N_Boss02_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2511
+    },
+    "Inspect_N_Hub_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0117",
+          "speaker": "Speaker_Homer",
+          "text": "The pathway to the docks is sealed shut by a phantasmal force that neither mortal nor immortal strength can budge."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0481",
+          "speaker": "PlayerUnit",
+          "text": "It's drawing strength from Shades..."
+        }
+      ],
+      "name": "Inspect_N_Hub_01",
+      "otherRequirements": {
+        "Path:CurrentRun.SpawnRecord.SoulPylon": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "SpawnRecord",
+              "SoulPylon"
+            ],
+            "Value": 5
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 1791
+    },
+    "Inspect_N_Hub_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0118",
+          "speaker": "Speaker_Homer",
+          "text": "A barricade bars passage to the docks beyond the city square, leaving the denizens of the city of Ephyra confined to their ruinous environs."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "Melinoe_1434",
+          "speaker": "PlayerUnit",
+          "text": "We'll get through. Even if it takes every Shade in this city."
+        }
+      ],
+      "name": "Inspect_N_Hub_02",
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 1
+        },
+        "Path:CurrentRun.SpawnRecord.SoulPylon": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "CurrentRun",
+              "SpawnRecord",
+              "SoulPylon"
+            ],
+            "Value": 5
+          }
+        ],
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "Inspect_N_Hub_01"
+        ],
+        "RequiredTextLines": [
+          "Inspect_N_Hub_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 1830
+    },
+    "Inspect_N_Hub_03": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0152",
+          "speaker": "Speaker_Homer",
+          "text": "The barely-held-together city is a labyrinth of streets, some barricaded still, yet others not, each horror-filled, night after endless night."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0482",
+          "speaker": "PlayerUnit",
+          "text": "So many mortals lived and died in such a place..."
+        }
+      ],
+      "name": "Inspect_N_Hub_03",
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 1
+        },
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "Inspect_N_Hub_04"
+        ],
+        "RequiredTextLines": [
+          "Inspect_N_Hub_04"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 1864
+    },
+    "Inspect_N_Hub_04": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0167",
+          "speaker": "Speaker_Homer",
+          "text": "A mortal-made stone likeness of the grim lord of the dead stands in the center of the city, looking on at the devastation sown as if in stunned silence."
+        }
+      ],
+      "endLines": [
+        {
+          "condGroup": 0,
+          "cue": "MelinoeField_0639",
+          "otherRequirements": {
+            "PathFalse:GameState.SpeechRecord./VO/MelinoeField_0639": [
+              {
+                "PathFalse": [
+                  "GameState",
+                  "SpeechRecord",
+                  "/VO/MelinoeField_0639"
+                ]
+              }
+            ]
+          },
+          "speaker": "PlayerUnit",
+          "text": "This is my... Father..."
+        },
+        {
+          "condGroup": 1,
+          "cue": "Melinoe_0347",
+          "otherRequirements": {
+            "PathTrue:GameState.SpeechRecord./VO/MelinoeField_0639": [
+              {
+                "PathTrue": [
+                  "GameState",
+                  "SpeechRecord",
+                  "/VO/MelinoeField_0639"
+                ]
+              }
+            ]
+          },
+          "requirements": {
+            "RequiredFalseTextLines": [
+              "HadesAboutUltimateProgress01",
+              "ZagreusPastMeeting05"
+            ]
+          },
+          "speaker": "PlayerUnit",
+          "text": "Vengeance for my father."
+        }
+      ],
+      "name": "Inspect_N_Hub_04",
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 1
+        },
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "Inspect_N_Hub_02",
+          "Inspect_N_Hub_05"
+        ],
+        "RequiredTextLines": [
+          "Inspect_N_Hub_02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 1898
+    },
+    "Inspect_N_Hub_05": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0168",
+          "speaker": "Speaker_Homer",
+          "text": "Amid the stench of death lies a rejuvenating spring, etched from a block of stone into the likeness of the verdure-goddess and the Underworld's rightful queen."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0814",
+          "speaker": "PlayerUnit",
+          "text": "This fountain... Mother..."
+        }
+      ],
+      "name": "Inspect_N_Hub_05",
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 1
+        },
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "Inspect_N_Hub_02",
+          "Inspect_N_Hub_04"
+        ],
+        "RequiredTextLines": [
+          "Inspect_N_Hub_02"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 1958
+    },
+    "Inspect_N_MiniBoss02_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0462",
+          "speaker": "Speaker_Homer",
+          "text": "Too many hunters failed to tame the massive raging Boar of Erymanthus whilst it lived and breathed; and not even Death has been able to still its mighty hooves and tusks."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_3660",
+          "speaker": "PlayerUnit",
+          "text": "I did, though! For now."
+        }
+      ],
+      "name": "Inspect_N_MiniBoss02_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 3087
+    },
+    "Inspect_N_Opening01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0150",
+          "speaker": "Speaker_Homer",
+          "text": "As the ill-fated princess feels her life-force fade with every breath of surface air, her sole recourse is to return whence she came."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0479",
+          "speaker": "PlayerUnit",
+          "text": "...What, I... ungh..."
+        }
+      ],
+      "name": "Inspect_N_Opening01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathFalse:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathFalse": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 772
+    },
+    "Inspect_N_Opening01_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0023",
+          "speaker": "Speaker_Homer",
+          "text": "Few entrances into the Underworld exist, and one of them is through the Acheron, whose accursed waters bear the weight of all the woes of mortalkind."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "Melinoe_0858",
+          "speaker": "PlayerUnit",
+          "text": "If our foes can use this as an exit, so can I."
+        }
+      ],
+      "name": "Inspect_N_Opening01_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 801
+    },
+    "Inspect_N_Opening01_03": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0010",
+          "speaker": "Speaker_Homer",
+          "text": "The light of the Moon is all that now illuminates the surface, where the dead have risen, and Olympus teeters on the brink of doom."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "Melinoe_0035_B",
+          "speaker": "PlayerUnit",
+          "text": "Damn you, Chronos..."
+        }
+      ],
+      "name": "Inspect_N_Opening01_03",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathFalse:CurrentRun.ActiveBounty": [
+          {
+            "PathFalse": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:GameState.WorldUpgrades.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgrades",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 831
+    },
+    "Inspect_N_PostBoss01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0272",
+          "speaker": "Speaker_Homer",
+          "text": "Across a foul-smelling hovel crudely furnished with assorted fixtures of exaggerated proportion, and strewn with remains both fresh and long-decayed, comes a waft of sea-borne air..."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1957",
+          "speaker": "PlayerUnit",
+          "text": "I smell mostly the decay..."
+        }
+      ],
+      "name": "Inspect_N_PostBoss01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2691
+    },
+    "Inspect_N_PostBoss01_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0273",
+          "speaker": "Speaker_Homer",
+          "text": "Unfortunate livestock residing with the ravenous Cyclops seem to be unaware of the conditions under which they graze about and wander, not exactly lost; at least, not yet."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1958",
+          "speaker": "PlayerUnit",
+          "text": "The one they have to guide them is asleep..."
+        }
+      ],
+      "name": "Inspect_N_PostBoss01_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "Inspect_N_PostBoss01_01"
+        ]
+      },
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2721
+    },
+    "Inspect_N_PreBoss01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0155",
+          "speaker": "Speaker_Homer",
+          "text": "Doomed city at her back, the Princess of the Dead heads toward a dismal pasture, where she senses she is not exactly being watched."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1363",
+          "speaker": "PlayerUnit",
+          "text": "Polyphemus must already know I'm here..."
+        }
+      ],
+      "name": "Inspect_N_PreBoss01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.RoomCountCache.N_Boss01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "RoomCountCache",
+              "N_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2095
+    },
+    "Inspect_N_PreBoss01_02": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0269",
+          "speaker": "Speaker_Homer",
+          "text": "A lonesome, dusty path from the necropolis exhibits much of the decay within, yet provides comfort of a sort to all the many simple Shades nearby with nowhere left to go."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_1954",
+          "speaker": "PlayerUnit",
+          "text": "We'll find you a new home."
+        }
+      ],
+      "name": "Inspect_N_PreBoss01_02",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2124
+    },
+    "Inspect_N_PreBoss01_03": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0154",
+          "speaker": "Speaker_Homer",
+          "text": "Across the River Acheron, the Underworld Boatman travels between realms, through hidden borders, unseen as a shadow in the dark."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0484",
+          "speaker": "PlayerUnit",
+          "text": "Is there anywhere Lord Charon cannot row?"
+        },
+        {
+          "cue": "Charon_0051",
+          "speaker": "NPC_Charon_01",
+          "text": "Nrrgghhh..."
+        }
+      ],
+      "name": "Inspect_N_PreBoss01_03",
+      "otherRequirements": {
+        "FunctionName:RequiredAlive": [
+          {
+            "FunctionArgs": {
+              "Alive": true,
+              "Units": [
+                "NPC_Charon_01"
+              ]
+            },
+            "FunctionName": "RequiredAlive"
+          }
+        ],
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 2155
+    },
+    "Inspect_N_PreHub01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0151",
+          "speaker": "Speaker_Homer",
+          "text": "The city of Ephyra, which once stood in solemn tribute to the fear-inducing Underworld King and Queen, now barely stands at all."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0480",
+          "speaker": "PlayerUnit",
+          "text": "...Yet it stands in my way."
+        }
+      ],
+      "name": "Inspect_N_PreHub01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.WorldUpgradesAdded.WorldUpgradeSurfacePenaltyCure": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "WorldUpgradeSurfacePenaltyCure"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 905
+    },
+    "Inspect_N_Story_01_01": {
+      "dialogueLines": [
+        {
+          "cue": "Storyteller_0153",
+          "speaker": "Speaker_Homer",
+          "text": "In one forgotten recess of the fallen city, a solitary seeker of profane mysteries conducts her undertakings beneath a pale, distant Moon."
+        }
+      ],
+      "endLines": [
+        {
+          "cue": "MelinoeField_0483",
+          "speaker": "PlayerUnit",
+          "text": "I've learned a curse or two from this one..."
+        },
+        {
+          "cue": "Medea_0116",
+          "speaker": "NPC_Medea_01",
+          "text": "A pox upon our enemies."
+        }
+      ],
+      "name": "Inspect_N_Story_01_01",
+      "otherRequirements": {
+        "Path:GameState.CompletedRunsCache": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "CompletedRunsCache"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:UseRecord.InspectPoint": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "UseRecord",
+              "InspectPoint"
+            ],
+            "SumPrevRooms": 6,
+            "Value": 0
+          }
+        ],
+        "PathTrue:GameState.UseRecord.NPC_Medea_01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "UseRecord",
+              "NPC_Medea_01"
+            ]
+          }
+        ]
+      },
+      "owner": "Speaker_Homer",
+      "playOnce": true,
+      "requirements": {},
+      "section": "InteractTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "RoomDataN.lua",
+      "sourceLine": 3746
+    }
+  }
+}

@@ -1,0 +1,5605 @@
+{
+  "alternates": {
+    "ScyllaAboutDiving02": [
+      "ScyllaAboutDiving02_B"
+    ],
+    "ScyllaAboutDiving02_B": [
+      "ScyllaAboutDiving02"
+    ]
+  },
+  "dependents": {
+    "AphroditeAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "AphroditeAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ApolloAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "AresAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "AresAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ArtemisAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ArtemisAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "AthenaAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ChaosAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "CharonAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ChronosBossAboutScylla01": [
+      {
+        "name": "ScyllaAboutChronos02",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "ChronosBossAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ChronosMeetingAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "CirceAboutScylla01": [
+      {
+        "name": "ScyllaAboutCirce01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "CirceAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "CirceAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "DemeterAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "DemeterAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ErisBossAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ErisBossAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ErisBossAboutShrine03": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HecateBossAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HecateBossAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HecateBossAboutShrine03": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HecateBossAboutShrine04": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HecateBossKidnapped01": [
+      {
+        "name": "ScyllaAboutGrandeur01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "HephaestusAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HephaestusAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HeraAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HeraAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HermesAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HermesAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HermesAboutShrine03": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HestiaAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "HestiaAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "Inspect_G_PostBoss_02": [
+      {
+        "name": "ScyllaAboutGreenRoom01",
+        "orBranchIndex": 1,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      }
+    ],
+    "NarcissusAboutEcho01": [
+      {
+        "name": "ScyllaAboutNarcissus01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutEcho01B": [
+      {
+        "name": "ScyllaAboutNarcissus01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "NarcissusAboutSirens01": [
+      {
+        "name": "ScyllaAboutNarcissus01",
+        "type": "RequiredAnyTextLines"
+      }
+    ],
+    "OdysseusAboutReturn01": [
+      {
+        "name": "ScyllaAboutOdysseusQuest02",
+        "orBranchIndex": 2,
+        "orBranchTotal": 2,
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusAboutScylla02": [
+      {
+        "name": "ScyllaAboutOdysseus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusLooseEndsQuest02": [
+      {
+        "name": "ScyllaAboutOdysseusQuest01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "OdysseusLooseEndsQuestComplete01": [
+      {
+        "name": "ScyllaAboutOdysseusQuest02",
+        "orBranchIndex": 1,
+        "orBranchTotal": 2,
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "PolyphemusAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PolyphemusAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PolyphemusAboutShrine02_B": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PoseidonAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PoseidonAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "PoseidonGift01": [
+      {
+        "name": "ScyllaAboutPoseidon01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutAgents01": [
+      {
+        "name": "ScyllaAboutAgents01_2",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutAgents02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutAgents02": [
+      {
+        "name": "ScyllaAboutChronos01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutAgents01_2",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ScyllaAboutAltFight01": [
+      {
+        "name": "ScyllaAboutAltFight03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutSongs05",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutNarcissus01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutAltFight03": [
+      {
+        "name": "ScyllaAboutAltFight04",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutAltFight05",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutBallad01": [
+      {
+        "name": "ScyllaAboutSongs05",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutBallad02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutBallad02": [
+      {
+        "name": "ScyllaAboutBallad03",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutChlams01": [
+      {
+        "name": "ScyllaAboutChlams02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutChronos01": [
+      {
+        "name": "ScyllaAboutChronos02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutChronos02": [
+      {
+        "name": "ScyllaPostTrueEnding02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutDiving01": [
+      {
+        "name": "ScyllaAboutDiving02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutDiving02_B",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutDiving02": [
+      {
+        "name": "ScyllaAboutDiving02_B",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ScyllaAboutDiving02_B": [
+      {
+        "name": "ScyllaAboutDiving02",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ScyllaAboutGrandeur01": [
+      {
+        "name": "ScyllaLowHealth01",
+        "type": "RequiredFalseTextLines"
+      }
+    ],
+    "ScyllaAboutGreenRoom01": [
+      {
+        "name": "ScyllaAboutRumors01",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutOdysseusQuest01": [
+      {
+        "name": "ScyllaAboutOdysseus02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutOdysseusQuest02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ScyllaAboutSirens01": [
+      {
+        "name": "ScyllaAboutSlump01",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutSlump01",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ScyllaAboutSongs01": [
+      {
+        "name": "ScyllaAboutSongs02",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "ScyllaAboutSongs02": [
+      {
+        "name": "ScyllaAboutSongs03",
+        "type": "RequiredTextLines"
+      },
+      {
+        "name": "ScyllaAboutSongs03",
+        "type": "MinRunsSinceAnyTextLines"
+      }
+    ],
+    "ScyllaAboutSongs03": [
+      {
+        "name": "ScyllaAboutSongs04",
+        "type": "RequiredTextLines"
+      }
+    ],
+    "SeleneAboutPolyphemus02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "SeleneAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "SeleneAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "SeleneAboutShrine03": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ZeusAboutShrine01": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ZeusAboutShrine02": [
+      {
+        "name": "ScyllaAboutShrine01",
+        "type": "RequiredFalseTextLinesThisRun"
+      },
+      {
+        "name": "ScyllaAboutShrine02",
+        "type": "RequiredFalseTextLinesThisRun"
+      }
+    ],
+    "ZeusPostTrueEnding03": [
+      {
+        "name": "ScyllaPostTrueEnding02",
+        "type": "RequiredTextLines"
+      }
+    ]
+  },
+  "speakers": {
+    "AphroditeUpgrade": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "ApolloUpgrade": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "AresUpgrade": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "Chronos": {
+      "description": "Titan of Time",
+      "name": "Chronos (Boss)"
+    },
+    "DemeterUpgrade": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "Eris": {
+      "description": "Strife Incarnate",
+      "name": "Eris (Boss)"
+    },
+    "Hecate": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate (Boss)"
+    },
+    "HephaestusUpgrade": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "HeraUpgrade": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "HermesUpgrade": {
+      "description": "God of Swiftness",
+      "name": "Hermes"
+    },
+    "HestiaUpgrade": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "InfestedCerberus": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus (Boss)"
+    },
+    "NPC_Achilles_01": {
+      "description": "Forgotten Hero",
+      "name": "Achilles"
+    },
+    "NPC_Aphrodite_01": {
+      "description": "Goddess of Love",
+      "name": "Aphrodite"
+    },
+    "NPC_Apollo_01": {
+      "description": "God of Light",
+      "name": "Apollo"
+    },
+    "NPC_Apollo_Story_01": {
+      "description": "God of Light",
+      "name": "Apollo (Olympus)"
+    },
+    "NPC_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "NPC_Arachne_Home_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne (Crossroads)"
+    },
+    "NPC_Ares_01": {
+      "description": "God of War",
+      "name": "Ares"
+    },
+    "NPC_Artemis_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis"
+    },
+    "NPC_Artemis_Field_01": {
+      "description": "Goddess of the Hunt",
+      "name": "Artemis (Field)"
+    },
+    "NPC_Athena_01": {
+      "description": "Goddess of Wisdom",
+      "name": "Athena"
+    },
+    "NPC_Bouldy_01": {
+      "name": "Strange Rock"
+    },
+    "NPC_Cerberus_Field_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Cerberus_Story_01": {
+      "description": "Notorious Watchdog",
+      "name": "Cerberus"
+    },
+    "NPC_Chaos_01": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "NPC_Charon_01": {
+      "description": "Stygian Boatman",
+      "name": "Charon"
+    },
+    "NPC_Chronos_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "NPC_Chronos_Story_01": {
+      "description": "Titan of Time",
+      "name": "Chronos"
+    },
+    "NPC_Circe_01": {
+      "description": "Witch of Changing",
+      "name": "Circe"
+    },
+    "NPC_Cyclops_01": {
+      "description": "Infamous Cyclops",
+      "name": "Polyphemus"
+    },
+    "NPC_Cyclops_Unnamed_01": {
+      "description": "Cyclopean Shepherd",
+      "name": "? ? ? (Polyphemus)"
+    },
+    "NPC_Demeter_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter"
+    },
+    "NPC_Demeter_Story_01": {
+      "description": "Goddess of Seasons",
+      "name": "Demeter (Olympus)"
+    },
+    "NPC_Dionysus_01": {
+      "description": "God of Wine",
+      "name": "Dionysus"
+    },
+    "NPC_Dora_01": {
+      "description": "Listless Shade",
+      "name": "Dora"
+    },
+    "NPC_Dusa_01": {
+      "description": "Duty-Bound Gorgon",
+      "name": "Dusa"
+    },
+    "NPC_Echo_01": {
+      "description": "Dispirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Echo_02": {
+      "description": "Spirited Nymph",
+      "name": "Echo"
+    },
+    "NPC_Eris_01": {
+      "description": "Strife Incarnate",
+      "name": "Eris"
+    },
+    "NPC_Fates_01": {
+      "description": "Spinstress of Fate",
+      "name": "Clotho"
+    },
+    "NPC_Fates_02": {
+      "description": "Apportioner of Fate",
+      "name": "Lachesis"
+    },
+    "NPC_Fates_03": {
+      "description": "Cutter of Fate",
+      "name": "Atropos"
+    },
+    "NPC_Hades_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hades_02": {
+      "description": "God of the Dead",
+      "name": "Hades (House)"
+    },
+    "NPC_Hades_Field_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Hades_Story_01": {
+      "description": "Prisoner of Time",
+      "name": "Hades"
+    },
+    "NPC_Hecate_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hecate_Story_01": {
+      "description": "Witch of the Crossroads",
+      "name": "Hecate"
+    },
+    "NPC_Hephaestus_01": {
+      "description": "God of the Forge",
+      "name": "Hephaestus"
+    },
+    "NPC_Hera_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera"
+    },
+    "NPC_Hera_Story_01": {
+      "description": "Queen of the Olympians",
+      "name": "Hera (Olympus)"
+    },
+    "NPC_Heracles_01": {
+      "description": "Mightiest of Men",
+      "name": "Heracles"
+    },
+    "NPC_Hermes_01": {
+      "description": "God of Swiftness",
+      "name": "Hermes (Field)"
+    },
+    "NPC_Hestia_01": {
+      "description": "Goddess of the Hearth",
+      "name": "Hestia"
+    },
+    "NPC_Hypnos_01": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_02": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_03": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_04": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos"
+    },
+    "NPC_Hypnos_DreamRun": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Hypnos_DreamRun_Alt": {
+      "description": "Sleep Incarnate",
+      "name": "Hypnos (Dreaming)"
+    },
+    "NPC_Icarus_01": {
+      "description": "Free Spirit",
+      "name": "Icarus"
+    },
+    "NPC_LordHades_01": {
+      "description": "God of the Dead",
+      "name": "Hades"
+    },
+    "NPC_Medea_01": {
+      "description": "Witch of Shadows",
+      "name": "Medea"
+    },
+    "NPC_Megaera_01": {
+      "description": "First of the Furies",
+      "name": "Megaera"
+    },
+    "NPC_Melinoe_Story_01": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "NPC_Moros_01": {
+      "description": "Doom Incarnate",
+      "name": "Moros"
+    },
+    "NPC_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Narcissus_Field_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "NPC_Nemesis_01": {
+      "description": "Retribution Incarnate",
+      "name": "Nemesis"
+    },
+    "NPC_NyxVoice_01": {
+      "name": "Nyx?"
+    },
+    "NPC_Nyx_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Nyx_Story_01": {
+      "description": "Night Incarnate",
+      "name": "Nyx"
+    },
+    "NPC_Odysseus_01": {
+      "description": "Veteran Tactician",
+      "name": "Odysseus"
+    },
+    "NPC_Orpheus_01": {
+      "description": "Court Musician",
+      "name": "Orpheus"
+    },
+    "NPC_Persephone_01": {
+      "description": "Queen of the Underworld",
+      "name": "Persephone"
+    },
+    "NPC_Poseidon_01": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "NPC_Prometheus_01": {
+      "description": "Titan of Foresight",
+      "name": "Prometheus"
+    },
+    "NPC_Scylla_01": {
+      "description": "Scourge of the Seas",
+      "name": "Scylla"
+    },
+    "NPC_Scylla_Unnamed_01": {
+      "description": "Sea Monster",
+      "name": "? ? ? (Scylla)"
+    },
+    "NPC_Selene_01": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "NPC_Skelly_01": {
+      "description": "Training Master",
+      "name": "Schelemeus"
+    },
+    "NPC_Skelly_TrueMythologicalOrigin_01": {
+      "description": "Second Judge of the Dead",
+      "name": "Schelememnon"
+    },
+    "NPC_Thanatos_01": {
+      "description": "Death Incarnate",
+      "name": "Thanatos"
+    },
+    "NPC_Unnamed_01": {
+      "name": "? ? ?"
+    },
+    "NPC_Zagreus_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zagreus_Past_01": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus"
+    },
+    "NPC_Zeus_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    },
+    "NPC_Zeus_Story_01": {
+      "description": "King of the Olympians",
+      "name": "Zeus (Olympus)"
+    },
+    "PlayerUnit": {
+      "description": "Princess of the Underworld",
+      "name": "Melinoë"
+    },
+    "PlayerUnit_Flashback": {
+      "description": "Chthonic Nymph",
+      "name": "Melinoë"
+    },
+    "PoseidonUpgrade": {
+      "description": "God of the Sea",
+      "name": "Poseidon"
+    },
+    "Speaker_Anonymous": {
+      "name": "Anonymous"
+    },
+    "Speaker_Chronos_02": {
+      "description": "Father Time",
+      "name": "Chronos (Reformed)"
+    },
+    "Speaker_Homer": {
+      "name": "Homer"
+    },
+    "SpellDrop": {
+      "description": "Moon Incarnate",
+      "name": "Selene"
+    },
+    "Story_Arachne_01": {
+      "description": "Silk Weaver",
+      "name": "Arachne"
+    },
+    "Story_Narcissus_01": {
+      "description": "Beautiful Flower",
+      "name": "Narcissus"
+    },
+    "TrialUpgrade": {
+      "description": "Primordial Originator",
+      "name": "Chaos"
+    },
+    "TyphonHead": {
+      "description": "Titan of Time",
+      "name": "Chronos (Summit)"
+    },
+    "Zagreus": {
+      "description": "Prince of the Underworld",
+      "name": "Zagreus (Boss)"
+    },
+    "ZeusUpgrade": {
+      "description": "King of the Olympians",
+      "name": "Zeus"
+    }
+  },
+  "stats": {
+    "duplicates": [],
+    "totalEdges": 130,
+    "totalSpeakers": 1,
+    "totalTextlines": 110,
+    "unresolvedRefs": [
+      "AphroditeAboutShrine01",
+      "AphroditeAboutShrine02",
+      "ApolloAboutShrine01",
+      "AresAboutShrine01",
+      "AresAboutShrine02",
+      "ArtemisAboutShrine01",
+      "ArtemisAboutShrine02",
+      "AthenaAboutShrine01",
+      "ChaosAboutShrine01",
+      "CharonAboutShrine01",
+      "ChronosBossAboutScylla01",
+      "ChronosBossAboutShrine01",
+      "ChronosMeetingAboutShrine01",
+      "CirceAboutScylla01",
+      "CirceAboutShrine01",
+      "CirceAboutShrine02",
+      "DemeterAboutShrine01",
+      "DemeterAboutShrine02",
+      "ErisBossAboutShrine01",
+      "ErisBossAboutShrine02",
+      "ErisBossAboutShrine03",
+      "HecateBossAboutShrine01",
+      "HecateBossAboutShrine02",
+      "HecateBossAboutShrine03",
+      "HecateBossAboutShrine04",
+      "HecateBossKidnapped01",
+      "HephaestusAboutShrine01",
+      "HephaestusAboutShrine02",
+      "HeraAboutShrine01",
+      "HeraAboutShrine02",
+      "HermesAboutShrine01",
+      "HermesAboutShrine02",
+      "HermesAboutShrine03",
+      "HestiaAboutShrine01",
+      "HestiaAboutShrine02",
+      "Inspect_G_PostBoss_02",
+      "NarcissusAboutEcho01",
+      "NarcissusAboutEcho01B",
+      "NarcissusAboutSirens01",
+      "OdysseusAboutReturn01",
+      "OdysseusAboutScylla02",
+      "OdysseusLooseEndsQuest02",
+      "OdysseusLooseEndsQuestComplete01",
+      "PolyphemusAboutShrine01",
+      "PolyphemusAboutShrine02",
+      "PolyphemusAboutShrine02_B",
+      "PoseidonAboutShrine01",
+      "PoseidonAboutShrine02",
+      "PoseidonGift01",
+      "SeleneAboutPolyphemus02",
+      "SeleneAboutShrine01",
+      "SeleneAboutShrine02",
+      "SeleneAboutShrine03",
+      "ZeusAboutShrine01",
+      "ZeusAboutShrine02",
+      "ZeusPostTrueEnding03"
+    ]
+  },
+  "textlines": {
+    "ScyllaAboutAgents01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0193",
+          "speaker": "NPC_Scylla_01",
+          "text": "In my meeting with the gals the other night, we got to talking, I was talking mostly, but we started wondering what is your deal? Jetty thinks maybe you're an agent?"
+        },
+        {
+          "cue": "MelinoeField_2556",
+          "speaker": "PlayerUnit",
+          "text": "Jetty is rather perceptive, then... for I am indeed an agent of Night. This realm has fallen to the Titan; we shall see it restored to its rightful rule. No matter who gets in our way."
+        },
+        {
+          "cue": "Scylla_0194",
+          "speaker": "NPC_Scylla_01",
+          "text": "I can't believe it, Jetty, you were right? An agent on the hunt! Well your search is over, Agent Lady, because you won't find a bigger talent in the sea or out! Just watch!"
+        }
+      ],
+      "name": "ScyllaAboutAgents01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 27,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Scylla": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Scylla"
+            ],
+            "Value": 3
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ],
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ],
+        "PathTrue:GameState.EnemyKills.Chronos": [
+          {
+            "PathTrue": [
+              "GameState",
+              "EnemyKills",
+              "Chronos"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2260
+    },
+    "ScyllaAboutAgents01_2": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0336",
+          "speaker": "NPC_Scylla_01",
+          "text": "Agent Lady, welcome back! So who's this Night you're working for, and who else has she signed? She sounds intense."
+        },
+        {
+          "cue": "MelinoeField_3605",
+          "speaker": "PlayerUnit",
+          "text": "I spoke of the one and only Night, whose presence fills the Underworld and surface. She is one of the eldest primordial powers; yet the Titan Chronos thought he could stop her."
+        },
+        {
+          "cue": "Scylla_0337",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh, sounds like some healthy competition! Well, if this Night really wants us to sign with her, she'd better make a good offer! Else Mister Chronos might snatch up all the talent!"
+        }
+      ],
+      "name": "ScyllaAboutAgents01_2",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 24,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ScyllaAboutAgents02"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutAgents01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2297
+    },
+    "ScyllaAboutAgents02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0195",
+          "speaker": "NPC_Scylla_01",
+          "text": "You're not really an agent, are you, lady? Just pulling our fins, trying to get our hopes up, only to dash them against the rocks! How low can you sink?"
+        },
+        {
+          "cue": "MelinoeField_2557",
+          "speaker": "PlayerUnit",
+          "text": "Get your hopes up? Listen to me: I seek Chronos, not you. Perhaps you shall be hunted by some other agent, though."
+        },
+        {
+          "cue": "Scylla_0196",
+          "speaker": "NPC_Scylla_01",
+          "text": "You better believe it, gals! Even this lady knows a rising star when she sees one. When she hears one! And she's gonna put in a good word for us, won't she?"
+        }
+      ],
+      "name": "ScyllaAboutAgents02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutOdysseus01",
+        "ScyllaAboutNoShow01"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAgents01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2326
+    },
+    "ScyllaAboutAltFight01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0279",
+          "speaker": "NPC_Scylla_01",
+          "text": "Soak it up, lady! One of our proud sponsors made all our dreams come true: a brand-new stage, and... a collaboration with one of the biggest names this side of the sea!"
+        },
+        {
+          "cue": "MelinoeField_3538",
+          "speaker": "PlayerUnit",
+          "text": "Charybdis, here with you...? This is no sponsor's doing but the will of Night. As fear spreads, so do these manifestations of nightmares... my own apparently."
+        },
+        {
+          "cue": "Scylla_0280",
+          "speaker": "NPC_Scylla_01",
+          "text": "Bad-mouth our sponsor all you like, but they got taste, and you do not! We're debuting our latest single thanks to them, and there's nothing you can do to stop it...! At least not the first part."
+        }
+      ],
+      "name": "ScyllaAboutAltFight01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 1,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla3_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1012
+    },
+    "ScyllaAboutAltFight02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0282",
+          "speaker": "NPC_Scylla_01",
+          "text": "Come to heckle us some more, lady? Well it won't work! No matter what you do, this crowd thinks it's all part of the act. They're not just here for the music, but the full experience!"
+        },
+        {
+          "cue": "MelinoeField_3539",
+          "speaker": "PlayerUnit",
+          "text": "And watching you and your band get trounced repeatedly is the experience you're seeking to provide? You artists truly do make sacrifices for your craft."
+        },
+        {
+          "cue": "Scylla_0283",
+          "speaker": "NPC_Scylla_01",
+          "text": "That's right! I've given everything to reach this point in my career, to reach this very moment, on this very stage! And I'm prepared to give even more... what about you?!"
+        }
+      ],
+      "name": "ScyllaAboutAltFight02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight05"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1040
+    },
+    "ScyllaAboutAltFight03": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0284",
+          "speaker": "NPC_Scylla_01",
+          "text": "Back to our old and smaller stage as you can see, just for the night I'm sure! But our sponsor's going to come through! Put us back in the spotlight where we belong, hm! Eventually!"
+        },
+        {
+          "cue": "MelinoeField_3540",
+          "speaker": "PlayerUnit",
+          "text": "Who do you even think this mysterious sponsor is, setting the location for our clash and whether that horrid Charybdis makes a guest appearance?"
+        },
+        {
+          "cue": "Scylla_0285",
+          "speaker": "NPC_Scylla_01",
+          "text": "Nice try, lady. You can barge onto our stage, no matter the size... you can try and take our sense of style... even our fans! But you'll never take our sponsors!!"
+        }
+      ],
+      "name": "ScyllaAboutAltFight03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 12,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Scylla": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1066
+    },
+    "ScyllaAboutAltFight04": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0286",
+          "speaker": "NPC_Scylla_01",
+          "text": "Sometimes we like going back to this smaller venue for old time's sake! Lots of our fans want us sticking to our roots."
+        },
+        {
+          "cue": "MelinoeField_3541",
+          "speaker": "PlayerUnit",
+          "text": "So you comply with their every request? They don't sound much like fans if they're forcing their will upon you."
+        },
+        {
+          "cue": "Scylla_0287",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, spoken like somebody who never had any fans to satisfy. We're only here because our audience has come to love our songs. So it's a give-and-take sort of relationship: our music, sailors' lives! And yours!"
+        }
+      ],
+      "name": "ScyllaAboutAltFight04",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight08"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Scylla": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAltFight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1094
+    },
+    "ScyllaAboutAltFight05": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0288",
+          "speaker": "NPC_Scylla_01",
+          "text": "This is the big break we've been waiting for! I told the gals we'd be back in the spotlight on the big stage in no time. Oh, but the bigger we get... the more detractors we'll get..."
+        },
+        {
+          "cue": "MelinoeField_3542",
+          "speaker": "PlayerUnit",
+          "text": "And do you try to suffocate all your detractors as well as your fans, and if so, how will you keep accumulating more and more?"
+        },
+        {
+          "cue": "Scylla_0289",
+          "speaker": "NPC_Scylla_01",
+          "text": "Don't worry your pretty little head about that, lady! You've got bigger problems, like our special guest... who happens to be good at suffocating multiple detractors all at once."
+        }
+      ],
+      "name": "ScyllaAboutAltFight05",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight02"
+      ],
+      "narrativePriorityOrdinal": 31,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "PathFalse:GameState.LastBossDifficultyRecord.Scylla": [
+          {
+            "PathFalse": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAltFight03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1121
+    },
+    "ScyllaAboutAltFight06": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0290",
+          "speaker": "NPC_Scylla_01",
+          "text": "Big crowd here tonight, lady! Oh, we don't get turnouts like this every time, even if we really should! Though at our scale, we can't help but pick up some more-casual fans!"
+        },
+        {
+          "cue": "MelinoeField_3543",
+          "speaker": "PlayerUnit",
+          "text": "Not every Shade here in the Underworld can devote their every evening to attending your performances, Scylla. You don't even have that many songs."
+        },
+        {
+          "cue": "Scylla_0291",
+          "speaker": "NPC_Scylla_01",
+          "text": "How would you even know?! We like to play our greatest hits, but we got plenty more! Ones you haven't heard of, probably, since you're our most casual fan of all!"
+        }
+      ],
+      "name": "ScyllaAboutAltFight06",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight07"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1148
+    },
+    "ScyllaAboutAltFight07": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3544",
+          "speaker": "PlayerUnit",
+          "text": "So what's next for Scylla and the Sirens now that you've had your big break? An even bigger venue? Better songs?"
+        },
+        {
+          "cue": "Scylla_0292",
+          "speaker": "NPC_Scylla_01",
+          "text": "Even bigger venue, possibly! Even better songs, impossibly. Because our music is already the best! We could always make more if we really want, heh! Though right now, me and the gals want something more..."
+        }
+      ],
+      "name": "ScyllaAboutAltFight07",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight06"
+      ],
+      "narrativePriorityOrdinal": 32,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1172
+    },
+    "ScyllaAboutAltFight08": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0293",
+          "speaker": "NPC_Scylla_01",
+          "text": "Too bad Charybdis couldn't be here tonight, lady! Like she was supposed to. Probably back up on the surface, stuffing her face as usual!"
+        },
+        {
+          "cue": "MelinoeField_3545",
+          "speaker": "PlayerUnit",
+          "text": "I can see that. It must take a lot of sustenance to regenerate all those tentacles I've had to slice off."
+        },
+        {
+          "cue": "Scylla_0294",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well, the show must go on! We're playing Rock and a Hard Place, with or without our special guest! And our small but dedicated audience is gonna eat it up!"
+        }
+      ],
+      "name": "ScyllaAboutAltFight08",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAltFight04"
+      ],
+      "narrativePriorityOrdinal": 29,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla3_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ],
+        "PathTrue:GameState.LastBossDifficultyRecord.Scylla": [
+          {
+            "PathTrue": [
+              "GameState",
+              "LastBossDifficultyRecord",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1190
+    },
+    "ScyllaAboutAmbitions01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0008",
+          "speaker": "NPC_Scylla_01",
+          "text": "I knew it! She's come back! You ready for another show, lady? We've been rehearsing our material, practicing nonstop, because one day? I'm gonna be a star! Oh, me and the gals!"
+        },
+        {
+          "cue": "Melinoe_1042",
+          "speaker": "PlayerUnit",
+          "text": "What do your musical ambitions have to do with unprovoked acts of violence against me?"
+        },
+        {
+          "cue": "Scylla_0009",
+          "speaker": "NPC_Scylla_01",
+          "text": "She's just heckling us, gals, ignore her, and take it from the top, two, three, four...!"
+        }
+      ],
+      "name": "ScyllaAboutAmbitions01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 8,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1218
+    },
+    "ScyllaAboutAmbitions02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0010",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, always wanted to sing in front of a great big crowd, you know? And not just a bunch of crusty sailors, but like, one of those gigantic theaters they got up on land!"
+        },
+        {
+          "cue": "Melinoe_1828",
+          "speaker": "PlayerUnit",
+          "text": "Not my area of expertise. Do performances in these theaters typically involve attempts to drown the members of the audience?"
+        },
+        {
+          "cue": "Scylla_0011",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, yeah... and mortals show up to them in massive droves, kicking and screaming, just to get a glimpse, heh! Yet you get a show all to yourself!"
+        }
+      ],
+      "name": "ScyllaAboutAmbitions02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutSirens01",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutNarcissus01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1235
+    },
+    "ScyllaAboutBallad01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4308",
+          "speaker": "PlayerUnit",
+          "text": "Was that a new song I heard on my way in? Something about treasures glimmering. Another one about the sea!"
+        },
+        {
+          "cue": "Scylla_0436",
+          "speaker": "NPC_Scylla_01",
+          "text": "You could have said Scylla, I don't know anything about themes, so I just can't appreciate the depth of your work! But yeah, it is a new song! And only the first part."
+        },
+        {
+          "cue": "MelinoeField_4309",
+          "speaker": "PlayerUnit",
+          "text": "I suppose the second part is imminent. You make your performances unnecessarily difficult by fighting me, but that's a choice you keep on making."
+        },
+        {
+          "cue": "Scylla_0437",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well we have to drown someone! And sailors have gotten too easy, lady. You'll never be an artist if you don't push harder, and harder, and harder...!"
+        }
+      ],
+      "name": "ScyllaAboutBallad01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 4,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla4_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1513
+    },
+    "ScyllaAboutBallad02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0439",
+          "speaker": "NPC_Scylla_01",
+          "text": "What'd you think of our latest number, lady? Critics say Bewitching Eyes reveals a soulful, more vulnerable side of Scylla and the Sirens. But what do they know?"
+        },
+        {
+          "cue": "MelinoeField_4311",
+          "speaker": "PlayerUnit",
+          "text": "I couldn't make out all the lyrics while fighting back you lot, but you sang of red and green bewitching eyes and love potions and such. Is this truly how you feel about me?"
+        },
+        {
+          "cue": "Scylla_0440",
+          "speaker": "NPC_Scylla_01",
+          "text": "Pff, no! Why would I feel any of those things, especially about you, lady? It's called a fictionalized work? And besides, Jetty mostly wrote that one."
+        }
+      ],
+      "name": "ScyllaAboutBallad02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 11,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutBallad01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1545
+    },
+    "ScyllaAboutBallad03": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4312",
+          "speaker": "PlayerUnit",
+          "text": "You truly expect me to believe that neither I Am Gonna Claw nor Bewitching Eyes concern our meetings? Though if you're drawn to me, you have an odd way of showing it."
+        },
+        {
+          "cue": "Scylla_0441",
+          "speaker": "NPC_Scylla_01",
+          "text": "No way! You're the one who always shows up here, lady. You are obviously drawn to me! Or one or more of us. Jetty knows it, Roxy knows it, everyone in Oceanus knows it!"
+        },
+        {
+          "cue": "MelinoeField_4313",
+          "speaker": "PlayerUnit",
+          "text": "Oh come on, Scylla. I'll admit I don't dislike your songs as much as I previously let on, but that's as far as I'll go."
+        },
+        {
+          "cue": "Scylla_0442",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aw, you hear that, gals? That's as far as she'll go! I told you. Now either she gets off this stage, or we do!"
+        }
+      ],
+      "name": "ScyllaAboutBallad03",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 26,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla2_MC",
+              "/Music/IrisMusicScylla4_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutBallad02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1572
+    },
+    "ScyllaAboutCharybdis01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0203",
+          "speaker": "NPC_Scylla_01",
+          "text": "We used to play the surface, you know! That's when we really started to hit it big! Even had Charybdis open for us a few times, can you imagine?"
+        },
+        {
+          "cue": "MelinoeField_2561",
+          "speaker": "PlayerUnit",
+          "text": "So what? Charybdis opened for me just the other night. I practically couldn't get it to shut up!"
+        },
+        {
+          "cue": "Scylla_0204",
+          "speaker": "NPC_Scylla_01",
+          "text": "Like I believe that! Though I bet you are from up there, aren't you? You think you're underground, like us, but you'll always be mainstream!"
+        }
+      ],
+      "name": "ScyllaAboutCharybdis01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutDying01",
+        "ScyllaAboutThessaly01",
+        "ScyllaAboutMerch01",
+        "ScyllaAboutShrineBounty02",
+        "ScyllaAboutGreenRoom01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ],
+        "PathTrue:PrevRun.RoomsEntered.O_MiniBoss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "O_MiniBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2082
+    },
+    "ScyllaAboutCharybdis02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3598",
+          "speaker": "PlayerUnit",
+          "text": "Sharing the spotlight seems unlike you, Scylla. How will you make a name for yourself if you keep collaborating with a bigger performer like Charybdis? "
+        },
+        {
+          "cue": "Scylla_0328",
+          "speaker": "NPC_Scylla_01",
+          "text": "Charybdis has the bigger mouth all right, but we got a pretty different act. Sailors often can't decide which of us they like more, so... we figured: Why not let them have both?"
+        },
+        {
+          "cue": "MelinoeField_3599",
+          "speaker": "PlayerUnit",
+          "text": "This also doesn't strike me as the simplest creative partnership. Yet you're working together, to please your audience, or simply to stop me. I'm almost impressed."
+        },
+        {
+          "cue": "Scylla_0329",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, words we very often hear, yet always mean so much! Especially from our harshest detractors! Won't stop us from trying to drown you like always, lady... but thanks."
+        }
+      ],
+      "name": "ScyllaAboutCharybdis02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCurse01",
+        "ScyllaAboutCirce01"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2110
+    },
+    "ScyllaAboutChlams01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0018",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh hey gals, guess who?! It's the one that got away, that's who! Mm, something you ought to know about me, lady... is once I catch 'em... I never let 'em go."
+        },
+        {
+          "cue": "Melinoe_2037",
+          "speaker": "PlayerUnit",
+          "text": "That comes as no surprise to me at all. Some sea creatures are famously clingy. Barnacles, chlams..."
+        },
+        {
+          "cue": "Scylla_0019",
+          "speaker": "NPC_Scylla_01",
+          "text": "I am not a chlam!! You take that back. I'll make you take that back!"
+        }
+      ],
+      "name": "ScyllaAboutChlams01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutSurvey01",
+        "ScyllaAboutSongs05"
+      ],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1633
+    },
+    "ScyllaAboutChlams02": {
+      "dialogueLines": [
+        {
+          "cue": "Melinoe_2038",
+          "speaker": "PlayerUnit",
+          "text": "Now, see here! I'd no intention to offend last time, and never said you were a chlam. The least you could do is base your anger in reality."
+        },
+        {
+          "cue": "Scylla_0020",
+          "speaker": "NPC_Scylla_01",
+          "text": "Would you listen to that, gals, she's still talking about chlams! Poking fun at my little shell here, huh, hm-hm! Well, let's show her how we deal with hecklers 'round these parts!"
+        }
+      ],
+      "name": "ScyllaAboutChlams02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 3,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutChlams01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1650
+    },
+    "ScyllaAboutChronos01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0197",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well, if it isn't the little name-dropper! Off to see your good friend Mister Chronos again, hm? He loves our act! You'll drown before you take his sponsorship away from us!"
+        },
+        {
+          "cue": "MelinoeField_2558",
+          "speaker": "PlayerUnit",
+          "text": "Oh I'm not after any sponsorships from him. And we're not friends. We merely have some business to resolve... which you continue to impede night after night."
+        },
+        {
+          "cue": "Scylla_0198",
+          "speaker": "NPC_Scylla_01",
+          "text": "Business? With him? Then you must be somebody's kid, no way you'd have connections like that on your own! You know, some of us had to earn our spotlight, lady!"
+        }
+      ],
+      "name": "ScyllaAboutChronos01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChronos02",
+        "ScyllaAboutSongs03",
+        "ScyllaAboutSongs04"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAgents02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1975
+    },
+    "ScyllaAboutChronos02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0199",
+          "speaker": "NPC_Scylla_01",
+          "text": "Gonna level with you, lady. We can't have you bugging Mister Chronos every night! He doesn't pay much attention to our venue here, and we want to keep it that way."
+        },
+        {
+          "cue": "MelinoeField_2559",
+          "speaker": "PlayerUnit",
+          "text": "I don't think Chronos is concerned with you at all. So maybe back off, focus on your songwriting, instead of trying to asphyxiate me constantly?"
+        },
+        {
+          "cue": "Scylla_0200",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh she just doesn't get it, gals! But don't worry. They're never gonna shut us down, not while we keep on drawing crowds like this! It's good publicity!"
+        }
+      ],
+      "name": "ScyllaAboutChronos02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChronos01",
+        "ScyllaAboutSongs03",
+        "ScyllaAboutSongs04"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:PrevRun.RoomsEntered.I_Boss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "I_Boss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "ChronosBossAboutScylla01"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutChronos01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1998
+    },
+    "ScyllaAboutCirce01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3592",
+          "speaker": "PlayerUnit",
+          "text": "Are you familiar with the enchantress Circe? She mentioned that she knew you in her youth... though, I'm uncertain if you were on friendly terms."
+        },
+        {
+          "cue": "Scylla_0317",
+          "speaker": "NPC_Scylla_01",
+          "text": "The enchantress Circe, no that doesn't ring a bell! The only Circe I knew was the talentless pathetic little runt of the litter of Helios himself! What has this other Circe got to say?"
+        },
+        {
+          "cue": "MelinoeField_3593",
+          "speaker": "PlayerUnit",
+          "text": "She gave me the impression you were always rather boisterous, even back then. Perhaps already practicing the kinds of songs you think shall bring you fame."
+        },
+        {
+          "cue": "Scylla_0318",
+          "speaker": "NPC_Scylla_01",
+          "text": "It's no secret I always knew what I wanted to be, lady. Always knew what I was meant to be! Circe and so many others... all they ever did was get in my way! Same as you."
+        }
+      ],
+      "name": "ScyllaAboutCirce01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCurse01",
+        "ScyllaAboutCharybdis02"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "CirceAboutScylla01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1945
+    },
+    "ScyllaAboutComeback01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0026",
+          "speaker": "NPC_Scylla_01",
+          "text": "Hohh, surprised to see us again, lady? Heh, 'cause we're not going anywhere. This is our big comeback tour, after all!"
+        },
+        {
+          "cue": "Melinoe_2042",
+          "speaker": "PlayerUnit",
+          "text": "I thought I dealt with you last time, yet here you are. Am I going to have to drive you back into the sea?"
+        },
+        {
+          "cue": "Scylla_0027",
+          "speaker": "NPC_Scylla_01",
+          "text": "I don't know, am I going to have to tell Jetty and Roxy to play their hearts out? No, I'm not! 'Cause that's just what they do! Don't you, gals?"
+        }
+      ],
+      "name": "ScyllaAboutComeback01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 17,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:PrevRun.RoomsEntered.G_PostBoss01": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "G_PostBoss01"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1671
+    },
+    "ScyllaAboutCurse01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3590",
+          "speaker": "PlayerUnit",
+          "text": "If I may ask, who made you this way, Scylla? Because my understanding is that you weren't always, well... the way you are."
+        },
+        {
+          "cue": "Scylla_0315",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh-hoh, I'm entirely self-made, thank you, lady! You think I'm going to attribute all my talent to somebody else? A wizened songmaster who taught me all I know?"
+        },
+        {
+          "cue": "MelinoeField_3591",
+          "speaker": "PlayerUnit",
+          "text": "Your musical talents being innate doesn't surprise me; I'm asking how did you become a sea-monster. Weren't you the victim of a curse?"
+        },
+        {
+          "cue": "Scylla_0316",
+          "speaker": "NPC_Scylla_01",
+          "text": "Hah! Oh, something you wouldn't understand is, the more famous you get, the more they're going to say about ya! Because they're jealous! I let all of it roll off my shell. No good artist lets a random lie or insult get to them!"
+        }
+      ],
+      "name": "ScyllaAboutCurse01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCirce01",
+        "ScyllaAboutCharybdis02"
+      ],
+      "narrativePriorityOrdinal": 34,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:GameState.CodexEntriesViewed.Scylla": [
+          {
+            "PathTrue": [
+              "GameState",
+              "CodexEntriesViewed",
+              "Scylla"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1914
+    },
+    "ScyllaAboutDiving01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0330",
+          "speaker": "NPC_Scylla_01",
+          "text": "You better work with us tonight, lady! There's a potential sponsor somewhere in the stands so we have got to put on a big show! Bigger than when you beat us normally."
+        },
+        {
+          "cue": "MelinoeField_3600",
+          "speaker": "PlayerUnit",
+          "text": "I'm not here to contribute to your misguided attempts to earn stardom, or sponsorships for that matter. You truly thought I'd let you beat me just because you asked?"
+        },
+        {
+          "cue": "Scylla_0331",
+          "speaker": "NPC_Scylla_01",
+          "text": "I truly thought that you might have a shred of decency! Look, we are gonna start our song now, as we try to drown you, so just think about letting me and the gals have this one!"
+        }
+      ],
+      "name": "ScyllaAboutDiving01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutRumors01"
+      ],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ],
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "G_Boss01",
+                "G_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2641
+    },
+    "ScyllaAboutDiving02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3601",
+          "speaker": "PlayerUnit",
+          "text": "So did you get the sponsorship the other night? I still feel ashamed for losing to you last time simply because you asked somewhat nicely. There had better be some upside."
+        },
+        {
+          "cue": "Scylla_0332",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh-hoo-hoo, we got our sponsorship all right, hmhm...! At least, we will eventually. Apparently our sponsor showed up just to see us take a dive! Since you've been messing up our shows night after night!"
+        },
+        {
+          "cue": "MelinoeField_3602",
+          "speaker": "PlayerUnit",
+          "text": "You're saying I let you beat me for absolutely no reason?"
+        },
+        {
+          "cue": "Scylla_0333",
+          "speaker": "NPC_Scylla_01",
+          "text": "You didn't let us beat you, you just lost! You're getting soft and easier to drown. You don't have what it takes to succeed in this business! But we do."
+        }
+      ],
+      "name": "ScyllaAboutDiving02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 9,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ScyllaAboutDiving02_B"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutDiving01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2670
+    },
+    "ScyllaAboutDiving02_B": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_3603",
+          "speaker": "PlayerUnit",
+          "text": "So did you end up getting the sponsorship the other night? If your benefactor is interested in supporting you, they may as well know of your propensity to lose to me."
+        },
+        {
+          "cue": "Scylla_0334",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh we got our sponsorship all right! Our sponsor showed up just to see us take a dive, since you've been messing up our shows night after night. And they loved what they saw!"
+        },
+        {
+          "cue": "MelinoeField_3604",
+          "speaker": "PlayerUnit",
+          "text": "But you had asked me to hold back; to let you win. Your sponsor wanted you to lose?"
+        },
+        {
+          "cue": "Scylla_0335",
+          "speaker": "NPC_Scylla_01",
+          "text": "Our sponsor wanted an authentic performance, and that's exactly what we delivered! What we're always going to deliver from now on! So do your worst, lady."
+        }
+      ],
+      "name": "ScyllaAboutDiving02_B",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 10,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ScyllaAboutDiving02"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutDiving01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2706
+    },
+    "ScyllaAboutDying01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0140",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh, you keep trying to kill me, lady! The former Sea-Nymph side of me says just forget it and move on! But, I don't like to listen to her anymore."
+        },
+        {
+          "cue": "MelinoeField_2018",
+          "speaker": "PlayerUnit",
+          "text": "That you don't listen to yourself explains a lot. I know better than to try and kill an Oceanid. I just need you to get out of my way."
+        },
+        {
+          "cue": "Scylla_0141",
+          "speaker": "NPC_Scylla_01",
+          "text": "Hear that gals? I distinctly heard the lady say I need you there, hoho! Our art changes lives! What say we change this one right now...?"
+        }
+      ],
+      "name": "ScyllaAboutDying01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCharybdis01",
+        "ScyllaAboutThessaly01",
+        "ScyllaAboutMerch01",
+        "ScyllaAboutShrineBounty02",
+        "ScyllaAboutGreenRoom01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.EnemyKills.Scylla": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "EnemyKills",
+              "Scylla"
+            ],
+            "Value": 3
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1694
+    },
+    "ScyllaAboutGrandeur01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0028_B",
+          "speaker": "NPC_Scylla_01",
+          "text": "Don't worry, gals. One day? They'll put us up on the biggest stage, for all the world to see!"
+        },
+        {
+          "cue": "MelinoeField_5280",
+          "speaker": "PlayerUnit",
+          "text": "Scylla, I do not have time or patience for your delusions of grandeur right now, so why not start your little song?"
+        },
+        {
+          "cue": "Scylla_0029",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, it may be a little song to you now, lady. But it's going to be huge someday. You'll see. We'll show her, won't we, gals?"
+        }
+      ],
+      "name": "ScyllaAboutGrandeur01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 5,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathFalse:GameState.ReachedTrueEnding": [
+          {
+            "PathFalse": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "HecateBossKidnapped01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2872
+    },
+    "ScyllaAboutGreenRoom01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0189",
+          "speaker": "NPC_Scylla_01",
+          "text": "See anything you like in our greenroom down there, hm? Maybe you didn't notice the sign but that's our private little area where fans are not supposed to go!"
+        },
+        {
+          "cue": "MelinoeField_2554",
+          "speaker": "PlayerUnit",
+          "text": "Your so-called greenroom happens to be built atop a drain that spills into the Mourning Fields below. You could always flush your sorry work down there, where it'll fit right in."
+        },
+        {
+          "cue": "Scylla_0190",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh, you went looking through our work! So what if a few ideas go unused here and there? If you don't cut... you never get to the good stuff."
+        }
+      ],
+      "name": "ScyllaAboutGreenRoom01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCharybdis01",
+        "ScyllaAboutDying01",
+        "ScyllaAboutThessaly01",
+        "ScyllaAboutMerch01",
+        "ScyllaAboutShrineBounty02"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "orBranches": [
+        {
+          "requirements": {
+            "RequiredTextLines": [
+              "Inspect_G_PostBoss_02"
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:GameState.RoomsEntered.G_PostBoss01": [
+              {
+                "Comparison": ">=",
+                "Path": [
+                  "GameState",
+                  "RoomsEntered",
+                  "G_PostBoss01"
+                ],
+                "Value": 5
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2134
+    },
+    "ScyllaAboutMerch01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0307",
+          "speaker": "NPC_Scylla_01",
+          "text": "The gals and I decided recently, we need a product line! Authentic tokens of our breathtaking performances our fans can purchase for a reasonable price after the show! But we can't sell them with you getting in our way."
+        },
+        {
+          "cue": "MelinoeField_3586",
+          "speaker": "PlayerUnit",
+          "text": "You're the ones getting in my way! I never chose to have these fights! What do I care if you sell wall-scrolls and such to audience members who have resources to spare?"
+        },
+        {
+          "cue": "Scylla_0308",
+          "speaker": "NPC_Scylla_01",
+          "text": "How did you know that we offer wall-scrolls? Oh, hohohoh! You probably already got some of our merchandise and want it all to yourself! Well, if you want special treatment, come get it!"
+        }
+      ],
+      "name": "ScyllaAboutMerch01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCharybdis01",
+        "ScyllaAboutDying01",
+        "ScyllaAboutThessaly01",
+        "ScyllaAboutShrineBounty02",
+        "ScyllaAboutGreenRoom01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:GameState.WorldUpgradesAdded.Cosmetic_FanPoster01": [
+          {
+            "PathTrue": [
+              "GameState",
+              "WorldUpgradesAdded",
+              "Cosmetic_FanPoster01"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2490
+    },
+    "ScyllaAboutNarcissus01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0338",
+          "speaker": "NPC_Scylla_01",
+          "text": "By now, every single soul in Oceanus knows our name, lady! Especially mine! For all your efforts to defame us, all you've accomplished is the opposite!"
+        },
+        {
+          "cue": "MelinoeField_3606",
+          "speaker": "PlayerUnit",
+          "text": "At the risk of arguing over a technicality, I've met at least one soul in Oceanus who couldn't care less about your act. He'd much rather stare into a shallow pool than listen to you."
+        },
+        {
+          "cue": "Scylla_0339",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well, we can't please everyone, can we? We'd be giving up all our integrity if we even tried... something you wouldn't know the first thing about!"
+        }
+      ],
+      "name": "ScyllaAboutNarcissus01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutSirens01",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredAnyTextLines": [
+          "NarcissusAboutSirens01",
+          "NarcissusAboutEcho01",
+          "NarcissusAboutEcho01B"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutAltFight01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2028
+    },
+    "ScyllaAboutNoShow01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0305",
+          "speaker": "NPC_Scylla_01",
+          "text": "It's been so nice without you recently, lady! We've been playing our full set list night after night, no technical difficulties! Even had more and more sailors dropping in!"
+        },
+        {
+          "cue": "MelinoeField_3585",
+          "speaker": "PlayerUnit",
+          "text": "Those sailors dropping in are probably the Titan's naval forces I've been vanquishing throughout the Rift of Thessaly above. I think I recognize a few out in the stands."
+        },
+        {
+          "cue": "Scylla_0306",
+          "speaker": "NPC_Scylla_01",
+          "text": "You expect me to believe you've been promoting our events? We're getting lots of word-of-mouth lately, sure, but you've had nothing to do with it! Except by going away!"
+        }
+      ],
+      "name": "ScyllaAboutNoShow01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAgents02",
+        "ScyllaAboutOdysseus01"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:BiomesReached.N": [
+          {
+            "Comparison": ">=",
+            "CountPathTrue": true,
+            "IgnoreCurrentRun": true,
+            "Path": [
+              "BiomesReached",
+              "N"
+            ],
+            "SumPrevRuns": 5,
+            "Value": 4
+          }
+        ],
+        "Path:GameState.RoomsEntered.G_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "G_PostBoss01"
+            ],
+            "Value": 10
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.O_Intro": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "O_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2454
+    },
+    "ScyllaAboutOdysseus01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0024",
+          "speaker": "NPC_Scylla_01",
+          "text": "So tell me, lady, how is it that you seem to know our tricks? Other than the part where we keep playing the same act. Usually it slays!"
+        },
+        {
+          "cue": "Melinoe_2041",
+          "speaker": "PlayerUnit",
+          "text": "The Great Tactician Odysseus says hello. Told me all about you. You claim you never let anybody get away, though I understand all but six of his hapless men got well away from you."
+        },
+        {
+          "cue": "Scylla_0025",
+          "speaker": "NPC_Scylla_01",
+          "text": "Odysseus, hah! Oh, he's still on the hook! Big fish like that just takes a while to reel in, as he might say. Our song must still be bouncing around in his pretty little head! And now for yours..."
+        }
+      ],
+      "name": "ScyllaAboutOdysseus01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAgents02",
+        "ScyllaAboutNoShow01"
+      ],
+      "narrativePriorityOrdinal": 25,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "OdysseusAboutScylla02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1744
+    },
+    "ScyllaAboutOdysseus02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0303",
+          "speaker": "NPC_Scylla_01",
+          "text": "We know how come you keep on showing up here, don't we, lady? You're like Odysseus and all the rest! Though... what was with that Princess of the Underworld stuff he was going on about?"
+        },
+        {
+          "cue": "MelinoeField_3584",
+          "speaker": "PlayerUnit",
+          "text": "Nothing that you need concern yourself with at this point. So you think I keep returning because I love your music? Why wouldn't I just listen to it then, instead of fighting you?"
+        },
+        {
+          "cue": "Scylla_0304",
+          "speaker": "NPC_Scylla_01",
+          "text": "Live music is an interactive experience. You don't just sit back and hear it! You immerse yourself in it... soak it in, ahaha! And you've been doing that more than just about anyone."
+        }
+      ],
+      "name": "ScyllaAboutOdysseus02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 15,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutOdysseusQuest01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1767
+    },
+    "ScyllaAboutOdysseusQuest01": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4354",
+          "speaker": "PlayerUnit",
+          "text": "Scylla, would you mind if I put you in touch with a mutual acquaintance? It'll only be a moment. Heed now my voice, Odysseus; one whom you sought is here!"
+        },
+        {
+          "cue": "Scylla_0296",
+          "speaker": "NPC_Scylla_01",
+          "text": "I knew you'd come back, sailor. Once they hear our song, they always do! Unless they drown, and sometimes even after that. Ah, just had to get another listen, huh?"
+        },
+        {
+          "cue": "Odysseus_0567",
+          "speaker": "NPC_Odysseus_01",
+          "text": "Aye, Scylla, you and your Siren song left quite an impression on me in my mortal days! And I no longer wish to keep pretending otherwise."
+        },
+        {
+          "cue": "Scylla_0297",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, well if you want an earful, suit yourself! Nothing we'd rather do than please our longtime fans. I think some of your old crew's already in the crowd! The ones I took."
+        },
+        {
+          "cue": "Odysseus_0568",
+          "speaker": "NPC_Odysseus_01",
+          "text": "We had no choice but to sail past you, and good men gave their lives. But now the Princess of the Underworld shall give them all a show to remember!"
+        },
+        {
+          "cue": "Scylla_0298",
+          "speaker": "NPC_Scylla_01",
+          "text": "Princess of the Underworld... this lady? Hah! You always were the scheming sort and haven't changed a bit. Well then listen up, all of you..."
+        }
+      ],
+      "name": "ScyllaAboutOdysseusQuest01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 2,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "OdysseusLooseEndsQuest02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1791
+    },
+    "ScyllaAboutOdysseusQuest02": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_4355",
+          "speaker": "PlayerUnit",
+          "text": "I think a certain sailor would like another quick word! Heed now my voice, Odysseus; one whom you sought is here!"
+        },
+        {
+          "cue": "Scylla_0301",
+          "speaker": "NPC_Scylla_01",
+          "text": "How was our show for you last time, Odysseus, as good as you recall? It must have been if you're back here again. Not that you had much choice in the matter!"
+        },
+        {
+          "cue": "Odysseus_0569",
+          "speaker": "NPC_Odysseus_01",
+          "text": "I'm here because the Princess of the Underworld summoned me, Scylla. Though getting to hear your song again is a nice benefit. It's not my wish to delay your production so I'll be somewhere in the audience, all right?"
+        },
+        {
+          "cue": "Scylla_0302",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh you go right ahead, heh. We don't want everybody barging up on stage! Not with this Princess of the Underworld already soaking up all the spotlight!"
+        }
+      ],
+      "name": "ScyllaAboutOdysseusQuest02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 6,
+      "narrativePrioritySectionSize": 41,
+      "orBranches": [
+        {
+          "requirements": {
+            "RequiredFalseTextLines": [
+              "OdysseusLooseEndsQuestComplete01"
+            ]
+          }
+        },
+        {
+          "requirements": {
+            "RequiredTextLines": [
+              "OdysseusAboutReturn01"
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "StandardPackageBountyActive"
+        ],
+        "Path:CurrentRun.Hero.TraitDictionary": [
+          {
+            "HasAny": [
+              "BossPreDamageKeepsake"
+            ],
+            "Path": [
+              "CurrentRun",
+              "Hero",
+              "TraitDictionary"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutOdysseusQuest01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1850
+    },
+    "ScyllaAboutPackagedBounties01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0209",
+          "speaker": "NPC_Scylla_01",
+          "text": "Look who got here way too early for tonight's show! Doors weren't meant to open yet, lady! Not that you care about this venue's very reasonable code of conduct."
+        },
+        {
+          "cue": "MelinoeField_2718",
+          "speaker": "PlayerUnit",
+          "text": "Oh I'm familiar with the venue at this point. And if you aren't ready to perform yet, great! I don't really want to hear it from you anyway."
+        },
+        {
+          "cue": "Scylla_0210",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well, too bad! Because even though you're way too early, you are just in time for the private pre-show concert that was just about to start!"
+        }
+      ],
+      "name": "ScyllaAboutPackagedBounties01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 19,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:CurrentRun.ActiveBounty": [
+          {
+            "IsNone": [
+              "PackageBountyRandomUnderworld_Difficulty1",
+              "PackageBountyRandomUnderworld_Difficulty2",
+              "PackageBountyRandomSurface_Difficulty1",
+              "PackageBountyRandomSurface_Difficulty2"
+            ],
+            "Path": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ],
+        "PathTrue:CurrentRun.ActiveBounty": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "ActiveBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1722
+    },
+    "ScyllaAboutPoseidon01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0340",
+          "speaker": "NPC_Scylla_01",
+          "text": "There's a lot to like about this part of Oceanus, don't you think? The acoustics are the perfect blend of land and sea... and that Poseidon has no control over any of it!"
+        },
+        {
+          "cue": "MelinoeField_3607",
+          "speaker": "PlayerUnit",
+          "text": "You're taking advantage of this place being past the border of the realm beneath the Earth. I don't think Lord Poseidon would appreciate that, should you ever return to his waters."
+        },
+        {
+          "cue": "Scylla_0341",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh, if we ever go back to his waters, we'll be so big that he wouldn't dare mess with us! He or any of the gods! Wherever we go, we're gonna be the main attraction."
+        }
+      ],
+      "name": "ScyllaAboutPoseidon01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutSirens01",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutNarcissus01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:CurrentRun.UseRecord.PoseidonUpgrade": [
+          {
+            "PathTrue": [
+              "CurrentRun",
+              "UseRecord",
+              "PoseidonUpgrade"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "PoseidonGift01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2056
+    },
+    "ScyllaAboutReputation01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0012",
+          "speaker": "NPC_Scylla_01",
+          "text": "They say... our songs are to die for, but lately we don't get a lot of company. Oh, you wouldn't know anything about that, right? Because somebody's been smearing our good name..."
+        },
+        {
+          "cue": "Melinoe_1043",
+          "speaker": "PlayerUnit",
+          "text": "Your reputation is yours to build or ruin. Doubt anyone I know has even heard of you, besides."
+        },
+        {
+          "cue": "Scylla_0013",
+          "speaker": "NPC_Scylla_01",
+          "text": "Come on, gals! Let's go all out again before the crowd shows up! They're going to show up! I just know it!"
+        }
+      ],
+      "name": "ScyllaAboutReputation01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutSirens01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutNarcissus01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1318
+    },
+    "ScyllaAboutRumors01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0434",
+          "speaker": "NPC_Scylla_01",
+          "text": "Go on and heckle us, lady! We're big, we've got thick scales! Scylla's got a voice like yelping dogs! Her lustrous hair looks like a bunch of snakey heads! We've heard it all!"
+        },
+        {
+          "cue": "MelinoeField_4307",
+          "speaker": "PlayerUnit",
+          "text": "I wasn't going to say any of those things, which strike me as bizarre. Perhaps if you didn't antagonize your audience so much, they'd be more charitable."
+        },
+        {
+          "cue": "Scylla_0435",
+          "speaker": "NPC_Scylla_01",
+          "text": "Their words roll right off our backs! At least mine. I only care about their cheers and their screams... which all start to sound the same after a while..."
+        }
+      ],
+      "name": "ScyllaAboutRumors01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutDiving01"
+      ],
+      "narrativePriorityOrdinal": 37,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 2,
+              "Names": [
+                "G_Boss01",
+                "G_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutGreenRoom01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2168
+    },
+    "ScyllaAboutSayingLittle01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0445",
+          "speaker": "NPC_Scylla_01",
+          "text": "Stop! Don't say anything, lady, it's impolite to talk during the show in case you hadn't noticed! I'm through listening to you anyway! But definitely not the other way around."
+        }
+      ],
+      "name": "ScyllaAboutSayingLittle01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 41,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2941
+    },
+    "ScyllaAboutShrine01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0311",
+          "speaker": "NPC_Scylla_01",
+          "text": "This is gonna be our night! Can't you just feel it, gals? Don't know about you all but I am feeling even more unstoppable than normal! Ohh, and just in time..."
+        },
+        {
+          "cue": "MelinoeField_3588",
+          "speaker": "PlayerUnit",
+          "text": "Oh you're still stoppable, although the will of Night has made you stronger, yes. Shall we find out to what extent?"
+        },
+        {
+          "cue": "Scylla_0312",
+          "speaker": "NPC_Scylla_01",
+          "text": "Stoppable? Ahaha. Us? You don't get it, lady. We've never missed a single show, and we are not about to start! Oh, of course with live performances, there's no telling what might happen..."
+        }
+      ],
+      "name": "ScyllaAboutShrine01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutShrine02"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirementSources": {
+        "RequiredFalseTextLinesThisRun": [
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents"
+        ]
+      },
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "HecateBossAboutShrine01",
+          "HecateBossAboutShrine02",
+          "HecateBossAboutShrine03",
+          "HecateBossAboutShrine04",
+          "ScyllaAboutShrine01",
+          "CharonAboutShrine01",
+          "ArtemisAboutShrine01",
+          "ArtemisAboutShrine02",
+          "SeleneAboutShrine01",
+          "SeleneAboutShrine02",
+          "SeleneAboutShrine03",
+          "SeleneAboutPolyphemus02",
+          "ZeusAboutShrine01",
+          "ZeusAboutShrine02",
+          "PoseidonAboutShrine01",
+          "PoseidonAboutShrine02",
+          "HeraAboutShrine01",
+          "HeraAboutShrine02",
+          "DemeterAboutShrine01",
+          "DemeterAboutShrine02",
+          "ApolloAboutShrine01",
+          "AphroditeAboutShrine01",
+          "AphroditeAboutShrine02",
+          "HephaestusAboutShrine01",
+          "HephaestusAboutShrine02",
+          "HestiaAboutShrine01",
+          "HestiaAboutShrine02",
+          "AresAboutShrine01",
+          "AresAboutShrine02",
+          "AthenaAboutShrine01",
+          "CirceAboutShrine01",
+          "CirceAboutShrine02",
+          "ChaosAboutShrine01",
+          "HermesAboutShrine01",
+          "HermesAboutShrine02",
+          "HermesAboutShrine03",
+          "ChronosMeetingAboutShrine01",
+          "ChronosBossAboutShrine01",
+          "PolyphemusAboutShrine01",
+          "PolyphemusAboutShrine02",
+          "PolyphemusAboutShrine02_B",
+          "ErisBossAboutShrine01",
+          "ErisBossAboutShrine02",
+          "ErisBossAboutShrine03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2515
+    },
+    "ScyllaAboutShrine02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0313",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh! So glad you just decided to show up, lady, because you're really in for it tonight! We're fresh from rehearsing our best moves and can't wait to try them in concert...!"
+        },
+        {
+          "cue": "MelinoeField_3589",
+          "speaker": "PlayerUnit",
+          "text": "Go on and do it, then. Though I already know all the ways in which you're going to be stronger than you used to be."
+        },
+        {
+          "cue": "Scylla_0314",
+          "speaker": "NPC_Scylla_01",
+          "text": "You're just saying that to try and hurt us before we hurt you! An artist's job is to enthrall her audience... and we can't do that just by doing things the same old way, can we?"
+        }
+      ],
+      "name": "ScyllaAboutShrine02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutShrine01"
+      ],
+      "narrativePriorityOrdinal": 35,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.SpentShrinePointsCache": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "SpentShrinePointsCache"
+            ],
+            "Value": 16
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirementSources": {
+        "RequiredFalseTextLinesThisRun": [
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents",
+          "GameData.AboutShrineEvents"
+        ]
+      },
+      "requirements": {
+        "RequiredFalseTextLinesThisRun": [
+          "HecateBossAboutShrine01",
+          "HecateBossAboutShrine02",
+          "HecateBossAboutShrine03",
+          "HecateBossAboutShrine04",
+          "ScyllaAboutShrine01",
+          "CharonAboutShrine01",
+          "ArtemisAboutShrine01",
+          "ArtemisAboutShrine02",
+          "SeleneAboutShrine01",
+          "SeleneAboutShrine02",
+          "SeleneAboutShrine03",
+          "SeleneAboutPolyphemus02",
+          "ZeusAboutShrine01",
+          "ZeusAboutShrine02",
+          "PoseidonAboutShrine01",
+          "PoseidonAboutShrine02",
+          "HeraAboutShrine01",
+          "HeraAboutShrine02",
+          "DemeterAboutShrine01",
+          "DemeterAboutShrine02",
+          "ApolloAboutShrine01",
+          "AphroditeAboutShrine01",
+          "AphroditeAboutShrine02",
+          "HephaestusAboutShrine01",
+          "HephaestusAboutShrine02",
+          "HestiaAboutShrine01",
+          "HestiaAboutShrine02",
+          "AresAboutShrine01",
+          "AresAboutShrine02",
+          "AthenaAboutShrine01",
+          "CirceAboutShrine01",
+          "CirceAboutShrine02",
+          "ChaosAboutShrine01",
+          "HermesAboutShrine01",
+          "HermesAboutShrine02",
+          "HermesAboutShrine03",
+          "ChronosMeetingAboutShrine01",
+          "ChronosBossAboutShrine01",
+          "PolyphemusAboutShrine01",
+          "PolyphemusAboutShrine02",
+          "PolyphemusAboutShrine02_B",
+          "ErisBossAboutShrine01",
+          "ErisBossAboutShrine02",
+          "ErisBossAboutShrine03"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutShrine01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2545
+    },
+    "ScyllaAboutShrineBounty01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0319",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aww, lookit gals, our number one obsessive fan, come to ruin our show for everybody else! One day, we'll get our own big security team to take care of little incidents like this."
+        },
+        {
+          "cue": "MelinoeField_3594",
+          "speaker": "PlayerUnit",
+          "text": "I've little choice but to ruin your shows since you refuse to let me by... though this time at least I'm here for you, Scylla. The will of Night demands it."
+        },
+        {
+          "cue": "Scylla_0320",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh well that figures. Can't make it big without making some enemies! Well, our audience likes our shows no matter what happens. Like real fans! So do your worst, lady."
+        }
+      ],
+      "name": "ScyllaAboutShrineBounty01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 18,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.ActiveShrineBounty": [
+          {
+            "IsAny": [
+              "BountyDaggerHeat1GBoss",
+              "BountyStaffHeat2GBoss",
+              "BountySuitHeat4GBoss",
+              "BountyLobHeat8GBoss",
+              "BountyTorchHeat12GBoss",
+              "BountyAxeHeat16GBoss",
+              "BountyShrineStaffGBoss",
+              "BountyShrineDaggerGBoss",
+              "BountyShrineTorchGBoss",
+              "BountyShrineAxeGBoss",
+              "BountyShrineLobGBoss",
+              "BountyShrineSuitGBoss"
+            ],
+            "Path": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2579
+    },
+    "ScyllaAboutShrineBounty02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0321",
+          "speaker": "NPC_Scylla_01",
+          "text": "Whew, got a good feeling about this evening's show, how about you gals? The crowd is all worked up! And look who else...!"
+        },
+        {
+          "cue": "MelinoeField_3595",
+          "speaker": "PlayerUnit",
+          "text": "You likely sense the Testament of Night; those who threaten the Underworld are to be cast into obscurity. Such is law."
+        },
+        {
+          "cue": "Scylla_0322",
+          "speaker": "NPC_Scylla_01",
+          "text": "Obscurity? We've never been bigger! And our stars are rising with each and every performance. And we're about to make this one to remember!"
+        }
+      ],
+      "name": "ScyllaAboutShrineBounty02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCharybdis01",
+        "ScyllaAboutDying01",
+        "ScyllaAboutThessaly01",
+        "ScyllaAboutMerch01",
+        "ScyllaAboutGreenRoom01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:GameState.ActiveShrineBounty": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ActiveShrineBounty"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2617
+    },
+    "ScyllaAboutSirens01": {
+      "dialogueLines": [
+        {
+          "cue": "Melinoe_1830",
+          "speaker": "PlayerUnit",
+          "text": "You know, I thought the Sirens were supposed to be the singing ones. But it's always you flapping your gills at me, Scylla..."
+        },
+        {
+          "cue": "Scylla_0023",
+          "speaker": "NPC_Scylla_01",
+          "text": "Don't listen to her, gals! Your backup vocals are the backbone of this act! I've got the voice, you've got the music, we've got the magick! Let's give her a little taste, huh?"
+        }
+      ],
+      "name": "ScyllaAboutSirens01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutNarcissus01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1253
+    },
+    "ScyllaAboutSirens02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0213",
+          "speaker": "NPC_Scylla_01",
+          "text": "We have our ups and downs, Jetty and Roxy and me. Our little squabbles! But thanks to you, we started fighting with each other in public! And we can't have that."
+        },
+        {
+          "cue": "MelinoeField_2720",
+          "speaker": "PlayerUnit",
+          "text": "If it makes you feel any better, the hex I put on them was only temporary. Quite frankly I'm surprised it worked on them at all! Night Bloom normally only works on the dead."
+        },
+        {
+          "cue": "Scylla_0214",
+          "speaker": "NPC_Scylla_01",
+          "text": "This is my band. And if anybody's gonna turn Jetty and Roxy red with rage against each other, it's not going to be you! Right, gals?"
+        }
+      ],
+      "name": "ScyllaAboutSirens02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 21,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.SpeechRecord": [
+          {
+            "HasAny": [
+              "/VO/Scylla_0242",
+              "/VO/Scylla_0243",
+              "/VO/Scylla_0244",
+              "/VO/Scylla_0245",
+              "/VO/Scylla_0246",
+              "/VO/Scylla_0247",
+              "/VO/Scylla_0248",
+              "/VO/Scylla_0249"
+            ],
+            "Path": [
+              "GameState",
+              "SpeechRecord"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.EnemyKills.Scylla": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "EnemyKills",
+              "Scylla"
+            ]
+          }
+        ],
+        "PathTrue:PrevRun.TraitCache.SpellSummonTrait": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "TraitCache",
+              "SpellSummonTrait"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1268
+    },
+    "ScyllaAboutSlump01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0191",
+          "speaker": "NPC_Scylla_01",
+          "text": "Roxy, and Jetty, and I... we've been through bigger slumps than this, lady. It's gonna take more than your heckling to tear us apart!"
+        },
+        {
+          "cue": "MelinoeField_2555",
+          "speaker": "PlayerUnit",
+          "text": "I don't know why I bother with you, Scylla. Or why Roxy and Jetty do! You've yet to let either one of them speak."
+        },
+        {
+          "cue": "Scylla_0192",
+          "speaker": "NPC_Scylla_01",
+          "text": "They speak through their work! Besides I'm not just lead singer, I'm in charge of the talent! And the gals aren't taking interviews right now, especially from the likes of you!"
+        }
+      ],
+      "name": "ScyllaAboutSlump01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutSirens01",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutStage01",
+        "ScyllaAboutNarcissus01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 3,
+              "Names": [
+                "G_Boss01",
+                "G_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ],
+        "MinRunsSinceAnyTextLines": {
+          "Count": 2
+        },
+        "Path:GameState.RoomsEntered.G_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "G_PostBoss01"
+            ],
+            "Value": 6
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ScyllaAboutSirens01"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutSirens01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2224
+    },
+    "ScyllaAboutSongVolume01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0211",
+          "speaker": "NPC_Scylla_01",
+          "text": "I don't know what you did, lady, but lately, I can barely hear myself think... much less sing! I hate you, you witch! You better make it right!"
+        },
+        {
+          "cue": "MelinoeField_2719",
+          "speaker": "PlayerUnit",
+          "text": "Or else what? I'll use what tactics I see fit. Not having to listen to you spout your nonsense makes it easier to send you back to the depths for the night."
+        },
+        {
+          "cue": "Scylla_0212",
+          "speaker": "NPC_Scylla_01",
+          "text": "You know you like our song. Can't live without it! And I will not be silenced! No matter what you do, I'll always be singing in my head, and yours!"
+        }
+      ],
+      "name": "ScyllaAboutSongVolume01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 20,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:ConfigOptionCache.MusicVolume": [
+          {
+            "Comparison": "<",
+            "Path": [
+              "ConfigOptionCache",
+              "MusicVolume"
+            ],
+            "Value": 0.05
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1608
+    },
+    "ScyllaAboutSongs01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0014",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh, good, you're just in time for our set! Been working on a song called I Am Gonna Claw (Out Your Eyes then Drown You to Death), heh! Comes from a real personal place."
+        },
+        {
+          "cue": "Melinoe_1829",
+          "speaker": "PlayerUnit",
+          "text": "Is it any better than the one I heard on my way in?"
+        },
+        {
+          "cue": "Scylla_0015",
+          "speaker": "NPC_Scylla_01",
+          "text": "No, it's not! Because all our songs are the best, heh! Each like a perfect little child! Not a bad one, like you..."
+        }
+      ],
+      "name": "ScyllaAboutSongs01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 16,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla2_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1352
+    },
+    "ScyllaAboutSongs02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0138",
+          "speaker": "NPC_Scylla_01",
+          "text": "How did you like our latest song, lady? Be honest! There's no right or wrong answer, OK? We thrive on feedback from our fans!"
+        },
+        {
+          "cue": "MelinoeField_2017",
+          "speaker": "PlayerUnit",
+          "text": "If you seek feedback from your fans, ask them. As for me, I felt the chorus was catchy enough, but the lyrics and their disturbing themes were rather distracting."
+        },
+        {
+          "cue": "Scylla_0139",
+          "speaker": "NPC_Scylla_01",
+          "text": "Disturbing? Distracting?! Compelling! That's what good music is. That's what Scylla and the Sirens are! As for our song, hee! You'll understand it better if you give it another listen..."
+        }
+      ],
+      "name": "ScyllaAboutSongs02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 13,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla1_MC",
+              "/Music/IrisMusicScylla2_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutSongs01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1376
+    },
+    "ScyllaAboutSongs03": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_2564",
+          "speaker": "PlayerUnit",
+          "text": "Scylla, I've noticed your song I Am Gonna Claw may be inspired by true events. Is trying to drown me not sufficiently entertaining that I must also be the subject of your ridicule?"
+        },
+        {
+          "cue": "Scylla_0207",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, hoho how can you be so egotistical even? I had that song worked out since way before you showed up. Any and all similarity is entirely coincidence!"
+        },
+        {
+          "cue": "MelinoeField_2565",
+          "speaker": "PlayerUnit",
+          "text": "Come on. Insulting my hair and attire? Making claims that I'm obsessed with you? But if I'm not the subject of the song, who was, pray tell?"
+        },
+        {
+          "cue": "Scylla_0208",
+          "speaker": "NPC_Scylla_01",
+          "text": "No need to get personal, lady! If I go sharing every detail of my private life with every deranged fan who barges in here, then it wouldn't be a private life, would it?"
+        }
+      ],
+      "name": "ScyllaAboutSongs03",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChronos01",
+        "ScyllaAboutChronos02",
+        "ScyllaAboutSongs04"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "MinRunsSinceAnyTextLines": {
+          "Count": 3
+        },
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla2_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ],
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.RoomsEntered.G_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "G_PostBoss01"
+            ],
+            "Value": 5
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "MinRunsSinceAnyTextLines": [
+          "ScyllaAboutSongs02"
+        ],
+        "RequiredTextLines": [
+          "ScyllaAboutSongs02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1404
+    },
+    "ScyllaAboutSongs04": {
+      "dialogueLines": [
+        {
+          "cue": "MelinoeField_2562",
+          "speaker": "PlayerUnit",
+          "text": "Don't you have any new material yet, Scylla? You'd likely garner a much bigger audience if you had a few more songs."
+        },
+        {
+          "cue": "Scylla_0205",
+          "speaker": "NPC_Scylla_01",
+          "text": "Shut up! We have more songs than you can count! You're just not ready for them yet. Nobody is! Perfection takes time, lady."
+        },
+        {
+          "cue": "MelinoeField_2563",
+          "speaker": "PlayerUnit",
+          "text": "But, perfection is always out of reach... if you keep pursuing it, you'll never get there. You must have a work-in-progress you could play instead of the same old stuff."
+        },
+        {
+          "cue": "Scylla_0206",
+          "speaker": "NPC_Scylla_01",
+          "text": "The same old stuff...? Did you just hear that, gals? I think she meant to say your greatest hits, or your all-time classics, didn't she? Heh! You just don't get it, lady. We're here to please!"
+        }
+      ],
+      "name": "ScyllaAboutSongs04",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChronos01",
+        "ScyllaAboutChronos02",
+        "ScyllaAboutSongs03"
+      ],
+      "narrativePriorityOrdinal": 28,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ],
+        "Path:GameState.RoomsEntered.G_PostBoss01": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered",
+              "G_PostBoss01"
+            ],
+            "Value": 10
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutSongs03"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1450
+    },
+    "ScyllaAboutSongs05": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0309",
+          "speaker": "NPC_Scylla_01",
+          "text": "So, what's your favorite of our latest songs, lady? We've got something for just about everybody now! Even you."
+        },
+        {
+          "cue": "MelinoeField_3587",
+          "speaker": "PlayerUnit",
+          "text": "Oh, I'm reluctant to choose. I think all these clashes with you lot must have had a significant impact on my ability to appreciate your music on its own merits."
+        },
+        {
+          "cue": "Scylla_0310",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aw, that's too bad! If you can't appreciate art for its own sake and need to hold those of us who make it to outlandish standards, then what are you even doing?!"
+        }
+      ],
+      "name": "ScyllaAboutSongs05",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChlams01",
+        "ScyllaAboutSurvey01"
+      ],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ScyllaAboutAltFight01",
+          "ScyllaAboutBallad01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1488
+    },
+    "ScyllaAboutStage01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0016",
+          "speaker": "NPC_Scylla_01",
+          "text": "Just can't get enough of us, can you, lady? Oh, it's OK, happens to everybody, especially sailors, we're just that good! Do you sail?"
+        },
+        {
+          "cue": "Melinoe_2040",
+          "speaker": "PlayerUnit",
+          "text": "Your self-confidence is enviable, but I'm only here because I have to get past this ridiculous stage. So why don't we skip the show."
+        },
+        {
+          "cue": "Scylla_0017",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh I got a better idea: Why don't we start the show? All we needed was a little audience, and we've got you right where we want you."
+        }
+      ],
+      "name": "ScyllaAboutStage01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutAmbitions02",
+        "ScyllaAboutSirens01",
+        "ScyllaAboutReputation01",
+        "ScyllaAboutSlump01",
+        "ScyllaAboutNarcissus01",
+        "ScyllaAboutPoseidon01"
+      ],
+      "narrativePriorityOrdinal": 38,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1301
+    },
+    "ScyllaAboutSurvey01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0021",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh hey, as one of our fans, what would you say is the best thing about Scylla and the Sirens, hm? Our latest hit song? Our impeccable style?"
+        },
+        {
+          "cue": "Melinoe_2039",
+          "speaker": "PlayerUnit",
+          "text": "Your sense of style isn't really to my taste, that I can say for certain."
+        },
+        {
+          "cue": "Scylla_0022",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aw, that's OK! Not everybody's got good taste. At least you're strong enough to admit it, though we're going to get you for that insult, anyway."
+        }
+      ],
+      "name": "ScyllaAboutSurvey01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutChlams01",
+        "ScyllaAboutSongs05"
+      ],
+      "narrativePriorityOrdinal": 40,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 1334
+    },
+    "ScyllaAboutThessaly01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0201",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh, it's only you! Not just another one of those sailors we've been seeing more and more of lately here. Look at this crowd! We've been causing a real stir!"
+        },
+        {
+          "cue": "MelinoeField_2560",
+          "speaker": "PlayerUnit",
+          "text": "Perhaps those sailors are just remnants of the sunken fleet that Chronos sends against the gods. I've had my scuffles with them recently."
+        },
+        {
+          "cue": "Scylla_0202",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh no, I don't think so, lady. Our fame is due to good old fashioned word-of-mouth! And there is nothing you can do to stop it now!"
+        }
+      ],
+      "name": "ScyllaAboutThessaly01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaAboutCharybdis01",
+        "ScyllaAboutDying01",
+        "ScyllaAboutMerch01",
+        "ScyllaAboutShrineBounty02",
+        "ScyllaAboutGreenRoom01"
+      ],
+      "narrativePriorityOrdinal": 30,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "Path:GameState.RoomsEntered": [
+          {
+            "Comparison": ">=",
+            "Path": [
+              "GameState",
+              "RoomsEntered"
+            ],
+            "SumOf": [
+              "O_Boss01",
+              "O_Boss02"
+            ],
+            "Value": 2
+          }
+        ],
+        "PathTrue:PrevRun.RoomsEntered.O_Intro": [
+          {
+            "PathTrue": [
+              "PrevRun",
+              "RoomsEntered",
+              "O_Intro"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2195
+    },
+    "ScyllaFirstMeeting": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0002",
+          "speaker": "NPC_Scylla_Unnamed_01",
+          "text": "Ohh, hohoho, no way! No way. Lookit, gals, a lady! Ladies never come to see our shows, you must be different, what's your name? Oh, make yourself comfy, we're just about to start, aren't we, gals?"
+        },
+        {
+          "cue": "Melinoe_0498",
+          "speaker": "PlayerUnit",
+          "text": "...Sirens. I should have known you were the source of all that singing. Slinked down into the Underworld, have you?"
+        },
+        {
+          "cue": "Scylla_0003",
+          "speaker": "NPC_Scylla_01",
+          "text": "It's the perfect pressure down here! Beats the pressure trying to make art while all our fans are watching, begging, Scylla, where's your next song?!"
+        },
+        {
+          "cue": "Melinoe_0499",
+          "speaker": "PlayerUnit",
+          "text": "Don't you drown your so-called fans to death? Have you even got any left?"
+        },
+        {
+          "cue": "Scylla_0004",
+          "speaker": "NPC_Scylla_01",
+          "text": "Don't ever say such things about our fans! Oh hey gals...? What say we give her the old song and dance?"
+        }
+      ],
+      "name": "ScyllaFirstMeeting",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 7,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 984
+    },
+    "ScyllaLowHealth01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0028",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh no, you're bleeding. Trouble finding the place? Don't worry, gals. One day? They'll put us up on the biggest stage, for all the world to see!"
+        },
+        {
+          "cue": "Melinoe_2043",
+          "speaker": "PlayerUnit",
+          "text": "I'm not particularly interested in listening to your delusions of grandeur right now, so why not start your little song."
+        },
+        {
+          "cue": "Scylla_0029",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh, it may be a little song to you now, lady. But it's going to be huge someday. You'll see. We'll show her, won't we, gals?"
+        }
+      ],
+      "name": "ScyllaLowHealth01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaLowHealth02"
+      ],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ],
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredFalseTextLines": [
+          "ScyllaAboutGrandeur01"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2350
+    },
+    "ScyllaLowHealth02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0030",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh you know, this is a reputable venue, lady, and we do impose a dress code at the door, hm-hm! Oh, but you come barging in, looking like hell."
+        },
+        {
+          "cue": "Melinoe_2044",
+          "speaker": "PlayerUnit",
+          "text": "You sea-dwellers are not so welcoming to strangers in your habitat. Thus I'm a bit unkempt. And a bit low on patience..."
+        },
+        {
+          "cue": "Scylla_0031",
+          "speaker": "NPC_Scylla_01",
+          "text": "Got that old sinking feeling, huh? Then let's not keep her waiting any longer, gals! Hit it!"
+        }
+      ],
+      "name": "ScyllaLowHealth02",
+      "narrativePriorityClusterMembers": [
+        "ScyllaLowHealth01"
+      ],
+      "narrativePriorityOrdinal": 22,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2378
+    },
+    "ScyllaLowHealth03": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0032",
+          "speaker": "NPC_Scylla_01",
+          "text": "The sea can be a dangerous place if you don't know your way around, lady! Ohoho! Though it looks like you figured that out all on your own!"
+        },
+        {
+          "cue": "Melinoe_2045",
+          "speaker": "PlayerUnit",
+          "text": "Everything is damp, and reeks to the heavens. And now I'm forced to listen to your snide remarks. And your insufferable song, I suppose?"
+        },
+        {
+          "cue": "Scylla_0033",
+          "speaker": "NPC_Scylla_01",
+          "text": "You're damn right! And we'll keep playing our song until it's pitch perfect. It's a work in progress. So don't hold your breath..."
+        }
+      ],
+      "name": "ScyllaLowHealth03",
+      "narrativePriorityClusterMembers": [
+        "ScyllaLowHealth04"
+      ],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.66
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2400
+    },
+    "ScyllaLowHealth04": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0034",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aw lookit, gals, she's hurt! She's already hurt real bad. Maybe we could ease her passing with a little music, huh?"
+        },
+        {
+          "cue": "Melinoe_2046",
+          "speaker": "PlayerUnit",
+          "text": "I assure you any pain I'm experiencing is nothing compared with the pain I'll inflict on you if you continue to cross me."
+        },
+        {
+          "cue": "Scylla_0035",
+          "speaker": "NPC_Scylla_01",
+          "text": "Still got some fight left in you, huh? Well good, 'cause we just hate a passive audience! Come on, get in the pit, lady! The show's about to start!"
+        }
+      ],
+      "name": "ScyllaLowHealth04",
+      "narrativePriorityClusterMembers": [
+        "ScyllaLowHealth03"
+      ],
+      "narrativePriorityOrdinal": 36,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "FunctionName:RequiredHealthFraction": [
+          {
+            "FunctionArgs": {
+              "Comparison": "<=",
+              "Value": 0.33
+            },
+            "FunctionName": "RequiredHealthFraction"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2423
+    },
+    "ScyllaMiscStart01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0036",
+          "speaker": "NPC_Scylla_01",
+          "text": "Lookit, gals! We've got ourselves a crowd! Oh, let's knock \n'em dead, what do you say?"
+        }
+      ],
+      "name": "ScyllaMiscStart01",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2960
+    },
+    "ScyllaMiscStart02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0037",
+          "speaker": "NPC_Scylla_01",
+          "text": "All right. All right, gals, this is it, this is the big one! Our big break. Right here!!"
+        }
+      ],
+      "name": "ScyllaMiscStart02",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2969
+    },
+    "ScyllaMiscStart03": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0038",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh, hey lady! We've been practicing! You want to hear our latest jam?"
+        }
+      ],
+      "name": "ScyllaMiscStart03",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2977
+    },
+    "ScyllaMiscStart04": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0039",
+          "speaker": "NPC_Scylla_01",
+          "text": "You love a good show, don't you, lady? And we love to satisfy our fans! Don't we, gals?"
+        }
+      ],
+      "name": "ScyllaMiscStart04",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2985
+    },
+    "ScyllaMiscStart05": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0040",
+          "speaker": "NPC_Scylla_01",
+          "text": "That's the power of our songs, gals! Once they hear 'em, they can't tear themselves away...!"
+        }
+      ],
+      "name": "ScyllaMiscStart05",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2993
+    },
+    "ScyllaMiscStart06": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0041",
+          "speaker": "NPC_Scylla_01",
+          "text": "You just don't know when to quit, lady. Us neither! Hit it, gals!"
+        }
+      ],
+      "name": "ScyllaMiscStart06",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3001
+    },
+    "ScyllaMiscStart07": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0042",
+          "speaker": "NPC_Scylla_01",
+          "text": "See, gals? Oh, if it really wasn't working, she wouldn't keep coming back, would she?"
+        }
+      ],
+      "name": "ScyllaMiscStart07",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3009
+    },
+    "ScyllaMiscStart08": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0043",
+          "speaker": "NPC_Scylla_01",
+          "text": "We're still practicing our latest number, lady! So you're just in time."
+        }
+      ],
+      "name": "ScyllaMiscStart08",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3017
+    },
+    "ScyllaMiscStart09": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0044",
+          "speaker": "NPC_Scylla_01",
+          "text": "Come make sweet music with us, lady! Sure beats whatever it is you do."
+        }
+      ],
+      "name": "ScyllaMiscStart09",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3025
+    },
+    "ScyllaMiscStart10": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0045",
+          "speaker": "NPC_Scylla_01",
+          "text": "You should hear some of our classic numbers, haha! Oh but first: our latest hit..."
+        }
+      ],
+      "name": "ScyllaMiscStart10",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3034
+    },
+    "ScyllaMiscStart11": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0046",
+          "speaker": "NPC_Scylla_01",
+          "text": "Mm, don't normally play private events... but for you, lady? We'll do anything..."
+        }
+      ],
+      "name": "ScyllaMiscStart11",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3042
+    },
+    "ScyllaMiscStart12": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0047",
+          "speaker": "NPC_Scylla_01",
+          "text": "We'd like to dedicate this next song to all our fans! Especially you, lady."
+        }
+      ],
+      "name": "ScyllaMiscStart12",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3050
+    },
+    "ScyllaMiscStart13": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0048",
+          "speaker": "NPC_Scylla_01",
+          "text": "Now, lady, let the music fill your soul, and the brine fill your lungs!"
+        }
+      ],
+      "name": "ScyllaMiscStart13",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3059
+    },
+    "ScyllaMiscStart14": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0049",
+          "speaker": "NPC_Scylla_01",
+          "text": "I'd like to introduce Jetty on strings, and Roxy on percussion. Ready, gals?"
+        }
+      ],
+      "name": "ScyllaMiscStart14",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3067
+    },
+    "ScyllaMiscStart15": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0050",
+          "speaker": "NPC_Scylla_01",
+          "text": "Hello, Oceanus!! Oh, how's everybody doing tonight? You ready for a show?"
+        }
+      ],
+      "name": "ScyllaMiscStart15",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3075
+    },
+    "ScyllaMiscStart16": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0051",
+          "speaker": "NPC_Scylla_01",
+          "text": "We love our fans! They just keep coming back, no matter what!"
+        }
+      ],
+      "name": "ScyllaMiscStart16",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3084
+    },
+    "ScyllaMiscStart17": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0052",
+          "speaker": "NPC_Scylla_01",
+          "text": "You got something to say, lady, you save it till after the show..."
+        }
+      ],
+      "name": "ScyllaMiscStart17",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3092
+    },
+    "ScyllaMiscStart18": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0053",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh don't take this personally, lady, but... we kinda got to drown our fans..."
+        }
+      ],
+      "name": "ScyllaMiscStart18",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3100
+    },
+    "ScyllaMiscStart19": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0054",
+          "speaker": "NPC_Scylla_01",
+          "text": "I'd love to drag you to the bottom of the sea... but we're already here."
+        }
+      ],
+      "name": "ScyllaMiscStart19",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3108
+    },
+    "ScyllaMiscStart20": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0055",
+          "speaker": "NPC_Scylla_01",
+          "text": "I know it's dark down here, lady, so... just follow the sound of my voice..."
+        }
+      ],
+      "name": "ScyllaMiscStart20",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3116
+    },
+    "ScyllaMiscStart21": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0420",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ooh, you know we're on a hot streak when our fans keep coming back!"
+        }
+      ],
+      "name": "ScyllaMiscStart21",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3124
+    },
+    "ScyllaMiscStart23": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0422",
+          "speaker": "NPC_Scylla_01",
+          "text": "Jetty, Roxy, and I, we're thinking maybe we'll try going solo after this!"
+        }
+      ],
+      "name": "ScyllaMiscStart23",
+      "otherRequirements": {
+        "NamedRequirementsFalse": [
+          "BossDifficultyActive"
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3133
+    },
+    "ScyllaMiscStart24": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0425",
+          "speaker": "NPC_Scylla_01",
+          "text": "Get off my stage, lady! You are not the star of this show, no matter what anybody thinks!"
+        }
+      ],
+      "name": "ScyllaMiscStart24",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3145
+    },
+    "ScyllaMiscStart25": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0426",
+          "speaker": "NPC_Scylla_01",
+          "text": "Remember, gals, practice makes perfect, right? So, let's take it from the top! Again!"
+        }
+      ],
+      "name": "ScyllaMiscStart25",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3154
+    },
+    "ScyllaMiscStart26": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0427",
+          "speaker": "NPC_Scylla_01",
+          "text": "I'm not listening to a word you say, lady! But you get to listen to us!"
+        }
+      ],
+      "name": "ScyllaMiscStart26",
+      "otherRequirements": {
+        "Path:ConfigOptionCache.MusicVolume": [
+          {
+            "Comparison": ">",
+            "Path": [
+              "ConfigOptionCache",
+              "MusicVolume"
+            ],
+            "Value": 0.05
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3162
+    },
+    "ScyllaMiscStart27": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0428",
+          "speaker": "NPC_Scylla_01",
+          "text": "Can't get enough of Scylla and the Sirens, huh? Well you are not alone!"
+        }
+      ],
+      "name": "ScyllaMiscStart27",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3178
+    },
+    "ScyllaMiscStart28": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0429",
+          "speaker": "NPC_Scylla_01",
+          "text": "We've got a real crowd here tonight, but you get the best seat in the house!"
+        }
+      ],
+      "name": "ScyllaMiscStart28",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3186
+    },
+    "ScyllaMiscStart29": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0430",
+          "speaker": "NPC_Scylla_01",
+          "text": "You're not cut out to make it on this great big stage, lady! You'll see."
+        }
+      ],
+      "name": "ScyllaMiscStart29",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3195
+    },
+    "ScyllaMiscStart30": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0431",
+          "speaker": "NPC_Scylla_01",
+          "text": "Our special guest made it all the way down from the surface, just to see you!"
+        }
+      ],
+      "name": "ScyllaMiscStart30",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3209
+    },
+    "ScyllaMiscStart31": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0432",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohh, the crowd is gonna love this! We wouldn't be here if not for you, lady!"
+        }
+      ],
+      "name": "ScyllaMiscStart31",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3222
+    },
+    "ScyllaMiscStart32": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0433",
+          "speaker": "NPC_Scylla_01",
+          "text": "Why don't you go and give our guest Charybdis a big hug to say hello?!"
+        }
+      ],
+      "name": "ScyllaMiscStart32",
+      "otherRequirements": {
+        "FunctionName:IsBossDifficultyShrineUpgradeActive": [
+          {
+            "FunctionName": "IsBossDifficultyShrineUpgradeActive"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3236
+    },
+    "ScyllaMiscStart33": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0446",
+          "speaker": "NPC_Scylla_01",
+          "text": "Well, if it isn't our number one obsessive fan, come to spoil the show like always!"
+        }
+      ],
+      "name": "ScyllaMiscStart33",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3249
+    },
+    "ScyllaMiscStart34": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0447",
+          "speaker": "NPC_Scylla_01",
+          "text": "Looks like we got a heckler, gals! Where's our security? Oh! It's right here..."
+        }
+      ],
+      "name": "ScyllaMiscStart34",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3258
+    },
+    "ScyllaMiscStart35": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0448",
+          "speaker": "NPC_Scylla_01",
+          "text": "Every time you show your face around here, lady, you sink to a new low!"
+        }
+      ],
+      "name": "ScyllaMiscStart35",
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3266
+    },
+    "ScyllaMiscStart36": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0450",
+          "speaker": "NPC_Scylla_01",
+          "text": "We figured we'd open with our first big hit tonight! What do you say, lady?"
+        }
+      ],
+      "name": "ScyllaMiscStart36",
+      "otherRequirements": {
+        "Path:AudioState.MusicName": [
+          {
+            "IsAny": [
+              "/Music/IrisMusicScylla1_MC"
+            ],
+            "Path": [
+              "AudioState",
+              "MusicName"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3274
+    },
+    "ScyllaMiscStartWonAgainstHer01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0056",
+          "speaker": "NPC_Scylla_01",
+          "text": "Our big break's just around the corner, gals! So don't blow it now!"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer01",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3290
+    },
+    "ScyllaMiscStartWonAgainstHer02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0057",
+          "speaker": "NPC_Scylla_01",
+          "text": "Now, pull yourselves together and don't screw it up like last time! OK, gals?"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer02",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3306
+    },
+    "ScyllaMiscStartWonAgainstHer03": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0421",
+          "speaker": "NPC_Scylla_01",
+          "text": "Don't muck it up for us again, Roxy, OK? Now count us in, dammit!"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer03",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3323
+    },
+    "ScyllaMiscStartWonAgainstHer04": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0423",
+          "speaker": "NPC_Scylla_01",
+          "text": "Aren't Jetty and Roxy just the best? I'd like them even more if they could do something for once!"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer04",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3339
+    },
+    "ScyllaMiscStartWonAgainstHer05": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0424",
+          "speaker": "NPC_Scylla_01",
+          "text": "Tough crowd tonight! But if they can't appreciate our artistry, we'll make 'em!"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer05",
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3356
+    },
+    "ScyllaMiscStartWonAgainstHer06": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0449",
+          "speaker": "NPC_Scylla_01",
+          "text": "This is my stage, and this is my show, and you are not going to ruin it again!"
+        }
+      ],
+      "name": "ScyllaMiscStartWonAgainstHer06",
+      "otherRequirements": {
+        "FunctionName:RequiredConsecutiveClearsOfRoom": [
+          {
+            "FunctionArgs": {
+              "Count": 3,
+              "Names": [
+                "G_Boss01",
+                "G_Boss02"
+              ]
+            },
+            "FunctionName": "RequiredConsecutiveClearsOfRoom"
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 3372
+    },
+    "ScyllaNoHitMatch01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0326",
+          "speaker": "NPC_Scylla_01",
+          "text": "We didn't get even a little nibble on you last you showed your face here, lady. I've been trying to console Roxy ever since! But it's no use!"
+        },
+        {
+          "cue": "MelinoeField_3597",
+          "speaker": "PlayerUnit",
+          "text": "Perhaps if Roxy learned some new percussive patterns she'd have an easier time hitting me against my will."
+        },
+        {
+          "cue": "Scylla_0327",
+          "speaker": "NPC_Scylla_01",
+          "text": "Sure, try and tear us down all you like. But we're just gonna build back up, stronger than ever! And then! We'll bite your head clean off."
+        }
+      ],
+      "name": "ScyllaNoHitMatch01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaQuickMatch01"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 41,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "PathFalse:PrevRun.EncounterClearStats.BossScylla01.TookDamage": [
+              {
+                "PathFalse": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01",
+                  "TookDamage"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla01": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "PathFalse:PrevRun.EncounterClearStats.BossScylla02.TookDamage": [
+              {
+                "PathFalse": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02",
+                  "TookDamage"
+                ]
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla02": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2828
+    },
+    "ScyllaPostTrueEnding01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0342",
+          "speaker": "NPC_Scylla_01",
+          "text": "Hey... maybe you know, lady! What happened to Mister Chronos? Lately he stopped answering our calls, heh. He's probably just taking a little break!"
+        },
+        {
+          "cue": "MelinoeField_4122",
+          "speaker": "PlayerUnit",
+          "text": "You could say that. Lord Hades has returned as rightful ruler of the Underworld, which means Chronos now can attend to other matters. He'll likely get back to you."
+        },
+        {
+          "cue": "Scylla_0343",
+          "speaker": "NPC_Scylla_01",
+          "text": "What are you, his personal assistant? Of course he's getting back to us! And if he's paying no attention to what happens in our venue in the meantime, even better."
+        }
+      ],
+      "name": "ScyllaPostTrueEnding01",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 14,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {
+        "PathTrue:GameState.ReachedTrueEnding": [
+          {
+            "PathTrue": [
+              "GameState",
+              "ReachedTrueEnding"
+            ]
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2895
+    },
+    "ScyllaPostTrueEnding02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0443",
+          "speaker": "NPC_Scylla_01",
+          "text": "Still haven't heard from Mister Chronos lately. Have you seen him anywhere, lady? Because his sponsorship seems to have fizzled out... good thing we do have others."
+        },
+        {
+          "cue": "MelinoeField_4314",
+          "speaker": "PlayerUnit",
+          "text": "Lately Chronos has been over at the Isles of the Blessed. Off doing other things, like perhaps you should be. Who else is underwriting these performances of yours?"
+        },
+        {
+          "cue": "Scylla_0444",
+          "speaker": "NPC_Scylla_01",
+          "text": "Nobody you'd know, I'm sure! And what with all the changes lately, this venue isn't taking on new acts. You're stuck with only me, forever! Me and the gals."
+        }
+      ],
+      "name": "ScyllaPostTrueEnding02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 23,
+      "narrativePrioritySectionSize": 41,
+      "otherRequirements": {},
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {
+        "RequiredTextLines": [
+          "ZeusPostTrueEnding03",
+          "ScyllaAboutChronos02"
+        ]
+      },
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2918
+    },
+    "ScyllaQuickMatch01": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0323",
+          "speaker": "NPC_Scylla_01",
+          "text": "Last time you crashed our show so fast the crowd was left pretty upset, lady! They hardly got to hear our song!"
+        },
+        {
+          "cue": "MelinoeField_3596",
+          "speaker": "PlayerUnit",
+          "text": "Your concert would perhaps get a more rousing response if you let me pass. Otherwise it's liable to end abruptly again."
+        },
+        {
+          "cue": "Scylla_0324",
+          "speaker": "NPC_Scylla_01",
+          "text": "Ohoho, you don't know the first thing about theatrics! We want our crowd to experience a full range of emotions! So if that means occasional crushing disappointment, so be it...!"
+        }
+      ],
+      "name": "ScyllaQuickMatch01",
+      "narrativePriorityClusterMembers": [
+        "ScyllaNoHitMatch01"
+      ],
+      "narrativePriorityOrdinal": 33,
+      "narrativePrioritySectionSize": 41,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossScylla01.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01",
+                  "ClearTime"
+                ],
+                "Value": 25.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla01": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossScylla02.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02",
+                  "ClearTime"
+                ],
+                "Value": 25.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla02": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2741
+    },
+    "ScyllaQuickMatch02": {
+      "dialogueLines": [
+        {
+          "cue": "Scylla_0325",
+          "speaker": "NPC_Scylla_01",
+          "text": "Oh we won't let you make short work of us again, lady! So why don't you take your time! Bask in the atmosphere while we drown you in it!!"
+        }
+      ],
+      "name": "ScyllaQuickMatch02",
+      "narrativePriorityClusterMembers": [],
+      "narrativePriorityOrdinal": 39,
+      "narrativePrioritySectionSize": 41,
+      "orBranches": [
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossScylla01.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01",
+                  "ClearTime"
+                ],
+                "Value": 25.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla01": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla01"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "otherRequirements": {
+            "Path:PrevRun.EncounterClearStats.BossScylla02.ClearTime": [
+              {
+                "Comparison": "<=",
+                "Path": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02",
+                  "ClearTime"
+                ],
+                "Value": 25.0
+              }
+            ],
+            "PathTrue:PrevRun.EncounterClearStats.BossScylla02": [
+              {
+                "PathTrue": [
+                  "PrevRun",
+                  "EncounterClearStats",
+                  "BossScylla02"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "otherRequirements": {
+        "Path:GameState.LastBossHealthBarRecord.Scylla": [
+          {
+            "Comparison": "<=",
+            "Path": [
+              "GameState",
+              "LastBossHealthBarRecord",
+              "Scylla"
+            ],
+            "Value": 0
+          }
+        ]
+      },
+      "owner": "Scylla",
+      "playOnce": true,
+      "requirements": {},
+      "section": "BossIntroTextLineSets",
+      "source": "Hades 2",
+      "sourceFile": "EnemyData_Scylla.lua",
+      "sourceLine": 2788
+    }
+  }
+}
