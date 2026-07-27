@@ -9,14 +9,14 @@ curated :data:`HADES1_NON_PREFIX_ELIGIBILITY_FIELDS` set, and a build audit guar
 against a regression that stops surfacing them. These tests pin both halves.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.textline_set import (
-    extract_textline,
-    reset_unrecognised_textline_key_audit,
-    get_unrecognised_textline_keys,
-    _note_unrecognised_textline_keys,
     HADES1_NON_PREFIX_ELIGIBILITY_FIELDS,
+    _note_unrecognised_textline_keys,
+    extract_textline,
+    get_unrecognised_textline_keys,
+    reset_unrecognised_textline_key_audit,
 )
+from src.lua_parser import LuaParser
 
 
 def _parse_tl(lua_text):

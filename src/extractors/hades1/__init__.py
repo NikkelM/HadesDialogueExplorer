@@ -10,40 +10,40 @@ graph building, merge) lives outside this subpackage and is shared
 with any future Hades II extractors.
 """
 
-from .npc_data import extract_npc_data
-from .deathloop_data import extract_deathloop_data
-from .loot_data import extract_loot_data, LOOT_DEFAULT_SPEAKERS
-from .enemy_data import extract_enemy_data
-from .encounter_room_data import extract_encounter_room_data
-from .text_line_sets import extract_game_data_lists
-from .offer_text import HADES1_OFFER_TEXT_MAP
 from .choice_names import HADES1_CHOICE_NAMES
-from .preset_choices import HADES1_PRESET_CHOICES
-from .meta_upgrades import HADES1_META_UPGRADE_NAMES
+from .deathloop_data import extract_deathloop_data
+from .encounter_room_data import extract_encounter_room_data
+from .enemy_data import extract_enemy_data
 from .entity_names import HADES1_ENTITY_NAMES
-from .save_eval_data import extract_save_eval_static
-from .speakers import HADES1_SPEAKERS
-from .section_keys import (
-    HADES1_TEXTLINE_SECTION_KEYS,
-    HADES1_SECTION_KEY_LABELS,
-    HADES1_SECTION_KEY_PRIORITY_TIER,
-)
-from .req_types import (
-    HADES1_REQ_TYPE_LABELS,
-    HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
-    HADES1_REQ_TYPE_DISPLAY_ORDER,
-    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
-    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
-)
+from .loot_data import LOOT_DEFAULT_SPEAKERS, extract_loot_data
+from .meta_upgrades import HADES1_META_UPGRADE_NAMES
+from .npc_data import extract_npc_data
+from .offer_text import HADES1_OFFER_TEXT_MAP
 from .other_req_types import (
     HADES1_OTHER_REQ_LABELS,
     HADES1_OTHER_REQ_TOOLTIPS,
 )
+from .preset_choices import HADES1_PRESET_CHOICES
+from .req_types import (
+    HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+)
+from .save_eval_data import extract_save_eval_static
+from .section_keys import (
+    HADES1_SECTION_KEY_LABELS,
+    HADES1_SECTION_KEY_PRIORITY_TIER,
+    HADES1_TEXTLINE_SECTION_KEYS,
+)
+from .speakers import HADES1_SPEAKERS
+from .text_line_sets import extract_game_data_lists
 from .unresolved_refs import (
     HADES1_KNOWN_UNRESOLVED_REFS,
-    UNRESOLVED_CATEGORY_LABELS,
     UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    UNRESOLVED_CATEGORY_LABELS,
 )
 
 __all__ = [

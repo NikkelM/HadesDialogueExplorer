@@ -3,7 +3,6 @@ never be satisfied because of unresolved references."""
 
 from src.extractors.textline_set import REQUIREMENT_BLOCKING_SEMANTICS
 
-
 # Semantics tags ``annotate_blocked_textlines`` is allowed to emit on
 # ``blockingReasons[*]["semantics"]``. ``viewer.js::renderBlockingReason``
 # has a finite branch ladder matching these exact strings; any new value

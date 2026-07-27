@@ -23,8 +23,9 @@ counts so gaps are visible; those simply keep rendering their raw id.
 import json
 import re
 import sys
-import tomllib
 from pathlib import Path
+
+import tomllib
 
 ROOT = Path(__file__).resolve().parent.parent
 

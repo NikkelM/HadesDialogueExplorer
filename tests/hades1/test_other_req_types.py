@@ -19,17 +19,16 @@ import os
 
 import pytest
 
+from src.extractors.hades1 import (
+    HADES1_OTHER_REQ_LABELS,
+    HADES1_OTHER_REQ_TOOLTIPS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_TOOLTIPS,
+)
 from src.extractors.textline_set import (
     TEXTLINE_REQ_FIELDS,
     TEXTLINE_REQ_FIELDS_COUNT,
 )
-from src.extractors.hades1 import (
-    HADES1_REQ_TYPE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
-    HADES1_OTHER_REQ_LABELS,
-    HADES1_OTHER_REQ_TOOLTIPS,
-)
-
 
 _TEXTLINE_FIELDS = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
 

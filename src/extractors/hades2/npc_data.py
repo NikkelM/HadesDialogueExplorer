@@ -67,9 +67,8 @@ Deferred to follow-ups (each has its own todo):
 import re
 
 from ...lua_parser import LuaTable
-from .textline_set import extract_textline_sections
 from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
-
+from .textline_set import extract_textline_sections
 
 # Per-character file pattern: ``UnitSetData.NPC_Artemis``, ``UnitSetData.NPC_Hades``,
 # etc. The master ``NPCData.lua`` adds ``UnitSetData.NPCs`` (note the
@@ -89,11 +88,11 @@ def extract_npc_data(
     parsed: dict,
     source_label: str = "",
     source_file: str = "",
-    game_data_lists: dict = None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
-    named_requirements: dict = None,
-    hero_repeatable_sets: dict = None,
+    game_data_lists: dict | None = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
+    named_requirements: dict | None = None,
+    hero_repeatable_sets: dict | None = None,
 ) -> dict:
     """Extract H2 NPC dialogue data from a parsed Lua file.
 
@@ -219,9 +218,9 @@ def _build_owner_entry(
     source_label: str,
     source_file: str,
     *,
-    named_requirements: dict = None,
-    hero_repeatable_sets: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    hero_repeatable_sets: dict | None = None,
+    game_data_lists: dict | None = None,
 ):
     """Return the owner entry dict, or ``None`` if the owner has no textlines.
 

@@ -35,13 +35,13 @@ Owner attribution model:
 
 from ...lua_parser import LuaTable
 from ..textline_set import (
-    extract_textline_sections,
     collect_local_requirements,
-    merge_ancestor_requirements,
+    extract_textline_sections,
     is_inspect_point,
+    merge_ancestor_requirements,
 )
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
 from .cue_speakers import resolve_cue_prefix_speaker
+from .section_keys import HADES1_SECTION_KEY_PRIORITY_TIER, HADES1_TEXTLINE_SECTION_KEYS
 
 # Parametric idmap collapse. Any path passing through an idmap segment
 # whose parent map name is a key here resolves to the mapped owner.
@@ -128,7 +128,7 @@ GENERIC_PATH_NAMES = {
 _WALK_OWNERS_MAX_DEPTH = 64
 
 
-def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None, offer_text_map: dict = None, preset_choices: dict = None) -> dict:
+def extract_deathloop_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict | None = None, offer_text_map: dict | None = None, preset_choices: dict | None = None) -> dict:
     """
     Walk the DeathLoopData tree and pull out every owner that contains at
     least one `*TextLineSets` (or singular `TextLineSet`) section. Returns

@@ -77,62 +77,14 @@ H1 features intentionally NOT mirrored:
 """
 
 # Vocabulary / label data
-from .section_keys import (
-    HADES2_TEXTLINE_SECTION_KEYS,
-    HADES2_SECTION_KEY_LABELS,
-)
-from .speakers import HADES2_SPEAKERS
-from .req_types import (
-    HADES2_REQ_OPERATORS,
-    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
-    HADES2_REQ_TYPE_LABELS,
-    HADES2_REQ_TYPE_EDGE_LABELS,
-    HADES2_REQ_TYPE_TOOLTIPS,
-    HADES2_REQ_TYPE_DISPLAY_ORDER,
-    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
-    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
-)
 from .choice_names import HADES2_CHOICE_NAMES
-from .entity_names import HADES2_ENTITY_NAMES
-from .offer_text import HADES2_OFFER_TEXT_MAP
-from .owner_overrides import (
-    HUB_NARRATOR_SPEAKER,
-    TEXTLINE_OWNER_OVERRIDES,
-    IDMAP_PARENT_OWNER_OVERRIDES,
-)
-
-# Walker primitives (shared by all H2 extractors)
-from .named_requirements import extract_named_requirements
-from .req_extractor import (
-    HADES2_REQUIREMENT_SET_FIELDS,
-    extract_requirements,
-)
-from .textline_set import (
-    PLAYER_SPEAKER_ID,
-    extract_textline,
-    extract_textline_sections,
-)
-
-# Per-source extractors
-from .npc_data import extract_npc_data
-from .loot_data import (
-    LOOT_DEFAULT_SPEAKERS,
-    extract_loot_data,
-)
+from .deathloop_data import extract_deathloop_data
+from .encounter_room_data import extract_encounter_room_data
 from .enemy_data import (
     ENEMY_DEFAULT_SPEAKERS,
     extract_enemy_data,
 )
-from .deathloop_data import extract_deathloop_data
-from .encounter_room_data import extract_encounter_room_data
-
-# Cross-cutting passes
-from .narrative_data import (
-    extract_narrative_priorities,
-    apply_narrative_priorities,
-    iter_priority_keys,
-    find_unattached_priority_groups,
-)
+from .entity_names import HADES2_ENTITY_NAMES
 from .gamedata_refs import (
     HADES2_GAMEDATA_REF_SOURCE_FILES,
     extract_gamedata_refs,
@@ -140,12 +92,59 @@ from .gamedata_refs import (
 from .god_traits import (
     extract_god_trait_metadata,
 )
-from .unresolved_refs import (
-    HADES2_KNOWN_UNRESOLVED_REFS,
-    HADES2_UNRESOLVED_CATEGORY_LABELS,
-    HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+from .loot_data import (
+    LOOT_DEFAULT_SPEAKERS,
+    extract_loot_data,
 )
 
+# Walker primitives (shared by all H2 extractors)
+from .named_requirements import extract_named_requirements
+
+# Cross-cutting passes
+from .narrative_data import (
+    apply_narrative_priorities,
+    extract_narrative_priorities,
+    find_unattached_priority_groups,
+    iter_priority_keys,
+)
+
+# Per-source extractors
+from .npc_data import extract_npc_data
+from .offer_text import HADES2_OFFER_TEXT_MAP
+from .owner_overrides import (
+    HUB_NARRATOR_SPEAKER,
+    IDMAP_PARENT_OWNER_OVERRIDES,
+    TEXTLINE_OWNER_OVERRIDES,
+)
+from .req_extractor import (
+    HADES2_REQUIREMENT_SET_FIELDS,
+    extract_requirements,
+)
+from .req_types import (
+    HADES2_REQ_OPERATORS,
+    HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_REQ_TYPE_EDGE_LABELS,
+    HADES2_REQ_TYPE_LABELS,
+    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES2_REQ_TYPE_TOOLTIPS,
+    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
+)
+from .section_keys import (
+    HADES2_SECTION_KEY_LABELS,
+    HADES2_TEXTLINE_SECTION_KEYS,
+)
+from .speakers import HADES2_SPEAKERS
+from .textline_set import (
+    PLAYER_SPEAKER_ID,
+    extract_textline,
+    extract_textline_sections,
+)
+from .unresolved_refs import (
+    HADES2_KNOWN_UNRESOLVED_REFS,
+    HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    HADES2_UNRESOLVED_CATEGORY_LABELS,
+)
 
 __all__ = [
     # Vocabulary / label data

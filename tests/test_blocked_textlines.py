@@ -6,9 +6,9 @@ which dialogues a given unresolved ref blocks."""
 import pytest
 
 from src.blocked_textlines import (
+    _IMPOSSIBLE_SEEN_ROOM_TOKENS,
     annotate_blocked_textlines,
     audit_impossible_seen_room_drift,
-    _IMPOSSIBLE_SEEN_ROOM_TOKENS,
 )
 
 
@@ -280,8 +280,8 @@ class TestSemanticsValidator:
 
     def test_passes_on_known_semantics(self):
         from src.blocked_textlines import (
-            _assert_viewer_knows_semantics,
             _VIEWER_KNOWN_SEMANTICS,
+            _assert_viewer_knows_semantics,
         )
         for sem in _VIEWER_KNOWN_SEMANTICS:
             _assert_viewer_knows_semantics([{"semantics": sem}], "x")

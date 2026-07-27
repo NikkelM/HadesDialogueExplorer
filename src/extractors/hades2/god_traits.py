@@ -37,10 +37,8 @@ Faithfulness notes (mirrors ``RunData.lua`` / ``TraitLogic.lua``):
 
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Set
 
 from src.lua_parser import LuaTable, parse_lua_file
-
 
 # Top-level container keys: per-god boon owners under ``LootSetData.<X>``
 # (incl. the master ``LootSetData.Loot`` templates), NPC owners under
@@ -56,7 +54,7 @@ _TRAIT_LIST_KEYS = ("Traits", "WeaponUpgrades", "PermanentTraits", "TemporaryTra
 
 def _collect_owner_store(
     scripts_dir: Path, glob: str, container_re: "re.Pattern[str]"
-) -> Dict[str, LuaTable]:
+) -> dict[str, LuaTable]:
     """Merge every ``<container>.<owner>`` owner table across the files
     matching ``glob`` into one ``{owner_id: LuaTable}`` store.
 
@@ -65,7 +63,7 @@ def _collect_owner_store(
     resolution scope so a per-god owner can see the ``BaseLoot`` template
     defined in the master ``LootData.lua``.
     """
-    store: Dict[str, LuaTable] = {}
+    store: dict[str, LuaTable] = {}
     for path in sorted(scripts_dir.glob(glob)):
         parsed = parse_lua_file(str(path))
         for key, value in parsed.items():
@@ -78,8 +76,8 @@ def _collect_owner_store(
 
 
 def _inherited_flag(
-    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
-) -> Optional[bool]:
+    owner_id: str, store: dict[str, LuaTable], key: str, _seen: set[str] | None = None
+) -> bool | None:
     """Resolve an inheritable boolean flag for ``owner_id``.
 
     The owner's own value wins (including an explicit ``false`` that
@@ -107,8 +105,8 @@ def _inherited_flag(
 
 
 def _inherited_list(
-    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
-) -> List[str]:
+    owner_id: str, store: dict[str, LuaTable], key: str, _seen: set[str] | None = None
+) -> list[str]:
     """Resolve an inheritable string-list field (e.g. ``Traits``).
 
     The owner's own list wins; otherwise the first non-empty inherited
@@ -137,15 +135,15 @@ def _inherited_list(
     return []
 
 
-def _trait_index(owner_id: str, store: Dict[str, LuaTable]) -> Set[str]:
+def _trait_index(owner_id: str, store: dict[str, LuaTable]) -> set[str]:
     """Union of an owner's resolved trait-list fields (its TraitIndex)."""
-    names: Set[str] = set()
+    names: set[str] = set()
     for key in _TRAIT_LIST_KEYS:
         names.update(_inherited_list(owner_id, store, key))
     return names
 
 
-def extract_god_trait_metadata(scripts_dir: Path) -> Dict[str, List[str]]:
+def extract_god_trait_metadata(scripts_dir: Path) -> dict[str, list[str]]:
     """Return ``{"godTraitNames": [...], "restrictBoonChoiceTraitNames": [...]}``.
 
     ``godTraitNames`` is the ForShop ``IsGodTrait`` set (god-boon trait
@@ -158,7 +156,7 @@ def extract_god_trait_metadata(scripts_dir: Path) -> Dict[str, List[str]]:
     indeterminate, as they were before this hook).
     """
     scripts_dir = Path(scripts_dir)
-    god_traits: Set[str] = set()
+    god_traits: set[str] = set()
 
     # LootData sources: god-boon owners (GodLoot or TreatAsGodLootByShops,
     # excluding the owner's own DebugOnly templates).
@@ -181,7 +179,7 @@ def extract_god_trait_metadata(scripts_dir: Path) -> Dict[str, List[str]]:
             god_traits.update(_trait_index(owner_id, npc_store))
 
     # Traits that restrict boon choices (RequireUnrestrictedBoonChoices).
-    restrict: Set[str] = set()
+    restrict: set[str] = set()
     for path in sorted(scripts_dir.glob("TraitData*.lua")):
         parsed = parse_lua_file(str(path))
         for key, value in parsed.items():

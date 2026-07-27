@@ -7,9 +7,9 @@ substitution call site that consumes it, plus a couple of sanity
 checks on the published map.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.offer_text import HADES1_OFFER_TEXT_MAP
 from src.extractors.textline_set import extract_textline
+from src.lua_parser import LuaParser
 
 
 def parse_tl(lua_text):

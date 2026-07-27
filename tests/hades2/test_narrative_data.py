@@ -18,13 +18,13 @@ attachment helper :func:`.narrative_data.apply_narrative_priorities`:
 
 import pytest
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.narrative_data import (
     apply_narrative_priorities,
     extract_narrative_priorities,
     find_unattached_priority_groups,
     iter_priority_keys,
 )
+from src.lua_parser import LuaParser
 
 
 def _parse(text: str):

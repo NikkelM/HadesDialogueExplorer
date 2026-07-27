@@ -9,8 +9,8 @@ gated independently when the inputs change.
 import copy
 
 from src.speaker_overview import (
-    annotate_speaker_aggregates,
     _priority_bucket,
+    annotate_speaker_aggregates,
 )
 
 

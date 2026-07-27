@@ -8,21 +8,20 @@ between them, so labels are strictly per-game).
 
 import pytest
 
-from src.label_maps import annotate_label_maps
-from src.extractors.hades2 import (
-    HADES2_CHOICE_NAMES,
-    HADES2_SECTION_KEY_LABELS,
-    HADES2_REQ_TYPE_LABELS,
-    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
-)
 from src.extractors.hades1 import (
     HADES1_CHOICE_NAMES,
-    HADES1_SECTION_KEY_LABELS,
     HADES1_META_UPGRADE_NAMES,
-    HADES1_REQ_TYPE_LABELS,
     HADES1_OTHER_REQ_LABELS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_SECTION_KEY_LABELS,
 )
-
+from src.extractors.hades2 import (
+    HADES2_CHOICE_NAMES,
+    HADES2_REQ_TYPE_LABELS,
+    HADES2_SECTION_KEY_LABELS,
+    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
+)
+from src.label_maps import annotate_label_maps
 
 _DOCUMENTED_KEYS = (
     "reqTypeLabels",

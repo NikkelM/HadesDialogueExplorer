@@ -13,8 +13,8 @@ to add an explicit representation rather than silently losing data.
 
 import pytest
 
-from src.lua_parser import LuaTable, LuaIdentifier, LuaExpression
 from src.extractors.textline_set import _normalize_value
+from src.lua_parser import LuaExpression, LuaIdentifier, LuaTable
 
 
 class TestPureShapes:

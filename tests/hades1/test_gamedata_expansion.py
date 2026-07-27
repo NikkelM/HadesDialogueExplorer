@@ -6,8 +6,8 @@ extractor expands those references using the game_data_lists map so the
 dependency graph contains concrete edges instead of unresolved identifiers.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.npc_data import extract_npc_data
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):

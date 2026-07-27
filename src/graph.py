@@ -21,7 +21,6 @@ import itertools
 import re
 from collections import defaultdict
 
-
 _VARIANT_SUFFIX_RE = re.compile(r"\s*\([^()]*\)\s*$")
 
 

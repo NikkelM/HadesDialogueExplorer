@@ -19,10 +19,9 @@ uniformly on the viewer side.
 """
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from src.lua_parser import LuaExpression, LuaIdentifier, LuaTable, parse_lua_file
-
 
 # Source files that define the registry tables referenced from
 # ``otherRequirements`` ``<ref:...>`` placeholders. Each is optional -
@@ -75,7 +74,7 @@ def _name_is_ref_root(name: str) -> bool:
     return any(name.startswith(p) for p in _REF_ROOT_PREFIXES)
 
 
-def extract_gamedata_refs(scripts_dir: Path) -> Dict[str, Any]:
+def extract_gamedata_refs(scripts_dir: Path) -> dict[str, Any]:
     """Parse the H2 source files that define registry tables and return
     ``{full.identifier.name: normalised-value}``.
 
@@ -91,7 +90,7 @@ def extract_gamedata_refs(scripts_dir: Path) -> Dict[str, Any]:
     ``HADES2_GAMEDATA_REF_SOURCE_FILES`` reflects definition priority
     (NarrativeData first - it owns the bulk of the referenced tables).
     """
-    refs: Dict[str, Any] = {}
+    refs: dict[str, Any] = {}
     for fname in HADES2_GAMEDATA_REF_SOURCE_FILES:
         path = scripts_dir / fname
         if not path.exists():

@@ -12,7 +12,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 try:
     import tomllib  # Python 3.11+
@@ -89,7 +88,7 @@ def _require_string(value: object, key: str, config_path: Path) -> str:
 
 
 def load_config(
-    config_path: Optional[Path] = None,
+    config_path: Path | None = None,
     *,
     validate_paths: bool = True,
 ) -> Config:

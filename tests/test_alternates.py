@@ -14,7 +14,11 @@ textline's top-level ``requirements`` as well as from each ``orBranches`` clause
 so a gate expressed only inside an OR branch still confirms.
 """
 
-from src.graph import build_alternates, audit_content_alternate_drift, _CONTENT_ALTERNATE_GROUPS
+from src.graph import (
+    _CONTENT_ALTERNATE_GROUPS,
+    audit_content_alternate_drift,
+    build_alternates,
+)
 
 
 def _tl(reqs=None):

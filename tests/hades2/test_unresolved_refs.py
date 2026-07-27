@@ -4,11 +4,10 @@ graph data."""
 
 from src.extractors.hades2 import (
     HADES2_KNOWN_UNRESOLVED_REFS,
-    HADES2_UNRESOLVED_CATEGORY_LABELS,
     HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    HADES2_UNRESOLVED_CATEGORY_LABELS,
 )
 from src.known_unresolved import annotate_known_unresolved
-
 
 VALID_CATEGORIES = set(HADES2_UNRESOLVED_CATEGORY_LABELS.keys())
 

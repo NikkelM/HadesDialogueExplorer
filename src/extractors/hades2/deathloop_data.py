@@ -37,16 +37,15 @@ textline's own requirements.
 """
 
 from ...lua_parser import LuaTable
-from .textline_set import (
-    extract_textline_sections,
-    merge_ancestor_requirements_h2,
-)
-from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 from .owner_overrides import (
     HUB_NARRATOR_SPEAKER,
     TEXTLINE_OWNER_OVERRIDES,
 )
-
+from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
+from .textline_set import (
+    extract_textline_sections,
+    merge_ancestor_requirements_h2,
+)
 
 # ``StartUnthreadedEvents`` and ``UnthreadedEvents`` are the two
 # event-list keys on a hub table that have been observed to carry
@@ -60,10 +59,10 @@ def extract_deathloop_data(
     parsed: dict,
     source_label: str = "",
     source_file: str = "",
-    game_data_lists: dict = None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
-    named_requirements: dict = None,
+    game_data_lists: dict | None = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
+    named_requirements: dict | None = None,
 ) -> dict:
     """Extract H2 hub-room narration from a parsed ``DeathLoopData.lua``.
 
@@ -127,8 +126,8 @@ def _collect_inspect_points(
     hub_table: LuaTable,
     collapsed: dict,
     source_file: str,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> None:
     """Walk one hub's ``InspectPoints`` map and merge each inspect point's
     textline sections into the collapsed owner dict."""
@@ -153,8 +152,8 @@ def _collect_on_load_events(
     hub_table: LuaTable,
     collapsed: dict,
     source_file: str,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> None:
     """Walk a hub's ``OnLoadEvents`` list and merge each event's nested
     ``PostPortraitTextLines`` (under ``Args.PresentationFunctionArgs``)
@@ -189,8 +188,8 @@ def _collect_event_textline_sets(
     narrator_sections: dict,
     rerouted: list,
     source_file: str,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> None:
     """Walk a hub's ``StartUnthreadedEvents`` and ``UnthreadedEvents``
     lists, picking up any ``Args.TextLineSet`` entries (rare inline
@@ -254,8 +253,8 @@ def _lift_and_collapse(
     sections: dict,
     ancestor: LuaTable,
     collapsed: dict,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> None:
     """Lift ancestor-level requirements onto each textline in ``sections``
     and merge into ``collapsed`` (insert-if-absent so the first

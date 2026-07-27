@@ -16,11 +16,11 @@ Covers the discovery, collapse, and ancestor-merge contracts of
 * Returns ``{}`` when no dialogue-bearing nodes are found (defensive).
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.deathloop_data import (
     HUB_NARRATOR_SPEAKER,
     extract_deathloop_data,
 )
+from src.lua_parser import LuaParser
 
 
 def _parse(lua_text):

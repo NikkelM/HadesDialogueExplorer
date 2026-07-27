@@ -90,19 +90,17 @@ remain available for a future raw-text pre-pass should the viewer
 ever need to display them as cluster headers.
 """
 
-from typing import Dict, Optional
 
 from src.lua_parser import LuaTable
 
-from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 from .owner_overrides import TEXTLINE_OWNER_OVERRIDES
-
+from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 
 # Suffix attached to every priority-list key in NarrativeData.lua.
 _PRIORITIES_SUFFIX = "TextLinePriorities"
 
 
-def _section_key_for(priority_key: str) -> Optional[str]:
+def _section_key_for(priority_key: str) -> str | None:
     """Resolve a NarrativeData ``<Stem>TextLinePriorities`` key to the
     matching textline-section key used by the textline extractors.
 
@@ -161,7 +159,7 @@ def _iter_priority_slots(priority_list):
             yield ordinal, members
 
 
-def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]]:
+def extract_narrative_priorities(parsed) -> dict[str, dict[str, dict[str, dict]]]:
     """Extract per-textline narrative priority metadata from a parsed
     ``NarrativeData.lua``.
 
@@ -194,7 +192,7 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
     skipped silently; section keys that don't resolve to a known
     textline section key are also skipped.
     """
-    result: Dict[str, Dict[str, Dict[str, dict]]] = {}
+    result: dict[str, dict[str, dict[str, dict]]] = {}
     narrative_data = parsed.get("NarrativeData") if isinstance(parsed, (dict, LuaTable)) else None
     if narrative_data is None:
         return result
@@ -205,7 +203,7 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
         if not isinstance(owner_data, (dict, LuaTable)):
             continue
         sections_iter = owner_data.items()
-        owner_out: Dict[str, Dict[str, dict]] = {}
+        owner_out: dict[str, dict[str, dict]] = {}
         for priority_key, priority_list in sections_iter:
             if not isinstance(priority_key, str):
                 continue
@@ -216,7 +214,7 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
             if not slots:
                 continue
             section_size = slots[-1][0]
-            section_out: Dict[str, dict] = {}
+            section_out: dict[str, dict] = {}
             for ordinal, members in slots:
                 for name in members:
                     siblings = [m for m in members if m != name]
@@ -233,7 +231,7 @@ def extract_narrative_priorities(parsed) -> Dict[str, Dict[str, Dict[str, dict]]
 
 
 def iter_priority_keys(
-    priorities: Dict[str, Dict[str, Dict[str, dict]]],
+    priorities: dict[str, dict[str, dict[str, dict]]],
 ):
     """Yield every ``(owner_id, section_key, textline_name)`` tuple present
     in a ``priorities`` mapping.
@@ -254,7 +252,7 @@ def iter_priority_keys(
 
 
 def find_unattached_priority_groups(
-    priorities: Dict[str, Dict[str, Dict[str, dict]]],
+    priorities: dict[str, dict[str, dict[str, dict]]],
     attached_keys: set,
 ) -> list:
     """Return ``(owner_id, section_key, textline_name)`` tuples for
@@ -308,9 +306,9 @@ def find_unattached_priority_groups(
 
 
 def apply_narrative_priorities(
-    owners_data: Dict[str, dict],
-    priorities: Dict[str, Dict[str, Dict[str, dict]]],
-    attached_keys: Optional[set] = None,
+    owners_data: dict[str, dict],
+    priorities: dict[str, dict[str, dict[str, dict]]],
+    attached_keys: set | None = None,
 ) -> int:
     """Attach narrative-priority annotations from ``priorities`` onto
     each matching textline in ``owners_data`` in place.

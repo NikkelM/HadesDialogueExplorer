@@ -75,9 +75,8 @@ requirement records total, with ~1300 dialogue-edge records using
 these prefixes).
 """
 
-from ...lua_parser import LuaTable, LuaIdentifier, LuaExpression
+from ...lua_parser import LuaExpression, LuaIdentifier, LuaTable
 from ..textline_set import _to_string_list
-
 
 # RequirementSet-bearing fields - the only fields on a parent table whose
 # value is treated by the engine as a RequirementSet (i.e. legal input

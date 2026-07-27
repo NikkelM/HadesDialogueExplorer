@@ -5,10 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from src.lua_parser import parse_lua_file
 from src.extractors.hades1.npc_data import extract_npc_data
 from src.graph import build_graph_data
-
+from src.lua_parser import parse_lua_file
 
 FIXTURE = Path(__file__).parent / "fixtures" / "mini_npc_data.lua"
 

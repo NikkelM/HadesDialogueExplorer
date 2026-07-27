@@ -3,8 +3,8 @@ ThisRoom variants. These all exercise ``extract_textline`` via the H1
 NPC extractor; they cover the specific field shapes that needed extra
 handling on top of the simple ``Required* = { ... }`` list pattern."""
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.npc_data import extract_npc_data
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):
@@ -114,6 +114,7 @@ class TestSectionKeysRequired:
 
     def test_extract_textline_sections_requires_section_keys_kwarg(self):
         import pytest
+
         from src.extractors.textline_set import extract_textline_sections
         from src.lua_parser import LuaTable
 

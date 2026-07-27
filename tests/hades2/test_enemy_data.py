@@ -22,12 +22,12 @@ Covers the discovery and speaker-mapping contracts of
   per-section dicts).
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.enemy_data import (
     ENEMY_DEFAULT_SPEAKERS,
     extract_enemy_data,
 )
 from src.extractors.hades2.speakers import HADES2_SPEAKERS
+from src.lua_parser import LuaParser
 
 
 def _parse(lua_text):

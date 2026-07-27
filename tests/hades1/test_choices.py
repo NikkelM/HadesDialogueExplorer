@@ -7,9 +7,9 @@ requirements. The extractor surfaces each choice as a synthetic sibling
 textline so the dependency graph resolves cleanly.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.npc_data import extract_npc_data
 from src.graph import build_graph_data, resolve_duplicate
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):

@@ -792,7 +792,7 @@ def parse_lua_file(filepath: str) -> dict:
     # replacement char instead of aborting the whole build. Both game trees are
     # clean UTF-8 today, so this is defensive alignment rather than an active
     # need.
-    with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
+    with open(filepath, encoding='utf-8', errors='replace') as f:
         text = f.read()
     if text.startswith('\ufeff'):
         text = text.lstrip('\ufeff')

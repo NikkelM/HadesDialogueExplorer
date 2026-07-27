@@ -17,22 +17,21 @@ Two halves are covered:
 
 import pytest
 
-from src.lua_parser import LuaParser
 import src.section_key_audit as ska
-from src.section_key_audit import audit_section_keys
 from src.extractors.hades1 import HADES1_SECTION_KEY_LABELS
 from src.extractors.hades1.section_keys import HADES1_TEXTLINE_SECTION_KEYS
 from src.extractors.hades2 import HADES2_SECTION_KEY_LABELS
 from src.extractors.hades2.section_keys import HADES2_TEXTLINE_SECTION_KEYS
+from src.extractors.hades2.textline_set import (
+    extract_textline_sections as h2_extract_textline_sections,
+)
 from src.extractors.textline_set import (
     extract_textline_sections,
     get_unlisted_section_keys,
     reset_section_key_audit,
 )
-from src.extractors.hades2.textline_set import (
-    extract_textline_sections as h2_extract_textline_sections,
-)
-
+from src.lua_parser import LuaParser
+from src.section_key_audit import audit_section_keys
 
 _ALLOWLISTS = {
     "hades1": (HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_LABELS),

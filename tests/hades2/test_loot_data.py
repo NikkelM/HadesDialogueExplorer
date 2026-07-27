@@ -14,11 +14,11 @@ Covers the discovery and speaker-mapping contracts of
 * Output shape mirrors the NPC extractor (``source`` + per-section dicts).
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.loot_data import (
     LOOT_DEFAULT_SPEAKERS,
     extract_loot_data,
 )
+from src.lua_parser import LuaParser
 
 
 def _parse(lua_text):

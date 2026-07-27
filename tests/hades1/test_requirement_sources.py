@@ -7,9 +7,9 @@ and the parallel `requirementSources["RequiredTextLines"]` list is
 so the viewer can chunk adjacent same-group entries into a labeled box.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.npc_data import extract_npc_data
 from src.graph import build_graph_data
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):

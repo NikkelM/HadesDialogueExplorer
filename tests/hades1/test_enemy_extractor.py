@@ -1,7 +1,7 @@
 """Tests for the EnemyData extractor."""
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.enemy_data import extract_enemy_data
+from src.lua_parser import LuaParser
 
 
 def extract(lua_text, source="Test", source_file="EnemyData.lua"):

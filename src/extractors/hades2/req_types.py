@@ -115,10 +115,10 @@ canonical reference list to lint against).
 """
 
 from src.extractors.hades1.req_types import (
-    HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 

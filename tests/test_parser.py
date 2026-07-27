@@ -2,7 +2,10 @@
 
 
 from src.lua_parser import (
-    LuaParser, LuaTable, LuaIdentifier, LuaExpression,
+    LuaExpression,
+    LuaIdentifier,
+    LuaParser,
+    LuaTable,
 )
 
 

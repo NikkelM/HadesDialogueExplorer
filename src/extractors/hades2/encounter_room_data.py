@@ -45,20 +45,19 @@ ancestor wins (a closer container's requirements fully replace an
 outer one's once it declares any of its own).
 """
 
+from ...graph import attach_variant, resolve_duplicate
 from ...lua_parser import LuaTable
-from ...graph import resolve_duplicate, attach_variant
+from ..textline_set import is_inspect_point
+from .owner_overrides import (
+    IDMAP_PARENT_OWNER_OVERRIDES,
+    TEXTLINE_OWNER_OVERRIDES,
+)
+from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
 from .textline_set import (
     extract_textline_sections,
-    merge_ancestor_requirements_h2,
     has_local_h2_requirements,
+    merge_ancestor_requirements_h2,
 )
-from ..textline_set import is_inspect_point
-from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
-from .owner_overrides import (
-    TEXTLINE_OWNER_OVERRIDES,
-    IDMAP_PARENT_OWNER_OVERRIDES,
-)
-
 
 # Top-level root key prefixes this extractor knows how to walk.
 # ``EncounterData`` is a single top-level for every ``EncounterData_*.lua``
@@ -79,10 +78,10 @@ def extract_encounter_room_data(
     parsed: dict,
     source_label: str = "",
     source_file: str = "",
-    game_data_lists: dict = None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
-    named_requirements: dict = None,
+    game_data_lists: dict | None = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
+    named_requirements: dict | None = None,
 ) -> dict:
     """Walk every ``EncounterData`` / ``RoomSetData.*`` root in ``parsed``
     and pull out every container that holds at least one textline-set

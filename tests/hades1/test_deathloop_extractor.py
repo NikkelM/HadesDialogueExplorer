@@ -1,7 +1,7 @@
 """Tests for the DeathLoopData extractor."""
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.deathloop_data import extract_deathloop_data
+from src.lua_parser import LuaParser
 
 
 def extract(lua_text, source="Test", source_file="DeathLoopData.lua"):

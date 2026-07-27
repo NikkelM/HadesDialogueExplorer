@@ -18,8 +18,8 @@ Covers the discovery contract of :func:`.npc_data.extract_npc_data`:
   focus on the discovery / owner-entry-assembly layer.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.npc_data import extract_npc_data
+from src.lua_parser import LuaParser
 
 
 def _parse(lua_text):

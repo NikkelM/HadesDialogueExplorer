@@ -10,19 +10,18 @@ chips do not collapse semantically different requirement types onto
 the same glyph.
 """
 
+from src.extractors.hades1 import (
+    HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+)
 from src.extractors.textline_set import (
     TEXTLINE_REQ_FIELDS,
     TEXTLINE_REQ_FIELDS_COUNT,
 )
-from src.extractors.hades1 import (
-    HADES1_REQ_TYPE_LABELS,
-    HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
-    HADES1_REQ_TYPE_DISPLAY_ORDER,
-    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
-    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
-)
-
 
 ALL_FIELDS = TEXTLINE_REQ_FIELDS | TEXTLINE_REQ_FIELDS_COUNT
 

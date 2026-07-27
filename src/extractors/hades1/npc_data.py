@@ -10,8 +10,7 @@ import re
 from ...lua_parser import LuaTable
 from ..textline_set import extract_textline_sections
 from .cue_speakers import resolve_cue_prefix_speaker
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
-
+from .section_keys import HADES1_SECTION_KEY_PRIORITY_TIER, HADES1_TEXTLINE_SECTION_KEYS
 
 # Textlines that ship in the game data but are dev-test artefacts the
 # tool should not surface. Filtered out post-extraction so they don't
@@ -47,7 +46,7 @@ OWNER_NAME_ALIASES = {
 }
 
 
-def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict = None, offer_text_map: dict = None, preset_choices: dict = None) -> dict:
+def extract_npc_data(parsed: dict, source_label: str = "", source_file: str = "", game_data_lists: dict | None = None, offer_text_map: dict | None = None, preset_choices: dict | None = None) -> dict:
     """
     Extract NPC dialogue data from a parsed Lua file.
 

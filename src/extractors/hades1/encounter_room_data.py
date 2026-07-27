@@ -38,19 +38,20 @@ lines in ``RoomOpening`` keep ``RoomOpening`` as the owner, but the
 two Storyteller inspect lines in the same room move to ``Storyteller``).
 """
 
+from ...graph import attach_variant, resolve_duplicate
 from ...lua_parser import LuaTable
 from ..textline_set import (
-    extract_textline_sections,
     collect_local_requirements,
-    merge_ancestor_requirements,
+    extract_textline_sections,
     is_inspect_point,
+    merge_ancestor_requirements,
 )
-from ...graph import resolve_duplicate, attach_variant
-from .section_keys import HADES1_TEXTLINE_SECTION_KEYS, HADES1_SECTION_KEY_PRIORITY_TIER
-from .deathloop_data import IDMAP_PARENT_OWNER_OVERRIDES
+
 # Per-cue closing-voiceline speaker recovery, shared with the other H1
 # extractors via :mod:`.cue_speakers`.
 from .cue_speakers import resolve_cue_prefix_speaker
+from .deathloop_data import IDMAP_PARENT_OWNER_OVERRIDES
+from .section_keys import HADES1_SECTION_KEY_PRIORITY_TIER, HADES1_TEXTLINE_SECTION_KEYS
 
 # Per-textline-name owner overrides for synthetic encounter/room owners
 # that aren't well-served by the topmost-named-ancestor rule. Keyed by
@@ -126,9 +127,9 @@ def extract_encounter_room_data(
     parsed: dict,
     source_label: str = "",
     source_file: str = "",
-    game_data_lists: dict = None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
+    game_data_lists: dict | None = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
 ) -> dict:
     """Walk every EncounterData / RoomSetData.* root in ``parsed`` and pull
     out every container that holds at least one textline-set section.

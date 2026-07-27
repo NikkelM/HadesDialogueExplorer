@@ -9,54 +9,54 @@ get their own ``sectionKeyLabels`` / ``reqTypeLabels`` / ``choiceNames``
 """
 
 from src.extractors.hades1 import (
-    HADES1_SECTION_KEY_LABELS,
-    HADES1_REQ_TYPE_LABELS,
-    HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
-    HADES1_REQ_TYPE_DISPLAY_ORDER,
-    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
-    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+    HADES1_CHOICE_NAMES,
+    HADES1_ENTITY_NAMES,
+    HADES1_META_UPGRADE_NAMES,
     HADES1_OTHER_REQ_LABELS,
     HADES1_OTHER_REQ_TOOLTIPS,
-    HADES1_CHOICE_NAMES,
-    HADES1_META_UPGRADE_NAMES,
-    HADES1_ENTITY_NAMES,
+    HADES1_REQ_TYPE_DISPLAY_ORDER,
+    HADES1_REQ_TYPE_EDGE_LABELS,
+    HADES1_REQ_TYPE_LABELS,
+    HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+    HADES1_SECTION_KEY_LABELS,
     HADES1_SPEAKERS,
 )
+from src.extractors.hades1.badge_rank_names import (
+    HADES1_BADGE_RANK_MANAGER,
+    HADES1_BADGE_RANK_NAMES,
+)
+from src.extractors.hades1.broken_req_fields import HADES1_BROKEN_REQ_FIELDS
+from src.extractors.hades1.extra_entities import HADES1_EXTRA_ENTITY_NAMES
+from src.extractors.hades1.flag_names import HADES1_FLAG_NAMES
+from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
 from src.extractors.hades2 import (
-    HADES2_SECTION_KEY_LABELS,
-    HADES2_REQ_TYPE_LABELS,
-    HADES2_REQ_TYPE_EDGE_LABELS,
-    HADES2_REQ_TYPE_TOOLTIPS,
-    HADES2_REQ_TYPE_DISPLAY_ORDER,
-    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
-    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
     HADES2_CHOICE_NAMES,
     HADES2_ENTITY_NAMES,
+    HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_REQ_TYPE_EDGE_LABELS,
+    HADES2_REQ_TYPE_LABELS,
+    HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES2_REQ_TYPE_TOOLTIPS,
+    HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+    HADES2_SECTION_KEY_LABELS,
     HADES2_SPEAKERS,
 )
-from src.extractors.hades1.hub_rooms import HADES1_HUB_ROOM_NAMES
-from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
-from src.extractors.hades1.extra_entities import HADES1_EXTRA_ENTITY_NAMES
-from src.extractors.hades2.extra_entities import HADES2_EXTRA_ENTITY_NAMES
-from src.extractors.hades2.path_names import (
-    HADES2_PATH_SCOPE_NAMES,
-    HADES2_PATH_FIELD_NAMES,
-    HADES2_PATH_OBJECT_FIELDS,
-    HADES2_PATH_FIELD_LEAF_NAMES,
-    HADES2_PATH_LITERAL_LEAF_FIELDS,
+from src.extractors.hades2.badge_rank_names import (
+    HADES2_BADGE_RANK_MANAGER,
+    HADES2_BADGE_RANK_NAMES,
 )
 from src.extractors.hades2.broken_path_refs import HADES2_BROKEN_PATH_REFS
-from src.extractors.hades1.broken_req_fields import HADES1_BROKEN_REQ_FIELDS
-from src.extractors.hades1.badge_rank_names import (
-    HADES1_BADGE_RANK_NAMES,
-    HADES1_BADGE_RANK_MANAGER,
+from src.extractors.hades2.extra_entities import HADES2_EXTRA_ENTITY_NAMES
+from src.extractors.hades2.hub_rooms import HADES2_HUB_ROOM_NAMES
+from src.extractors.hades2.path_names import (
+    HADES2_PATH_FIELD_LEAF_NAMES,
+    HADES2_PATH_FIELD_NAMES,
+    HADES2_PATH_LITERAL_LEAF_FIELDS,
+    HADES2_PATH_OBJECT_FIELDS,
+    HADES2_PATH_SCOPE_NAMES,
 )
-from src.extractors.hades2.badge_rank_names import (
-    HADES2_BADGE_RANK_NAMES,
-    HADES2_BADGE_RANK_MANAGER,
-)
-from src.extractors.hades1.flag_names import HADES1_FLAG_NAMES
 
 
 def _speaker_names(speakers: dict) -> dict:

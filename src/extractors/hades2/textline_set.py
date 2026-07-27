@@ -68,25 +68,24 @@ Format tags ({#Emph}, {#Prev}, {#PrevFormat}, ...) are stripped from
 the rendered text using the same regex as H1 (``\\{#\\w+\\}``).
 """
 
-from ...lua_parser import LuaTable, LuaIdentifier
+from ...lua_parser import LuaIdentifier, LuaTable
 from ..textline_set import (
-    build_synthetic_variants,
-    walk_textline_sections,
-    _collect_cue_choices,
-    build_end_lines,
-    iter_voice_cues,
-    iter_top_segments,
-    _is_cue_entry,
-    _group_speaker,
     _FORMAT_TAG_RE,
     _VO_PREFIX_RE,
+    _collect_cue_choices,
+    _group_speaker,
+    _is_cue_entry,
+    build_end_lines,
+    build_synthetic_variants,
+    iter_top_segments,
+    iter_voice_cues,
+    walk_textline_sections,
 )
 from .req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
-    extract_requirements,
     _extend_requirements,
+    extract_requirements,
 )
-
 
 # Speaker id used when a cue carries ``UsePlayerSource = true``. Matches
 # the protagonist key in :data:`src.extractors.hades2.speakers.HADES2_SPEAKERS`
@@ -150,11 +149,11 @@ def extract_textline_sections(
     source_file: str,
     *,
     section_keys,
-    default_speaker: str = None,
-    named_requirements: dict = None,
+    default_speaker: str | None = None,
+    named_requirements: dict | None = None,
     force_play_once: bool = False,
-    hero_repeatable_sets: dict = None,
-    game_data_lists: dict = None,
+    hero_repeatable_sets: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> dict:
     """Extract every textline-set section from a single H2 owner table.
 
@@ -228,9 +227,9 @@ def extract_textline(
     fallback_speaker: str,
     source_file: str,
     *,
-    named_requirements: dict = None,
-    hero_repeatable_sets: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    hero_repeatable_sets: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single H2 textline table."""
     data = {
@@ -479,8 +478,8 @@ def _merge_requirement_result(data: dict, result: dict) -> None:
 def merge_ancestor_requirements_h2(
     tl_data: dict,
     ancestor: LuaTable,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> None:
     """Lift RequirementSet-bearing fields from an ancestor container onto
     a single extracted textline.
@@ -554,8 +553,8 @@ def _extract_choice_variants(
     fallback_speaker: str,
     source_file: str,
     *,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> dict:
     """Find every inline ``Choices = {...}`` block nested in the
     parent's cues and materialise each option as a synthetic child

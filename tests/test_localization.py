@@ -12,7 +12,6 @@ import json
 
 from src import localization as loc
 
-
 # --- text cleaning ---------------------------------------------------
 
 def test_clean_strips_format_and_icon_tags():

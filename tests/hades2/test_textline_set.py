@@ -19,12 +19,12 @@ Covers the per-textline output contract that the graph builder consumes:
 * Sections outside the per-game allowlist are silently ignored.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades2.textline_set import (
     PLAYER_SPEAKER_ID,
     extract_textline,
     extract_textline_sections,
 )
+from src.lua_parser import LuaParser
 
 
 def _parse_textline(lua_text):

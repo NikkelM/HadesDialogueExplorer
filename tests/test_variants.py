@@ -9,15 +9,15 @@ the merge wiring in :mod:`src.graph_merge`.
 """
 
 from src.graph import (
+    _is_substantive_variant,
+    _variant_already_present,
     attach_variant,
     make_variant_summary,
     split_name_collisions,
     transfer_orphan_annotations,
-    _is_substantive_variant,
-    _variant_already_present,
 )
 from src.graph_merge import merge_graph_data
-from tests.test_merge import _make_textline, _make_dataset
+from tests.test_merge import _make_dataset, _make_textline
 
 
 def _entry(owner, *, source_file="X.lua", source_line=1, dialogue=None,

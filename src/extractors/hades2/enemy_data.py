@@ -64,9 +64,8 @@ tags always win over the owner / default-speaker fallback (see
 import re
 
 from ...lua_parser import LuaTable
-from .textline_set import extract_textline_sections
 from .section_keys import HADES2_TEXTLINE_SECTION_KEYS
-
+from .textline_set import extract_textline_sections
 
 # Top-level container key pattern. Per-boss files use
 # ``UnitSetData.<BossName>``; the master ``EnemyData.lua`` uses
@@ -101,10 +100,10 @@ def extract_enemy_data(
     parsed: dict,
     source_label: str = "",
     source_file: str = "",
-    game_data_lists: dict = None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
-    named_requirements: dict = None,
+    game_data_lists: dict | None = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
+    named_requirements: dict | None = None,
 ) -> dict:
     """Extract H2 boss encounter dialogue data from a parsed Lua file.
 
@@ -161,8 +160,8 @@ def _build_owner_entry(
     source_label: str,
     source_file: str,
     *,
-    named_requirements: dict = None,
-    game_data_lists: dict = None,
+    named_requirements: dict | None = None,
+    game_data_lists: dict | None = None,
 ):
     """Return the owner entry dict, or ``None`` if it has no textlines."""
     sections = extract_textline_sections(

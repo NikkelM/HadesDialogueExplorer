@@ -33,7 +33,6 @@ array of strings are returned.
 
 from ...lua_parser import LuaTable
 
-
 GAME_DATA_PREFIX = "GameData."
 
 

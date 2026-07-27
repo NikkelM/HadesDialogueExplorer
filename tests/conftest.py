@@ -18,7 +18,7 @@ def _configured_scripts_dir(key):
     lives on another drive, which would otherwise skip live-data tests even
     though the install is present.
     """
-    from src.config import load_config, ConfigError
+    from src.config import ConfigError, load_config
 
     try:
         cfg = load_config(validate_paths=False)

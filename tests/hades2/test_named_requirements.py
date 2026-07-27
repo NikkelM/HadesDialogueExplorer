@@ -12,11 +12,11 @@ synthetic fixtures shaped like the real registry, including:
   ``DebugData.LegalNonGenericRequirementKeys`` blocks being ignored
 """
 
-from src.lua_parser import LuaParser, LuaTable
 from src.extractors.hades2.named_requirements import (
     NAMED_REQUIREMENTS_KEY,
     extract_named_requirements,
 )
+from src.lua_parser import LuaParser, LuaTable
 
 
 def parse(lua_text):

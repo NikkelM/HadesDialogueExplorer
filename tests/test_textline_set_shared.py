@@ -12,15 +12,14 @@ silently reshuffle either game's shipped output:
 * H2 merges them in a deferred second pass (``real1, real2, syn1``).
 """
 
-from src.lua_parser import LuaParser
-from src.extractors.textline_set import (
-    extract_textline_sections as h1_extract_textline_sections,
-)
+from src.extractors.hades1.cue_speakers import resolve_cue_prefix_speaker
 from src.extractors.hades2.textline_set import (
     extract_textline_sections as h2_extract_textline_sections,
 )
-from src.extractors.hades1.cue_speakers import resolve_cue_prefix_speaker
-
+from src.extractors.textline_set import (
+    extract_textline_sections as h1_extract_textline_sections,
+)
+from src.lua_parser import LuaParser
 
 # A choice-bearing textline (``Foo01``, yielding the synthetic
 # ``Foo01ChoiceAccept``) followed by a plain textline (``Bar01``). The
@@ -426,7 +425,10 @@ def test_no_end_lines_field_when_textline_has_none():
 
 
 def test_cue_comment_map_recovers_subtitles_from_source_comments():
-    from src.extractors.textline_set import build_cue_comment_map, apply_cue_comment_texts
+    from src.extractors.textline_set import (
+        apply_cue_comment_texts,
+        build_cue_comment_map,
+    )
     source = '\n'.join([
         '    Foo01 = {',
         "        -- The job's number one perk... no thanks.",

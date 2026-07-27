@@ -5,8 +5,8 @@ detecting duplicate textline names, rebuilding the dependents index, and
 flagging conflicting speakers mappings.
 """
 
-from src.graph_merge import merge_graph_data
 from src.graph import resolve_duplicate
+from src.graph_merge import merge_graph_data
 
 
 def _make_textline(name, owner, *, dialogue_lines=None, requirements=None,

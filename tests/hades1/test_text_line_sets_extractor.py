@@ -5,8 +5,8 @@ per-source extractor to expand bare-identifier references in requirement
 fields.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.text_line_sets import extract_game_data_lists
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):

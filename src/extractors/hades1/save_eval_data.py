@@ -37,7 +37,6 @@ number, a per-(weapon, index) slot map, one constant) - everything else
 the engine reads for these gates is in the persistent save slice.
 """
 
-from typing import Dict, List, Optional, Set
 
 from ...lua_parser import LuaTable
 
@@ -173,13 +172,13 @@ def extract_weapon_upgrade_slots(parsed: dict) -> dict:
 _GOD_TRAIT_LIST_KEYS = ("WeaponUpgrades", "Traits", "PermanentTraits", "TemporaryTraits")
 
 
-def _loot_store(loot_parsed: dict) -> Dict[str, LuaTable]:
+def _loot_store(loot_parsed: dict) -> dict[str, LuaTable]:
     """Map ``{owner_id: LuaTable}`` from the flat ``LootData`` table.
 
     Doubles as the ``InheritFrom`` resolution scope so a per-god owner can
     see the ``BaseLoot`` template it inherits ``GodLoot`` from.
     """
-    store: Dict[str, LuaTable] = {}
+    store: dict[str, LuaTable] = {}
     loot = loot_parsed.get("LootData")
     if isinstance(loot, LuaTable):
         for owner_id, table in loot.named.items():
@@ -189,8 +188,8 @@ def _loot_store(loot_parsed: dict) -> Dict[str, LuaTable]:
 
 
 def _inherited_flag(
-    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
-) -> Optional[bool]:
+    owner_id: str, store: dict[str, LuaTable], key: str, _seen: set[str] | None = None
+) -> bool | None:
     """Resolve an inheritable boolean flag (owner's own value wins, including
     an explicit ``false`` overriding a parent's ``true``; else the
     ``InheritFrom`` parents in order). ``None`` when unset. Cycle-guarded."""
@@ -214,8 +213,8 @@ def _inherited_flag(
 
 
 def _inherited_list(
-    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
-) -> List[str]:
+    owner_id: str, store: dict[str, LuaTable], key: str, _seen: set[str] | None = None
+) -> list[str]:
     """Resolve an inheritable string-list field (owner's own list wins, else
     the first non-empty inherited list). Cycle-guarded."""
     _seen = _seen if _seen is not None else set()
@@ -241,8 +240,8 @@ def _inherited_list(
 
 
 def _linked_upgrade_keys(
-    owner_id: str, store: Dict[str, LuaTable], _seen: Optional[Set[str]] = None
-) -> List[str]:
+    owner_id: str, store: dict[str, LuaTable], _seen: set[str] | None = None
+) -> list[str]:
     """The ``LinkedUpgrades`` keys (a named table, not a list) that also feed a
     god's TraitIndex. Resolved with the same own-wins / inherit fallback."""
     _seen = _seen if _seen is not None else set()
@@ -267,9 +266,9 @@ def _linked_upgrade_keys(
     return []
 
 
-def _trait_index(owner_id: str, store: Dict[str, LuaTable]) -> Set[str]:
+def _trait_index(owner_id: str, store: dict[str, LuaTable]) -> set[str]:
     """Union of an owner's resolved trait-list fields and LinkedUpgrades keys."""
-    names: Set[str] = set()
+    names: set[str] = set()
     for key in _GOD_TRAIT_LIST_KEYS:
         names.update(_inherited_list(owner_id, store, key))
     names.update(_linked_upgrade_keys(owner_id, store))
@@ -289,8 +288,8 @@ def extract_god_loot_data(loot_parsed: dict) -> dict:
     tables (the two gates then stay indeterminate, as before this hook).
     """
     store = _loot_store(loot_parsed)
-    per_god: Dict[str, List[str]] = {}
-    shop_traits: Set[str] = set()
+    per_god: dict[str, list[str]] = {}
+    shop_traits: set[str] = set()
     for owner_id, table in store.items():
         index = _trait_index(owner_id, store)
         if index:
@@ -307,13 +306,13 @@ def extract_god_loot_data(loot_parsed: dict) -> dict:
     }
 
 
-def _trait_store(trait_parsed: dict) -> Dict[str, LuaTable]:
+def _trait_store(trait_parsed: dict) -> dict[str, LuaTable]:
     """Map ``{trait_name: LuaTable}`` from the flat ``TraitData`` table.
 
     Doubles as the ``InheritFrom`` resolution scope so a keepsake can see the
     ``GiftTrait`` / ``AssistTrait`` base it inherits ``ChamberThresholds`` from.
     """
-    store: Dict[str, LuaTable] = {}
+    store: dict[str, LuaTable] = {}
     data = trait_parsed.get("TraitData")
     if isinstance(data, LuaTable):
         for name, table in data.named.items():
@@ -323,8 +322,8 @@ def _trait_store(trait_parsed: dict) -> Dict[str, LuaTable]:
 
 
 def _inherited_number_list(
-    owner_id: str, store: Dict[str, LuaTable], key: str, _seen: Optional[Set[str]] = None
-) -> List[float]:
+    owner_id: str, store: dict[str, LuaTable], key: str, _seen: set[str] | None = None
+) -> list[float]:
     """Resolve an inheritable numeric-list field (owner's own list wins, else
     the first non-empty inherited list). Cycle-guarded."""
     _seen = _seen if _seen is not None else set()
@@ -349,7 +348,7 @@ def _inherited_number_list(
     return []
 
 
-def extract_keepsake_max_chambers(trait_parsed: dict) -> Dict[str, int]:
+def extract_keepsake_max_chambers(trait_parsed: dict) -> dict[str, int]:
     """Map each threshold-based keepsake trait to the chamber count at which it
     is mastered (``IsKeepsakeMaxed``, KeepsakeScripts.lua).
 
@@ -364,7 +363,7 @@ def extract_keepsake_max_chambers(trait_parsed: dict) -> Dict[str, int]:
     out of this map and stay indeterminate.
     """
     store = _trait_store(trait_parsed)
-    out: Dict[str, int] = {}
+    out: dict[str, int] = {}
     for name in store:
         if _inherited_flag(name, store, "KeepsakeRarityGameStateRequirements"):
             continue
@@ -377,8 +376,8 @@ def extract_keepsake_max_chambers(trait_parsed: dict) -> Dict[str, int]:
 def extract_save_eval_static(
     meta_parsed: dict,
     weapon_parsed: dict,
-    loot_parsed: Optional[dict] = None,
-    trait_parsed: Optional[dict] = None,
+    loot_parsed: dict | None = None,
+    trait_parsed: dict | None = None,
 ) -> dict:
     """Bundle every static table the H1 save evaluator needs.
 

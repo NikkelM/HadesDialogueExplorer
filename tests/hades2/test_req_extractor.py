@@ -20,13 +20,13 @@ Covers the four output channels (``requirements`` / ``otherRequirements`` /
   ``PlayFirst``) are silently dropped.
 """
 
-from src.lua_parser import LuaParser, LuaTable
 from src.extractors.hades2.req_extractor import (
     HADES2_REQUIREMENT_SET_FIELDS,
     extract_requirements,
-    reset_unresolved_textline_op_audit,
     get_unresolved_textline_op_refs,
+    reset_unresolved_textline_op_audit,
 )
+from src.lua_parser import LuaParser, LuaTable
 
 
 def _parse_req_set(lua_text):

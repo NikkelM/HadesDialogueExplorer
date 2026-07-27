@@ -26,7 +26,6 @@ module docstring. Those omissions are documented inline in
 
 import src.extractors.hades2 as h2
 
-
 # Names that the merge / build pipeline depends on. Removing one is
 # an explicit breaking change; adding new exports is fine (no upper
 # bound on the package surface).

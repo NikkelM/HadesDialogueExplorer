@@ -23,7 +23,7 @@ extractor.
 
 import re
 
-from ..lua_parser import LuaTable, LuaIdentifier, LuaExpression
+from ..lua_parser import LuaExpression, LuaIdentifier, LuaTable
 
 # Requirement fields that reference other textlines (dialogue dependencies).
 TEXTLINE_REQ_FIELDS = {
@@ -360,8 +360,7 @@ def iter_top_segments(container):
     vs random-pick handling) and see cross-file identifier references."""
     if not isinstance(container, LuaTable):
         return
-    for el in container.array:
-        yield el
+    yield from container.array
     for k in sorted(
         (k for k in container.named if isinstance(k, str) and _NUM_KEY_RE.match(k)),
         key=int):
@@ -691,7 +690,7 @@ def walk_textline_sections(
     section_keys,
     extract_one,
     extract_variants,
-    priority_tiers: dict = None,
+    priority_tiers: dict | None = None,
     force_play_once: bool = False,
     defer_variants: bool = False,
 ) -> dict:
@@ -799,12 +798,12 @@ def extract_textline_sections(
     source_file: str,
     *,
     section_keys,
-    default_speaker: str = None,
-    game_data_lists: dict = None,
-    section_priority_tiers: dict = None,
+    default_speaker: str | None = None,
+    game_data_lists: dict | None = None,
+    section_priority_tiers: dict | None = None,
     cue_speaker_resolver=None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
     force_play_once: bool = False,
     end_cue_speaker_resolver=None,
 ) -> dict:
@@ -909,10 +908,10 @@ def extract_textline(
     tl_table: LuaTable,
     fallback_speaker: str,
     source_file: str,
-    game_data_lists: dict = None,
+    game_data_lists: dict | None = None,
     cue_speaker_resolver=None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
     end_cue_speaker_resolver=None,
 ) -> dict:
     """Extract requirements + dialogue lines from a single textline table."""
@@ -1105,7 +1104,7 @@ def extract_textline(
     return data
 
 
-def _collect_cue_choices(cue: LuaTable, parent_name: str, preset_choices: dict = None):
+def _collect_cue_choices(cue: LuaTable, parent_name: str, preset_choices: dict | None = None):
     """Return the list of ``{internal, targetTextline}`` choice entries
     declared on a single cue, or ``None`` when the cue has no
     ``Choices`` field (or the field is an unresolvable reference).
@@ -1254,10 +1253,10 @@ def _extract_choice_variants(
     tl_table: LuaTable,
     fallback_speaker: str,
     source_file: str,
-    game_data_lists: dict = None,
+    game_data_lists: dict | None = None,
     cue_speaker_resolver=None,
-    offer_text_map: dict = None,
-    preset_choices: dict = None,
+    offer_text_map: dict | None = None,
+    preset_choices: dict | None = None,
     end_cue_speaker_resolver=None,
 ) -> dict:
     """Find every ``Choices = {...}`` array nested in the parent's cues and
@@ -1311,7 +1310,7 @@ def _merge_synthetic(section: dict, name: str, data: dict) -> None:
     return
 
 
-def _to_string_list(value, game_data_lists: dict = None, sources_out: list = None) -> list:
+def _to_string_list(value, game_data_lists: dict | None = None, sources_out: list | None = None) -> list:
     """Convert a value to a list of strings (for requirement fields).
 
     Expands ``LuaIdentifier`` references that name a known GameData list
@@ -1395,7 +1394,7 @@ def _to_string_list(value, game_data_lists: dict = None, sources_out: list = Non
     return [str(value)]
 
 
-def _normalize_value(value, game_data_lists: dict = None):
+def _normalize_value(value, game_data_lists: dict | None = None):
     """Normalize a Lua value for storage in otherRequirements.
 
     GameData identifiers known to resolve to textline lists are expanded

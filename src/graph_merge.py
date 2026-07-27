@@ -1,16 +1,16 @@
 """Merge multiple per-source graph datasets into one combined dataset."""
 
 from src.graph import (
-    resolve_duplicate,
-    dup_summary,
     attach_variant,
-    transfer_orphan_annotations,
-    split_name_collisions,
-    count_distinct_speakers,
-    build_dependents,
     build_alternates,
+    build_dependents,
     collect_referenced_textlines,
+    count_distinct_speakers,
+    dup_summary,
+    resolve_duplicate,
     resolve_skip_replacements,
+    split_name_collisions,
+    transfer_orphan_annotations,
 )
 
 

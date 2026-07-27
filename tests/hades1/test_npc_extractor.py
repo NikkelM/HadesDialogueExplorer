@@ -2,10 +2,9 @@
 
 from unittest.mock import patch
 
-
-from src.lua_parser import LuaParser
 from src.extractors.hades1 import npc_data as npc_data_mod
 from src.extractors.hades1.npc_data import extract_npc_data
+from src.lua_parser import LuaParser
 
 
 def extract(lua_text, source="Test", source_file=""):

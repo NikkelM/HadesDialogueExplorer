@@ -17,51 +17,61 @@ import sys
 from pathlib import Path
 
 from src.config import ConfigError, load_config
-from src.lua_parser import parse_lua_file
 from src.extractors.hades1 import (
-    extract_npc_data,
-    extract_deathloop_data,
-    extract_loot_data,
-    extract_enemy_data,
-    extract_encounter_room_data,
-    extract_game_data_lists,
     HADES1_OFFER_TEXT_MAP,
     HADES1_PRESET_CHOICES,
     HADES1_SPEAKERS,
+    extract_deathloop_data,
+    extract_encounter_room_data,
+    extract_enemy_data,
+    extract_game_data_lists,
+    extract_loot_data,
+    extract_npc_data,
     extract_save_eval_static,
 )
 from src.extractors.hades2 import (
-    extract_npc_data as h2_extract_npc_data,
-    extract_deathloop_data as h2_extract_deathloop_data,
-    extract_loot_data as h2_extract_loot_data,
-    extract_enemy_data as h2_extract_enemy_data,
-    extract_encounter_room_data as h2_extract_encounter_room_data,
-    extract_narrative_priorities,
-    apply_narrative_priorities,
-    find_unattached_priority_groups,
     HADES2_SPEAKERS,
+    apply_narrative_priorities,
+    extract_narrative_priorities,
+    find_unattached_priority_groups,
+)
+from src.extractors.hades2 import (
+    extract_deathloop_data as h2_extract_deathloop_data,
+)
+from src.extractors.hades2 import (
+    extract_encounter_room_data as h2_extract_encounter_room_data,
+)
+from src.extractors.hades2 import (
+    extract_enemy_data as h2_extract_enemy_data,
+)
+from src.extractors.hades2 import (
+    extract_loot_data as h2_extract_loot_data,
+)
+from src.extractors.hades2 import (
+    extract_npc_data as h2_extract_npc_data,
 )
 from src.extractors.hades2.gamedata_refs import extract_gamedata_refs
 from src.extractors.hades2.god_traits import extract_god_trait_metadata
 from src.extractors.hades2.named_requirements import extract_named_requirements
 from src.extractors.hades2.req_extractor import (
     extract_requirements,
-    reset_unresolved_textline_op_audit,
     get_unresolved_textline_op_refs,
+    reset_unresolved_textline_op_audit,
 )
 from src.extractors.hades2.textline_set import extract_hero_repeatable_sets
 from src.extractors.textline_set import (
-    reset_section_key_audit,
-    get_unlisted_section_keys,
-    reset_unrecognised_textline_key_audit,
-    get_unrecognised_textline_keys,
+    apply_cue_comment_texts,
     build_cue_comment_map,
     build_h2_cue_text_map,
-    apply_cue_comment_texts,
     drop_textless_end_cues,
+    get_unlisted_section_keys,
+    get_unrecognised_textline_keys,
+    reset_section_key_audit,
+    reset_unrecognised_textline_key_audit,
 )
 from src.graph import build_graph_data
 from src.localization import build_localization, read_subtitles_map
+from src.lua_parser import parse_lua_file
 
 # Each entry: (output filename, source label, lua filename, extractor function)
 HADES1_SOURCES = [
@@ -304,8 +314,8 @@ def generate_hades2_source(
     named_requirements: dict,
     narrative_priorities: dict,
     attached_priority_keys: set,
-    hero_repeatable_sets: dict = None,
-    game_data_lists: dict = None,
+    hero_repeatable_sets: dict | None = None,
+    game_data_lists: dict | None = None,
 ) -> tuple[str, dict]:
     """Parse one H2 Lua source file and return ``(output_name, graph_data)``.
 

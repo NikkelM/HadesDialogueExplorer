@@ -2,11 +2,24 @@
 
 
 from src.lua_parser import (
+    T_BOOL,
+    T_COMMA,
+    T_CONCAT,
+    T_DOT,
+    T_EOF,
+    T_EQUALS,
+    T_IDENT,
+    T_LBRACE,
+    T_LBRACKET,
+    T_LPAREN,
+    T_NIL,
+    T_NUMBER,
+    T_RBRACE,
+    T_RBRACKET,
+    T_RPAREN,
+    T_SEMICOL,
+    T_STRING,
     Tokenizer,
-    T_STRING, T_NUMBER, T_BOOL, T_NIL, T_IDENT,
-    T_LBRACE, T_RBRACE, T_LBRACKET, T_RBRACKET,
-    T_LPAREN, T_RPAREN, T_EQUALS, T_COMMA, T_SEMICOL,
-    T_DOT, T_CONCAT, T_EOF,
 )
 
 

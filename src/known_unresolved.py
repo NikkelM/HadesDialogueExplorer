@@ -3,15 +3,18 @@ and audit it against the parser's actual unresolved set."""
 
 from src.extractors.hades1 import (
     HADES1_KNOWN_UNRESOLVED_REFS,
-    UNRESOLVED_CATEGORY_LABELS as _HADES1_CATEGORY_LABELS,
+)
+from src.extractors.hades1 import (
     UNRESOLVED_CATEGORY_DESCRIPTIONS as _HADES1_CATEGORY_DESCRIPTIONS,
+)
+from src.extractors.hades1 import (
+    UNRESOLVED_CATEGORY_LABELS as _HADES1_CATEGORY_LABELS,
 )
 from src.extractors.hades2 import (
     HADES2_KNOWN_UNRESOLVED_REFS,
-    HADES2_UNRESOLVED_CATEGORY_LABELS,
     HADES2_UNRESOLVED_CATEGORY_DESCRIPTIONS,
+    HADES2_UNRESOLVED_CATEGORY_LABELS,
 )
-
 
 # Per-game known-unresolved maps. The build pipeline calls
 # :func:`annotate_known_unresolved` once per game with the matching

@@ -33,7 +33,6 @@ from src.extractors.hades1.section_keys import HADES1_TEXTLINE_SECTION_KEYS
 from src.extractors.hades2 import HADES2_SECTION_KEY_LABELS
 from src.extractors.hades2.section_keys import HADES2_TEXTLINE_SECTION_KEYS
 
-
 # Per-game (label-prefix, allowlist, label-map) rows. The build pipeline
 # calls :func:`audit_section_keys` once per game with the matching id so
 # each game's audit runs only against its own vocabulary (the strict

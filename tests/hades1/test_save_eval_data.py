@@ -8,16 +8,16 @@ fixtures so a game-data layout change surfaces as a failure here rather
 than as a silently-wrong eligibility verdict in the viewer.
 """
 
-from src.lua_parser import LuaParser
 from src.extractors.hades1.save_eval_data import (
-    extract_save_eval_static,
+    extract_god_loot_data,
+    extract_keepsake_max_chambers,
     extract_meta_upgrade_order_length,
+    extract_save_eval_static,
     extract_shrine_upgrade_order,
     extract_strike_through_change_value,
     extract_weapon_upgrade_slots,
-    extract_god_loot_data,
-    extract_keepsake_max_chambers,
 )
+from src.lua_parser import LuaParser
 
 
 def parse(lua_text):

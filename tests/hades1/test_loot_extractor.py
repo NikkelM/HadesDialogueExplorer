@@ -1,7 +1,7 @@
 """Tests for the LootData extractor."""
 
+from src.extractors.hades1.loot_data import LOOT_DEFAULT_SPEAKERS, extract_loot_data
 from src.lua_parser import LuaParser
-from src.extractors.hades1.loot_data import extract_loot_data, LOOT_DEFAULT_SPEAKERS
 
 
 def extract(lua_text, source="Test", source_file="LootData.lua"):

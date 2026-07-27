@@ -59,18 +59,21 @@ import shutil
 import sys
 from pathlib import Path
 
-from src.graph_merge import merge_graph_data
-from viewer_bundle import assemble_viewer_js, build_js, build_source_map
-from src.known_unresolved import annotate_known_unresolved
-from src.blocked_textlines import annotate_blocked_textlines, audit_impossible_seen_room_drift
-from src.graph import audit_content_alternate_drift
-from src.manual_overrides import apply_manual_overrides
-from src.label_maps import annotate_label_maps
-from src.section_key_audit import audit_section_keys
-from src.speaker_overview import annotate_speaker_aggregates
-from src.play_once import annotate_play_once
+from src.blocked_textlines import (
+    annotate_blocked_textlines,
+    audit_impossible_seen_room_drift,
+)
 from src.choice_prompt_text import annotate_choice_prompt_text
 from src.extractors.hades2 import HADES2_OFFER_TEXT_MAP
+from src.graph import audit_content_alternate_drift
+from src.graph_merge import merge_graph_data
+from src.known_unresolved import annotate_known_unresolved
+from src.label_maps import annotate_label_maps
+from src.manual_overrides import apply_manual_overrides
+from src.play_once import annotate_play_once
+from src.section_key_audit import audit_section_keys
+from src.speaker_overview import annotate_speaker_aggregates
+from viewer_bundle import assemble_viewer_js, build_js, build_source_map
 
 PROJECT_DIR = Path(__file__).parent
 TEMPLATES_DIR = PROJECT_DIR / "templates"
@@ -840,7 +843,7 @@ def main(argv=None):
     for json_file in json_files:
         print(f"Loading: {json_file.name}")
         game = _route_dataset(json_file.name)
-        with open(json_file, "r", encoding="utf-8") as f:
+        with open(json_file, encoding="utf-8") as f:
             data = json.load(f)
         datasets_by_game.setdefault(game, []).append(data)
 

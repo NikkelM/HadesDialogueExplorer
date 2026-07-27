@@ -21,27 +21,26 @@ Two key sets contribute to the expected coverage:
 """
 
 from src.extractors.hades1 import (
-    HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_EDGE_LABELS,
-    HADES1_REQ_TYPE_TOOLTIPS,
+    HADES1_REQ_TYPE_LABELS,
     HADES1_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES1_REQ_TYPE_TOOLTIPS,
     HADES1_REQ_TYPE_TOOLTIPS_DEPENDENTS,
 )
 from src.extractors.hades2 import (
     HADES2_REQ_OPERATORS,
-    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
-    HADES2_REQ_TYPE_LABELS,
-    HADES2_REQ_TYPE_EDGE_LABELS,
-    HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_DISPLAY_ORDER,
+    HADES2_REQ_TYPE_EDGE_LABELS,
+    HADES2_REQ_TYPE_LABELS,
     HADES2_REQ_TYPE_LABELS_DEPENDENTS,
+    HADES2_REQ_TYPE_TOOLTIPS,
     HADES2_REQ_TYPE_TOOLTIPS_DEPENDENTS,
+    HADES2_TEXTLINE_DEPENDENCY_FIELDS,
 )
 from src.extractors.hades2.req_extractor import (
     _FUNCTION_TEXTLINE_SYNTHETIC_KEYS,
     _TEXTLINE_PATH_PREFIXES,
 )
-
 
 # Combined "expected key" set: every entry in the H2 label maps must
 # be one of these. Updating the maps means updating one of the two

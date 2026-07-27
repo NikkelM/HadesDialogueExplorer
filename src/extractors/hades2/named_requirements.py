@@ -70,7 +70,6 @@ already vendored as the operator allowlist in
 
 from ...lua_parser import LuaTable
 
-
 NAMED_REQUIREMENTS_KEY = "NamedRequirementsData"
 
 

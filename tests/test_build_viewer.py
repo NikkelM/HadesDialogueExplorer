@@ -9,8 +9,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import viewer_bundle
-from build_viewer import DEPLOY_BASE_URL, OG_IMAGE_NAME, SEO_DESCRIPTION, _build_split_index_html
-
+from build_viewer import (
+    DEPLOY_BASE_URL,
+    OG_IMAGE_NAME,
+    SEO_DESCRIPTION,
+    _build_split_index_html,
+)
 
 # --- split-build head augmentation --------------------------------------
 
