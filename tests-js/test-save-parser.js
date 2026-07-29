@@ -32,7 +32,7 @@ import {
     validateSaveFilename,
     getSaveContext,
 } from '../templates/viewer/save-parser.js';
-import { loadData, registerGameData, registerDataFingerprints } from '../templates/viewer/data.js';
+import { loadData, registerGameData, registerDataFingerprints, setActiveGame } from '../templates/viewer/data.js';
 
 // Build an LZ4 block of `n` literal bytes (0,1,2,... mod 256), no matches.
 function literalBlock(n) {
@@ -833,6 +833,71 @@ test('a biomes-mod H2 save carries flat per-run EnemyKills into the current/prev
     assert.equal(ctx.currentRun.EnemyKills.Harpy, 2);
     // "Last run" kills come from the newest RunHistory entry's flat EnemyKills.
     assert.equal(ctx.prevRun.EnemyKills.Harpy2, 3);
+    clearSaveProgress();
+});
+
+test('H1 view of a biomes H2 save re-keys duplicate lines to the ModsNikkelMHadesBiomes_ prefix', () => {
+    clearSaveProgress();
+    // DupLine01 / DupLine02 exist in both games; UniqueH1Line01 is H1-only. The
+    // mod records the H1 version of a duplicate under the prefix, so in this save
+    // DupLine01 is present only as the H2 (unprefixed) version, DupLine02 only as
+    // the H1 (prefixed) version, and the H1-only line raw.
+    loadData({ duplicates: [{ name: 'DupLine01' }, { name: 'DupLine02' }] });
+    registerGameData('hades1', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {} }, DupLine02: { owner: 'NPC_Test_01', requirements: {} }, UniqueH1Line01: { owner: 'NPC_Test_01', requirements: {} } } });
+    registerGameData('hades2', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: {
+            GameState: {
+                ModsNikkelMHadesBiomesCompletedRunsCache: 1,
+                TextLinesRecord: {
+                    DupLine01: true,                              // H2 version of a duplicate
+                    ModsNikkelMHadesBiomes_DupLine02: true,       // H1 version of a duplicate
+                    UniqueH1Line01: true,                         // H1-only line, recorded raw
+                },
+            },
+        },
+    }));
+
+    // H2 view (raw): the unprefixed duplicate is played, the prefixed one is not
+    // resolved by its bare name, and the prefixed key is present verbatim.
+    setActiveGame('hades2');
+    assert.equal(isDialoguePlayed('DupLine01'), true);
+    assert.equal(isDialoguePlayed('DupLine02'), false);
+    assert.equal(isDialoguePlayed('UniqueH1Line01'), true);
+
+    // H1 view (re-keyed): the raw duplicate is the H2 version (excluded), the
+    // prefixed duplicate resolves under its bare H1 name, and the H1-only line
+    // stays played.
+    setActiveGame('hades1');
+    assert.equal(isDialoguePlayed('DupLine01'), false);
+    assert.equal(isDialoguePlayed('DupLine02'), true);
+    assert.equal(isDialoguePlayed('UniqueH1Line01'), true);
+    assert.deepEqual(
+        [...getSaveProgress()].sort(),
+        ['DupLine02', 'UniqueH1Line01'],
+    );
+
+    // Toggling back to H2 restores the raw view (no stale re-keyed cache).
+    setActiveGame('hades2');
+    assert.equal(isDialoguePlayed('DupLine01'), true);
+    assert.equal(isDialoguePlayed('DupLine02'), false);
+    clearSaveProgress();
+});
+
+test('H1 re-keying only applies to biomes H2 saves, not vanilla H2 saves', () => {
+    clearSaveProgress();
+    loadData({ duplicates: [{ name: 'DupLine01' }] });
+    registerGameData('hades1', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {} } } });
+    registerGameData('hades2', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+    // Vanilla H2 save (no biomes marker): even with H1 active, the raw duplicate
+    // stays as-is (no mod means no ported H1 content to re-key).
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: { GameState: { TextLinesRecord: { DupLine01: true } } },
+    }));
+    setActiveGame('hades1');
+    assert.equal(isDialoguePlayed('DupLine01'), true);
     clearSaveProgress();
 });
 

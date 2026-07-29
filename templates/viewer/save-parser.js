@@ -11,7 +11,7 @@
  * (MIT licensed): https://github.com/TheNormalnij/Hades-SavesExtractor
  */
 
-import { getActiveGame, games, dataFingerprints } from './data.js';
+import { getActiveGame, games, dataFingerprints, duplicates } from './data.js';
 import { collectGameStatePaths, pruneGameState, collectRunPaths, collectCurrentRunPaths, collectRoomPaths, collectPrevRunPaths, collectRunHistoryClearMask } from './gamestate-eval.js';
 import { H1_GAMESTATE_SLICE_KEYS, H1_CURRENTRUN_SLICE_KEYS, collectH1GlobalRefs } from './gamestate-eval-h1.js';
 import { directSatisfaction } from './requirements.js';
@@ -1003,7 +1003,97 @@ let _saveInRun = null;
 // H2 AudioState.* gates; null for non-H2 saves or when none is loaded.
 let _saveAudioState = null;
 
-export function getSaveProgress() { return _saveProgress; }
+// --- Hades 1 view of a Hades II + Zagreus' Journey (Hades Biomes) save ---
+//
+// The mod ports Hades 1 content into a Hades II save. For a dialogue name that
+// exists in BOTH games (a cross-game duplicate), the mod records the Hades 1
+// version under a ``ModsNikkelMHadesBiomes_`` prefix so it can't collide with
+// the Hades II line of the same name: an unprefixed duplicate in the record is
+// the Hades II version, the prefixed one is the Hades 1 version. Non-duplicate
+// names have no collision, so they are recorded raw.
+//
+// So when we display / trace Hades 1 dialogues against such a save, an H1 name
+// ``N`` played iff ``prefix+N`` is recorded (N a duplicate) or ``N`` is recorded
+// (N not a duplicate). We surface that by rebuilding the name-keyed record sets
+// re-keyed to H1 names, so every downstream consumer (badge, tracer, tree,
+// analytics) reads correct H1 progress with no per-call-site translation. Only
+// this exact cross-game modded case is remapped; H2 view and native H1 saves are
+// returned untouched.
+const _BIOMES_H1_PREFIX = 'ModsNikkelMHadesBiomes_';
+
+// Cross-game duplicate names, memoised on the ``duplicates`` array identity so
+// it rebuilds after a data swap.
+let _dupNameSet = null;
+let _dupNameSrc = null;
+function _duplicateNames() {
+  if (_dupNameSrc !== duplicates) {
+    _dupNameSrc = duplicates;
+    _dupNameSet = new Set((duplicates || []).map(d => d.name));
+  }
+  return _dupNameSet;
+}
+
+// True when we are displaying Hades 1 dialogues against a Hades II save that
+// carries the Biomes mod (the only case the H1 re-keying applies to).
+function _isH1BiomesView() {
+  return _saveGameId === 'hades2' && _saveHasBiomesMod && getActiveGame() === 'hades1';
+}
+
+// Map one recorded save key to the Hades 1 name it represents, or null when the
+// key is not a Hades 1 dialogue in this save (a raw duplicate = the Hades II
+// version, which must not count as the H1 line played).
+function _recordKeyToH1Name(key, dupSet) {
+  if (key.startsWith(_BIOMES_H1_PREFIX)) return key.slice(_BIOMES_H1_PREFIX.length);
+  return dupSet.has(key) ? null : key;
+}
+
+function _adjustSetForH1(set, dupSet) {
+  if (!(set instanceof Set)) return set;
+  const out = new Set();
+  for (const k of set) {
+    const n = _recordKeyToH1Name(k, dupSet);
+    if (n !== null) out.add(n);
+  }
+  return out;
+}
+
+function _adjustRunsAgoForH1(map, dupSet) {
+  if (!map || typeof map !== 'object') return map;
+  const out = Object.create(null);
+  for (const k in map) {
+    const n = _recordKeyToH1Name(k, dupSet);
+    if (n === null) continue;
+    const idx = map[k];
+    if (out[n] === undefined || idx < out[n]) out[n] = idx;
+  }
+  return out;
+}
+
+// Lazily built + memoised H1-re-keyed record sets for the loaded save. Returns
+// null when not in the H1-biomes view (callers then use the raw sets). Rebuilt
+// on save load / clear (cache nulled) and on a duplicates data swap (dupSet
+// identity guard).
+let _h1ViewCache = null;
+function _h1View() {
+  if (!_isH1BiomesView()) return null;
+  const dupSet = _duplicateNames();
+  if (_h1ViewCache && _h1ViewCache.dupSet === dupSet) return _h1ViewCache;
+  _h1ViewCache = {
+    dupSet,
+    played: _adjustSetForH1(_saveProgress, dupSet),
+    thisRun: _adjustSetForH1(_saveThisRun, dupSet),
+    thisRoom: _adjustSetForH1(_saveThisRoom, dupSet),
+    queued: _adjustSetForH1(_saveQueued, dupSet),
+    lastRun: _adjustSetForH1(_saveLastRun, dupSet),
+    runsAgo: _adjustRunsAgoForH1(_saveRunsAgo, dupSet),
+  };
+  return _h1ViewCache;
+}
+
+export function getSaveProgress() {
+  const v = _h1View();
+  return v ? v.played : _saveProgress;
+}
 export function getSaveGameId() { return _saveGameId; }
 export function getSaveRuns() { return _saveRuns; }
 export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
@@ -1029,13 +1119,14 @@ export function detectH2Softlock() {
 // plus the run-scoped records (each ``null`` when the save doesn't carry
 // it). ``requirements.js`` picks the right record per requirement field.
 export function getSaveContext() {
+  const v = _h1View();
   return {
-    played: _saveProgress,
-    thisRun: _saveThisRun,
-    thisRoom: _saveThisRoom,
-    queued: _saveQueued,
-    lastRun: _saveLastRun,
-    runsAgo: _saveRunsAgo,
+    played: v ? v.played : _saveProgress,
+    thisRun: v ? v.thisRun : _saveThisRun,
+    thisRoom: v ? v.thisRoom : _saveThisRoom,
+    queued: v ? v.queued : _saveQueued,
+    lastRun: v ? v.lastRun : _saveLastRun,
+    runsAgo: v ? v.runsAgo : _saveRunsAgo,
     gameState: _saveGameState,
     runs: _saveRunsSlice,
     currentRun: _saveCurrentRun,
@@ -1065,6 +1156,7 @@ export function clearSaveProgress() {
   _saveInRun = null;
   _saveRunsAgo = null;
   _saveAudioState = null;
+  _h1ViewCache = null;
 }
 
 // --- Local persistence ---
@@ -1248,6 +1340,7 @@ export function restoreSaveProgress() {
   _saveRunHistory = Array.isArray(data.runHistory) ? data.runHistory : null;
   _saveInRun = (typeof data.inRun === 'boolean') ? data.inRun : null;
   _saveAudioState = (data.audioState && typeof data.audioState === 'object') ? data.audioState : null;
+  _h1ViewCache = null;
   return {
     gameId: _saveGameId,
     completedRuns: _saveRuns,
@@ -1316,17 +1409,21 @@ export function parseSaveFile(arrayBuffer) {
   _saveGameId = parsed.gameId;
   _saveRuns = parsed.completedRuns;
   _saveHasBiomesMod = !!parsed.hasBiomesMod;
+  _h1ViewCache = null;
   return { gameId: parsed.gameId, completedRuns: parsed.completedRuns, count: _saveProgress.size };
 }
 
 export function isDialoguePlayed(name) {
-  if (!_saveProgress) return null;
-  return _saveProgress.has(name);
+  const played = getSaveProgress();
+  if (!played) return null;
+  return played.has(name);
 }
 
 export function getDialogueStatus(name, textlineData) {
-  if (!_saveProgress) return null;
-  if (_saveProgress.has(name)) return 'played';
+  const played = getSaveProgress();
+  if (!played) return null;
+  if (played.has(name)) return 'played';
+  const ctx = getSaveContext();
   // A permanent structural lock (a required choice was taken differently, or a
   // mutually-exclusive line has played) is definitive, so it is checked first.
   // It must come BEFORE the 'eligible' verdict: a choice variant whose sibling
@@ -1334,10 +1431,10 @@ export function getDialogueStatus(name, textlineData) {
   // directSatisfaction reads 'met') yet can never be obtained - checking
   // eligibility first would mislabel it 'eligible'. This keeps the badge in
   // lockstep with the eligibility tracer, which reports the same lock.
-  if (isUnobtainable(name, _saveProgress, _saveRunsAgo, getSaveContext())) return 'unobtainable';
+  if (isUnobtainable(name, played, ctx.runsAgo, ctx)) return 'unobtainable';
   // Respect per-type requirement semantics (AND / OR / negative) and the
   // record each field is scoped to (global / this-run / this-room / queued).
-  const sat = directSatisfaction(textlineData, getSaveContext(), name);
+  const sat = directSatisfaction(textlineData, ctx, name);
   if (sat === 'met') return 'eligible';
   // 'unknown' -> the dialogue gates on a run-scoped record this save doesn't
   // carry (the H2 textline queue, or a current-run record when no run is
