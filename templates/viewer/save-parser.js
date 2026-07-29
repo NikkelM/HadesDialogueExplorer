@@ -1100,6 +1100,14 @@ export function getSaveHasBiomesMod() { return _saveHasBiomesMod; }
 // true = in-run save, false = hub save, null = unknown / none loaded.
 export function getSaveInRun() { return _saveInRun; }
 
+// Raw whole-save played count (the true number of recorded TextLinesRecord
+// entries), independent of the active-game H1 re-keying. The save-status pill
+// reports the whole save, not the per-game view, so it must stay identical
+// across a game switch (see refreshSaveStatus).
+export function getSaveRawPlayedCount() {
+  return _saveProgress ? _saveProgress.size : 0;
+}
+
 // Detect the known Hades II story-softlock state: the player holds Gigaros (the
 // ``HadesSpearPoints`` inventory resource, granted on picking up Hades' spear
 // during the Zagreus dream sequence) WITHOUT having played

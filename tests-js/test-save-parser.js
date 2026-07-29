@@ -21,6 +21,7 @@ import {
     getSaveProgress,
     getSaveGameId,
     getSaveRuns,
+    getSaveRawPlayedCount,
     clearSaveProgress,
     persistSaveProgress,
     restoreSaveProgress,
@@ -899,6 +900,63 @@ test('H1 re-keying only applies to biomes H2 saves, not vanilla H2 saves', () =>
     setActiveGame('hades1');
     assert.equal(isDialoguePlayed('DupLine01'), true);
     clearSaveProgress();
+});
+
+test('H1 eligibility resolves a duplicate dependency against the prefixed record', () => {
+    clearSaveProgress();
+    // NeedsDup01 (H1) gates on the duplicate DupDep01 having played. Whether that
+    // gate is met in the H1 view must key off the H1 (prefixed) record, not the
+    // H2 (unprefixed) one - so eligibility follows the same re-keying as the
+    // played badge.
+    loadData({ duplicates: [{ name: 'DupDep01' }] });
+    const h1tl = {
+        DupDep01: { owner: 'NPC_Test_01', requirements: {} },
+        NeedsDup01: { owner: 'NPC_Test_01', requirements: { RequiredTextLines: ['DupDep01'] } },
+    };
+    registerGameData('hades1', { textlines: h1tl });
+    registerGameData('hades2', { textlines: { DupDep01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+    setActiveGame('hades1');
+
+    // Only the H2 (unprefixed) version of the duplicate is recorded, so in the H1
+    // view the H1 dependency has NOT played -> the gate is unmet -> blocked.
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: { GameState: { ModsNikkelMHadesBiomesCompletedRunsCache: 1, TextLinesRecord: { DupDep01: true } } },
+    }));
+    assert.equal(getDialogueStatus('NeedsDup01', h1tl.NeedsDup01), 'blocked');
+
+    // The H1 (prefixed) version is recorded, so the dependency counts as played
+    // and the gate is satisfied -> the dependent line is eligible.
+    clearSaveProgress();
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: { GameState: { ModsNikkelMHadesBiomesCompletedRunsCache: 1, TextLinesRecord: { ModsNikkelMHadesBiomes_DupDep01: true } } },
+    }));
+    assert.equal(getDialogueStatus('NeedsDup01', h1tl.NeedsDup01), 'eligible');
+    clearSaveProgress();
+});
+
+test('getSaveRawPlayedCount reports the whole-save total in either game view', () => {
+    clearSaveProgress();
+    // The status pill reports the whole save, not the per-game H1 re-keyed view,
+    // so the count must stay identical across a game switch. Here the H2 view
+    // sees 2 played (the raw duplicate + the prefixed one) and the H1 view sees
+    // only 1 (the prefixed duplicate), but the raw count is 2 in both.
+    loadData({ duplicates: [{ name: 'DupLine01' }] });
+    registerGameData('hades1', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {} } } });
+    registerGameData('hades2', { textlines: { DupLine01: { owner: 'NPC_Test_01', requirements: {}, otherRequirements: {} } }, namedRequirements: {} });
+    parseSaveFile(buildSGB1({
+        gameVersion: GAME_VERSION_HADES2,
+        luaState: { GameState: { ModsNikkelMHadesBiomesCompletedRunsCache: 1, TextLinesRecord: { DupLine01: true, ModsNikkelMHadesBiomes_DupLine01: true } } },
+    }));
+    setActiveGame('hades2');
+    assert.equal(getSaveProgress().size, 2);
+    assert.equal(getSaveRawPlayedCount(), 2);
+    setActiveGame('hades1');
+    assert.equal(getSaveProgress().size, 1);       // H1 view drops the raw H2 duplicate
+    assert.equal(getSaveRawPlayedCount(), 2);       // ...but the pill total is unchanged
+    clearSaveProgress();
+    assert.equal(getSaveRawPlayedCount(), 0);
 });
 
 test('extractH1CurrentRunSlice prunes Hero / CurrentRoom / RoomHistory', () => {

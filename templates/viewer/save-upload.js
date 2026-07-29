@@ -8,6 +8,7 @@ import {
     getSaveProgress,
     getSaveGameId,
     getSaveRuns,
+    getSaveRawPlayedCount,
     getSaveHasBiomesMod,
     getSaveInRun,
     saveMatchesActiveGame,
@@ -149,7 +150,7 @@ export function refreshSaveStatus(activeGameId, labels) {
     if (!getSaveProgress()) return;
     const gameId = getSaveGameId();
     const label = ((labels || gameLabels) || {})[gameId] || gameId;
-    const count = getSaveProgress().size;
+    const count = getSaveRawPlayedCount();
     const runs = getSaveRuns();
     const moddedH2 = gameId === 'hades2' && getSaveHasBiomesMod();
     // Hub vs in-run (_Temp) save: changes which CurrentRun.* gates can resolve,
