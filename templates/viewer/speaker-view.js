@@ -815,20 +815,20 @@ function renderTextlineRow(name, tl) {
             + badges
             + `</li>`;
     }
-    // Save mode (single column): every row shares one aligned head - a chevron
-    // slot (real chevron when expandable, else an empty spacer so names line up),
-    // the status dot, the name, then the badges. A blocked / indeterminate row
-    // expands in place to reveal the unplayed dialogues still blocking it (each
-    // with its own dot, itself expandable - see ``toggleTextlineBlockers``);
-    // played / eligible / unobtainable rows have nothing to expand and simply
-    // navigate on click. Navigation matches the tree views: the row toggles /
-    // (for leaves) navigates on a single click, and an expandable row navigates
-    // on a double-click - so the name is a plain span, not a link.
+    // Save mode: every row shares one aligned head - a chevron slot (a real
+    // chevron when expandable, else an empty spacer so names line up), the status
+    // dot, the name, then the badges. The dialogue NAME always opens the detail
+    // view (a navigate link, click-stopped so it doesn't also toggle). A blocked
+    // / indeterminate row expands in place - via the chevron or any non-name part
+    // of the row - to reveal the unplayed dialogues still blocking it (each with
+    // its own dot, itself expandable - see ``toggleTextlineBlockers``). Played /
+    // eligible / unobtainable rows have nothing to expand, so the whole row
+    // navigates.
     const expandable = status === 'blocked' || status === 'indeterminate';
     const chevron = expandable
         ? `<span class="speaker-row-chevron">\u25B6</span>`
         : `<span class="speaker-row-chevron"></span>`;
-    const name_ = `<span class="textline-link speaker-row-name">${escapeHtml(name)}</span>`;
+    const name_ = `<a class="textline-link speaker-row-name" onclick="event.stopPropagation();navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`;
     if (!expandable) {
         return `<li class="speaker-textline-row speaker-textline-row-save">`
             + `<div class="speaker-textline-row-head" onclick="navigateTo(${jsAttr(name)})">`
@@ -837,7 +837,7 @@ function renderTextlineRow(name, tl) {
             + `</li>`;
     }
     return `<li class="speaker-textline-row speaker-textline-row-save speaker-textline-row-expandable" data-name="${escapeHtml(name)}">`
-        + `<div class="speaker-textline-row-head" onclick="toggleTextlineBlockers(this.closest('.speaker-textline-row'))" ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`
+        + `<div class="speaker-textline-row-head" onclick="toggleTextlineBlockers(this.closest('.speaker-textline-row'))">`
         + chevron + saveBadge + name_ + badges
         + `</div>`
         + `<div class="speaker-row-blockers" data-loaded="0"></div>`
@@ -861,8 +861,8 @@ export function toggleTextlineBlockers(rowEl) {
     // / run-count gate (the tracer's territory), so point there rather than show
     // an empty box.
     box.innerHTML = tree
-        || `<p class="speaker-row-blockers-note">No unplayed prerequisite dialogues - blocked by other conditions. `
-            + `<a class="textline-link" onclick="navigateToEligibility(${jsAttr(name)})">Open the eligibility tracer</a> for the full picture.</p>`;
+        || `<p class="speaker-row-blockers-note">Blocked by non-dialogue conditions - `
+            + `<a class="textline-link" onclick="navigateToEligibility(${jsAttr(name)})">open the eligibility tracer</a>.</p>`;
     box.dataset.loaded = '1';
 }
 

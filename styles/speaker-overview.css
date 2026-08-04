@@ -644,20 +644,15 @@ body.layout-speaker #panel-info {
     background-color: var(--col-stripe);
 }
 
-/* ---- Save-progress mode: dynamic roomy columns + expandable blocker rows --
+/* ---- Save-progress mode: expandable blocker rows -----------------------
    With a matching save the rows become expandable into their unplayed blocker
-   tree (``speaker-view.js`` adds the ``-save`` modifier). The list flows into a
-   dynamic ``auto-fill`` grid whose columns are wider than the dense no-save grid
-   so each column comfortably fits a name row and its expanded blocker tree - a
-   4k display gets several columns, a laptop one or two. ``--speaker-save-col-min``
-   is the single knob for how wide each column is (raise it for fewer/roomier
-   columns, lower it for more). Column striping (``stripeSpeakerColumns``) tints
-   alternate columns just like the no-save grid. */
-.speaker-textline-list-save {
-    --speaker-save-col-min: 800px;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--speaker-save-col-min)), 1fr));
-    column-gap: 2rem;
-}
+   tree (``speaker-view.js`` adds the ``-save`` modifier). The list keeps the
+   SAME responsive column grid as the no-save case (single source of truth:
+   ``--speaker-col-min`` on ``.speaker-textline-list``), so loading a save
+   doesn't reflow the column count. Raise ``--speaker-col-min`` there to tune
+   both cases together. Column striping (``stripeSpeakerColumns``) applies in
+   both. The ``.speaker-textline-list-save`` class stays as a JS/markup hook
+   (per-row save styling keys off ``.speaker-textline-row-save``). */
 /* In save mode every row is a clickable head (chevron slot + dot + name +
    badges); an expandable row additionally stacks its lazily-filled blocker tree
    below the head. Both switch from the flat flex row to a block container so the
@@ -678,17 +673,27 @@ body.layout-speaker #panel-info {
 .speaker-textline-row-head:hover {
     background: #1e2a30;
 }
-/* The dialogue name is a plain span in save mode (clicking it toggles / (for a
-   leaf) navigates, matching the tree views), so it keeps the row-name weight but
-   not the link hover accent - navigation is a double-click (or a single click on
-   a leaf row). */
+/* The dialogue name always opens the detail view (a navigate link), so it keeps
+   the row-name weight and gets the usual link hover accent; expanding a row
+   happens via the chevron / any non-name part of the row. */
 .speaker-row-name {
     color: var(--text-secondary);
     font-weight: 500;
     cursor: pointer;
 }
 .speaker-row-name:hover {
-    color: var(--text-secondary);
+    color: var(--accent-color);
+}
+/* The name sizes to its own text (overriding ``.textline-link``'s ``flex: 1``)
+   so the blank space in the head belongs to the row, not the link - clicking
+   beside the name expands an expandable row instead of navigating. The badges
+   hug the right edge. Higher specificity than ``.textline-link`` so the flex
+   override actually wins. */
+.speaker-textline-row-head .speaker-row-name {
+    flex: 0 1 auto;
+}
+.speaker-textline-row-head .speaker-textline-badges {
+    margin-left: auto;
 }
 /* Chevron slot: a real chevron on expandable rows, an empty (width-reserving)
    span on the rest so every row's dot + name line up. */

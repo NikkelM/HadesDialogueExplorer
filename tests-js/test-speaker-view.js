@@ -1037,10 +1037,11 @@ test('renderSpeaker makes a blocked row expandable, leaving played / eligible ro
     assert.match(html, /speaker-textline-row-expandable" data-name="TestBlocked01"/);
     assert.match(html, /speaker-row-chevron/);
     assert.match(html, /speaker-row-blockers" data-loaded="0"/);
-    // Navigation matches the tree views: the row head toggles on click and
-    // navigates on double-click; the name is a plain span (clicking it toggles).
-    assert.match(html, /speaker-textline-row-head" onclick="toggleTextlineBlockers[^"]*" ondblclick="[^"]*navigateTo\(&quot;TestBlocked01&quot;\)"/);
-    assert.match(html, /<span class="textline-link speaker-row-name">TestBlocked01<\/span>/);
+    // Navigation: the dialogue name always opens the detail view (a
+    // click-stopped navigate link); the row head expands via any non-name part.
+    assert.match(html, /speaker-textline-row-head" onclick="toggleTextlineBlockers[^"]*">/);
+    assert.doesNotMatch(html, /ondblclick/);
+    assert.match(html, /<a class="textline-link speaker-row-name" onclick="event\.stopPropagation\(\);navigateTo\(&quot;TestBlocked01&quot;\)">TestBlocked01<\/a>/);
     // No jump-to arrow anywhere (the tree views carry none).
     assert.doesNotMatch(html, /speaker-row-open/);
     assert.doesNotMatch(html, /\u2197/);
