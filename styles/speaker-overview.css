@@ -643,6 +643,109 @@ body.layout-speaker #panel-info {
 .speaker-textline-list > .speaker-col-alt {
     background-color: var(--col-stripe);
 }
+
+/* ---- Save-progress mode: dynamic roomy columns + expandable blocker rows --
+   With a matching save the rows become expandable into their unplayed blocker
+   tree (``speaker-view.js`` adds the ``-save`` modifier). The list flows into a
+   dynamic ``auto-fill`` grid whose columns are wider than the dense no-save grid
+   so each column comfortably fits a name row and its expanded blocker tree - a
+   4k display gets several columns, a laptop one or two. ``--speaker-save-col-min``
+   is the single knob for how wide each column is (raise it for fewer/roomier
+   columns, lower it for more). Column striping (``stripeSpeakerColumns``) tints
+   alternate columns just like the no-save grid. */
+.speaker-textline-list-save {
+    --speaker-save-col-min: 800px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--speaker-save-col-min)), 1fr));
+    column-gap: 2rem;
+}
+/* In save mode every row is a clickable head (chevron slot + dot + name +
+   badges); an expandable row additionally stacks its lazily-filled blocker tree
+   below the head. Both switch from the flat flex row to a block container so the
+   head owns the flex layout and the rows stay vertically aligned. */
+.speaker-textline-row-save {
+    display: block;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.speaker-textline-row-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.speaker-textline-row-head:hover {
+    background: #1e2a30;
+}
+/* The dialogue name is a plain span in save mode (clicking it toggles / (for a
+   leaf) navigates, matching the tree views), so it keeps the row-name weight but
+   not the link hover accent - navigation is a double-click (or a single click on
+   a leaf row). */
+.speaker-row-name {
+    color: var(--text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+}
+.speaker-row-name:hover {
+    color: var(--text-secondary);
+}
+/* Chevron slot: a real chevron on expandable rows, an empty (width-reserving)
+   span on the rest so every row's dot + name line up. */
+.speaker-row-chevron {
+    flex-shrink: 0;
+    width: 0.8em;
+    font-size: 0.65em;
+    display: inline-block;
+    transition: transform 0.15s;
+    color: var(--text-secondary);
+}
+.speaker-textline-row-expandable.expanded > .speaker-textline-row-head .speaker-row-chevron {
+    transform: rotate(90deg);
+}
+/* The embedded blocker tree mirrors the tree views, which carry no jump-to
+   arrow, so hide the shared ``.tree-link`` here (a nested row still navigates on
+   double-click / single-click on a leaf). */
+.speaker-blocker-tree .tree-link {
+    display: none;
+}
+/* The blocker tree is hidden until the row is expanded (and stays empty in the
+   markup until first expand - lazily hydrated). Nested under the name with a
+   left rule so it reads as a child of the row. */
+.speaker-row-blockers {
+    display: none;
+    margin: 2px 0 6px 1.3em;
+    padding-left: 0.6rem;
+    border-left: 2px solid var(--border);
+}
+.speaker-textline-row-expandable.expanded > .speaker-row-blockers {
+    display: block;
+}
+.speaker-row-blockers .speaker-blocker-tree {
+    margin-top: 0;
+    /* Same size as the dialogue rows themselves - the indentation already sets
+       the blocker (dependency) dialogues apart, so they don't also need to be
+       smaller. */
+    font-size: var(--fs-base);
+}
+/* First-level tree nodes align to the row rule rather than re-indenting. */
+.speaker-row-blockers .speaker-blocker-tree > .tree-node {
+    margin-left: 0;
+    border-left: none;
+    padding-left: 0;
+}
+.speaker-row-blockers-note {
+    margin: 4px 0 6px;
+    /* Same size as the dialogue rows / blocker tree (the indentation sets it
+       apart), so the expanded content reads at one consistent size. */
+    font-size: var(--fs-base);
+    color: var(--text-secondary);
+}
+/* The inline "Open the eligibility tracer" link is a ``.textline-link``, which
+   otherwise forces ``--fs-base``; keep it the same size as the note text. */
+.speaker-row-blockers-note .textline-link {
+    font-size: inherit;
+}
 /* Mutually-exclusive alternate variants, clustered into one labelled box
    within a section (gold accent shared with the dialogue detail view). */
 .speaker-alt-group {

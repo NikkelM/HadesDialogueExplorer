@@ -21,6 +21,7 @@ import {
     canonicalisePriority,
     canonicaliseEligibility,
     toggleSpeakerSection,
+    toggleTextlineBlockers,
     searchSpeakerTextlines,
     buildAdjacencyDetail,
     renderAdjacencyDetailRows,
@@ -104,6 +105,16 @@ function buildSpeakerFixture() {
                 requirements: {}, otherRequirements: {},
                 dialogueLines: [{ speaker: 'NPC_Herald_01', text: 'Until next time.' }],
             },
+            // A speaker owning lines in two sections, for the section
+            // auto-expand / collapse tests (Interact sorts before Gift).
+            DuoInteract01: {
+                owner: 'NPC_Duo_01', section: 'InteractTextLineSets',
+                requirements: {}, otherRequirements: {}, dialogueLines: [],
+            },
+            DuoGift01: {
+                owner: 'NPC_Duo_01', section: 'GiftTextLineSets',
+                requirements: {}, otherRequirements: {}, dialogueLines: [],
+            },
         },
         dependents: {
             ...base.dependents,
@@ -145,6 +156,15 @@ function buildSpeakerFixture() {
                 asSpeakerTextlines: [],
                 sourceFiles: ['NPCData.lua'],
                 sectionCounts: { InteractTextLineSets: 2 },
+                priorityCounts: { super: 0, priority: 0, plain: 2 },
+            },
+            NPC_Duo_01: {
+                name: 'Duo',
+                description: 'Owns two sections',
+                ownedTextlines: ['DuoInteract01', 'DuoGift01'],
+                asSpeakerTextlines: [],
+                sourceFiles: ['NPCData.lua'],
+                sectionCounts: { InteractTextLineSets: 1, GiftTextLineSets: 1 },
                 priorityCounts: { super: 0, priority: 0, plain: 2 },
             },
         },
@@ -510,17 +530,23 @@ test('renderSpeaker exposes only a Filter control - no Group/Sort control', () =
     assert.match(html, /speaker-textline-group/);
 });
 
-test('renderSpeaker section groups are collapsible and collapsed by default', () => {
-    const html = render('NPC_Zeus_01', { priority: 'all' });
-    // Group renders without the ``expanded`` modifier -> collapsed.
-    assert.match(html, /<div class="speaker-textline-group">/);
-    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
+test('renderSpeaker opens the first section by default and leaves the rest collapsed', () => {
+    // NPC_Duo_01 owns two sections; Interact sorts before Gift. On a fresh load
+    // the first (Interact) section is expanded and the second (Gift) collapsed.
+    render('NPC_Orpheus_01', { priority: 'all' });   // ensure the next load is fresh
+    const html = render('NPC_Duo_01', { priority: 'all' });
+    const interactIdx = html.indexOf('DuoInteract01');
+    const giftIdx = html.indexOf('DuoGift01');
+    // Exactly one group carries the ``expanded`` modifier (the first).
+    assert.equal((html.match(/class="speaker-textline-group expanded"/g) || []).length, 1);
+    assert.match(html, /class="speaker-textline-group">/);   // at least one collapsed group
+    assert.ok(interactIdx < giftIdx, 'Interact section renders before Gift');
     // Header toggles the group on click and carries a chevron affordance.
     assert.match(html, /speaker-textline-group-header" onclick="toggleSpeakerSection\(this, /);
     assert.match(html, /<span class="speaker-group-chevron">/);
 });
 
-test('renderSpeaker keeps an expanded section open across a re-render for the same speaker', () => {
+test('renderSpeaker keeps section expansion state across a re-render, resetting (and re-opening the first) on a new speaker', () => {
     // A minimal header-element stub: ``toggleSpeakerSection`` flips the
     // ``expanded`` class on ``parentElement`` and records the section key.
     const fakeHeader = () => {
@@ -530,21 +556,24 @@ test('renderSpeaker keeps an expanded section open across a re-render for the sa
         } } };
     };
 
-    // Fresh render of Zeus: the Gift section is collapsed.
-    let html = render('NPC_Zeus_01', { priority: 'all' });
-    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
+    // Fresh render of Duo: the first (Interact) section is auto-expanded, Gift
+    // is collapsed.
+    render('NPC_Orpheus_01', { priority: 'all' });   // ensure the next load is fresh
+    let html = render('NPC_Duo_01', { priority: 'all' });
+    assert.equal((html.match(/class="speaker-textline-group expanded"/g) || []).length, 1);
 
-    // User expands the Gift section.
+    // User expands the second (Gift) section too.
     toggleSpeakerSection(fakeHeader(), 'GiftTextLineSets');
 
-    // Re-render the SAME speaker (e.g. after a filter change): the section
-    // stays expanded.
-    html = render('NPC_Zeus_01', { priority: 'all' });
-    assert.match(html, /class="speaker-textline-group expanded"/);
+    // Re-render the SAME speaker (e.g. after a filter change): both sections
+    // stay expanded (the auto-open flag does not fire again).
+    html = render('NPC_Duo_01', { priority: 'all' });
+    assert.equal((html.match(/class="speaker-textline-group expanded"/g) || []).length, 2);
 
-    // Navigating to a DIFFERENT speaker resets the expansion state.
-    html = render('NPC_Aphrodite_01', { priority: 'all' });
-    assert.doesNotMatch(html, /class="speaker-textline-group expanded"/);
+    // Navigating to a DIFFERENT speaker resets the user's expansion state and
+    // re-opens just that speaker's first section.
+    html = render('NPC_Herald_01', { priority: 'all' });
+    assert.equal((html.match(/class="speaker-textline-group expanded"/g) || []).length, 1);
 });
 
 test('renderSpeaker groups co-present mutually-exclusive alternates into one cluster', () => {
@@ -984,6 +1013,152 @@ test('renderSpeaker eligibility filter narrows the list to one status', () => {
     const playedOnly = render('NPC_Test_01', { eligibility: 'played' });
     assert.match(playedOnly, /TestPlayed01/);
     assert.doesNotMatch(playedOnly, /TestBlocked01/);
+});
+
+// --- expandable blocker rows (save-progress mode) -----------------
+
+test('renderSpeaker uses the dynamic multi-column save layout when a save applies', () => {
+    loadEligibilityFixtureWithSave();
+    assert.match(render('NPC_Test_01', {}), /class="speaker-textline-list speaker-textline-list-save"/);
+});
+
+test('renderSpeaker keeps the plain list (no -save modifier) when no save is loaded', () => {
+    // ``beforeEach`` cleared the save, so this speaker renders without save chrome.
+    const html = render('NPC_Zeus_01', {});
+    assert.match(html, /class="speaker-textline-list"/);
+    assert.doesNotMatch(html, /speaker-textline-list-save/);
+});
+
+test('renderSpeaker makes a blocked row expandable, leaving played / eligible rows flat', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});
+    // The blocked row gains the expandable wrapper, a chevron, and an empty
+    // (lazily hydrated) blocker container keyed to the dialogue name.
+    assert.match(html, /speaker-textline-row-expandable" data-name="TestBlocked01"/);
+    assert.match(html, /speaker-row-chevron/);
+    assert.match(html, /speaker-row-blockers" data-loaded="0"/);
+    // Navigation matches the tree views: the row head toggles on click and
+    // navigates on double-click; the name is a plain span (clicking it toggles).
+    assert.match(html, /speaker-textline-row-head" onclick="toggleTextlineBlockers[^"]*" ondblclick="[^"]*navigateTo\(&quot;TestBlocked01&quot;\)"/);
+    assert.match(html, /<span class="textline-link speaker-row-name">TestBlocked01<\/span>/);
+    // No jump-to arrow anywhere (the tree views carry none).
+    assert.doesNotMatch(html, /speaker-row-open/);
+    assert.doesNotMatch(html, /\u2197/);
+    // Played / eligible rows have nothing still blocking them, so they are not
+    // wrapped as expandable (no data-name row for them).
+    assert.doesNotMatch(html, /data-name="TestPlayed01"/);
+    assert.doesNotMatch(html, /data-name="TestEligible01"/);
+});
+
+test('renderSpeaker aligns save-mode rows: every row has a chevron slot and no jump arrow', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});
+    // Non-expandable (eligible / played) rows share the save-row structure - a
+    // chevron slot keeps their name aligned with the expandable rows - and they
+    // navigate on a single click.
+    assert.match(html, /speaker-textline-row speaker-textline-row-save"[^>]*>[\s\S]*?TestEligible01/);
+    // The eligible/played rows are save-rows but not expandable.
+    const eligibleRow = html.slice(html.indexOf('TestEligible01') - 400, html.indexOf('TestEligible01') + 50);
+    assert.match(eligibleRow, /speaker-textline-row-save/);
+    assert.doesNotMatch(eligibleRow, /speaker-textline-row-expandable/);
+});
+
+test('renderSpeaker leaves rows flat (never expandable) when no save is loaded', () => {
+    const html = render('NPC_Zeus_01', {});
+    assert.doesNotMatch(html, /speaker-textline-row-expandable/);
+    assert.doesNotMatch(html, /speaker-row-blockers/);
+});
+
+test('renderSpeaker sorts rows within a section by eligibility under the All filter', () => {
+    loadEligibilityFixtureWithSave();
+    const html = render('NPC_Test_01', {});   // no eligibility filter = "All"
+    const iElig = html.indexOf('TestEligible01');
+    const iBlocked = html.indexOf('TestBlocked01');
+    const iPlayed = html.indexOf('TestPlayed01');
+    assert.ok(iElig >= 0 && iBlocked >= 0 && iPlayed >= 0, 'all three rows present');
+    // Actionable-first (eligible -> blocked -> played), NOT alphabetical
+    // (which would put Blocked before Eligible), so eligibility drives the order.
+    assert.ok(iElig < iBlocked, 'eligible sorts before blocked');
+    assert.ok(iBlocked < iPlayed, 'blocked sorts before played');
+});
+
+test('toggleTextlineBlockers lazily hydrates a blocked row with its unplayed blocker tree', () => {
+    loadEligibilityFixtureWithSave();
+    // Minimal stand-in for the row element the inline onclick passes in: only the
+    // members ``toggleTextlineBlockers`` touches are implemented.
+    let boxHtml = '';
+    const box = {
+        dataset: { loaded: '0' },
+        set innerHTML(v) { boxHtml = v; },
+        get innerHTML() { return boxHtml; },
+    };
+    const cls = new Set();
+    const row = {
+        dataset: { name: 'TestBlocked01' },
+        classList: {
+            contains: c => cls.has(c),
+            toggle: (c) => { if (cls.has(c)) { cls.delete(c); return false; } cls.add(c); return true; },
+        },
+        querySelector: sel => (sel === '.speaker-row-blockers' ? box : null),
+    };
+    // First toggle expands and fills the box with the unplayed prerequisite.
+    toggleTextlineBlockers(row);
+    assert.ok(cls.has('expanded'), 'row is marked expanded');
+    assert.equal(box.dataset.loaded, '1');
+    assert.match(boxHtml, /speaker-blocker-tree/);
+    assert.match(boxHtml, /NeverPlayedLine/);
+
+    // Collapsing then re-expanding must not rebuild (already loaded); the box
+    // content is left untouched.
+    const filled = boxHtml;
+    toggleTextlineBlockers(row);            // collapse
+    assert.equal(cls.has('expanded'), false);
+    toggleTextlineBlockers(row);            // expand again - no re-hydrate
+    assert.equal(boxHtml, filled);
+});
+
+test('renderSpeaker blocker tree omits already-played prerequisites (shows only what still blocks)', () => {
+    // TwoPrereqBlocked01 needs a played line (satisfied) and an unplayed line;
+    // its expansion must show only the unplayed one.
+    const base = buildFixtureData();
+    const fixture = {
+        ...base,
+        textlines: {
+            ...base.textlines,
+            DonePrereq01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true },
+            OpenPrereq01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: {}, playOnce: true },
+            TwoPrereqBlocked01: { owner: 'NPC_Test_01', section: 'InteractTextLineSets', dialogueLines: [], requirements: { RequiredTextLines: ['DonePrereq01', 'OpenPrereq01'] }, playOnce: true },
+        },
+        speakers: {
+            ...base.speakers,
+            NPC_Test_01: {
+                name: 'Tester',
+                ownedTextlines: ['DonePrereq01', 'OpenPrereq01', 'TwoPrereqBlocked01'],
+                asSpeakerTextlines: [], sourceFiles: ['NPCData.lua'],
+                sectionCounts: { InteractTextLineSets: 3 },
+                priorityCounts: { super: 0, priority: 3, plain: 0 },
+                adjacencyUpstream: {}, adjacencyDownstream: {},
+            },
+        },
+    };
+    loadData(fixture);
+    resetSpeakerGroups();
+    _localStore.set('hde.save', JSON.stringify({
+        v: SAVE_STORAGE_SCHEMA, gameId: getActiveGame(), runs: 1, played: ['DonePrereq01'],
+    }));
+    restoreSaveProgress();
+
+    let boxHtml = '';
+    const box = { dataset: { loaded: '0' }, set innerHTML(v) { boxHtml = v; }, get innerHTML() { return boxHtml; } };
+    const cls = new Set();
+    const row = {
+        dataset: { name: 'TwoPrereqBlocked01' },
+        classList: { contains: c => cls.has(c), toggle: (c) => { if (cls.has(c)) { cls.delete(c); return false; } cls.add(c); return true; } },
+        querySelector: sel => (sel === '.speaker-row-blockers' ? box : null),
+    };
+    toggleTextlineBlockers(row);
+    assert.match(boxHtml, /OpenPrereq01/);          // still-unplayed blocker shown
+    assert.doesNotMatch(boxHtml, /DonePrereq01/);    // satisfied prerequisite pruned
 });
 
 test('renderSpeaker keeps the alternates cluster when the filter hides a sibling (labelled "N of M")', () => {

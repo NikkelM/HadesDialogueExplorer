@@ -37,6 +37,7 @@ import {
 } from './utilities.js';
 import { getDialogueStatus, getSaveProgress, saveMatchesActiveGame } from './save-parser.js';
 import { mergedSectionKey, playRank, sectionOrderRank } from './play-order.js';
+import { renderUnplayedBlockerTreeHtml } from './eligibility-view.js';
 
 // Priority filter scheme. Both games slice a speaker's owned dialogues
 // on the same axis - repeatability (the ``playOnce`` flag) - matching
@@ -272,6 +273,27 @@ function compareWithinSection(a, b, game) {
     const rb = playRank(b.tl, g);
     if (ra !== rb) return ra - rb;
     return a.name.localeCompare(b.name);
+}
+
+// Eligibility sort rank for a row, ordered actionable-first to match the
+// eligibility filter-chip order (``_ELIGIBILITY_BUCKETS``). With no matching
+// save every row ranks equal, so the sort collapses to play order. Under the
+// "All" eligibility filter this keeps a section's rows grouped by save status
+// (eligible, then blocked, ...) while a specific eligibility filter is a no-op
+// (its rows already share one status).
+function eligibilityRank(name, tl) {
+    if (!saveActive()) return 0;
+    const i = _ELIGIBILITY_BUCKETS.indexOf(getDialogueStatus(name, tl));
+    return i === -1 ? _ELIGIBILITY_BUCKETS.length : i;
+}
+
+// Row order within a section: primarily by eligibility status (when a save
+// applies), then by the game's natural play order.
+function compareRows(a, b, game) {
+    const ra = eligibilityRank(a.name, a.tl);
+    const rb = eligibilityRank(b.name, b.tl);
+    if (ra !== rb) return ra - rb;
+    return compareWithinSection(a, b, game);
 }
 
 // Render the summary cards: owned/guest totals and the per-section
@@ -521,11 +543,13 @@ function displayNameFor(speakerId) {
 function renderTextlineList(entry, speakerId, filter, eligFilter, game) {
     // Preserve which sections the user expanded across re-renders (filter /
     // eligibility changes) for the SAME speaker; reset for a new speaker
-    // (along with the in-speaker name search).
+    // (along with the in-speaker name search). A fresh speaker load also flags
+    // the first section to auto-expand (see ``renderTextlineListBody``).
     if (speakerId !== _expandedSpeaker) {
         _expandedSpeaker = speakerId;
         _expandedSections = new Set();
         _speakerQuery = '';
+        _autoExpandFirstSection = true;
     }
     // Stash the render context so ``searchSpeakerTextlines`` can rebuild just
     // the list body (keeping the search input, and its focus, intact) as the
@@ -591,8 +615,16 @@ function renderTextlineListBody() {
     }
     const orderedSections = Array.from(groups.keys()).sort((a, b) =>
         compareSections(a, b));
+    // On a fresh speaker load, open the first section so the view doesn't start
+    // fully collapsed; the rest stay collapsed. Consumed once, and skipped under
+    // an active search (which force-expands every group anyway), so it never
+    // fights the user's later collapse of it.
+    if (_autoExpandFirstSection) {
+        _autoExpandFirstSection = false;
+        if (!query && orderedSections.length) _expandedSections.add(orderedSections[0]);
+    }
     return orderedSections.map(sec => {
-        const rows = groups.get(sec).slice().sort((a, b) => compareWithinSection(a, b, game));
+        const rows = groups.get(sec).slice().sort((a, b) => compareRows(a, b, game));
         const header = sec
             ? renderSectionHtml(sec)
             : `<span class="section-name">(unknown section)</span>`;
@@ -601,12 +633,19 @@ function renderTextlineListBody() {
         // re-render. An active name search force-expands every group so the
         // matches show without extra clicks. The header toggle records state.
         const expandedClass = (query || _expandedSections.has(sec)) ? ' expanded' : '';
+        // With a matching save the rows become expandable (into their unplayed
+        // blocker tree). The list flows into a dynamic multi-column grid with
+        // roomy columns (each wide enough for a name row and its blocker tree);
+        // the per-column min width is a CSS variable so it is easy to tune.
+        const listClass = saveActive()
+            ? 'speaker-textline-list speaker-textline-list-save'
+            : 'speaker-textline-list';
         return `<div class="speaker-textline-group${expandedClass}">`
             + `<h5 class="speaker-textline-group-header" onclick="toggleSpeakerSection(this, ${jsAttr(sec)})">`
             + `<span class="speaker-group-chevron">\u25B6</span>`
             + `${header} <span class="speaker-count">${rows.length}</span>`
             + `</h5>`
-            + `<ul class="speaker-textline-list">${renderSectionRowsHtml(rows, ownedNames)}</ul>`
+            + `<ul class="${listClass}">${renderSectionRowsHtml(rows, ownedNames)}</ul>`
             + `</div>`;
     }).join('');
 }
@@ -617,6 +656,9 @@ function renderTextlineListBody() {
 // in ``renderTextlineList`` when a different speaker is rendered.
 let _expandedSpeaker = null;
 let _expandedSections = new Set();
+// Set on a fresh speaker load so ``renderTextlineListBody`` opens the first
+// section once (see there); cleared as soon as it is consumed.
+let _autoExpandFirstSection = false;
 
 // In-speaker dialogue filter. ``_speakerQuery`` is the live filter text (reset
 // per speaker); ``_listCtx`` stashes the last list render's inputs so a
@@ -763,11 +805,65 @@ function renderTextlineRow(name, tl) {
     const saveBadge = renderSaveBadgeHtml(name, tl);
     const priority = renderPrimaryPriorityBadgeHtml(tl);
     const playOnce = renderPlayOnceBadgeHtml(tl);
-    return `<li class="speaker-textline-row">`
-        + saveBadge
-        + `<a class="textline-link" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`
-        + `<span class="speaker-textline-badges">${priority}${playOnce}</span>`
+    const badges = `<span class="speaker-textline-badges">${priority}${playOnce}</span>`;
+    const status = saveActive() ? getDialogueStatus(name, tl) : null;
+    // No matching save: the flat dense-grid row (name navigates on click).
+    if (!status) {
+        return `<li class="speaker-textline-row">`
+            + saveBadge
+            + `<a class="textline-link" onclick="navigateTo(${jsAttr(name)})">${escapeHtml(name)}</a>`
+            + badges
+            + `</li>`;
+    }
+    // Save mode (single column): every row shares one aligned head - a chevron
+    // slot (real chevron when expandable, else an empty spacer so names line up),
+    // the status dot, the name, then the badges. A blocked / indeterminate row
+    // expands in place to reveal the unplayed dialogues still blocking it (each
+    // with its own dot, itself expandable - see ``toggleTextlineBlockers``);
+    // played / eligible / unobtainable rows have nothing to expand and simply
+    // navigate on click. Navigation matches the tree views: the row toggles /
+    // (for leaves) navigates on a single click, and an expandable row navigates
+    // on a double-click - so the name is a plain span, not a link.
+    const expandable = status === 'blocked' || status === 'indeterminate';
+    const chevron = expandable
+        ? `<span class="speaker-row-chevron">\u25B6</span>`
+        : `<span class="speaker-row-chevron"></span>`;
+    const name_ = `<span class="textline-link speaker-row-name">${escapeHtml(name)}</span>`;
+    if (!expandable) {
+        return `<li class="speaker-textline-row speaker-textline-row-save">`
+            + `<div class="speaker-textline-row-head" onclick="navigateTo(${jsAttr(name)})">`
+            + chevron + saveBadge + name_ + badges
+            + `</div>`
+            + `</li>`;
+    }
+    return `<li class="speaker-textline-row speaker-textline-row-save speaker-textline-row-expandable" data-name="${escapeHtml(name)}">`
+        + `<div class="speaker-textline-row-head" onclick="toggleTextlineBlockers(this.closest('.speaker-textline-row'))" ondblclick="event.stopPropagation();navigateTo(${jsAttr(name)})">`
+        + chevron + saveBadge + name_ + badges
+        + `</div>`
+        + `<div class="speaker-row-blockers" data-loaded="0"></div>`
         + `</li>`;
+}
+
+// Expand / collapse a blocked dialogue row to reveal the unplayed dialogues
+// still blocking it. The blocker tree is built lazily on first expand (mirrors
+// ``toggleAdjacencyRow``) so a speaker's many rows don't each pay for a
+// prerequisite walk up front. Exposed globally for the inline row ``onclick``.
+export function toggleTextlineBlockers(rowEl) {
+    if (!rowEl) return;
+    const expanding = !rowEl.classList.contains('expanded');
+    rowEl.classList.toggle('expanded');
+    if (!expanding) return;
+    const box = rowEl.querySelector('.speaker-row-blockers');
+    if (!box || box.dataset.loaded === '1') return;
+    const name = rowEl.dataset.name;
+    const tree = name ? renderUnplayedBlockerTreeHtml(name) : '';
+    // No textline prerequisites left means the block is a situational / negative
+    // / run-count gate (the tracer's territory), so point there rather than show
+    // an empty box.
+    box.innerHTML = tree
+        || `<p class="speaker-row-blockers-note">No unplayed prerequisite dialogues - blocked by other conditions. `
+            + `<a class="textline-link" onclick="navigateToEligibility(${jsAttr(name)})">Open the eligibility tracer</a> for the full picture.</p>`;
+    box.dataset.loaded = '1';
 }
 
 // ---- Empty-state speaker picker ----------------------------------------
