@@ -791,8 +791,31 @@ export function renderTreeHtml(chain, rootName, groups) {
     return html;
 }
 
-// Render a single textline ``ref`` as an expandable prerequisite-tree node:
-// the same chevron / recursion / played-status rendering the main tree uses,
+// Compact "still blocking" tree for embedding in another surface (the speaker
+// overview's per-dialogue row expansion). Same recursive, save-status-dotted,
+// cycle-safe tree the tracer renders, but pruned to the still-unplayed path:
+// already-played prerequisites (satisfied branches) are dropped rather than
+// shown as ticked leaves, so the caller sees only the dialogues that are STILL
+// blocking ``rootName``. Returns '' when nothing textline-based blocks it (e.g.
+// blocked only by situational / negative / run-count gates), so the caller can
+// fall back to a "trace" affordance. ``isPlayed`` is injectable for tests.
+export function renderUnplayedBlockerTreeHtml(rootName, isPlayed = (n) => isDialoguePlayed(n) === true) {
+    const { chain, groups } = buildPrereqChain(rootName, isPlayed);
+    if (chain.size === 0) return '';
+    // Keep the root plus every unplayed node; drop played nodes so satisfied
+    // prerequisites (and the branches behind them) don't render. A node reachable
+    // only through a played parent becomes unreachable from the root - correct,
+    // since a played prerequisite means that whole branch is already satisfied.
+    const pruned = new Map();
+    for (const [name, info] of chain) {
+        if (name === rootName || !info.played) pruned.set(name, info);
+    }
+    const childrenOf = buildChildrenOf(pruned);
+    if (!childrenOf.has(rootName) || childrenOf.get(rootName).length === 0) return '';
+    return `<div class="eligibility-tree-container speaker-blocker-tree">`
+        + renderTreeNode(rootName, childrenOf, pruned, groups, new Set(), 0)
+        + `</div>`;
+}
 // so a branch line behaves exactly like a node in the dependency tree. Its
 // own prerequisite chain is built on demand (rooted at ``ref``); played refs
 // are leaves (already satisfied). ``isPlayed`` threads the (injectable) save
