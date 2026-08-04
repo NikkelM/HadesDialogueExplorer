@@ -1,0 +1,56 @@
+{
+  "cueTexts": {
+    "Artemis_0304": {
+      "speaker": "Artemis",
+      "text": "That's it!"
+    },
+    "Artemis_0448": {
+      "speaker": "Artemis",
+      "text": "Save some for me next time."
+    },
+    "Hecate_0070": {
+      "speaker": "Hecate",
+      "text": "There you are."
+    },
+    "Heracles_0438": {
+      "speaker": "Heracles",
+      "text": "Rough waters."
+    },
+    "Heracles_0440": {
+      "speaker": "Heracles",
+      "text": "Another stowaway."
+    },
+    "Hypnos_0047": {
+      "speaker": "Hypnos",
+      "text": "I love you! So long!"
+    },
+    "Melinoe_2935": {
+      "speaker": "Melinoë",
+      "text": "One of these nights you ought to ask Headmistress how she got this from the House."
+    },
+    "Melinoe_5156": {
+      "speaker": "Melinoë",
+      "text": "The Fates... they're close..."
+    },
+    "Melinoe_5525": {
+      "speaker": "Melinoë",
+      "text": "Thank you, and farewell."
+    },
+    "Prometheus_0463": {
+      "speaker": "Prometheus",
+      "text": "I am surpassed... but never beaten..."
+    },
+    "Skelly_0288": {
+      "speaker": "Schelemeus",
+      "text": "What news?"
+    },
+    "Zagreus_0050": {
+      "speaker": "Zagreus",
+      "text": "What if something happened... something must have happened... but then how am I still dreaming? If this even is a dream. Oh, blast, where is she... when is she...?"
+    },
+    "Zagreus_0104": {
+      "speaker": "Zagreus",
+      "text": "Good news! The terms of your Infernal Contract are fulfilled!"
+    }
+  }
+}
